@@ -1,0 +1,91 @@
+<resources>
+    <string name="app_name">CTemplarApp</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+    <!-- Navigation Drawer -->
+    <string name="nav_drawer_inbox">Inbox</string>
+    <string name="nav_drawer_draft">Draft</string>
+    <string name="nav_drawer_sent">Sent</string>
+    <string name="nav_drawer_starred">Starred</string>
+    <string name="nav_drawer_archive">Archive</string>
+    <string name="nav_drawer_spam">Spam</string>
+    <string name="nav_drawer_trash">Trash</string>
+    <string name="nav_drawer_all_mails">All Mails</string>
+    <string name="nav_drawer_add_folder">Add Folder</string>
+    <string name="nav_drawer_add_label">Add Label</string>
+    <string name="nav_drawer_contact">Contact</string>
+    <string name="nav_drawer_settings">Settings</string>
+    <string name="nav_drawer_help">Help</string>
+    <string name="nav_drawer_logout">Logout</string>
+
+    <!-- Tool Bar -->
+
+    <string name="action_search">Search</string>
+    <string name="action_filter">Filter</string>
+    <string name="action_search_hint">Search mail</string>
+
+    <!-- FONTS -->
+    <string name="FONT_LATO_REGULAR">fonts/Lato-Regular.ttf</string>
+
+    <!-- STRINGS -->
+    <string name="token_expired_title">Session expired</string>
+    <string name="token_expired_message">Your session has expired, please log in to CTemplar again</string>
+    <string name="title_email">Email</string>
+    <string name="title_next">Next</string>
+    <string name="title_next_no_email">Next (No Email)</string>
+    <string name="title_password">Password</string>
+    <string name="title_username">Username</string>
+    <string name="title_ctemplar">CTEMPLAR</string>
+    <string name="title_forgot_password">Forgot password</string>
+    <string name="title_forgot_password_hint">We will send reset link to your recovery email</string>
+    <string name="title_choose_password">Choose password</string>
+    <string name="title_confirm_password">Confirm password</string>
+    <string name="title_ctemplar_username">Ctemplar username to reset</string>
+    <string name="title_recovery_email">Recovery email</string>
+    <string name="title_recovery_email_optional">Recovery email (Optional)</string>
+    <string name="title_reset_password">Reset password</string>
+    <string name="title_reset_code">Reset code</string>
+    <string name="title_confirm">Confirm</string>
+    <string name="title_confirm_reset_password">Confirm Reset Password</string>
+    <string name="title_confirm_reset_password_hint">Your encryption key is connected to your password. Because of this <![CDATA[<font color="#e74c3c">you will not be able to decrypt old messages, attachments and contacts</font>]]> if you reset your password.
+If you have further questions please email <![CDATA[<u><a href="mailto:support@ctemplar.com">support@ctemplar.com</a></u>]]>.</string>
+    <string name="title_confirm_reset_password_hint2">Are you sure you want to reset your password?</string>
+    <string name="title_reset_code_hint">We have sent a reset code to your <![CDATA[<u><a href="mailto:%1$s">recovery email</a></u>]]> to reset your password. \n\n Enter it below for confirmation.</string>
+    <string name="title_new_pasword_hint">Don’t forget this password, it can’t be restored.</string>
+    <string name="title_forgot_username_underlined"><u>Forgot Your Username?</u></string>
+    <string name="title_forgot_username">Forgot your username?</string>
+    <string name="title_forgot_username_hint">Enter your email address and we will send you your username</string>
+    <string name="title_email_my_username">Email me my username</string>
+    <string name="title_username_and_domain">Username and domain</string>
+    <string name="title_step_username_hint">This will be your new Ctemplar email address.</string>
+    <string name="title_step_password_hint">Your password must be at least 10 characters. Password can contain only latin letters and cannot contain symbols such «-+!@. etc.</string>
+    <string name="title_step_email_hint">This is used to recover your account if you get locked out or forget your password</string>
+    <string name="title_step_email_check_hint">Please check this box if you agree to abide by our <![CDATA[<u><a href="https://ctemplar.com/terms">Terms and Conditions</a></u>]]></string>
+    <string name="title_more_info_link"><u>More Info</u>></string>
+    <string name="title_empty_inbox">You have no Inbox messages</string>
+    <string name="btn_login">Log in</string>
+    <string name="btn_compose">Compose</string>
+    <string name="txt_forgot_pass">Forgot Password?</string>
+    <string name="txt_create_acc"><u>Create account</u></string>
+    <string name="txt_loading">Loading...</string>
+
+    <!-- ERRORS -->
+
+    <string name="error_invalid_email">Invalid email</string>
+    <string name="error_username_small">Minimum 4 symbols</string>
+    <string name="error_username_big">Maximum 64 symbols</string>
+    <string name="error_username_incorrect">Username incorrect</string>
+    <string name="error_username_exists">Username already exists</string>
+    <string name="error_password_not_match">Passwords do not match</string>
+    <string name="error_empty_email">Empty email</string>
+    <string name="error_empty_password">Empty password</string>
+    <string name="error_authentication_failed">Wrong username or password</string>
+    <string name="error_server">Server error</string>
+    <string name="error_recover_password">Incorrect Username or Email</string>
+
+</resources>

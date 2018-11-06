@@ -1,0 +1,13 @@
+package mobileapp.ctemplar.com.ctemplarapp;
+
+public enum LoginActivityActions {
+    // base fragment for Login activity
+    CHANGE_FRAGMENT_SIGN_IN,
+    CHANGE_FRAGMENT_FORGOT_PASSWORD,
+    CHANGE_FRAGMENT_FORGOT_USERNAME,
+    CHANGE_FRAGMENT_CONFIRM_PASWORD,
+    CHANGE_FRAGMENT_RESET_CODE,
+    CHANGE_FRAGMENT_NEW_PASSWORD,
+    CHANGE_FRAGMENT_CREATE_ACCOUNT,
+    CHANGE_ACTIVITY_MAIN
+}

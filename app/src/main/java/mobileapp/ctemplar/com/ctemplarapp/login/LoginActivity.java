@@ -1,0 +1,123 @@
+package mobileapp.ctemplar.com.ctemplarapp.login;
+
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.view.View;
+import android.view.WindowManager;
+import android.widget.ProgressBar;
+
+import butterknife.BindView;
+import mobileapp.ctemplar.com.ctemplarapp.BaseFragment;
+import mobileapp.ctemplar.com.ctemplarapp.BaseFragmentActivity;
+import mobileapp.ctemplar.com.ctemplarapp.DialogState;
+import mobileapp.ctemplar.com.ctemplarapp.LoginActivityActions;
+import mobileapp.ctemplar.com.ctemplarapp.R;
+import mobileapp.ctemplar.com.ctemplarapp.main.MainActivity;
+
+public class LoginActivity extends BaseFragmentActivity {
+
+    @BindView(R.id.progress_bar)
+    public ProgressBar progress;
+
+    @BindView(R.id.progress_background)
+    public View progressBackground;
+
+    private LoginActivityViewModel loginViewModel;
+
+    @NonNull
+    @Override
+    protected BaseFragment getStartFragment() {
+        return new SignInFragment();
+    }
+
+    @Override
+    protected int getLayoutId() {
+        return R.layout.activity_login;
+    }
+
+    @Override
+    protected void onCreate(Bundle savedState) {
+        super.onCreate(savedState);
+
+        loginViewModel = ViewModelProviders.of(this).get(LoginActivityViewModel.class);
+        loginViewModel.getActionStatus().observe(this, new Observer<LoginActivityActions>() {
+            @Override
+            public void onChanged(@Nullable LoginActivityActions actions) {
+                handleActions(actions);
+            }
+        });
+        loginViewModel.getDialogState().observe(this, new Observer<DialogState>() {
+            @Override
+            public void onChanged(@Nullable DialogState dialogState) {
+                handleDialogState(dialogState);
+            }
+        });
+    }
+
+    public void blockUI() {
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+    }
+
+    public void unlockUI() {
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+    }
+
+    private void goToMainActivity() {
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
+    private void handleDialogState(DialogState state) {
+        if(state != null) {
+            switch (state) {
+                case SHOW_PROGRESS_DIALOG:
+                    progress.setVisibility(View.VISIBLE);
+                    progressBackground.setVisibility(View.VISIBLE);
+                    blockUI();
+                    break;
+                case HIDE_PROGRESS_DIALOG:
+                    progress.setVisibility(View.GONE);
+                    progressBackground.setVisibility(View.GONE);
+                    unlockUI();
+                    break;
+            }
+        }
+    }
+
+    private void handleActions(LoginActivityActions action) {
+        if (action != null) {
+            switch (action) {
+                case CHANGE_FRAGMENT_SIGN_IN:
+                    break;
+                case CHANGE_FRAGMENT_FORGOT_USERNAME:
+                    pushFragment(new ForgotUsernameFragment());
+                    break;
+                case CHANGE_FRAGMENT_FORGOT_PASSWORD:
+                    pushFragment(new ForgotPasswordFragment());
+                    break;
+                case CHANGE_FRAGMENT_CONFIRM_PASWORD:
+                    pushFragment(new ConfirmResetPasswordFragment());
+                    break;
+                case CHANGE_FRAGMENT_RESET_CODE:
+                    pushFragment(new ResetCodeFragment());
+                    break;
+                case CHANGE_FRAGMENT_NEW_PASSWORD:
+                    pushFragment(new NewPasswordFragment());
+                    break;
+                case CHANGE_FRAGMENT_CREATE_ACCOUNT:
+                    pushFragment(new SignUpFragment());
+                    break;
+                case CHANGE_ACTIVITY_MAIN:
+                    goToMainActivity();
+                    break;
+
+            }
+        }
+    }
+}
