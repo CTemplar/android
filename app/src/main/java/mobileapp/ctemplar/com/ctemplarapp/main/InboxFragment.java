@@ -19,7 +19,7 @@ import butterknife.OnClick;
 import mobileapp.ctemplar.com.ctemplarapp.BaseFragment;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Mailboxes.MessagesResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResponse;
 
 public class InboxFragment extends BaseFragment {
 
@@ -82,10 +82,10 @@ public class InboxFragment extends BaseFragment {
             }
         });
 
-        if(mainModel.getMessagesResponse() == null || mainModel.getMessagesResponse().getValue() == null) {
-            mainModel.showProgressDialog();
-            mainModel.getMessages(20, 0, mainModel.getCurrentFolder().getValue());
-        }
+//        if(mainModel.getMessagesResponse() == null || mainModel.getMessagesResponse().getValue() == null) {
+//            mainModel.showProgressDialog();
+//            mainModel.getMessages(20, 0, mainModel.getCurrentFolder().getValue());
+//        }
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(mLayoutManager);
@@ -118,8 +118,8 @@ public class InboxFragment extends BaseFragment {
                     Toast.makeText(getActivity(), getResources().getString(R.string.error_server), Toast.LENGTH_SHORT).show();
                     break;
                 case RESPONSE_NEXT_MESSAGES:
-                    adapter = new InboxMessagesAdapter(mainModel.getMessagesResponse().getValue().getMessagesList());
-                    recyclerView.setAdapter(adapter);
+                    // adapter = new InboxMessagesAdapter(mainModel.getMessagesResponse().getValue().getMessagesList());
+                    // recyclerView.setAdapter(adapter);
                     break;
             }
         }
@@ -138,7 +138,9 @@ public class InboxFragment extends BaseFragment {
             imgEmpty.setVisibility(View.GONE);
             txtEmpty.setVisibility(View.GONE);
             frameCompose.setVisibility(View.GONE);
-            // adapter = new InboxMessagesAdapter(mailboxResponse.getMessagesList());
+
+            adapter = new InboxMessagesAdapter(mainModel.getMessagesResponse().getValue().getMessagesList());
+            recyclerView.setAdapter(adapter);
         }
     }
 

@@ -22,6 +22,7 @@ import mobileapp.ctemplar.com.ctemplarapp.LoginActivityActions;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
+import mobileapp.ctemplar.com.ctemplarapp.view.TextDrawable;
 
 public class SignInFragment extends BaseFragment {
 
@@ -72,6 +73,12 @@ public class SignInFragment extends BaseFragment {
         super.onViewCreated(view, savedInstanceState);
 
         setListeners();
+
+        TextDrawable ctemplarTest = new TextDrawable("@ctemplar.com");
+
+        // editTextUsername.setCompoundDrawablesWithIntrinsicBounds(null,null, ctemplarTest, null);
+
+        // editTextUsername.setCompoundDrawablesWithIntrinsicBounds(0,0, R.drawable.ic_action_search, 0);
     }
 
     @Override

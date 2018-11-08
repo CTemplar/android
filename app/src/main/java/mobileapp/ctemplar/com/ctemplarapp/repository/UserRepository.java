@@ -1,5 +1,7 @@
 package mobileapp.ctemplar.com.ctemplarapp.repository;
 
+import java.util.List;
+
 import javax.inject.Singleton;
 
 import io.reactivex.Observable;
@@ -11,11 +13,14 @@ import mobileapp.ctemplar.com.ctemplarapp.net.request.RecoverPasswordRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SignInRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SignUpRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.CheckUsernameResponse;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Mailboxes.MessagesResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Mailboxes.MailboxesResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Mailboxes.MailboxesResult;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.RecoverPasswordResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.SignInResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.SignUpResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.MyselfResponse;
+import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 
 @Singleton
 public class UserRepository {
@@ -50,10 +55,32 @@ public class UserRepository {
 
     public void logout() {
         userStore.logout();
+        CTemplarApp.getAppDatabase().mailboxDao().deleteAll();
     }
 
     public void saveUserToken(String token) {
         userStore.saveToken(token);
+    }
+
+    public void saveMailboxes(List<MailboxesResult> mailboxes) {
+        if(mailboxes != null && mailboxes.size()>0) {
+            for(int i = 0; i < mailboxes.size(); i++) {
+                MailboxesResult result = mailboxes.get(i);
+
+                MailboxEntity entity = new MailboxEntity();
+                entity.setId(result.getId());
+                entity.setDefault(result.isDefault()?1:0);
+                entity.setDisplayName(result.getDisplayName());
+                entity.setEmail(result.getEmail());
+                entity.setEnabled(result.isEnabled()?1:0);
+                entity.setFingerprint(result.getFingerprint());
+                entity.setPrivateKey(result.getPrivateKey());
+                entity.setPublicKey(result.getPublicKey());
+                entity.setSignature(result.getSignature());
+
+                CTemplarApp.getAppDatabase().mailboxDao().save(entity);
+            }
+        }
     }
 
     // Requests
@@ -88,7 +115,7 @@ public class UserRepository {
     }
 
     public Observable<MessagesResponse> getMessagesList(int limit, int offset, String folder) {
-        return service.getMailboxes(limit, offset, folder)
+        return service.getMessages(limit, offset, folder)
                 .subscribeOn(io.reactivex.schedulers.Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
@@ -98,4 +125,10 @@ public class UserRepository {
                 .subscribeOn(io.reactivex.schedulers.Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
+    public Observable<MailboxesResponse> getMailboxesList(int limit, int offset) {
+        return service.getMailboxes(limit, offset)
+                .subscribeOn(io.reactivex.schedulers.Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
 }

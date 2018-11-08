@@ -8,18 +8,24 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import net.kibotu.pgp.Pgp;
+
 import java.util.List;
 
+import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.R;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Mailboxes.MessagesResult;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResult;
+import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
 
 public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessageViewHolder> {
 
     private List<MessagesResult> messagesList;
+    private MailboxEntity currentMailbox;
 
     public InboxMessagesAdapter(List<MessagesResult> messagesList) {
         this.messagesList = messagesList;
+        currentMailbox = CTemplarApp.getAppDatabase().mailboxDao().getDefault();
     }
 
     @NonNull
@@ -72,11 +78,26 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessageViewH
         }
 
         holder.txtSubject.setText(messagesList.get(position).getSubject());
-        holder.txtContent.setText(messagesList.get(position).getContent());
+        // Commented because PGP library requires password that can't be obtained
+        //holder.txtContent.setText(decodeContent(messagesList.get(position).getContent(), messagesList.get(position).getHash()));
     }
 
     @Override
     public int getItemCount() {
         return messagesList.size();
+    }
+
+    private String decodeContent(String encodedString, String password) {
+        Pgp.setPrivateKey(currentMailbox.getPrivateKey());
+        Pgp.setPublicKey(currentMailbox.getPrivateKey());
+        String result = "";
+
+        try {
+            result = Pgp.decrypt(encodedString, password);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return result;
     }
 }

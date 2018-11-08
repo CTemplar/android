@@ -33,6 +33,7 @@ import mobileapp.ctemplar.com.ctemplarapp.BaseActivity;
 import mobileapp.ctemplar.com.ctemplarapp.DialogState;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.login.LoginActivity;
+import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import timber.log.Timber;
 
 public class MainActivity extends BaseActivity
@@ -98,8 +99,16 @@ public class MainActivity extends BaseActivity
             }
         });
 
+        mainModel.getResponseStatus().observe(this, new Observer<ResponseStatus>() {
+            @Override
+            public void onChanged(@Nullable ResponseStatus status) {
+                handleResponseStatus(status);
+            }
+        });
+
         // default folder
         mainModel.setCurrentFolder("inbox");
+        loadUserInfo();
     }
 
     @Override
@@ -238,10 +247,22 @@ public class MainActivity extends BaseActivity
         }
     }
 
+    private void loadUserInfo() {
+        mainModel.getMailboxes(20, 0);
+    }
+
     private void handleMainActions(MainActivityActions actions) {
         switch (actions) {
             case ACTION_LOGOUT:
                 startSignInActivity();
+                break;
+        }
+    }
+
+    private void handleResponseStatus(ResponseStatus status) {
+        switch (status) {
+            case RESPONSE_NEXT_MAILBOXES:
+                // mainModel.getMessages(20, 0, "inbox");
                 break;
         }
     }

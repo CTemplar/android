@@ -8,7 +8,8 @@ import mobileapp.ctemplar.com.ctemplarapp.net.request.RecoverPasswordRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SignInRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SignUpRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.CheckUsernameResponse;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Mailboxes.MessagesResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Mailboxes.MailboxesResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.RecoverPasswordResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.SignInResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.SignUpResponse;
@@ -37,9 +38,12 @@ public interface RestService {
     Observable<RecoverPasswordResponse> resetPassword(@Body RecoverPasswordRequest request);
 
     @GET("/emails/messages/")
-    Observable<MessagesResponse> getMailboxes(@Query("limit") int limit, @Query("offset") int offset, @Query("folder") String folder);
+    Observable<MessagesResponse> getMessages(@Query("limit") int limit, @Query("offset") int offset, @Query("folder") String folder);
 
     @GET("/users/myself/")
     Observable<MyselfResponse> getMyself();
+
+    @GET("/emails/mailboxes/")
+    Observable<MailboxesResponse> getMailboxes(@Query("limit") int limit, @Query("offset") int offset);
 
 }

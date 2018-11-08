@@ -2,6 +2,8 @@ package mobileapp.ctemplar.com.ctemplarapp.net.response.myself;
 
 import com.google.gson.annotations.SerializedName;
 
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Mailboxes.MailboxesResult;
+
 public class MyselfResult {
 
     @SerializedName("id")
@@ -29,7 +31,7 @@ public class MyselfResult {
     public SettingsEntity settings;
 
     @SerializedName("mailboxes")
-    public MailboxEntity mailboxes;
+    public MailboxesResult mailboxes;
 
     public long getId() {
         return id;
@@ -63,7 +65,7 @@ public class MyselfResult {
         return settings;
     }
 
-    public MailboxEntity getMailboxes() {
+    public MailboxesResult getMailboxes() {
         return mailboxes;
     }
 

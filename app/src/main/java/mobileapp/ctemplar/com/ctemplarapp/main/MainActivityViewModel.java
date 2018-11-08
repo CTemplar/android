@@ -10,7 +10,8 @@ import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.DialogState;
 import mobileapp.ctemplar.com.ctemplarapp.SingleLiveEvent;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Mailboxes.MessagesResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Mailboxes.MailboxesResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResponse;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
 
 public class MainActivityViewModel extends ViewModel {
@@ -81,6 +82,35 @@ public class MainActivityViewModel extends ViewModel {
                     public void onNext(MessagesResponse response) {
                         messagesResponse.postValue(response);
                         responseStatus.postValue(ResponseStatus.RESPONSE_NEXT_MESSAGES);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    public void getMailboxes(int limit, int offset) {
+        userRepository.getMailboxesList(limit, offset)
+                .subscribe(new Observer<MailboxesResponse>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(MailboxesResponse mailboxesResponse) {
+
+                        if(mailboxesResponse.getTotalCount() > 0) {
+                            userRepository.saveMailboxes(mailboxesResponse.getMailboxesList());
+                        }
+                        responseStatus.postValue(ResponseStatus.RESPONSE_NEXT_MAILBOXES);
                     }
 
                     @Override
