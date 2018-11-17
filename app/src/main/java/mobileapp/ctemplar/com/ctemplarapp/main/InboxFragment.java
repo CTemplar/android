@@ -3,6 +3,7 @@ package mobileapp.ctemplar.com.ctemplarapp.main;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -18,7 +19,9 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import mobileapp.ctemplar.com.ctemplarapp.BaseFragment;
 import mobileapp.ctemplar.com.ctemplarapp.R;
+import mobileapp.ctemplar.com.ctemplarapp.message.MessageActivity;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.SendMessageRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResponse;
 
 public class InboxFragment extends BaseFragment {
@@ -108,6 +111,15 @@ public class InboxFragment extends BaseFragment {
     @OnClick(R.id.fragment_inbox_send)
     public void onClickCompose() {
         Toast.makeText(getActivity(), "In progress", Toast.LENGTH_SHORT).show();
+    }
+
+    @OnClick(R.id.fragment_inbox_fab_compose)
+    public void onClickFabCompose() {
+        Intent intent = new Intent(getActivity(), MessageActivity.class);
+        startActivity(intent);
+
+        //Toast.makeText(getActivity(), "Sending mail...", Toast.LENGTH_SHORT).show();
+        //mainModel.sendMessage(new SendMessageRequest("Test subject from app", "Content", "inbox", 196));
     }
 
     public void handleResponseStatus(ResponseStatus status) {

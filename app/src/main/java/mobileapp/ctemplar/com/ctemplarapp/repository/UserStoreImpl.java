@@ -47,6 +47,14 @@ public class UserStoreImpl implements UserStore{
     }
 
     @Override
+    //TODO: store in db instead
+    public void savePassword(String password) {
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(KEY_PASSWORD, password);
+        editor.commit();
+    }
+
+    @Override
     public void saveUserPref(String username, String pass, String passHashed, String privateKey, String publicKey) {
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(KEY_USERNAME, username);
