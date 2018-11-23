@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="10dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <ImageView
+        android:layout_width="38dp"
+        android:layout_height="40dp"
+        android:id="@+id/recipients_list_view_item_user_ico"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:padding="8dp"
+        android:src="@drawable/ic_star_on"/>
+
+    <View
+        android:id="@+id/recipients_list_view_item_divider"
+        android:layout_width="1dp"
+        android:layout_height="1dp"
+        android:background="@android:color/transparent"
+        app:layout_constraintTop_toTopOf="@id/recipients_list_view_item_user_ico"
+        app:layout_constraintBottom_toBottomOf="@id/recipients_list_view_item_user_ico"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/recipients_list_view_item_first_last_name"
+        android:text="Andrew Smith"
+        android:textColor="@color/colorDarkBlue3"
+        android:textSize="16sp"
+        android:lineHeight="18sp"
+        app:layout_constraintBottom_toTopOf="@id/recipients_list_view_item_divider"
+        android:fontFamily="@font/lato_bold"
+        app:layout_constraintLeft_toRightOf="@id/recipients_list_view_item_user_ico"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/recipients_list_view_item_mail"
+        android:textColor="@color/colorGreyLight5"
+        android:text="andrewsmith@ctemplar.com"
+        android:textSize="16sp"
+        android:fontFamily="@font/lato_regular"
+        app:layout_constraintLeft_toRightOf="@id/recipients_list_view_item_user_ico"
+        app:layout_constraintTop_toTopOf="@id/recipients_list_view_item_divider"/>
+
+</android.support.constraint.ConstraintLayout>

@@ -9,7 +9,7 @@ import android.widget.TextView;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 
 public class InboxMessageViewHolder extends RecyclerView.ViewHolder{
-
+    public View root;
     public TextView txtUsername;
     public TextView txtChildren;
     public TextView txtStatus;
@@ -23,7 +23,7 @@ public class InboxMessageViewHolder extends RecyclerView.ViewHolder{
 
     public InboxMessageViewHolder(@NonNull View itemView) {
         super(itemView);
-
+        root = itemView;
         txtUsername = itemView.findViewById(R.id.message_holder_username);
         txtChildren = itemView.findViewById(R.id.message_holder_children);
         txtStatus = itemView.findViewById(R.id.message_holder_status);

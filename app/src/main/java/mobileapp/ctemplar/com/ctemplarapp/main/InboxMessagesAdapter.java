@@ -19,6 +19,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 
+import io.reactivex.subjects.PublishSubject;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResult;
@@ -29,6 +30,7 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessageViewH
 
     private List<MessagesResult> messagesList;
     private MailboxEntity currentMailbox;
+    private final PublishSubject<Long> onClickSubject = PublishSubject.create();
 
     public InboxMessagesAdapter(List<MessagesResult> messagesList) {
         this.messagesList = messagesList;
@@ -45,11 +47,18 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessageViewH
 
     @Override
     public void onBindViewHolder(@NonNull InboxMessageViewHolder holder, int position) {
-        holder.txtUsername.setText(messagesList.get(position).getSender());
+        final MessagesResult messagesResult = messagesList.get(position);
+        holder.txtUsername.setText(messagesResult.getSender());
+        holder.root.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onClickSubject.onNext(messagesResult.getId());
+            }
+        });
 
         // check for children count
         if(messagesList.get(position).getChildrenCount() > 0) {
-            holder.txtChildren.setText(String.valueOf(messagesList.get(position).getChildrenCount()));
+            holder.txtChildren.setText(String.valueOf(messagesResult.getChildrenCount()));
             holder.txtChildren.setVisibility(View.VISIBLE);
         } else {
             holder.txtChildren.setVisibility(View.GONE);
@@ -65,20 +74,20 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessageViewH
         }
 
         // check for status (time delete, delayed delivery)
-        if(TextUtils.isEmpty(messagesList.get(position).getDelayedDelivery()) &&
-                TextUtils.isEmpty(messagesList.get(position).getDestructDate())) {
+        if(TextUtils.isEmpty(messagesResult.getDelayedDelivery()) &&
+                TextUtils.isEmpty(messagesResult.getDestructDate())) {
             holder.txtStatus.setVisibility(View.GONE);
         }
 
         // format creation date
-        if(TextUtils.isEmpty(messagesList.get(position).getCreatedAt())) {
-            holder.txtDate.setText(AppUtils.formatDate(messagesList.get(position).getCreatedAt()));
+        if(TextUtils.isEmpty(messagesResult.getCreatedAt())) {
+            holder.txtDate.setText(AppUtils.formatDate(messagesResult.getCreatedAt()));
         }
 
-        holder.imgStarred.setEnabled(messagesList.get(position).isStarred());
+        holder.imgStarred.setEnabled(messagesResult.isStarred());
 
-        if(messagesList.get(position).getAttachments() != null &&
-                messagesList.get(position).getAttachments().size() > 0) {
+        if(messagesResult.getAttachments() != null &&
+                messagesResult.getAttachments().size() > 0) {
             holder.imgAttachment.setVisibility(View.VISIBLE);
         } else {
             holder.imgAttachment.setVisibility(View.GONE);
@@ -87,7 +96,7 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessageViewH
         holder.txtSubject.setText(messagesList.get(position).getSubject());
         String password =
                 CTemplarApp.getInstance().getSharedPreferences("pref_user", Context.MODE_PRIVATE).getString("key_password", null);
-        holder.txtContent.setText(decodeContent(messagesList.get(position).getContent(), password));
+        holder.txtContent.setText(decodeContent(messagesResult.getContent(), password));
     }
 
     @Override
@@ -108,5 +117,9 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessageViewH
         }
 
         return result;
+    }
+
+    public PublishSubject<Long> getOnClickSubject() {
+        return onClickSubject;
     }
 }

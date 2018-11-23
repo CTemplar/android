@@ -17,11 +17,15 @@ import android.widget.Toast;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import io.reactivex.Scheduler;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 import mobileapp.ctemplar.com.ctemplarapp.BaseFragment;
 import mobileapp.ctemplar.com.ctemplarapp.R;
-import mobileapp.ctemplar.com.ctemplarapp.message.MessageActivity;
+import mobileapp.ctemplar.com.ctemplarapp.message.SendMessageActivity;
+import mobileapp.ctemplar.com.ctemplarapp.message.ViewMessageActivity;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
-import mobileapp.ctemplar.com.ctemplarapp.net.request.SendMessageRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResponse;
 
 public class InboxFragment extends BaseFragment {
@@ -115,7 +119,7 @@ public class InboxFragment extends BaseFragment {
 
     @OnClick(R.id.fragment_inbox_fab_compose)
     public void onClickFabCompose() {
-        Intent intent = new Intent(getActivity(), MessageActivity.class);
+        Intent intent = new Intent(getActivity(), SendMessageActivity.class);
         startActivity(intent);
 
         //Toast.makeText(getActivity(), "Sending mail...", Toast.LENGTH_SHORT).show();
@@ -152,6 +156,32 @@ public class InboxFragment extends BaseFragment {
             frameCompose.setVisibility(View.GONE);
 
             adapter = new InboxMessagesAdapter(mainModel.getMessagesResponse().getValue().getMessagesList());
+            adapter.getOnClickSubject()
+                    .subscribeOn(io.reactivex.schedulers.Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new io.reactivex.Observer<Long>() {
+                        @Override
+                        public void onSubscribe(Disposable d) {
+
+                        }
+
+                        @Override
+                        public void onNext(Long aLong) {
+                            Intent intent = new Intent(getActivity(), ViewMessageActivity.class);
+                            intent.putExtra(ViewMessageActivity.ARG_ID, aLong);
+                            getActivity().startActivity(intent);
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+
+                        }
+
+                        @Override
+                        public void onComplete() {
+
+                        }
+                    });
             recyclerView.setAdapter(adapter);
         }
     }

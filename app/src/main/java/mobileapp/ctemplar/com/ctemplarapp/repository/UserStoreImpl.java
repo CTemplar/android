@@ -90,4 +90,21 @@ public class UserStoreImpl implements UserStore{
         editor.clear();
         editor.commit();
     }
+
+    @Override
+    public void saveUsername(String username) {
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(KEY_USERNAME, username);
+        editor.commit();
+    }
+
+    @Override
+    public String getUsername() {
+        return preferences.getString(KEY_USERNAME, "<Undefined>");
+    }
+
+    @Override
+    public String getUserPassword() {
+        return preferences.getString(KEY_PASSWORD, "");
+    }
 }
