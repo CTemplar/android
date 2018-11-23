@@ -13,4 +13,10 @@ public interface UserStore {
     public UserEntity getUser();
     public void clearToken();
     public void logout();
+
+    void saveUsername(String username);
+
+    String getUsername();
+
+    String getUserPassword();
 }

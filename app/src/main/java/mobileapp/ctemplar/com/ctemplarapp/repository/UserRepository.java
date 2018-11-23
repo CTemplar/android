@@ -122,6 +122,12 @@ public class UserRepository {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
+    public Observable<MessagesResponse> getMessage(long id) {
+        return service.getMessage(id)
+                .subscribeOn(io.reactivex.schedulers.Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
     public Observable<MyselfResponse> getMyselfInfo() {
         return service.getMyself()
                 .subscribeOn(io.reactivex.schedulers.Schedulers.io())
@@ -141,5 +147,17 @@ public class UserRepository {
 
     public void saveUserPassword(String password) {
         userStore.savePassword(password);
+    }
+
+    public void saveUserName(String username) {
+        userStore.saveUsername(username);
+    }
+
+    public String getUsername() {
+        return userStore.getUsername();
+    }
+
+    public String getUserPassword() {
+        return userStore.getUserPassword();
     }
 }

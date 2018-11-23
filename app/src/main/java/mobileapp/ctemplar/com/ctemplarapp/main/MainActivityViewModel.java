@@ -17,10 +17,14 @@ import mobileapp.ctemplar.com.ctemplarapp.DialogState;
 import mobileapp.ctemplar.com.ctemplarapp.SingleLiveEvent;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SendMessageRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.SignInRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Mailboxes.MailboxesResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResult;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.SignInResponse;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
+import mobileapp.ctemplar.com.ctemplarapp.utils.EncodeUtils;
+import retrofit2.HttpException;
 import timber.log.Timber;
 
 public class MainActivityViewModel extends ViewModel {
@@ -30,6 +34,7 @@ public class MainActivityViewModel extends ViewModel {
     MutableLiveData<ResponseStatus> responseStatus = new MutableLiveData<>();
     MutableLiveData<MessagesResponse> messagesResponse = new MutableLiveData<>();
     MutableLiveData<String> currentFolder = new MutableLiveData<String>();
+    MutableLiveData<SignInResponse> signResponse = new MutableLiveData<>();
 
     public MainActivityViewModel() {
         userRepository = CTemplarApp.getUserRepository();
@@ -157,12 +162,61 @@ public class MainActivityViewModel extends ViewModel {
 
                     @Override
                     public void onError(Throwable e) {
+                        if (e instanceof HttpException) {
+                            int code = ((HttpException) e).code();
+                            switch (code) {
+                                case 401:
+                                case 403:
+                                    signIn();
+                                    break;
+                            }
+                        }
                         responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
                     }
 
                     @Override
                     public void onComplete() {
 
+                    }
+                });
+    }
+
+    private void signIn() {
+        String username = userRepository.getUsername();
+        String password = userRepository.getUserPassword();
+        SignInRequest signInRequest = new SignInRequest(
+                username,
+                EncodeUtils.encodePassword(username, password)
+        );
+
+        userRepository.signIn(signInRequest)
+                .subscribe(new Observer<SignInResponse>() {
+                    @Override
+                    public void onError(Throwable e) {
+                        if(e instanceof HttpException ) {
+                            HttpException exception = (HttpException)e;
+                            switch (exception.code()) {
+                                case 400:
+                                    logout();
+                                    break;
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(SignInResponse signInResponse) {
+                        userRepository.saveUserToken(signInResponse.getToken());
+                        // ToDo recall last request?
                     }
                 });
     }

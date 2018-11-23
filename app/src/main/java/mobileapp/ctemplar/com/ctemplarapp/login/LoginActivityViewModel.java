@@ -62,6 +62,7 @@ public class LoginActivityViewModel extends ViewModel {
     }
 
     public void signIn(String username, String password) {
+        userRepository.saveUserName(username);
         userRepository.saveUserPassword(password);
         userRepository.signIn(new SignInRequest(username, EncodeUtils.encodePassword(username, password)))
                 .subscribe(new Observer<SignInResponse>() {

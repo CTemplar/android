@@ -31,4 +31,7 @@ public interface MailboxDao {
 
     @Query("DELETE FROM mailboxes")
     void deleteAll();
+
+    @Query("SELECT * FROM mailboxes WHERE id= :id")
+    MailboxEntity getById(long id);
 }

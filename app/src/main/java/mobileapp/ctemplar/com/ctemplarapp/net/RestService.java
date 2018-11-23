@@ -42,6 +42,9 @@ public interface RestService {
     @GET("/emails/messages/")
     Observable<MessagesResponse> getMessages(@Query("limit") int limit, @Query("offset") int offset, @Query("folder") String folder);
 
+    @GET("/emails/messages/")
+    Observable<MessagesResponse> getMessage(@Query("id") long id);
+
     @GET("/users/myself/")
     Observable<MyselfResponse> getMyself();
 

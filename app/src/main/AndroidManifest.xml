@@ -42,7 +42,8 @@
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
         </activity>
-        <activity android:name=".message.MessageActivity"></activity>
+        <activity android:name=".message.SendMessageActivity"></activity>
+        <activity android:name=".message.ViewMessageActivity" />
     </application>
 
 </manifest>
