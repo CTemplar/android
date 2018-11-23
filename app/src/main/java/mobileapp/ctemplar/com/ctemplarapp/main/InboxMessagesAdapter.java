@@ -1,5 +1,7 @@
 package mobileapp.ctemplar.com.ctemplarapp.main;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.graphics.Typeface;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -10,6 +12,11 @@ import android.view.ViewGroup;
 
 import net.kibotu.pgp.Pgp;
 
+import org.spongycastle.openpgp.PGPException;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.List;
 
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
@@ -78,8 +85,9 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessageViewH
         }
 
         holder.txtSubject.setText(messagesList.get(position).getSubject());
-        // Commented because PGP library requires password that can't be obtained
-        //holder.txtContent.setText(decodeContent(messagesList.get(position).getContent(), messagesList.get(position).getHash()));
+        String password =
+                CTemplarApp.getInstance().getSharedPreferences("pref_user", Context.MODE_PRIVATE).getString("key_password", null);
+        holder.txtContent.setText(decodeContent(messagesList.get(position).getContent(), password));
     }
 
     @Override
@@ -88,8 +96,9 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessageViewH
     }
 
     private String decodeContent(String encodedString, String password) {
+
         Pgp.setPrivateKey(currentMailbox.getPrivateKey());
-        Pgp.setPublicKey(currentMailbox.getPrivateKey());
+        Pgp.setPublicKey(currentMailbox.getPublicKey());
         String result = "";
 
         try {

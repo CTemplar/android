@@ -6,6 +6,9 @@ public interface UserStore {
 
     public String getToken();
     public void saveToken(String token);
+
+    void savePassword(String password);
+
     public void saveUserPref(String username, String pass, String passHashed, String privateKey, String publicKey);
     public UserEntity getUser();
     public void clearToken();
