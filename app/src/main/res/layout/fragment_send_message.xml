@@ -94,15 +94,24 @@
 
     </RelativeLayout>
 
+    <android.support.v4.widget.Space
+        android:id="@+id/marginSpacerFrom"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="1dp"
+        app:layout_constraintBottom_toBottomOf="@+id/fragment_send_message_from_input_layout"
+        app:layout_constraintLeft_toLeftOf="@id/fragment_send_message_from_input_layout"
+        app:layout_constraintRight_toRightOf="@id/fragment_send_message_from_input_layout" />
+
     <RelativeLayout
         android:id="@+id/fragment_send_message_to_input_layout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textColorHint="@color/colorDarkBlue2"
         app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_marginTop="-1dp"
+        android:paddingTop="-1dp"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/fragment_send_message_from_input_layout"
+        app:layout_constraintTop_toBottomOf="@id/marginSpacerFrom"
         android:minHeight="44dp"
         android:background="@drawable/send_message_input_field_background">
 
@@ -146,6 +155,15 @@
 
     </RelativeLayout>
 
+    <android.support.v4.widget.Space
+        android:id="@+id/marginSpacerTo"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="1dp"
+        app:layout_constraintBottom_toBottomOf="@+id/fragment_send_message_to_input_layout"
+        app:layout_constraintLeft_toLeftOf="@id/fragment_send_message_to_input_layout"
+        app:layout_constraintRight_toRightOf="@id/fragment_send_message_to_input_layout" />
+
     <RelativeLayout
         android:id="@+id/fragment_send_message_cc_layout"
         android:layout_width="0dp"
@@ -154,7 +172,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         android:layout_marginTop="-1dp"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/fragment_send_message_to_input_layout"
+        app:layout_constraintTop_toBottomOf="@id/marginSpacerTo"
         android:minHeight="44dp"
         android:background="@drawable/send_message_input_field_background"
         android:visibility="gone">
@@ -257,11 +275,20 @@
 
     </RelativeLayout>
 
+    <android.support.v4.widget.Space
+        android:id="@+id/marginSpacerSubject"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="1dp"
+        app:layout_constraintBottom_toBottomOf="@+id/fragment_send_message_subject_input_layout"
+        app:layout_constraintLeft_toLeftOf="@id/fragment_send_message_subject_input_layout"
+        app:layout_constraintRight_toRightOf="@id/fragment_send_message_subject_input_layout" />
+
     <LinearLayout android:id="@+id/fragment_send_message_email_actions_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintTop_toBottomOf="@id/fragment_send_message_subject_input_layout"
+        app:layout_constraintTop_toBottomOf="@id/marginSpacerSubject"
         android:background="@drawable/send_message_actions_layout_background"
         android:minHeight="50dp">
 

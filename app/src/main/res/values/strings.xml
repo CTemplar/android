@@ -68,11 +68,14 @@ If you have further questions please email <![CDATA[<u><a href="mailto:support@c
     <string name="title_step_email_check_hint">Please check this box if you agree to abide by our <![CDATA[<u><a href="https://ctemplar.com/terms">Terms and Conditions</a></u>]]></string>
     <string name="title_more_info_link"><u>More Info</u>></string>
     <string name="title_empty_inbox">You have no Inbox messages</string>
+    <string name="title_empty_contacts">You have no contacts yet</string>
     <string name="btn_login">Log in</string>
     <string name="btn_compose">Compose</string>
+    <string name="btn_add_contact">Add contact</string>
     <string name="txt_forgot_pass">Forgot Password?</string>
     <string name="txt_create_acc"><u>Create account</u></string>
     <string name="txt_loading">Loading...</string>
+    <string name="txt_add_contact">Add contact</string>
 
     <!-- ERRORS -->
 

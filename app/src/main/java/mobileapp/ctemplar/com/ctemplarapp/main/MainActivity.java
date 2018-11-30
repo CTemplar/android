@@ -1,32 +1,26 @@
 package mobileapp.ctemplar.com.ctemplarapp.main;
 
-import android.app.SearchManager;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.ActionBar;
-import android.support.v7.widget.SearchView;
-import android.view.View;
-import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import butterknife.BindView;
 import mobileapp.ctemplar.com.ctemplarapp.BaseActivity;
@@ -79,6 +73,9 @@ public class MainActivity extends BaseActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         if (savedInstanceState == null) {
+            setCheckedItem(R.id.nav_inbox);
+            showFragment(new InboxFragment());
+
             FragmentManager manager = getSupportFragmentManager();
             FragmentTransaction ft = manager.beginTransaction();
             Fragment startFragment;
@@ -99,6 +96,13 @@ public class MainActivity extends BaseActivity
             }
         });
 
+        mainModel.getCurrentFolder().observe(this, new Observer<String>() {
+            @Override
+            public void onChanged(@Nullable String folder) {
+                showFragmentByFolder(folder);
+            }
+        });
+
         mainModel.getResponseStatus().observe(this, new Observer<ResponseStatus>() {
             @Override
             public void onChanged(@Nullable ResponseStatus status) {
@@ -108,7 +112,26 @@ public class MainActivity extends BaseActivity
 
         // default folder
         mainModel.setCurrentFolder("inbox");
+        setTitle("Inbox");
         loadUserInfo();
+    }
+
+    private void showFragmentByFolder(String folder) {
+        switch (folder) {
+            case "inbox":
+                showFragment(new InboxFragment());
+                break;
+            case "contact":
+                showFragment(new ContactFragment());
+                break;
+        }
+    }
+
+    private void showFragment(Fragment fragment) {
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction ft = manager.beginTransaction();
+        ft.replace(mContentFrame.getId(), fragment);
+        ft.commit();
     }
 
     @Override
@@ -122,38 +145,15 @@ public class MainActivity extends BaseActivity
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main, menu);
-//        MenuItem searchItem = menu.getItem(R.id.action_search);
-//        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-//        SearchView searchView = null;
-//        if(searchItem != null) {
-//            searchView = (SearchView) searchItem.getActionView();
-//        }
-//        if(searchView != null) {
-//            searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-//        }
-
-        return true;
+    public void setTitle(int titleId) {
+        super.setTitle(titleId);
+        getSupportActionBar().setTitle(titleId);
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_filter) {
-            return true;
-        }
-
-        if (id == R.id.action_search) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
+    public void setTitle(CharSequence title) {
+        super.setTitle(title);
+        getSupportActionBar().setTitle(title);
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -175,8 +175,22 @@ public class MainActivity extends BaseActivity
         } else if (id == R.id.nav_starred) {
             setTitle(R.string.nav_drawer_starred);
             mainModel.setCurrentFolder("starred");
+        } else if (id == R.id.nav_contact) {
+            setTitle(R.string.nav_drawer_contact);
+            mainModel.setCurrentFolder("contact");
         } else if (id == R.id.nav_logout) {
-            mainModel.logout();
+            new AlertDialog.Builder(this)
+                    .setTitle("Log out")
+                    .setMessage("Are you sure you want to log out?")
+                    .setPositiveButton("LOG OUT", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    mainModel.logout();
+                                }
+                            }
+                    )
+                    .setNeutralButton("CANCEL", null)
+                    .show();
         }
 
         drawer.closeDrawer(GravityCompat.START);

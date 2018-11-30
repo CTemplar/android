@@ -1,9 +1,13 @@
 package mobileapp.ctemplar.com.ctemplarapp.message;
 
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -15,6 +19,7 @@ import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 import android.widget.Toast;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -23,6 +28,8 @@ import butterknife.OnClick;
 import mobileapp.ctemplar.com.ctemplarapp.BaseFragment;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SendMessageRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.ContactData;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.ContactsResponse;
 
 public class SendMessageFragment extends BaseFragment {
     private SendMessageActivityViewModel mainModel;
@@ -31,7 +38,7 @@ public class SendMessageFragment extends BaseFragment {
 //    EditText from;
 
     @BindView(R.id.fragment_send_message_to_input)
-    AutoCompleteTextView to;
+    AutoCompleteTextView toEmail;
 
     @BindView(R.id.fragment_send_message_subject_input)
     EditText subject;
@@ -54,6 +61,9 @@ public class SendMessageFragment extends BaseFragment {
     @BindView(R.id.fragment_send_message_to_add_button)
     ImageView toAddIco;
 
+    @BindView(R.id.fragment_send_message_send)
+    ImageView sendMessage;
+
     @Override
     protected int getLayoutId() {
         return R.layout.fragment_send_message;
@@ -62,6 +72,31 @@ public class SendMessageFragment extends BaseFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        toEmail.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String email = toEmail.getText().toString();
+                if (Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                    toEmail.setError(null);
+                    sendMessage.setEnabled(true);
+                } else {
+                    toEmail.setError("Enter valid email");
+                    sendMessage.setEnabled(false);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
         mainModel = ViewModelProviders.of(getActivity()).get(SendMessageActivityViewModel.class);
         SpinnerAdapter adapter = new ArrayAdapter<>(
                 getActivity(),
@@ -70,12 +105,27 @@ public class SendMessageFragment extends BaseFragment {
         );
         spinnerFrom.setAdapter(adapter);
 
-        List<User> recipients = new LinkedList<>();
-        recipients.add(new User("Andrew Smith", "andrewsmith@ctemplar.com"));
-        recipients.add(new User("Andrew Black", "andrewblack@ctemplar.com"));
-        recipients.add(new User("Anna Brown", "annabrown@ctemplar.com"));
-        RecipientsListAdapter recipientsAdapter = new RecipientsListAdapter(getActivity(), R.layout.recipients_list_view_item, recipients);
-        to.setAdapter(recipientsAdapter);
+        mainModel = ViewModelProviders.of(getActivity()).get(SendMessageActivityViewModel.class);
+        mainModel.getContactsResponse().observe(this, new Observer<ContactsResponse>() {
+            @Override
+            public void onChanged(@Nullable ContactsResponse contactsResponse) {
+                handleContactsList(contactsResponse);
+            }
+        });
+        mainModel.getContacts(20, 0);
+    }
+
+    private void handleContactsList(@Nullable ContactsResponse contactsResponse) {
+        if (contactsResponse == null || contactsResponse.getResults() == null || contactsResponse.getResults().length == 0) {
+            // empty list
+            return;
+        }
+
+        ContactData[] contacts = contactsResponse.getResults();
+        List<ContactData> contactsList = new LinkedList<>();
+        contactsList.addAll(Arrays.asList(contacts));
+        RecipientsListAdapter recipientsAdapter = new RecipientsListAdapter(getActivity(), R.layout.recipients_list_view_item, contactsList);
+        toEmail.setAdapter(recipientsAdapter);
     }
 
     @OnClick(R.id.fragment_send_message_send)
@@ -87,7 +137,7 @@ public class SendMessageFragment extends BaseFragment {
                 "inbox",
                 196
         );
-        String receiver = to.getText().toString();
+        String receiver = toEmail.getText().toString();
         if (!receiver.isEmpty()) {
             List<String> receivers = new LinkedList<>();
             receivers.add(receiver);

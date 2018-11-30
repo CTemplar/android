@@ -1,6 +1,5 @@
 package mobileapp.ctemplar.com.ctemplarapp.main;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.support.annotation.NonNull;
@@ -12,11 +11,6 @@ import android.view.ViewGroup;
 
 import net.kibotu.pgp.Pgp;
 
-import org.spongycastle.openpgp.PGPException;
-
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.List;
 
 import io.reactivex.subjects.PublishSubject;
@@ -80,7 +74,7 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessageViewH
         }
 
         // format creation date
-        if(TextUtils.isEmpty(messagesResult.getCreatedAt())) {
+        if(!TextUtils.isEmpty(messagesResult.getCreatedAt())) {
             holder.txtDate.setText(AppUtils.formatDate(messagesResult.getCreatedAt()));
         }
 

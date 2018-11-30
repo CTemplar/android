@@ -35,9 +35,9 @@
         app:layout_constraintLeft_toRightOf="@id/recipients_list_view_item_user_ico"/>
 
     <TextView
+        android:id="@+id/recipients_list_view_item_mail"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/recipients_list_view_item_mail"
         android:textColor="@color/colorGreyLight5"
         android:text="andrewsmith@ctemplar.com"
         android:textSize="16sp"

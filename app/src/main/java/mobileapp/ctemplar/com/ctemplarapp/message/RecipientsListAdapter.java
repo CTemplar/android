@@ -15,14 +15,15 @@ import java.util.LinkedList;
 import java.util.List;
 
 import mobileapp.ctemplar.com.ctemplarapp.R;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.ContactData;
 
-public class RecipientsListAdapter extends ArrayAdapter<User> implements Filterable {
+public class RecipientsListAdapter extends ArrayAdapter<ContactData> implements Filterable {
 
-    List<User> data = new LinkedList<>();
-    List<User> filteredData = new LinkedList<>();
+    List<ContactData> data = new LinkedList<>();
+    List<ContactData> filteredData = new LinkedList<>();
     LayoutInflater layoutInflater;
 
-    public RecipientsListAdapter(Context context, int textViewResourceId, List<User> data) {
+    public RecipientsListAdapter(Context context, int textViewResourceId, List<ContactData> data) {
         super(context, textViewResourceId, data);
         this.data.addAll(data);
         filteredData.addAll(data);
@@ -37,13 +38,13 @@ public class RecipientsListAdapter extends ArrayAdapter<User> implements Filtera
             vi = layoutInflater.inflate(R.layout.recipients_list_view_item, parent, false);
         }
 
-        User user = data.get(position);
+        ContactData contactData = data.get(position);
 
         TextView firstLastName = vi.findViewById(R.id.recipients_list_view_item_first_last_name);
         TextView mail = vi.findViewById(R.id.recipients_list_view_item_mail);
 
-        firstLastName.setText(user.getName());
-        mail.setText(user.getMail());
+        firstLastName.setText(contactData.getName());
+        mail.setText(contactData.getEmail());
 
         return vi;
     }
@@ -60,12 +61,12 @@ public class RecipientsListAdapter extends ArrayAdapter<User> implements Filtera
             FilterResults results = new FilterResults();
 
             if (constraint != null) {
-                ArrayList<User> suggestions = new ArrayList<User>();
-                for (User user : data) {
-                    // Note: change the "contains" to "startsWith" if you only want starting matches
-                    if (user.getName().toLowerCase().contains(constraint.toString().toLowerCase())
-                            || user.getMail().toLowerCase().contains(constraint.toString().toLowerCase())) {
-                        suggestions.add(user);
+                ArrayList<ContactData> suggestions = new ArrayList<>();
+                for (ContactData contactData : data) {
+                    // Note: change the "contains" toEmail "startsWith" if you only want starting matches
+                    if (contactData.getName().toLowerCase().contains(constraint.toString().toLowerCase())
+                            || contactData.getEmail().toLowerCase().contains(constraint.toString().toLowerCase())) {
+                        suggestions.add(contactData);
                     }
                 }
 
@@ -81,7 +82,7 @@ public class RecipientsListAdapter extends ArrayAdapter<User> implements Filtera
             clear();
             if (results != null && results.count > 0) {
                 // we have filtered results
-                addAll((ArrayList<User>) results.values);
+                addAll((ArrayList<ContactData>) results.values);
             } else {
                 // no filter, add entire original list back in
 //                addAll(data);

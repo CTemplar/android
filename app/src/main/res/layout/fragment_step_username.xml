@@ -41,6 +41,7 @@
         android:layout_marginRight="24dp"
         android:textColorHint="@color/colorDarkBlue2"
         app:hintEnabled="true"
+        android:drawableRight="@drawable/ic_ctemplar_username"
         app:hintTextAppearance="@style/TextHintAppearanceDark"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"

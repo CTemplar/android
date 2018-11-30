@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.text.TextUtils;
 
 import mobileapp.ctemplar.com.ctemplarapp.BaseActivity;
+import mobileapp.ctemplar.com.ctemplarapp.BuildConfig;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.login.LoginActivity;
 import mobileapp.ctemplar.com.ctemplarapp.main.MainActivity;
