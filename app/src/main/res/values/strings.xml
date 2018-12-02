@@ -79,7 +79,7 @@ If you have further questions please email <![CDATA[<u><a href="mailto:support@c
 
     <!-- ERRORS -->
 
-    <string name="error_invalid_email">Invalid email</string>
+    <string name="error_invalid_email">Invalid email. Correct or remove it</string>
     <string name="error_username_small">Minimum 4 symbols</string>
     <string name="error_username_big">Maximum 64 symbols</string>
     <string name="error_username_incorrect">Username incorrect</string>

@@ -129,6 +129,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/lato_regular"
+            android:completionThreshold="1"
             android:layout_toRightOf="@id/fragment_send_message_to_text"
             android:layout_toEndOf="@id/fragment_send_message_to_text"
             android:inputType="textEmailAddress"
@@ -174,8 +175,7 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/marginSpacerTo"
         android:minHeight="44dp"
-        android:background="@drawable/send_message_input_field_background"
-        android:visibility="gone">
+        android:background="@drawable/send_message_input_field_background">
 
         <TextView android:id="@+id/fragment_send_message_cc_text"
             android:layout_width="wrap_content"
@@ -204,6 +204,16 @@
 
     </RelativeLayout>
 
+    <android.support.v4.widget.Space
+        android:id="@+id/marginSpacerCc"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="1dp"
+        app:layout_constraintBottom_toBottomOf="@+id/fragment_send_message_cc_layout"
+        app:layout_constraintLeft_toLeftOf="@id/fragment_send_message_cc_layout"
+        app:layout_constraintRight_toRightOf="@id/fragment_send_message_cc_layout" />
+
+
     <RelativeLayout
         android:id="@+id/fragment_send_message_bcc_layout"
         android:layout_width="0dp"
@@ -212,10 +222,9 @@
         app:layout_constraintLeft_toLeftOf="parent"
         android:layout_marginTop="-1dp"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/fragment_send_message_cc_layout"
+        app:layout_constraintTop_toBottomOf="@id/marginSpacerCc"
         android:minHeight="44dp"
-        android:background="@drawable/send_message_input_field_background"
-        android:visibility="gone">
+        android:background="@drawable/send_message_input_field_background">
 
         <TextView android:id="@+id/fragment_send_message_bcc_text"
             android:layout_width="wrap_content"

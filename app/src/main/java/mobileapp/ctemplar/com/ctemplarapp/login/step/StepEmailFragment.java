@@ -133,11 +133,6 @@ public class StepEmailFragment extends BaseFragment {
     }
 
     private void handleErrorEmail(String email) {
-        if(TextUtils.isEmpty(email)) {
-            editEmailLayout.setError(getResources().getString(R.string.error_empty_email));
-            return;
-        }
-
         if(!EditTextUtils.isEmailValid(email)) {
             editEmailLayout.setError(getResources().getString(R.string.error_invalid_email));
             return;

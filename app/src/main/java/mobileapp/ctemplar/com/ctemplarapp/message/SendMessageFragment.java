@@ -5,8 +5,6 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -38,13 +36,13 @@ public class SendMessageFragment extends BaseFragment {
 //    EditText from;
 
     @BindView(R.id.fragment_send_message_to_input)
-    AutoCompleteTextView toEmail;
+    AutoCompleteTextView toEmailTextView;
 
     @BindView(R.id.fragment_send_message_subject_input)
-    EditText subject;
+    EditText subjectEditText;
 
     @BindView(R.id.fragment_send_message_compose_email_input)
-    EditText content;
+    EditText composeEditText;
 
     @BindView(R.id.fragment_send_message_from_list_view)
     ListView fromListView;
@@ -72,30 +70,6 @@ public class SendMessageFragment extends BaseFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        toEmail.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                String email = toEmail.getText().toString();
-                if (Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-                    toEmail.setError(null);
-                    sendMessage.setEnabled(true);
-                } else {
-                    toEmail.setError("Enter valid email");
-                    sendMessage.setEnabled(false);
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
 
         mainModel = ViewModelProviders.of(getActivity()).get(SendMessageActivityViewModel.class);
         SpinnerAdapter adapter = new ArrayAdapter<>(
@@ -125,22 +99,37 @@ public class SendMessageFragment extends BaseFragment {
         List<ContactData> contactsList = new LinkedList<>();
         contactsList.addAll(Arrays.asList(contacts));
         RecipientsListAdapter recipientsAdapter = new RecipientsListAdapter(getActivity(), R.layout.recipients_list_view_item, contactsList);
-        toEmail.setAdapter(recipientsAdapter);
+        toEmailTextView.setAdapter(recipientsAdapter);
     }
 
     @OnClick(R.id.fragment_send_message_send)
     public void onClickSend() {
+        String toEmail = toEmailTextView.getText().toString();
+        String compose = composeEditText.getText().toString();
+
+        if (Patterns.EMAIL_ADDRESS.matcher(toEmail).matches()) {
+            toEmailTextView.setError(null);
+        } else {
+            toEmailTextView.setError("Enter valid email");
+            return;
+        }
+
+        if (compose == null || compose.length() < 1) {
+            composeEditText.setError("Enter message");
+            return;
+        }
+
         Toast.makeText(getActivity(), "Sending mail...", Toast.LENGTH_SHORT).show();
         SendMessageRequest messageRequest = new SendMessageRequest(
-                subject.getText().toString(),
-                content.getText().toString(),
+                subjectEditText.getText().toString(),
+                composeEditText.getText().toString(),
                 "inbox",
                 196
         );
-        String receiver = toEmail.getText().toString();
-        if (!receiver.isEmpty()) {
+
+        if (!toEmail.isEmpty()) {
             List<String> receivers = new LinkedList<>();
-            receivers.add(receiver);
+            receivers.add(toEmail);
             messageRequest.setReceivers(receivers);
         }
         mainModel.sendMessage(messageRequest);

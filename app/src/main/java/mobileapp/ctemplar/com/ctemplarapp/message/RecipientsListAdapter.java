@@ -11,7 +11,6 @@ import android.widget.Filterable;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 import mobileapp.ctemplar.com.ctemplarapp.R;
@@ -19,34 +18,41 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.ContactData;
 
 public class RecipientsListAdapter extends ArrayAdapter<ContactData> implements Filterable {
 
-    List<ContactData> data = new LinkedList<>();
-    List<ContactData> filteredData = new LinkedList<>();
-    LayoutInflater layoutInflater;
+    Context context;
+    int textViewResourceId;
+    List<ContactData> contacts, tempContacts, suggestions;
 
-    public RecipientsListAdapter(Context context, int textViewResourceId, List<ContactData> data) {
-        super(context, textViewResourceId, data);
-        this.data.addAll(data);
-        filteredData.addAll(data);
-        layoutInflater = LayoutInflater.from(context);
+    public RecipientsListAdapter(Context context, int textViewResourceId, List<ContactData> contacts) {
+        super(context, textViewResourceId, contacts);
+        this.context = context;
+        this.textViewResourceId = textViewResourceId;
+        this.contacts = contacts;
+        tempContacts = new ArrayList<>(contacts);
+        suggestions = new ArrayList<>();
     }
 
     @NonNull
     @Override
     public View getView(int position, View convertView, @NonNull ViewGroup parent) {
-        View vi = convertView;
-        if (vi == null) {
-            vi = layoutInflater.inflate(R.layout.recipients_list_view_item, parent, false);
+        View view = convertView;
+        if (view == null) {
+            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            view = inflater.inflate(R.layout.recipients_list_view_item, parent, false);
         }
 
-        ContactData contactData = data.get(position);
+        ContactData contactData = contacts.get(position);
+        if (contactData != null) {
+            TextView firstLastName = view.findViewById(R.id.recipients_list_view_item_first_last_name);
+            TextView mail = view.findViewById(R.id.recipients_list_view_item_mail);
+            if (firstLastName != null) {
+                firstLastName.setText(contactData.getName());
+            }
+            if (mail != null) {
+                mail.setText(contactData.getEmail());
+            }
+        }
 
-        TextView firstLastName = vi.findViewById(R.id.recipients_list_view_item_first_last_name);
-        TextView mail = vi.findViewById(R.id.recipients_list_view_item_mail);
-
-        firstLastName.setText(contactData.getName());
-        mail.setText(contactData.getEmail());
-
-        return vi;
+        return view;
     }
 
     @NonNull
@@ -56,38 +62,44 @@ public class RecipientsListAdapter extends ArrayAdapter<ContactData> implements 
     }
 
     Filter mFilter = new Filter() {
+
+        @Override
+        public CharSequence convertResultToString(Object resultValue) {
+            String str = ((ContactData) resultValue).getEmail();
+            return str;
+        }
+
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
-            FilterResults results = new FilterResults();
-
             if (constraint != null) {
-                ArrayList<ContactData> suggestions = new ArrayList<>();
-                for (ContactData contactData : data) {
-                    // Note: change the "contains" toEmail "startsWith" if you only want starting matches
-                    if (contactData.getName().toLowerCase().contains(constraint.toString().toLowerCase())
-                            || contactData.getEmail().toLowerCase().contains(constraint.toString().toLowerCase())) {
-                        suggestions.add(contactData);
+                suggestions.clear();
+                for (ContactData contacts : tempContacts) {
+                    if (contacts.getName().toLowerCase().contains(constraint.toString().toLowerCase())
+                            || contacts.getEmail().toLowerCase().contains(constraint.toString().toLowerCase())) {
+
+                        suggestions.add(contacts);
                     }
                 }
 
-                results.values = suggestions;
-                results.count = suggestions.size();
+                FilterResults filterResults = new FilterResults();
+                filterResults.values = suggestions;
+                filterResults.count = suggestions.size();
+                return filterResults;
+            } else {
+                return new FilterResults();
             }
-
-            return results;
         }
 
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
-            clear();
+            List<ContactData> filterList = (ArrayList<ContactData>) results.values;
             if (results != null && results.count > 0) {
-                // we have filtered results
-                addAll((ArrayList<ContactData>) results.values);
-            } else {
-                // no filter, add entire original list back in
-//                addAll(data);
+                clear();
+                for (ContactData contacts : filterList) {
+                    add(contacts);
+                    notifyDataSetChanged();
+                }
             }
-            notifyDataSetChanged();
         }
     };
 }
