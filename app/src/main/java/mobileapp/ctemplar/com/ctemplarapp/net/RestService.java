@@ -9,6 +9,8 @@ import mobileapp.ctemplar.com.ctemplarapp.net.request.SendMessageRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SignInRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SignUpRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.CheckUsernameResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.ContactData;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.ContactsResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Mailboxes.MailboxesResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResult;
@@ -16,9 +18,13 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.RecoverPasswordResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.SignInResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.SignUpResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.MyselfResponse;
+import okhttp3.ResponseBody;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
+import retrofit2.http.PATCH;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 @Singleton
@@ -53,5 +59,24 @@ public interface RestService {
 
     @POST("/emails/messages/")
     Observable<MessagesResult> sendMessage(@Body SendMessageRequest request);
+
+    @GET("/users/contacts/")
+    Observable<ContactsResponse> getContacts(@Query("limit") int limit, @Query("offset") int offset, @Query("id__in") String id__in);
+
+    @GET("/users/contacts/")
+    Observable<ContactsResponse> getContacts(@Query("limit") int limit, @Query("offset") int offset);
+
+    @GET("/users/contacts/")
+    Observable<ContactsResponse> getContact(@Query("id") long id);
+
+    @POST("/users/contacts/")
+    Observable<ContactData> createContact(@Body ContactData contactData);
+
+    @PATCH("/users/contacts/{id}/")
+    Observable<ContactData> updateContact(@Path("id") long id, @Body ContactData contactData);
+
+    // Good if response code is 204 (no content)
+    @DELETE("/users/contacts/{id}/")
+    Observable<ResponseBody> deleteContact(@Path("id") long id);
 
 }

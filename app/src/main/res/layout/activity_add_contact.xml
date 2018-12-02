@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/app_bar_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/add_contact_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            android:theme="@style/ActionBarLight"
+            app:title="Add contact"
+            android:fontFamily="@font/lato_bold"
+            app:popupTheme="@style/AppTheme.PopupOverlay">
+
+        </android.support.v7.widget.Toolbar>
+
+    </android.support.design.widget.AppBarLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="25dp"
+        app:layout_constraintTop_toBottomOf="@id/app_bar_layout"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/activity_add_contact_name_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="22dp">
+
+                <TextView
+                    android:id="@+id/activity_add_contact_name_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Contact Name"
+                    android:fontFamily="@font/lato_regular"
+                    android:textColor="@color/colorDarkBlue"
+                    android:textSize="14sp" />
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/activity_add_contact_name_input"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="@font/lato_regular"
+                    android:textSize="16sp"
+                    android:padding="16dp"
+                    android:textColor="@color/colorDarkBlue"
+                    android:minHeight="45dp"
+                    android:hint="Contact name"
+                    app:layout_constraintTop_toBottomOf="@id/activity_add_contact_name_title"
+                    android:background="@drawable/activity_contact_input_field" />
+
+            </android.support.constraint.ConstraintLayout>
+
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/activity_add_contact_email_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="22dp"
+                android:layout_marginBottom="22dp"
+                app:layout_constraintTop_toBottomOf="@id/activity_add_contact_name_container">
+
+                <TextView
+                    android:id="@+id/activity_add_contact_email_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Email Address"
+                    android:fontFamily="@font/lato_regular"
+                    android:textColor="@color/colorDarkBlue"
+                    android:textSize="14sp" />
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/activity_add_contact_email_input"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="@font/lato_regular"
+                    android:textSize="16sp"
+                    android:inputType="textEmailAddress"
+                    android:textColor="@color/colorDarkBlue"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp"
+                    android:minHeight="45dp"
+                    android:drawableLeft="@drawable/ic_contact_remove"
+                    android:drawableStart="@drawable/ic_contact_remove"
+                    android:hint="Email Address"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/activity_add_contact_email_title"
+                    app:layout_constraintRight_toLeftOf="@id/activity_add_contact_email_add"
+                    android:background="@drawable/activity_contact_input_field" />
+
+                <ImageView
+                    android:id="@+id/activity_add_contact_email_add"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_contact_add_disabled"
+                    app:layout_constraintLeft_toRightOf="@id/activity_add_contact_email_input"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/activity_add_contact_email_input"
+                    app:layout_constraintBottom_toBottomOf="@id/activity_add_contact_email_input" />
+
+            </android.support.constraint.ConstraintLayout>
+
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/activity_add_contact_phone_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="22dp"
+                android:layout_marginBottom="22dp"
+                app:layout_constraintTop_toBottomOf="@id/activity_add_contact_email_container">
+
+                <TextView
+                    android:id="@+id/activity_add_contact_phone_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Phone Number"
+                    android:fontFamily="@font/lato_regular"
+                    android:textColor="@color/colorDarkBlue"
+                    android:textSize="14sp" />
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/activity_add_contact_phone_input"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="@font/lato_regular"
+                    android:textSize="16sp"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp"
+                    android:minHeight="45dp"
+                    android:drawableLeft="@drawable/ic_contact_remove"
+                    android:drawableStart="@drawable/ic_contact_remove"
+                    android:hint="Phone Number"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/activity_add_contact_phone_title"
+                    app:layout_constraintRight_toLeftOf="@id/activity_add_contact_phone_add"
+                    android:background="@drawable/activity_contact_input_field" />
+
+                <ImageView
+                    android:id="@+id/activity_add_contact_phone_add"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_contact_add_disabled"
+                    app:layout_constraintLeft_toRightOf="@id/activity_add_contact_phone_input"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/activity_add_contact_phone_input"
+                    app:layout_constraintBottom_toBottomOf="@id/activity_add_contact_phone_input" />
+
+            </android.support.constraint.ConstraintLayout>
+
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/activity_add_contact_address_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="22dp"
+                android:layout_marginBottom="22dp"
+                app:layout_constraintTop_toBottomOf="@id/activity_add_contact_phone_container">
+
+                <TextView
+                    android:id="@+id/activity_add_contact_address_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Address"
+                    android:fontFamily="@font/lato_regular"
+                    android:textColor="@color/colorDarkBlue"
+                    android:textSize="14sp" />
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/activity_add_contact_address_input"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="@font/lato_regular"
+                    android:textSize="16sp"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp"
+                    android:minHeight="45dp"
+                    android:drawableLeft="@drawable/ic_contact_remove"
+                    android:drawableStart="@drawable/ic_contact_remove"
+                    android:hint="Address"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/activity_add_contact_address_title"
+                    app:layout_constraintRight_toLeftOf="@id/activity_add_contact_address_add"
+                    android:background="@drawable/activity_contact_input_field" />
+
+                <ImageView
+                    android:id="@+id/activity_add_contact_address_add"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_contact_add_disabled"
+                    app:layout_constraintLeft_toRightOf="@id/activity_add_contact_address_input"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/activity_add_contact_address_input"
+                    app:layout_constraintBottom_toBottomOf="@id/activity_add_contact_address_input" />
+
+            </android.support.constraint.ConstraintLayout>
+
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/activity_add_contact_note_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginTop="22dp"
+                android:layout_marginBottom="22dp"
+                app:layout_constraintTop_toBottomOf="@id/activity_add_contact_address_container">
+
+                <TextView
+                    android:id="@+id/activity_add_contact_note_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Note"
+                    android:fontFamily="@font/lato_regular"
+                    android:textColor="@color/colorDarkBlue"
+                    android:textSize="14sp" />
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/activity_add_contact_note_input"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="@font/lato_regular"
+                    android:textSize="16sp"
+                    android:padding="16dp"
+                    android:textColor="@color/colorDarkBlue"
+                    android:minHeight="45dp"
+                    android:hint="Note"
+                    app:layout_constraintTop_toBottomOf="@id/activity_add_contact_note_title"
+                    android:background="@drawable/activity_contact_input_field" />
+
+            </android.support.constraint.ConstraintLayout>
+        </android.support.constraint.ConstraintLayout>
+    </ScrollView>
+
+</android.support.constraint.ConstraintLayout>

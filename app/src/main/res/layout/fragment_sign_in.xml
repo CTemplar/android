@@ -75,7 +75,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/fragment_sign_in_username_input_layout"
-        app:passwordToggleDrawable="@drawable/icon_password_eye"
+        app:passwordToggleDrawable="@drawable/selector_password_state"
         app:passwordToggleEnabled="true"
         app:passwordToggleTint="@color/colorTextGrayLight">
 

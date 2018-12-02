@@ -27,7 +27,7 @@
         app:piv_unselectedColor="@color/colorOrangeLight20"
         app:piv_viewPager="@id/fragment_sign_up_view_pager"
         attrs:piv_padding="12dp"
-        attrs:piv_radius="4dp" />
+        attrs:piv_radius="3dp" />
 
     <ImageView
         android:id="@+id/fragment_sign_up_back"

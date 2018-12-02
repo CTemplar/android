@@ -59,7 +59,9 @@ public class ViewMessageActivity extends BaseActivity {
                 });
 
         long id = getIntent().getLongExtra(ARG_ID, -1);
-        if (id == -1) {}
+        if (id == -1) {
+            return; //ToDo
+        }
 
         ViewMessageFragment fragment = new ViewMessageFragment();
         Bundle args = new Bundle();

@@ -15,18 +15,27 @@ import io.reactivex.disposables.Disposable;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SendMessageRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.ContactsResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResult;
+import mobileapp.ctemplar.com.ctemplarapp.repository.ContactsRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
 import timber.log.Timber;
 
 public class SendMessageActivityViewModel extends ViewModel {
 
     UserRepository userRepository;
+    ContactsRepository contactsRepository;
     MutableLiveData<ResponseStatus> responseStatus = new MutableLiveData<>();
     MutableLiveData<MessagesResult> messagesResult = new MutableLiveData<>();
+    MutableLiveData<ContactsResponse> contactsResponse = new MutableLiveData<>();
 
     public SendMessageActivityViewModel() {
         userRepository = CTemplarApp.getUserRepository();
+        contactsRepository = CTemplarApp.getContactsRepository();
+    }
+
+    public LiveData<ContactsResponse> getContactsResponse() {
+        return contactsResponse;
     }
 
     public void sendMessage(SendMessageRequest request) {
@@ -48,6 +57,32 @@ public class SendMessageActivityViewModel extends ViewModel {
                     public void onNext(MessagesResult result) {
                         messagesResult.postValue(result);
                         responseStatus.postValue(ResponseStatus.RESPONSE_NEXT_MESSAGES);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    public void getContacts(int limit, int offset) {
+        contactsRepository.getContactsList(limit, offset)
+                .subscribe(new Observer<ContactsResponse>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(ContactsResponse response) {
+                        contactsResponse.postValue(response);
+                        responseStatus.postValue(ResponseStatus.RESPONSE_NEXT_CONTACTS);
                     }
 
                     @Override

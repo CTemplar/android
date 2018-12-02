@@ -44,6 +44,8 @@
         </activity>
         <activity android:name=".message.SendMessageActivity"></activity>
         <activity android:name=".message.ViewMessageActivity" />
+        <activity android:name=".contact.AddContactActivity" />
+        <activity android:name=".contact.EditContactActivity" />
     </application>
 
 </manifest>
