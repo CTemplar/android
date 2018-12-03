@@ -27,7 +27,8 @@
         </activity>
         <activity
             android:name=".login.LoginActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:configChanges="screenSize|orientation" />
         <activity
             android:name=".main.MainActivity"
             android:theme="@style/ActionBarLight">
