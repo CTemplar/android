@@ -70,7 +70,10 @@ public class CTemplarApp extends MultiDexApplication {
         }
 
         if(appDatabase == null) {
-            appDatabase = Room.databaseBuilder(application, AppDatabase.class, "database").allowMainThreadQueries().build();
+            appDatabase = Room.databaseBuilder(application, AppDatabase.class, "database")
+                    .allowMainThreadQueries()
+                    .fallbackToDestructiveMigration()
+                    .build();
         }
 
         if (contactsRepository == null) {

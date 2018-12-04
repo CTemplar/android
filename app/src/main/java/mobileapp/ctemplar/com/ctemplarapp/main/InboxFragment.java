@@ -103,6 +103,7 @@ public class InboxFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
+        mainModel.getMessages(20, 0, mainModel.getCurrentFolder().getValue());
     }
 
     @Override
@@ -148,20 +149,19 @@ public class InboxFragment extends BaseFragment {
 
     @OnClick(R.id.fragment_inbox_send_layout)
     public void onClickComposeLayout() {
-        Toast.makeText(getActivity(), "In progress", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(getActivity(), SendMessageActivity.class);
+        startActivity(intent);
     }
     @OnClick(R.id.fragment_inbox_send)
     public void onClickCompose() {
-        Toast.makeText(getActivity(), "In progress", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(getActivity(), SendMessageActivity.class);
+        startActivity(intent);
     }
 
     @OnClick(R.id.fragment_inbox_fab_compose)
     public void onClickFabCompose() {
         Intent intent = new Intent(getActivity(), SendMessageActivity.class);
         startActivity(intent);
-
-        //Toast.makeText(getActivity(), "Sending mail...", Toast.LENGTH_SHORT).show();
-        //mainModel.sendMessage(new SendMessageRequest("Test subject from app", "Content", "inbox", 196));
     }
 
     public void handleResponseStatus(ResponseStatus status) {
@@ -193,7 +193,7 @@ public class InboxFragment extends BaseFragment {
             txtEmpty.setVisibility(View.GONE);
             frameCompose.setVisibility(View.GONE);
 
-            adapter = new InboxMessagesAdapter(mainModel.getMessagesResponse().getValue().getMessagesList());
+            adapter = new InboxMessagesAdapter(mainModel.getMessagesResponse().getValue().getMessagesList(), mainModel);
             adapter.getOnClickSubject()
                     .subscribeOn(io.reactivex.schedulers.Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())

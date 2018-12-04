@@ -24,10 +24,12 @@ import android.widget.ProgressBar;
 
 import butterknife.BindView;
 import mobileapp.ctemplar.com.ctemplarapp.BaseActivity;
+import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.DialogState;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.login.LoginActivity;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
+import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import timber.log.Timber;
 
 public class MainActivity extends BaseActivity
@@ -45,6 +47,8 @@ public class MainActivity extends BaseActivity
     private int mLastSelectedId;
 
     private MainActivityViewModel mainModel;
+
+    private MailboxEntity defaultMailbox;
 
     @Override
     protected int getLayoutId() {
@@ -73,19 +77,12 @@ public class MainActivity extends BaseActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         if (savedInstanceState == null) {
-            setCheckedItem(R.id.nav_inbox);
-            showFragment(new InboxFragment());
-
-            FragmentManager manager = getSupportFragmentManager();
-            FragmentTransaction ft = manager.beginTransaction();
-            Fragment startFragment;
-
-            Timber.i("Standard startup");
-            startFragment = new InboxFragment();
-            setCheckedItem(R.id.nav_inbox);
-
-            ft.add(mContentFrame.getId(), startFragment);
-            ft.commit();
+            defaultMailbox = CTemplarApp.getAppDatabase().mailboxDao().getDefault();
+            if (defaultMailbox != null) {
+                Timber.i("Standard startup");
+                setCheckedItem(R.id.nav_inbox);
+                showFragment(new InboxFragment());
+            }
         }
 
         mainModel = ViewModelProviders.of(this).get(MainActivityViewModel.class);
@@ -276,6 +273,11 @@ public class MainActivity extends BaseActivity
     private void handleResponseStatus(ResponseStatus status) {
         switch (status) {
             case RESPONSE_NEXT_MAILBOXES:
+                if (defaultMailbox == null) {
+                    Timber.i("Standard startup");
+                    setCheckedItem(R.id.nav_inbox);
+                    showFragment(new InboxFragment());
+                }
                 // mainModel.getMessages(20, 0, "inbox");
                 break;
         }

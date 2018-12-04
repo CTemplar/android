@@ -93,8 +93,8 @@
             android:layout_marginStart="16dp"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:layout_alignStart="@id/fragment_view_message_subject_star_image"
-            android:layout_alignLeft="@id/fragment_view_message_subject_star_image" />
+            android:layout_alignStart="@id/fragment_view_message_subject_star_image_layout"
+            android:layout_alignLeft="@id/fragment_view_message_subject_star_image_layout" />
 
         <ImageView
             android:id="@+id/fragment_view_message_subject_encrypted_image"
@@ -109,16 +109,23 @@
             android:layout_marginLeft="7dp"
             android:layout_marginStart="7dp" />
 
-        <ImageView
-            android:id="@+id/fragment_view_message_subject_star_image"
+        <FrameLayout android:id="@+id/fragment_view_message_subject_star_image_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_star_off"
-            android:layout_marginTop="15dp"
+            android:layout_centerVertical="true"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
-            android:layout_marginRight="20dp"
-            android:layout_marginEnd="20dp" />
+            android:padding="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginEnd="10dp">
+
+            <ImageView
+                android:id="@+id/fragment_view_message_subject_star_image"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/selector_starred" />
+
+        </FrameLayout>
 
     </RelativeLayout>
 

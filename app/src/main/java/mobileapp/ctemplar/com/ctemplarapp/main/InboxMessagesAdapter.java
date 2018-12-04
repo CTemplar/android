@@ -25,10 +25,12 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessageViewH
     private List<MessagesResult> messagesList;
     private MailboxEntity currentMailbox;
     private final PublishSubject<Long> onClickSubject = PublishSubject.create();
+    private final MainActivityViewModel mainModel;
 
-    public InboxMessagesAdapter(List<MessagesResult> messagesList) {
+    public InboxMessagesAdapter(List<MessagesResult> messagesList, MainActivityViewModel mainModel) {
         this.messagesList = messagesList;
         currentMailbox = CTemplarApp.getAppDatabase().mailboxDao().getDefault();
+        this.mainModel = mainModel;
     }
 
     @NonNull
@@ -40,8 +42,9 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessageViewH
     }
 
     @Override
-    public void onBindViewHolder(@NonNull InboxMessageViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final InboxMessageViewHolder holder, int position) {
         final MessagesResult messagesResult = messagesList.get(position);
+
         holder.txtUsername.setText(messagesResult.getSender());
         holder.root.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -51,7 +54,7 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessageViewH
         });
 
         // check for children count
-        if(messagesList.get(position).getChildrenCount() > 0) {
+        if(messagesResult.getChildrenCount() > 0) {
             holder.txtChildren.setText(String.valueOf(messagesResult.getChildrenCount()));
             holder.txtChildren.setVisibility(View.VISIBLE);
         } else {
@@ -59,7 +62,7 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessageViewH
         }
 
         // check for read/unread
-        if(messagesList.get(position).isRead()) {
+        if(messagesResult.isRead()) {
             holder.imgUnread.setVisibility(View.GONE);
             holder.txtUsername.setTypeface(null, Typeface.NORMAL);
         } else {
@@ -78,7 +81,17 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessageViewH
             holder.txtDate.setText(AppUtils.formatDate(messagesResult.getCreatedAt()));
         }
 
-        holder.imgStarred.setEnabled(messagesResult.isStarred());
+        holder.imgStarred.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                boolean isStarred = !messagesResult.isStarred();
+                mainModel.markMessageIsStarred(messagesResult.getId(), isStarred);
+                messagesResult.setStarred(isStarred);
+                holder.imgStarred.setSelected(isStarred);
+            }
+        });
+
+        holder.imgStarred.setSelected(messagesResult.isStarred());
 
         if(messagesResult.getAttachments() != null &&
                 messagesResult.getAttachments().size() > 0) {

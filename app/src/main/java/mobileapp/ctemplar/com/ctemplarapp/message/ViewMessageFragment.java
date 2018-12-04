@@ -30,8 +30,9 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import timber.log.Timber;
 
 public class ViewMessageFragment extends BaseFragment {
-    private ViewMessageActivityViewModel mainModel;
+    private ViewMessageActivityViewModel viewMessageModel;
     private MailboxEntity currentMailbox;
+    private MessagesResult currentMessage;
 
     @BindView(R.id.fragment_view_message_subject_text)
     TextView textViewSubject;
@@ -76,18 +77,27 @@ public class ViewMessageFragment extends BaseFragment {
         super.onViewCreated(view, savedInstanceState);
         currentMailbox = CTemplarApp.getAppDatabase().mailboxDao().getDefault();
 
-        mainModel = ViewModelProviders.of(getActivity()).get(ViewMessageActivityViewModel.class);
+        viewMessageModel = ViewModelProviders.of(getActivity()).get(ViewMessageActivityViewModel.class);
         long id = getArguments().getLong(ViewMessageActivity.ARG_ID, -1);
 
-        mainModel.getMessageResponse().observe(this, new Observer<MessagesResult>() {
+        viewMessageModel.getMessageResponse().observe(this, new Observer<MessagesResult>() {
             @Override
             public void onChanged(@Nullable MessagesResult messagesResult) {
                 handleMessage(messagesResult);
             }
         });
 
-        mainModel.getMessage(id);
+        viewMessageModel.getMessage(id);
 
+        viewMessageModel.getStarredResponse().observe(this, new Observer<MessagesResult>() {
+            @Override
+            public void onChanged(@Nullable MessagesResult messagesResult) {
+                if (messagesResult != null && messagesResult.getId() == currentMessage.getId()) {
+                    imageViewStar.setSelected(messagesResult.isStarred());
+                    currentMessage = messagesResult;
+                }
+            }
+        });
     }
 
     private String decodeContent(String encodedString, String password) {
@@ -113,6 +123,8 @@ public class ViewMessageFragment extends BaseFragment {
     }
 
     void handleMessage(MessagesResult messagesResult) {
+        currentMessage = messagesResult;
+
         textViewSubject.setText(messagesResult.getSubject());
         String sender = '<' + messagesResult.getSender() + '>';
         textViewFromEmail.setText(sender);
@@ -138,15 +150,16 @@ public class ViewMessageFragment extends BaseFragment {
         } catch (ParseException e) {
             Timber.e("DateParse error: %s", e.getMessage());
         }
-        if (messagesResult.isStarred()) {
-            imageViewStar.setImageResource(R.drawable.ic_star_on);
-        } else {
-            imageViewStar.setImageResource(R.drawable.ic_star_off);
-        }
+
+        imageViewStar.setSelected(messagesResult.isStarred());
 
         String password =
                 CTemplarApp.getInstance().getSharedPreferences("pref_user", Context.MODE_PRIVATE).getString("key_password", null);
         textViewContent.setText(decodeContent(messagesResult.getContent(), password));
+
+        if (!messagesResult.isRead())  {
+            viewMessageModel.markMessageAsRead(messagesResult.getId());
+        }
     }
 
     @OnClick(R.id.fragment_view_message_reply)
@@ -167,5 +180,14 @@ public class ViewMessageFragment extends BaseFragment {
     @OnClick(R.id.fragment_view_message_back)
     public void onClickBack() {
         getActivity().onBackPressed();
+    }
+
+    @OnClick(R.id.fragment_view_message_subject_star_image_layout)
+    public void onClickStarred() {
+        MessagesResult messagesResult = currentMessage;
+        if (messagesResult != null) {
+            boolean isStarred = !messagesResult.isStarred();
+            viewMessageModel.markMessageIsStarred(messagesResult.getId(), isStarred);
+        }
     }
 }

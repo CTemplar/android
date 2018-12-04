@@ -191,4 +191,7 @@ public class MessagesResult {
         return parent;
     }
 
+    public void setStarred(boolean starred) {
+        isStarred = starred;
+    }
 }

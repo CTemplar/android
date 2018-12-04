@@ -4,6 +4,8 @@ import javax.inject.Singleton;
 
 import io.reactivex.Observable;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.CheckUsernameRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.MarkMessageAsReadRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.MarkMessageIsStarredRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.RecoverPasswordRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SendMessageRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SignInRequest;
@@ -50,6 +52,12 @@ public interface RestService {
 
     @GET("/emails/messages/")
     Observable<MessagesResponse> getMessage(@Query("id") long id);
+
+    @PATCH("/emails/messages/{id}/")
+    Observable<MessagesResult> markMessageAsRead(@Path("id") long id, @Body MarkMessageAsReadRequest request);
+
+    @PATCH("/emails/messages/{id}/")
+    Observable<MessagesResult> markMessageIsStarred(@Path("id") long id, @Body MarkMessageIsStarredRequest request);
 
     @GET("/users/myself/")
     Observable<MyselfResponse> getMyself();
