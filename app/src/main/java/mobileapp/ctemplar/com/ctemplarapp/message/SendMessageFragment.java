@@ -24,6 +24,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
 import mobileapp.ctemplar.com.ctemplarapp.BaseFragment;
+import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SendMessageRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.ContactData;
@@ -104,6 +105,7 @@ public class SendMessageFragment extends BaseFragment {
 
     @OnClick(R.id.fragment_send_message_send)
     public void onClickSend() {
+        //String from = spinnerFrom
         String toEmail = toEmailTextView.getText().toString();
         String compose = composeEditText.getText().toString();
 
@@ -124,7 +126,7 @@ public class SendMessageFragment extends BaseFragment {
                 subjectEditText.getText().toString(),
                 composeEditText.getText().toString(),
                 "inbox",
-                196
+                CTemplarApp.getAppDatabase().mailboxDao().getDefault().id // ToDo
         );
 
         if (!toEmail.isEmpty()) {

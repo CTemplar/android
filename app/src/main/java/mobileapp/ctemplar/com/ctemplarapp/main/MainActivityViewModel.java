@@ -163,39 +163,6 @@ public class MainActivityViewModel extends ViewModel {
                 });
     }
 
-    public void sendMessage(SendMessageRequest request) {
-        String content = request.getContent();
-        try {
-            content = Pgp.encrypt(content);
-        } catch (IOException | PGPException e) {
-            Timber.e("Pgp encrypt error: %s", e.getMessage());
-        }
-        request.setContent(content);
-        userRepository.sendMessage(request)
-                .subscribe(new Observer<MessagesResult>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(MessagesResult result) {
-//                        messagesResponse.postValue(result);
-                        responseStatus.postValue(ResponseStatus.RESPONSE_NEXT_MESSAGES);
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
-    }
-
     public void getMailboxes(int limit, int offset) {
         userRepository.getMailboxesList(limit, offset)
                 .subscribe(new Observer<MailboxesResponse>() {
@@ -292,6 +259,32 @@ public class MainActivityViewModel extends ViewModel {
                     @Override
                     public void onError(Throwable e) {
                         e.printStackTrace();
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+
+    public void markMessageIsStarred(long id, boolean starred) {
+        userRepository.markMessageIsStarred(id, starred)
+                .subscribe(new Observer<MessagesResult>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(MessagesResult messagesResult) {
+                        //starredResponse.postValue(messagesResult);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
                     }
 
                     @Override

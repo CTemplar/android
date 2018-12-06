@@ -16,12 +16,12 @@ public class SendMessageRequest {
     private String folder;
 
     @SerializedName("mailbox")
-    private int mailbox;
+    private long mailbox;
 
     @SerializedName("receiver")
     private List<String> receivers;
 
-    public SendMessageRequest(String subject, String content, String folder, int mailbox) {
+    public SendMessageRequest(String subject, String content, String folder, long mailbox) {
         this.subject = subject;
         this.content = content;
         this.folder = folder;
@@ -53,11 +53,11 @@ public class SendMessageRequest {
         this.folder = folder;
     }
 
-    public int getMailbox() {
+    public long getMailbox() {
         return mailbox;
     }
 
-    public void setMailbox(int mailbox) {
+    public void setMailbox(long mailbox) {
         this.mailbox = mailbox;
     }
 
