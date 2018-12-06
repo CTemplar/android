@@ -8,9 +8,12 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 
 import net.kibotu.pgp.Pgp;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.subjects.PublishSubject;
@@ -23,12 +26,15 @@ import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
 public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessageViewHolder> {
 
     private List<MessagesResult> messagesList;
+    private List<MessagesResult> filteredList;
     private MailboxEntity currentMailbox;
     private final PublishSubject<Long> onClickSubject = PublishSubject.create();
     private final MainActivityViewModel mainModel;
 
     public InboxMessagesAdapter(List<MessagesResult> messagesList, MainActivityViewModel mainModel) {
         this.messagesList = messagesList;
+        filteredList = new ArrayList<>();
+        filteredList.addAll(messagesList);
         currentMailbox = CTemplarApp.getAppDatabase().mailboxDao().getDefault();
         this.mainModel = mainModel;
     }
@@ -43,7 +49,7 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessageViewH
 
     @Override
     public void onBindViewHolder(@NonNull final InboxMessageViewHolder holder, int position) {
-        final MessagesResult messagesResult = messagesList.get(position);
+        final MessagesResult messagesResult = filteredList.get(position);
 
         holder.txtUsername.setText(messagesResult.getSender());
         holder.root.setOnClickListener(new View.OnClickListener() {
@@ -54,7 +60,7 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessageViewH
         });
 
         // check for children count
-        if(messagesResult.getChildrenCount() > 0) {
+        if (messagesResult.getChildrenCount() > 0) {
             holder.txtChildren.setText(String.valueOf(messagesResult.getChildrenCount()));
             holder.txtChildren.setVisibility(View.VISIBLE);
         } else {
@@ -62,7 +68,7 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessageViewH
         }
 
         // check for read/unread
-        if(messagesResult.isRead()) {
+        if (messagesResult.isRead()) {
             holder.imgUnread.setVisibility(View.GONE);
             holder.txtUsername.setTypeface(null, Typeface.NORMAL);
         } else {
@@ -71,13 +77,13 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessageViewH
         }
 
         // check for status (time delete, delayed delivery)
-        if(TextUtils.isEmpty(messagesResult.getDelayedDelivery()) &&
+        if (TextUtils.isEmpty(messagesResult.getDelayedDelivery()) &&
                 TextUtils.isEmpty(messagesResult.getDestructDate())) {
             holder.txtStatus.setVisibility(View.GONE);
         }
 
         // format creation date
-        if(!TextUtils.isEmpty(messagesResult.getCreatedAt())) {
+        if (!TextUtils.isEmpty(messagesResult.getCreatedAt())) {
             holder.txtDate.setText(AppUtils.formatDate(messagesResult.getCreatedAt()));
         }
 
@@ -93,7 +99,7 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessageViewH
 
         holder.imgStarred.setSelected(messagesResult.isStarred());
 
-        if(messagesResult.getAttachments() != null &&
+        if (messagesResult.getAttachments() != null &&
                 messagesResult.getAttachments().size() > 0) {
             holder.imgAttachment.setVisibility(View.VISIBLE);
         } else {
@@ -108,7 +114,7 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessageViewH
 
     @Override
     public int getItemCount() {
-        return messagesList.size();
+        return filteredList.size();
     }
 
     private String decodeContent(String encodedString, String password) {
@@ -128,5 +134,23 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessageViewH
 
     public PublishSubject<Long> getOnClickSubject() {
         return onClickSubject;
+    }
+
+    public void filter(boolean isStarred, boolean isUnread, boolean withAttachment) {
+        filteredList = new ArrayList<>();
+        for (MessagesResult messageResult :
+                messagesList) {
+            boolean messageIsStarred = messageResult.isStarred();
+            boolean messageUnread = !messageResult.isRead();
+            boolean messageWithAttachments = messageResult.getAttachments() != null;
+            boolean messageNotEmpty = !messageResult.getAttachments().isEmpty();
+
+            if ((isStarred && messageIsStarred) ||
+                    (isUnread && messageUnread) ||
+                    (withAttachment && messageWithAttachments && messageNotEmpty)) {
+                filteredList.add(messageResult);
+            }
+        }
+        notifyDataSetChanged();
     }
 }

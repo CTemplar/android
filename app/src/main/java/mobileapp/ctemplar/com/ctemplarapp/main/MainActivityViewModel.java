@@ -125,6 +125,32 @@ public class MainActivityViewModel extends ViewModel {
                 });
     }
 
+    public void getStarredMessages(int limit, int offset, int starred) {
+        userRepository.getStarredMessagesList(limit, offset, starred)
+                .subscribe(new Observer<MessagesResponse>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(MessagesResponse response) {
+                        messagesResponse.postValue(response);
+                        responseStatus.postValue(ResponseStatus.RESPONSE_NEXT_MESSAGES);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
     public void getContacts(int limit, int offset) {
         List<ContactEntity> contactEntities = contactsRepository.getLocalContacts();
 

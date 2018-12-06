@@ -50,6 +50,14 @@ public class InboxFragment extends BaseFragment {
 
     private MainActivityViewModel mainModel;
 
+    private FilterDialogFragment.OnApplyClickListener onFilterApplyClickListener
+            = new FilterDialogFragment.OnApplyClickListener() {
+        @Override
+        public void onApply(boolean isStarred, boolean isUnread, boolean withAttachment) {
+            adapter.filter(isStarred, isUnread, withAttachment);
+        }
+    };
+
     @Override
     protected int getLayoutId() {
         return R.layout.fragment_inbox;
@@ -87,7 +95,12 @@ public class InboxFragment extends BaseFragment {
         mainModel.getCurrentFolder().observe(this, new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {
-                mainModel.getMessages(20, 0, mainModel.getCurrentFolder().getValue());
+                String currentFolder = mainModel.getCurrentFolder().getValue();
+                if (currentFolder.equals("starred")) {
+                    mainModel.getStarredMessages(20, 0, 1);
+                } else {
+                    mainModel.getMessages(20, 0, currentFolder);
+                }
             }
         });
 
@@ -103,7 +116,15 @@ public class InboxFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-        mainModel.getMessages(20, 0, mainModel.getCurrentFolder().getValue());
+
+        String currentFolder = mainModel.getCurrentFolder().getValue();
+        if (currentFolder != null) {
+            if (currentFolder.equals("starred")) {
+                mainModel.getStarredMessages(20, 0, 1);
+            } else {
+                mainModel.getMessages(20, 0, currentFolder);
+            }
+        }
     }
 
     @Override
@@ -136,6 +157,9 @@ public class InboxFragment extends BaseFragment {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_filter) {
+            FilterDialogFragment dialogFragment = new FilterDialogFragment();
+            dialogFragment.setOnApplyClickListener(onFilterApplyClickListener);
+            dialogFragment.show(getFragmentManager(), null);
             return true;
         }
 

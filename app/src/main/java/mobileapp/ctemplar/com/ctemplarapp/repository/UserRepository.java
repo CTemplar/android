@@ -124,6 +124,12 @@ public class UserRepository {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
+    public Observable<MessagesResponse> getStarredMessagesList(int limit, int offset, int starred) {
+        return service.getStarredMessages(limit, offset, starred)
+                .subscribeOn(io.reactivex.schedulers.Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
     public Observable<MessagesResponse> getMessage(long id) {
         return service.getMessage(id)
                 .subscribeOn(io.reactivex.schedulers.Schedulers.io())

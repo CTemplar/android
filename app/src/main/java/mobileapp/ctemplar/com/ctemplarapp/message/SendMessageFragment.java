@@ -29,6 +29,7 @@ import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SendMessageRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.ContactData;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.ContactsResponse;
+import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 
 public class SendMessageFragment extends BaseFragment {
     private SendMessageActivityViewModel mainModel;
@@ -73,10 +74,17 @@ public class SendMessageFragment extends BaseFragment {
         super.onViewCreated(view, savedInstanceState);
 
         mainModel = ViewModelProviders.of(getActivity()).get(SendMessageActivityViewModel.class);
+
+        List<MailboxEntity> mailboxEntities = mainModel.getMailboxes();
+        String[] emails = new String[mailboxEntities.size()];
+        for (int i = 0; i < mailboxEntities.size(); i++) {
+            emails[i] = mailboxEntities.get(i).email;
+        }
+
         SpinnerAdapter adapter = new ArrayAdapter<>(
                 getActivity(),
                 R.layout.fragment_send_message_spinner,
-                new String[] { mainModel.userRepository.getUsername() + "@ctemplar.com" }
+                emails
         );
         spinnerFrom.setAdapter(adapter);
 

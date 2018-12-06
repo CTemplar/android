@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <RelativeLayout
+        android:id="@+id/fragment_messages_filter_dialog_title_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="16dp">
+
+        <ImageView
+            android:id="@+id/fragment_messages_filter_dialog_close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_close"
+            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"/>
+
+        <TextView
+            android:id="@+id/fragment_messages_filter_dialog_clear_all"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:fontFamily="@font/lato_regular"
+            android:textColor="@color/colorDarkBlue4"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginRight="16dp"
+            android:layout_marginEnd="16dp"
+            android:text="Clear all"/>
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/fragment_messages_filter_dialog_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Filters"
+        android:fontFamily="@font/lato_regular"
+        android:textSize="22sp"
+        android:textColor="@color/colorDarkBlue"
+        app:layout_constraintTop_toBottomOf="@id/fragment_messages_filter_dialog_title_layout"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"/>
+
+    <LinearLayout
+        android:id="@+id/fragment_messages_filter_dialog_categories"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        app:layout_goneMarginEnd="16dp"
+        android:orientation="vertical"
+        android:showDividers="middle"
+        android:divider="@drawable/filter_dialog_divider"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintTop_toBottomOf="@id/fragment_messages_filter_dialog_title"
+        app:layout_constraintBottom_toTopOf="@id/fragment_messages_filter_dialog_actions_layout">
+
+        <TextView
+            android:id="@+id/fragment_messages_filter_dialog_select_filters"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Select filters"
+            android:gravity="center_vertical"
+            android:minHeight="52dp"
+            android:textSize="16sp"
+            android:textColor="@color/colorBlue"
+            android:fontFamily="@font/lato_regular"/>
+
+        <CheckBox
+            android:id="@+id/fragment_messages_filter_dialog_starred"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:minHeight="48dp"
+            android:fontFamily="@font/lato_regular"
+            android:textColor="@color/colorOrangeLight"
+            android:text="Starred"
+            android:button="@null"
+            android:drawableRight="@drawable/selector_check"
+            android:drawableEnd="@drawable/selector_check"/>
+
+        <CheckBox
+            android:id="@+id/fragment_messages_filter_dialog_unread"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:minHeight="48dp"
+            android:fontFamily="@font/lato_regular"
+            android:textColor="@color/colorOrangeLight"
+            android:text="Unread"
+            android:button="@null"
+            android:drawableRight="@drawable/selector_check"
+            android:drawableEnd="@drawable/selector_check"/>
+
+        <CheckBox
+            android:id="@+id/fragment_messages_filter_dialog_with_attachment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:minHeight="48dp"
+            android:fontFamily="@font/lato_regular"
+            android:textColor="@color/colorOrangeLight"
+            android:text="With Attachment"
+            android:button="@null"
+            android:drawableRight="@drawable/selector_check"
+            android:drawableEnd="@drawable/selector_check"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/fragment_messages_filter_dialog_actions_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent">
+
+        <Button
+            android:id="@+id/fragment_messages_filter_dialog_action_cancel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginRight="4dp"
+            android:textColor="@color/colorDarkBlue2"
+            android:background="@drawable/dialog_cancel_button_background"
+            android:text="Cancel"/>
+
+        <Button
+            android:id="@+id/fragment_messages_filter_dialog_action_apply"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginLeft="4dp"
+            android:textColor="@android:color/white"
+            android:background="@color/colorDarkBlue2"
+            android:text="Apply"/>
+
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>

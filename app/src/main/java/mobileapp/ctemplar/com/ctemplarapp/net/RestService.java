@@ -51,6 +51,9 @@ public interface RestService {
     Observable<MessagesResponse> getMessages(@Query("limit") int limit, @Query("offset") int offset, @Query("folder") String folder);
 
     @GET("/emails/messages/")
+    Observable<MessagesResponse> getStarredMessages(@Query("limit") int limit, @Query("offset") int offset, @Query("starred") int starred);
+
+    @GET("/emails/messages/")
     Observable<MessagesResponse> getMessage(@Query("id") long id);
 
     @PATCH("/emails/messages/{id}/")
