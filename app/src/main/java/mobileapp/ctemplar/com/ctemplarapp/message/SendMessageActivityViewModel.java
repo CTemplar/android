@@ -9,6 +9,7 @@ import net.kibotu.pgp.Pgp;
 import org.spongycastle.openpgp.PGPException;
 
 import java.io.IOException;
+import java.util.List;
 
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
@@ -19,6 +20,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.ContactsResponse
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResult;
 import mobileapp.ctemplar.com.ctemplarapp.repository.ContactsRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
+import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import timber.log.Timber;
 
 public class SendMessageActivityViewModel extends ViewModel {
@@ -103,5 +105,9 @@ public class SendMessageActivityViewModel extends ViewModel {
 
     public LiveData<ResponseStatus> getResponseStatus() {
         return responseStatus;
+    }
+
+    public List<MailboxEntity> getMailboxes() {
+        return CTemplarApp.getAppDatabase().mailboxDao().getAll();
     }
 }
