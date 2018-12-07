@@ -4,6 +4,9 @@ import android.content.Context;
 import android.graphics.Typeface;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
+import android.text.Spanned;
+import android.text.SpannedString;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -109,7 +112,10 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessageViewH
         holder.txtSubject.setText(messagesList.get(position).getSubject());
         String password =
                 CTemplarApp.getInstance().getSharedPreferences("pref_user", Context.MODE_PRIVATE).getString("key_password", null);
-        holder.txtContent.setText(decodeContent(messagesResult.getContent(), password));
+
+        String messageContent = decodeContent(messagesResult.getContent(), password).replaceAll("<img.+?>", "");
+        Spanned contentMessage = Html.fromHtml(messageContent);
+        holder.txtContent.setText(contentMessage);
     }
 
     @Override

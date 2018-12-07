@@ -109,6 +109,14 @@ public class SendMessageFragment extends BaseFragment {
             }
         }
 
+        String toEmail = toEmailTextView.getText().toString();
+        if (toEmail.isEmpty()) {
+            toEmailTextView.requestFocus();
+        } else {
+            composeEditText.requestFocus();
+            composeEditText.setSelection(0);
+        }
+
         mainModel = ViewModelProviders.of(getActivity()).get(SendMessageActivityViewModel.class);
 
         List<MailboxEntity> mailboxEntities = mainModel.getMailboxes();
