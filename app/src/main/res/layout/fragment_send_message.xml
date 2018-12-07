@@ -391,19 +391,19 @@
         app:passwordToggleEnabled="true"
         app:passwordToggleTint="@color/colorDarkBlue">
 
-        <android.support.design.widget.TextInputEditText
-            android:id="@+id/fragment_send_message_compose_email_input"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:fontFamily="@font/lato_regular"
-            android:hint="Compose email"
-            android:inputType="textMultiLine"
-            android:letterSpacing="0.05"
-            android:textColor="@color/colorDarkBlue2"
-            android:textSize="16sp"
-            android:theme="@style/EditTextCredentialsThemeDark"
-            android:background="@android:color/transparent"
-            android:gravity="top"/>
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/fragment_send_message_compose_email_input"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fontFamily="@font/lato_regular"
+                android:hint="Compose email"
+                android:inputType="textMultiLine"
+                android:letterSpacing="0.05"
+                android:textColor="@color/colorDarkBlue2"
+                android:textSize="16sp"
+                android:theme="@style/EditTextCredentialsThemeDark"
+                android:background="@android:color/transparent"
+                android:gravity="top"/>
 
     </android.support.design.widget.TextInputLayout>
 

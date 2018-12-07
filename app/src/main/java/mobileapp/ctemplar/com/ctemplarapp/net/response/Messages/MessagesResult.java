@@ -127,11 +127,11 @@ public class MessagesResult {
         return receivers;
     }
 
-    public String[] getCc() {
+    public String[] getCC() {
         return cc;
     }
 
-    public String[] getBcc() {
+    public String[] getBCC() {
         return bcc;
     }
 

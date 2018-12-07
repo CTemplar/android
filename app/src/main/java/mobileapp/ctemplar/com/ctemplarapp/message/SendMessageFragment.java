@@ -2,10 +2,13 @@ package mobileapp.ctemplar.com.ctemplarapp.message;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Patterns;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -53,10 +56,16 @@ public class SendMessageFragment extends BaseFragment {
     Spinner spinnerFrom;
 
     @BindView(R.id.fragment_send_message_cc_layout)
-    RelativeLayout cc;
+    RelativeLayout ccLayout;
 
     @BindView(R.id.fragment_send_message_bcc_layout)
-    RelativeLayout bcc;
+    RelativeLayout bccLayout;
+
+    @BindView(R.id.fragment_send_message_cc_input)
+    AutoCompleteTextView ccTextView;
+
+    @BindView(R.id.fragment_send_message_bcc_input)
+    AutoCompleteTextView bccTextView;
 
     @BindView(R.id.fragment_send_message_to_add_button)
     ImageView toAddIco;
@@ -72,6 +81,33 @@ public class SendMessageFragment extends BaseFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        Bundle args = getArguments();
+        if (args != null) {
+            String[] bundleEmails = args.getStringArray(Intent.EXTRA_EMAIL);
+            String[] bundleCC = args.getStringArray(Intent.EXTRA_CC);
+            String[] bundleBCC = args.getStringArray(Intent.EXTRA_BCC);
+            String bundleSubject = args.getString(Intent.EXTRA_SUBJECT);
+            String bundleText = args.getString(Intent.EXTRA_TEXT);
+
+            if (bundleEmails != null && bundleEmails.length > 0) {
+                toEmailTextView.setText(bundleEmails[0]);
+            }
+            if (bundleCC != null && bundleCC.length > 0) {
+                ccLayout.setVisibility(View.VISIBLE);
+                ccTextView.setText(bundleCC[0]);
+            }
+            if (bundleBCC != null && bundleBCC.length > 0) {
+                bccLayout.setVisibility(View.VISIBLE);
+                bccTextView.setText(bundleBCC[0]);
+            }
+            if (bundleSubject != null && !bundleSubject.isEmpty()) {
+                subjectEditText.setText(bundleSubject);
+            }
+            if (bundleText != null && !bundleText.isEmpty()) {
+                composeEditText.setText(bundleText);
+            }
+        }
 
         mainModel = ViewModelProviders.of(getActivity()).get(SendMessageActivityViewModel.class);
 
@@ -124,7 +160,7 @@ public class SendMessageFragment extends BaseFragment {
             return;
         }
 
-        if (compose == null || compose.length() < 1) {
+        if (compose.length() < 1) {
             composeEditText.setError("Enter message");
             return;
         }
@@ -147,14 +183,14 @@ public class SendMessageFragment extends BaseFragment {
 
     @OnClick(R.id.fragment_send_message_to_add_button)
     public void onClick() {
-        if (cc.getVisibility() == View.GONE) {
+        if (ccLayout.getVisibility() == View.GONE) {
             toAddIco.setImageResource(R.drawable.ic_remove);
-            cc.setVisibility(View.VISIBLE);
-            bcc.setVisibility(View.VISIBLE);
+            ccLayout.setVisibility(View.VISIBLE);
+            bccLayout.setVisibility(View.VISIBLE);
         } else {
             toAddIco.setImageResource(R.drawable.ic_add_active);
-            cc.setVisibility(View.GONE);
-            bcc.setVisibility(View.GONE);
+            ccLayout.setVisibility(View.GONE);
+            bccLayout.setVisibility(View.GONE);
         }
     }
 

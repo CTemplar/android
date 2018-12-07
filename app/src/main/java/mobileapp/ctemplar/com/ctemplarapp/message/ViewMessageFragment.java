@@ -3,11 +3,16 @@ package mobileapp.ctemplar.com.ctemplarapp.message;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.Html;
 import android.text.TextUtils;
+import android.util.Base64;
 import android.view.View;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -33,6 +38,7 @@ public class ViewMessageFragment extends BaseFragment {
     private ViewMessageActivityViewModel viewMessageModel;
     private MailboxEntity currentMailbox;
     private MessagesResult currentMessage;
+    private String encodedMessage;
 
     @BindView(R.id.fragment_view_message_subject_text)
     TextView textViewSubject;
@@ -62,7 +68,7 @@ public class ViewMessageFragment extends BaseFragment {
     TextView textViewMessageDate;
 
     @BindView(R.id.fragment_view_message_content)
-    TextView textViewContent;
+    WebView webViewContent;
 
     @BindView(R.id.fragment_view_message_subject_star_image)
     ImageView imageViewStar;
@@ -122,6 +128,22 @@ public class ViewMessageFragment extends BaseFragment {
         return receiversList;
     }
 
+    private String getStringDate(String stringDate) {
+        if (stringDate == null) {
+            return "";
+        }
+        DateFormat parseFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault());
+        DateFormat viewFormat = new SimpleDateFormat("h:mm a',' MMMM d yyyy", Locale.getDefault());
+        try {
+            Date date = parseFormat.parse(stringDate);
+            stringDate = viewFormat.format(date);
+
+        } catch (ParseException e) {
+            Timber.e("DateParse error: %s", e.getMessage());
+        }
+        return stringDate;
+    }
+
     void handleMessage(MessagesResult messagesResult) {
         currentMessage = messagesResult;
 
@@ -133,7 +155,7 @@ public class ViewMessageFragment extends BaseFragment {
             receivers = addQuotes(receivers);
             textViewToEmail.setText(TextUtils.join(", ", receivers));
         }
-        String[] cc = messagesResult.getCc();
+        String[] cc = messagesResult.getCC();
         if (cc != null) {
             cc = addQuotes(cc);
             textViewCCEmail.setText(TextUtils.join(", ", cc));
@@ -141,40 +163,73 @@ public class ViewMessageFragment extends BaseFragment {
             textViewCCLayout.setVisibility(View.GONE);
         }
         String stringDate = messagesResult.getCreatedAt();
-        DateFormat parseFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault());
-        DateFormat viewFormat = new SimpleDateFormat("h:mm a',' MMMM d yyyy", Locale.getDefault());
-        try {
-            Date date = parseFormat.parse(stringDate);
-            stringDate = viewFormat.format(date);
-            textViewMessageDate.setText(stringDate);
-        } catch (ParseException e) {
-            Timber.e("DateParse error: %s", e.getMessage());
-        }
+        textViewMessageDate.setText(getStringDate(stringDate));
 
         imageViewStar.setSelected(messagesResult.isStarred());
 
         String password =
                 CTemplarApp.getInstance().getSharedPreferences("pref_user", Context.MODE_PRIVATE).getString("key_password", null);
-        textViewContent.setText(decodeContent(messagesResult.getContent(), password));
+
+        encodedMessage = decodeContent(messagesResult.getContent(), password);
+        String encodedContent = Base64.encodeToString(encodedMessage.getBytes(), Base64.NO_PADDING);
+
+        webViewContent.setInitialScale(1);
+        WebSettings webViewSettings = webViewContent.getSettings();
+        webViewSettings.setLoadWithOverviewMode(true);
+        webViewSettings.setUseWideViewPort(true);
+        webViewSettings.setBuiltInZoomControls(true);
+        webViewSettings.setDisplayZoomControls(false);
+
+        webViewContent.loadData(encodedContent, "text/html", "base64");
 
         if (!messagesResult.isRead())  {
             viewMessageModel.markMessageAsRead(messagesResult.getId());
         }
     }
 
+    private String forwardHead() {
+        String[] receivers = addQuotes(currentMessage.getReceivers());
+        String receiversString = TextUtils.join(", ", receivers);
+
+        return "\n\n---------- Forwarded message ----------\n" +
+                "From: <" + currentMessage.getSender() + ">\n" +
+                "Date: " + getStringDate(currentMessage.getCreatedAt()) + "\n" +
+                "Subject: " + currentMessage.getSubject() + "\n" +
+                "To: " + receiversString + "\n\n";
+    }
+
+    private String replyHead() {
+        return "\n\nOn " +
+                getStringDate(currentMessage.getCreatedAt()) + " " +
+                currentMessage.getSender() +  " wrote:\n\n";
+    }
+
     @OnClick(R.id.fragment_view_message_reply)
     public void onClickReply() {
-
+        Intent intent = new Intent(getActivity(), SendMessageActivity.class);
+        intent.putExtra(Intent.EXTRA_EMAIL, new String[] { currentMessage.getSender() });
+        intent.putExtra(Intent.EXTRA_SUBJECT, "Re: "+ currentMessage.getSubject());
+        intent.putExtra(Intent.EXTRA_TEXT, replyHead() + Html.fromHtml(encodedMessage));
+        startActivity(intent);
     }
 
     @OnClick(R.id.fragment_view_message_reply_all)
     public void onClickReplyAll() {
-
+        Intent intent = new Intent(getActivity(), SendMessageActivity.class);
+        intent.putExtra(Intent.EXTRA_EMAIL, new String[] { currentMessage.getSender() });
+        intent.putExtra(Intent.EXTRA_SUBJECT, "Re: "+ currentMessage.getSubject());
+        intent.putExtra(Intent.EXTRA_TEXT, replyHead() + Html.fromHtml(encodedMessage));
+        intent.putExtra(Intent.EXTRA_CC, currentMessage.getCC());
+        intent.putExtra(Intent.EXTRA_BCC, currentMessage.getBCC());
+        startActivity(intent);
     }
 
     @OnClick(R.id.fragment_view_message_forward)
     public void onClickForward() {
-
+        Intent intent = new Intent(getActivity(), SendMessageActivity.class);
+        intent.putExtra(Intent.EXTRA_SUBJECT, "Fwd: "+ currentMessage.getSubject());
+        intent.putExtra(Intent.EXTRA_TEXT, forwardHead() + Html.fromHtml(encodedMessage));
+        startActivity(intent);
     }
 
     @OnClick(R.id.fragment_view_message_back)
@@ -190,4 +245,5 @@ public class ViewMessageFragment extends BaseFragment {
             viewMessageModel.markMessageIsStarred(messagesResult.getId(), isStarred);
         }
     }
+
 }

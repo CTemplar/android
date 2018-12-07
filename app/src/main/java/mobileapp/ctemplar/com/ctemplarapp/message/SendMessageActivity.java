@@ -13,9 +13,13 @@ import mobileapp.ctemplar.com.ctemplarapp.BaseActivity;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResult;
 
+import static mobileapp.ctemplar.com.ctemplarapp.message.ViewMessageActivity.ARG_ID;
+
 public class SendMessageActivity extends BaseActivity {
 
     private SendMessageActivityViewModel mainModel;
+
+    public static final String ARG_ID = "id";
 
     @BindView(R.id.content_frame)
     FrameLayout mContentFrame;
@@ -29,9 +33,19 @@ public class SendMessageActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+//        long id = getIntent().getLongExtra(ARG_ID, -1);
+////        if (id == -1) {
+////            return;
+////        }
+
+        SendMessageFragment fragment = new SendMessageFragment();
+        if (getIntent() != null) {
+            fragment.setArguments(getIntent().getExtras());
+        }
+
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
-                .add(mContentFrame.getId(), new SendMessageFragment())
+                .add(mContentFrame.getId(), fragment)
                 .commit();
 
         mainModel = ViewModelProviders.of(this).get(SendMessageActivityViewModel.class);

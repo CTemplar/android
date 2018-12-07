@@ -52,7 +52,7 @@ public class ViewMessageActivity extends BaseActivity {
                             mContentFrame.setVisibility(View.VISIBLE);
                         } else {
                             Timber.e("Message doesn't exist");
-                            Toast.makeText(getApplicationContext(), "Message doesn't exist", Toast.LENGTH_SHORT);
+                            Toast.makeText(getApplicationContext(), "Message doesn't exist", Toast.LENGTH_SHORT).show();
                             onBackPressed();
                         }
                     }
