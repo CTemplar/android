@@ -171,16 +171,13 @@ public class ViewMessageFragment extends BaseFragment {
                 CTemplarApp.getInstance().getSharedPreferences("pref_user", Context.MODE_PRIVATE).getString("key_password", null);
 
         encodedMessage = decodeContent(messagesResult.getContent(), password);
-        String encodedContent = Base64.encodeToString(encodedMessage.getBytes(), Base64.NO_PADDING);
+        String style = "<style type=\"text/css\">*{width:auto;}</style>";
+        String messageWithStyle = style + encodedMessage;
+        String encodedContent = Base64.encodeToString(messageWithStyle.getBytes(), Base64.NO_PADDING);
 
-        webViewContent.setInitialScale(1);
-        WebSettings webViewSettings = webViewContent.getSettings();
-        webViewSettings.setLoadWithOverviewMode(true);
-        webViewSettings.setUseWideViewPort(true);
-        webViewSettings.setBuiltInZoomControls(true);
-        webViewSettings.setDisplayZoomControls(false);
-
+        webViewContent.getSettings().setLoadWithOverviewMode(true);
         webViewContent.loadData(encodedContent, "text/html", "base64");
+
 
         if (!messagesResult.isRead())  {
             viewMessageModel.markMessageAsRead(messagesResult.getId());
