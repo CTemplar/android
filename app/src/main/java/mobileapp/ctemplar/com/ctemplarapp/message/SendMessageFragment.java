@@ -35,7 +35,10 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.ContactsResponse
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 
 public class SendMessageFragment extends BaseFragment {
+
     private SendMessageActivityViewModel mainModel;
+    private Long parentId;
+    public final static String PARENT_ID = "parent_id";
 
 //    @BindView(R.id.fragment_send_message_from_input)
 //    EditText from;
@@ -89,6 +92,10 @@ public class SendMessageFragment extends BaseFragment {
             String[] bundleBCC = args.getStringArray(Intent.EXTRA_BCC);
             String bundleSubject = args.getString(Intent.EXTRA_SUBJECT);
             String bundleText = args.getString(Intent.EXTRA_TEXT);
+            parentId = args.getLong(PARENT_ID, -1);
+            if (parentId == -1) {
+                parentId = null;
+            }
 
             if (bundleEmails != null && bundleEmails.length > 0) {
                 toEmailTextView.setText(bundleEmails[0]);
@@ -174,11 +181,15 @@ public class SendMessageFragment extends BaseFragment {
         }
 
         Toast.makeText(getActivity(), "Sending mail...", Toast.LENGTH_SHORT).show();
+
         SendMessageRequest messageRequest = new SendMessageRequest(
                 subjectEditText.getText().toString(),
                 composeEditText.getText().toString(),
-                "inbox",
-                CTemplarApp.getAppDatabase().mailboxDao().getDefault().id // ToDo
+                "sent",
+                true,
+                true,
+                CTemplarApp.getAppDatabase().mailboxDao().getDefault().id, //TODO
+                parentId
         );
 
         if (!toEmail.isEmpty()) {

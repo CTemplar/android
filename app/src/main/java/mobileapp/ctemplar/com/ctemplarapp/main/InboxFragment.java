@@ -24,8 +24,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import mobileapp.ctemplar.com.ctemplarapp.BaseFragment;
 import mobileapp.ctemplar.com.ctemplarapp.R;
+import mobileapp.ctemplar.com.ctemplarapp.message.ViewMessagesActivity;
 import mobileapp.ctemplar.com.ctemplarapp.message.SendMessageActivity;
-import mobileapp.ctemplar.com.ctemplarapp.message.ViewMessageActivity;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResponse;
 
@@ -229,9 +229,13 @@ public class InboxFragment extends BaseFragment {
 
                         @Override
                         public void onNext(Long aLong) {
-                            Intent intent = new Intent(getActivity(), ViewMessageActivity.class);
-                            intent.putExtra(ViewMessageActivity.ARG_ID, aLong);
+                            Intent intent = new Intent(getActivity(), ViewMessagesActivity.class);
+                            intent.putExtra(ViewMessagesActivity.PARENT_ID, aLong);
                             getActivity().startActivity(intent);
+
+//                            Intent intent = new Intent(getActivity(), ViewMessageActivity.class);
+//                            intent.putExtra(ViewMessageActivity.ARG_ID, aLong);
+//                            getActivity().startActivity(intent);
                         }
 
                         @Override

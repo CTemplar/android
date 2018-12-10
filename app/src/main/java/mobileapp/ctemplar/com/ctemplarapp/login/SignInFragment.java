@@ -74,7 +74,7 @@ public class SignInFragment extends BaseFragment {
 
         setListeners();
 
-        TextDrawable ctemplarTest = new TextDrawable("@ctemplar.com");
+        //TextDrawable ctemplarTest = new TextDrawable("@ctemplar.com");
 
         // editTextUsername.setCompoundDrawablesWithIntrinsicBounds(null,null, ctemplarTest, null);
 

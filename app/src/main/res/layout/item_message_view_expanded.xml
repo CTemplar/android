@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/item_message_view_expanded_short"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="16dp"
+        android:paddingLeft="16dp"
+        android:paddingEnd="25dp"
+        android:paddingRight="25dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <RelativeLayout
+            android:id="@+id/item_message_view_expanded_sender_layout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <TextView
+                android:id="@+id/item_message_view_expanded_sender_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="from: "
+                android:ellipsize="end"
+                android:fontFamily="@font/lato_regular"
+                android:textSize="14sp"
+                android:textColor="@color/colorGrey"/>
+
+            <TextView
+                android:id="@+id/item_message_view_expanded_sender_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="CTemplar"
+                android:ellipsize="end"
+                android:textColor="@color/colorGrey"
+                android:fontFamily="@font/lato_regular"
+                android:textSize="14sp"
+                android:layout_toEndOf="@id/item_message_view_expanded_sender_text"
+                android:layout_toRightOf="@id/item_message_view_expanded_sender_text"
+                android:layout_marginRight="5dp"
+                android:layout_marginEnd="5dp" />
+
+
+        </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/item_message_view_expanded_receiver_layout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        app:layout_constraintTop_toBottomOf="@id/item_message_view_expanded_sender_layout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:id="@+id/item_message_view_expanded_receiver_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="to: "
+            android:ellipsize="end"
+            android:fontFamily="@font/lato_regular"
+            android:textSize="14sp"
+            android:textColor="@color/colorGrey"/>
+
+        <TextView
+            android:id="@+id/item_message_view_expanded_receiver_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="CTemplar"
+            android:ellipsize="end"
+            android:textColor="@color/colorGrey"
+            android:fontFamily="@font/lato_regular"
+            android:textSize="14sp"
+            android:layout_toEndOf="@id/item_message_view_expanded_receiver_text"
+            android:layout_toRightOf="@id/item_message_view_expanded_receiver_text"
+            android:layout_marginRight="5dp"
+            android:layout_marginEnd="5dp" />
+
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/item_message_view_expanded_date_layout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_marginTop="5dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/item_message_view_expanded_receiver_layout">
+
+        <TextView
+            android:id="@+id/item_message_view_expanded_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:fontFamily="@font/lato_regular"
+            android:gravity="left"
+            android:lines="1"
+            android:text="Apr 6, 2018"
+            android:textColor="@color/colorGrey"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/item_message_view_expanded_details"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:fontFamily="@font/lato_regular"
+            android:gravity="left"
+            android:layout_marginRight="20dp"
+            android:layout_marginLeft="20dp"
+            android:lines="1"
+            android:text="@string/txt_hide_details"
+            android:textColor="@color/colorBlue"
+            android:textSize="14sp" />
+
+    </LinearLayout>
+
+    </android.support.constraint.ConstraintLayout>
+
+    <View
+        android:id="@+id/item_message_view_expanded_short_info_divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/colorGreyLight4"
+        app:layout_constraintTop_toBottomOf="@id/item_message_view_expanded_short"
+        android:visibility="visible"/>
+
+    <RelativeLayout
+        android:id="@+id/item_message_view_expanded_credentials"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/item_message_view_expanded_short_info_divider"
+        android:background="@color/colorGreyLight6"
+        android:paddingLeft="16dp"
+        android:paddingStart="16dp"
+        android:paddingRight="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
+        android:visibility="gone">
+
+        <RelativeLayout
+            android:id="@+id/item_message_view_from_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/item_message_view_from_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="From: "
+                android:fontFamily="@font/lato_regular"
+                android:textSize="14sp"
+                android:textColor="@color/colorGreyLight5"/>
+
+            <TextView
+                android:id="@+id/item_message_view_from_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="CTemplar"
+                android:fontFamily="@font/lato_regular"
+                android:textColor="@color/colorBlack4"
+                android:textSize="14sp"
+                android:layout_toRightOf="@id/item_message_view_from_text"
+                android:layout_toEndOf="@id/item_message_view_from_text"
+                android:layout_marginRight="5dp"
+                android:layout_marginEnd="5dp" />
+
+            <TextView
+                android:id="@+id/item_message_view_from_email"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="&lt;contact@ctemplar.ch&gt;"
+                android:fontFamily="@font/lato_regular"
+                android:textSize="14sp"
+                android:textColor="@color/colorGreyLight5"
+                android:layout_toRightOf="@id/item_message_view_from_name"
+                android:layout_toEndOf="@id/item_message_view_from_name" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/item_message_view_to_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/item_message_view_from_layout"
+            android:layout_marginTop="5dp">
+
+            <TextView
+                android:id="@+id/item_message_view_to_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="To: "
+                android:fontFamily="@font/lato_regular"
+                android:textSize="14sp"
+                android:textColor="@color/colorGreyLight5"/>
+
+            <TextView
+                android:id="@+id/item_message_view_to_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="John Doe"
+                android:fontFamily="@font/lato_regular"
+                android:textColor="@color/colorBlack4"
+                android:textSize="14sp"
+                android:layout_toRightOf="@id/item_message_view_to_text"
+                android:layout_toEndOf="@id/item_message_view_to_text"
+                android:layout_marginRight="5dp"
+                android:layout_marginEnd="5dp" />
+
+            <TextView
+                android:id="@+id/item_message_view_to_email"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="&lt;johndoe@ctemplar.ch&gt;"
+                android:fontFamily="@font/lato_regular"
+                android:textSize="14sp"
+                android:textColor="@color/colorGreyLight5"
+                android:layout_toRightOf="@id/item_message_view_to_name"
+                android:layout_toEndOf="@id/item_message_view_to_name" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/item_message_view_CC_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/item_message_view_to_layout"
+            android:layout_marginTop="5dp">
+
+            <TextView
+                android:id="@+id/item_message_view_CC_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="CC: "
+                android:fontFamily="@font/lato_regular"
+                android:textSize="14sp"
+                android:textColor="@color/colorGreyLight5"/>
+
+            <TextView
+                android:id="@+id/item_message_view_CC_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Sam Smith"
+                android:fontFamily="@font/lato_regular"
+                android:textColor="@color/colorBlack4"
+                android:textSize="14sp"
+                android:layout_toRightOf="@id/item_message_view_CC_text"
+                android:layout_toEndOf="@id/item_message_view_CC_text"
+                android:layout_marginRight="5dp"
+                android:layout_marginEnd="5dp" />
+
+            <TextView
+                android:id="@+id/item_message_view_CC_email"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="&lt;samsmitht@ctemplar.ch&gt;"
+                android:fontFamily="@font/lato_regular"
+                android:textSize="14sp"
+                android:textColor="@color/colorGreyLight5"
+                android:layout_toRightOf="@id/item_message_view_CC_name"
+                android:layout_toEndOf="@id/item_message_view_CC_name" />
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+    <View
+        android:id="@+id/item_message_view_expanded_credentials_divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/colorGreyLight4"
+        app:layout_constraintTop_toBottomOf="@id/item_message_view_expanded_credentials"
+        android:visibility="gone"/>
+
+    <RelativeLayout
+        android:id="@+id/item_message_view_expanded_content_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="12dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/item_message_view_expanded_credentials_divider">
+
+        <WebView
+            android:id="@+id/item_message_view_expanded_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        </WebView>
+
+    </RelativeLayout>
+
+</android.support.constraint.ConstraintLayout>

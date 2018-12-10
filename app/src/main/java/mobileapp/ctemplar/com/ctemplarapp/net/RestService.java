@@ -56,6 +56,9 @@ public interface RestService {
     @GET("/emails/messages/")
     Observable<MessagesResponse> getMessage(@Query("id") long id);
 
+    @GET("/emails/messages/")
+    Observable<MessagesResponse> getChainMessages(@Query("id__in") long id);
+
     @PATCH("/emails/messages/{id}/")
     Observable<MessagesResult> markMessageAsRead(@Path("id") long id, @Body MarkMessageAsReadRequest request);
 

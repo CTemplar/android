@@ -84,6 +84,9 @@ public class MessagesResult {
     @SerializedName("parent")
     private String parent;
 
+    @SerializedName("children")
+    private MessagesResult[] children;
+
     public long getId() {
         return id;
     }
@@ -193,5 +196,13 @@ public class MessagesResult {
 
     public void setStarred(boolean starred) {
         isStarred = starred;
+    }
+
+    public MessagesResult[] getChildren() {
+        return children;
+    }
+
+    public void setChildren(MessagesResult[] children) {
+        this.children = children;
     }
 }
