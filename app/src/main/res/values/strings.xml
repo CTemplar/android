@@ -77,6 +77,9 @@ If you have further questions please email <![CDATA[<u><a href="mailto:support@c
     <string name="txt_loading">Loading...</string>
     <string name="txt_add_contact">Add contact</string>
 
+    <!-- VIEW MESSAGES -->
+    <string name="txt_hide_details">View details</string>
+
     <!-- ERRORS -->
 
     <string name="error_invalid_email">Invalid email. Correct or remove it</string>

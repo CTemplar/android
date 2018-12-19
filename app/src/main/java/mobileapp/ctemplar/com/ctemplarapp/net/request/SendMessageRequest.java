@@ -15,17 +15,29 @@ public class SendMessageRequest {
     @SerializedName("folder")
     private String folder;
 
+    @SerializedName("send")
+    private boolean send;
+
+    @SerializedName("is_encrypted")
+    private boolean isEncrypted;
+
+    @SerializedName("parent")
+    private Long parent;
+
     @SerializedName("mailbox")
     private long mailbox;
 
     @SerializedName("receiver")
     private List<String> receivers;
 
-    public SendMessageRequest(String subject, String content, String folder, long mailbox) {
+    public SendMessageRequest(String subject, String content, String folder, boolean send, boolean isEncrypted, long mailbox, Long parent) {
         this.subject = subject;
         this.content = content;
         this.folder = folder;
+        this.send = send;
+        this.isEncrypted = isEncrypted;
         this.mailbox = mailbox;
+        this.parent = parent;
     }
 
 
@@ -67,5 +79,29 @@ public class SendMessageRequest {
 
     public void setReceivers(List<String> receivers) {
         this.receivers = receivers;
+    }
+
+    public boolean getIsEncrypted() {
+        return isEncrypted;
+    }
+
+    public void setIsEncrypted(boolean isEncrypted) {
+        this.isEncrypted = isEncrypted;
+    }
+
+    public boolean isSend() {
+        return send;
+    }
+
+    public void setSend(boolean send) {
+        this.send = send;
+    }
+
+    public Long getParent() {
+        return parent;
+    }
+
+    public void setParent(Long parent) {
+        this.parent = parent;
     }
 }

@@ -136,6 +136,12 @@ public class UserRepository {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
+    public Observable<MessagesResponse> getChainMessages(long id) {
+        return service.getChainMessages(id)
+                .subscribeOn(io.reactivex.schedulers.Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
     public Observable<MessagesResult> markMessageAsRead(long id) {
         return service.markMessageAsRead(id, new MarkMessageAsReadRequest())
                 .subscribeOn(io.reactivex.schedulers.Schedulers.io())

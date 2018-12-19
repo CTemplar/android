@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingStart="16dp"
+    android:paddingLeft="16dp"
+    android:paddingEnd="26dp"
+    android:paddingRight="26dp"
+    android:paddingTop="16dp"
+    android:paddingBottom="16dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+        android:id="@+id/item_message_view_collapsed_sender"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:fontFamily="@font/lato_regular"
+        android:gravity="left"
+        android:lines="1"
+        android:text="CTemplar"
+        android:textColor="@color/colorDarkBlue3"
+        android:textSize="14sp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="spread" />
+
+    <TextView
+        android:id="@+id/item_message_view_collapsed_content"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:ellipsize="end"
+        android:fontFamily="@font/lato_regular"
+        android:gravity="left"
+        android:lines="1"
+        android:text="You now have an inbox that is protected by strong encryption"
+        android:textColor="@color/colorGrey"
+        android:textSize="14sp"
+        app:layout_constraintTop_toBottomOf="@id/item_message_view_collapsed_sender"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="spread" />
+
+</android.support.constraint.ConstraintLayout>
