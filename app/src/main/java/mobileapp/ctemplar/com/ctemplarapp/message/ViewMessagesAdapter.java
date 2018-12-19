@@ -2,7 +2,6 @@ package mobileapp.ctemplar.com.ctemplarapp.message;
 
 import android.content.Context;
 import android.text.Html;
-import android.text.Layout;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.view.LayoutInflater;
@@ -12,12 +11,9 @@ import android.webkit.WebView;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import net.kibotu.pgp.Pgp;
-
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -25,6 +21,7 @@ import java.util.Locale;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResult;
+import mobileapp.ctemplar.com.ctemplarapp.repository.PGPManager;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import timber.log.Timber;
 
@@ -83,7 +80,10 @@ public class ViewMessagesAdapter extends BaseAdapter {
             expandedView.setVisibility(View.VISIBLE);
         }
 
-        String encodedMessage = decodeContent(messageData.getContent(), password);
+        PGPManager pgpManager = new PGPManager();
+        String privateKey = currentMailbox.getPrivateKey();
+        String encodedMessage = pgpManager.decryptMessage(messageData.getContent(), privateKey, password);
+
         String style = "<style type=\"text/css\">*{width:auto;}</style>";
         String messageWithStyle = style + encodedMessage;
         String encodedContent = Base64.encodeToString(messageWithStyle.getBytes(), Base64.NO_PADDING);
@@ -183,17 +183,4 @@ public class ViewMessagesAdapter extends BaseAdapter {
         return stringDate;
     }
 
-    private String decodeContent(String encodedString, String password) {
-        Pgp.setPrivateKey(currentMailbox.getPrivateKey());
-        Pgp.setPublicKey(currentMailbox.getPublicKey());
-        String result = "";
-
-        try {
-            result = Pgp.decrypt(encodedString, password);
-        } catch (Exception e) {
-            Timber.e("Pgp decrypt error: %s", e.getMessage());
-        }
-
-        return result;
-    }
 }

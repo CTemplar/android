@@ -65,7 +65,6 @@ dependencies {
     implementation 'io.reactivex.rxjava2:rxjava:2.2.2'
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'
     implementation 'uk.co.chrisjenx:calligraphy:2.3.0'
-    implementation 'com.github.kibotu:android-pgp:1.2.1'
 
     implementation 'com.google.dagger:dagger:2.17'
     annotationProcessor 'com.google.dagger:dagger-compiler:2.17'
