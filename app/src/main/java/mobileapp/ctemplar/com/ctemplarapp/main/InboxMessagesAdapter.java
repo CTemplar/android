@@ -6,15 +6,10 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.Spanned;
-import android.text.SpannedString;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Filter;
-import android.widget.Filterable;
-
-import net.kibotu.pgp.Pgp;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +18,7 @@ import io.reactivex.subjects.PublishSubject;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResult;
+import mobileapp.ctemplar.com.ctemplarapp.repository.PGPManager;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
 
@@ -113,7 +109,11 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessageViewH
         String password =
                 CTemplarApp.getInstance().getSharedPreferences("pref_user", Context.MODE_PRIVATE).getString("key_password", null);
 
-        String messageContent = decodeContent(messagesResult.getContent(), password).replaceAll("<img.+?>", "");
+        PGPManager pgpManager = new PGPManager();
+        String privateKey = currentMailbox.getPrivateKey();
+        String messageContent = pgpManager.decryptMessage(messagesResult.getContent(), privateKey, password);
+        messageContent = messageContent.replaceAll("<img.+?>", "");
+
         Spanned contentMessage = Html.fromHtml(messageContent);
         holder.txtContent.setText(contentMessage);
     }
@@ -121,21 +121,6 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessageViewH
     @Override
     public int getItemCount() {
         return filteredList.size();
-    }
-
-    private String decodeContent(String encodedString, String password) {
-
-        Pgp.setPrivateKey(currentMailbox.getPrivateKey());
-        Pgp.setPublicKey(currentMailbox.getPublicKey());
-        String result = "";
-
-        try {
-            result = Pgp.decrypt(encodedString, password);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return result;
     }
 
     public PublishSubject<Long> getOnClickSubject() {

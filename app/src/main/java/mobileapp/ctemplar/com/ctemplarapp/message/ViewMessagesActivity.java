@@ -14,7 +14,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import net.kibotu.pgp.Pgp;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -32,6 +31,7 @@ import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResult;
+import mobileapp.ctemplar.com.ctemplarapp.repository.PGPManager;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import timber.log.Timber;
 
@@ -40,7 +40,7 @@ public class ViewMessagesActivity extends BaseActivity {
     private MessagesResult parentMessage;
     private MessagesResult lastMessage;
     private MailboxEntity currentMailbox;
-    private String encodedLastMessage;
+    private String decryptedLastMessage;
 
     @BindView(R.id.activity_view_messages_messages)
     ListView messagesListView;
@@ -106,7 +106,13 @@ public class ViewMessagesActivity extends BaseActivity {
                         }
 
                         lastMessage = messagesArrayList.get(messagesArrayList.size() - 1);
-                        encodedLastMessage = decodeContent(ViewMessagesActivity.this.lastMessage.getContent(), password);
+
+                        PGPManager pgpManager = new PGPManager();
+                        String privateKey = currentMailbox.getPrivateKey();
+                        String encryptedMessage = ViewMessagesActivity.this.lastMessage.getContent();
+                        decryptedLastMessage = pgpManager.decryptMessage(encryptedMessage, privateKey, password);
+
+                        starImageView.setSelected(parentMessage.isStarred());
                     }
 
                     ViewMessagesAdapter adapter = new ViewMessagesAdapter(messagesArrayList);
@@ -122,6 +128,7 @@ public class ViewMessagesActivity extends BaseActivity {
                     Timber.e("Messages doesn't exists");
                     Toast.makeText(getApplicationContext(), "Messages doesn't exists", Toast.LENGTH_SHORT).show();
                     onBackPressed();
+                    return;
                 }
             }
         });
@@ -137,20 +144,6 @@ public class ViewMessagesActivity extends BaseActivity {
                 }
             }
         });
-    }
-
-    private String decodeContent(String encodedString, String password) {
-        Pgp.setPrivateKey(currentMailbox.getPrivateKey());
-        Pgp.setPublicKey(currentMailbox.getPublicKey());
-        String result = "";
-
-        try {
-            result = Pgp.decrypt(encodedString, password);
-        } catch (Exception e) {
-            Timber.e("Pgp decrypt error: %s", e.getMessage());
-        }
-
-        return result;
     }
 
     private void setSubject(String subject) {
@@ -203,7 +196,7 @@ public class ViewMessagesActivity extends BaseActivity {
         Intent intent = new Intent(this, SendMessageActivity.class);
         intent.putExtra(Intent.EXTRA_EMAIL, new String[] { lastMessage.getSender() });
         intent.putExtra(Intent.EXTRA_SUBJECT, lastMessage.getSubject());
-        intent.putExtra(Intent.EXTRA_TEXT, replyHead() + Html.fromHtml(encodedLastMessage));
+        intent.putExtra(Intent.EXTRA_TEXT, replyHead() + Html.fromHtml(decryptedLastMessage));
         intent.putExtra(SendMessageFragment.PARENT_ID, lastMessage.getId());
         startActivity(intent);
     }
@@ -213,7 +206,7 @@ public class ViewMessagesActivity extends BaseActivity {
         Intent intent = new Intent(this, SendMessageActivity.class);
         intent.putExtra(Intent.EXTRA_EMAIL, new String[] { lastMessage.getSender() });
         intent.putExtra(Intent.EXTRA_SUBJECT, lastMessage.getSubject());
-        intent.putExtra(Intent.EXTRA_TEXT, replyHead() + Html.fromHtml(encodedLastMessage));
+        intent.putExtra(Intent.EXTRA_TEXT, replyHead() + Html.fromHtml(decryptedLastMessage));
         intent.putExtra(Intent.EXTRA_CC, lastMessage.getCC());
         intent.putExtra(Intent.EXTRA_BCC, lastMessage.getBCC());
         intent.putExtra(SendMessageFragment.PARENT_ID, lastMessage.getId());
@@ -224,7 +217,7 @@ public class ViewMessagesActivity extends BaseActivity {
     public void onClickForward() {
         Intent intent = new Intent(this, SendMessageActivity.class);
         intent.putExtra(Intent.EXTRA_SUBJECT, lastMessage.getSubject());
-        intent.putExtra(Intent.EXTRA_TEXT, forwardHead() + Html.fromHtml(encodedLastMessage));
+        intent.putExtra(Intent.EXTRA_TEXT, forwardHead() + Html.fromHtml(decryptedLastMessage));
         startActivity(intent);
     }
 

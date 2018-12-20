@@ -11,13 +11,10 @@ import android.text.Html;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.view.View;
-import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
-import net.kibotu.pgp.Pgp;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -31,6 +28,7 @@ import mobileapp.ctemplar.com.ctemplarapp.BaseFragment;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResult;
+import mobileapp.ctemplar.com.ctemplarapp.repository.PGPManager;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import timber.log.Timber;
 
@@ -106,20 +104,6 @@ public class ViewMessageFragment extends BaseFragment {
         });
     }
 
-    private String decodeContent(String encodedString, String password) {
-        Pgp.setPrivateKey(currentMailbox.getPrivateKey());
-        Pgp.setPublicKey(currentMailbox.getPublicKey());
-        String result = "";
-
-        try {
-            result = Pgp.decrypt(encodedString, password);
-        } catch (Exception e) {
-            Timber.e("Pgp decrypt error: %s", e.getMessage());
-        }
-
-        return result;
-    }
-
     static String[] addQuotes(String[] receivers) {
         String[] receiversList = new String[receivers.length];
         for (int i = 0; i < receiversList.length; i++) {
@@ -170,7 +154,10 @@ public class ViewMessageFragment extends BaseFragment {
         String password =
                 CTemplarApp.getInstance().getSharedPreferences("pref_user", Context.MODE_PRIVATE).getString("key_password", null);
 
-        encodedMessage = decodeContent(messagesResult.getContent(), password);
+        PGPManager pgpManager = new PGPManager();
+        String privateKey = currentMailbox.getPrivateKey();
+        encodedMessage = pgpManager.decryptMessage(messagesResult.getContent(), privateKey, password);
+
         String style = "<style type=\"text/css\">*{width:auto;}</style>";
         String messageWithStyle = style + encodedMessage;
         String encodedContent = Base64.encodeToString(messageWithStyle.getBytes(), Base64.NO_PADDING);

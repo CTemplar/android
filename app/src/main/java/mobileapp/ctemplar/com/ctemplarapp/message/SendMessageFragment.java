@@ -6,9 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.text.method.ScrollingMovementMethod;
 import android.util.Patterns;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -32,6 +30,8 @@ import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SendMessageRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.ContactData;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.ContactsResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.KeyResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.KeyResult;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 
 public class SendMessageFragment extends BaseFragment {
@@ -147,6 +147,18 @@ public class SendMessageFragment extends BaseFragment {
             }
         });
         mainModel.getContacts(20, 0);
+
+        mainModel.getKeyResponse().observe(this, new Observer<KeyResponse>() {
+            @Override
+            public void onChanged(@Nullable KeyResponse keyResponse) {
+                if (keyResponse != null && keyResponse.getKeyResult() != null && keyResponse.getKeyResult().length > 0) {
+                    KeyResult keyResult = keyResponse.getKeyResult()[0];
+                    String publicKey = keyResult.getPublicKey();
+                    String email = keyResult.getEmail();
+                    sendMessage(email, publicKey);
+                }
+            }
+        });
     }
 
     private void handleContactsList(@Nullable ContactsResponse contactsResponse) {
@@ -180,6 +192,10 @@ public class SendMessageFragment extends BaseFragment {
             return;
         }
 
+        mainModel.getEmailPublicKey(toEmail);
+    }
+
+    private void sendMessage(String email, String publicKey) {
         Toast.makeText(getActivity(), "Sending mail...", Toast.LENGTH_SHORT).show();
 
         SendMessageRequest messageRequest = new SendMessageRequest(
@@ -192,12 +208,13 @@ public class SendMessageFragment extends BaseFragment {
                 parentId
         );
 
-        if (!toEmail.isEmpty()) {
+        if (!email.isEmpty()) {
             List<String> receivers = new LinkedList<>();
-            receivers.add(toEmail);
+            receivers.add(email);
             messageRequest.setReceivers(receivers);
         }
-        mainModel.sendMessage(messageRequest);
+
+        mainModel.sendMessage(messageRequest, publicKey);
     }
 
     @OnClick(R.id.fragment_send_message_to_add_button)

@@ -1,20 +1,13 @@
 package mobileapp.ctemplar.com.ctemplarapp.utils;
 
 import android.text.TextUtils;
-import android.util.Log;
 
-import net.kibotu.pgp.Pgp;
-
-import org.spongycastle.openpgp.PGPException;
-import org.spongycastle.openpgp.PGPKeyRingGenerator;
-
-import java.io.IOException;
 import java.util.concurrent.Callable;
 
 import io.reactivex.Observable;
-import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import mobileapp.ctemplar.com.ctemplarapp.net.entity.PGPKeyEntity;
+import mobileapp.ctemplar.com.ctemplarapp.repository.PGPManager;
 
 public class EncodeUtils {
 
@@ -39,28 +32,11 @@ public class EncodeUtils {
         return Observable.fromCallable(new Callable<PGPKeyEntity>() {
             @Override
             public PGPKeyEntity call() throws Exception {
-                return getPGPKey(password);
+                PGPManager pgpManager = new PGPManager();
+                return pgpManager.generateKeys("name <name@domain.com>", password); //TODO
             }
         }).subscribeOn(io.reactivex.schedulers.Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread());
-    }
-
-    public static PGPKeyEntity getPGPKey(String password) {
-        PGPKeyRingGenerator generator = null;
-        String publicKey = null;
-        String privateKey = null;
-
-        try {
-            generator = Pgp.generateKeyRingGenerator(password.toCharArray());
-            publicKey = Pgp.genPGPPublicKey(generator);
-            privateKey = Pgp.genPGPPrivKey(generator);
-        } catch (PGPException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return new PGPKeyEntity(publicKey, privateKey);
     }
 
     public static String decodeMessage(String encodedMessage, String publicKey, String privateKey) {

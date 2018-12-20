@@ -13,6 +13,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.request.SignUpRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.CheckUsernameResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.ContactData;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.ContactsResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.KeyResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Mailboxes.MailboxesResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResult;
@@ -70,6 +71,9 @@ public interface RestService {
 
     @GET("/emails/mailboxes/")
     Observable<MailboxesResponse> getMailboxes(@Query("limit") int limit, @Query("offset") int offset);
+
+    @GET("/emails/keys/")
+    Observable<KeyResponse> getKey(@Query("email__in") String emailIn);
 
     @POST("/emails/messages/")
     Observable<MessagesResult> sendMessage(@Body SendMessageRequest request);
