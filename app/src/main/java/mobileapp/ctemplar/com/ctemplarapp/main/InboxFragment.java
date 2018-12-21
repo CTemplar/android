@@ -4,9 +4,13 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BaseTransientBottomBar;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
@@ -24,12 +28,17 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import mobileapp.ctemplar.com.ctemplarapp.BaseFragment;
 import mobileapp.ctemplar.com.ctemplarapp.R;
-import mobileapp.ctemplar.com.ctemplarapp.message.ViewMessagesActivity;
 import mobileapp.ctemplar.com.ctemplarapp.message.SendMessageActivity;
+import mobileapp.ctemplar.com.ctemplarapp.message.ViewMessagesActivity;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResult;
 
 public class InboxFragment extends BaseFragment {
+
+    private InboxMessagesAdapter adapter;
+    private MainActivityViewModel mainModel;
+    private InboxMessagesTouchListener touchListener;
 
     @BindView(R.id.fragment_inbox_recycler_view)
     RecyclerView recyclerView;
@@ -45,10 +54,6 @@ public class InboxFragment extends BaseFragment {
 
     @BindView(R.id.fragment_inbox_fab_compose)
     FloatingActionButton fabCompose;
-
-    private InboxMessagesAdapter adapter;
-
-    private MainActivityViewModel mainModel;
 
     private FilterDialogFragment.OnApplyClickListener onFilterApplyClickListener
             = new FilterDialogFragment.OnApplyClickListener() {
@@ -111,6 +116,7 @@ public class InboxFragment extends BaseFragment {
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(mLayoutManager);
+        recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
     }
 
     @Override
@@ -232,10 +238,6 @@ public class InboxFragment extends BaseFragment {
                             Intent intent = new Intent(getActivity(), ViewMessagesActivity.class);
                             intent.putExtra(ViewMessagesActivity.PARENT_ID, aLong);
                             getActivity().startActivity(intent);
-
-//                            Intent intent = new Intent(getActivity(), ViewMessageActivity.class);
-//                            intent.putExtra(ViewMessageActivity.ARG_ID, aLong);
-//                            getActivity().startActivity(intent);
                         }
 
                         @Override
@@ -249,6 +251,76 @@ public class InboxFragment extends BaseFragment {
                         }
                     });
             recyclerView.setAdapter(adapter);
+
+            touchListener = new InboxMessagesTouchListener(getActivity(), recyclerView);
+            touchListener
+//                    .setClickable(new InboxMessagesTouchListener.OnRowClickListener() {
+//                        @Override
+//                        public void onRowClicked(int position) {
+//                            //Toast.makeText(getActivity().getApplicationContext(), "Hello", Toast.LENGTH_SHORT).show();
+//                        }
+//
+//                        @Override
+//                        public void onIndependentViewClicked(int independentViewID, int position) {
+//
+//                        }
+//                    })
+                    .setSwipeOptionViews(R.id.item_message_view_holder_spam, R.id.item_message_view_holder_move, R.id.item_message_view_holder_delete)
+                    .setSwipeable(R.id.item_message_view_holder_foreground, R.id.item_message_view_holder_background, new InboxMessagesTouchListener.OnSwipeOptionsClickListener() {
+                        @Override
+                        public void onSwipeOptionClicked(int viewID, final int position) {
+                            switch (viewID){
+                                case R.id.item_message_view_holder_delete:
+                                    final MessagesResult deletedMessage = adapter.removeAt(position);
+                                    final String name = deletedMessage.getSubject();
+                                    Snackbar deleteSnackbar = Snackbar
+                                            .make(frameCompose, name + " removed!", Snackbar.LENGTH_LONG);
+                                    deleteSnackbar.setAction("UNDO", new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            adapter.restoreMessage(deletedMessage, position);
+                                        }
+                                    });
+                                    deleteSnackbar.addCallback(new BaseTransientBottomBar.BaseCallback<Snackbar>() {
+                                        @Override
+                                        public void onDismissed(Snackbar transientBottomBar, int event) {
+                                            if (event != DISMISS_EVENT_ACTION) {
+                                                mainModel.deleteMessage(deletedMessage);
+                                            }
+                                        }
+                                    });
+                                    deleteSnackbar.setActionTextColor(Color.YELLOW);
+                                    deleteSnackbar.show();
+                                    break;
+                                case R.id.item_message_view_holder_spam:
+                                    final MessagesResult spamMessage = adapter.removeAt(position);
+                                    Snackbar spamSnackbar = Snackbar
+                                            .make(frameCompose, "1 reported as spam", Snackbar.LENGTH_LONG);
+                                    spamSnackbar.setAction("UNDO", new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            adapter.restoreMessage(spamMessage, position);
+                                        }
+                                    });
+                                    spamSnackbar.addCallback(new BaseTransientBottomBar.BaseCallback<Snackbar>() {
+                                        @Override
+                                        public void onDismissed(Snackbar transientBottomBar, int event) {
+                                            if (event != DISMISS_EVENT_ACTION) {
+                                                mainModel.toSpam(spamMessage);
+                                            }
+                                        }
+                                    });
+                                    spamSnackbar.setActionTextColor(Color.YELLOW);
+                                    spamSnackbar.show();
+                                    break;
+                                case R.id.item_message_view_holder_move:
+                                    Toast.makeText(getActivity().getApplicationContext(), "Action move", Toast.LENGTH_SHORT).show();
+                                    break;
+                            }
+                        }
+                    });
+
+            recyclerView.addOnItemTouchListener(touchListener);
         }
     }
 

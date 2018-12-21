@@ -172,6 +172,12 @@ public class MainActivity extends BaseActivity
         } else if (id == R.id.nav_starred) {
             setTitle(R.string.nav_drawer_starred);
             mainModel.setCurrentFolder("starred");
+        } else if (id == R.id.nav_spam) {
+            setTitle(R.string.nav_drawer_spam);
+            mainModel.setCurrentFolder("spam");
+        } else if (id == R.id.nav_trash) {
+            setTitle(R.string.nav_drawer_trash);
+            mainModel.setCurrentFolder("trash");
         } else if (id == R.id.nav_contact) {
             setTitle(R.string.nav_drawer_contact);
             mainModel.setCurrentFolder("contact");

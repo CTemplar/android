@@ -3,7 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
 
-    <group android:checkableBehavior="single">
+    <group
+        android:id="@+id/activity_main_drawer_top"
+        android:checkableBehavior="single">
         <item
             android:id="@+id/nav_inbox"
             android:icon="@drawable/ic_drawer_inbox"
@@ -20,6 +22,19 @@
             android:id="@+id/nav_starred"
             android:icon="@drawable/ic_drawer_star"
             android:title="@string/nav_drawer_starred" />
+        <item
+            android:id="@+id/nav_spam"
+            android:icon="@drawable/ic_drawer_spam"
+            android:title="@string/nav_drawer_spam" />
+        <item
+            android:id="@+id/nav_trash"
+            android:icon="@drawable/ic_drawer_trash"
+            android:title="@string/nav_drawer_trash" />
+    </group>
+
+    <group
+        android:id="@+id/activity_main_drawer_bottom"
+        android:checkableBehavior="single">
         <item
             android:id="@+id/nav_contact"
             android:icon="@drawable/ic_drawer_contact"

@@ -5,7 +5,6 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
-import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
@@ -63,7 +62,7 @@ public class ViewMessageActivity extends BaseActivity {
             return; //ToDo
         }
 
-        ViewMessageFragment fragment = new ViewMessageFragment();
+        ViewMessagesFragment fragment = new ViewMessagesFragment();
         Bundle args = new Bundle();
         args.putLong(ARG_ID, id);
         fragment.setArguments(args);

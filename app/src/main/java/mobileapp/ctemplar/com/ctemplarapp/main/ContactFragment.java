@@ -160,7 +160,7 @@ public class ContactFragment extends BaseFragment {
                         }
                     }
                 });
-                snackbar.setActionTextColor(Color.BLUE);
+                snackbar.setActionTextColor(Color.YELLOW);
                 snackbar.show();
             }
         };

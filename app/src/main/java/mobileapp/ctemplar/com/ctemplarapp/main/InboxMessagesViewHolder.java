@@ -8,7 +8,7 @@ import android.widget.TextView;
 
 import mobileapp.ctemplar.com.ctemplarapp.R;
 
-public class InboxMessageViewHolder extends RecyclerView.ViewHolder{
+public class InboxMessagesViewHolder extends RecyclerView.ViewHolder{
     public View root;
     public TextView txtUsername;
     public TextView txtChildren;
@@ -21,7 +21,7 @@ public class InboxMessageViewHolder extends RecyclerView.ViewHolder{
     public ImageView imgStarred;
     public ImageView imgAttachment;
 
-    public InboxMessageViewHolder(@NonNull View itemView) {
+    public InboxMessagesViewHolder(@NonNull View itemView) {
         super(itemView);
         root = itemView;
         txtUsername = itemView.findViewById(R.id.message_holder_username);

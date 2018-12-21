@@ -15,7 +15,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.ContactsResponse
 import mobileapp.ctemplar.com.ctemplarapp.net.response.KeyResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResult;
 import mobileapp.ctemplar.com.ctemplarapp.repository.ContactsRepository;
-import mobileapp.ctemplar.com.ctemplarapp.repository.PGPManager;
+import mobileapp.ctemplar.com.ctemplarapp.utils.PGPManager;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 
@@ -87,6 +87,7 @@ public class SendMessageActivityViewModel extends ViewModel {
 
                     @Override
                     public void onError(Throwable e) {
+                        responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
                         //SendMessageActivityViewModel.this.keyResponse.postValue(null);
                     }
 
