@@ -18,11 +18,11 @@ import io.reactivex.subjects.PublishSubject;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResult;
-import mobileapp.ctemplar.com.ctemplarapp.repository.PGPManager;
+import mobileapp.ctemplar.com.ctemplarapp.utils.PGPManager;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
 
-public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessageViewHolder> {
+public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesViewHolder> {
 
     private List<MessagesResult> messagesList;
     private List<MessagesResult> filteredList;
@@ -40,14 +40,14 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessageViewH
 
     @NonNull
     @Override
-    public InboxMessageViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+    public InboxMessagesViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_message_view_holder, viewGroup, false);
 
-        return new InboxMessageViewHolder(view);
+        return new InboxMessagesViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final InboxMessageViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final InboxMessagesViewHolder holder, int position) {
         final MessagesResult messagesResult = filteredList.get(position);
 
         holder.txtUsername.setText(messagesResult.getSender());
@@ -105,7 +105,7 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessageViewH
             holder.imgAttachment.setVisibility(View.GONE);
         }
 
-        holder.txtSubject.setText(messagesList.get(position).getSubject());
+        holder.txtSubject.setText(filteredList.get(position).getSubject());
         String password =
                 CTemplarApp.getInstance().getSharedPreferences("pref_user", Context.MODE_PRIVATE).getString("key_password", null);
 
@@ -121,6 +121,17 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessageViewH
     @Override
     public int getItemCount() {
         return filteredList.size();
+    }
+
+    public MessagesResult removeAt(int position) {
+        MessagesResult removedMessage = filteredList.remove(position);
+        notifyItemRemoved(position);
+        return removedMessage;
+    }
+
+    public void restoreMessage(MessagesResult deletedMessage, int position) {
+        filteredList.add(position, deletedMessage);
+        notifyItemInserted(position);
     }
 
     public PublishSubject<Long> getOnClickSubject() {

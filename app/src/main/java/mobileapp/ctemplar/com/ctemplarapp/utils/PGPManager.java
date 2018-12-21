@@ -1,4 +1,4 @@
-package mobileapp.ctemplar.com.ctemplarapp.repository;
+package mobileapp.ctemplar.com.ctemplarapp.utils;
 
 import com.didisoft.pgp.KeyPairInformation;
 import com.didisoft.pgp.KeyStore;

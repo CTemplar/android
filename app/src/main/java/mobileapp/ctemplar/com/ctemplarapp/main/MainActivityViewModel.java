@@ -26,6 +26,7 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.entity.ContactEntity;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EncodeUtils;
 import okhttp3.ResponseBody;
 import retrofit2.HttpException;
+import timber.log.Timber;
 
 public class MainActivityViewModel extends ViewModel {
 
@@ -255,14 +256,13 @@ public class MainActivityViewModel extends ViewModel {
                     @Override
                     public void onNext(SignInResponse signInResponse) {
                         userRepository.saveUserToken(signInResponse.getToken());
-                        // ToDo recall last request?
+                        // TODO recall last request?
                     }
                 });
     }
 
     public void deleteContact(final Contact contact) {
         contactsRepository.deleteLocalContact(contact.getId());
-
         contactsRepository.deleteContact(contact.getId())
                 .subscribe(new Observer<ResponseBody>() {
                     @Override
@@ -277,7 +277,7 @@ public class MainActivityViewModel extends ViewModel {
 
                     @Override
                     public void onError(Throwable e) {
-                        e.printStackTrace();
+                        Timber.e(e, "Delete contact");
                     }
 
                     @Override
@@ -287,6 +287,55 @@ public class MainActivityViewModel extends ViewModel {
                 });
     }
 
+    public void deleteMessage(final MessagesResult deletedMessage) {
+        userRepository.deleteMessage(deletedMessage.getId())
+                .subscribe(new Observer<ResponseBody>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(ResponseBody responseBody) {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Timber.e(e, "Delete message");
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    public void toSpam(final MessagesResult spamMessage) {
+        userRepository.toFolder(spamMessage.getId(), "spam")
+                .subscribe(new Observer<ResponseBody>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(ResponseBody responseBody) {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Timber.e(e, "Move message to spam");
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
 
     public void markMessageIsStarred(long id, boolean starred) {
         userRepository.markMessageIsStarred(id, starred)

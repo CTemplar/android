@@ -11,6 +11,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.RestService;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.CheckUsernameRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.MarkMessageAsReadRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.MarkMessageIsStarredRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.MoveFolderTo;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.RecoverPasswordRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SendMessageRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SignInRequest;
@@ -26,6 +27,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.SignInResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.SignUpResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.MyselfResponse;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
+import okhttp3.ResponseBody;
 
 @Singleton
 public class UserRepository {
@@ -133,6 +135,18 @@ public class UserRepository {
 
     public Observable<MessagesResponse> getMessage(long id) {
         return service.getMessage(id)
+                .subscribeOn(io.reactivex.schedulers.Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public Observable<ResponseBody> deleteMessage(long id) {
+        return service.deleteMessage(id)
+                .subscribeOn(io.reactivex.schedulers.Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public Observable<ResponseBody> toFolder(long id, String folder) {
+        return service.toFolder(id, new MoveFolderTo(folder))
                 .subscribeOn(io.reactivex.schedulers.Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }

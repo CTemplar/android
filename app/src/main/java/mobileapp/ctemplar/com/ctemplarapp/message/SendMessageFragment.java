@@ -1,5 +1,6 @@
 package mobileapp.ctemplar.com.ctemplarapp.message;
 
+import android.app.ProgressDialog;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
@@ -27,6 +28,7 @@ import butterknife.OnClick;
 import mobileapp.ctemplar.com.ctemplarapp.BaseFragment;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.R;
+import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SendMessageRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.ContactData;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.ContactsResponse;
@@ -38,6 +40,7 @@ public class SendMessageFragment extends BaseFragment {
 
     private SendMessageActivityViewModel mainModel;
     private Long parentId;
+    private ProgressDialog sendingProgress;
     public final static String PARENT_ID = "parent_id";
 
 //    @BindView(R.id.fragment_send_message_from_input)
@@ -159,6 +162,17 @@ public class SendMessageFragment extends BaseFragment {
                 }
             }
         });
+
+        mainModel.getResponseStatus().observe(this, new Observer<ResponseStatus>(){
+
+            @Override
+            public void onChanged(@Nullable ResponseStatus responseStatus) {
+                if (responseStatus == ResponseStatus.RESPONSE_ERROR) {
+                    sendingProgress.dismiss();
+                    Toast.makeText(getActivity(), "Message not sent", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
     private void handleContactsList(@Nullable ContactsResponse contactsResponse) {
@@ -192,12 +206,16 @@ public class SendMessageFragment extends BaseFragment {
             return;
         }
 
+        sendingProgress = new ProgressDialog(getActivity());
+        sendingProgress.setCanceledOnTouchOutside(false);
+        sendingProgress.setMessage("Sending mail...");
+        sendingProgress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        sendingProgress.show();
+
         mainModel.getEmailPublicKey(toEmail);
     }
 
     private void sendMessage(String email, String publicKey) {
-        Toast.makeText(getActivity(), "Sending mail...", Toast.LENGTH_SHORT).show();
-
         SendMessageRequest messageRequest = new SendMessageRequest(
                 subjectEditText.getText().toString(),
                 composeEditText.getText().toString(),
@@ -215,6 +233,7 @@ public class SendMessageFragment extends BaseFragment {
         }
 
         mainModel.sendMessage(messageRequest, publicKey);
+        sendingProgress.dismiss();
     }
 
     @OnClick(R.id.fragment_send_message_to_add_button)

@@ -7,7 +7,6 @@ import java.util.concurrent.Callable;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import mobileapp.ctemplar.com.ctemplarapp.net.entity.PGPKeyEntity;
-import mobileapp.ctemplar.com.ctemplarapp.repository.PGPManager;
 
 public class EncodeUtils {
 
