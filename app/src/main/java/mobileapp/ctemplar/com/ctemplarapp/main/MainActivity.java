@@ -21,6 +21,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import butterknife.BindView;
 import mobileapp.ctemplar.com.ctemplarapp.BaseActivity;
@@ -45,9 +46,7 @@ public class MainActivity extends BaseActivity
     public View progressBackground;
 
     private int mLastSelectedId;
-
     private MainActivityViewModel mainModel;
-
     private MailboxEntity defaultMailbox;
 
     @Override
@@ -59,10 +58,10 @@ public class MainActivity extends BaseActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.main_toolbar);
+        Toolbar toolbar = findViewById(R.id.main_toolbar);
         setSupportActionBar(toolbar);
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
@@ -73,8 +72,12 @@ public class MainActivity extends BaseActivity
         bar.setDisplayHomeAsUpEnabled(true);
         bar.setHomeAsUpIndicator(R.drawable.ic_drawer_menu);
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        View headerView = navigationView.getHeaderView(0);
+        TextView navUsername = headerView.findViewById(R.id.main_activity_username);
+        TextView navEmail = headerView.findViewById(R.id.main_activity_email);
 
         if (savedInstanceState == null) {
             defaultMailbox = CTemplarApp.getAppDatabase().mailboxDao().getDefault();
@@ -82,6 +85,8 @@ public class MainActivity extends BaseActivity
                 Timber.i("Standard startup");
                 setCheckedItem(R.id.nav_inbox);
                 showFragment(new InboxFragment());
+                navUsername.setText(defaultMailbox.displayName);
+                navEmail.setText(defaultMailbox.email);
             }
         }
 
@@ -172,6 +177,9 @@ public class MainActivity extends BaseActivity
         } else if (id == R.id.nav_starred) {
             setTitle(R.string.nav_drawer_starred);
             mainModel.setCurrentFolder("starred");
+        } else if (id == R.id.nav_archive) {
+            setTitle(R.string.nav_drawer_archive);
+            mainModel.setCurrentFolder("archive");
         } else if (id == R.id.nav_spam) {
             setTitle(R.string.nav_drawer_spam);
             mainModel.setCurrentFolder("spam");
@@ -284,7 +292,6 @@ public class MainActivity extends BaseActivity
                     setCheckedItem(R.id.nav_inbox);
                     showFragment(new InboxFragment());
                 }
-                // mainModel.getMessages(20, 0, "inbox");
                 break;
         }
     }

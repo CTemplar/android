@@ -2,80 +2,31 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:theme="@style/NavigationBarLight"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <android.support.constraint.ConstraintLayout
-        android:id="@+id/activity_view_messages_title_bar"
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/activity_view_messages_bar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        android:background="@color/colorGreyLight"
-        android:minHeight="60dp">
+        android:theme="@style/AppTheme.AppBarOverlay">
 
-        <ImageView
-            android:id="@+id/activity_view_messages_back"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="4dp"
-            android:src="@drawable/icon_back"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginLeft="12dp"
-            android:layout_marginStart="12dp"
-            android:contentDescription="Back" />
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/activity_view_messages_bar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            android:theme="@style/ActionBarLight"
+            app:popupTheme="@style/AppTheme.PopupOverlay">
+        </android.support.v7.widget.Toolbar>
 
-        <ImageView
-            android:id="@+id/activity_view_messages_spam"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="5dp"
-            android:contentDescription="Spam"
-            android:src="@drawable/ic_spam"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintRight_toLeftOf="@id/activity_view_messages_move"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <ImageView
-            android:id="@+id/activity_view_messages_move"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="5dp"
-            android:contentDescription="Move"
-            android:src="@drawable/ic_move"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintRight_toLeftOf="@id/activity_view_messages_delete"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <ImageView
-            android:id="@+id/activity_view_messages_delete"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="5dp"
-            android:contentDescription="Delete"
-            android:src="@drawable/ic_trash"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintRight_toLeftOf="@id/activity_view_messages_more"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <ImageView
-            android:id="@+id/activity_view_messages_more"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="4dp"
-            android:contentDescription="More"
-            android:src="@drawable/ic_more"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-    </android.support.constraint.ConstraintLayout>
+    </android.support.design.widget.AppBarLayout>
 
     <RelativeLayout
         android:id="@+id/activity_view_messages_subject_layout"
         android:layout_width="match_parent"
         android:layout_height="47dp"
-        app:layout_constraintTop_toBottomOf="@id/activity_view_messages_title_bar"
+        app:layout_constraintTop_toBottomOf="@id/activity_view_messages_bar_layout"
         android:background="@color/colorWhiteLight">
 
         <TextView

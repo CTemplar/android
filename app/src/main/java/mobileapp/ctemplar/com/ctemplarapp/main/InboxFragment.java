@@ -39,6 +39,7 @@ public class InboxFragment extends BaseFragment {
     private InboxMessagesAdapter adapter;
     private MainActivityViewModel mainModel;
     private InboxMessagesTouchListener touchListener;
+    private String currentFolder;
 
     @BindView(R.id.fragment_inbox_recycler_view)
     RecyclerView recyclerView;
@@ -100,7 +101,7 @@ public class InboxFragment extends BaseFragment {
         mainModel.getCurrentFolder().observe(this, new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {
-                String currentFolder = mainModel.getCurrentFolder().getValue();
+                currentFolder = mainModel.getCurrentFolder().getValue();
                 if (currentFolder.equals("starred")) {
                     mainModel.getStarredMessages(20, 0, 1);
                 } else {
@@ -237,6 +238,7 @@ public class InboxFragment extends BaseFragment {
                         public void onNext(Long aLong) {
                             Intent intent = new Intent(getActivity(), ViewMessagesActivity.class);
                             intent.putExtra(ViewMessagesActivity.PARENT_ID, aLong);
+                            intent.putExtra(ViewMessagesActivity.FOLDER_NAME, mainModel.currentFolder.getValue());
                             getActivity().startActivity(intent);
                         }
 
@@ -254,17 +256,6 @@ public class InboxFragment extends BaseFragment {
 
             touchListener = new InboxMessagesTouchListener(getActivity(), recyclerView);
             touchListener
-//                    .setClickable(new InboxMessagesTouchListener.OnRowClickListener() {
-//                        @Override
-//                        public void onRowClicked(int position) {
-//                            //Toast.makeText(getActivity().getApplicationContext(), "Hello", Toast.LENGTH_SHORT).show();
-//                        }
-//
-//                        @Override
-//                        public void onIndependentViewClicked(int independentViewID, int position) {
-//
-//                        }
-//                    })
                     .setSwipeOptionViews(R.id.item_message_view_holder_spam, R.id.item_message_view_holder_move, R.id.item_message_view_holder_delete)
                     .setSwipeable(R.id.item_message_view_holder_foreground, R.id.item_message_view_holder_background, new InboxMessagesTouchListener.OnSwipeOptionsClickListener() {
                         @Override
@@ -273,8 +264,15 @@ public class InboxFragment extends BaseFragment {
                                 case R.id.item_message_view_holder_delete:
                                     final MessagesResult deletedMessage = adapter.removeAt(position);
                                     final String name = deletedMessage.getSubject();
-                                    Snackbar deleteSnackbar = Snackbar
-                                            .make(frameCompose, name + " removed!", Snackbar.LENGTH_LONG);
+                                    Snackbar deleteSnackbar;
+                                    if (currentFolder.equals("trash")) {
+                                        deleteSnackbar = Snackbar
+                                                .make(frameCompose, name + " permanently deleted", Snackbar.LENGTH_LONG);
+                                    } else {
+                                        deleteSnackbar = Snackbar
+                                                .make(frameCompose, name + " removed", Snackbar.LENGTH_LONG);
+                                    }
+
                                     deleteSnackbar.setAction("UNDO", new View.OnClickListener() {
                                         @Override
                                         public void onClick(View view) {
@@ -285,13 +283,18 @@ public class InboxFragment extends BaseFragment {
                                         @Override
                                         public void onDismissed(Snackbar transientBottomBar, int event) {
                                             if (event != DISMISS_EVENT_ACTION) {
-                                                mainModel.deleteMessage(deletedMessage);
+                                                if (currentFolder.equals("trash")) {
+                                                    mainModel.deleteMessage(deletedMessage);
+                                                } else {
+                                                    mainModel.toFolder(deletedMessage, "trash");
+                                                }
                                             }
                                         }
                                     });
                                     deleteSnackbar.setActionTextColor(Color.YELLOW);
                                     deleteSnackbar.show();
                                     break;
+
                                 case R.id.item_message_view_holder_spam:
                                     final MessagesResult spamMessage = adapter.removeAt(position);
                                     Snackbar spamSnackbar = Snackbar
@@ -306,13 +309,14 @@ public class InboxFragment extends BaseFragment {
                                         @Override
                                         public void onDismissed(Snackbar transientBottomBar, int event) {
                                             if (event != DISMISS_EVENT_ACTION) {
-                                                mainModel.toSpam(spamMessage);
+                                                mainModel.toFolder(spamMessage, "spam");
                                             }
                                         }
                                     });
                                     spamSnackbar.setActionTextColor(Color.YELLOW);
                                     spamSnackbar.show();
                                     break;
+
                                 case R.id.item_message_view_holder_move:
                                     Toast.makeText(getActivity().getApplicationContext(), "Action move", Toast.LENGTH_SHORT).show();
                                     break;

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/menu_view_spam"
+        android:icon="@drawable/ic_spam"
+        android:title="Spam"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/menu_view_unspam"
+        android:icon="@drawable/icon_unread"
+        android:title="Unspam"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/menu_view_move"
+        android:icon="@drawable/ic_move"
+        android:title="Move"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/menu_view_trash"
+        android:icon="@drawable/ic_trash"
+        android:title="Trash"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/menu_view_inbox"
+        android:title="Move to inbox"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/menu_view_archive"
+        android:title="Move to archive"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/menu_view_unread"
+        android:title="Mark as unread"
+        app:showAsAction="never"/>
+
+</menu>

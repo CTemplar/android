@@ -23,6 +23,7 @@ public class PGPManager {
     }
 
     public String encryptMessage(String message, String[] pubicKeys) {
+
         ByteArrayInputStream inputMessageStream = new ByteArrayInputStream(message.getBytes());
         ByteArrayOutputStream outputMessageStream = new ByteArrayOutputStream();
 
@@ -56,6 +57,7 @@ public class PGPManager {
     }
 
     public String decryptMessage(String message, String privateKey, String password) {
+
         ByteArrayInputStream inputMessageStream = new ByteArrayInputStream(message.getBytes());
         ByteArrayInputStream privateKeyStream = new ByteArrayInputStream(privateKey.getBytes());
         ByteArrayOutputStream outputMessageStream = new ByteArrayOutputStream();

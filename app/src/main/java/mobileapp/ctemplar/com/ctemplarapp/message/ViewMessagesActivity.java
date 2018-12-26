@@ -6,14 +6,18 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.TextUtils;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -29,18 +33,23 @@ import butterknife.OnClick;
 import mobileapp.ctemplar.com.ctemplarapp.BaseActivity;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.R;
+import mobileapp.ctemplar.com.ctemplarapp.main.MainActivityViewModel;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResult;
-import mobileapp.ctemplar.com.ctemplarapp.utils.PGPManager;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
+import mobileapp.ctemplar.com.ctemplarapp.utils.PGPManager;
 import timber.log.Timber;
 
 public class ViewMessagesActivity extends BaseActivity {
+
     public static final String PARENT_ID = "parent_id";
+    public static final String FOLDER_NAME = "folder_name";
+    private MainActivityViewModel mainModel;
     private MessagesResult parentMessage;
     private MessagesResult lastMessage;
     private MailboxEntity currentMailbox;
     private String decryptedLastMessage;
+    private String currentFolder;
 
     @BindView(R.id.activity_view_messages_messages)
     ListView messagesListView;
@@ -54,6 +63,9 @@ public class ViewMessagesActivity extends BaseActivity {
     @BindView(R.id.activity_view_messages_progress)
     View loadProgress;
 
+    @BindView(R.id.activity_view_messages_bar)
+    Toolbar toolbar;
+
     ViewMessagesViewModel modelViewMessages;
 
     @Override
@@ -66,6 +78,15 @@ public class ViewMessagesActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         loadProgress.setVisibility(View.VISIBLE);
 
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setHomeButtonEnabled(true);
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setDisplayShowTitleEnabled(false);
+        }
+
+        mainModel = ViewModelProviders.of(this).get(MainActivityViewModel.class);
         modelViewMessages = ViewModelProviders.of(this).get(ViewMessagesViewModel.class);
         currentMailbox = CTemplarApp.getAppDatabase().mailboxDao().getDefault();
 
@@ -83,6 +104,7 @@ public class ViewMessagesActivity extends BaseActivity {
             onBackPressed();
             return;
         }
+        currentFolder = intent.getStringExtra(FOLDER_NAME);
 
         modelViewMessages.getMessagesResponse().observe(this, new Observer<MessagesResponse>() {
             @Override
@@ -124,11 +146,12 @@ public class ViewMessagesActivity extends BaseActivity {
 
                     loadProgress.setVisibility(View.GONE);
 
+                    invalidateOptionsMenu();
+
                 } else {
                     Timber.e("Messages doesn't exists");
                     Toast.makeText(getApplicationContext(), "Messages doesn't exists", Toast.LENGTH_SHORT).show();
                     onBackPressed();
-                    return;
                 }
             }
         });
@@ -144,6 +167,65 @@ public class ViewMessagesActivity extends BaseActivity {
                 }
             }
         });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.view_messages_menu, menu);
+        if (currentFolder.equals("inbox")) {
+            menu.findItem(R.id.menu_view_unspam).setVisible(false);
+            menu.findItem(R.id.menu_view_inbox).setVisible(false);
+        } else if (currentFolder.equals("spam")) {
+            menu.findItem(R.id.menu_view_spam).setVisible(false);
+            menu.findItem(R.id.menu_view_inbox).setVisible(false);
+        } else if (currentFolder.equals("archive")) {
+            menu.findItem(R.id.menu_view_spam).setVisible(false);
+            menu.findItem(R.id.menu_view_archive).setVisible(false);
+        }
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch(id) {
+            case R.id.menu_view_archive:
+                mainModel.toFolder(parentMessage, "archive");
+                Toast.makeText(getApplicationContext(), "1 archived", Toast.LENGTH_SHORT).show();
+                onBackPressed();
+                return true;
+            case R.id.menu_view_inbox:
+                mainModel.toFolder(parentMessage, "inbox");
+                Toast.makeText(getApplicationContext(), "Moved to inbox", Toast.LENGTH_SHORT).show();
+                onBackPressed();
+                return true;
+            case R.id.menu_view_spam:
+                mainModel.toFolder(parentMessage, "spam");
+                Toast.makeText(getApplicationContext(), "1 reported as spam", Toast.LENGTH_SHORT).show();
+                onBackPressed();
+                return true;
+            case R.id.menu_view_unspam:
+                mainModel.toFolder(parentMessage, "inbox");
+                Toast.makeText(getApplicationContext(), "Moved to inbox", Toast.LENGTH_SHORT).show();
+                onBackPressed();
+                return true;
+            case R.id.menu_view_trash:
+                if (currentFolder.equals("trash")) {
+                    mainModel.deleteMessage(parentMessage);
+                    Toast.makeText(getApplicationContext(), "1 message permanently deleted", Toast.LENGTH_SHORT).show();
+                } else {
+                    mainModel.toFolder(parentMessage, "trash");
+                    Toast.makeText(getApplicationContext(), "1 message removed", Toast.LENGTH_SHORT).show();
+                }
+                onBackPressed();
+                return true;
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     private void setSubject(String subject) {
@@ -227,10 +309,5 @@ public class ViewMessagesActivity extends BaseActivity {
             boolean isStarred = !parentMessage.isStarred();
             modelViewMessages.markMessageIsStarred(parentMessage.getId(), isStarred);
         }
-    }
-
-    @OnClick(R.id.activity_view_messages_back)
-    public void onClickBack() {
-        onBackPressed();
     }
 }
