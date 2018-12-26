@@ -11,7 +11,8 @@ import mobileapp.ctemplar.com.ctemplarapp.net.RestService;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.CheckUsernameRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.MarkMessageAsReadRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.MarkMessageIsStarredRequest;
-import mobileapp.ctemplar.com.ctemplarapp.net.request.MoveFolderTo;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.MoveToFolderRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.PublicKeysRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.RecoverPasswordRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SendMessageRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SignInRequest;
@@ -146,7 +147,7 @@ public class UserRepository {
     }
 
     public Observable<ResponseBody> toFolder(long id, String folder) {
-        return service.toFolder(id, new MoveFolderTo(folder))
+        return service.toFolder(id, new MoveToFolderRequest(folder))
                 .subscribeOn(io.reactivex.schedulers.Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
@@ -186,8 +187,8 @@ public class UserRepository {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<KeyResponse> getEmailPublicKey(String email) {
-        return service.getKey(email)
+    public Observable<KeyResponse> getEmailPublicKeys(PublicKeysRequest request) {
+        return service.getKeys(request)
                 .subscribeOn(io.reactivex.schedulers.Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }

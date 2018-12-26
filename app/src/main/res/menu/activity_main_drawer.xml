@@ -23,6 +23,10 @@
             android:icon="@drawable/ic_drawer_star"
             android:title="@string/nav_drawer_starred" />
         <item
+            android:id="@+id/nav_archive"
+            android:icon="@drawable/ic_drawer_archive"
+            android:title="@string/nav_drawer_archive" />
+        <item
             android:id="@+id/nav_spam"
             android:icon="@drawable/ic_drawer_spam"
             android:title="@string/nav_drawer_spam" />

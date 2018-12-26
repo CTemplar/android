@@ -62,7 +62,7 @@ public class ViewMessageActivity extends BaseActivity {
             return; //ToDo
         }
 
-        ViewMessagesFragment fragment = new ViewMessagesFragment();
+        ViewMessageFragment fragment = new ViewMessageFragment();
         Bundle args = new Bundle();
         args.putLong(ARG_ID, id);
         fragment.setArguments(args);

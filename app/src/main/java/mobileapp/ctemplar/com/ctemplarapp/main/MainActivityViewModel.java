@@ -312,8 +312,8 @@ public class MainActivityViewModel extends ViewModel {
                 });
     }
 
-    public void toSpam(final MessagesResult spamMessage) {
-        userRepository.toFolder(spamMessage.getId(), "spam")
+    public void toFolder(final MessagesResult messageResult, String folder) {
+        userRepository.toFolder(messageResult.getId(), folder)
                 .subscribe(new Observer<ResponseBody>() {
                     @Override
                     public void onSubscribe(Disposable d) {
@@ -327,7 +327,7 @@ public class MainActivityViewModel extends ViewModel {
 
                     @Override
                     public void onError(Throwable e) {
-                        Timber.e(e, "Move message to spam");
+                        Timber.e(e, "Move message");
                     }
 
                     @Override

@@ -19,6 +19,7 @@ import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -29,6 +30,7 @@ import mobileapp.ctemplar.com.ctemplarapp.BaseFragment;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.PublicKeysRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SendMessageRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.ContactData;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.ContactsResponse;
@@ -155,10 +157,15 @@ public class SendMessageFragment extends BaseFragment {
             @Override
             public void onChanged(@Nullable KeyResponse keyResponse) {
                 if (keyResponse != null && keyResponse.getKeyResult() != null && keyResponse.getKeyResult().length > 0) {
-                    KeyResult keyResult = keyResponse.getKeyResult()[0];
-                    String publicKey = keyResult.getPublicKey();
-                    String email = keyResult.getEmail();
-                    sendMessage(email, publicKey);
+                    KeyResult[] keyResult = keyResponse.getKeyResult();
+
+                    ArrayList<String> emails = new ArrayList<>();
+                    ArrayList<String> publicKeys = new ArrayList<>();
+                    for (KeyResult key : keyResult) {
+                        emails.add(key.getEmail());
+                        publicKeys.add(key.getPublicKey());
+                    }
+                    sendMessage(emails, publicKeys);
                 }
             }
         });
@@ -190,7 +197,6 @@ public class SendMessageFragment extends BaseFragment {
 
     @OnClick(R.id.fragment_send_message_send)
     public void onClickSend() {
-        //String from = spinnerFrom
         String toEmail = toEmailTextView.getText().toString();
         String compose = composeEditText.getText().toString();
 
@@ -212,10 +218,13 @@ public class SendMessageFragment extends BaseFragment {
         sendingProgress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         sendingProgress.show();
 
-        mainModel.getEmailPublicKey(toEmail);
+        ArrayList<String> emails = new ArrayList<>();
+        emails.add(toEmail);
+        PublicKeysRequest publicKeysRequest = new PublicKeysRequest(emails);
+        mainModel.getEmailPublicKeys(publicKeysRequest);
     }
 
-    private void sendMessage(String email, String publicKey) {
+    private void sendMessage(ArrayList<String> emails, ArrayList<String> publicKeys) {
         SendMessageRequest messageRequest = new SendMessageRequest(
                 subjectEditText.getText().toString(),
                 composeEditText.getText().toString(),
@@ -226,13 +235,11 @@ public class SendMessageFragment extends BaseFragment {
                 parentId
         );
 
-        if (!email.isEmpty()) {
-            List<String> receivers = new LinkedList<>();
-            receivers.add(email);
-            messageRequest.setReceivers(receivers);
+        if (!emails.isEmpty()) {
+            messageRequest.setReceivers(emails);
         }
 
-        mainModel.sendMessage(messageRequest, publicKey);
+        mainModel.sendMessage(messageRequest, publicKeys);
         sendingProgress.dismiss();
     }
 

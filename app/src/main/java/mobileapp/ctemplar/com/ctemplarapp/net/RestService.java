@@ -6,7 +6,8 @@ import io.reactivex.Observable;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.CheckUsernameRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.MarkMessageAsReadRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.MarkMessageIsStarredRequest;
-import mobileapp.ctemplar.com.ctemplarapp.net.request.MoveFolderTo;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.MoveToFolderRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.PublicKeysRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.RecoverPasswordRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SendMessageRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SignInRequest;
@@ -62,7 +63,7 @@ public interface RestService {
     Observable<ResponseBody> deleteMessage(@Path("id") long id);
 
     @PATCH("/emails/messages/")
-    Observable<ResponseBody> toFolder(@Query("id__in") long id, @Body MoveFolderTo request);
+    Observable<ResponseBody> toFolder(@Query("id__in") long id, @Body MoveToFolderRequest request);
 
     @GET("/emails/messages/")
     Observable<MessagesResponse> getChainMessages(@Query("id__in") long id);
@@ -79,8 +80,8 @@ public interface RestService {
     @GET("/emails/mailboxes/")
     Observable<MailboxesResponse> getMailboxes(@Query("limit") int limit, @Query("offset") int offset);
 
-    @GET("/emails/keys/")
-    Observable<KeyResponse> getKey(@Query("email__in") String emailIn);
+    @POST("/emails/keys/")
+    Observable<KeyResponse> getKeys(@Body PublicKeysRequest request);
 
     @POST("/emails/messages/")
     Observable<MessagesResult> sendMessage(@Body SendMessageRequest request);
