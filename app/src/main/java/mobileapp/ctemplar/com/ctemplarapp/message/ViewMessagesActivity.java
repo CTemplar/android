@@ -174,11 +174,11 @@ public class ViewMessagesActivity extends BaseActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.view_messages_menu, menu);
         if (currentFolder.equals("inbox")) {
-            menu.findItem(R.id.menu_view_unspam).setVisible(false);
+            menu.findItem(R.id.menu_view_not_spam).setVisible(false);
             menu.findItem(R.id.menu_view_inbox).setVisible(false);
         } else if (currentFolder.equals("spam")) {
             menu.findItem(R.id.menu_view_spam).setVisible(false);
-            menu.findItem(R.id.menu_view_inbox).setVisible(false);
+            menu.findItem(R.id.menu_view_archive).setVisible(false);
         } else if (currentFolder.equals("archive")) {
             menu.findItem(R.id.menu_view_spam).setVisible(false);
             menu.findItem(R.id.menu_view_archive).setVisible(false);
@@ -205,9 +205,9 @@ public class ViewMessagesActivity extends BaseActivity {
                 Toast.makeText(getApplicationContext(), "1 reported as spam", Toast.LENGTH_SHORT).show();
                 onBackPressed();
                 return true;
-            case R.id.menu_view_unspam:
+            case R.id.menu_view_not_spam:
                 mainModel.toFolder(parentMessage, "inbox");
-                Toast.makeText(getApplicationContext(), "Moved to inbox", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "1 repotred as not spam", Toast.LENGTH_SHORT).show();
                 onBackPressed();
                 return true;
             case R.id.menu_view_trash:
@@ -279,7 +279,7 @@ public class ViewMessagesActivity extends BaseActivity {
         intent.putExtra(Intent.EXTRA_EMAIL, new String[] { lastMessage.getSender() });
         intent.putExtra(Intent.EXTRA_SUBJECT, lastMessage.getSubject());
         intent.putExtra(Intent.EXTRA_TEXT, replyHead() + Html.fromHtml(decryptedLastMessage));
-        intent.putExtra(SendMessageFragment.PARENT_ID, lastMessage.getId());
+        intent.putExtra(SendMessageActivity.PARENT_ID, lastMessage.getId());
         startActivity(intent);
     }
 
@@ -291,7 +291,7 @@ public class ViewMessagesActivity extends BaseActivity {
         intent.putExtra(Intent.EXTRA_TEXT, replyHead() + Html.fromHtml(decryptedLastMessage));
         intent.putExtra(Intent.EXTRA_CC, lastMessage.getCC());
         intent.putExtra(Intent.EXTRA_BCC, lastMessage.getBCC());
-        intent.putExtra(SendMessageFragment.PARENT_ID, lastMessage.getId());
+        intent.putExtra(SendMessageActivity.PARENT_ID, lastMessage.getId());
         startActivity(intent);
     }
 
