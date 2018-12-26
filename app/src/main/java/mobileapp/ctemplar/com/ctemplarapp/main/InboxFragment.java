@@ -124,7 +124,7 @@ public class InboxFragment extends BaseFragment {
     public void onResume() {
         super.onResume();
 
-        String currentFolder = mainModel.getCurrentFolder().getValue();
+        currentFolder = mainModel.getCurrentFolder().getValue();
         if (currentFolder != null) {
             if (currentFolder.equals("starred")) {
                 mainModel.getStarredMessages(20, 0, 1);
@@ -254,18 +254,27 @@ public class InboxFragment extends BaseFragment {
                     });
             recyclerView.setAdapter(adapter);
 
+            if (touchListener != null) {
+                recyclerView.removeOnItemTouchListener(touchListener);
+            }
+            currentFolder = mainModel.getCurrentFolder().getValue();
             touchListener = new InboxMessagesTouchListener(getActivity(), recyclerView);
+            if (currentFolder.equals("draft")) {
+                touchListener.setSwipeOptionViews(R.id.item_message_view_holder_delete);
+            } else {
+                touchListener.setSwipeOptionViews(R.id.item_message_view_holder_spam, R.id.item_message_view_holder_move, R.id.item_message_view_holder_delete);
+            }
             touchListener
-                    .setSwipeOptionViews(R.id.item_message_view_holder_spam, R.id.item_message_view_holder_move, R.id.item_message_view_holder_delete)
-                    .setSwipeable(R.id.item_message_view_holder_foreground, R.id.item_message_view_holder_background, new InboxMessagesTouchListener.OnSwipeOptionsClickListener() {
+                    .setSwipeable(R.id.item_message_view_holder_foreground, R.id.item_message_view_holder_background_layout, new InboxMessagesTouchListener.OnSwipeOptionsClickListener() {
                         @Override
                         public void onSwipeOptionClicked(int viewID, final int position) {
                             switch (viewID){
                                 case R.id.item_message_view_holder_delete:
                                     final MessagesResult deletedMessage = adapter.removeAt(position);
                                     final String name = deletedMessage.getSubject();
+                                    final String currentFolderFinal = currentFolder;
                                     Snackbar deleteSnackbar;
-                                    if (currentFolder.equals("trash")) {
+                                    if (currentFolderFinal.equals("trash") || currentFolderFinal.equals("draft")) {
                                         deleteSnackbar = Snackbar
                                                 .make(frameCompose, name + " permanently deleted", Snackbar.LENGTH_LONG);
                                     } else {
@@ -283,7 +292,7 @@ public class InboxFragment extends BaseFragment {
                                         @Override
                                         public void onDismissed(Snackbar transientBottomBar, int event) {
                                             if (event != DISMISS_EVENT_ACTION) {
-                                                if (currentFolder.equals("trash")) {
+                                                if (currentFolderFinal.equals("trash") || currentFolderFinal.equals("draft")) {
                                                     mainModel.deleteMessage(deletedMessage);
                                                 } else {
                                                     mainModel.toFolder(deletedMessage, "trash");

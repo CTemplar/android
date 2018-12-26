@@ -18,9 +18,9 @@ import io.reactivex.subjects.PublishSubject;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResult;
-import mobileapp.ctemplar.com.ctemplarapp.utils.PGPManager;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
+import mobileapp.ctemplar.com.ctemplarapp.utils.PGPManager;
 
 public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesViewHolder> {
 
@@ -41,7 +41,20 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesView
     @NonNull
     @Override
     public InboxMessagesViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_message_view_holder, viewGroup, false);
+        LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
+        ViewGroup view = (ViewGroup) inflater
+                .inflate(R.layout.item_message_view_holder, viewGroup, false);
+
+        ViewGroup backOptionsLayout = view.findViewById(R.id.item_message_view_holder_background_layout);
+        View backOptionsView;
+        if (mainModel.getCurrentFolder().getValue().equals("draft")) {
+            backOptionsView = inflater.inflate(R.layout.swipe_actions_draft, backOptionsLayout, false);
+        } else {
+            backOptionsView = inflater.inflate(R.layout.swipe_actions, backOptionsLayout, false);
+        }
+
+        backOptionsLayout.removeAllViews();
+        backOptionsLayout.addView(backOptionsView, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
         return new InboxMessagesViewHolder(view);
     }

@@ -7,9 +7,9 @@
         android:title="Spam"
         app:showAsAction="always" />
     <item
-        android:id="@+id/menu_view_unspam"
+        android:id="@+id/menu_view_not_spam"
         android:icon="@drawable/icon_unread"
-        android:title="Unspam"
+        android:title="Not spam"
         app:showAsAction="always" />
     <item
         android:id="@+id/menu_view_move"
