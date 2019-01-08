@@ -31,6 +31,7 @@ import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.login.LoginActivity;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
+import mobileapp.ctemplar.com.ctemplarapp.settings.SettingsActivity;
 import timber.log.Timber;
 
 public class MainActivity extends BaseActivity
@@ -189,6 +190,9 @@ public class MainActivity extends BaseActivity
         } else if (id == R.id.nav_contact) {
             setTitle(R.string.nav_drawer_contact);
             mainModel.setCurrentFolder("contact");
+        } else if (id == R.id.nav_settings) {
+            Intent settingsScreeen = new Intent(this, SettingsActivity.class);
+            startActivity(settingsScreeen);
         } else if (id == R.id.nav_logout) {
             new AlertDialog.Builder(this)
                     .setTitle("Log out")
@@ -202,6 +206,9 @@ public class MainActivity extends BaseActivity
                     )
                     .setNeutralButton("CANCEL", null)
                     .show();
+        } else if (id == R.id.nav_manage_folders) {
+            Intent manageFolders = new Intent(this, ManageFoldersActivity.class);
+            startActivity(manageFolders);
         }
 
         drawer.closeDrawer(GravityCompat.START);

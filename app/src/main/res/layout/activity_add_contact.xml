@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
@@ -19,7 +20,6 @@
             app:title="Add contact"
             android:fontFamily="@font/lato_bold"
             app:popupTheme="@style/AppTheme.PopupOverlay">
-
         </android.support.v7.widget.Toolbar>
 
     </android.support.design.widget.AppBarLayout>

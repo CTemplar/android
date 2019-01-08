@@ -7,6 +7,7 @@ import android.support.multidex.MultiDexApplication;
 import mobileapp.ctemplar.com.ctemplarapp.net.RestClient;
 import mobileapp.ctemplar.com.ctemplarapp.repository.AppDatabase;
 import mobileapp.ctemplar.com.ctemplarapp.repository.ContactsRepository;
+import mobileapp.ctemplar.com.ctemplarapp.repository.ManageFoldersRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserStore;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserStoreImpl;
@@ -18,6 +19,7 @@ public class CTemplarApp extends MultiDexApplication {
     private static UserStore userStore;
     private static UserRepository userRepository;
     private static ContactsRepository contactsRepository;
+    private static ManageFoldersRepository manageFoldersRepository;
     private static AppDatabase appDatabase;
 
     @Override
@@ -51,6 +53,10 @@ public class CTemplarApp extends MultiDexApplication {
         return contactsRepository;
     }
 
+    public static ManageFoldersRepository getManageFoldersRepository() {
+        return manageFoldersRepository;
+    }
+
     public static AppDatabase getAppDatabase() {
         return appDatabase;
     }
@@ -78,6 +84,10 @@ public class CTemplarApp extends MultiDexApplication {
 
         if (contactsRepository == null) {
             contactsRepository = new ContactsRepository();
+        }
+
+        if (manageFoldersRepository == null) {
+            manageFoldersRepository = new ManageFoldersRepository();
         }
     }
 }

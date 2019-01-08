@@ -43,7 +43,7 @@
         <item name="colorControlActivated">@color/colorDarkBlue2</item>
         <item name="colorControlHighlight">@color/colorDarkBlue2</item>
     </style>
-    
+
     <style name="TextHintAppearanceLight" parent="TextAppearance.Design.Hint">
         <item name="android:textColor">@android:color/white</item>
         <item name="android:textColorHint">@android:color/white</item>
@@ -75,5 +75,9 @@
         <item name="android:windowEnterAnimation">@anim/fragment_enter_from_bottom</item>
         <item name="android:windowExitAnimation">@anim/fragment_exit_to_bottom</item>
     </style>
+
+    <style name="ActionBarLight.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="ActionBarLight.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
 </resources>

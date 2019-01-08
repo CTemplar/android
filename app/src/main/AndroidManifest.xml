@@ -26,8 +26,8 @@
         </activity>
         <activity
             android:name=".login.LoginActivity"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:configChanges="screenSize|orientation" />
+            android:configChanges="screenSize|orientation"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".main.MainActivity"
             android:theme="@style/ActionBarLight">
@@ -42,11 +42,14 @@
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
         </activity>
-        <activity android:name=".message.SendMessageActivity"></activity>
+        <activity android:name=".message.SendMessageActivity" />
         <activity android:name=".message.ViewMessageActivity" />
         <activity android:name=".contact.AddContactActivity" />
         <activity android:name=".contact.EditContactActivity" />
         <activity android:name=".message.ViewMessagesActivity" />
+        <activity android:name=".settings.SettingsActivity" />
+        <activity android:name=".settings.ChangePasswordActivity" />
+        <activity android:name=".main.ManageFoldersActivity" />
     </application>
 
 </manifest>
