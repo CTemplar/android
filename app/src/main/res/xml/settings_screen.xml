@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:key="settings_screen">
+
+    <PreferenceCategory
+        android:title="General settings">
+
+        <PreferenceScreen
+            android:title="Recovery email">
+
+            <CheckBoxPreference
+                android:title="Enable recovery email"
+                android:key="@string/recovery_email_enabled" />
+
+            <EditTextPreference
+                android:title="Type your recovery email"
+                android:key="@string/recovery_email" />
+
+        </PreferenceScreen>
+
+        <Preference
+            android:title="Password"
+            android:key="@string/password_key"/>
+
+        <ListPreference
+            android:title="Language"
+            android:key="language"
+            android:entries="@array/languages"
+            android:entryValues="@array/languages" />
+
+        <PreferenceScreen
+            android:title="Notifications">
+
+            <SwitchPreference
+                android:title="Enable push notifications"
+                android:key="push_notifications_enabled" />
+
+        </PreferenceScreen>
+
+        <PreferenceScreen
+            android:title="Saving contacts">
+
+            <SwitchPreference
+                android:title="Automatically save contacts"
+                android:key="auto_save_contacts_enabled" />
+
+        </PreferenceScreen>
+
+        <Preference
+            android:title="Whitelist/Blacklist"
+            android:key="@string/white_black_list"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="Folders">
+
+        <Preference
+            android:title="Manage folders"
+            android:key="@string/manage_folders"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="Mail">
+
+        <ListPreference
+            android:title="Addresses"
+            android:key="email_addresses"
+            android:entries="@array/addresses"
+            android:entryValues="@array/addresses" />
+
+        <PreferenceScreen
+            android:title="Signature">
+
+            <CheckBoxPreference
+                android:title="Enable signature"
+                android:key="@string/signature_enabled" />
+
+            <EditTextPreference
+                android:title="Type your signature"
+                android:key="@string/signature" />
+
+        </PreferenceScreen>
+
+        <PreferenceScreen
+            android:title="Mobile signature">
+
+            <CheckBoxPreference
+                android:title="Enable mobile signature"
+                android:key="@string/mobile_signature_enabled" />
+
+            <EditTextPreference
+                android:title="Type your mobile signature"
+                android:key="@string/mobile_signature" />
+
+        </PreferenceScreen>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="About">
+
+        <Preference
+            android:title="About us">
+
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="@string/about_url" />
+
+        </Preference>
+
+        <Preference android:title="Privacy Policy">
+
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="@string/privacy_url" />
+
+        </Preference>
+
+        <Preference
+            android:title="Terms &amp; Conditions">
+
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="@string/terms_url" />
+
+        </Preference>
+
+        <Preference
+            android:title="Local storage limit"
+            android:summary="826KB of 500MB" />
+
+        <Preference
+            android:title="App version"
+            android:summary="1.1" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>
