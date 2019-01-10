@@ -44,9 +44,24 @@
             android:icon="@drawable/ic_drawer_contact"
             android:title="@string/nav_drawer_contact" />
         <item
+            android:id="@+id/nav_settings"
+            android:icon="@drawable/ic_drawer_settings"
+            android:title="@string/nav_drawer_settings"
+            android:checkable="false" />
+        <item
             android:id="@+id/nav_logout"
             android:icon="@drawable/ic_drawer_logout"
             android:title="@string/nav_drawer_logout" />
+    </group>
+
+    <group
+        android:id="@+id/activity_main_drawer_folders"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_manage_folders"
+            android:icon="@drawable/ic_manage_folders"
+            android:title="@string/nav_drawer_manage_folders"
+            android:checkable="false" />
     </group>
 
 </menu>

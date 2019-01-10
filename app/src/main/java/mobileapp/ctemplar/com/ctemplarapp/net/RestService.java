@@ -3,6 +3,7 @@ package mobileapp.ctemplar.com.ctemplarapp.net;
 import javax.inject.Singleton;
 
 import io.reactivex.Observable;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.ChangePasswordRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.CheckUsernameRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.MarkMessageAsReadRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.MarkMessageIsStarredRequest;
@@ -15,6 +16,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.request.SignUpRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.CheckUsernameResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.ContactData;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.ContactsResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Folders.FoldersResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.KeyResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Mailboxes.MailboxesResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResponse;
@@ -23,6 +25,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.RecoverPasswordResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.SignInResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.SignUpResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.MyselfResponse;
+import mobileapp.ctemplar.com.ctemplarapp.settings.ChangePasswordActivity;
 import okhttp3.ResponseBody;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
@@ -50,6 +53,9 @@ public interface RestService {
     @POST("/auth/reset/")
     Observable<RecoverPasswordResponse> resetPassword(@Body RecoverPasswordRequest request);
 
+    @POST("/auth/change-password/")
+    Observable<ResponseBody> changePassword(@Body ChangePasswordRequest request);
+
     @GET("/emails/messages/")
     Observable<MessagesResponse> getMessages(@Query("limit") int limit, @Query("offset") int offset, @Query("folder") String folder);
 
@@ -73,6 +79,9 @@ public interface RestService {
 
     @PATCH("/emails/messages/{id}/")
     Observable<MessagesResult> markMessageIsStarred(@Path("id") long id, @Body MarkMessageIsStarredRequest request);
+
+    @GET("/emails/custom-folder/")
+    Observable<FoldersResponse> getFolders(@Query("limit") int limit, @Query("offset") int offset);
 
     @GET("/users/myself/")
     Observable<MyselfResponse> getMyself();

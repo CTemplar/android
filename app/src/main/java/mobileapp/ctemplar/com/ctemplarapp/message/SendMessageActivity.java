@@ -5,9 +5,12 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.preference.PreferenceManager;
+import android.text.Html;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -47,6 +50,7 @@ public class SendMessageActivity extends BaseActivity {
     private Long parentId;
     private ProgressDialog sendingProgress;
     private boolean needExit = false;
+    private SharedPreferences sharedPreferences;
 
     @BindView(R.id.fragment_send_message_to_input)
     AutoCompleteTextView toEmailTextView;
@@ -90,6 +94,7 @@ public class SendMessageActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         Bundle args = getIntent().getExtras();
         if (args != null) {
             String[] bundleEmails = args.getStringArray(Intent.EXTRA_EMAIL);
@@ -119,6 +124,12 @@ public class SendMessageActivity extends BaseActivity {
             if (bundleText != null && !bundleText.isEmpty()) {
                 composeEditText.setText(bundleText);
             }
+        }
+
+        boolean mobileSignatureEnabled = sharedPreferences.getBoolean(getString(R.string.mobile_signature_enabled), false);
+        String mobileSignature = sharedPreferences.getString(getString(R.string.mobile_signature), null);
+        if(mobileSignatureEnabled) {
+            composeEditText.setText("\n\n--------\n" + mobileSignature + '\n' + composeEditText.getText());
         }
 
         String toEmail = toEmailTextView.getText().toString();
@@ -247,7 +258,8 @@ public class SendMessageActivity extends BaseActivity {
 
     private void sendMessageToDraft() {
         String toEmail = toEmailTextView.getText().toString();
-        String compose = composeEditText.getText().toString();
+        String subject = subjectEditText.getText().toString();
+        String compose = Html.toHtml(composeEditText.getText());
 
         ArrayList<String> emails = new ArrayList<>();
         if (!toEmail.isEmpty()) {
@@ -255,7 +267,7 @@ public class SendMessageActivity extends BaseActivity {
         }
 
         SendMessageRequest messageRequest = new SendMessageRequest(
-                subjectEditText.getText().toString(),
+                subject,
                 compose,
                 "draft",
                 false,
@@ -272,9 +284,12 @@ public class SendMessageActivity extends BaseActivity {
     }
 
     private void sendMessage(ArrayList<String> emails, ArrayList<String> publicKeys) {
+        String subject = subjectEditText.getText().toString();
+        String compose = Html.toHtml(composeEditText.getText());
+
         SendMessageRequest messageRequest = new SendMessageRequest(
-                subjectEditText.getText().toString(),
-                composeEditText.getText().toString(),
+                subject,
+                compose,
                 "sent",
                 true,
                 true,

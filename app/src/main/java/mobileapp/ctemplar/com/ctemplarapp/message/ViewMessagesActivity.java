@@ -182,6 +182,9 @@ public class ViewMessagesActivity extends BaseActivity {
         } else if (currentFolder.equals("archive")) {
             menu.findItem(R.id.menu_view_spam).setVisible(false);
             menu.findItem(R.id.menu_view_archive).setVisible(false);
+        } else if (currentFolder.equals("draft")) {
+            menu.findItem(R.id.menu_view_spam).setVisible(false);
+            menu.findItem(R.id.menu_view_not_spam).setVisible(false);
         }
         return true;
     }
