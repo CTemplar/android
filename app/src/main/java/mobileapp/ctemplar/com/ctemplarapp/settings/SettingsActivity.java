@@ -16,9 +16,10 @@ import java.util.List;
 
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.R;
-import mobileapp.ctemplar.com.ctemplarapp.main.ManageFoldersActivity;
+import mobileapp.ctemplar.com.ctemplarapp.folders.ManageFoldersActivity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
+import mobileapp.ctemplar.com.ctemplarapp.wbl.WhiteBlackListActivity;
 
 public class SettingsActivity extends AppCompatPreferenceActivity {
 
@@ -52,8 +53,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             Preference whiteBlackList = findPreference(getString(R.string.white_black_list));
             whiteBlackList.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 public boolean onPreferenceClick(Preference preference) {
-//                    Intent whiteBlackList = new Intent(getActivity(), WhiteBlackList.class);
-//                    startActivity(whiteBlackList);
+                    Intent whiteBlackList = new Intent(getActivity(), WhiteBlackListActivity.class);
+                    startActivity(whiteBlackList);
                     return true;
                 }
             });
