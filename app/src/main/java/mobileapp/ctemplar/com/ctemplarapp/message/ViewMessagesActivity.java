@@ -1,10 +1,15 @@
 package mobileapp.ctemplar.com.ctemplarapp.message;
 
+import android.app.DownloadManager;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
@@ -30,6 +35,8 @@ import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
 import mobileapp.ctemplar.com.ctemplarapp.BaseActivity;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.R;
@@ -37,7 +44,9 @@ import mobileapp.ctemplar.com.ctemplarapp.main.MainActivityViewModel;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResult;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
+import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.PGPManager;
+import mobileapp.ctemplar.com.ctemplarapp.utils.PermissionCheck;
 import timber.log.Timber;
 
 public class ViewMessagesActivity extends BaseActivity {
@@ -137,7 +146,43 @@ public class ViewMessagesActivity extends BaseActivity {
                         starImageView.setSelected(parentMessage.isStarred());
                     }
 
-                    ViewMessagesAdapter adapter = new ViewMessagesAdapter(messagesArrayList);
+                    MessageAttachmentAdapter messageAttachmentAdapter = new MessageAttachmentAdapter();
+                    ViewMessagesAdapter adapter = new ViewMessagesAdapter(messagesArrayList, messageAttachmentAdapter);
+                    messageAttachmentAdapter.getOnClickAttachmentLink()
+                            .subscribeOn(io.reactivex.schedulers.Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(new io.reactivex.Observer<String>() {
+                                @Override
+                                public void onSubscribe(Disposable d) {
+
+                                }
+
+                                @Override
+                                public void onNext(String documentLink) {
+                                    Uri documentUri = Uri.parse(documentLink);
+                                    String fileName = AppUtils.getFileNameFromURL(documentLink);
+
+                                    DownloadManager.Request documentRequest = new DownloadManager.Request(documentUri);
+                                    documentRequest.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName);
+                                    documentRequest.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+
+                                    if (PermissionCheck.readAndWriteExternalStorage(ViewMessagesActivity.this)){
+                                        DownloadManager downloadManager = (DownloadManager) getApplicationContext().getSystemService(DOWNLOAD_SERVICE);
+                                        downloadManager.enqueue(documentRequest);
+                                        Toast.makeText(ViewMessagesActivity.this, "Download started", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+
+                                @Override
+                                public void onError(Throwable e) {
+
+                                }
+
+                                @Override
+                                public void onComplete() {
+
+                                }
+                            });
                     messagesListView.setAdapter(adapter);
 
                     if (!parentMessage.isRead())  {
@@ -167,6 +212,13 @@ public class ViewMessagesActivity extends BaseActivity {
                 }
             }
         });
+
+        BroadcastReceiver onComplete = new BroadcastReceiver() {
+            public void onReceive(Context ctx, Intent intent) {
+                Toast.makeText(getApplicationContext(), "Download complete", Toast.LENGTH_SHORT).show();
+            }
+        };
+        registerReceiver(onComplete, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
     }
 
     @Override

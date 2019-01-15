@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:paddingLeft="5dp"
+    android:paddingStart="5dp"
+    android:paddingRight="5dp"
+    android:paddingEnd="5dp">
+
+    <RelativeLayout
+        android:id="@+id/item_message_attachment_tile"
+        android:layout_width="100dp"
+        android:layout_height="72dp"
+        android:padding="10dp"
+        android:background="@color/colorGreyLight7">
+
+        <TextView
+            android:id="@+id/item_message_attachment_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="uploaded_file_text_name.txt"
+            android:fontFamily="@font/lato_regular"
+            android:textSize="14sp"
+            android:lines="2"
+            android:ellipsize="end"
+            android:textColor="@color/colorDarkBlue2" />
+
+        <ImageView
+            android:id="@+id/item_message_attachment_ext"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:src="@drawable/ic_other" />
+
+    </RelativeLayout>
+
+</android.support.constraint.ConstraintLayout>
