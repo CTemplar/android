@@ -5,6 +5,7 @@
     <dimen name="nav_header_vertical_spacing">8dp</dimen>
     <dimen name="nav_header_height">100dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
+    <dimen name="colors_round_size">32dp</dimen>
 
     <integer name="restriction_username_min">4</integer>
     <integer name="restriction_username_max">64</integer>

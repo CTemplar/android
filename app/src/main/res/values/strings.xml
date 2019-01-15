@@ -132,5 +132,7 @@ If you have further questions please email <![CDATA[<u><a href="mailto:support@c
     <string name="error_recover_password">Incorrect Username or Email</string>
     <string name="title_activity_white_black_list">WhiteBlackList</string>
     <string name="section_format">Hello World from section: %1$d</string>
+    <string name="whitelist">Whitelist</string>
+    <string name="blacklist">Blacklist</string>
 
 </resources>

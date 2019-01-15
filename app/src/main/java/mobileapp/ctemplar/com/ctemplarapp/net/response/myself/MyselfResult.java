@@ -31,7 +31,13 @@ public class MyselfResult {
     public SettingsEntity settings;
 
     @SerializedName("mailboxes")
-    public MailboxesResult mailboxes;
+    public MailboxesResult[] mailboxes;
+
+    @SerializedName("blacklist")
+    public BlackListContact[] blacklist;
+
+    @SerializedName("whitelist")
+    public WhiteListContact[] whitelist;
 
     public long getId() {
         return id;
@@ -65,8 +71,15 @@ public class MyselfResult {
         return settings;
     }
 
-    public MailboxesResult getMailboxes() {
+    public MailboxesResult[] getMailboxes() {
         return mailboxes;
     }
 
+    public BlackListContact[] getBlacklist() {
+        return blacklist;
+    }
+
+    public WhiteListContact[] getWhitelist() {
+        return whitelist;
+    }
 }

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <Button android:id="@+id/buttonAddBlacklistContact"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add blacklist contact"
+        android:drawableLeft="@drawable/add_outline"
+        android:drawableStart="@drawable/add_outline"
+        android:textSize="16sp"
+        android:textColor="#e74c3c"
+        android:drawablePadding="10dp"
+        style="@style/Widget.MaterialComponents.Button.TextButton"/>
+
+</android.support.constraint.ConstraintLayout>

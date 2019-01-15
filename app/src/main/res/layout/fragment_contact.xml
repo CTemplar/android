@@ -10,23 +10,19 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@color/colorWhiteLight"
-        app:layout_constraintTop_toBottomOf="@id/fragment_contact_search_view"
+        app:layout_constraintTop_toBottomOf="@id/fragment_contact_search"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent" />
 
-    <android.support.v7.widget.SearchView
-        android:id="@+id/fragment_contact_search_view"
-        android:layout_width="0dp"
+    <EditText android:id="@+id/fragment_contact_search"
+        android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:background="@color/colorGreyLight"
-        app:defaultQueryHint="@string/action_search"
-        app:searchIcon="@drawable/ic_action_search"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-    </android.support.v7.widget.SearchView>
+        android:drawableLeft="@drawable/ic_action_search"
+        android:background="@android:color/transparent"
+        android:hint="@string/action_search"
+        android:inputType="text"
+        android:drawableStart="@drawable/ic_action_search" />
 
     <ImageView
         android:id="@+id/fragment_contact_icon_empty"

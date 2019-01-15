@@ -3,8 +3,10 @@ package mobileapp.ctemplar.com.ctemplarapp.net;
 import javax.inject.Singleton;
 
 import io.reactivex.Observable;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.AddFolderRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.ChangePasswordRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.CheckUsernameRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.EditFolderRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.MarkMessageAsReadRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.MarkMessageIsStarredRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.MoveToFolderRequest;
@@ -17,6 +19,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.CheckUsernameResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.ContactData;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.ContactsResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Folders.FoldersResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Folders.FoldersResult;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.KeyResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Mailboxes.MailboxesResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResponse;
@@ -24,9 +27,12 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResult;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.RecoverPasswordResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.SignInResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.SignUpResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.BlackListContact;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.MyselfResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.WhiteListContact;
 import mobileapp.ctemplar.com.ctemplarapp.settings.ChangePasswordActivity;
 import okhttp3.ResponseBody;
+import retrofit2.Response;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
@@ -83,6 +89,15 @@ public interface RestService {
     @GET("/emails/custom-folder/")
     Observable<FoldersResponse> getFolders(@Query("limit") int limit, @Query("offset") int offset);
 
+    @POST("/emails/custom-folder/")
+    Observable<ResponseBody> addFolder(@Body AddFolderRequest request);
+
+    @DELETE("/emails/custom-folder/{id}/")
+    Observable<Response<Void>> deleteFolder(@Path("id") long id);
+
+    @PATCH("/emails/custom-folder/{id}/")
+    Observable<FoldersResult> editFolder(@Path("id") long id, @Body EditFolderRequest request);
+
     @GET("/users/myself/")
     Observable<MyselfResponse> getMyself();
 
@@ -114,4 +129,15 @@ public interface RestService {
     @DELETE("/users/contacts/{id}/")
     Observable<ResponseBody> deleteContact(@Path("id") long id);
 
+    @DELETE("/users/blacklist/{id}/")
+    Observable<ResponseBody> deleteBlacklistContact(@Path("id") long id);
+
+    @DELETE("/users/whitelist/{id}/")
+    Observable<ResponseBody> deleteWhitelistContact(@Path("id") long id);
+
+    @POST("/users/blacklist/")
+    Observable<BlackListContact> addBlacklistContact(@Body BlackListContact contact);
+
+    @POST("/users/whitelist/")
+    Observable<WhiteListContact> addWhitelistContact(@Body WhiteListContact contact);
 }

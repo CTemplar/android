@@ -66,7 +66,7 @@
                     android:minHeight="45dp"
                     android:hint="Contact name"
                     app:layout_constraintTop_toBottomOf="@id/activity_edit_contact_name_title"
-                    android:background="@drawable/activity_contact_input_field" />
+                    android:background="@drawable/text_input_field" />
 
             </android.support.constraint.ConstraintLayout>
 
@@ -107,7 +107,7 @@
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/activity_edit_contact_email_title"
                     app:layout_constraintRight_toLeftOf="@id/activity_edit_contact_email_add"
-                    android:background="@drawable/activity_contact_input_field" />
+                    android:background="@drawable/text_input_field" />
 
                 <ImageView
                     android:id="@+id/activity_edit_contact_email_add"
@@ -156,7 +156,7 @@
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/activity_edit_contact_phone_title"
                     app:layout_constraintRight_toLeftOf="@id/activity_edit_contact_phone_add"
-                    android:background="@drawable/activity_contact_input_field" />
+                    android:background="@drawable/text_input_field" />
 
                 <ImageView
                     android:id="@+id/activity_edit_contact_phone_add"
@@ -205,7 +205,7 @@
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/activity_edit_contact_address_title"
                     app:layout_constraintRight_toLeftOf="@id/activity_edit_contact_address_add"
-                    android:background="@drawable/activity_contact_input_field" />
+                    android:background="@drawable/text_input_field" />
 
                 <ImageView
                     android:id="@+id/activity_edit_contact_address_add"
@@ -252,7 +252,7 @@
                     android:minHeight="45dp"
                     android:hint="Note"
                     app:layout_constraintTop_toBottomOf="@id/activity_edit_contact_note_title"
-                    android:background="@drawable/activity_contact_input_field" />
+                    android:background="@drawable/text_input_field" />
 
             </android.support.constraint.ConstraintLayout>
         </android.support.constraint.ConstraintLayout>
