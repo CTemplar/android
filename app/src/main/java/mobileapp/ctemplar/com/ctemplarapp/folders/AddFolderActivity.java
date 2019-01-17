@@ -21,6 +21,21 @@ import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 
 public class AddFolderActivity extends BaseActivity {
 
+    final private static String PICKED_COLOR_1 = "#7272a8";
+    final private static String PICKED_COLOR_2 = "#d05859";
+    final private static String PICKED_COLOR_3 = "#c26cc7";
+    final private static String PICKED_COLOR_4 = "#7568d1";
+    final private static String PICKED_COLOR_5 = "#6aa9d2";
+    final private static String PICKED_COLOR_6 = "#5fc7b8";
+    final private static String PICKED_COLOR_7 = "#72bb74";
+    final private static String PICKED_COLOR_8 = "#72bb74";
+    final private static String PICKED_COLOR_9 = "#e6c14c";
+    final private static String PICKED_COLOR_10 = "#e6994d";
+    final private static String PICKED_COLOR_11 = "#cf7e7d";
+    final private static String PICKED_COLOR_12 = "#c893cb";
+    final private static String PICKED_COLOR_13 = "#9c94d0";
+    final private static String PICKED_COLOR_14 = "#a9c4d5";
+
     private AddFolderViewModel addFolderModel;
 
     @BindView(R.id.activity_add_folder_action_add)
@@ -85,38 +100,11 @@ public class AddFolderActivity extends BaseActivity {
     @OnClick(R.id.activity_add_folder_action_add)
     public void OnClickAddFolder() {
         String folderName = editTextFolderName.getText().toString();
-        String folderColor = "#7272a8";
+        String folderColor = "";
 
         if (radioGroupColor.getCheckedRadioButtonId() != -1) {
             int selectedColor = radioGroupColor.getCheckedRadioButtonId();
-
-            if (selectedColor == R.id.folder_color_2) {
-                folderColor = "#d05859";
-            } else if (selectedColor == R.id.folder_color_3) {
-                folderColor = "#c26cc7";
-            } else if (selectedColor == R.id.folder_color_4) {
-                folderColor = "#7568d1";
-            } else if (selectedColor == R.id.folder_color_5) {
-                folderColor = "#6aa9d2";
-            } else if (selectedColor == R.id.folder_color_6) {
-                folderColor = "#5fc7b8";
-            } else if (selectedColor == R.id.folder_color_7) {
-                folderColor = "#72bb74";
-            } else if (selectedColor == R.id.folder_color_8) {
-                folderColor = "#72bb74";
-            } else if (selectedColor == R.id.folder_color_9) {
-                folderColor = "#e6c14c";
-            } else if (selectedColor == R.id.folder_color_10) {
-                folderColor = "#e6994d";
-            } else if (selectedColor == R.id.folder_color_11) {
-                folderColor = "#cf7e7d";
-            } else if (selectedColor == R.id.folder_color_12) {
-                folderColor = "#c893cb";
-            } else if (selectedColor == R.id.folder_color_13) {
-                folderColor = "#9c94d0";
-            } else if (selectedColor == R.id.folder_color_14) {
-                folderColor = "#a9c4d5";
-            }
+            folderColor = getPickerColor(selectedColor);
         }
 
         if (folderName.matches("^[a-zA-Z0-9]*$") && folderName.length() > 3 && folderName.length() < 31) {
@@ -125,6 +113,40 @@ public class AddFolderActivity extends BaseActivity {
         } else {
             editTextFolderName.setError("Folder name must be between 4 and 30 letters and digits");
         }
+    }
+
+    public static String getPickerColor(int selectedColor) {
+        String folderColor = PICKED_COLOR_1;
+
+        if (selectedColor == R.id.folder_color_2) {
+            folderColor = PICKED_COLOR_2;
+        } else if (selectedColor == R.id.folder_color_3) {
+            folderColor = PICKED_COLOR_3;
+        } else if (selectedColor == R.id.folder_color_4) {
+            folderColor = PICKED_COLOR_4;
+        } else if (selectedColor == R.id.folder_color_5) {
+            folderColor = PICKED_COLOR_5;
+        } else if (selectedColor == R.id.folder_color_6) {
+            folderColor = PICKED_COLOR_6;
+        } else if (selectedColor == R.id.folder_color_7) {
+            folderColor = PICKED_COLOR_7;
+        } else if (selectedColor == R.id.folder_color_8) {
+            folderColor = PICKED_COLOR_8;
+        } else if (selectedColor == R.id.folder_color_9) {
+            folderColor = PICKED_COLOR_9;
+        } else if (selectedColor == R.id.folder_color_10) {
+            folderColor = PICKED_COLOR_10;
+        } else if (selectedColor == R.id.folder_color_11) {
+            folderColor = PICKED_COLOR_11;
+        } else if (selectedColor == R.id.folder_color_12) {
+            folderColor = PICKED_COLOR_12;
+        } else if (selectedColor == R.id.folder_color_13) {
+            folderColor = PICKED_COLOR_13;
+        } else if (selectedColor == R.id.folder_color_14) {
+            folderColor = PICKED_COLOR_14;
+        }
+
+        return folderColor;
     }
 
     @OnClick(R.id.activity_add_folder_action_cancel)

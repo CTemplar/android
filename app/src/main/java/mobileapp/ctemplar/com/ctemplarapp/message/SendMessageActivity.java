@@ -6,10 +6,12 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.preference.PreferenceManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.util.Patterns;
 import android.view.View;
@@ -23,6 +25,7 @@ import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 import android.widget.Toast;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -38,19 +41,28 @@ import mobileapp.ctemplar.com.ctemplarapp.net.request.PublicKeysRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SendMessageRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.ContactData;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.ContactsResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.CreateAttachmentResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.KeyResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.KeyResult;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessageAttachment;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResult;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
+import mobileapp.ctemplar.com.ctemplarapp.utils.FileUtils;
+import mobileapp.ctemplar.com.ctemplarapp.utils.PermissionCheck;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 
 public class SendMessageActivity extends BaseActivity {
 
+    private final int PICK_FILE_FROM_STORAGE = 1;
     private SendMessageActivityViewModel mainModel;
     public final static String PARENT_ID = "parent_id";
     private Long parentId;
     private ProgressDialog sendingProgress;
-    private boolean needExit = false;
     private SharedPreferences sharedPreferences;
+    private long currentMessageId;
+    private MessageSendAttachmentAdapter messageSendAttachmentAdapter;
 
     @BindView(R.id.fragment_send_message_to_input)
     AutoCompleteTextView toEmailTextView;
@@ -84,6 +96,9 @@ public class SendMessageActivity extends BaseActivity {
 
     @BindView(R.id.fragment_send_message_send)
     ImageView sendMessage;
+
+    @BindView(R.id.fragment_send_message_attachments)
+    RecyclerView messageAttachmentsRecycleView;
 
     @Override
     protected int getLayoutId() {
@@ -141,6 +156,7 @@ public class SendMessageActivity extends BaseActivity {
         }
 
         mainModel = ViewModelProviders.of(this).get(SendMessageActivityViewModel.class);
+        createMessage();
 
         List<MailboxEntity> mailboxEntities = mainModel.getMailboxes();
         String[] emails = new String[mailboxEntities.size()];
@@ -155,6 +171,9 @@ public class SendMessageActivity extends BaseActivity {
         );
         spinnerFrom.setAdapter(adapter);
 
+        messageSendAttachmentAdapter = new MessageSendAttachmentAdapter();
+        messageAttachmentsRecycleView.setAdapter(messageSendAttachmentAdapter);
+
         mainModel.getContactsResponse().observe(this, new Observer<ContactsResponse>() {
             @Override
             public void onChanged(@Nullable ContactsResponse contactsResponse) {
@@ -167,11 +186,10 @@ public class SendMessageActivity extends BaseActivity {
             @Override
             public void onChanged(@Nullable KeyResponse keyResponse) {
                 if (keyResponse != null && keyResponse.getKeyResult() != null && keyResponse.getKeyResult().length > 0) {
-                    KeyResult[] keyResult = keyResponse.getKeyResult();
-
                     ArrayList<String> emails = new ArrayList<>();
                     ArrayList<String> publicKeys = new ArrayList<>();
-                    for (KeyResult key : keyResult) {
+
+                    for (KeyResult key : keyResponse.getKeyResult()) {
                         emails.add(key.getEmail());
                         publicKeys.add(key.getPublicKey());
                     }
@@ -200,19 +218,55 @@ public class SendMessageActivity extends BaseActivity {
                         if (messagesResult == null) {
                             Toast.makeText(SendMessageActivity.this, "Not sent", Toast.LENGTH_SHORT).show();
                         } else {
-                            onBackPressed();
+                            finish();
+                        }
+                    }
+                });
+
+        mainModel.getCreateMessageStatus()
+                .observe(this, new Observer<ResponseStatus>() {
+                    @Override
+                    public void onChanged(@Nullable ResponseStatus responseStatus) {
+                        if (responseStatus == null || responseStatus == ResponseStatus.RESPONSE_ERROR) {
+                            Toast.makeText(getApplicationContext(), "Message not created", Toast.LENGTH_SHORT).show();
+                            finish();
+                        }
+                    }
+                });
+
+        mainModel.getCreateMessageResponse()
+                .observe(this, new Observer<MessagesResult>() {
+                    @Override
+                    public void onChanged(@Nullable MessagesResult messagesResult) {
+                        if (messagesResult != null) {
+                            currentMessageId = messagesResult.getId();
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Message not created", Toast.LENGTH_SHORT).show();
+                            finish();
+                        }
+                    }
+                });
+
+        mainModel.uploadAttachmentStatus
+                .observe(this, new Observer<ResponseStatus>() {
+                    @Override
+                    public void onChanged(@Nullable ResponseStatus responseStatus) {
+                        if (responseStatus == ResponseStatus.RESPONSE_COMPLETE) {
+                            //Toast.makeText(getApplicationContext(), "Attachment upload complete" , Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+
+        mainModel.uploadAttachmentResponse
+                .observe(this, new Observer<MessageAttachment>() {
+                    @Override
+                    public void onChanged(@Nullable MessageAttachment messageAttachment) {
+                        if (messageAttachment != null) {
+                            messageSendAttachmentAdapter.addAttachment(messageAttachment);
                         }
                     }
                 });
     }
-
-    @Override
-    public void onBackPressed() {
-        if (onHandleBackPressed()) {
-            super.onBackPressed();
-        }
-    }
-
 
     private void handleContactsList(@Nullable ContactsResponse contactsResponse) {
         if (contactsResponse == null || contactsResponse.getResults() == null || contactsResponse.getResults().length == 0) {
@@ -257,6 +311,10 @@ public class SendMessageActivity extends BaseActivity {
     }
 
     private void sendMessageToDraft() {
+        MailboxEntity defaultMailbox = CTemplarApp.getAppDatabase().mailboxDao().getDefault();
+        long mailboxId = defaultMailbox.id;
+        String mailboxEmail = defaultMailbox.email;
+
         String toEmail = toEmailTextView.getText().toString();
         String subject = subjectEditText.getText().toString();
         String compose = Html.toHtml(composeEditText.getText());
@@ -266,46 +324,103 @@ public class SendMessageActivity extends BaseActivity {
             emails.add(toEmail);
         }
 
-        SendMessageRequest messageRequest = new SendMessageRequest(
-                subject,
-                compose,
-                "draft",
-                false,
-                true,
-                CTemplarApp.getAppDatabase().mailboxDao().getDefault().id, //TODO
-                parentId
-        );
+        SendMessageRequest messageRequestToDraft = new SendMessageRequest();
+        messageRequestToDraft.setSubject(subject);
+        messageRequestToDraft.setSender(mailboxEmail);
+        messageRequestToDraft.setContent(compose);
+        messageRequestToDraft.setFolder("draft");
+        messageRequestToDraft.setIsEncrypted(true);
+        messageRequestToDraft.setSend(false);
+        messageRequestToDraft.setMailbox(mailboxId);
+        messageRequestToDraft.setParent(parentId);
 
         if (!emails.isEmpty()) {
-            messageRequest.setReceivers(emails);
+            messageRequestToDraft.setReceivers(emails);
         }
 
-        mainModel.sendMessage(messageRequest, new ArrayList<String>());
+        mainModel.updateMessage(currentMessageId, messageRequestToDraft, new ArrayList<String>());
     }
 
     private void sendMessage(ArrayList<String> emails, ArrayList<String> publicKeys) {
+        MailboxEntity defaultMailbox = CTemplarApp.getAppDatabase().mailboxDao().getDefault();
+        long mailboxId = defaultMailbox.id;
+        String mailboxEmail = defaultMailbox.email;
+
         String subject = subjectEditText.getText().toString();
         String compose = Html.toHtml(composeEditText.getText());
 
-        SendMessageRequest messageRequest = new SendMessageRequest(
-                subject,
-                compose,
-                "sent",
-                true,
-                true,
-                CTemplarApp.getAppDatabase().mailboxDao().getDefault().id, //TODO
-                parentId
-        );
+        SendMessageRequest sendMessageRequest = new SendMessageRequest();
+        sendMessageRequest.setSender(mailboxEmail);
+        sendMessageRequest.setSubject(subject);
+        sendMessageRequest.setContent(compose);
+        sendMessageRequest.setFolder("sent");
+        sendMessageRequest.setSend(true);
+        sendMessageRequest.setMailbox(mailboxId);
+        sendMessageRequest.setParent(parentId);
 
-        if (!emails.isEmpty()) {
-            messageRequest.setReceivers(emails);
+        if (!publicKeys.contains(null)) {
+            sendMessageRequest.setIsEncrypted(true);
         }
 
-        needExit = true;
-        mainModel.sendMessage(messageRequest, publicKeys);
+        List<MessageAttachment> attachments = messageSendAttachmentAdapter.getAttachmentsList();
+        if (attachments != null && !attachments.isEmpty()) {
+            sendMessageRequest.setAttachments(attachments);
+        }
+
+        if (!emails.isEmpty()) {
+            sendMessageRequest.setReceivers(emails);
+        }
+
+        mainModel.updateMessage(currentMessageId, sendMessageRequest, publicKeys);
         if (sendingProgress != null){
             sendingProgress.dismiss();
         }
+    }
+
+    private void createMessage() {
+        MailboxEntity defaultMailbox = CTemplarApp.getAppDatabase().mailboxDao().getDefault();
+        long mailboxId = defaultMailbox.id;
+        String mailboxEmail = defaultMailbox.email;
+
+        SendMessageRequest createMessageRequest = new SendMessageRequest(
+                mailboxEmail,
+                "content",
+                "draft",
+                mailboxId
+        );
+
+        mainModel.createMessage(createMessageRequest);
+    }
+
+    @OnClick(R.id.fragment_send_message_attachment_layout)
+    public void onClickAttachment() {
+        if (PermissionCheck.readAndWriteExternalStorage(this)) {
+            Intent chooseIntent = new Intent(Intent.ACTION_GET_CONTENT);
+            chooseIntent.setType("*/*");
+            startActivityForResult(chooseIntent, PICK_FILE_FROM_STORAGE);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == PICK_FILE_FROM_STORAGE && resultCode == RESULT_OK && data != null && data.getData() != null) {
+            Uri attachmentUri = data.getData();
+            uploadAttachment(attachmentUri);
+        }
+    }
+
+    private void uploadAttachment(Uri attachmentUri) {
+        String attachmentPath = FileUtils.getPath(this, attachmentUri);
+
+        File attachmentFile = new File(attachmentPath);
+        RequestBody attachmentPart = RequestBody.create(MediaType.parse(getContentResolver().getType(attachmentUri)), attachmentFile);
+        MultipartBody.Part multipartAttachment = MultipartBody.Part.createFormData("document", attachmentFile.getName(), attachmentPart);
+
+        Toast.makeText(getApplicationContext(), "Start upload attachment" , Toast.LENGTH_SHORT).show();
+
+        mainModel.uploadAttachment(multipartAttachment, currentMessageId);
     }
 
     @OnClick(R.id.fragment_send_message_to_add_button)
@@ -321,38 +436,47 @@ public class SendMessageActivity extends BaseActivity {
         }
     }
 
-    @OnClick(R.id.fragment_send_message_back)
-    public void onClickBack() {
-        onBackPressed();
+    @Override
+    public void onBackPressed() {
+        if (onHandleBackPressed()) {
+            super.onBackPressed();
+        }
     }
 
-    public boolean onHandleBackPressed() {
-        if (needExit) {
-            return true;
-        }
-
+    private boolean onHandleBackPressed() {
         new AlertDialog.Builder(SendMessageActivity.this)
                 .setTitle("Confirm Discard")
                 .setMessage("Are you sure, you want to discard this email?")
                 .setPositiveButton("Save in drafts", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                needExit = true;
                                 sendMessageToDraft();
-                                SendMessageActivity.this.onBackPressed();
+                                finish();
                             }
                         }
                 )
                 .setNegativeButton("Discard", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                needExit = true;
-                                SendMessageActivity.this.onBackPressed();
+                                mainModel.deleteMessage(currentMessageId);
+                                finish();
                             }
                         }
                 )
                 .setNeutralButton("Cancel", null)
                 .show();
-        return needExit;
+
+        return false;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mainModel.deleteMessage(currentMessageId);
+    }
+
+    @OnClick(R.id.fragment_send_message_back)
+    public void onClickBack() {
+        onBackPressed();
     }
 }

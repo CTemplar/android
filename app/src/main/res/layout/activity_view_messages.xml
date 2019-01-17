@@ -2,6 +2,7 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:theme="@style/NavigationBarLight"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
@@ -89,6 +90,8 @@
         android:id="@+id/activity_view_messages_messages"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:orientation="horizontal"
+        tools:listitem="@layout/item_message_view_expanded"
         app:layout_constraintTop_toBottomOf="@id/activity_view_messages_bottom_subject_divider"
         app:layout_constraintBottom_toTopOf="@id/activity_view_messages_actions"
         android:background="@color/colorWhiteLight"/>

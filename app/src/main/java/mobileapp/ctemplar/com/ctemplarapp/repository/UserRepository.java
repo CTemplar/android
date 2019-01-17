@@ -19,9 +19,11 @@ import mobileapp.ctemplar.com.ctemplarapp.net.request.SendMessageRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SignInRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SignUpRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.CheckUsernameResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.CreateAttachmentResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.KeyResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Mailboxes.MailboxesResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Mailboxes.MailboxesResult;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessageAttachment;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResult;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.RecoverPasswordResponse;
@@ -31,6 +33,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.BlackListContact;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.MyselfResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.WhiteListContact;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
+import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
 
 @Singleton
@@ -190,8 +193,20 @@ public class UserRepository {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
+    public Observable<MessagesResult> updateMessage(long id, SendMessageRequest request) {
+        return service.updateMessage(id, request)
+                .subscribeOn(io.reactivex.schedulers.Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
     public Observable<MessagesResult> sendMessage(SendMessageRequest request) {
         return service.sendMessage(request)
+                .subscribeOn(io.reactivex.schedulers.Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public Observable<MessageAttachment> uploadAttachment(MultipartBody.Part attachment, long message) {
+        return service.uploadAttachment(attachment, message)
                 .subscribeOn(io.reactivex.schedulers.Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
@@ -200,22 +215,6 @@ public class UserRepository {
         return service.getKeys(request)
                 .subscribeOn(io.reactivex.schedulers.Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
-    }
-
-    public void saveUserPassword(String password) {
-        userStore.savePassword(password);
-    }
-
-    public void saveUserName(String username) {
-        userStore.saveUsername(username);
-    }
-
-    public String getUsername() {
-        return userStore.getUsername();
-    }
-
-    public String getUserPassword() {
-        return userStore.getUserPassword();
     }
 
     public Observable<ResponseBody> deleteBlacklistContact(BlackListContact contact) {
@@ -240,5 +239,21 @@ public class UserRepository {
         return service.addWhitelistContact(contact)
                 .subscribeOn(io.reactivex.schedulers.Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public void saveUserPassword(String password) {
+        userStore.savePassword(password);
+    }
+
+    public void saveUserName(String username) {
+        userStore.saveUsername(username);
+    }
+
+    public String getUsername() {
+        return userStore.getUsername();
+    }
+
+    public String getUserPassword() {
+        return userStore.getUserPassword();
     }
 }

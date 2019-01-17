@@ -12,7 +12,11 @@
     <color name="colorGreyLight4">#ebebeb</color>
     <color name="colorGreyLight5">#61000000</color>
     <color name="colorGreyLight6">#fafafa</color>
+    <color name="colorGreyLight7">#f2f0f0</color>
     <color name="colorGrey">#939191</color>
+    <color name="colorGrey2">#e0e0e0</color>
+    <color name="colorGrey3">#5a5a5a</color>
+    <color name="colorGrey4">#979797</color>
     <color name="colorBlack50">#8a000000</color>
     <color name="colorBlack3">#08000000</color>
     <color name="colorBlack4">#de000000</color>

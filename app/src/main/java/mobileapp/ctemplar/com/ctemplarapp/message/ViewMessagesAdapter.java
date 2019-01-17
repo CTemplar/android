@@ -1,6 +1,9 @@
 package mobileapp.ctemplar.com.ctemplarapp.message;
 
 import android.content.Context;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.TextUtils;
 import android.util.Base64;
@@ -9,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.BaseAdapter;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.text.DateFormat;
@@ -20,6 +24,8 @@ import java.util.Locale;
 
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.R;
+import mobileapp.ctemplar.com.ctemplarapp.folders.ManageFoldersAdapter;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessageAttachment;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResult;
 import mobileapp.ctemplar.com.ctemplarapp.utils.PGPManager;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
@@ -29,9 +35,11 @@ public class ViewMessagesAdapter extends BaseAdapter {
 
     private MailboxEntity currentMailbox;
     private List<MessagesResult> data;
+    private MessageAttachmentAdapter messageAttachmentAdapter;
 
-    ViewMessagesAdapter(List<MessagesResult> data) {
+    ViewMessagesAdapter(List<MessagesResult> data, MessageAttachmentAdapter messageAttachmentAdapter) {
         this.data = data;
+        this.messageAttachmentAdapter = messageAttachmentAdapter;
         currentMailbox = CTemplarApp.getAppDatabase().mailboxDao().getDefault();
     }
 
@@ -88,16 +96,14 @@ public class ViewMessagesAdapter extends BaseAdapter {
         String messageWithStyle = style + encodedMessage;
         String encodedContent = Base64.encodeToString(messageWithStyle.getBytes(), Base64.NO_PADDING);
 
-        // collapsed
+        // VIEW COLLAPSED
         TextView senderTextView = view.findViewById(R.id.item_message_view_collapsed_sender);
         TextView contentTextView = view.findViewById(R.id.item_message_view_collapsed_content);
 
         senderTextView.setText(messageData.getSender());
         contentTextView.setText(Html.fromHtml(encodedMessage));
 
-
-        //expanded
-
+        // VIEW EXPANDED
         senderTextView = view.findViewById(R.id.item_message_view_expanded_sender_name);
         TextView receiverTextView = view.findViewById(R.id.item_message_view_expanded_receiver_name);
         TextView dateTextView = view.findViewById(R.id.item_message_view_expanded_date);
@@ -110,6 +116,7 @@ public class ViewMessagesAdapter extends BaseAdapter {
         TextView ccNameTextView = view.findViewById(R.id.item_message_view_CC_name);
         TextView ccEmailTextView = view.findViewById(R.id.item_message_view_CC_email);
         WebView contentWebView = view.findViewById(R.id.item_message_view_expanded_content);
+        RecyclerView attachmentsRecyclerView = view.findViewById(R.id.item_message_view_expanded_attachment);
         final ViewGroup expandedCredentialsLayout = view.findViewById(R.id.item_message_view_expanded_credentials);
         final View credentialsDivider = view.findViewById(R.id.item_message_view_expanded_credentials_divider);
 
@@ -129,13 +136,19 @@ public class ViewMessagesAdapter extends BaseAdapter {
             }
         });
 
-        senderTextView.setText(messageData.getSender());
-        receiverTextView.setText(TextUtils.join(", ", messageData.getReceivers()));
+        if (messageData.getSender() != null) {
+            senderTextView.setText(messageData.getSender());
+        }
+        if (messageData.getReceivers() != null) {
+            receiverTextView.setText(TextUtils.join(", ", messageData.getReceivers()));
+        }
         dateTextView.setText(getStringDate(messageData.getCreatedAt()));
 
         String[] sender = new String[] { messageData.getSender() };
         senderEmailTextView.setText(addQuotesToNames(sender));
-        receiverEmailTextView.setText(addQuotesToNames(messageData.getReceivers()));
+        if (messageData.getReceivers() != null) {
+            receiverEmailTextView.setText(addQuotesToNames(messageData.getReceivers()));
+        }
 
         String[] cc = messageData.getCC();
         if (cc != null) {
@@ -147,6 +160,14 @@ public class ViewMessagesAdapter extends BaseAdapter {
         contentWebView.getSettings().setLoadWithOverviewMode(true);
         contentWebView.loadData(encodedContent, "text/html", "base64");
 
+        List<MessageAttachment> attachmentsList = messageData.getAttachments();
+
+        RecyclerView.LayoutManager mLayoutManager
+                = new LinearLayoutManager(attachmentsRecyclerView.getContext(), LinearLayoutManager.HORIZONTAL, false);
+        attachmentsRecyclerView.setLayoutManager(mLayoutManager);
+
+        messageAttachmentAdapter.setAttachmentsList(attachmentsList);
+        attachmentsRecyclerView.setAdapter(messageAttachmentAdapter);
 
         return view;
     }

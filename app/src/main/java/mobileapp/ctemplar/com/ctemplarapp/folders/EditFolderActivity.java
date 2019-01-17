@@ -81,38 +81,11 @@ public class EditFolderActivity extends BaseActivity {
 
     private void editFolder() {
         String folderName = editTextNameFolder.getText().toString();
-        String folderColor = "#7272a8";
+        String folderColor = "";
 
         if (radioGroupColor.getCheckedRadioButtonId() != -1) {
             int selectedColor = radioGroupColor.getCheckedRadioButtonId();
-
-            if (selectedColor == R.id.folder_color_2) {
-                folderColor = "#d05859";
-            } else if (selectedColor == R.id.folder_color_3) {
-                folderColor = "#c26cc7";
-            } else if (selectedColor == R.id.folder_color_4) {
-                folderColor = "#7568d1";
-            } else if (selectedColor == R.id.folder_color_5) {
-                folderColor = "#6aa9d2";
-            } else if (selectedColor == R.id.folder_color_6) {
-                folderColor = "#5fc7b8";
-            } else if (selectedColor == R.id.folder_color_7) {
-                folderColor = "#72bb74";
-            } else if (selectedColor == R.id.folder_color_8) {
-                folderColor = "#72bb74";
-            } else if (selectedColor == R.id.folder_color_9) {
-                folderColor = "#e6c14c";
-            } else if (selectedColor == R.id.folder_color_10) {
-                folderColor = "#e6994d";
-            } else if (selectedColor == R.id.folder_color_11) {
-                folderColor = "#cf7e7d";
-            } else if (selectedColor == R.id.folder_color_12) {
-                folderColor = "#c893cb";
-            } else if (selectedColor == R.id.folder_color_13) {
-                folderColor = "#9c94d0";
-            } else if (selectedColor == R.id.folder_color_14) {
-                folderColor = "#a9c4d5";
-            }
+            folderColor = AddFolderActivity.getPickerColor(selectedColor);
         }
 
         if (folderName.matches("^[a-zA-Z0-9]*$") && folderName.length() > 3 && folderName.length() < 31) {

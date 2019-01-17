@@ -4,7 +4,12 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessageAttachment;
+
 public class SendMessageRequest {
+
+    @SerializedName("sender")
+    private String sender;
 
     @SerializedName("subject")
     private String subject;
@@ -30,16 +35,19 @@ public class SendMessageRequest {
     @SerializedName("receiver")
     private List<String> receivers;
 
-    public SendMessageRequest(String subject, String content, String folder, boolean send, boolean isEncrypted, long mailbox, Long parent) {
-        this.subject = subject;
-        this.content = content;
-        this.folder = folder;
-        this.send = send;
-        this.isEncrypted = isEncrypted;
-        this.mailbox = mailbox;
-        this.parent = parent;
+    @SerializedName("attachments")
+    private List<MessageAttachment> attachments;
+
+    public SendMessageRequest() {
+
     }
 
+    public SendMessageRequest(String sender, String content, String folder, long mailbox) {
+        this.sender = sender;
+        this.content = content;
+        this.folder = folder;
+        this.mailbox = mailbox;
+    }
 
     public String getSubject() {
         return subject;
@@ -103,5 +111,21 @@ public class SendMessageRequest {
 
     public void setParent(Long parent) {
         this.parent = parent;
+    }
+
+    public String getSender() {
+        return sender;
+    }
+
+    public void setSender(String sender) {
+        this.sender = sender;
+    }
+
+    public List<MessageAttachment> getAttachments() {
+        return attachments;
+    }
+
+    public void setAttachments(List<MessageAttachment> attachments) {
+        this.attachments = attachments;
     }
 }

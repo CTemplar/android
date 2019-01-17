@@ -18,10 +18,12 @@ import mobileapp.ctemplar.com.ctemplarapp.net.request.SignUpRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.CheckUsernameResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.ContactData;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.ContactsResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.CreateAttachmentResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Folders.FoldersResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Folders.FoldersResult;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.KeyResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Mailboxes.MailboxesResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessageAttachment;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResult;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.RecoverPasswordResponse;
@@ -30,14 +32,16 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.SignUpResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.BlackListContact;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.MyselfResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.WhiteListContact;
-import mobileapp.ctemplar.com.ctemplarapp.settings.ChangePasswordActivity;
+import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
 import retrofit2.Response;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
+import retrofit2.http.Multipart;
 import retrofit2.http.PATCH;
 import retrofit2.http.POST;
+import retrofit2.http.Part;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
@@ -61,6 +65,10 @@ public interface RestService {
 
     @POST("/auth/change-password/")
     Observable<ResponseBody> changePassword(@Body ChangePasswordRequest request);
+
+    @Multipart
+    @POST("/emails/attachments/create/")
+    Observable<MessageAttachment> uploadAttachment(@Part MultipartBody.Part document, @Part("message") long message);
 
     @GET("/emails/messages/")
     Observable<MessagesResponse> getMessages(@Query("limit") int limit, @Query("offset") int offset, @Query("folder") String folder);
@@ -109,6 +117,9 @@ public interface RestService {
 
     @POST("/emails/messages/")
     Observable<MessagesResult> sendMessage(@Body SendMessageRequest request);
+
+    @PATCH("/emails/messages/{id}/")
+    Observable<MessagesResult> updateMessage(@Path("id") long id, @Body SendMessageRequest request);
 
     @GET("/users/contacts/")
     Observable<ContactsResponse> getContacts(@Query("limit") int limit, @Query("offset") int offset, @Query("id__in") String id__in);

@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/colorWhiteLight">
 
     <android.support.constraint.ConstraintLayout
@@ -304,6 +305,7 @@
         android:minHeight="50dp">
 
         <RelativeLayout
+            android:id="@+id/fragment_send_message_attachment_layout"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="match_parent">
@@ -386,7 +388,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/fragment_send_message_email_actions_layout"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/fragment_send_message_attachments"
         app:passwordToggleDrawable="@drawable/icon_password_eye_dark"
         app:passwordToggleEnabled="true"
         app:passwordToggleTint="@color/colorDarkBlue">
@@ -406,6 +408,21 @@
                 android:gravity="top"/>
 
     </android.support.design.widget.TextInputLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/fragment_send_message_attachments"
+        android:padding="12dp"
+        android:orientation="vertical"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        tools:listitem="@layout/item_message_attachment_send"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/fragment_send_message_compose_email_input_layout"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layoutManager="android.support.v7.widget.LinearLayoutManager">
+
+    </android.support.v7.widget.RecyclerView>
 
     <!--ToDo-->
     <ListView android:id="@+id/fragment_send_message_from_list_view"
