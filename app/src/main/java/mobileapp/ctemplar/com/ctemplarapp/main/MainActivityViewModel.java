@@ -21,8 +21,10 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResponse
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResult;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.SignInResponse;
 import mobileapp.ctemplar.com.ctemplarapp.repository.ContactsRepository;
+import mobileapp.ctemplar.com.ctemplarapp.repository.MessagesRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.ContactEntity;
+import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MessageEntity;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EncodeUtils;
 import okhttp3.ResponseBody;
 import retrofit2.HttpException;
@@ -32,10 +34,12 @@ public class MainActivityViewModel extends ViewModel {
 
     UserRepository userRepository;
     ContactsRepository contactsRepository;
+    MessagesRepository messagesRepository;
     MutableLiveData<MainActivityActions> actions = new SingleLiveEvent<>();
     MutableLiveData<DialogState> dialogState = new SingleLiveEvent<>();
     MutableLiveData<ResponseStatus> responseStatus = new MutableLiveData<>();
-    MutableLiveData<MessagesResponse> messagesResponse = new MutableLiveData<>();
+    MutableLiveData<List<MessageProvider>> messagesResponse = new MutableLiveData<>();
+    MutableLiveData<List<MessageProvider>> starredMessagesResponse = new MutableLiveData<>();
     MutableLiveData<List<Contact>> contactsResponse = new MutableLiveData<>();
     MutableLiveData<String> currentFolder = new MutableLiveData<String>();
     MutableLiveData<SignInResponse> signResponse = new MutableLiveData<>();
@@ -43,6 +47,7 @@ public class MainActivityViewModel extends ViewModel {
     public MainActivityViewModel() {
         userRepository = CTemplarApp.getUserRepository();
         contactsRepository = CTemplarApp.getContactsRepository();
+        messagesRepository = CTemplarApp.getMessagesRepository();
     }
 
     public LiveData<MainActivityActions> getActionsStatus() {
@@ -85,15 +90,24 @@ public class MainActivityViewModel extends ViewModel {
         return currentFolder;
     }
 
-    public LiveData<MessagesResponse> getMessagesResponse() {
+    public LiveData<List<MessageProvider>> getMessagesResponse() {
         return messagesResponse;
+    }
+
+    public LiveData<List<MessageProvider>> getStarredMessagesResponse() {
+        return starredMessagesResponse;
     }
 
     public LiveData<List<Contact>> getContactsResponse() {
         return contactsResponse;
     }
 
-    public void getMessages(int limit, int offset, String folder) {
+    public void getMessages(int limit, int offset, final String folder) {
+
+        List<MessageEntity> entities = messagesRepository.getLocalMessagesByFolder(folder);
+        List<MessageProvider> messageProviders = MessageProvider.fromMessageEntities(entities);
+        messagesResponse.postValue(messageProviders);
+
         userRepository.getMessagesList(limit, offset, folder)
                 .subscribe(new Observer<MessagesResponse>() {
                     @Override
@@ -102,9 +116,25 @@ public class MainActivityViewModel extends ViewModel {
                     }
 
                     @Override
-                    public void onNext(MessagesResponse response) {
-                        messagesResponse.postValue(response);
-                        responseStatus.postValue(ResponseStatus.RESPONSE_NEXT_MESSAGES);
+                    public void onNext(final MessagesResponse response) {
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                messagesRepository.deleteLocalMessagesByFolderName(folder);
+                                List<MessagesResult> messages = response.getMessagesList();
+
+                                List<MessageProvider> messageProviders = MessageProvider
+                                        .fromMessagesResults(messages);
+
+                                List<MessageEntity> messageEntities = MessageProvider
+                                        .fromMessagesResultsToEntities(messages);
+
+                                messagesRepository.addMessagesToDatabase(messageEntities);
+
+                                messagesResponse.postValue(messageProviders);
+                                responseStatus.postValue(ResponseStatus.RESPONSE_NEXT_MESSAGES);
+                            }
+                        }).start();
                     }
 
                     @Override
@@ -129,7 +159,11 @@ public class MainActivityViewModel extends ViewModel {
 
                     @Override
                     public void onNext(MessagesResponse response) {
-                        messagesResponse.postValue(response);
+                        List<MessagesResult> messages = response.getMessagesList();
+                        List<MessageProvider> messageProviders = MessageProvider
+                                .fromMessagesResults(messages);
+
+                        starredMessagesResponse.postValue(messageProviders);
                         responseStatus.postValue(ResponseStatus.RESPONSE_NEXT_MESSAGES);
                     }
 
@@ -287,8 +321,8 @@ public class MainActivityViewModel extends ViewModel {
                 });
     }
 
-    public void deleteMessage(final MessagesResult deletedMessage) {
-        userRepository.deleteMessage(deletedMessage.getId())
+    public void deleteMessage(long messageId) {
+        userRepository.deleteMessage(messageId)
                 .subscribe(new Observer<ResponseBody>() {
                     @Override
                     public void onSubscribe(Disposable d) {
@@ -337,8 +371,8 @@ public class MainActivityViewModel extends ViewModel {
                 });
     }
 
-    public void toFolder(final MessagesResult messageResult, String folder) {
-        userRepository.toFolder(messageResult.getId(), folder)
+    public void toFolder(long messageId, String folder) {
+        userRepository.toFolder(messageId, folder)
                 .subscribe(new Observer<ResponseBody>() {
                     @Override
                     public void onSubscribe(Disposable d) {

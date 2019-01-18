@@ -8,6 +8,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.RestClient;
 import mobileapp.ctemplar.com.ctemplarapp.repository.AppDatabase;
 import mobileapp.ctemplar.com.ctemplarapp.repository.ContactsRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.ManageFoldersRepository;
+import mobileapp.ctemplar.com.ctemplarapp.repository.MessagesRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserStore;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserStoreImpl;
@@ -18,9 +19,14 @@ public class CTemplarApp extends MultiDexApplication {
     private static RestClient restClient;
     private static UserStore userStore;
     private static UserRepository userRepository;
+    private static MessagesRepository messagesRepository;
     private static ContactsRepository contactsRepository;
     private static ManageFoldersRepository manageFoldersRepository;
     private static AppDatabase appDatabase;
+
+    public static MessagesRepository getMessagesRepository() {
+        return messagesRepository;
+    }
 
     @Override
     public void onCreate() {
@@ -88,6 +94,10 @@ public class CTemplarApp extends MultiDexApplication {
 
         if (manageFoldersRepository == null) {
             manageFoldersRepository = new ManageFoldersRepository();
+        }
+
+        if (messagesRepository == null) {
+            messagesRepository = MessagesRepository.getInstance();
         }
     }
 }
