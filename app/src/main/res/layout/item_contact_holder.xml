@@ -2,7 +2,7 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="14dp"
+    android:padding="12dp"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <ImageView
@@ -11,14 +11,16 @@
         android:layout_height="40dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        android:padding="8dp"
-        android:src="@drawable/ic_star_on"/>
+        android:src="@drawable/icon_user"/>
 
     <View
         android:id="@+id/item_contact_holder_divider"
         android:layout_width="1dp"
         android:layout_height="1dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginLeft="10dp"
         android:background="@android:color/transparent"
+        app:layout_constraintLeft_toRightOf="@+id/item_contact_holder_ico"
         app:layout_constraintTop_toTopOf="@id/item_contact_holder_ico"
         app:layout_constraintBottom_toBottomOf="@id/item_contact_holder_ico"/>
 
@@ -27,15 +29,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ellipsize="end"
-        android:fontFamily="@font/lato_bold"
+        android:fontFamily="@font/lato_regular"
         android:gravity="left"
         android:lines="1"
         android:maxWidth="140dp"
         android:text="Andrew Smith"
-        android:textColor="@color/colorBlack4"
+        android:textColor="@color/colorDarkBlue3"
         android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@id/item_contact_holder_divider"
-        app:layout_constraintLeft_toRightOf="@id/item_contact_holder_ico"/>
+        app:layout_constraintLeft_toRightOf="@id/item_contact_holder_divider"/>
 
     <TextView
         android:id="@+id/item_contact_holder_mail"
@@ -45,7 +47,7 @@
         android:text="andrewsmith@ctemplar.com"
         android:textSize="16sp"
         android:fontFamily="@font/lato_regular"
-        app:layout_constraintLeft_toRightOf="@id/item_contact_holder_ico"
+        app:layout_constraintLeft_toRightOf="@id/item_contact_holder_divider"
         app:layout_constraintTop_toTopOf="@id/item_contact_holder_divider"/>
 
 </android.support.constraint.ConstraintLayout>

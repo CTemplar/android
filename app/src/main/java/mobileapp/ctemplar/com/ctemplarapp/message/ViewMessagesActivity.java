@@ -226,15 +226,25 @@ public class ViewMessagesActivity extends BaseActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.view_messages_menu, menu);
         if (currentFolder.equals("inbox")) {
-            menu.findItem(R.id.menu_view_not_spam).setVisible(false);
             menu.findItem(R.id.menu_view_inbox).setVisible(false);
+            menu.findItem(R.id.menu_view_not_spam).setVisible(false);
+        } else if (currentFolder.equals("sent")) {
+            menu.findItem(R.id.menu_view_spam).setVisible(false);
+            menu.findItem(R.id.menu_view_not_spam).setVisible(false);
+        } else if (currentFolder.equals("outbox")) {
+            menu.findItem(R.id.menu_view_spam).setVisible(false);
+            menu.findItem(R.id.menu_view_not_spam).setVisible(false);
         } else if (currentFolder.equals("spam")) {
             menu.findItem(R.id.menu_view_spam).setVisible(false);
             menu.findItem(R.id.menu_view_archive).setVisible(false);
         } else if (currentFolder.equals("archive")) {
             menu.findItem(R.id.menu_view_spam).setVisible(false);
             menu.findItem(R.id.menu_view_archive).setVisible(false);
+            menu.findItem(R.id.menu_view_not_spam).setVisible(false);
         } else if (currentFolder.equals("draft")) {
+            menu.findItem(R.id.menu_view_spam).setVisible(false);
+            menu.findItem(R.id.menu_view_not_spam).setVisible(false);
+        } else if (currentFolder.equals("trash")) {
             menu.findItem(R.id.menu_view_spam).setVisible(false);
             menu.findItem(R.id.menu_view_not_spam).setVisible(false);
         }

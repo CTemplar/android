@@ -147,11 +147,17 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesView
         notifyItemInserted(position);
     }
 
-    public PublishSubject<Long> getOnClickSubject() {
-        return onClickSubject;
+    public List<MessagesResult> getAll() {
+        return filteredList;
     }
 
-    public void filter(boolean isStarred, boolean isUnread, boolean withAttachment) {
+    public void removeAll(List<MessagesResult> messagesList) {
+        filteredList.removeAll(messagesList);
+        notifyDataSetChanged();
+    }
+
+    public boolean filter(boolean isStarred, boolean isUnread, boolean withAttachment) {
+        boolean filtered = false;
         filteredList = new ArrayList<>();
         for (MessagesResult messageResult :
                 messagesList) {
@@ -164,8 +170,17 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesView
                     (isUnread && messageUnread) ||
                     (withAttachment && messageWithAttachments && messageNotEmpty)) {
                 filteredList.add(messageResult);
+            } else if (!isStarred && !isUnread && !withAttachment) {
+                filteredList.add(messageResult);
+            } else {
+                filtered = true;
             }
         }
         notifyDataSetChanged();
+        return filtered;
+    }
+
+    public PublishSubject<Long> getOnClickSubject() {
+        return onClickSubject;
     }
 }

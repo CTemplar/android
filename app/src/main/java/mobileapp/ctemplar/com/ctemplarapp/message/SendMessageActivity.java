@@ -12,7 +12,9 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
 import android.text.Html;
+import android.text.TextWatcher;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -252,7 +254,7 @@ public class SendMessageActivity extends BaseActivity {
                     @Override
                     public void onChanged(@Nullable ResponseStatus responseStatus) {
                         if (responseStatus == ResponseStatus.RESPONSE_COMPLETE) {
-                            //Toast.makeText(getApplicationContext(), "Attachment upload complete" , Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), "Attachment upload complete" , Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -266,6 +268,61 @@ public class SendMessageActivity extends BaseActivity {
                         }
                     }
                 });
+
+        sendMessage.setEnabled(false);
+        toEmailTextView.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                boolean state = inputFieldsNotEmpty();
+                sendMessage.setEnabled(state);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        subjectEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                boolean state = inputFieldsNotEmpty();
+                sendMessage.setEnabled(state);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        composeEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                boolean state = inputFieldsNotEmpty();
+                sendMessage.setEnabled(state);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
     }
 
     private void handleContactsList(@Nullable ContactsResponse contactsResponse) {
@@ -284,6 +341,7 @@ public class SendMessageActivity extends BaseActivity {
     @OnClick(R.id.fragment_send_message_send)
     public void onClickSend() {
         String toEmail = toEmailTextView.getText().toString();
+        String subject = subjectEditText.getText().toString();
         String compose = composeEditText.getText().toString();
 
         if (Patterns.EMAIL_ADDRESS.matcher(toEmail).matches()) {
@@ -293,9 +351,18 @@ public class SendMessageActivity extends BaseActivity {
             return;
         }
 
+        if (subject.length() < 1) {
+            subjectEditText.setError("Enter subject");
+            return;
+        } else {
+            subjectEditText.setError(null);
+        }
+
         if (compose.length() < 1) {
             composeEditText.setError("Enter message");
             return;
+        } else {
+            composeEditText.setError(null);
         }
 
         sendingProgress = new ProgressDialog(SendMessageActivity.this);
@@ -392,15 +459,6 @@ public class SendMessageActivity extends BaseActivity {
         mainModel.createMessage(createMessageRequest);
     }
 
-    @OnClick(R.id.fragment_send_message_attachment_layout)
-    public void onClickAttachment() {
-        if (PermissionCheck.readAndWriteExternalStorage(this)) {
-            Intent chooseIntent = new Intent(Intent.ACTION_GET_CONTENT);
-            chooseIntent.setType("*/*");
-            startActivityForResult(chooseIntent, PICK_FILE_FROM_STORAGE);
-        }
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -421,26 +479,6 @@ public class SendMessageActivity extends BaseActivity {
         Toast.makeText(getApplicationContext(), "Start upload attachment" , Toast.LENGTH_SHORT).show();
 
         mainModel.uploadAttachment(multipartAttachment, currentMessageId);
-    }
-
-    @OnClick(R.id.fragment_send_message_to_add_button)
-    public void onClick() {
-        if (ccLayout.getVisibility() == View.GONE) {
-            toAddIco.setImageResource(R.drawable.ic_remove);
-            ccLayout.setVisibility(View.VISIBLE);
-            bccLayout.setVisibility(View.VISIBLE);
-        } else {
-            toAddIco.setImageResource(R.drawable.ic_add_active);
-            ccLayout.setVisibility(View.GONE);
-            bccLayout.setVisibility(View.GONE);
-        }
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (onHandleBackPressed()) {
-            super.onBackPressed();
-        }
     }
 
     private boolean onHandleBackPressed() {
@@ -469,10 +507,41 @@ public class SendMessageActivity extends BaseActivity {
         return false;
     }
 
+    private boolean inputFieldsNotEmpty() {
+        String toEmail = toEmailTextView.getText().toString();
+        String subject = subjectEditText.getText().toString();
+        String compose = composeEditText.getText().toString();
+
+        return (!toEmail.isEmpty() && !subject.isEmpty() && !compose.isEmpty());
+    }
+
+    @OnClick(R.id.fragment_send_message_attachment_layout)
+    public void onClickAttachment() {
+        if (PermissionCheck.readAndWriteExternalStorage(this)) {
+            Intent chooseIntent = new Intent(Intent.ACTION_GET_CONTENT);
+            chooseIntent.setType("*/*");
+            startActivityForResult(chooseIntent, PICK_FILE_FROM_STORAGE);
+        }
+    }
+
+    @OnClick(R.id.fragment_send_message_to_add_button)
+    public void onClick() {
+        if (ccLayout.getVisibility() == View.GONE) {
+            toAddIco.setImageResource(R.drawable.ic_remove);
+            ccLayout.setVisibility(View.VISIBLE);
+            bccLayout.setVisibility(View.VISIBLE);
+        } else {
+            toAddIco.setImageResource(R.drawable.ic_add_active);
+            ccLayout.setVisibility(View.GONE);
+            bccLayout.setVisibility(View.GONE);
+        }
+    }
+
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        mainModel.deleteMessage(currentMessageId);
+    public void onBackPressed() {
+        if (onHandleBackPressed()) {
+            super.onBackPressed();
+        }
     }
 
     @OnClick(R.id.fragment_send_message_back)

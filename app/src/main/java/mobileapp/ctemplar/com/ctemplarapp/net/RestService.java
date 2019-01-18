@@ -82,6 +82,9 @@ public interface RestService {
     @DELETE("/emails/messages/{id}/")
     Observable<ResponseBody> deleteMessage(@Path("id") long id);
 
+    @DELETE("emails/messages/")
+    Observable<ResponseBody> deleteSeveralMessages(@Query("id__in") String messagesId);
+
     @PATCH("/emails/messages/")
     Observable<ResponseBody> toFolder(@Query("id__in") long id, @Body MoveToFolderRequest request);
 

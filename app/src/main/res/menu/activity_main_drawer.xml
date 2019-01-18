@@ -19,6 +19,10 @@
             android:icon="@drawable/ic_drawer_sent"
             android:title="@string/nav_drawer_sent" />
         <item
+            android:id="@+id/nav_outbox"
+            android:icon="@drawable/ic_drawer_outbox"
+            android:title="@string/nav_drawer_outbox" />
+        <item
             android:id="@+id/nav_starred"
             android:icon="@drawable/ic_drawer_star"
             android:title="@string/nav_drawer_starred" />

@@ -11,6 +11,7 @@
     <string name="nav_drawer_inbox">Inbox</string>
     <string name="nav_drawer_draft">Draft</string>
     <string name="nav_drawer_sent">Sent</string>
+    <string name="nav_drawer_outbox">Outbox</string>
     <string name="nav_drawer_starred">Starred</string>
     <string name="nav_drawer_archive">Archive</string>
     <string name="nav_drawer_spam">Spam</string>
@@ -29,6 +30,7 @@
     <string name="action_search">Search</string>
     <string name="action_filter">Filter</string>
     <string name="action_search_hint">Search mail</string>
+    <string name="action_empty_folder">Empty folder</string>
 
     <!-- FONTS -->
     <string name="FONT_LATO_REGULAR">fonts/Lato-Regular.ttf</string>

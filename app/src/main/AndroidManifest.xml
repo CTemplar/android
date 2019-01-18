@@ -49,7 +49,8 @@
         <activity android:name=".contact.AddContactActivity" />
         <activity android:name=".contact.EditContactActivity" />
         <activity android:name=".message.ViewMessagesActivity" />
-        <activity android:name=".settings.SettingsActivity" />
+        <activity android:name=".settings.SettingsActivity"
+            android:theme="@style/PreferenceScreen"/>
         <activity android:name=".settings.ChangePasswordActivity" />
         <activity android:name=".folders.ManageFoldersActivity" />
         <activity android:name=".folders.AddFolderActivity" />
