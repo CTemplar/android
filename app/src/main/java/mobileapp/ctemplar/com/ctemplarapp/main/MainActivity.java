@@ -16,6 +16,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
@@ -122,12 +123,25 @@ public class MainActivity extends BaseActivity
     }
 
     private void showFragmentByFolder(String folder) {
+        Fragment currentFragment = getCurrentFragment();
+
         switch (folder) {
             case "inbox":
-                showFragment(new InboxFragment());
+            case "draft":
+            case "sent":
+            case "outbox":
+            case "starred":
+            case "archive":
+            case "spam":
+            case "trash":
+                if (!(currentFragment instanceof InboxFragment)) {
+                    showFragment(new InboxFragment());
+                }
                 break;
             case "contact":
-                showFragment(new ContactFragment());
+                if (!(currentFragment instanceof ContactFragment)) {
+                    showFragment(new ContactFragment());
+                }
                 break;
         }
     }
@@ -177,6 +191,9 @@ public class MainActivity extends BaseActivity
         } else if (id == R.id.nav_sent) {
             setTitle(R.string.nav_drawer_sent);
             mainModel.setCurrentFolder("sent");
+        } else if (id == R.id.nav_outbox) {
+            setTitle(R.string.nav_drawer_outbox);
+            mainModel.setCurrentFolder("outbox");
         } else if (id == R.id.nav_starred) {
             setTitle(R.string.nav_drawer_starred);
             mainModel.setCurrentFolder("starred");

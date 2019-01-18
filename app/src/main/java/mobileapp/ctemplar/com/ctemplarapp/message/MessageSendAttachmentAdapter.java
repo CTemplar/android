@@ -54,9 +54,9 @@ public class MessageSendAttachmentAdapter extends RecyclerView.Adapter<MessageSe
     }
 
     public void deleteAttachment(MessageAttachment messageAttachment) {
-        attachmentsList.remove(messageAttachment);
         int attachmentPosition = attachmentsList.indexOf(messageAttachment);
         if (attachmentPosition != -1) {
+            attachmentsList.remove(attachmentPosition);
             notifyItemRemoved(attachmentPosition);
         }
     }

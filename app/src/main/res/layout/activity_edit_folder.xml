@@ -14,6 +14,7 @@
             android:id="@+id/activity_edit_folder_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
+            app:titleTextColor="@color/colorDarkBlue2"
             android:background="?attr/colorPrimary"
             android:theme="@style/ActionBarLight"
             app:title="Add folder"

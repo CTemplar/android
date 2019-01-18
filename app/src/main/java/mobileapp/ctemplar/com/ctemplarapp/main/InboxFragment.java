@@ -13,6 +13,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -21,6 +22,8 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -107,6 +110,8 @@ public class InboxFragment extends BaseFragment {
                 } else {
                     mainModel.getMessages(20, 0, currentFolder);
                 }
+                setHasOptionsMenu(false);
+                setHasOptionsMenu(true);
             }
         });
 
@@ -143,14 +148,20 @@ public class InboxFragment extends BaseFragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.main, menu);
 
-//        MenuItem searchItem = menu.getItem(R.id.action_search);
-//        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        MenuItem emptyFolder = menu.findItem(R.id.action_empty_folder);
+        emptyFolder.setVisible(currentFolder.equals("trash")
+                || currentFolder.equals("spam")
+                || currentFolder.equals("draft"));
+
+//        MenuItem searchItem = menu.findItem(R.id.action_search);
+//        SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
+//
 //        SearchView searchView = null;
-//        if(searchItem != null) {
+//        if (searchItem != null) {
 //            searchView = (SearchView) searchItem.getActionView();
 //        }
-//        if(searchView != null) {
-//            searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+//        if (searchView != null) {
+//            searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
 //        }
         super.onCreateOptionsMenu(menu, inflater);
     }
@@ -168,9 +179,18 @@ public class InboxFragment extends BaseFragment {
             dialogFragment.setOnApplyClickListener(onFilterApplyClickListener);
             dialogFragment.show(getFragmentManager(), null);
             return true;
-        }
-
-        if (id == R.id.action_search) {
+        } else if (id == R.id.action_search) {
+            return true;
+        } else if (id == R.id.action_empty_folder) {
+            List<MessagesResult> messages = adapter.getAll();
+            StringBuilder messagesIds = new StringBuilder();
+            for (MessagesResult messagesResult : messages) {
+                messagesIds.append(messagesResult.getId());
+                messagesIds.append(',');
+            }
+            mainModel.deleteSeveralMessages(messagesIds.toString());
+            adapter.removeAll(messages);
+            mainModel.getMessages(20, 0, currentFolder);
             return true;
         }
 
@@ -224,7 +244,8 @@ public class InboxFragment extends BaseFragment {
             txtEmpty.setVisibility(View.GONE);
             frameCompose.setVisibility(View.GONE);
 
-            adapter = new InboxMessagesAdapter(mainModel.getMessagesResponse().getValue().getMessagesList(), mainModel);
+            List<MessagesResult> messagesList = mainModel.getMessagesResponse().getValue().getMessagesList();
+            adapter = new InboxMessagesAdapter(messagesList, mainModel);
             adapter.getOnClickSubject()
                     .subscribeOn(io.reactivex.schedulers.Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -336,5 +357,4 @@ public class InboxFragment extends BaseFragment {
             recyclerView.addOnItemTouchListener(touchListener);
         }
     }
-
 }

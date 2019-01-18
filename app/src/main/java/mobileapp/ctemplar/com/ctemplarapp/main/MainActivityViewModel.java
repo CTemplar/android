@@ -312,6 +312,31 @@ public class MainActivityViewModel extends ViewModel {
                 });
     }
 
+    public void deleteSeveralMessages(String messagesId) {
+        userRepository.deleteSeveralMessages(messagesId)
+                .subscribe(new Observer<ResponseBody>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(ResponseBody responseBody) {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
     public void toFolder(final MessagesResult messageResult, String folder) {
         userRepository.toFolder(messageResult.getId(), folder)
                 .subscribe(new Observer<ResponseBody>() {
