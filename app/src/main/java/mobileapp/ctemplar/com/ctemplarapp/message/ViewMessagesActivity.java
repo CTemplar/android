@@ -27,8 +27,6 @@ import android.widget.Toast;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -38,14 +36,10 @@ import butterknife.OnClick;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import mobileapp.ctemplar.com.ctemplarapp.BaseActivity;
-import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.main.MainActivityViewModel;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResponse;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResult;
-import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
+import mobileapp.ctemplar.com.ctemplarapp.main.MessageProvider;
 import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
-import mobileapp.ctemplar.com.ctemplarapp.utils.PGPManager;
 import mobileapp.ctemplar.com.ctemplarapp.utils.PermissionCheck;
 import timber.log.Timber;
 
@@ -54,9 +48,8 @@ public class ViewMessagesActivity extends BaseActivity {
     public static final String PARENT_ID = "parent_id";
     public static final String FOLDER_NAME = "folder_name";
     private MainActivityViewModel mainModel;
-    private MessagesResult parentMessage;
-    private MessagesResult lastMessage;
-    private MailboxEntity currentMailbox;
+    private MessageProvider parentMessage;
+    private MessageProvider lastMessage;
     private String decryptedLastMessage;
     private String currentFolder;
 
@@ -97,11 +90,6 @@ public class ViewMessagesActivity extends BaseActivity {
 
         mainModel = ViewModelProviders.of(this).get(MainActivityViewModel.class);
         modelViewMessages = ViewModelProviders.of(this).get(ViewMessagesViewModel.class);
-        currentMailbox = CTemplarApp.getAppDatabase().mailboxDao().getDefault();
-
-        final String password = CTemplarApp.getInstance()
-                .getSharedPreferences("pref_user", Context.MODE_PRIVATE)
-                .getString("key_password", null);
 
         Intent intent = getIntent();
         if (intent == null) {
@@ -116,97 +104,78 @@ public class ViewMessagesActivity extends BaseActivity {
         }
         currentFolder = intent.getStringExtra(FOLDER_NAME);
 
-        modelViewMessages.getMessagesResponse().observe(this, new Observer<MessagesResponse>() {
+        modelViewMessages.getMessagesResponse().observe(this, new Observer<List<MessageProvider>>() {
             @Override
-            public void onChanged(@Nullable MessagesResponse messagesResponse) {
-                if (messagesResponse != null) {
-                    List<MessagesResult> messagesList = messagesResponse.getMessagesList();
-                    if (messagesList == null) {
-                        messagesList = new ArrayList<>();
-                    }
-
-                    List <MessagesResult> messagesArrayList = new ArrayList<>();
-                    if (messagesList.size() > 0) {
-                        MessagesResult currentParentMessage = messagesList.get(0);
-                        messagesArrayList.add(currentParentMessage);
-                        parentMessage = currentParentMessage;
-                        setSubject(currentParentMessage.getSubject());
-
-                        MessagesResult[] children = currentParentMessage.getChildren();
-                        if (children != null && children.length != 0) {
-                            messagesArrayList.addAll(Arrays.asList(children));
-                        }
-
-                        lastMessage = messagesArrayList.get(messagesArrayList.size() - 1);
-
-                        PGPManager pgpManager = new PGPManager();
-                        String privateKey = currentMailbox.getPrivateKey();
-                        String encryptedMessage = ViewMessagesActivity.this.lastMessage.getContent();
-                        decryptedLastMessage = pgpManager.decryptMessage(encryptedMessage, privateKey, password);
-
-                        starImageView.setSelected(parentMessage.isStarred());
-                    }
-
-                    MessageAttachmentAdapter messageAttachmentAdapter = new MessageAttachmentAdapter();
-                    ViewMessagesAdapter adapter = new ViewMessagesAdapter(messagesArrayList, messageAttachmentAdapter);
-                    messageAttachmentAdapter.getOnClickAttachmentLink()
-                            .subscribeOn(io.reactivex.schedulers.Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(new io.reactivex.Observer<String>() {
-                                @Override
-                                public void onSubscribe(Disposable d) {
-
-                                }
-
-                                @Override
-                                public void onNext(String documentLink) {
-                                    Uri documentUri = Uri.parse(documentLink);
-                                    String fileName = AppUtils.getFileNameFromURL(documentLink);
-
-                                    DownloadManager.Request documentRequest = new DownloadManager.Request(documentUri);
-                                    documentRequest.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName);
-                                    documentRequest.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-
-                                    if (PermissionCheck.readAndWriteExternalStorage(ViewMessagesActivity.this)){
-                                        DownloadManager downloadManager = (DownloadManager) getApplicationContext().getSystemService(DOWNLOAD_SERVICE);
-                                        downloadManager.enqueue(documentRequest);
-                                        Toast.makeText(ViewMessagesActivity.this, "Download started", Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-
-                                @Override
-                                public void onError(Throwable e) {
-
-                                }
-
-                                @Override
-                                public void onComplete() {
-
-                                }
-                            });
-                    messagesListView.setAdapter(adapter);
-
-                    if (!parentMessage.isRead())  {
-                        modelViewMessages.markMessageAsRead(parentMessage.getId());
-                    }
-
-                    loadProgress.setVisibility(View.GONE);
-
-                    invalidateOptionsMenu();
-
-                } else {
+            public void onChanged(@Nullable List<MessageProvider> messagesList) {
+                if (messagesList == null || messagesList.isEmpty()) {
                     Timber.e("Messages doesn't exists");
                     Toast.makeText(getApplicationContext(), "Messages doesn't exists", Toast.LENGTH_SHORT).show();
                     onBackPressed();
+                    return;
                 }
+
+                MessageProvider currentParentMessage = messagesList.get(0);
+                parentMessage = currentParentMessage;
+                setSubject(currentParentMessage.getSubject());
+
+                lastMessage = messagesList.get(messagesList.size() - 1);
+                decryptedLastMessage = lastMessage.getContent();
+                starImageView.setSelected(parentMessage.isStarred());
+
+                MessageAttachmentAdapter messageAttachmentAdapter = new MessageAttachmentAdapter();
+                ViewMessagesAdapter adapter = new ViewMessagesAdapter(messagesList, messageAttachmentAdapter);
+                messageAttachmentAdapter.getOnClickAttachmentLink()
+                        .subscribeOn(io.reactivex.schedulers.Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new io.reactivex.Observer<String>() {
+                            @Override
+                            public void onSubscribe(Disposable d) {
+
+                            }
+
+                            @Override
+                            public void onNext(String documentLink) {
+                                Uri documentUri = Uri.parse(documentLink);
+                                String fileName = AppUtils.getFileNameFromURL(documentLink);
+
+                                DownloadManager.Request documentRequest = new DownloadManager.Request(documentUri);
+                                documentRequest.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName);
+                                documentRequest.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+
+                                if (PermissionCheck.readAndWriteExternalStorage(ViewMessagesActivity.this)) {
+                                    DownloadManager downloadManager = (DownloadManager) getApplicationContext().getSystemService(DOWNLOAD_SERVICE);
+                                    downloadManager.enqueue(documentRequest);
+                                    Toast.makeText(ViewMessagesActivity.this, "Download started", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+
+                            }
+
+                            @Override
+                            public void onComplete() {
+
+                            }
+                        });
+                messagesListView.setAdapter(adapter);
+
+                if (!parentMessage.isRead()) {
+                    modelViewMessages.markMessageAsRead(parentMessage.getId());
+                }
+
+                loadProgress.setVisibility(View.GONE);
+
+                invalidateOptionsMenu();
             }
         });
 
         modelViewMessages.getChainMessages(parentId);
 
-        modelViewMessages.getStarredResponse().observe(this, new Observer<MessagesResult>() {
+        modelViewMessages.getStarredResponse().observe(this, new Observer<MessageProvider>() {
             @Override
-            public void onChanged(@Nullable MessagesResult messagesResult) {
+            public void onChanged(@Nullable MessageProvider messagesResult) {
                 if (messagesResult != null && messagesResult.getId() == parentMessage.getId()) {
                     starImageView.setSelected(messagesResult.isStarred());
                     parentMessage = messagesResult;
@@ -355,8 +324,8 @@ public class ViewMessagesActivity extends BaseActivity {
         intent.putExtra(Intent.EXTRA_EMAIL, new String[] { lastMessage.getSender() });
         intent.putExtra(Intent.EXTRA_SUBJECT, lastMessage.getSubject());
         intent.putExtra(Intent.EXTRA_TEXT, replyHead() + Html.fromHtml(decryptedLastMessage));
-        intent.putExtra(Intent.EXTRA_CC, lastMessage.getCC());
-        intent.putExtra(Intent.EXTRA_BCC, lastMessage.getBCC());
+        intent.putExtra(Intent.EXTRA_CC, lastMessage.getCc());
+        intent.putExtra(Intent.EXTRA_BCC, lastMessage.getBcc());
         intent.putExtra(SendMessageActivity.PARENT_ID, lastMessage.getId());
         startActivity(intent);
     }

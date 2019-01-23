@@ -5,6 +5,7 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -16,10 +17,8 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -27,7 +26,6 @@ import android.widget.TextView;
 import butterknife.BindView;
 import mobileapp.ctemplar.com.ctemplarapp.BaseActivity;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
-import mobileapp.ctemplar.com.ctemplarapp.DialogState;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.contact.ContactFragment;
 import mobileapp.ctemplar.com.ctemplarapp.folders.ManageFoldersActivity;
@@ -49,9 +47,9 @@ public class MainActivity extends BaseActivity
     @BindView(R.id.progress_background)
     public View progressBackground;
 
-    private int mLastSelectedId;
     private MainActivityViewModel mainModel;
     private MailboxEntity defaultMailbox;
+    private String toggleFolder;
 
     @Override
     protected int getLayoutId() {
@@ -66,15 +64,27 @@ public class MainActivity extends BaseActivity
         setSupportActionBar(toolbar);
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
+        ActionBarDrawerToggle drawerToggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
+                if (toggleFolder != null) {
+                    mainModel.setCurrentFolder(toggleFolder);
+                    toggleFolder = null;
+                }
+            }
+        };
+        drawer.addDrawerListener(drawerToggle);
+        drawerToggle.syncState();
 
         ActionBar bar = getSupportActionBar();
-        bar.setHomeButtonEnabled(true);
-        bar.setDisplayHomeAsUpEnabled(true);
-        bar.setHomeAsUpIndicator(R.drawable.ic_drawer_menu);
+        if (bar != null) {
+            bar.setHomeButtonEnabled(true);
+            bar.setDisplayHomeAsUpEnabled(true);
+            bar.setHomeAsUpIndicator(R.drawable.ic_drawer_menu);
+        }
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -122,7 +132,30 @@ public class MainActivity extends BaseActivity
         loadUserInfo();
     }
 
+    private InboxFragment inboxFragment;
+
+    private InboxFragment getInboxFragment() {
+        if (inboxFragment == null) {
+            inboxFragment = new InboxFragment();
+        }
+        return inboxFragment;
+    }
+
+    private ContactFragment contactFragment;
+
+    private ContactFragment getContactFragment() {
+        if (contactFragment == null) {
+            contactFragment = new ContactFragment();
+        }
+        return contactFragment;
+    }
+
+
+
     private void showFragmentByFolder(String folder) {
+        if (folder == null) {
+            return;
+        }
         Fragment currentFragment = getCurrentFragment();
 
         switch (folder) {
@@ -135,12 +168,12 @@ public class MainActivity extends BaseActivity
             case "spam":
             case "trash":
                 if (!(currentFragment instanceof InboxFragment)) {
-                    showFragment(new InboxFragment());
+                    showFragment(getInboxFragment());
                 }
                 break;
             case "contact":
                 if (!(currentFragment instanceof ContactFragment)) {
-                    showFragment(new ContactFragment());
+                    showFragment(getContactFragment());
                 }
                 break;
         }
@@ -155,7 +188,7 @@ public class MainActivity extends BaseActivity
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -166,49 +199,54 @@ public class MainActivity extends BaseActivity
     @Override
     public void setTitle(int titleId) {
         super.setTitle(titleId);
-        getSupportActionBar().setTitle(titleId);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setTitle(titleId);
+        }
     }
 
     @Override
     public void setTitle(CharSequence title) {
         super.setTitle(title);
-        getSupportActionBar().setTitle(title);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            getSupportActionBar().setTitle(title);
+        }
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         int id = item.getItemId();
 
         if (id == R.id.nav_inbox) {
             setTitle(R.string.nav_drawer_inbox);
-            mainModel.setCurrentFolder("inbox");
+            toggleFolder = "inbox";
         } else if (id == R.id.nav_draft) {
             setTitle(R.string.nav_drawer_draft);
-            mainModel.setCurrentFolder("draft");
+            toggleFolder = "draft";
         } else if (id == R.id.nav_sent) {
             setTitle(R.string.nav_drawer_sent);
-            mainModel.setCurrentFolder("sent");
+            toggleFolder = "sent";
         } else if (id == R.id.nav_outbox) {
             setTitle(R.string.nav_drawer_outbox);
-            mainModel.setCurrentFolder("outbox");
+            toggleFolder = "outbox";
         } else if (id == R.id.nav_starred) {
             setTitle(R.string.nav_drawer_starred);
-            mainModel.setCurrentFolder("starred");
+            toggleFolder = "starred";
         } else if (id == R.id.nav_archive) {
             setTitle(R.string.nav_drawer_archive);
-            mainModel.setCurrentFolder("archive");
+            toggleFolder = "archive";
         } else if (id == R.id.nav_spam) {
             setTitle(R.string.nav_drawer_spam);
-            mainModel.setCurrentFolder("spam");
+            toggleFolder = "spam";
         } else if (id == R.id.nav_trash) {
             setTitle(R.string.nav_drawer_trash);
-            mainModel.setCurrentFolder("trash");
+            toggleFolder = "trash";
         } else if (id == R.id.nav_contact) {
             setTitle(R.string.nav_drawer_contact);
-            mainModel.setCurrentFolder("contact");
+            toggleFolder = "contact";
         } else if (id == R.id.nav_settings) {
             Intent settingsScreeen = new Intent(this, SettingsActivity.class);
             startActivity(settingsScreeen);
@@ -234,75 +272,62 @@ public class MainActivity extends BaseActivity
         return true;
     }
 
-    private void setFragment(Fragment fragment) {
-        FragmentManager manager = getSupportFragmentManager();
-        // getCurrentFragment().popChildrenWithFade();
-        FragmentTransaction ft = manager.beginTransaction();
-        // ft.setCustomAnimations(R.anim.fade_in, R.anim.fade_out);
-        ft.replace(mContentFrame.getId(), fragment);
-        ft.commit();
-    }
-
     private Fragment getCurrentFragment() {
-        return (Fragment) getSupportFragmentManager().findFragmentById(mContentFrame.getId());
+        return getSupportFragmentManager().findFragmentById(mContentFrame.getId());
     }
 
     private void setCheckedItem(int itemId) {
-        mLastSelectedId = itemId;
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setCheckedItem(itemId);
     }
 
-    private void selectNavigationItem(int itemId) {
-        if (mLastSelectedId != itemId) {
-            mLastSelectedId = itemId;
-        }
-    }
+//    public void blockUI() {
+//        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+//                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+//    }
+//
+//    public void unlockUI() {
+//        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+//    }
 
-    public void blockUI() {
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-    }
+//    public void blockNavigation() {
+//        blockDrawer(true);
+//    }
+//
+//    public void unlockNavigation() {
+//        blockDrawer(false);
+//    }
+//
+//    private void blockDrawer(boolean state) {
+//        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+//        drawer.setDrawerLockMode(state?DrawerLayout.LOCK_MODE_LOCKED_CLOSED : DrawerLayout.LOCK_MODE_UNLOCKED);
+//    }
 
-    public void unlockUI() {
-        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-    }
-
-    public void blockNavigation() {
-        blockDrawer(true);
-    }
-
-    public void unlockNavigation() {
-        blockDrawer(false);
-    }
-
-    private void blockDrawer(boolean state) {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.setDrawerLockMode(state?DrawerLayout.LOCK_MODE_LOCKED_CLOSED : DrawerLayout.LOCK_MODE_UNLOCKED);
-    }
-
-    private void handleDialogState(DialogState state) {
-        if(state != null) {
-            switch (state) {
-                case SHOW_PROGRESS_DIALOG:
-                    progress.setVisibility(View.VISIBLE);
-                    progressBackground.setVisibility(View.VISIBLE);
-                    blockUI();
-                    break;
-                case HIDE_PROGRESS_DIALOG:
-                    progress.setVisibility(View.GONE);
-                    progressBackground.setVisibility(View.GONE);
-                    unlockUI();
-                    break;
-            }
-        }
-    }
+//    private void handleDialogState(DialogState state) {
+//        if(state != null) {
+//            switch (state) {
+//                case SHOW_PROGRESS_DIALOG:
+//                    progress.setVisibility(View.VISIBLE);
+//                    progressBackground.setVisibility(View.VISIBLE);
+//                    blockUI();
+//                    break;
+//                case HIDE_PROGRESS_DIALOG:
+//                    progress.setVisibility(View.GONE);
+//                    progressBackground.setVisibility(View.GONE);
+//                    unlockUI();
+//                    break;
+//            }
+//        }
+//    }
 
     private void loadUserInfo() {
         mainModel.getMailboxes(20, 0);
     }
 
     private void handleMainActions(MainActivityActions actions) {
+        if (actions == null) {
+            return;
+        }
         switch (actions) {
             case ACTION_LOGOUT:
                 startSignInActivity();
@@ -311,6 +336,9 @@ public class MainActivity extends BaseActivity
     }
 
     private void handleResponseStatus(ResponseStatus status) {
+        if (status == null) {
+            return;
+        }
         switch (status) {
             case RESPONSE_NEXT_MAILBOXES:
                 if (defaultMailbox == null) {

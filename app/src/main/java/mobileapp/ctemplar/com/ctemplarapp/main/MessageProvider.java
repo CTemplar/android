@@ -4,10 +4,13 @@ import android.content.Context;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessageAttachment;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResult;
+import mobileapp.ctemplar.com.ctemplarapp.repository.entity.AttachmentEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MessageEntity;
 import mobileapp.ctemplar.com.ctemplarapp.utils.PGPManager;
@@ -18,6 +21,7 @@ public class MessageProvider {
     private String encryption;
     private String sender;
     private boolean hasAttachments;
+    private List<AttachmentProvider> attachments;
     private String createdAt;
     private boolean hasChildren;
     private int childrenCount;
@@ -260,6 +264,28 @@ public class MessageProvider {
         return messageContent.replaceAll("<img.+?>", "");
     }
 
+    private static AttachmentProvider convertFromResponseMessageAttachmentToAttachmentProvider(MessageAttachment messageAttachment) {
+        AttachmentProvider attachmentProvider = new AttachmentProvider();
+        attachmentProvider.setId(messageAttachment.getId());
+        attachmentProvider.setContentId(messageAttachment.getContent_id());
+        attachmentProvider.setDocumentLink(messageAttachment.getDocumentLink());
+        attachmentProvider.setInline(messageAttachment.isInline());
+        attachmentProvider.setMessage(messageAttachment.getMessage());
+        return attachmentProvider;
+    }
+
+    public static List<AttachmentProvider> convertResponseAttachmentsListToProviderList(List<MessageAttachment> messageAttachments) {
+        if (messageAttachments == null || messageAttachments.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        List<AttachmentProvider> attachmentProviders = new ArrayList<>(messageAttachments.size());
+        for (MessageAttachment messageAttachment : messageAttachments) {
+            attachmentProviders.add(convertFromResponseMessageAttachmentToAttachmentProvider(messageAttachment));
+        }
+        return attachmentProviders;
+    }
+
     public static MessageProvider fromMessagesResult(MessagesResult message) {
         MessageProvider result = new MessageProvider();
 
@@ -267,6 +293,7 @@ public class MessageProvider {
         result.encryption = message.getEncryption();
         result.sender = message.getSender();
         result.hasAttachments = !isNullOrEmpty(message.getAttachments());
+        result.attachments = convertResponseAttachmentsListToProviderList(message.getAttachments());
         result.createdAt = message.getCreatedAt();
         result.hasChildren = message.hasChildren();
         result.childrenCount = message.getChildrenCount();
@@ -294,6 +321,9 @@ public class MessageProvider {
     }
 
     public static List<MessageProvider> fromMessagesResults(List<MessagesResult> messages) {
+        if (messages == null || messages.isEmpty()) {
+            return Collections.emptyList();
+        }
         List<MessageProvider> result = new ArrayList<>(messages.size());
         for (MessagesResult message : messages) {
             result.add(MessageProvider.fromMessagesResult(message));
@@ -319,6 +349,28 @@ public class MessageProvider {
         return Arrays.asList(array);
     }
 
+    private static AttachmentProvider convertAttachmentFromEntityToProvider(AttachmentEntity attachmentEntity) {
+        AttachmentProvider attachmentProvider = new AttachmentProvider();
+        attachmentProvider.setId(attachmentEntity.getId());
+        attachmentProvider.setContentId(attachmentEntity.getContentId());
+        attachmentProvider.setMessage(attachmentEntity.getMessage());
+        attachmentProvider.setInline(attachmentEntity.isInline());
+        attachmentProvider.setDocumentLink(attachmentEntity.getDocumentLink());
+        return attachmentProvider;
+    }
+
+    private static List<AttachmentProvider> convertAttachmentsListFromEntityToProvider(List<AttachmentEntity> attachmentEntities) {
+        if (attachmentEntities == null || attachmentEntities.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        List<AttachmentProvider> attachmentProviders = new ArrayList<>(attachmentEntities.size());
+        for (AttachmentEntity attachmentEntity : attachmentEntities) {
+            attachmentProviders.add(convertAttachmentFromEntityToProvider(attachmentEntity));
+        }
+        return attachmentProviders;
+    }
+
     public static MessageProvider fromMessageEntity(MessageEntity message) {
         MessageProvider result = new MessageProvider();
 
@@ -326,6 +378,7 @@ public class MessageProvider {
         result.encryption = message.getEncryption();
         result.sender = message.getSender();
         result.hasAttachments = message.isHasAttachments();
+        result.attachments = convertAttachmentsListFromEntityToProvider(message.getAttachments());
         result.createdAt = message.getCreatedAt();
         result.hasChildren = message.isHasChildren();
         result.childrenCount = message.getChildrenCount();
@@ -364,6 +417,27 @@ public class MessageProvider {
         return list == null || list.isEmpty();
     }
 
+    private static AttachmentEntity convertAttachmentFromResponseToEntity(MessageAttachment messageAttachment) {
+        AttachmentEntity attachmentEntity = new AttachmentEntity();
+        attachmentEntity.setId(messageAttachment.getId());
+        attachmentEntity.setContentId(messageAttachment.getContent_id());
+        attachmentEntity.setDocumentLink(messageAttachment.getDocumentLink());
+        attachmentEntity.setInline(messageAttachment.isInline());
+        attachmentEntity.setMessage(messageAttachment.getMessage());
+        return attachmentEntity;
+    }
+
+    private static List<AttachmentEntity> convertAttachmentsListFromResponsesToEntities(List<MessageAttachment> messageAttachments) {
+        if (messageAttachments == null || messageAttachments.isEmpty()) {
+            return Collections.emptyList();
+        }
+        List<AttachmentEntity> attachmentEntities = new ArrayList<>(messageAttachments.size());
+        for (MessageAttachment messageAttachment : messageAttachments) {
+            attachmentEntities.add(convertAttachmentFromResponseToEntity(messageAttachment));
+        }
+        return attachmentEntities;
+    }
+
     public static MessageEntity fromMessagesResultToEntity(MessagesResult message) {
         MessageEntity result = new MessageEntity();
 
@@ -371,6 +445,7 @@ public class MessageProvider {
         result.setEncryption(message.getEncryption());
         result.setSender(message.getSender());
         result.setHasAttachments(!isNullOrEmpty(message.getAttachments()));
+        result.setAttachments(convertAttachmentsListFromResponsesToEntities(message.getAttachments()));
         result.setCreatedAt(message.getCreatedAt());
         result.setHasChildren(message.hasChildren());
         result.setChildrenCount(message.getChildrenCount());
@@ -411,5 +486,13 @@ public class MessageProvider {
 
     public void setHasAttachments(boolean hasAttachments) {
         this.hasAttachments = hasAttachments;
+    }
+
+    public List<AttachmentProvider> getAttachments() {
+        return attachments;
+    }
+
+    public void setAttachments(List<AttachmentProvider> attachments) {
+        this.attachments = attachments;
     }
 }

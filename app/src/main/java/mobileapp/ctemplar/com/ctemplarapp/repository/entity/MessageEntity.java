@@ -1,6 +1,5 @@
 package mobileapp.ctemplar.com.ctemplarapp.repository.entity;
 
-
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 
@@ -14,7 +13,7 @@ public class MessageEntity {
     private String encryption;
     private String sender;
     private boolean hasAttachments;
-//    private MessagesResult[] children;
+    private List<AttachmentEntity> attachments;
     private String createdAt;
     private boolean hasChildren;
     private int childrenCount;
@@ -244,5 +243,13 @@ public class MessageEntity {
 
     public void setHasAttachments(boolean hasAttachments) {
         this.hasAttachments = hasAttachments;
+    }
+
+    public List<AttachmentEntity> getAttachments() {
+        return attachments;
+    }
+
+    public void setAttachments(List<AttachmentEntity> attachments) {
+        this.attachments = attachments;
     }
 }

@@ -13,7 +13,6 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -23,6 +22,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -34,7 +34,6 @@ import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.message.SendMessageActivity;
 import mobileapp.ctemplar.com.ctemplarapp.message.ViewMessagesActivity;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
-import timber.log.Timber;
 
 public class InboxFragment extends BaseFragment {
 
@@ -230,23 +229,32 @@ public class InboxFragment extends BaseFragment {
         }
     }
 
+    private void hideMessagesList() {
+        recyclerView.setVisibility(View.GONE);
+        fabCompose.hide();
+        imgEmpty.setVisibility(View.VISIBLE);
+        txtEmpty.setVisibility(View.VISIBLE);
+        frameCompose.setVisibility(View.VISIBLE);
+    }
+
+    private void showMessagesList() {
+        recyclerView.setVisibility(View.VISIBLE);
+        fabCompose.show();
+        imgEmpty.setVisibility(View.GONE);
+        txtEmpty.setVisibility(View.GONE);
+        frameCompose.setVisibility(View.GONE);
+    }
+
     public void handleMessagesList(List<MessageProvider> messages, boolean starredMessages) {
         if(messages == null || messages.isEmpty()) {
-            recyclerView.setVisibility(View.GONE);
-            fabCompose.hide();
-            imgEmpty.setVisibility(View.VISIBLE);
-            txtEmpty.setVisibility(View.VISIBLE);
-            frameCompose.setVisibility(View.VISIBLE);
+            hideMessagesList();
         } else {
-            recyclerView.setVisibility(View.VISIBLE);
-            fabCompose.show();
-            imgEmpty.setVisibility(View.GONE);
-            txtEmpty.setVisibility(View.GONE);
-            frameCompose.setVisibility(View.GONE);
+            showMessagesList();
 
             String messagesFolder = messages.get(0).getFolderName();
             if (currentFolder != null && !currentFolder.equals(messagesFolder) && !starredMessages) {
-                return;
+                messages = new ArrayList<>();
+                hideMessagesList();
             }
 
             adapter = new InboxMessagesAdapter(messages, mainModel);

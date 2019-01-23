@@ -31,4 +31,20 @@ public class MessagesRepository {
     public void deleteLocalMessagesByFolderName(String folder) {
         CTemplarApp.getAppDatabase().messageDao().deleteAllByFolder(folder);
     }
+
+    public MessageEntity getLocalMessage(long id) {
+        return CTemplarApp.getAppDatabase().messageDao().getById(id);
+    }
+
+    public void addMessageToDatabase(MessageEntity entity) {
+        CTemplarApp.getAppDatabase().messageDao().save(entity);
+    }
+
+    public void deleteMessagesByParentId(long id) {
+        CTemplarApp.getAppDatabase().messageDao().deleteAllByParentId(((Object)id).toString());
+    }
+
+    public List<MessageEntity> getChildMessages(MessageEntity parentMessage) {
+        return CTemplarApp.getAppDatabase().messageDao().getByParentId(((Object)parentMessage.getId()).toString());
+    }
 }

@@ -41,7 +41,7 @@ public class MainActivityViewModel extends ViewModel {
     MutableLiveData<List<MessageProvider>> messagesResponse = new MutableLiveData<>();
     MutableLiveData<List<MessageProvider>> starredMessagesResponse = new MutableLiveData<>();
     MutableLiveData<List<Contact>> contactsResponse = new MutableLiveData<>();
-    MutableLiveData<String> currentFolder = new MutableLiveData<String>();
+    MutableLiveData<String> currentFolder = new MutableLiveData<>();
     MutableLiveData<SignInResponse> signResponse = new MutableLiveData<>();
 
     public MainActivityViewModel() {
@@ -104,8 +104,8 @@ public class MainActivityViewModel extends ViewModel {
 
     public void getMessages(int limit, int offset, final String folder) {
 
-        List<MessageEntity> entities = messagesRepository.getLocalMessagesByFolder(folder);
-        List<MessageProvider> messageProviders = MessageProvider.fromMessageEntities(entities);
+        List<MessageEntity> messageEntities = messagesRepository.getLocalMessagesByFolder(folder);
+        List<MessageProvider> messageProviders = MessageProvider.fromMessageEntities(messageEntities);
         messagesResponse.postValue(messageProviders);
 
         userRepository.getMessagesList(limit, offset, folder)
@@ -120,17 +120,17 @@ public class MainActivityViewModel extends ViewModel {
                         new Thread(new Runnable() {
                             @Override
                             public void run() {
-                                messagesRepository.deleteLocalMessagesByFolderName(folder);
                                 List<MessagesResult> messages = response.getMessagesList();
-
-                                List<MessageProvider> messageProviders = MessageProvider
-                                        .fromMessagesResults(messages);
-
                                 List<MessageEntity> messageEntities = MessageProvider
                                         .fromMessagesResultsToEntities(messages);
+//                                List<MessageProvider> messageProviders = MessageProvider
+//                                        .fromMessageEntities(messageEntities);
 
+                                messagesRepository.deleteLocalMessagesByFolderName(folder);
                                 messagesRepository.addMessagesToDatabase(messageEntities);
 
+                                List<MessageEntity> localEntities = messagesRepository.getLocalMessagesByFolder(folder);
+                                List<MessageProvider> messageProviders = MessageProvider.fromMessageEntities(localEntities);
                                 messagesResponse.postValue(messageProviders);
                                 responseStatus.postValue(ResponseStatus.RESPONSE_NEXT_MESSAGES);
                             }
@@ -321,7 +321,7 @@ public class MainActivityViewModel extends ViewModel {
                 });
     }
 
-    public void deleteMessage(long messageId) {
+    public void deleteMessage(final long messageId) {
         userRepository.deleteMessage(messageId)
                 .subscribe(new Observer<ResponseBody>() {
                     @Override
@@ -331,7 +331,7 @@ public class MainActivityViewModel extends ViewModel {
 
                     @Override
                     public void onNext(ResponseBody responseBody) {
-
+                        messagesRepository.deleteMessagesByParentId(messageId);
                     }
 
                     @Override

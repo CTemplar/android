@@ -10,6 +10,7 @@ import java.util.List;
 
 import io.reactivex.subjects.PublishSubject;
 import mobileapp.ctemplar.com.ctemplarapp.R;
+import mobileapp.ctemplar.com.ctemplarapp.main.AttachmentProvider;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessageAttachment;
 import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
 
@@ -20,10 +21,10 @@ public class MessageAttachmentAdapter extends RecyclerView.Adapter<MessageAttach
     final private static String PNG = "PNG";
     final private static String JPG = "JPG";
 
-    private List<MessageAttachment> attachmentsList;
+    private List<AttachmentProvider> attachmentsList;
     private final PublishSubject<String> onClickAttachmentLink = PublishSubject.create();
 
-    public void setAttachmentsList(List<MessageAttachment> attachmentsList) {
+    public void setAttachmentsList(List<AttachmentProvider> attachmentsList) {
         this.attachmentsList = attachmentsList;
     }
 
@@ -37,7 +38,7 @@ public class MessageAttachmentAdapter extends RecyclerView.Adapter<MessageAttach
 
     @Override
     public void onBindViewHolder(@NonNull final MessageAttachmentHolder holder, int position) {
-        final MessageAttachment messageAttachment = attachmentsList.get(position);
+        final AttachmentProvider messageAttachment = attachmentsList.get(position);
         final String documentLink = messageAttachment.getDocumentLink();
         final String fileName = AppUtils.getFileNameFromURL(documentLink);
 
