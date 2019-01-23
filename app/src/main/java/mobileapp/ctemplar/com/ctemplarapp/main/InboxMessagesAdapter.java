@@ -1,6 +1,5 @@
 package mobileapp.ctemplar.com.ctemplarapp.main;
 
-import android.content.Context;
 import android.graphics.Typeface;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -17,24 +16,20 @@ import java.util.List;
 import io.reactivex.subjects.PublishSubject;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.R;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResult;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
-import mobileapp.ctemplar.com.ctemplarapp.utils.PGPManager;
 
 public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesViewHolder> {
 
-    private List<MessagesResult> messagesList;
-    private List<MessagesResult> filteredList;
-    private MailboxEntity currentMailbox;
+    private List<MessageProvider> messagesList;
+    private List<MessageProvider> filteredList;
     private final PublishSubject<Long> onClickSubject = PublishSubject.create();
     private final MainActivityViewModel mainModel;
 
-    public InboxMessagesAdapter(List<MessagesResult> messagesList, MainActivityViewModel mainModel) {
+    public InboxMessagesAdapter(List<MessageProvider> messagesList, MainActivityViewModel mainModel) {
         this.messagesList = messagesList;
         filteredList = new ArrayList<>();
         filteredList.addAll(messagesList);
-        currentMailbox = CTemplarApp.getAppDatabase().mailboxDao().getDefault();
         this.mainModel = mainModel;
     }
 
@@ -61,26 +56,26 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesView
 
     @Override
     public void onBindViewHolder(@NonNull final InboxMessagesViewHolder holder, int position) {
-        final MessagesResult messagesResult = filteredList.get(position);
+        final MessageProvider messages = filteredList.get(position);
 
-        holder.txtUsername.setText(messagesResult.getSender());
+        holder.txtUsername.setText(messages.getSender());
         holder.root.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onClickSubject.onNext(messagesResult.getId());
+                onClickSubject.onNext(messages.getId());
             }
         });
 
         // check for children count
-        if (messagesResult.getChildrenCount() > 0) {
-            holder.txtChildren.setText(String.valueOf(messagesResult.getChildrenCount()));
+        if (messages.getChildrenCount() > 0) {
+            holder.txtChildren.setText(String.valueOf(messages.getChildrenCount()));
             holder.txtChildren.setVisibility(View.VISIBLE);
         } else {
             holder.txtChildren.setVisibility(View.GONE);
         }
 
         // check for read/unread
-        if (messagesResult.isRead()) {
+        if (messages.isRead()) {
             holder.imgUnread.setVisibility(View.GONE);
             holder.txtUsername.setTypeface(null, Typeface.NORMAL);
         } else {
@@ -89,45 +84,37 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesView
         }
 
         // check for status (time delete, delayed delivery)
-        if (TextUtils.isEmpty(messagesResult.getDelayedDelivery()) &&
-                TextUtils.isEmpty(messagesResult.getDestructDate())) {
+        if (TextUtils.isEmpty(messages.getDelayedDelivery()) &&
+                TextUtils.isEmpty(messages.getDestructDate())) {
             holder.txtStatus.setVisibility(View.GONE);
         }
 
         // format creation date
-        if (!TextUtils.isEmpty(messagesResult.getCreatedAt())) {
-            holder.txtDate.setText(AppUtils.formatDate(messagesResult.getCreatedAt()));
+        if (!TextUtils.isEmpty(messages.getCreatedAt())) {
+            holder.txtDate.setText(AppUtils.formatDate(messages.getCreatedAt()));
         }
 
         holder.imgStarred.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                boolean isStarred = !messagesResult.isStarred();
-                mainModel.markMessageIsStarred(messagesResult.getId(), isStarred);
-                messagesResult.setStarred(isStarred);
+                boolean isStarred = !messages.isStarred();
+                mainModel.markMessageIsStarred(messages.getId(), isStarred);
+                messages.setStarred(isStarred);
                 holder.imgStarred.setSelected(isStarred);
             }
         });
 
-        holder.imgStarred.setSelected(messagesResult.isStarred());
+        holder.imgStarred.setSelected(messages.isStarred());
 
-        if (messagesResult.getAttachments() != null &&
-                messagesResult.getAttachments().size() > 0) {
+        if (messages.isHasAttachments()) {
             holder.imgAttachment.setVisibility(View.VISIBLE);
         } else {
             holder.imgAttachment.setVisibility(View.GONE);
         }
 
         holder.txtSubject.setText(filteredList.get(position).getSubject());
-        String password =
-                CTemplarApp.getInstance().getSharedPreferences("pref_user", Context.MODE_PRIVATE).getString("key_password", null);
 
-        PGPManager pgpManager = new PGPManager();
-        String privateKey = currentMailbox.getPrivateKey();
-        String messageContent = pgpManager.decryptMessage(messagesResult.getContent(), privateKey, password);
-        messageContent = messageContent.replaceAll("<img.+?>", "");
-
-        Spanned contentMessage = Html.fromHtml(messageContent);
+        Spanned contentMessage = Html.fromHtml(messages.getContent());
         holder.txtContent.setText(contentMessage);
     }
 
@@ -136,39 +123,32 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesView
         return filteredList.size();
     }
 
-    public MessagesResult removeAt(int position) {
-        MessagesResult removedMessage = filteredList.remove(position);
+    public MessageProvider removeAt(int position) {
+        MessageProvider removedMessage = filteredList.remove(position);
         notifyItemRemoved(position);
         return removedMessage;
     }
 
-    public void restoreMessage(MessagesResult deletedMessage, int position) {
+    public void restoreMessage(MessageProvider deletedMessage, int position) {
         filteredList.add(position, deletedMessage);
         notifyItemInserted(position);
     }
 
-    public List<MessagesResult> getAll() {
+    public List<MessageProvider> getAll() {
         return filteredList;
-    }
-
-    public void removeAll(List<MessagesResult> messagesList) {
-        filteredList.removeAll(messagesList);
-        notifyDataSetChanged();
     }
 
     public boolean filter(boolean isStarred, boolean isUnread, boolean withAttachment) {
         boolean filtered = false;
         filteredList = new ArrayList<>();
-        for (MessagesResult messageResult :
+        for (MessageProvider messageResult :
                 messagesList) {
             boolean messageIsStarred = messageResult.isStarred();
             boolean messageUnread = !messageResult.isRead();
-            boolean messageWithAttachments = messageResult.getAttachments() != null;
-            boolean messageNotEmpty = !messageResult.getAttachments().isEmpty();
 
             if ((isStarred && messageIsStarred) ||
                     (isUnread && messageUnread) ||
-                    (withAttachment && messageWithAttachments && messageNotEmpty)) {
+                    (withAttachment && messageResult.isHasAttachments())) {
                 filteredList.add(messageResult);
             } else if (!isStarred && !isUnread && !withAttachment) {
                 filteredList.add(messageResult);

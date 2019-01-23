@@ -34,8 +34,7 @@ import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.message.SendMessageActivity;
 import mobileapp.ctemplar.com.ctemplarapp.message.ViewMessagesActivity;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResponse;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResult;
+import timber.log.Timber;
 
 public class InboxFragment extends BaseFragment {
 
@@ -94,10 +93,17 @@ public class InboxFragment extends BaseFragment {
             }
         });
 
-        mainModel.getMessagesResponse().observe(this, new Observer<MessagesResponse>() {
+        mainModel.getMessagesResponse().observe(this, new Observer<List<MessageProvider>>() {
             @Override
-            public void onChanged(@Nullable MessagesResponse messagesResponse) {
-                handleMessagesList(messagesResponse);
+            public void onChanged(@Nullable List<MessageProvider> messagesResponse) {
+                handleMessagesList(messagesResponse, false);
+            }
+        });
+
+        mainModel.getStarredMessagesResponse().observe(this, new Observer<List<MessageProvider>>() {
+            @Override
+            public void onChanged(@Nullable List<MessageProvider> messagesResponse) {
+                handleMessagesList(messagesResponse, true);
             }
         });
 
@@ -106,19 +112,14 @@ public class InboxFragment extends BaseFragment {
             public void onChanged(@Nullable String s) {
                 currentFolder = mainModel.getCurrentFolder().getValue();
                 if (currentFolder.equals("starred")) {
-                    mainModel.getStarredMessages(20, 0, 1);
+                    mainModel.getStarredMessages(50, 0, 1);
                 } else {
-                    mainModel.getMessages(20, 0, currentFolder);
+                    mainModel.getMessages(50, 0, currentFolder);
                 }
                 setHasOptionsMenu(false);
                 setHasOptionsMenu(true);
             }
         });
-
-//        if(mainModel.getMessagesResponse() == null || mainModel.getMessagesResponse().getValue() == null) {
-//            mainModel.showProgressDialog();
-//            mainModel.getMessages(20, 0, mainModel.getCurrentFolder().getValue());
-//        }
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(mLayoutManager);
@@ -132,9 +133,9 @@ public class InboxFragment extends BaseFragment {
         currentFolder = mainModel.getCurrentFolder().getValue();
         if (currentFolder != null) {
             if (currentFolder.equals("starred")) {
-                mainModel.getStarredMessages(20, 0, 1);
+                mainModel.getStarredMessages(50, 0, 1);
             } else {
-                mainModel.getMessages(20, 0, currentFolder);
+                mainModel.getMessages(50, 0, currentFolder);
             }
         }
     }
@@ -182,15 +183,14 @@ public class InboxFragment extends BaseFragment {
         } else if (id == R.id.action_search) {
             return true;
         } else if (id == R.id.action_empty_folder) {
-            List<MessagesResult> messages = adapter.getAll();
+            List<MessageProvider> messages = adapter.getAll();
             StringBuilder messagesIds = new StringBuilder();
-            for (MessagesResult messagesResult : messages) {
+            for (MessageProvider messagesResult : messages) {
                 messagesIds.append(messagesResult.getId());
                 messagesIds.append(',');
             }
             mainModel.deleteSeveralMessages(messagesIds.toString());
-            adapter.removeAll(messages);
-            mainModel.getMessages(20, 0, currentFolder);
+            mainModel.getMessages(50, 0, currentFolder);
             return true;
         }
 
@@ -230,8 +230,8 @@ public class InboxFragment extends BaseFragment {
         }
     }
 
-    public void handleMessagesList(MessagesResponse mailboxResponse) {
-        if(mailboxResponse == null || mailboxResponse.getMessagesList() == null || mailboxResponse.getMessagesList().size() == 0) {
+    public void handleMessagesList(List<MessageProvider> messages, boolean starredMessages) {
+        if(messages == null || messages.isEmpty()) {
             recyclerView.setVisibility(View.GONE);
             fabCompose.hide();
             imgEmpty.setVisibility(View.VISIBLE);
@@ -244,8 +244,12 @@ public class InboxFragment extends BaseFragment {
             txtEmpty.setVisibility(View.GONE);
             frameCompose.setVisibility(View.GONE);
 
-            List<MessagesResult> messagesList = mainModel.getMessagesResponse().getValue().getMessagesList();
-            adapter = new InboxMessagesAdapter(messagesList, mainModel);
+            String messagesFolder = messages.get(0).getFolderName();
+            if (currentFolder != null && !currentFolder.equals(messagesFolder) && !starredMessages) {
+                return;
+            }
+
+            adapter = new InboxMessagesAdapter(messages, mainModel);
             adapter.getOnClickSubject()
                     .subscribeOn(io.reactivex.schedulers.Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -291,7 +295,7 @@ public class InboxFragment extends BaseFragment {
                         public void onSwipeOptionClicked(int viewID, final int position) {
                             switch (viewID){
                                 case R.id.item_message_view_holder_delete:
-                                    final MessagesResult deletedMessage = adapter.removeAt(position);
+                                    final MessageProvider deletedMessage = adapter.removeAt(position);
                                     final String name = deletedMessage.getSubject();
                                     final String currentFolderFinal = currentFolder;
                                     Snackbar deleteSnackbar;
@@ -314,9 +318,9 @@ public class InboxFragment extends BaseFragment {
                                         public void onDismissed(Snackbar transientBottomBar, int event) {
                                             if (event != DISMISS_EVENT_ACTION) {
                                                 if (currentFolderFinal.equals("trash") || currentFolderFinal.equals("draft")) {
-                                                    mainModel.deleteMessage(deletedMessage);
+                                                    mainModel.deleteMessage(deletedMessage.getId());
                                                 } else {
-                                                    mainModel.toFolder(deletedMessage, "trash");
+                                                    mainModel.toFolder(deletedMessage.getId(), "trash");
                                                 }
                                             }
                                         }
@@ -326,7 +330,7 @@ public class InboxFragment extends BaseFragment {
                                     break;
 
                                 case R.id.item_message_view_holder_spam:
-                                    final MessagesResult spamMessage = adapter.removeAt(position);
+                                    final MessageProvider spamMessage = adapter.removeAt(position);
                                     Snackbar spamSnackbar = Snackbar
                                             .make(frameCompose, "1 reported as spam", Snackbar.LENGTH_LONG);
                                     spamSnackbar.setAction("UNDO", new View.OnClickListener() {
@@ -339,7 +343,7 @@ public class InboxFragment extends BaseFragment {
                                         @Override
                                         public void onDismissed(Snackbar transientBottomBar, int event) {
                                             if (event != DISMISS_EVENT_ACTION) {
-                                                mainModel.toFolder(spamMessage, "spam");
+                                                mainModel.toFolder(spamMessage.getId(), "spam");
                                             }
                                         }
                                     });

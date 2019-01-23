@@ -99,8 +99,9 @@ public class ViewMessagesActivity extends BaseActivity {
         modelViewMessages = ViewModelProviders.of(this).get(ViewMessagesViewModel.class);
         currentMailbox = CTemplarApp.getAppDatabase().mailboxDao().getDefault();
 
-        final String password =
-                CTemplarApp.getInstance().getSharedPreferences("pref_user", Context.MODE_PRIVATE).getString("key_password", null);
+        final String password = CTemplarApp.getInstance()
+                .getSharedPreferences("pref_user", Context.MODE_PRIVATE)
+                .getString("key_password", null);
 
         Intent intent = getIntent();
         if (intent == null) {
@@ -256,31 +257,31 @@ public class ViewMessagesActivity extends BaseActivity {
         int id = item.getItemId();
         switch(id) {
             case R.id.menu_view_archive:
-                mainModel.toFolder(parentMessage, "archive");
+                mainModel.toFolder(parentMessage.getId(), "archive");
                 Toast.makeText(getApplicationContext(), "1 archived", Toast.LENGTH_SHORT).show();
                 onBackPressed();
                 return true;
             case R.id.menu_view_inbox:
-                mainModel.toFolder(parentMessage, "inbox");
+                mainModel.toFolder(parentMessage.getId(), "inbox");
                 Toast.makeText(getApplicationContext(), "Moved to inbox", Toast.LENGTH_SHORT).show();
                 onBackPressed();
                 return true;
             case R.id.menu_view_spam:
-                mainModel.toFolder(parentMessage, "spam");
+                mainModel.toFolder(parentMessage.getId(), "spam");
                 Toast.makeText(getApplicationContext(), "1 reported as spam", Toast.LENGTH_SHORT).show();
                 onBackPressed();
                 return true;
             case R.id.menu_view_not_spam:
-                mainModel.toFolder(parentMessage, "inbox");
-                Toast.makeText(getApplicationContext(), "1 repotred as not spam", Toast.LENGTH_SHORT).show();
+                mainModel.toFolder(parentMessage.getId(), "inbox");
+                Toast.makeText(getApplicationContext(), "1 reported as not spam", Toast.LENGTH_SHORT).show();
                 onBackPressed();
                 return true;
             case R.id.menu_view_trash:
                 if (currentFolder.equals("trash")) {
-                    mainModel.deleteMessage(parentMessage);
+                    mainModel.deleteMessage(parentMessage.getId());
                     Toast.makeText(getApplicationContext(), "1 message permanently deleted", Toast.LENGTH_SHORT).show();
                 } else {
-                    mainModel.toFolder(parentMessage, "trash");
+                    mainModel.toFolder(parentMessage.getId(), "trash");
                     Toast.makeText(getApplicationContext(), "1 message removed", Toast.LENGTH_SHORT).show();
                 }
                 onBackPressed();
