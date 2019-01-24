@@ -4,10 +4,19 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.ObservableSource;
 import io.reactivex.Observer;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Function;
+import io.reactivex.observers.DisposableObserver;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.DialogState;
 import mobileapp.ctemplar.com.ctemplarapp.SingleLiveEvent;
@@ -102,51 +111,59 @@ public class MainActivityViewModel extends ViewModel {
         return contactsResponse;
     }
 
+    private Observable<MessagesResponse> messagesObservable;
+    private CompositeDisposable disposable;
+
     public void getMessages(int limit, int offset, final String folder) {
 
         List<MessageEntity> messageEntities = messagesRepository.getLocalMessagesByFolder(folder);
         List<MessageProvider> messageProviders = MessageProvider.fromMessageEntities(messageEntities);
         messagesResponse.postValue(messageProviders);
 
-        userRepository.getMessagesList(limit, offset, folder)
-                .subscribe(new Observer<MessagesResponse>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
+//        if (disposable != null && !disposable.isDisposed()) {
+//            disposable.clear();
+//        }
+//        disposable = new CompositeDisposable();
+        Observable<MessagesResponse> messagesObservable = userRepository.getMessagesList(limit, offset, folder);
+        messagesObservable.subscribe(new Observer<MessagesResponse>() {
+            @Override
+            public void onSubscribe(Disposable d) {
+//                disposable.add(d);
+            }
 
-                    }
-
+            @Override
+            public void onNext(final MessagesResponse response) {
+                new Thread(new Runnable() {
                     @Override
-                    public void onNext(final MessagesResponse response) {
-                        new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                List<MessagesResult> messages = response.getMessagesList();
-                                List<MessageEntity> messageEntities = MessageProvider
-                                        .fromMessagesResultsToEntities(messages);
+                    public void run() {
+                        List<MessagesResult> messages = response.getMessagesList();
+                        List<MessageEntity> messageEntities = MessageProvider
+                                .fromMessagesResultsToEntities(messages);
+                        // ToDo
 //                                List<MessageProvider> messageProviders = MessageProvider
 //                                        .fromMessageEntities(messageEntities);
 
-                                messagesRepository.deleteLocalMessagesByFolderName(folder);
-                                messagesRepository.addMessagesToDatabase(messageEntities);
+                        messagesRepository.deleteLocalMessagesByFolderName(folder);
+                        messagesRepository.addMessagesToDatabase(messageEntities);
 
-                                List<MessageEntity> localEntities = messagesRepository.getLocalMessagesByFolder(folder);
-                                List<MessageProvider> messageProviders = MessageProvider.fromMessageEntities(localEntities);
-                                messagesResponse.postValue(messageProviders);
-                                responseStatus.postValue(ResponseStatus.RESPONSE_NEXT_MESSAGES);
-                            }
-                        }).start();
+                        List<MessageEntity> localEntities = messagesRepository.getLocalMessagesByFolder(folder);
+                        List<MessageProvider> messageProviders = MessageProvider.fromMessageEntities(localEntities);
+                        messagesResponse.postValue(messageProviders);
+                        responseStatus.postValue(ResponseStatus.RESPONSE_NEXT_MESSAGES);
                     }
+                }).start();
+            }
 
-                    @Override
-                    public void onError(Throwable e) {
-                        responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
-                    }
+            @Override
+            public void onError(Throwable e) {
+                responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
+            }
 
-                    @Override
-                    public void onComplete() {
+            @Override
+            public void onComplete() {
 
-                    }
-                });
+            }
+        });
     }
 
     public void getStarredMessages(int limit, int offset, int starred) {

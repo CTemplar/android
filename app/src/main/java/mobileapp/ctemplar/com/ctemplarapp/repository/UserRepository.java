@@ -69,6 +69,8 @@ public class UserRepository {
     public void logout() {
         userStore.logout();
         CTemplarApp.getAppDatabase().mailboxDao().deleteAll();
+        CTemplarApp.getAppDatabase().messageDao().deleteAll();
+        CTemplarApp.getAppDatabase().contactDao().deleteAll();
     }
 
     public void saveUserToken(String token) {

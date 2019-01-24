@@ -13,6 +13,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -23,6 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
@@ -246,16 +248,18 @@ public class InboxFragment extends BaseFragment {
     }
 
     public void handleMessagesList(List<MessageProvider> messages, boolean starredMessages) {
+        currentFolder = mainModel.getCurrentFolder().getValue();
+        if (messages != null && !messages.isEmpty()) {
+            String messagesFolder = messages.get(0).getFolderName();
+            if (currentFolder != null && !currentFolder.equals(messagesFolder) && !starredMessages) {
+                return;
+            }
+        }
+
         if(messages == null || messages.isEmpty()) {
             hideMessagesList();
         } else {
             showMessagesList();
-
-            String messagesFolder = messages.get(0).getFolderName();
-            if (currentFolder != null && !currentFolder.equals(messagesFolder) && !starredMessages) {
-                messages = new ArrayList<>();
-                hideMessagesList();
-            }
 
             adapter = new InboxMessagesAdapter(messages, mainModel);
             adapter.getOnClickSubject()
@@ -290,7 +294,6 @@ public class InboxFragment extends BaseFragment {
             if (touchListener != null) {
                 recyclerView.removeOnItemTouchListener(touchListener);
             }
-            currentFolder = mainModel.getCurrentFolder().getValue();
             touchListener = new InboxMessagesTouchListener(getActivity(), recyclerView);
             if (currentFolder.equals("draft")) {
                 touchListener.setSwipeOptionViews(R.id.item_message_view_holder_delete);
