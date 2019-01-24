@@ -42,6 +42,7 @@ public class RestClient {
         OkHttpClient.Builder client = new OkHttpClient.Builder();
         client.addInterceptor(interceptor)
                 .addInterceptor(new HttpTokenInterceptor())
+                .authenticator(new TokenAuthenticator())
                 .readTimeout(60, TimeUnit.SECONDS)
                 .connectTimeout(60, TimeUnit.SECONDS)
                 .build();

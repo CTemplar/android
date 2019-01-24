@@ -23,6 +23,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
@@ -34,7 +36,6 @@ import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.message.SendMessageActivity;
 import mobileapp.ctemplar.com.ctemplarapp.message.ViewMessagesActivity;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
-import timber.log.Timber;
 
 public class InboxFragment extends BaseFragment {
 
@@ -230,24 +231,35 @@ public class InboxFragment extends BaseFragment {
         }
     }
 
-    public void handleMessagesList(List<MessageProvider> messages, boolean starredMessages) {
-        if(messages == null || messages.isEmpty()) {
-            recyclerView.setVisibility(View.GONE);
-            fabCompose.hide();
-            imgEmpty.setVisibility(View.VISIBLE);
-            txtEmpty.setVisibility(View.VISIBLE);
-            frameCompose.setVisibility(View.VISIBLE);
-        } else {
-            recyclerView.setVisibility(View.VISIBLE);
-            fabCompose.show();
-            imgEmpty.setVisibility(View.GONE);
-            txtEmpty.setVisibility(View.GONE);
-            frameCompose.setVisibility(View.GONE);
+    private void hideMessagesList() {
+        recyclerView.setVisibility(View.GONE);
+        fabCompose.hide();
+        imgEmpty.setVisibility(View.VISIBLE);
+        txtEmpty.setVisibility(View.VISIBLE);
+        frameCompose.setVisibility(View.VISIBLE);
+    }
 
+    private void showMessagesList() {
+        recyclerView.setVisibility(View.VISIBLE);
+        fabCompose.show();
+        imgEmpty.setVisibility(View.GONE);
+        txtEmpty.setVisibility(View.GONE);
+        frameCompose.setVisibility(View.GONE);
+    }
+
+    public void handleMessagesList(List<MessageProvider> messages, boolean starredMessages) {
+        currentFolder = mainModel.getCurrentFolder().getValue();
+        if (messages != null && !messages.isEmpty()) {
             String messagesFolder = messages.get(0).getFolderName();
             if (currentFolder != null && !currentFolder.equals(messagesFolder) && !starredMessages) {
                 return;
             }
+        }
+
+        if(messages == null || messages.isEmpty()) {
+            hideMessagesList();
+        } else {
+            showMessagesList();
 
             adapter = new InboxMessagesAdapter(messages, mainModel);
             adapter.getOnClickSubject()
@@ -282,7 +294,6 @@ public class InboxFragment extends BaseFragment {
             if (touchListener != null) {
                 recyclerView.removeOnItemTouchListener(touchListener);
             }
-            currentFolder = mainModel.getCurrentFolder().getValue();
             touchListener = new InboxMessagesTouchListener(getActivity(), recyclerView);
             if (currentFolder.equals("draft")) {
                 touchListener.setSwipeOptionViews(R.id.item_message_view_holder_delete);

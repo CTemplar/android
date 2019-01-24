@@ -46,7 +46,6 @@
                 android:resource="@xml/searchable" />
         </activity>
         <activity android:name=".message.SendMessageActivity" />
-        <activity android:name=".message.ViewMessageActivity" />
         <activity android:name=".contact.AddContactActivity" />
         <activity android:name=".contact.EditContactActivity" />
         <activity android:name=".message.ViewMessagesActivity" />

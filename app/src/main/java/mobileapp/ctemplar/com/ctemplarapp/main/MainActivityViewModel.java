@@ -4,10 +4,19 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.ObservableSource;
 import io.reactivex.Observer;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Function;
+import io.reactivex.observers.DisposableObserver;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.DialogState;
 import mobileapp.ctemplar.com.ctemplarapp.SingleLiveEvent;
@@ -41,7 +50,7 @@ public class MainActivityViewModel extends ViewModel {
     MutableLiveData<List<MessageProvider>> messagesResponse = new MutableLiveData<>();
     MutableLiveData<List<MessageProvider>> starredMessagesResponse = new MutableLiveData<>();
     MutableLiveData<List<Contact>> contactsResponse = new MutableLiveData<>();
-    MutableLiveData<String> currentFolder = new MutableLiveData<String>();
+    MutableLiveData<String> currentFolder = new MutableLiveData<>();
     MutableLiveData<SignInResponse> signResponse = new MutableLiveData<>();
 
     public MainActivityViewModel() {
@@ -102,51 +111,59 @@ public class MainActivityViewModel extends ViewModel {
         return contactsResponse;
     }
 
+    private Observable<MessagesResponse> messagesObservable;
+    private CompositeDisposable disposable;
+
     public void getMessages(int limit, int offset, final String folder) {
 
-        List<MessageEntity> entities = messagesRepository.getLocalMessagesByFolder(folder);
-        List<MessageProvider> messageProviders = MessageProvider.fromMessageEntities(entities);
+        List<MessageEntity> messageEntities = messagesRepository.getLocalMessagesByFolder(folder);
+        List<MessageProvider> messageProviders = MessageProvider.fromMessageEntities(messageEntities);
         messagesResponse.postValue(messageProviders);
 
-        userRepository.getMessagesList(limit, offset, folder)
-                .subscribe(new Observer<MessagesResponse>() {
+//        if (disposable != null && !disposable.isDisposed()) {
+//            disposable.clear();
+//        }
+//        disposable = new CompositeDisposable();
+        Observable<MessagesResponse> messagesObservable = userRepository.getMessagesList(limit, offset, folder);
+        messagesObservable.subscribe(new Observer<MessagesResponse>() {
+            @Override
+            public void onSubscribe(Disposable d) {
+//                disposable.add(d);
+            }
+
+            @Override
+            public void onNext(final MessagesResponse response) {
+                new Thread(new Runnable() {
                     @Override
-                    public void onSubscribe(Disposable d) {
+                    public void run() {
+                        List<MessagesResult> messages = response.getMessagesList();
+                        List<MessageEntity> messageEntities = MessageProvider
+                                .fromMessagesResultsToEntities(messages);
+                        // ToDo
+//                                List<MessageProvider> messageProviders = MessageProvider
+//                                        .fromMessageEntities(messageEntities);
 
+                        messagesRepository.deleteLocalMessagesByFolderName(folder);
+                        messagesRepository.addMessagesToDatabase(messageEntities);
+
+                        List<MessageEntity> localEntities = messagesRepository.getLocalMessagesByFolder(folder);
+                        List<MessageProvider> messageProviders = MessageProvider.fromMessageEntities(localEntities);
+                        messagesResponse.postValue(messageProviders);
+                        responseStatus.postValue(ResponseStatus.RESPONSE_NEXT_MESSAGES);
                     }
+                }).start();
+            }
 
-                    @Override
-                    public void onNext(final MessagesResponse response) {
-                        new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                messagesRepository.deleteLocalMessagesByFolderName(folder);
-                                List<MessagesResult> messages = response.getMessagesList();
+            @Override
+            public void onError(Throwable e) {
+                responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
+            }
 
-                                List<MessageProvider> messageProviders = MessageProvider
-                                        .fromMessagesResults(messages);
+            @Override
+            public void onComplete() {
 
-                                List<MessageEntity> messageEntities = MessageProvider
-                                        .fromMessagesResultsToEntities(messages);
-
-                                messagesRepository.addMessagesToDatabase(messageEntities);
-
-                                messagesResponse.postValue(messageProviders);
-                                responseStatus.postValue(ResponseStatus.RESPONSE_NEXT_MESSAGES);
-                            }
-                        }).start();
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
+            }
+        });
     }
 
     public void getStarredMessages(int limit, int offset, int starred) {
@@ -321,7 +338,7 @@ public class MainActivityViewModel extends ViewModel {
                 });
     }
 
-    public void deleteMessage(long messageId) {
+    public void deleteMessage(final long messageId) {
         userRepository.deleteMessage(messageId)
                 .subscribe(new Observer<ResponseBody>() {
                     @Override
@@ -331,7 +348,7 @@ public class MainActivityViewModel extends ViewModel {
 
                     @Override
                     public void onNext(ResponseBody responseBody) {
-
+                        messagesRepository.deleteMessagesByParentId(messageId);
                     }
 
                     @Override

@@ -16,8 +16,7 @@ public interface MessageDao {
     @Query("SELECT * FROM messages")
     List<MessageEntity> getAll();
 
-    // TODO
-    @Query("SELECT * FROM messages WHERE folderName=:folderName ORDER BY createdAt DESC")
+    @Query("SELECT * FROM messages WHERE folderName=:folderName ORDER BY updated DESC")
     List<MessageEntity> getAllByFolder(String folderName);
 
     @Insert(onConflict = REPLACE)
@@ -37,4 +36,10 @@ public interface MessageDao {
 
     @Query("DELETE FROM messages WHERE folderName=:folderName")
     void deleteAllByFolder(String folderName);
+
+    @Query("DELETE FROM messages WHERE parent=:id")
+    void deleteAllByParentId(String id);
+
+    @Query("SELECT * FROM messages WHERE parent=:id")
+    List<MessageEntity> getByParentId(String id);
 }

@@ -1,7 +1,7 @@
 package mobileapp.ctemplar.com.ctemplarapp.message;
 
 import android.content.Context;
-import android.support.v7.widget.DividerItemDecoration;
+import android.os.Build;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
@@ -10,9 +10,9 @@ import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.BaseAdapter;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.text.DateFormat;
@@ -24,23 +24,18 @@ import java.util.Locale;
 
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.R;
-import mobileapp.ctemplar.com.ctemplarapp.folders.ManageFoldersAdapter;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessageAttachment;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResult;
-import mobileapp.ctemplar.com.ctemplarapp.utils.PGPManager;
-import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
+import mobileapp.ctemplar.com.ctemplarapp.main.AttachmentProvider;
+import mobileapp.ctemplar.com.ctemplarapp.main.MessageProvider;
 import timber.log.Timber;
 
 public class ViewMessagesAdapter extends BaseAdapter {
 
-    private MailboxEntity currentMailbox;
-    private List<MessagesResult> data;
+    private List<MessageProvider> data;
     private MessageAttachmentAdapter messageAttachmentAdapter;
 
-    ViewMessagesAdapter(List<MessagesResult> data, MessageAttachmentAdapter messageAttachmentAdapter) {
+    ViewMessagesAdapter(List<MessageProvider> data, MessageAttachmentAdapter messageAttachmentAdapter) {
         this.data = data;
         this.messageAttachmentAdapter = messageAttachmentAdapter;
-        currentMailbox = CTemplarApp.getAppDatabase().mailboxDao().getDefault();
     }
 
     @Override
@@ -58,14 +53,15 @@ public class ViewMessagesAdapter extends BaseAdapter {
         return data.get(position).getId();
     }
 
-    private View getViewByFlag(LayoutInflater inflater, ViewGroup parent, MessagesResult messageData, boolean isLast) {
+    private View getViewByFlag(LayoutInflater inflater, ViewGroup parent, MessageProvider messageData, boolean isLast) {
         View view = inflater.inflate(R.layout.item_message_view_selector, parent, false);
 
         final View collapsedView = view.findViewById(R.id.collappsed);
         final View expandedView = view.findViewById(R.id.expanded);
 
-        String password =
-                CTemplarApp.getInstance().getSharedPreferences("pref_user", Context.MODE_PRIVATE).getString("key_password", null);
+        String password = CTemplarApp.getInstance()
+                .getSharedPreferences("pref_user", Context.MODE_PRIVATE)
+                .getString("key_password", null);
 
         collapsedView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -88,12 +84,10 @@ public class ViewMessagesAdapter extends BaseAdapter {
             expandedView.setVisibility(View.VISIBLE);
         }
 
-        PGPManager pgpManager = new PGPManager();
-        String privateKey = currentMailbox.getPrivateKey();
-        String encodedMessage = pgpManager.decryptMessage(messageData.getContent(), privateKey, password);
+        String encodedMessage = messageData.getContent();
 
         String style = "<style type=\"text/css\">*{width:auto;}</style>";
-        String messageWithStyle = style + encodedMessage;
+        String messageWithStyle = style + messageData.getContent();
         String encodedContent = Base64.encodeToString(messageWithStyle.getBytes(), Base64.NO_PADDING);
 
         // VIEW COLLAPSED
@@ -150,17 +144,23 @@ public class ViewMessagesAdapter extends BaseAdapter {
             receiverEmailTextView.setText(addQuotesToNames(messageData.getReceivers()));
         }
 
-        String[] cc = messageData.getCC();
+        String[] cc = messageData.getCc();
         if (cc != null) {
-            ccEmailTextView.setText(addQuotesToNames(messageData.getCC()));
+            ccEmailTextView.setText(addQuotesToNames(messageData.getCc()));
         } else {
             ccLayout.setVisibility(View.GONE);
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            contentWebView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+        } else {
+            contentWebView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
         }
 
         contentWebView.getSettings().setLoadWithOverviewMode(true);
         contentWebView.loadData(encodedContent, "text/html", "base64");
 
-        List<MessageAttachment> attachmentsList = messageData.getAttachments();
+        List<AttachmentProvider> attachmentsList = messageData.getAttachments();
 
         RecyclerView.LayoutManager mLayoutManager
                 = new LinearLayoutManager(attachmentsRecyclerView.getContext(), LinearLayoutManager.HORIZONTAL, false);
@@ -175,7 +175,7 @@ public class ViewMessagesAdapter extends BaseAdapter {
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        MessagesResult messageData = data.get(position);
+        MessageProvider messageData = data.get(position);
         return getViewByFlag(inflater, parent, messageData, position + 1 == getCount());
     }
 

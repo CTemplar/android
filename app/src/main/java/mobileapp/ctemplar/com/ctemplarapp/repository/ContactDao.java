@@ -19,6 +19,9 @@ public interface ContactDao {
     @Insert(onConflict = REPLACE)
     void save(ContactEntity contactEntity);
 
+    @Query("DELETE FROM messages")
+    void deleteAll();
+
     @Query("DELETE FROM contacts WHERE id = :id")
     void delete(long id);
 

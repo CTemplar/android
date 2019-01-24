@@ -3,47 +3,88 @@ package mobileapp.ctemplar.com.ctemplarapp.message;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
+import mobileapp.ctemplar.com.ctemplarapp.main.MessageProvider;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResult;
+import mobileapp.ctemplar.com.ctemplarapp.repository.MessagesRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
+import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MessageEntity;
 import timber.log.Timber;
 
 public class ViewMessagesViewModel extends ViewModel {
     private UserRepository userRepository;
+    private MessagesRepository messagesRepository;
     private MutableLiveData<ResponseStatus> responseStatus = new MutableLiveData<>();
-    private MutableLiveData<MessagesResponse> messagesResponse = new MutableLiveData<>();
-    private MutableLiveData<MessagesResult> starredResponse = new MutableLiveData<>();
+    private MutableLiveData<List<MessageProvider>> messagesResponse = new MutableLiveData<>();
+    private MutableLiveData<MessageProvider> starredResponse = new MutableLiveData<>();
 
     public ViewMessagesViewModel() {
         userRepository = UserRepository.getInstance();
+        messagesRepository = MessagesRepository.getInstance();
     }
 
     public void getChainMessages(long id) {
+
+        final MessageEntity parentMessage = messagesRepository.getLocalMessage(id);
+        if (parentMessage != null) {
+            final List<MessageEntity> childrenEntities = messagesRepository.getChildMessages(parentMessage);
+            List<MessageEntity> allEntities = new ArrayList<>(childrenEntities.size() + 1);
+            allEntities.add(parentMessage);
+            allEntities.addAll(childrenEntities);
+
+            List<MessageProvider> messageProviders = MessageProvider.fromMessageEntities(allEntities);
+            messagesResponse.postValue(messageProviders);
+        }
+
         userRepository.getChainMessages(id)
-        .subscribe(new Observer<MessagesResponse>() {
-            @Override
-            public void onSubscribe(Disposable d) {
+                .subscribe(new Observer<MessagesResponse>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
 
-            }
+                    }
 
-            @Override
-            public void onNext(MessagesResponse messagesResponse) {
-                ViewMessagesViewModel.this.messagesResponse.postValue(messagesResponse);
-            }
+                    @Override
+                    public void onNext(MessagesResponse messagesResponse) {
+                        List<MessagesResult> messagesResults = messagesResponse.getMessagesList();
+                        if (messagesResults == null || messagesResults.isEmpty()) {
+                            ViewMessagesViewModel.this.messagesResponse.postValue(null);
+                            return;
+                        }
+                        MessagesResult parentMessageResult = messagesResults.get(0);
+                        MessageEntity parentEntity = MessageProvider.fromMessagesResultToEntity(parentMessageResult);
+                        MessageProvider parentMessage = MessageProvider.fromMessageEntity(parentEntity);
 
-            @Override
-            public void onError(Throwable e) {
-                Timber.e(e);
-            }
+                        MessagesResult[] childrenResult = parentMessageResult.getChildren();
+                        List<MessageEntity> childrenEntities = MessageProvider.fromMessagesResultsToEntities(Arrays.asList(childrenResult));
+                        List<MessageProvider> childrenMessages = MessageProvider.fromMessageEntities(childrenEntities);
 
-            @Override
-            public void onComplete() {
+                        messagesRepository.deleteMessagesByParentId(parentEntity.getId());
+                        messagesRepository.addMessageToDatabase(parentEntity);
+                        messagesRepository.addMessagesToDatabase(childrenEntities);
 
-            }
-        });
+                        List<MessageProvider> resultList = new ArrayList<>(1 + childrenResult.length);
+                        resultList.add(parentMessage);
+                        resultList.addAll(childrenMessages);
+                        ViewMessagesViewModel.this.messagesResponse.postValue(resultList);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Timber.e(e);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
     }
 
     public void markMessageIsStarred(long id, boolean starred) {
@@ -56,7 +97,8 @@ public class ViewMessagesViewModel extends ViewModel {
 
                     @Override
                     public void onNext(MessagesResult messagesResult) {
-                        starredResponse.postValue(messagesResult);
+                        MessageProvider messageProvider = MessageProvider.fromMessagesResult(messagesResult);
+                        starredResponse.postValue(messageProvider);
                     }
 
                     @Override
@@ -96,11 +138,11 @@ public class ViewMessagesViewModel extends ViewModel {
                 });
     }
 
-    public MutableLiveData<MessagesResponse> getMessagesResponse() {
+    public MutableLiveData<List<MessageProvider>> getMessagesResponse() {
         return messagesResponse;
     }
 
-    MutableLiveData<MessagesResult> getStarredResponse() {
+    MutableLiveData<MessageProvider> getStarredResponse() {
         return starredResponse;
     }
 }
