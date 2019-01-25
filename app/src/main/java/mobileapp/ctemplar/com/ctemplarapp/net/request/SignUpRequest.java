@@ -15,13 +15,13 @@ public class SignUpRequest {
     private String username;
 
     @SerializedName("private_key")
-    private String private_key = "test_private_key";
+    private String private_key;
 
     @SerializedName("public_key")
-    private String public_key = "test_public_key";
+    private String public_key;
 
     @SerializedName("fingerprint")
-    private String fingerprint = "test_fingerprint";
+    private String fingerprint;
 
     @SerializedName("recaptcha")
     private String recaptcha = "text_recaptcha";

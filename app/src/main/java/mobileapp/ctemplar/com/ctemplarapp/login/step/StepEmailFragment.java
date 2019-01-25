@@ -92,11 +92,14 @@ public class StepEmailFragment extends BaseFragment {
     @OnClick(R.id.fragment_step_email_next_btn)
     public void onClickNext() {
 
-        handleErrorEmail(editEmail.getText().toString());
+        String recoveryEmail = editEmail.getText().toString();
+        handleErrorEmail(recoveryEmail);
 
-        if(EditTextUtils.isEmailValid(editEmail.getText().toString())) {
+        if(recoveryEmail.isEmpty() || EditTextUtils.isEmailValid(recoveryEmail)) {
             loginActivityModel.showProgressDialog();
-            viewModel.setRecoveryEmail(editEmail.getText().toString());
+            if (!recoveryEmail.isEmpty()) {
+                viewModel.setRecoveryEmail(recoveryEmail);
+            }
             viewModel.signUp();
         }
     }
@@ -133,9 +136,8 @@ public class StepEmailFragment extends BaseFragment {
     }
 
     private void handleErrorEmail(String email) {
-        if(!EditTextUtils.isEmailValid(email)) {
+        if(!email.isEmpty() && !EditTextUtils.isEmailValid(email)) {
             editEmailLayout.setError(getResources().getString(R.string.error_invalid_email));
-            return;
         }
     }
 
