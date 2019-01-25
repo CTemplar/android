@@ -32,17 +32,9 @@ public class EncodeUtils {
             @Override
             public PGPKeyEntity call() throws Exception {
                 PGPManager pgpManager = new PGPManager();
-                return pgpManager.generateKeys("name <name@domain.com>", password); //TODO
+                return pgpManager.generateKeys("name <name@domain.com>", password);
             }
         }).subscribeOn(io.reactivex.schedulers.Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread());
-    }
-
-    public static String decodeMessage(String encodedMessage, String publicKey, String privateKey) {
-        if(!TextUtils.isEmpty(encodedMessage)) {
-
-        }
-
-        return "";
     }
 }

@@ -83,8 +83,8 @@
             android:textColor="@drawable/filter_checkbox_color_selector"
             android:text="Starred"
             android:button="@null"
-            android:drawableRight="@drawable/selector_check"
-            android:drawableEnd="@drawable/selector_check"/>
+            android:drawableRight="@drawable/selector_check_filter"
+            android:drawableEnd="@drawable/selector_check_filter"/>
 
         <CheckBox
             android:id="@+id/fragment_messages_filter_dialog_unread"
@@ -96,8 +96,8 @@
             android:textColor="@drawable/filter_checkbox_color_selector"
             android:text="Unread"
             android:button="@null"
-            android:drawableRight="@drawable/selector_check"
-            android:drawableEnd="@drawable/selector_check"/>
+            android:drawableRight="@drawable/selector_check_filter"
+            android:drawableEnd="@drawable/selector_check_filter"/>
 
         <CheckBox
             android:id="@+id/fragment_messages_filter_dialog_with_attachment"
@@ -109,8 +109,8 @@
             android:textColor="@drawable/filter_checkbox_color_selector"
             android:text="With Attachment"
             android:button="@null"
-            android:drawableRight="@drawable/selector_check"
-            android:drawableEnd="@drawable/selector_check"/>
+            android:drawableRight="@drawable/selector_check_filter"
+            android:drawableEnd="@drawable/selector_check_filter"/>
 
     </LinearLayout>
 

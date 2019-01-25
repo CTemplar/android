@@ -68,7 +68,6 @@ public class StepRegistrationViewModel extends ViewModel {
                         if(checkUsernameResponse.isExists()) {
                             responseStatus.postValue(ResponseStatus.RESPONSE_ERROR_USERNAME_EXISTS);
                         } else {
-                            // save username
                             signUpRequest.setUsername(username);
                             responseStatus.postValue(ResponseStatus.RESPONSE_NEXT_STEP_USERNAME);
                         }
@@ -96,11 +95,8 @@ public class StepRegistrationViewModel extends ViewModel {
                 .flatMap(new Function<PGPKeyEntity, Observable<SignUpResponse>>() {
                     @Override
                     public Observable<SignUpResponse> apply(PGPKeyEntity pgpKeyEntity) throws Exception {
-
-                        signUpRequest.setPrivateKey(pgpKeyEntity.getPrivateKey());
-                        signUpRequest.setPublicKey(pgpKeyEntity.getPublicKey());
-                        signUpRequest.setPasswordHashed(EncodeUtils.encodePassword(signUpRequest.getUsername(), signUpRequest.getPassword()));
-
+                        generatePGPKeys();
+                        hashPassword();
                         return userRepository.signUp(signUpRequest);
                     }
                 }).subscribe(new Observer<SignUpResponse>() {
@@ -113,6 +109,7 @@ public class StepRegistrationViewModel extends ViewModel {
             @Override
             public void onNext(SignUpResponse signUpResponse) {
                 userRepository.saveUserToken(signUpResponse.getToken());
+                userRepository.saveUserPassword(signUpRequest.getPassword());
                 responseStatus.postValue(ResponseStatus.RESPONSE_NEXT_STEP_EMAIL);
             }
 
@@ -131,13 +128,14 @@ public class StepRegistrationViewModel extends ViewModel {
 
     public void generatePGPKeys() {
         PGPManager pgpManager = new PGPManager();
-        PGPKeyEntity entity = pgpManager.generateKeys("name <name@domain.com>", signUpRequest.getPassword());
+        PGPKeyEntity entity = pgpManager.generateKeys(signUpRequest.getUsername(), signUpRequest.getPassword());
         signUpRequest.setPrivateKey(entity.getPrivateKey());
         signUpRequest.setPublicKey(entity.getPublicKey());
+        signUpRequest.setFingerprint(entity.getFingerprint());
     }
 
     public void hashPassword() {
-        signUpRequest.setPassword(EncodeUtils.encodePassword(signUpRequest.getUsername(), signUpRequest.getPassword()));
+        signUpRequest.setPasswordHashed(EncodeUtils.encodePassword(signUpRequest.getUsername(), signUpRequest.getPassword()));
     }
 
 }

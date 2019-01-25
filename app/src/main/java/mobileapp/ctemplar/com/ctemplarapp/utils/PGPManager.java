@@ -1,5 +1,9 @@
 package mobileapp.ctemplar.com.ctemplarapp.utils;
 
+import com.didisoft.pgp.CompressionAlgorithm;
+import com.didisoft.pgp.CypherAlgorithm;
+import com.didisoft.pgp.HashAlgorithm;
+import com.didisoft.pgp.KeyAlgorithm;
 import com.didisoft.pgp.KeyPairInformation;
 import com.didisoft.pgp.KeyStore;
 import com.didisoft.pgp.PGPException;
@@ -14,8 +18,10 @@ import mobileapp.ctemplar.com.ctemplarapp.net.entity.PGPKeyEntity;
 import timber.log.Timber;
 
 public class PGPManager {
+
     private PGPLib pgpLib;
     private final boolean asciiArmor = true;
+    private final int KEY_SIZE = 4096;
     private final boolean withIntegrityCheck = true;
 
     public PGPManager() {
@@ -41,13 +47,13 @@ public class PGPManager {
                     asciiArmor, withIntegrityCheck);
 
         } catch (IOException | PGPException e) {
+            e.printStackTrace();
             Timber.e("Pgp encrypt error: %s", e.getMessage());
 
         } finally {
             try {
                 inputMessageStream.close();
                 outputMessageStream.close();
-
             } catch (IOException e) {
                 Timber.e("Pgp close stream error: %s", e.getMessage());
             }
@@ -66,14 +72,14 @@ public class PGPManager {
             pgpLib.decryptStream(inputMessageStream, privateKeyStream, password, outputMessageStream);
 
         } catch (IOException | PGPException e) {
-            Timber.e("Pgp encrypt error: %s", e.getMessage());
+            e.printStackTrace();
+            Timber.e("Pgp decrypt error: %s", e.getMessage());
 
         } finally {
             try {
                 inputMessageStream.close();
                 outputMessageStream.close();
                 privateKeyStream.close();
-
             } catch (IOException e) {
                 Timber.e("Pgp close stream error: %s", e.getMessage());
             }
@@ -84,7 +90,65 @@ public class PGPManager {
 
     public PGPKeyEntity generateKeys(String userId, String password) {
 
-        return new PGPKeyEntity("", "");
+        PGPKeyEntity pgpKeyEntity = new PGPKeyEntity();
+        ByteArrayOutputStream publicKeyStream = new ByteArrayOutputStream();
+        ByteArrayOutputStream privateKeyStream = new ByteArrayOutputStream();
+
+        KeyAlgorithm keyAlgorithm = KeyAlgorithm.RSA;
+
+        CompressionAlgorithm[] compressionAlgorithms = new CompressionAlgorithm[] {
+                CompressionAlgorithm.ZIP,
+                CompressionAlgorithm.ZLIB,
+                CompressionAlgorithm.UNCOMPRESSED
+        };
+
+        HashAlgorithm[] hashAlgorithms = new HashAlgorithm[] {
+                HashAlgorithm.SHA256,
+                HashAlgorithm.SHA384,
+                HashAlgorithm.SHA512
+        };
+
+        CypherAlgorithm[] cypherAlgorithm = new CypherAlgorithm[] {
+                CypherAlgorithm.AES_128,
+                CypherAlgorithm.AES_192,
+                CypherAlgorithm.AES_256,
+                CypherAlgorithm.TWOFISH
+        };
+
+        try {
+            KeyStore keyStore = new KeyStore();
+            KeyPairInformation keyPairInformation = keyStore.generateKeyPair(
+                    KEY_SIZE,
+                    userId,
+                    keyAlgorithm,
+                    password,
+                    compressionAlgorithms,
+                    hashAlgorithms,
+                    cypherAlgorithm
+             );
+
+            String fingerprint = keyPairInformation.getFingerprint();
+            keyStore.exportPublicKey(publicKeyStream, keyPairInformation.getKeyID(), asciiArmor);
+            keyStore.exportPrivateKey(privateKeyStream, keyPairInformation.getKeyID(), asciiArmor);
+
+            pgpKeyEntity.setFingerprint(fingerprint);
+            pgpKeyEntity.setPublicKey(publicKeyStream.toString());
+            pgpKeyEntity.setPrivateKey(privateKeyStream.toString());
+
+        } catch (PGPException | IOException e) {
+            e.printStackTrace();
+            Timber.e("Pgp generation key error: %s", e.getMessage());
+
+        } finally {
+            try {
+                publicKeyStream.close();
+                privateKeyStream.close();
+            } catch (IOException e) {
+                Timber.e("Pgp close stream error: %s", e.getMessage());
+            }
+        }
+
+        return pgpKeyEntity;
     }
 
 }
