@@ -66,6 +66,11 @@
             android:icon="@drawable/ic_manage_folders"
             android:title="@string/nav_drawer_manage_folders"
             android:checkable="false" />
+        <item
+            android:id="@+id/nav_manage_folders_more"
+            android:title="@string/nav_drawer_folders_show_more"
+            android:orderInCategory="1000"
+            android:checkable="false" />
     </group>
 
 </menu>

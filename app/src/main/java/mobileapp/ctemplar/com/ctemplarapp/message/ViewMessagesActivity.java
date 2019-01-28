@@ -314,7 +314,7 @@ public class ViewMessagesActivity extends BaseActivity {
         intent.putExtra(Intent.EXTRA_EMAIL, new String[] { lastMessage.getSender() });
         intent.putExtra(Intent.EXTRA_SUBJECT, lastMessage.getSubject());
         intent.putExtra(Intent.EXTRA_TEXT, replyHead() + Html.fromHtml(decryptedLastMessage));
-        intent.putExtra(SendMessageActivity.PARENT_ID, lastMessage.getId());
+        intent.putExtra(SendMessageActivity.PARENT_ID, parentMessage.getId());
         startActivity(intent);
     }
 
@@ -326,7 +326,7 @@ public class ViewMessagesActivity extends BaseActivity {
         intent.putExtra(Intent.EXTRA_TEXT, replyHead() + Html.fromHtml(decryptedLastMessage));
         intent.putExtra(Intent.EXTRA_CC, lastMessage.getCc());
         intent.putExtra(Intent.EXTRA_BCC, lastMessage.getBcc());
-        intent.putExtra(SendMessageActivity.PARENT_ID, lastMessage.getId());
+        intent.putExtra(SendMessageActivity.PARENT_ID, parentMessage.getId());
         startActivity(intent);
     }
 

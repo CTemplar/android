@@ -111,12 +111,9 @@ public class InboxFragment extends BaseFragment {
         mainModel.getCurrentFolder().observe(this, new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {
-                currentFolder = mainModel.getCurrentFolder().getValue();
-                if (currentFolder.equals("starred")) {
-                    mainModel.getStarredMessages(50, 0, 1);
-                } else {
-                    mainModel.getMessages(50, 0, currentFolder);
-                }
+                getMessages();
+                String emptyFolderString = getResources().getString(R.string.title_empty_messages, currentFolder);
+                txtEmpty.setText(emptyFolderString);
                 setHasOptionsMenu(false);
                 setHasOptionsMenu(true);
             }
@@ -130,15 +127,7 @@ public class InboxFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-
-        currentFolder = mainModel.getCurrentFolder().getValue();
-        if (currentFolder != null) {
-            if (currentFolder.equals("starred")) {
-                mainModel.getStarredMessages(50, 0, 1);
-            } else {
-                mainModel.getMessages(50, 0, currentFolder);
-            }
-        }
+        getMessages();
     }
 
     @Override
@@ -150,6 +139,7 @@ public class InboxFragment extends BaseFragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.main, menu);
 
+        // Function
         MenuItem emptyFolder = menu.findItem(R.id.action_empty_folder);
         emptyFolder.setVisible(currentFolder.equals("trash")
                 || currentFolder.equals("spam")
@@ -231,6 +221,17 @@ public class InboxFragment extends BaseFragment {
         }
     }
 
+    private void getMessages() {
+        currentFolder = mainModel.getCurrentFolder().getValue();
+        if (currentFolder != null) {
+            if (currentFolder.equals("starred")) {
+                mainModel.getStarredMessages(50, 0, 1);
+            } else {
+                mainModel.getMessages(50, 0, currentFolder);
+            }
+        }
+    }
+
     private void hideMessagesList() {
         recyclerView.setVisibility(View.GONE);
         fabCompose.hide();
@@ -273,9 +274,10 @@ public class InboxFragment extends BaseFragment {
 
                         @Override
                         public void onNext(Long aLong) {
+                            String folderName = mainModel.currentFolder.getValue();
                             Intent intent = new Intent(getActivity(), ViewMessagesActivity.class);
                             intent.putExtra(ViewMessagesActivity.PARENT_ID, aLong);
-                            intent.putExtra(ViewMessagesActivity.FOLDER_NAME, mainModel.currentFolder.getValue());
+                            intent.putExtra(ViewMessagesActivity.FOLDER_NAME, folderName);
                             getActivity().startActivity(intent);
                         }
 
@@ -304,62 +306,55 @@ public class InboxFragment extends BaseFragment {
                     .setSwipeable(R.id.item_message_view_holder_foreground, R.id.item_message_view_holder_background_layout, new InboxMessagesTouchListener.OnSwipeOptionsClickListener() {
                         @Override
                         public void onSwipeOptionClicked(int viewID, final int position) {
+                            final String currentFolderFinal = currentFolder;
+
                             switch (viewID){
                                 case R.id.item_message_view_holder_delete:
                                     final MessageProvider deletedMessage = adapter.removeAt(position);
                                     final String name = deletedMessage.getSubject();
-                                    final String currentFolderFinal = currentFolder;
-                                    Snackbar deleteSnackbar;
-                                    if (currentFolderFinal.equals("trash") || currentFolderFinal.equals("draft")) {
-                                        deleteSnackbar = Snackbar
-                                                .make(frameCompose, name + " permanently deleted", Snackbar.LENGTH_LONG);
-                                    } else {
-                                        deleteSnackbar = Snackbar
-                                                .make(frameCompose, name + " removed", Snackbar.LENGTH_LONG);
-                                    }
 
-                                    deleteSnackbar.setAction("UNDO", new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View view) {
-                                            adapter.restoreMessage(deletedMessage, position);
-                                        }
-                                    });
-                                    deleteSnackbar.addCallback(new BaseTransientBottomBar.BaseCallback<Snackbar>() {
-                                        @Override
-                                        public void onDismissed(Snackbar transientBottomBar, int event) {
-                                            if (event != DISMISS_EVENT_ACTION) {
-                                                if (currentFolderFinal.equals("trash") || currentFolderFinal.equals("draft")) {
-                                                    mainModel.deleteMessage(deletedMessage.getId());
+                                    if (!currentFolderFinal.equals("trash")
+                                            && !currentFolderFinal.equals("spam")
+                                            && !currentFolderFinal.equals("draft")) {
+
+                                        mainModel.toFolder(deletedMessage.getId(), "trash");
+                                        Snackbar snackbarDelete = Snackbar.make(frameCompose, name + " removed", Snackbar.LENGTH_LONG);
+                                        snackbarDelete.setAction("UNDO", new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View view) {
+                                                mainModel.toFolder(deletedMessage.getId(), currentFolderFinal);
+                                                if (currentFolder.equals(currentFolderFinal)) {
+                                                    adapter.restoreMessage(deletedMessage, position);
                                                 } else {
-                                                    mainModel.toFolder(deletedMessage.getId(), "trash");
+                                                    getMessages();
                                                 }
                                             }
-                                        }
-                                    });
-                                    deleteSnackbar.setActionTextColor(Color.YELLOW);
-                                    deleteSnackbar.show();
+                                        });
+                                        snackbarDelete.setActionTextColor(Color.YELLOW);
+                                        snackbarDelete.show();
+                                    } else {
+                                        mainModel.deleteMessage(deletedMessage.getId());
+                                    }
                                     break;
 
                                 case R.id.item_message_view_holder_spam:
-                                    final MessageProvider spamMessage = adapter.removeAt(position);
-                                    Snackbar spamSnackbar = Snackbar
-                                            .make(frameCompose, "1 reported as spam", Snackbar.LENGTH_LONG);
-                                    spamSnackbar.setAction("UNDO", new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View view) {
-                                            adapter.restoreMessage(spamMessage, position);
-                                        }
-                                    });
-                                    spamSnackbar.addCallback(new BaseTransientBottomBar.BaseCallback<Snackbar>() {
-                                        @Override
-                                        public void onDismissed(Snackbar transientBottomBar, int event) {
-                                            if (event != DISMISS_EVENT_ACTION) {
+                                    if (!currentFolder.equals("spam")) {
+                                        final MessageProvider spamMessage = adapter.removeAt(position);
+                                        Snackbar snackbarSpam = Snackbar.make(frameCompose, "1 reported as spam", Snackbar.LENGTH_LONG);
+                                        snackbarSpam.setAction("UNDO", new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View view) {
                                                 mainModel.toFolder(spamMessage.getId(), "spam");
+                                                if (currentFolder.equals(currentFolderFinal)) {
+                                                    adapter.restoreMessage(spamMessage, position);
+                                                } else {
+                                                    getMessages();
+                                                }
                                             }
-                                        }
-                                    });
-                                    spamSnackbar.setActionTextColor(Color.YELLOW);
-                                    spamSnackbar.show();
+                                        });
+                                        snackbarSpam.setActionTextColor(Color.YELLOW);
+                                        snackbarSpam.show();
+                                    }
                                     break;
 
                                 case R.id.item_message_view_holder_move:

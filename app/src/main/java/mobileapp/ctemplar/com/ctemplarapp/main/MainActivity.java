@@ -4,6 +4,9 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -17,11 +20,16 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
+import android.view.SubMenu;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import mobileapp.ctemplar.com.ctemplarapp.BaseActivity;
@@ -31,6 +39,8 @@ import mobileapp.ctemplar.com.ctemplarapp.contact.ContactFragment;
 import mobileapp.ctemplar.com.ctemplarapp.folders.ManageFoldersActivity;
 import mobileapp.ctemplar.com.ctemplarapp.login.LoginActivity;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Folders.FoldersResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Folders.FoldersResult;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import mobileapp.ctemplar.com.ctemplarapp.settings.SettingsActivity;
 import timber.log.Timber;
@@ -47,9 +57,13 @@ public class MainActivity extends BaseActivity
     @BindView(R.id.progress_background)
     public View progressBackground;
 
+    private final int CUSTOM_FOLDER_STEP = 10;
     private MainActivityViewModel mainModel;
     private MailboxEntity defaultMailbox;
     private String toggleFolder;
+    private List<FoldersResult> customFoldersList;
+    private List<FoldersResult> customFoldersListAll = new ArrayList<>();
+    private int customFoldersShowCount = 3;
 
     @Override
     protected int getLayoutId() {
@@ -86,7 +100,7 @@ public class MainActivity extends BaseActivity
             bar.setHomeAsUpIndicator(R.drawable.ic_drawer_menu);
         }
 
-        NavigationView navigationView = findViewById(R.id.nav_view);
+        final NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
         View headerView = navigationView.getHeaderView(0);
@@ -105,6 +119,7 @@ public class MainActivity extends BaseActivity
         }
 
         mainModel = ViewModelProviders.of(this).get(MainActivityViewModel.class);
+        loadCustomFolders();
         mainModel.getActionsStatus().observe(this, new Observer<MainActivityActions>() {
             @Override
             public void onChanged(@Nullable MainActivityActions mainActivityActions) {
@@ -126,10 +141,56 @@ public class MainActivity extends BaseActivity
             }
         });
 
+        mainModel.getFoldersResponse().observe(this, new Observer<FoldersResponse>() {
+            @Override
+            public void onChanged(@Nullable FoldersResponse foldersResponse) {
+                if (foldersResponse != null) {
+                    handleFoldersResponse(navigationView, foldersResponse);
+                }
+            }
+        });
+
         // default folder
         mainModel.setCurrentFolder("inbox");
         setTitle("Inbox");
         loadUserInfo();
+    }
+
+    private void handleFoldersResponse(NavigationView navigationView, FoldersResponse foldersResponse) {
+        customFoldersList = foldersResponse.getFoldersList();
+        int customFoldersCount = foldersResponse.getTotalCount();
+        Menu navigationMenu = navigationView.getMenu();
+
+        List<FoldersResult> foldersListForDeleting = customFoldersListAll;
+        for (FoldersResult folderItem :
+                customFoldersListAll) {
+            navigationMenu.removeItem((int) folderItem.getId());
+        }
+        customFoldersListAll.removeAll(foldersListForDeleting);
+
+        MenuItem manageFolders = navigationMenu.findItem(R.id.nav_manage_folders);
+        String manageFoldersTitle = getResources().getString(R.string.nav_drawer_manage_folders_param, customFoldersCount);
+        manageFolders.setTitle(manageFoldersTitle);
+
+        for (FoldersResult folderItem :
+                customFoldersList) {
+            customFoldersListAll.add(folderItem);
+            MenuItem menuItem = navigationMenu.add(R.id.activity_main_drawer_folders,
+                    (int)folderItem.getId(), (int)folderItem.getId(), folderItem.getName());
+            menuItem.setCheckable(true);
+            menuItem.setIcon(R.drawable.ic_manage_folders);
+            Drawable itemIcon = menuItem.getIcon();
+            itemIcon.mutate();
+            int folderColor = Color.parseColor(folderItem.getColor());
+            itemIcon.setColorFilter(folderColor, PorterDuff.Mode.SRC_IN);
+        }
+
+        MenuItem moreFolders = navigationMenu.findItem(R.id.nav_manage_folders_more);
+        if (customFoldersShowCount < customFoldersCount) {
+            moreFolders.setVisible(true);
+        } else {
+            moreFolders.setVisible(false);
+        }
     }
 
     private InboxFragment inboxFragment;
@@ -150,32 +211,21 @@ public class MainActivity extends BaseActivity
         return contactFragment;
     }
 
-
-
     private void showFragmentByFolder(String folder) {
         if (folder == null) {
             return;
         }
         Fragment currentFragment = getCurrentFragment();
-
         switch (folder) {
-            case "inbox":
-            case "draft":
-            case "sent":
-            case "outbox":
-            case "starred":
-            case "archive":
-            case "spam":
-            case "trash":
-                if (!(currentFragment instanceof InboxFragment)) {
-                    showFragment(getInboxFragment());
-                }
-                break;
             case "contact":
                 if (!(currentFragment instanceof ContactFragment)) {
                     showFragment(getContactFragment());
                 }
                 break;
+            default:
+                if (!(currentFragment instanceof InboxFragment)) {
+                    showFragment(getInboxFragment());
+                }
         }
     }
 
@@ -219,6 +269,7 @@ public class MainActivity extends BaseActivity
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         int id = item.getItemId();
+        boolean closeDrawer = true;
 
         if (id == R.id.nav_inbox) {
             setTitle(R.string.nav_drawer_inbox);
@@ -266,9 +317,23 @@ public class MainActivity extends BaseActivity
         } else if (id == R.id.nav_manage_folders) {
             Intent manageFolders = new Intent(this, ManageFoldersActivity.class);
             startActivity(manageFolders);
+        } else if (id == R.id.nav_manage_folders_more) {
+            customFoldersShowCount += CUSTOM_FOLDER_STEP;
+            loadCustomFolders();
+            closeDrawer = false;
+        } else {
+            for (FoldersResult folderItem :
+                    customFoldersList) {
+                if (id == folderItem.getId()) {
+                    setTitle(folderItem.getName());
+                    toggleFolder = folderItem.getName();
+                }
+            }
         }
 
-        drawer.closeDrawer(GravityCompat.START);
+        if (closeDrawer) {
+            drawer.closeDrawer(GravityCompat.START);
+        }
         return true;
     }
 
@@ -277,11 +342,21 @@ public class MainActivity extends BaseActivity
     }
 
     private void setCheckedItem(int itemId) {
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setCheckedItem(itemId);
     }
 
-//    public void blockUI() {
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadCustomFolders();
+    }
+
+    private void loadCustomFolders() {
+        mainModel.getFolders(customFoldersShowCount, 0);
+    }
+
+    //    public void blockUI() {
 //        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
 //                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
 //    }

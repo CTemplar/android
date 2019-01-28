@@ -58,12 +58,12 @@ import okhttp3.RequestBody;
 public class SendMessageActivity extends BaseActivity {
 
     private final int PICK_FILE_FROM_STORAGE = 1;
-    private SendMessageActivityViewModel mainModel;
     public final static String PARENT_ID = "parent_id";
     private Long parentId;
+    private long currentMessageId;
     private ProgressDialog sendingProgress;
     private SharedPreferences sharedPreferences;
-    private long currentMessageId;
+    private SendMessageActivityViewModel mainModel;
     private MessageSendAttachmentAdapter messageSendAttachmentAdapter;
 
     @BindView(R.id.fragment_send_message_to_input)
@@ -269,7 +269,12 @@ public class SendMessageActivity extends BaseActivity {
                     }
                 });
 
+        addListeners();
+    }
+
+    private void addListeners() {
         sendMessage.setEnabled(false);
+
         toEmailTextView.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -365,7 +370,7 @@ public class SendMessageActivity extends BaseActivity {
             composeEditText.setError(null);
         }
 
-        sendingProgress = new ProgressDialog(SendMessageActivity.this);
+        sendingProgress = new ProgressDialog(this);
         sendingProgress.setCanceledOnTouchOutside(false);
         sendingProgress.setMessage("Sending mail...");
         sendingProgress.setProgressStyle(ProgressDialog.STYLE_SPINNER);

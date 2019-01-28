@@ -3,11 +3,13 @@ package mobileapp.ctemplar.com.ctemplarapp.login;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 
 import butterknife.BindView;
@@ -25,6 +27,9 @@ public class LoginActivity extends BaseFragmentActivity {
 
     @BindView(R.id.progress_background)
     public View progressBackground;
+
+    @BindView(R.id.content_frame)
+    FrameLayout mContentFrame;
 
     private LoginActivityViewModel loginViewModel;
 
@@ -119,5 +124,25 @@ public class LoginActivity extends BaseFragmentActivity {
 
             }
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        if (isPortrait2Landscape()) {
+            remove_fragments();
+        }
+        super.onSaveInstanceState(outState);
+    }
+
+    private void remove_fragments() {
+        getSupportFragmentManager().beginTransaction().remove(getSupportFragmentManager().findFragmentById(mContentFrame.getId())).commit();
+    }
+
+    private boolean isPortrait2Landscape() {
+        return isDevicePortrait() && (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE);
+    }
+
+    private boolean isDevicePortrait() {
+        return (findViewById(mContentFrame.getId()) != null);
     }
 }

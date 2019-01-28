@@ -91,13 +91,17 @@ public class ManageFoldersActivity extends BaseActivity {
                         }
                     }
                 });
-        manageFoldersModel.getFolders(200, 0);
+        getCustomFolders();
         footerAddFolder.setVisibility(View.GONE);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        getCustomFolders();
+    }
+
+    private void getCustomFolders() {
         manageFoldersModel.getFolders(200, 0);
     }
 

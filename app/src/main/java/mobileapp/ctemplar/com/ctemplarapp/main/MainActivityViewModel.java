@@ -25,11 +25,13 @@ import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SignInRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.ContactData;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.ContactsResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Folders.FoldersResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Mailboxes.MailboxesResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResult;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.SignInResponse;
 import mobileapp.ctemplar.com.ctemplarapp.repository.ContactsRepository;
+import mobileapp.ctemplar.com.ctemplarapp.repository.ManageFoldersRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.MessagesRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.ContactEntity;
@@ -44,19 +46,23 @@ public class MainActivityViewModel extends ViewModel {
     UserRepository userRepository;
     ContactsRepository contactsRepository;
     MessagesRepository messagesRepository;
+    ManageFoldersRepository manageFoldersRepository;
     MutableLiveData<MainActivityActions> actions = new SingleLiveEvent<>();
     MutableLiveData<DialogState> dialogState = new SingleLiveEvent<>();
     MutableLiveData<ResponseStatus> responseStatus = new MutableLiveData<>();
     MutableLiveData<List<MessageProvider>> messagesResponse = new MutableLiveData<>();
     MutableLiveData<List<MessageProvider>> starredMessagesResponse = new MutableLiveData<>();
     MutableLiveData<List<Contact>> contactsResponse = new MutableLiveData<>();
+    MutableLiveData<ResponseStatus> toFolderStatus = new MutableLiveData<>();
     MutableLiveData<String> currentFolder = new MutableLiveData<>();
     MutableLiveData<SignInResponse> signResponse = new MutableLiveData<>();
+    MutableLiveData<FoldersResponse> foldersResponse = new MutableLiveData<>();
 
     public MainActivityViewModel() {
         userRepository = CTemplarApp.getUserRepository();
         contactsRepository = CTemplarApp.getContactsRepository();
         messagesRepository = CTemplarApp.getMessagesRepository();
+        manageFoldersRepository = CTemplarApp.getManageFoldersRepository();
     }
 
     public LiveData<MainActivityActions> getActionsStatus() {
@@ -398,7 +404,7 @@ public class MainActivityViewModel extends ViewModel {
 
                     @Override
                     public void onNext(ResponseBody responseBody) {
-
+                        toFolderStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
                     }
 
                     @Override
@@ -436,5 +442,38 @@ public class MainActivityViewModel extends ViewModel {
 
                     }
                 });
+    }
+
+    public void getFolders(int limit, int offset) {
+        manageFoldersRepository.getFoldersList(limit, offset)
+                .subscribe(new Observer<FoldersResponse>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(FoldersResponse response) {
+                        foldersResponse.postValue(response);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    public LiveData<ResponseStatus> getToFolderStatus() {
+        return toFolderStatus;
+    }
+
+    public MutableLiveData<FoldersResponse> getFoldersResponse() {
+        return foldersResponse;
     }
 }
