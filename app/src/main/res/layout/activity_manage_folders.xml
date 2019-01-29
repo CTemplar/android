@@ -18,7 +18,7 @@
             android:background="?attr/colorPrimary"
             android:theme="@style/ActionBarLight"
             android:fontFamily="@font/lato_bold"
-            app:title="Manage Folders"
+            app:title="@string/txt_manage_folders"
             app:titleTextColor="@color/colorDarkBlue2"
             app:popupTheme="@style/AppTheme.PopupOverlay">
         </android.support.v7.widget.Toolbar>
@@ -41,9 +41,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 tools:listitem="@layout/item_folders_holder"
-                android:divider="@drawable/filter_dialog_divider" />
+                android:divider="@drawable/dialog_divider" />
 
-            <include layout="@layout/manage_folders_footer"/>
+            <include layout="@layout/manage_folders_footer" />
 
         </LinearLayout>
 
@@ -59,7 +59,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        android:contentDescription="Folders Empty"
+        android:contentDescription="@string/txt_folders_empty"
         app:layout_constraintVertical_chainStyle="packed"  />
 
     <TextView

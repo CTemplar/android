@@ -17,7 +17,7 @@
             android:background="?attr/colorPrimary"
             android:theme="@style/ActionBarLight"
             android:fontFamily="@font/lato_bold"
-            app:title="Whitelist / Blacklist"
+            app:title="@string/title_white_black_list"
             app:titleTextColor="@color/colorDarkBlue2"
             app:popupTheme="@style/AppTheme.PopupOverlay"/>
 

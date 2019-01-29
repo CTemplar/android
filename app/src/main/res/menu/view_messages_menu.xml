@@ -4,34 +4,34 @@
     <item
         android:id="@+id/menu_view_spam"
         android:icon="@drawable/ic_spam"
-        android:title="Spam"
+        android:title="@string/menu_spam"
         app:showAsAction="always" />
     <item
         android:id="@+id/menu_view_not_spam"
         android:icon="@drawable/icon_unread"
-        android:title="Not spam"
+        android:title="@string/menu_not_spam"
         app:showAsAction="always" />
     <item
         android:id="@+id/menu_view_move"
         android:icon="@drawable/ic_move"
-        android:title="Move"
+        android:title="@string/menu_move"
         app:showAsAction="always" />
     <item
         android:id="@+id/menu_view_trash"
         android:icon="@drawable/ic_trash"
-        android:title="Trash"
+        android:title="@string/menu_trash"
         app:showAsAction="always" />
     <item
         android:id="@+id/menu_view_inbox"
-        android:title="Move to inbox"
+        android:title="@string/menu_move_to_inbox"
         app:showAsAction="never"/>
     <item
         android:id="@+id/menu_view_archive"
-        android:title="Move to archive"
+        android:title="@string/menu_move_to_archive"
         app:showAsAction="never"/>
     <item
         android:id="@+id/menu_view_unread"
-        android:title="Mark as unread"
+        android:title="@string/menu_mark_as_unread"
         app:showAsAction="never"/>
 
 </menu>

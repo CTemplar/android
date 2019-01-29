@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BaseTransientBottomBar;
 import android.support.design.widget.FloatingActionButton;
@@ -33,9 +34,12 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import mobileapp.ctemplar.com.ctemplarapp.BaseFragment;
 import mobileapp.ctemplar.com.ctemplarapp.R;
+import mobileapp.ctemplar.com.ctemplarapp.message.MoveDialogFragment;
 import mobileapp.ctemplar.com.ctemplarapp.message.SendMessageActivity;
 import mobileapp.ctemplar.com.ctemplarapp.message.ViewMessagesActivity;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
+
+import static mobileapp.ctemplar.com.ctemplarapp.message.ViewMessagesActivity.PARENT_ID;
 
 public class InboxFragment extends BaseFragment {
 
@@ -276,7 +280,7 @@ public class InboxFragment extends BaseFragment {
                         public void onNext(Long aLong) {
                             String folderName = mainModel.currentFolder.getValue();
                             Intent intent = new Intent(getActivity(), ViewMessagesActivity.class);
-                            intent.putExtra(ViewMessagesActivity.PARENT_ID, aLong);
+                            intent.putExtra(PARENT_ID, aLong);
                             intent.putExtra(ViewMessagesActivity.FOLDER_NAME, folderName);
                             getActivity().startActivity(intent);
                         }
@@ -318,8 +322,8 @@ public class InboxFragment extends BaseFragment {
                                             && !currentFolderFinal.equals("draft")) {
 
                                         mainModel.toFolder(deletedMessage.getId(), "trash");
-                                        Snackbar snackbarDelete = Snackbar.make(frameCompose, name + " removed", Snackbar.LENGTH_LONG);
-                                        snackbarDelete.setAction("UNDO", new View.OnClickListener() {
+                                        Snackbar snackbarDelete = Snackbar.make(frameCompose, getResources().getString(R.string.txt_name_removed, name), Snackbar.LENGTH_LONG);
+                                        snackbarDelete.setAction(getResources().getString(R.string.action_undo), new View.OnClickListener() {
                                             @Override
                                             public void onClick(View view) {
                                                 mainModel.toFolder(deletedMessage.getId(), currentFolderFinal);
@@ -340,8 +344,8 @@ public class InboxFragment extends BaseFragment {
                                 case R.id.item_message_view_holder_spam:
                                     if (!currentFolder.equals("spam")) {
                                         final MessageProvider spamMessage = adapter.removeAt(position);
-                                        Snackbar snackbarSpam = Snackbar.make(frameCompose, "1 reported as spam", Snackbar.LENGTH_LONG);
-                                        snackbarSpam.setAction("UNDO", new View.OnClickListener() {
+                                        Snackbar snackbarSpam = Snackbar.make(frameCompose, getResources().getString(R.string.action_spam), Snackbar.LENGTH_LONG);
+                                        snackbarSpam.setAction(getResources().getString(R.string.action_undo), new View.OnClickListener() {
                                             @Override
                                             public void onClick(View view) {
                                                 mainModel.toFolder(spamMessage.getId(), "spam");
@@ -358,7 +362,12 @@ public class InboxFragment extends BaseFragment {
                                     break;
 
                                 case R.id.item_message_view_holder_move:
-                                    Toast.makeText(getActivity().getApplicationContext(), "Action move", Toast.LENGTH_SHORT).show();
+                                    MessageProvider movedMessage = adapter.get(position);
+                                    MoveDialogFragment moveDialogFragment = new MoveDialogFragment();
+                                    Bundle moveFragmentBundle = new Bundle();
+                                    moveFragmentBundle.putLong(PARENT_ID, movedMessage.getId());
+                                    moveDialogFragment.setArguments(moveFragmentBundle);
+                                    moveDialogFragment.show(getFragmentManager(), "MoveDialogFragment");
                                     break;
                             }
                         }

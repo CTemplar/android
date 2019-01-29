@@ -18,7 +18,7 @@
             app:titleTextColor="@color/colorDarkBlue2"
             android:background="?attr/colorPrimary"
             android:theme="@style/ActionBarLight"
-            app:title="Add to whitelist"
+            app:title="@string/title_add_to_whitelist"
             android:fontFamily="@font/lato_bold"
             app:popupTheme="@style/AppTheme.PopupOverlay">
         </android.support.v7.widget.Toolbar>
@@ -41,7 +41,7 @@
             android:id="@+id/activity_add_whitelist_contact_name_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Contact name"
+            android:text="@string/title_contact_name"
             android:fontFamily="@font/lato_regular"
             android:textColor="@color/colorDarkBlue"
             android:textSize="14sp" />
@@ -85,7 +85,7 @@
             android:id="@+id/activity_add_whitelist_contact_email_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Contact name"
+            android:text="@string/title_contact_name"
             android:fontFamily="@font/lato_regular"
             android:textColor="@color/colorDarkBlue"
             android:textSize="14sp" />
@@ -139,7 +139,7 @@
             android:textColor="@color/colorDarkBlue2"
             android:background="@drawable/dialog_cancel_button_background"
             android:textAllCaps="false"
-            android:text="Add contact"/>
+            android:text="@string/txt_add_contact"/>
 
     </LinearLayout>
 

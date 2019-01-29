@@ -7,10 +7,14 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
+import android.support.design.widget.BaseTransientBottomBar;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
@@ -19,6 +23,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -68,6 +73,9 @@ public class ViewMessagesActivity extends BaseActivity {
     @BindView(R.id.activity_view_messages_bar)
     Toolbar toolbar;
 
+    @BindView(R.id.activity_view_messages_actions)
+    ConstraintLayout messageActionsLayout;
+
     ViewMessagesViewModel modelViewMessages;
 
     @Override
@@ -109,7 +117,7 @@ public class ViewMessagesActivity extends BaseActivity {
             public void onChanged(@Nullable List<MessageProvider> messagesList) {
                 if (messagesList == null || messagesList.isEmpty()) {
                     Timber.e("Messages doesn't exists");
-                    Toast.makeText(getApplicationContext(), "Messages doesn't exists", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.toast_messages_doesnt_exist), Toast.LENGTH_SHORT).show();
                     onBackPressed();
                     return;
                 }
@@ -145,7 +153,7 @@ public class ViewMessagesActivity extends BaseActivity {
                                 if (PermissionCheck.readAndWriteExternalStorage(ViewMessagesActivity.this)) {
                                     DownloadManager downloadManager = (DownloadManager) getApplicationContext().getSystemService(DOWNLOAD_SERVICE);
                                     downloadManager.enqueue(documentRequest);
-                                    Toast.makeText(ViewMessagesActivity.this, "Download started", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(ViewMessagesActivity.this, getResources().getString(R.string.toast_download_started), Toast.LENGTH_SHORT).show();
                                 }
                             }
 
@@ -185,7 +193,7 @@ public class ViewMessagesActivity extends BaseActivity {
 
         BroadcastReceiver onComplete = new BroadcastReceiver() {
             public void onReceive(Context ctx, Intent intent) {
-                Toast.makeText(getApplicationContext(), "Download complete", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), getResources().getString(R.string.toast_download_complete), Toast.LENGTH_SHORT).show();
             }
         };
         registerReceiver(onComplete, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
@@ -217,6 +225,9 @@ public class ViewMessagesActivity extends BaseActivity {
         } else if (currentFolder.equals("trash")) {
             menu.findItem(R.id.menu_view_spam).setVisible(false);
             menu.findItem(R.id.menu_view_not_spam).setVisible(false);
+        } else {
+            menu.findItem(R.id.menu_view_not_spam).setVisible(false);
+            menu.findItem(R.id.menu_view_spam).setVisible(false);
         }
         return true;
     }
@@ -226,34 +237,26 @@ public class ViewMessagesActivity extends BaseActivity {
         int id = item.getItemId();
         switch(id) {
             case R.id.menu_view_archive:
-                mainModel.toFolder(parentMessage.getId(), "archive");
-                Toast.makeText(getApplicationContext(), "1 archived", Toast.LENGTH_SHORT).show();
-                onBackPressed();
+                showSnackbar("archive", getResources().getString(R.string.action_archived));
                 return true;
             case R.id.menu_view_inbox:
-                mainModel.toFolder(parentMessage.getId(), "inbox");
-                Toast.makeText(getApplicationContext(), "Moved to inbox", Toast.LENGTH_SHORT).show();
-                onBackPressed();
+                showSnackbar("inbox", getResources().getString(R.string.action_moved_to_inbox));
                 return true;
             case R.id.menu_view_spam:
-                mainModel.toFolder(parentMessage.getId(), "spam");
-                Toast.makeText(getApplicationContext(), "1 reported as spam", Toast.LENGTH_SHORT).show();
-                onBackPressed();
+                showSnackbar("spam", getResources().getString(R.string.action_reported_as_spam));
                 return true;
             case R.id.menu_view_not_spam:
-                mainModel.toFolder(parentMessage.getId(), "inbox");
-                Toast.makeText(getApplicationContext(), "1 reported as not spam", Toast.LENGTH_SHORT).show();
-                onBackPressed();
+                showSnackbar("inbox", getResources().getString(R.string.action_reported_as_not_spam));
                 return true;
             case R.id.menu_view_trash:
-                if (currentFolder.equals("trash")) {
-                    mainModel.deleteMessage(parentMessage.getId());
-                    Toast.makeText(getApplicationContext(), "1 message permanently deleted", Toast.LENGTH_SHORT).show();
-                } else {
-                    mainModel.toFolder(parentMessage.getId(), "trash");
-                    Toast.makeText(getApplicationContext(), "1 message removed", Toast.LENGTH_SHORT).show();
-                }
-                onBackPressed();
+                showSnackbar("trash", getResources().getString(R.string.action_message_removed));
+                return true;
+            case R.id.menu_view_move:
+                MoveDialogFragment moveDialogFragment = new MoveDialogFragment();
+                Bundle moveFragmentBundle = new Bundle();
+                moveFragmentBundle.putLong(PARENT_ID, parentMessage.getId());
+                moveDialogFragment.setArguments(moveFragmentBundle);
+                moveDialogFragment.show(getSupportFragmentManager(), "MoveDialogFragment");
                 return true;
             case android.R.id.home:
                 onBackPressed();
@@ -261,6 +264,41 @@ public class ViewMessagesActivity extends BaseActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void showSnackbar(final String folder, String message) {
+        Snackbar snackbar = Snackbar.make(messageActionsLayout, message, Snackbar.LENGTH_SHORT);
+        snackbar.setAction("UNDO", new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                blockUI();
+            }
+        });
+        snackbar.addCallback(new BaseTransientBottomBar.BaseCallback<Snackbar>() {
+            @Override
+            public void onDismissed(Snackbar transientBottomBar, int event) {
+                if (event != DISMISS_EVENT_ACTION) {
+                    if (!currentFolder.equals("trash")) {
+                        mainModel.toFolder(parentMessage.getId(), folder);
+                    } else {
+                        mainModel.deleteMessage(parentMessage.getId());
+                    }
+                    onBackPressed();
+                }
+                unlockUI();
+            }
+        });
+        snackbar.setActionTextColor(Color.YELLOW);
+        snackbar.show();
+    }
+
+    private void blockUI() {
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+    }
+
+    private void unlockUI() {
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
     }
 
     private void setSubject(String subject) {
@@ -284,9 +322,9 @@ public class ViewMessagesActivity extends BaseActivity {
     }
 
     private String replyHead() {
-        return "\n\nOn " +
-                getStringDate(lastMessage.getCreatedAt()) + " " +
-                lastMessage.getSender() +  " wrote:\n\n";
+        String createdAt = getStringDate(lastMessage.getCreatedAt());
+        String sender = lastMessage.getSender();
+        return getResources().getString(R.string.txt_user_wrote, createdAt, sender);
     }
 
     private String addQuotesToNames(String[] names) {
@@ -300,12 +338,15 @@ public class ViewMessagesActivity extends BaseActivity {
 
     private String forwardHead() {
         String receiversString = addQuotesToNames(lastMessage.getReceivers());
+        String sender = lastMessage.getSender();
+        String createdAt = getStringDate(lastMessage.getCreatedAt());
+        String subject = lastMessage.getSubject();
 
-        return "\n\n---------- Forwarded message ----------\n" +
-                "From: <" + lastMessage.getSender() + ">\n" +
-                "Date: " + getStringDate(lastMessage.getCreatedAt()) + "\n" +
-                "Subject: " + lastMessage.getSubject() + "\n" +
-                "To: " + receiversString + "\n\n";
+        return "\n\n---------- " + getResources().getString(R.string.txt_forwarded_message) + "----------\n" +
+            getResources().getString(R.string.txt_from) + " <" + sender + ">\n" +
+            getResources().getString(R.string.txt_date) + ": " + createdAt + "\n" +
+            getResources().getString(R.string.txt_subject) + ": " + subject + "\n" +
+            getResources().getString(R.string.txt_to) + " " + receiversString + "\n\n";
     }
 
     @OnClick(R.id.activity_view_messages_reply)

@@ -95,7 +95,7 @@
         tools:listitem="@layout/item_message_view_expanded"
         app:layout_constraintTop_toBottomOf="@id/activity_view_messages_bottom_subject_divider"
         app:layout_constraintBottom_toTopOf="@id/activity_view_messages_actions"
-        android:background="@color/colorWhiteLight"/>
+        android:background="@color/colorWhiteLight" />
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/activity_view_messages_actions"
@@ -152,7 +152,7 @@
                 android:fontFamily="@font/lato_regular"
                 android:textColor="@color/colorDarkBlue2"
                 android:textSize="12sp"
-                android:text="Reply all"/>
+                android:text="@string/txt_reply_all"/>
 
         </android.support.constraint.ConstraintLayout>
 

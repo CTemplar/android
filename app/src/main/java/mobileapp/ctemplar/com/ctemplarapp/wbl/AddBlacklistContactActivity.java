@@ -46,7 +46,7 @@ public class AddBlacklistContactActivity extends BaseActivity {
                         if (responseStatus == ResponseStatus.RESPONSE_COMPLETE) {
                             onBackPressed();
                         } else {
-                            Toast.makeText(AddBlacklistContactActivity.this, "Error adding contact to blacklist", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(AddBlacklistContactActivity.this, getResources().getString(R.string.adding_blacklist_contact_error), Toast.LENGTH_SHORT).show();
                         }
                     }
                 });

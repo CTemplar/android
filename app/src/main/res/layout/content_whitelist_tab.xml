@@ -30,7 +30,7 @@
                 android:layout_height="wrap_content"
                 tools:listitem="@layout/item_contact_holder"
                 tools:listfooter="@layout/whitelist_footer"
-                android:divider="@drawable/filter_dialog_divider"/>
+                android:divider="@drawable/dialog_divider"/>
 
             <include layout="@layout/whitelist_footer"/>
 

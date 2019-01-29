@@ -303,16 +303,16 @@ public class MainActivity extends BaseActivity
             startActivity(settingsScreeen);
         } else if (id == R.id.nav_logout) {
             new AlertDialog.Builder(this)
-                    .setTitle("Log out")
-                    .setMessage("Are you sure you want to log out?")
-                    .setPositiveButton("LOG OUT", new DialogInterface.OnClickListener() {
+                    .setTitle(getResources().getString(R.string.dialog_log_out))
+                    .setMessage(getResources().getString(R.string.dialog_log_out_confirm))
+                    .setPositiveButton(getResources().getString(R.string.btn_log_out), new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     mainModel.logout();
                                 }
                             }
                     )
-                    .setNeutralButton("CANCEL", null)
+                    .setNeutralButton(R.string.btn_cancel, null)
                     .show();
         } else if (id == R.id.nav_manage_folders) {
             Intent manageFolders = new Intent(this, ManageFoldersActivity.class);
