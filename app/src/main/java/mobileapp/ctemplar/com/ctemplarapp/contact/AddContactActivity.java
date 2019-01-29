@@ -82,11 +82,11 @@ public class AddContactActivity extends BaseActivity {
 
     private void handleResponse(ResponseStatus responseStatus) {
         if (responseStatus == null || responseStatus == ResponseStatus.RESPONSE_ERROR) {
-            Toast.makeText(this, "Not saved", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getResources().getString(R.string.toast_not_saved), Toast.LENGTH_SHORT).show();
         } else if (responseStatus == ResponseStatus.RESPONSE_COMPLETE) {
             onBackPressed();
         } else {
-            Toast.makeText(this, "Undefined error", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getResources().getString(R.string.toast_undefined_error), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -98,14 +98,14 @@ public class AddContactActivity extends BaseActivity {
         String contactNote = editTextContactNote.getText().toString();
 
         if (contactName.isEmpty()) {
-            editTextContactName.setError("Enter Name");
+            editTextContactName.setError(getResources().getString(R.string.txt_enter_name));
         } else {
             editTextContactName.setError(null);
         }
         if (Patterns.EMAIL_ADDRESS.matcher(contactEmail).matches()) {
             editTextContactEmail.setError(null);
         } else {
-            editTextContactEmail.setError("Enter valid email address");
+            editTextContactEmail.setError(getResources().getString(R.string.txt_enter_valid_email));
         }
         if (editTextContactName.getError() != null || editTextContactEmail.getError() != null) {
             return;

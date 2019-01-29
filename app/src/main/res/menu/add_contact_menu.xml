@@ -3,5 +3,5 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item android:id="@+id/action_save_contact"
         app:showAsAction="always"
-        android:title="Save"/>
+        android:title="@string/menu_save"/>
 </menu>

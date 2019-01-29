@@ -1,8 +1,6 @@
 package mobileapp.ctemplar.com.ctemplarapp.main;
 
 import android.app.Dialog;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -86,7 +84,7 @@ public class FilterDialogFragment extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        return new Dialog(this.getActivity(), R.style.FilterDialogAnimation);
+        return new Dialog(this.getActivity(), R.style.DialogAnimation);
     }
 
     interface OnApplyClickListener {

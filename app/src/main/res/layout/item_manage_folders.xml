@@ -4,14 +4,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <Button android:id="@+id/manager_folders_footer_btn"
+    <Button
+        android:id="@+id/manager_folders"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/btn_add_folder"
-        android:drawableLeft="@drawable/add_outline"
-        android:drawableStart="@drawable/add_outline"
+        android:text="@string/txt_manage_folders"
+        android:drawableLeft="@drawable/ic_manage_folders"
+        android:drawableStart="@drawable/ic_manage_folders"
         android:textSize="16sp"
-        android:textColor="#e74c3c"
+        android:textColor="@color/colorDarkBlue"
         android:drawablePadding="10dp"
         style="@style/Widget.MaterialComponents.Button.TextButton" />
 

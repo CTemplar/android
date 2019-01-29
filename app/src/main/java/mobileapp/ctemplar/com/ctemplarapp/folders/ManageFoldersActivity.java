@@ -85,19 +85,23 @@ public class ManageFoldersActivity extends BaseActivity {
                     @Override
                     public void onChanged(@Nullable ResponseStatus responseStatus) {
                         if (responseStatus == null || responseStatus == ResponseStatus.RESPONSE_ERROR) {
-                            Toast.makeText(getApplicationContext(), "Folder not deleted", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), getResources().getString(R.string.txt_folder_not_deleted), Toast.LENGTH_SHORT).show();
                         } else if (responseStatus == ResponseStatus.RESPONSE_COMPLETE) {
-                            Toast.makeText(getApplicationContext(), "Folder deleted", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), getResources().getString(R.string.txt_folder_deleted), Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
-        manageFoldersModel.getFolders(200, 0);
+        getCustomFolders();
         footerAddFolder.setVisibility(View.GONE);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        getCustomFolders();
+    }
+
+    private void getCustomFolders() {
         manageFoldersModel.getFolders(200, 0);
     }
 
@@ -132,16 +136,16 @@ public class ManageFoldersActivity extends BaseActivity {
                 final FoldersResult deletedFolder = adapter.removeAt(deletedIndex);
 
                 new AlertDialog.Builder(ManageFoldersActivity.this)
-                        .setTitle("Delete folder?")
-                        .setMessage("Are you sure you want to delete folder?")
-                        .setPositiveButton("DELETE", new DialogInterface.OnClickListener() {
+                        .setTitle(getResources().getString(R.string.txt_delete_folder_quest_title))
+                        .setMessage(getResources().getString(R.string.txt_delete_folder_quest_message))
+                        .setPositiveButton(getResources().getString(R.string.btn_contact_delete), new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         manageFoldersModel.deleteFolder(deletedFolder);
                                     }
                                 }
                         )
-                        .setNeutralButton("CANCEL", new DialogInterface.OnClickListener() {
+                        .setNeutralButton(getResources().getString(R.string.btn_cancel), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 adapter.restoreItem(deletedIndex, deletedFolder);

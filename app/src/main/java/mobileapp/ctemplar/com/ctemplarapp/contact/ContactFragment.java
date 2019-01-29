@@ -143,9 +143,11 @@ public class ContactFragment extends BaseFragment {
                 final int deletedIndex = viewHolder.getAdapterPosition();
                 final Contact deletedContact =  adapter.removeAt(deletedIndex);
                 final String name = deletedContact.getName();
+                String undoTxt = getResources().getString(R.string.action_undo);
+                String removedTxt = getResources().getString(R.string.txt_name_removed, name);
                 Snackbar snackbar = Snackbar
-                        .make(frameCompose, name + " removed!", Snackbar.LENGTH_LONG);
-                snackbar.setAction("UNDO", new View.OnClickListener() {
+                        .make(frameCompose, removedTxt, Snackbar.LENGTH_LONG);
+                snackbar.setAction(undoTxt, new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         adapter.restoreItem(deletedContact, deletedIndex);

@@ -17,7 +17,7 @@
             app:titleTextColor="@color/colorDarkBlue2"
             android:background="?attr/colorPrimary"
             android:theme="@style/ActionBarLight"
-            app:title="Add folder"
+            app:title="@string/txt_edit_folder"
             android:fontFamily="@font/lato_bold"
             app:popupTheme="@style/AppTheme.PopupOverlay">
         </android.support.v7.widget.Toolbar>
@@ -40,7 +40,7 @@
             android:id="@+id/activity_edit_folder_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Folder name"
+            android:text="@string/title_folder_name"
             android:fontFamily="@font/lato_regular"
             android:textColor="@color/colorDarkBlue"
             android:textSize="14sp" />
@@ -71,7 +71,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="25dp"
-            android:text="Choose color"
+            android:text="@string/title_choose_color"
             android:fontFamily="@font/lato_regular"
             android:textColor="@color/colorDarkBlue"
             android:textSize="16sp" />
@@ -262,7 +262,7 @@
             android:textColor="@color/colorDarkBlue2"
             android:background="@drawable/dialog_cancel_button_background"
             android:textAllCaps="false"
-            android:text="Delete folder"/>
+            android:text="@string/txt_delete_folder"/>
 
     </LinearLayout>
 

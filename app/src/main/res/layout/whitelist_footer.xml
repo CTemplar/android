@@ -6,7 +6,7 @@
     <Button android:id="@+id/buttonAddWhitelistContact"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Add whitelist contact"
+        android:text="@string/txt_add_whitelist_contact"
         android:drawableLeft="@drawable/add_outline"
         android:drawableStart="@drawable/add_outline"
         android:textSize="16sp"

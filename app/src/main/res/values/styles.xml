@@ -67,11 +67,11 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
-    <style name="FilterDialogAnimation" parent="Theme.AppCompat.Dialog.Alert">
-        <item name="android:windowAnimationStyle">@style/FilterDialog.Window</item>
+    <style name="DialogAnimation" parent="Theme.AppCompat.Dialog.Alert">
+        <item name="android:windowAnimationStyle">@style/Dialog.Window</item>
     </style>
 
-    <style name="FilterDialog.Window" parent="@android:style/Animation.Activity">
+    <style name="Dialog.Window" parent="@android:style/Animation.Activity">
         <item name="android:windowEnterAnimation">@anim/fragment_enter_from_bottom</item>
         <item name="android:windowExitAnimation">@anim/fragment_exit_to_bottom</item>
     </style>

@@ -59,9 +59,9 @@ public class EditFolderActivity extends BaseActivity {
                     @Override
                     public void onChanged(@Nullable ResponseStatus responseStatus) {
                         if (responseStatus == null || responseStatus == ResponseStatus.RESPONSE_ERROR) {
-                            Toast.makeText(getApplicationContext(), "Folder not deleted", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), getResources().getString(R.string.txt_folder_not_deleted), Toast.LENGTH_SHORT).show();
                         } else if (responseStatus == ResponseStatus.RESPONSE_COMPLETE) {
-                            Toast.makeText(getApplicationContext(), "Folder deleted", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), getResources().getString(R.string.txt_folder_deleted), Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -70,9 +70,9 @@ public class EditFolderActivity extends BaseActivity {
                     @Override
                     public void onChanged(@Nullable ResponseStatus responseStatus) {
                         if (responseStatus == null || responseStatus == ResponseStatus.RESPONSE_ERROR) {
-                            Toast.makeText(getApplicationContext(), "Folder not edited", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), getResources().getString(R.string.txt_folder_not_edited), Toast.LENGTH_SHORT).show();
                         } else if (responseStatus == ResponseStatus.RESPONSE_COMPLETE) {
-                            Toast.makeText(getApplicationContext(), "Folder edited", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), getResources().getString(R.string.txt_folder_edited), Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -94,7 +94,7 @@ public class EditFolderActivity extends BaseActivity {
             finish();
 
         } else {
-            editTextNameFolder.setError("Folder name must be between 4 and 30 letters and digits");
+            editTextNameFolder.setError(getResources().getString(R.string.txt_folder_name_hint));
         }
     }
 

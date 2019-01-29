@@ -17,7 +17,7 @@
             app:titleTextColor="@color/colorDarkBlue2"
             android:background="?attr/colorPrimary"
             android:theme="@style/ActionBarLight"
-            app:title="Edit contact"
+            app:title="@string/txt_edit_contact"
             android:fontFamily="@font/lato_bold"
             app:popupTheme="@style/AppTheme.PopupOverlay">
 
@@ -50,7 +50,7 @@
                     android:id="@+id/activity_edit_contact_name_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Contact Name"
+                    android:text="@string/title_contact_name"
                     android:fontFamily="@font/lato_regular"
                     android:textColor="@color/colorDarkBlue"
                     android:textSize="14sp" />
@@ -65,7 +65,7 @@
                     android:padding="16dp"
                     android:textColor="@color/colorDarkBlue"
                     android:minHeight="45dp"
-                    android:hint="Contact name"
+                    android:hint="@string/title_contact_name"
                     app:layout_constraintTop_toBottomOf="@id/activity_edit_contact_name_title"
                     android:background="@drawable/text_input_field" />
 
@@ -85,7 +85,7 @@
                     android:id="@+id/activity_edit_contact_email_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Email Address"
+                    android:text="@string/title_email_address"
                     android:fontFamily="@font/lato_regular"
                     android:textColor="@color/colorDarkBlue"
                     android:textSize="14sp" />
@@ -104,7 +104,7 @@
                     android:minHeight="45dp"
                     android:drawableLeft="@drawable/ic_contact_remove"
                     android:drawableStart="@drawable/ic_contact_remove"
-                    android:hint="Email Address"
+                    android:hint="@string/title_email_address"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/activity_edit_contact_email_title"
                     app:layout_constraintRight_toLeftOf="@id/activity_edit_contact_email_add"
@@ -136,7 +136,7 @@
                     android:id="@+id/activity_edit_contact_phone_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Phone Number"
+                    android:text="@string/title_phone_number"
                     android:fontFamily="@font/lato_regular"
                     android:textColor="@color/colorDarkBlue"
                     android:textSize="14sp" />
@@ -153,7 +153,7 @@
                     android:minHeight="45dp"
                     android:drawableLeft="@drawable/ic_contact_remove"
                     android:drawableStart="@drawable/ic_contact_remove"
-                    android:hint="Phone Number"
+                    android:hint="@string/title_phone_number"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/activity_edit_contact_phone_title"
                     app:layout_constraintRight_toLeftOf="@id/activity_edit_contact_phone_add"
@@ -185,7 +185,7 @@
                     android:id="@+id/activity_edit_contact_address_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Address"
+                    android:text="@string/title_address"
                     android:fontFamily="@font/lato_regular"
                     android:textColor="@color/colorDarkBlue"
                     android:textSize="14sp" />
@@ -202,7 +202,7 @@
                     android:minHeight="45dp"
                     android:drawableLeft="@drawable/ic_contact_remove"
                     android:drawableStart="@drawable/ic_contact_remove"
-                    android:hint="Address"
+                    android:hint="@string/title_address"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/activity_edit_contact_address_title"
                     app:layout_constraintRight_toLeftOf="@id/activity_edit_contact_address_add"
@@ -236,7 +236,7 @@
                     android:id="@+id/activity_edit_contact_note_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Note"
+                    android:text="@string/title_note"
                     android:fontFamily="@font/lato_regular"
                     android:textColor="@color/colorDarkBlue"
                     android:textSize="14sp" />
@@ -251,7 +251,7 @@
                     android:padding="16dp"
                     android:textColor="@color/colorDarkBlue"
                     android:minHeight="45dp"
-                    android:hint="Note"
+                    android:hint="@string/title_note"
                     app:layout_constraintTop_toBottomOf="@id/activity_edit_contact_note_title"
                     android:background="@drawable/text_input_field" />
 

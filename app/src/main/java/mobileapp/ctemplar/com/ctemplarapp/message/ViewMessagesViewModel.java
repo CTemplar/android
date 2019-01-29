@@ -9,25 +9,33 @@ import java.util.List;
 
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
+import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.main.MessageProvider;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Folders.FoldersResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResult;
+import mobileapp.ctemplar.com.ctemplarapp.repository.ManageFoldersRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.MessagesRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MessageEntity;
+import okhttp3.ResponseBody;
 import timber.log.Timber;
 
 public class ViewMessagesViewModel extends ViewModel {
     private UserRepository userRepository;
     private MessagesRepository messagesRepository;
+    private ManageFoldersRepository manageFoldersRepository;
     private MutableLiveData<ResponseStatus> responseStatus = new MutableLiveData<>();
     private MutableLiveData<List<MessageProvider>> messagesResponse = new MutableLiveData<>();
     private MutableLiveData<MessageProvider> starredResponse = new MutableLiveData<>();
+    private MutableLiveData<FoldersResponse> foldersResponse = new MutableLiveData<>();
+    private MutableLiveData<ResponseStatus> moveToFolderStatus = new MutableLiveData<>();
 
     public ViewMessagesViewModel() {
         userRepository = UserRepository.getInstance();
         messagesRepository = MessagesRepository.getInstance();
+        manageFoldersRepository = CTemplarApp.getManageFoldersRepository();
     }
 
     public void getChainMessages(long id) {
@@ -138,11 +146,69 @@ public class ViewMessagesViewModel extends ViewModel {
                 });
     }
 
-    public MutableLiveData<List<MessageProvider>> getMessagesResponse() {
+    public void getFolders(int limit, int offset) {
+        manageFoldersRepository.getFoldersList(limit, offset)
+                .subscribe(new Observer<FoldersResponse>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(FoldersResponse response) {
+                        foldersResponse.postValue(response);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    public void moveToFolder(long messageId, String folder) {
+        userRepository.toFolder(messageId, folder)
+                .subscribe(new Observer<ResponseBody>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(ResponseBody responseBody) {
+                        moveToFolderStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Timber.e(e, "Move message");
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    MutableLiveData<ResponseStatus> getMoveToFolderStatus() {
+        return moveToFolderStatus;
+    }
+
+    MutableLiveData<List<MessageProvider>> getMessagesResponse() {
         return messagesResponse;
     }
 
     MutableLiveData<MessageProvider> getStarredResponse() {
         return starredResponse;
+    }
+
+    MutableLiveData<FoldersResponse> getFoldersResponse() {
+        return foldersResponse;
     }
 }

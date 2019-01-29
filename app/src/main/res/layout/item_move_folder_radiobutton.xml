@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RadioButton
+    android:id="@+id/radio_button"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:textSize="16sp"
+    android:minHeight="48dp"
+    android:fontFamily="@font/lato_regular"
+    android:textColor="@color/colorDarkBlue"
+    android:text="Folder"
+    android:button="@null"
+    android:drawablePadding="10dp"
+    android:drawableStart="@drawable/ic_manage_folders"
+    android:drawableLeft="@drawable/ic_manage_folders"
+    android:drawableRight="@drawable/selector_check"
+    android:drawableEnd="@drawable/selector_check"
+    xmlns:android="http://schemas.android.com/apk/res/android" />

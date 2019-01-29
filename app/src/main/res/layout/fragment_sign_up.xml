@@ -9,7 +9,11 @@
     <mobileapp.ctemplar.com.ctemplarapp.login.step.ViewPagerNoScroll
         android:id="@+id/fragment_sign_up_view_pager"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/fragment_sign_up_text"
+        app:layout_constraintBottom_toTopOf="@+id/pageIndicatorView"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="15dp" />
 
     <com.rd.PageIndicatorView
         android:id="@+id/pageIndicatorView"

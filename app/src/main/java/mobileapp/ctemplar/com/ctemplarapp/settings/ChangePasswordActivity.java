@@ -76,9 +76,9 @@ public class ChangePasswordActivity extends BaseActivity {
 
     private void handleResponse(ResponseStatus responseStatus) {
         if (responseStatus == null || responseStatus == ResponseStatus.RESPONSE_ERROR) {
-            Toast.makeText(this, "Password not changed", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getResources().getString(R.string.toast_password_not_changed), Toast.LENGTH_SHORT).show();
         } else if (responseStatus == ResponseStatus.RESPONSE_COMPLETE) {
-            Toast.makeText(this, "Password changed", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getResources().getString(R.string.toast_password_changed), Toast.LENGTH_SHORT).show();
             changePasswordModel.logout();
         }
     }
@@ -97,16 +97,16 @@ public class ChangePasswordActivity extends BaseActivity {
 
         if (TextUtils.equals(newPassword, passwordConfirmation) && !newPassword.isEmpty() && newPassword.length() > 7) {
             new AlertDialog.Builder(this)
-                    .setTitle("Change Password")
-                    .setMessage("Are you sure you want change password? All data will be lost")
-                    .setPositiveButton("CHANGE", new DialogInterface.OnClickListener() {
+                    .setTitle(getResources().getString(R.string.dialog_change_password))
+                    .setMessage(getResources().getString(R.string.dialog_change_password_confirm))
+                    .setPositiveButton(getResources().getString(R.string.btn_change), new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     changePasswordModel.changePassword(currentPassword, newPassword, passwordConfirmation);
                                 }
                             }
                     )
-                    .setNeutralButton("CANCEL", null)
+                    .setNeutralButton(getResources().getString(R.string.btn_cancel), null)
                     .show();
         } else {
             Toast.makeText(this, getResources().getString(R.string.error_new_password_not_match),

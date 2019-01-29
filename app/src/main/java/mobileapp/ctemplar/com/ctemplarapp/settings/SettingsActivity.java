@@ -80,7 +80,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                         preferenceRecoveryEmail.setTitle((String) newValue);
                         return true;
                     } else {
-                        Toast.makeText(getActivity(), "Email is not valid", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), getResources().getString(R.string.toast_email_not_valid), Toast.LENGTH_SHORT).show();
                         return false;
                     }
                 }
@@ -107,7 +107,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                     if (!newValue.toString().isEmpty()) {
                         preferenceSignature.setTitle((String) newValue);
                     } else {
-                        preferenceSignature.setTitle("Type your signature");
+                        preferenceSignature.setTitle(getResources().getString(R.string.txt_type_signature));
                     }
                     return true;
                 }
@@ -134,7 +134,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                     if (!newValue.toString().isEmpty()) {
                         preferenceMobileSignature.setTitle((String) newValue);
                     } else {
-                        preferenceMobileSignature.setTitle("Type your mobile signature");
+                        preferenceMobileSignature.setTitle(getResources().getString(R.string.txt_type_mobile_signature));
                     }
                     return true;
                 }

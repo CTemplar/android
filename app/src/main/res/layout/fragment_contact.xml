@@ -34,7 +34,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        android:contentDescription="Contacts Empty"
+        android:contentDescription="@string/txt_contacts_empty"
         app:layout_constraintVertical_chainStyle="packed"  />
 
     <TextView
@@ -72,7 +72,7 @@
             android:drawablePadding="10dp"
             android:fontFamily="@font/lato_regular"
             android:gravity="center"
-            android:text="@string/btn_add_contact"
+            android:text="@string/txt_add_contact"
             android:textAllCaps="false"
             android:textColor="@android:color/white" />
     </FrameLayout>

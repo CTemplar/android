@@ -20,7 +20,9 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.ContactData;
 
 public class EditContactActivity extends BaseActivity {
 
+    public static final String ARG_ID = "id";
     private EditContactViewModel viewModel;
+    private long contactId;
 
     @BindView(R.id.activity_edit_contact_name_input)
     EditText editTextContactName;
@@ -37,9 +39,6 @@ public class EditContactActivity extends BaseActivity {
 
     @BindView(R.id.edit_contact_toolbar)
     Toolbar toolbar;
-
-    public static final String ARG_ID = "id";
-    private long contactId;
 
     @Override
     protected int getLayoutId() {
@@ -91,7 +90,8 @@ public class EditContactActivity extends BaseActivity {
     private void handleResponse(ResponseStatus responseStatus) {
         if (responseStatus == null || responseStatus == ResponseStatus.RESPONSE_ERROR) {
             onBackPressed();
-            Toast.makeText(this, "Loading error", Toast.LENGTH_SHORT).show();
+            String loadingErrorTxt = getResources().getString(R.string.txt_contact_loading_error);
+            Toast.makeText(this, loadingErrorTxt, Toast.LENGTH_SHORT).show();
         } else if (responseStatus == ResponseStatus.RESPONSE_COMPLETE) {
             onBackPressed();
         }
@@ -129,14 +129,14 @@ public class EditContactActivity extends BaseActivity {
         String contactNote = editTextContactNote.getText().toString();
 
         if (contactName.isEmpty()) {
-            editTextContactName.setError("Enter Name");
+            editTextContactName.setError(getResources().getString(R.string.txt_enter_name));
         } else {
             editTextContactName.setError(null);
         }
         if (Patterns.EMAIL_ADDRESS.matcher(contactEmail).matches()) {
             editTextContactEmail.setError(null);
         } else {
-            editTextContactEmail.setError("Enter valid email address");
+            editTextContactEmail.setError(getResources().getString(R.string.txt_enter_valid_email));
         }
         if (editTextContactName.getError() != null || editTextContactEmail.getError() != null) {
             return;

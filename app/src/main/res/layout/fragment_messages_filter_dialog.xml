@@ -30,7 +30,7 @@
             android:layout_alignParentEnd="true"
             android:layout_marginRight="16dp"
             android:layout_marginEnd="16dp"
-            android:text="Clear all"/>
+            android:text="@string/txt_clear_all"/>
 
     </RelativeLayout>
 
@@ -38,7 +38,7 @@
         android:id="@+id/fragment_messages_filter_dialog_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Filters"
+        android:text="@string/txt_filters"
         android:fontFamily="@font/lato_regular"
         android:textSize="22sp"
         android:textColor="@color/colorDarkBlue"
@@ -57,7 +57,7 @@
         app:layout_goneMarginEnd="16dp"
         android:orientation="vertical"
         android:showDividers="middle"
-        android:divider="@drawable/filter_dialog_divider"
+        android:divider="@drawable/dialog_divider"
         android:layout_marginBottom="8dp"
         app:layout_constraintTop_toBottomOf="@id/fragment_messages_filter_dialog_title"
         app:layout_constraintBottom_toTopOf="@id/fragment_messages_filter_dialog_actions_layout">
@@ -66,7 +66,7 @@
             android:id="@+id/fragment_messages_filter_dialog_select_filters"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Select filters"
+            android:text="@string/txt_select_filters"
             android:gravity="center_vertical"
             android:minHeight="52dp"
             android:textSize="16sp"
@@ -81,7 +81,7 @@
             android:minHeight="48dp"
             android:fontFamily="@font/lato_regular"
             android:textColor="@drawable/filter_checkbox_color_selector"
-            android:text="Starred"
+            android:text="@string/txt_starred"
             android:button="@null"
             android:drawableRight="@drawable/selector_check_filter"
             android:drawableEnd="@drawable/selector_check_filter"/>
@@ -94,7 +94,7 @@
             android:minHeight="48dp"
             android:fontFamily="@font/lato_regular"
             android:textColor="@drawable/filter_checkbox_color_selector"
-            android:text="Unread"
+            android:text="@string/txt_unread"
             android:button="@null"
             android:drawableRight="@drawable/selector_check_filter"
             android:drawableEnd="@drawable/selector_check_filter"/>
@@ -107,7 +107,7 @@
             android:minHeight="48dp"
             android:fontFamily="@font/lato_regular"
             android:textColor="@drawable/filter_checkbox_color_selector"
-            android:text="With Attachment"
+            android:text="@string/txt_with_attachments"
             android:button="@null"
             android:drawableRight="@drawable/selector_check_filter"
             android:drawableEnd="@drawable/selector_check_filter"/>
@@ -137,7 +137,7 @@
             android:fontFamily="@font/lato_regular"
             android:textColor="@color/colorDarkBlue2"
             android:background="@drawable/dialog_cancel_button_background"
-            android:text="Cancel"/>
+            android:text="@string/action_cancel"/>
 
         <Button
             android:id="@+id/fragment_messages_filter_dialog_action_apply"
@@ -148,7 +148,7 @@
             android:fontFamily="@font/lato_regular"
             android:textColor="@android:color/white"
             android:background="@color/colorDarkBlue2"
-            android:text="Apply"/>
+            android:text="@string/btn_apply"/>
 
     </LinearLayout>
 

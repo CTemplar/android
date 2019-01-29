@@ -66,9 +66,9 @@ public class AddFolderActivity extends BaseActivity {
             @Override
             public void onChanged(@Nullable ResponseStatus responseStatus) {
                 if (responseStatus == null || responseStatus == ResponseStatus.RESPONSE_ERROR) {
-                    Toast.makeText(getApplicationContext(), "Folder not created", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.toast_folder_not_created), Toast.LENGTH_SHORT).show();
                 } else if (responseStatus == ResponseStatus.RESPONSE_COMPLETE) {
-                    Toast.makeText(getApplicationContext(), "Folder created", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.toast_folder_created), Toast.LENGTH_SHORT).show();
                     onBackPressed();
                 }
             }
@@ -111,7 +111,7 @@ public class AddFolderActivity extends BaseActivity {
             addFolderModel.addFolder(folderName, folderColor);
             editTextFolderName.setError(null);
         } else {
-            editTextFolderName.setError("Folder name must be between 4 and 30 letters and digits");
+            editTextFolderName.setError(getResources().getString(R.string.txt_folder_name_hint));
         }
     }
 

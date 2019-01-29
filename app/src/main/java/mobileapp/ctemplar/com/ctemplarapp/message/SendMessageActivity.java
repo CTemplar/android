@@ -58,12 +58,12 @@ import okhttp3.RequestBody;
 public class SendMessageActivity extends BaseActivity {
 
     private final int PICK_FILE_FROM_STORAGE = 1;
-    private SendMessageActivityViewModel mainModel;
     public final static String PARENT_ID = "parent_id";
     private Long parentId;
+    private long currentMessageId;
     private ProgressDialog sendingProgress;
     private SharedPreferences sharedPreferences;
-    private long currentMessageId;
+    private SendMessageActivityViewModel mainModel;
     private MessageSendAttachmentAdapter messageSendAttachmentAdapter;
 
     @BindView(R.id.fragment_send_message_to_input)
@@ -208,7 +208,7 @@ public class SendMessageActivity extends BaseActivity {
                     if (sendingProgress != null){
                         sendingProgress.dismiss();
                     }
-                    Toast.makeText(SendMessageActivity.this, "Message not sent", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SendMessageActivity.this, getResources().getString(R.string.toast_message_not_sent), Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -218,7 +218,7 @@ public class SendMessageActivity extends BaseActivity {
                     @Override
                     public void onChanged(@Nullable MessagesResult messagesResult) {
                         if (messagesResult == null) {
-                            Toast.makeText(SendMessageActivity.this, "Not sent", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(SendMessageActivity.this, getResources().getString(R.string.toast_message_not_sent), Toast.LENGTH_SHORT).show();
                         } else {
                             finish();
                         }
@@ -230,7 +230,7 @@ public class SendMessageActivity extends BaseActivity {
                     @Override
                     public void onChanged(@Nullable ResponseStatus responseStatus) {
                         if (responseStatus == null || responseStatus == ResponseStatus.RESPONSE_ERROR) {
-                            Toast.makeText(getApplicationContext(), "Message not created", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), getResources().getString(R.string.toast_message_not_created), Toast.LENGTH_SHORT).show();
                             finish();
                         }
                     }
@@ -243,7 +243,7 @@ public class SendMessageActivity extends BaseActivity {
                         if (messagesResult != null) {
                             currentMessageId = messagesResult.getId();
                         } else {
-                            Toast.makeText(getApplicationContext(), "Message not created", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), getResources().getString(R.string.toast_message_not_created), Toast.LENGTH_SHORT).show();
                             finish();
                         }
                     }
@@ -254,7 +254,7 @@ public class SendMessageActivity extends BaseActivity {
                     @Override
                     public void onChanged(@Nullable ResponseStatus responseStatus) {
                         if (responseStatus == ResponseStatus.RESPONSE_COMPLETE) {
-                            Toast.makeText(getApplicationContext(), "Attachment upload complete" , Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), getResources().getString(R.string.toast_attachment_upload_complete) , Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -269,7 +269,12 @@ public class SendMessageActivity extends BaseActivity {
                     }
                 });
 
+        addListeners();
+    }
+
+    private void addListeners() {
         sendMessage.setEnabled(false);
+
         toEmailTextView.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -347,27 +352,27 @@ public class SendMessageActivity extends BaseActivity {
         if (Patterns.EMAIL_ADDRESS.matcher(toEmail).matches()) {
             toEmailTextView.setError(null);
         } else {
-            toEmailTextView.setError("Enter valid email");
+            toEmailTextView.setError(getResources().getString(R.string.txt_enter_valid_email));
             return;
         }
 
         if (subject.length() < 1) {
-            subjectEditText.setError("Enter subject");
+            subjectEditText.setError(getResources().getString(R.string.hint_enter_subject));
             return;
         } else {
             subjectEditText.setError(null);
         }
 
         if (compose.length() < 1) {
-            composeEditText.setError("Enter message");
+            composeEditText.setError(getResources().getString(R.string.hint_enter_message));
             return;
         } else {
             composeEditText.setError(null);
         }
 
-        sendingProgress = new ProgressDialog(SendMessageActivity.this);
+        sendingProgress = new ProgressDialog(this);
         sendingProgress.setCanceledOnTouchOutside(false);
-        sendingProgress.setMessage("Sending mail...");
+        sendingProgress.setMessage(getResources().getString(R.string.txt_sending_mail));
         sendingProgress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         sendingProgress.show();
 
@@ -476,16 +481,16 @@ public class SendMessageActivity extends BaseActivity {
         RequestBody attachmentPart = RequestBody.create(MediaType.parse(getContentResolver().getType(attachmentUri)), attachmentFile);
         MultipartBody.Part multipartAttachment = MultipartBody.Part.createFormData("document", attachmentFile.getName(), attachmentPart);
 
-        Toast.makeText(getApplicationContext(), "Start upload attachment" , Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), getResources().getString(R.string.toast_attachment_upload_start) , Toast.LENGTH_SHORT).show();
 
         mainModel.uploadAttachment(multipartAttachment, currentMessageId);
     }
 
     private boolean onHandleBackPressed() {
         new AlertDialog.Builder(SendMessageActivity.this)
-                .setTitle("Confirm Discard")
-                .setMessage("Are you sure, you want to discard this email?")
-                .setPositiveButton("Save in drafts", new DialogInterface.OnClickListener() {
+                .setTitle(getResources().getString(R.string.dialog_discard_mail))
+                .setMessage(getResources().getString(R.string.dialog_discard_confirm))
+                .setPositiveButton(getResources().getString(R.string.dialog_save_in_drafts), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 sendMessageToDraft();
@@ -493,7 +498,7 @@ public class SendMessageActivity extends BaseActivity {
                             }
                         }
                 )
-                .setNegativeButton("Discard", new DialogInterface.OnClickListener() {
+                .setNegativeButton(getResources().getString(R.string.action_discard), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 mainModel.deleteMessage(currentMessageId);
@@ -501,7 +506,7 @@ public class SendMessageActivity extends BaseActivity {
                             }
                         }
                 )
-                .setNeutralButton("Cancel", null)
+                .setNeutralButton(getResources().getString(R.string.action_cancel), null)
                 .show();
 
         return false;
