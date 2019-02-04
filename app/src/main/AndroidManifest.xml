@@ -33,6 +33,7 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".main.MainActivity"
+            android:configChanges="orientation|screenSize"
             android:theme="@style/ActionBarLight">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />

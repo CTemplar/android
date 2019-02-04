@@ -4,19 +4,12 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
-import io.reactivex.ObservableOnSubscribe;
-import io.reactivex.ObservableSource;
 import io.reactivex.Observer;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Function;
-import io.reactivex.observers.DisposableObserver;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.DialogState;
 import mobileapp.ctemplar.com.ctemplarapp.SingleLiveEvent;
@@ -121,20 +114,15 @@ public class MainActivityViewModel extends ViewModel {
     private CompositeDisposable disposable;
 
     public void getMessages(int limit, int offset, final String folder) {
-
         List<MessageEntity> messageEntities = messagesRepository.getLocalMessagesByFolder(folder);
         List<MessageProvider> messageProviders = MessageProvider.fromMessageEntities(messageEntities);
         messagesResponse.postValue(messageProviders);
 
-//        if (disposable != null && !disposable.isDisposed()) {
-//            disposable.clear();
-//        }
-//        disposable = new CompositeDisposable();
         Observable<MessagesResponse> messagesObservable = userRepository.getMessagesList(limit, offset, folder);
         messagesObservable.subscribe(new Observer<MessagesResponse>() {
             @Override
             public void onSubscribe(Disposable d) {
-//                disposable.add(d);
+
             }
 
             @Override
@@ -313,7 +301,6 @@ public class MainActivityViewModel extends ViewModel {
                     @Override
                     public void onNext(SignInResponse signInResponse) {
                         userRepository.saveUserToken(signInResponse.getToken());
-                        // TODO recall last request?
                     }
                 });
     }

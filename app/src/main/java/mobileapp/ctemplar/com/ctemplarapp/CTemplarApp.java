@@ -12,6 +12,7 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.MessagesRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserStore;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserStoreImpl;
+import timber.log.Timber;
 
 public class CTemplarApp extends MultiDexApplication {
 
@@ -31,6 +32,7 @@ public class CTemplarApp extends MultiDexApplication {
     @Override
     public void onCreate() {
         super.onCreate();
+        Timber.plant(new Timber.DebugTree());
         instance = this;
         installProviders(this);
     }

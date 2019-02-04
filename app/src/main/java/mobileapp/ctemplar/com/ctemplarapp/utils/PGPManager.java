@@ -72,7 +72,6 @@ public class PGPManager {
             pgpLib.decryptStream(inputMessageStream, privateKeyStream, password, outputMessageStream);
 
         } catch (IOException | PGPException e) {
-            e.printStackTrace();
             Timber.e("Pgp decrypt error: %s", e.getMessage());
 
         } finally {

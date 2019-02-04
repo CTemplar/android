@@ -1,5 +1,6 @@
 package mobileapp.ctemplar.com.ctemplarapp.net;
 
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import java.io.IOException;
@@ -15,19 +16,17 @@ public class HttpTokenInterceptor implements Interceptor {
     private static final String HEADER_AUTHORIZATION = "Authorization";
 
     @Override
-    public Response intercept(Chain chain) throws IOException {
+    public Response intercept(@NonNull Chain chain) throws IOException {
         Request request = chain.request();
         Request.Builder builder = request.newBuilder();
         builder.header(HEADER_ACCEPT, "application/json");
 
-        // TODO add user token when method will be implemented
         String token = CTemplarApp.getUserRepository().getUserToken();
         setAuthHeader(builder, token);
 
         request = builder.build();
-        Response response = chain.proceed(request);
 
-        return response;
+        return chain.proceed(request);
     }
 
     private void setAuthHeader(Request.Builder builder, String token) {

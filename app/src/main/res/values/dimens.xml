@@ -9,4 +9,5 @@
 
     <integer name="restriction_username_min">4</integer>
     <integer name="restriction_username_max">64</integer>
+    <bool name="isTabletLand">false</bool>
 </resources>
