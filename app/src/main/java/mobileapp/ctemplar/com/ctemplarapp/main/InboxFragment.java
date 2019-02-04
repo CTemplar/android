@@ -6,15 +6,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Message;
 import android.support.annotation.Nullable;
-import android.support.design.widget.BaseTransientBottomBar;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -24,7 +22,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -36,10 +33,13 @@ import mobileapp.ctemplar.com.ctemplarapp.BaseFragment;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.message.MoveDialogFragment;
 import mobileapp.ctemplar.com.ctemplarapp.message.SendMessageActivity;
+import mobileapp.ctemplar.com.ctemplarapp.message.SendMessageFragment;
 import mobileapp.ctemplar.com.ctemplarapp.message.ViewMessagesActivity;
+import mobileapp.ctemplar.com.ctemplarapp.message.ViewMessagesFragment;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 
 import static mobileapp.ctemplar.com.ctemplarapp.message.ViewMessagesActivity.PARENT_ID;
+import static mobileapp.ctemplar.com.ctemplarapp.message.ViewMessagesFragment.FOLDER_NAME;
 
 public class InboxFragment extends BaseFragment {
 
@@ -145,9 +145,11 @@ public class InboxFragment extends BaseFragment {
 
         // Function
         MenuItem emptyFolder = menu.findItem(R.id.action_empty_folder);
-        emptyFolder.setVisible(currentFolder.equals("trash")
-                || currentFolder.equals("spam")
-                || currentFolder.equals("draft"));
+        if (currentFolder != null) {
+            emptyFolder.setVisible(currentFolder.equals("trash")
+                    || currentFolder.equals("spam")
+                    || currentFolder.equals("draft"));
+        }
 
 //        MenuItem searchItem = menu.findItem(R.id.action_search);
 //        SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
@@ -195,19 +197,47 @@ public class InboxFragment extends BaseFragment {
 
     @OnClick(R.id.fragment_inbox_send_layout)
     public void onClickComposeLayout() {
-        Intent intent = new Intent(getActivity(), SendMessageActivity.class);
-        startActivity(intent);
+        startSendMessageActivity();
     }
     @OnClick(R.id.fragment_inbox_send)
     public void onClickCompose() {
-        Intent intent = new Intent(getActivity(), SendMessageActivity.class);
-        startActivity(intent);
+        startSendMessageActivity();
     }
 
     @OnClick(R.id.fragment_inbox_fab_compose)
     public void onClickFabCompose() {
-        Intent intent = new Intent(getActivity(), SendMessageActivity.class);
-        startActivity(intent);
+        startSendMessageActivity();
+    }
+
+    private void startSendMessageActivity() {
+        MainActivity activity = (MainActivity) getActivity();
+        if (activity == null) {
+            return;
+        }
+
+        Intent intent = new Intent(activity, SendMessageActivity.class);
+        Fragment fragment = SendMessageFragment.newInstance();
+        activity.showActivityOrFragment(intent, fragment);
+    }
+
+    private void startViewMessageActivity(Long parentId) {
+        MainActivity activity = (MainActivity) getActivity();
+        if (activity == null) {
+            return;
+        }
+        String folderName = mainModel.currentFolder.getValue();
+
+        Intent intent = new Intent(activity, ViewMessagesActivity.class);
+        intent.putExtra(PARENT_ID, parentId);
+        intent.putExtra(FOLDER_NAME, folderName);
+
+        Fragment fragment = ViewMessagesFragment.newInstance();
+        Bundle bundle = new Bundle();
+        bundle.putLong(PARENT_ID, parentId);
+        bundle.putString(FOLDER_NAME, folderName);
+        fragment.setArguments(bundle);
+
+        activity.showActivityOrFragment(intent, fragment);
     }
 
     public void handleResponseStatus(ResponseStatus status) {
@@ -277,12 +307,8 @@ public class InboxFragment extends BaseFragment {
                         }
 
                         @Override
-                        public void onNext(Long aLong) {
-                            String folderName = mainModel.currentFolder.getValue();
-                            Intent intent = new Intent(getActivity(), ViewMessagesActivity.class);
-                            intent.putExtra(PARENT_ID, aLong);
-                            intent.putExtra(ViewMessagesActivity.FOLDER_NAME, folderName);
-                            getActivity().startActivity(intent);
+                        public void onNext(Long parentId) {
+                            startViewMessageActivity(parentId);
                         }
 
                         @Override
@@ -374,6 +400,12 @@ public class InboxFragment extends BaseFragment {
                     });
 
             recyclerView.addOnItemTouchListener(touchListener);
+        }
+    }
+
+    public void clearListAdapter() {
+        if (recyclerView != null) {
+            recyclerView.setAdapter(new InboxMessagesAdapter(Collections.<MessageProvider>emptyList(), mainModel));
         }
     }
 }

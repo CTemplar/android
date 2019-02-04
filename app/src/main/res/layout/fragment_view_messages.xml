@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:theme="@style/NavigationBarLight"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/activity_view_messages_bar_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/activity_view_messages_bar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            android:theme="@style/ActionBarLight"
+            app:titleTextColor="@color/colorDarkBlue2"
+            app:popupTheme="@style/AppTheme.PopupOverlay">
+        </android.support.v7.widget.Toolbar>
+
+    </android.support.design.widget.AppBarLayout>
+
+    <RelativeLayout
+        android:id="@+id/activity_view_messages_subject_layout"
+        android:layout_width="match_parent"
+        android:layout_height="47dp"
+        app:layout_constraintTop_toBottomOf="@id/activity_view_messages_bar_layout"
+        android:background="@color/colorWhiteLight">
+
+        <TextView
+            android:id="@+id/activity_view_messages_subject_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:text="Welcome to CTemplar!"
+            android:fontFamily="@font/lato_bold"
+            android:textColor="@color/colorBlack4"
+            android:textSize="16sp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignStart="@id/activity_view_messages_subject_star_image_layout"
+            android:layout_alignLeft="@id/activity_view_messages_subject_star_image_layout" />
+
+        <ImageView
+            android:id="@+id/activity_view_messages_subject_encrypted_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/selector_encrypted"
+            android:layout_marginTop="15dp"
+
+            android:layout_toRightOf="@id/activity_view_messages_subject_text"
+            android:layout_toEndOf="@id/activity_view_messages_subject_text"
+
+            android:layout_marginLeft="7dp"
+            android:layout_marginStart="7dp" />
+
+        <FrameLayout android:id="@+id/activity_view_messages_subject_star_image_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:padding="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginEnd="10dp">
+
+            <ImageView
+                android:id="@+id/activity_view_messages_subject_star_image"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/selector_starred" />
+
+        </FrameLayout>
+
+    </RelativeLayout>
+
+    <View
+        android:id="@+id/activity_view_messages_bottom_subject_divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/colorGreyLight4"
+        app:layout_constraintTop_toBottomOf="@id/activity_view_messages_subject_layout"/>
+
+    <ListView
+        android:id="@+id/activity_view_messages_messages"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        tools:listitem="@layout/item_message_view_expanded"
+        app:layout_constraintTop_toBottomOf="@id/activity_view_messages_bottom_subject_divider"
+        app:layout_constraintBottom_toTopOf="@id/activity_view_messages_actions"
+        android:background="@color/colorWhiteLight" />
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/activity_view_messages_actions"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:minHeight="49dp"
+        android:background="@drawable/view_messages_actions_background">
+
+        <RelativeLayout
+            android:id="@+id/activity_view_messages_reply"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginLeft="38dp"
+            android:layout_marginStart="38dp">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_reply"
+                android:layout_centerInParent="true"
+                android:contentDescription="Reply"/>
+
+        </RelativeLayout>
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/activity_view_messages_reply_all"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintLeft_toRightOf="@+id/activity_view_messages_reply"
+            app:layout_constraintRight_toLeftOf="@+id/activity_view_messages_forward"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <ImageView
+                android:id="@+id/activity_view_messages_reply_all_ico"
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                android:src="@drawable/ic_reply_all"
+                android:layout_centerInParent="true"
+                android:contentDescription="Reply"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/activity_view_messages_reply_all_ico"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                android:fontFamily="@font/lato_regular"
+                android:textColor="@color/colorDarkBlue2"
+                android:textSize="12sp"
+                android:text="@string/txt_reply_all"/>
+
+        </android.support.constraint.ConstraintLayout>
+
+        <RelativeLayout
+            android:id="@+id/activity_view_messages_forward"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginRight="38dp"
+            android:layout_marginEnd="38dp">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_forward"
+                android:layout_centerInParent="true"
+                android:contentDescription="Reply"/>
+
+        </RelativeLayout>
+
+    </android.support.constraint.ConstraintLayout>
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/activity_view_messages_progress"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+        <View
+            android:id="@+id/activity_view_messages_progress_background"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/colorGreyLight"/>
+
+        <ProgressBar
+            android:id="@+id/activity_view_messages_progress_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </android.support.constraint.ConstraintLayout>
+
+</android.support.constraint.ConstraintLayout>

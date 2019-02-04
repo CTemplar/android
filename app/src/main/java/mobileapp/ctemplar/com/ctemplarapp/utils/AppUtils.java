@@ -18,7 +18,6 @@ public class AppUtils {
 
     public static String DATE_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
 
-    // ToDo
     public static String formatDate(String stringDate) {
         if(!TextUtils.isEmpty(stringDate)) {
             DateFormat parseFormat = new SimpleDateFormat(DATE_PATTERN, Locale.getDefault());

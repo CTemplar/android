@@ -17,6 +17,7 @@ import mobileapp.ctemplar.com.ctemplarapp.BaseActivity;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.ContactData;
+import timber.log.Timber;
 
 public class EditContactActivity extends BaseActivity {
 
@@ -72,7 +73,9 @@ public class EditContactActivity extends BaseActivity {
 
         long id = getIntent().getLongExtra(ARG_ID, -1);
         if (id == -1) {
-            return; //ToDo
+            Timber.e("Argument id is not defined");
+            onBackPressed();
+            return;
         }
 
         viewModel.getContact(id);
