@@ -14,9 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.subjects.PublishSubject;
-import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.R;
-import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
 
 public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesViewHolder> {
@@ -26,7 +24,7 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesView
     private final PublishSubject<Long> onClickSubject = PublishSubject.create();
     private final MainActivityViewModel mainModel;
 
-    public InboxMessagesAdapter(List<MessageProvider> messagesList, MainActivityViewModel mainModel) {
+    InboxMessagesAdapter(List<MessageProvider> messagesList, MainActivityViewModel mainModel) {
         this.messagesList = messagesList;
         filteredList = new ArrayList<>();
         filteredList.addAll(messagesList);
@@ -42,7 +40,8 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesView
 
         ViewGroup backOptionsLayout = view.findViewById(R.id.item_message_view_holder_background_layout);
         View backOptionsView;
-        if (mainModel.getCurrentFolder().getValue().equals("draft")) {
+        String currentFolder = mainModel.getCurrentFolder().getValue();
+        if (currentFolder != null && currentFolder.equals("draft")) {
             backOptionsView = inflater.inflate(R.layout.swipe_actions_draft, backOptionsLayout, false);
         } else {
             backOptionsView = inflater.inflate(R.layout.swipe_actions, backOptionsLayout, false);
@@ -84,14 +83,20 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesView
         }
 
         // check for status (time delete, delayed delivery)
-        if (TextUtils.isEmpty(messages.getDelayedDelivery()) &&
-                TextUtils.isEmpty(messages.getDestructDate())) {
+        if (!TextUtils.isEmpty(messages.getDelayedDelivery())) {
+            String leftTime = AppUtils.leftTime(messages.getDelayedDelivery());
+            holder.txtStatus.setText(holder.root.getResources().getString(R.string.txt_left_time_delay_delivery, leftTime));
+            holder.txtStatus.setBackgroundColor(holder.root.getResources().getColor(R.color.colorDarkGreen));
+        } else if (!TextUtils.isEmpty(messages.getDestructDate())) {
+            String leftTime = AppUtils.leftTime(messages.getDestructDate());
+            holder.txtStatus.setText(holder.root.getResources().getString(R.string.txt_left_time_destruct, leftTime));
+        } else {
             holder.txtStatus.setVisibility(View.GONE);
         }
 
         // format creation date
         if (!TextUtils.isEmpty(messages.getCreatedAt())) {
-            holder.txtDate.setText(AppUtils.formatDate(messages.getCreatedAt()));
+            holder.txtDate.setText(AppUtils.messageDate(messages.getCreatedAt()));
         }
 
         holder.imgStarred.setOnClickListener(new View.OnClickListener() {
@@ -123,7 +128,7 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesView
         return filteredList.size();
     }
 
-    public MessageProvider removeAt(int position) {
+    MessageProvider removeAt(int position) {
         MessageProvider removedMessage = filteredList.remove(position);
         notifyItemRemoved(position);
         return removedMessage;
@@ -133,7 +138,7 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesView
         return filteredList.get(position);
     }
 
-    public void restoreMessage(MessageProvider deletedMessage, int position) {
+    void restoreMessage(MessageProvider deletedMessage, int position) {
         filteredList.add(position, deletedMessage);
         notifyItemInserted(position);
     }
@@ -142,29 +147,84 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesView
         return filteredList;
     }
 
-    public boolean filter(boolean isStarred, boolean isUnread, boolean withAttachment) {
-        boolean filtered = false;
-        filteredList = new ArrayList<>();
-        for (MessageProvider messageResult :
-                messagesList) {
-            boolean messageIsStarred = messageResult.isStarred();
-            boolean messageUnread = !messageResult.isRead();
 
-            if ((isStarred && messageIsStarred) ||
-                    (isUnread && messageUnread) ||
-                    (withAttachment && messageResult.isHasAttachments())) {
+    private boolean isStarred = false, isUnread = false, withAttachment = false;
+    private String filterText = "";
+
+    void filter(boolean isStarred, boolean isUnread, boolean withAttachment) {
+        this.isStarred = isStarred;
+        this.isUnread = isUnread;
+        this.withAttachment = withAttachment;
+        filter();
+
+    }
+
+    void filter(String filter) {
+        if (filter == null) {
+            filterText = "";
+        } else {
+            filterText = filter.toLowerCase();
+        }
+        filter();
+    }
+
+    private void filter() {
+        filteredList.clear();
+        for (MessageProvider messageResult : messagesList) {
+            if (matchFiltering(messageResult)) {
                 filteredList.add(messageResult);
-            } else if (!isStarred && !isUnread && !withAttachment) {
-                filteredList.add(messageResult);
-            } else {
-                filtered = true;
             }
         }
         notifyDataSetChanged();
-        return filtered;
     }
 
-    public PublishSubject<Long> getOnClickSubject() {
+    private boolean matchFiltering(MessageProvider messageProvider) {
+        boolean messageIsStarred = messageProvider.isStarred();
+        boolean messageUnread = !messageProvider.isRead();
+
+        if (!isValidForFilter(messageProvider)) {
+            return false;
+        }
+
+        if ((isStarred && messageIsStarred) ||
+                (isUnread && messageUnread) ||
+                (withAttachment && messageProvider.isHasAttachments())) {
+            return true;
+        } else {
+            return !isStarred && !isUnread && !withAttachment;
+        }
+    }
+
+    private boolean isValidForFilter(MessageProvider messageProvider) {
+        return wrap(messageProvider.getContent()).contains(filterText) ||
+                wrap(messageProvider.getSubject()).contains(filterText) ||
+                containsInStringArrayWrapped(messageProvider.getReceivers(), filterText) ||
+                containsInStringArrayWrapped(messageProvider.getBcc(), filterText) ||
+                containsInStringArrayWrapped(messageProvider.getCc(), filterText) ||
+                wrap(messageProvider.getSender()).contains(filterText);
+
+    }
+
+    PublishSubject<Long> getOnClickSubject() {
         return onClickSubject;
+    }
+
+    private static boolean containsInStringArrayWrapped(String[] array, String filter) {
+        if (array == null) {
+            return false;
+        }
+        for (String item : array) {
+            if (wrap(item).contains(filter)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static String wrap(String str) {
+        if (str == null) {
+            return "";
+        }
+        return str.toLowerCase();
     }
 }

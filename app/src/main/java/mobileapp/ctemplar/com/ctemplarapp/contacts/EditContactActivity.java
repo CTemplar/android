@@ -1,4 +1,4 @@
-package mobileapp.ctemplar.com.ctemplarapp.contact;
+package mobileapp.ctemplar.com.ctemplarapp.contacts;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;

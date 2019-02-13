@@ -1,6 +1,8 @@
 package mobileapp.ctemplar.com.ctemplarapp.message;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,9 +17,14 @@ import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
 
 public class MessageSendAttachmentAdapter extends RecyclerView.Adapter<MessageSendAttachmentHolder> {
     private List<MessageAttachment> attachmentsList = new ArrayList<>();
+    private SendMessageActivityViewModel sendMessageActivityViewModel;
+
+    public MessageSendAttachmentAdapter(FragmentActivity fragmentActivity) {
+        sendMessageActivityViewModel = ViewModelProviders.of(fragmentActivity).get(SendMessageActivityViewModel.class);
+    }
 
     public List<MessageAttachment> getAttachmentsList() {
-        return  attachmentsList;
+        return attachmentsList;
     }
 
     @NonNull
@@ -54,6 +61,7 @@ public class MessageSendAttachmentAdapter extends RecyclerView.Adapter<MessageSe
     }
 
     public void deleteAttachment(MessageAttachment messageAttachment) {
+        sendMessageActivityViewModel.deleteAttachment(messageAttachment.getId());
         int attachmentPosition = attachmentsList.indexOf(messageAttachment);
         if (attachmentPosition != -1) {
             attachmentsList.remove(attachmentPosition);

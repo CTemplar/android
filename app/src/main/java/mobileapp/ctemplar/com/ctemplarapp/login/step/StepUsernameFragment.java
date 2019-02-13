@@ -126,7 +126,6 @@ public class StepUsernameFragment extends BaseFragment {
 
         if(!EditTextUtils.isTextValid(username)) {
             editUsernameLayout.setError(getResources().getString(R.string.error_username_incorrect));
-            return;
         }
     }
 
@@ -148,10 +147,6 @@ public class StepUsernameFragment extends BaseFragment {
     }
 
     public boolean isValid(String username) {
-        if(username.length() >= USERNAME_MIN && username.length() <= USERNAME_MAX && EditTextUtils.isTextValid(username)) {
-            return true;
-        }
-
-        return false;
+        return username.length() >= USERNAME_MIN && username.length() <= USERNAME_MAX && EditTextUtils.isTextValid(username);
     }
 }

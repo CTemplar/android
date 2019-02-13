@@ -2,7 +2,17 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <EditText android:id="@+id/fragment_contact_search"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:drawableLeft="@drawable/ic_action_search"
+        android:background="@android:color/transparent"
+        android:hint="@string/action_search"
+        android:inputType="text"
+        android:drawableStart="@drawable/ic_action_search" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/fragment_contact_recycler_view"
@@ -13,16 +23,8 @@
         app:layout_constraintTop_toBottomOf="@id/fragment_contact_search"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent" />
-
-    <EditText android:id="@+id/fragment_contact_search"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:drawableLeft="@drawable/ic_action_search"
-        android:background="@android:color/transparent"
-        android:hint="@string/action_search"
-        android:inputType="text"
-        android:drawableStart="@drawable/ic_action_search" />
+        app:layout_constraintRight_toRightOf="parent"
+        tools:listitem="@layout/item_contact_holder"/>
 
     <ImageView
         android:id="@+id/fragment_contact_icon_empty"

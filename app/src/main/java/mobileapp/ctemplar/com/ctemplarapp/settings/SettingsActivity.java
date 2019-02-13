@@ -78,6 +78,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                     String value = (String) newValue;
                     if (EditTextUtils.isEmailValid(value)) {
                         preferenceRecoveryEmail.setTitle((String) newValue);
+                        Toast.makeText(getActivity(), getResources().getString(R.string.toast_recovery_email_changed), Toast.LENGTH_SHORT).show();
                         return true;
                     } else {
                         Toast.makeText(getActivity(), getResources().getString(R.string.toast_email_not_valid), Toast.LENGTH_SHORT).show();

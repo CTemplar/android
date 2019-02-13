@@ -1,4 +1,4 @@
-package mobileapp.ctemplar.com.ctemplarapp.contact;
+package mobileapp.ctemplar.com.ctemplarapp.contacts;
 
 import java.util.LinkedList;
 import java.util.List;

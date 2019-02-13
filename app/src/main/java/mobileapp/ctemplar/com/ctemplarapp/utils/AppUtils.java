@@ -6,9 +6,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -16,10 +18,60 @@ import timber.log.Timber;
 
 public class AppUtils {
 
-    public static String DATE_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
+    private static String DATE_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
+    private static String LEFT_DATE_PATTERN = "yyyy-MM-dd'T'HH:mm:ss'Z'";
+
+    public static String leftTime(String stringDate) {
+        if (!TextUtils.isEmpty(stringDate)) {
+            Calendar nowCalendar = Calendar.getInstance();
+            DateFormat parseFormat = new SimpleDateFormat(LEFT_DATE_PATTERN, Locale.getDefault());
+            DateFormat leftTimeFormat = new SimpleDateFormat("d'd' h:mm", Locale.getDefault());
+
+            try {
+                Date parseDate = parseFormat.parse(stringDate);
+                long stringTimeInMillis = parseDate.getTime();
+                long diffInMillis = stringTimeInMillis - nowCalendar.getTimeInMillis();
+
+                return leftTimeFormat.format(diffInMillis);
+            } catch (ParseException e) {
+                Timber.e("DateParse error: %s", e.getMessage());
+            }
+        }
+        return null;
+    }
+
+    public static String messageDate(String stringDate) {
+        if (!TextUtils.isEmpty(stringDate)) {
+            Calendar nowCalendar = Calendar.getInstance();
+            DateFormat parseFormat = new SimpleDateFormat(DATE_PATTERN, Locale.getDefault());
+            DateFormat timeFormat = new SimpleDateFormat("h:mm aa", Locale.getDefault());
+            DateFormat monthFormat = new SimpleDateFormat("MMM d", Locale.getDefault());
+            DateFormat yearFormat = new SimpleDateFormat("MMM d, yyyy", Locale.getDefault());
+
+            try {
+                Date date = parseFormat.parse(stringDate);
+                Calendar parseCalendar = parseFormat.getCalendar();
+
+                if (nowCalendar.get(Calendar.YEAR) == parseCalendar.get(Calendar.YEAR)) {
+                    if (nowCalendar.get(Calendar.DATE) == parseCalendar.get(Calendar.DATE)) {
+                        return timeFormat.format(date);
+                    } else if (nowCalendar.get(Calendar.DATE) - parseCalendar.get(Calendar.DATE) == 1) {
+                        return "Yesterday";
+                    } else {
+                        return monthFormat.format(date);
+                    }
+                } else {
+                    return yearFormat.format(date);
+                }
+            } catch (ParseException e) {
+                Timber.e("DateParse error: %s", e.getMessage());
+            }
+        }
+        return null;
+    }
 
     public static String formatDate(String stringDate) {
-        if(!TextUtils.isEmpty(stringDate)) {
+        if (!TextUtils.isEmpty(stringDate)) {
             DateFormat parseFormat = new SimpleDateFormat(DATE_PATTERN, Locale.getDefault());
             DateFormat viewFormat = new SimpleDateFormat("h:mm a d.MM.yyyy", Locale.getDefault());
             try {
@@ -30,7 +82,6 @@ public class AppUtils {
                 Timber.e("DateParse error: %s", e.getMessage());
             }
         }
-
         return null;
     }
 

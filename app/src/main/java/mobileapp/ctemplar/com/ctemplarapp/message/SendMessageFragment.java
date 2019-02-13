@@ -62,7 +62,6 @@ import timber.log.Timber;
 
 import static android.app.Activity.RESULT_OK;
 
-
 public class SendMessageFragment extends Fragment implements View.OnClickListener, ActivityInterface {
 
     private final static String PARENT_ID = SendMessageActivity.PARENT_ID;
@@ -235,7 +234,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         );
         spinnerFrom.setAdapter(adapter);
 
-        messageSendAttachmentAdapter = new MessageSendAttachmentAdapter();
+        messageSendAttachmentAdapter = new MessageSendAttachmentAdapter(getActivity());
         messageAttachmentsRecycleView.setAdapter(messageSendAttachmentAdapter);
 
         initResponses();
@@ -654,6 +653,11 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         messageRequestToDraft.setSend(false);
         messageRequestToDraft.setMailbox(mailboxId);
         messageRequestToDraft.setParent(parentId);
+
+        List<MessageAttachment> attachments = messageSendAttachmentAdapter.getAttachmentsList();
+        if (attachments != null && !attachments.isEmpty()) {
+            messageRequestToDraft.setAttachments(attachments);
+        }
 
         if (!emails.isEmpty()) {
             messageRequestToDraft.setReceivers(emails);

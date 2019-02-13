@@ -71,14 +71,7 @@ public class SignInFragment extends BaseFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         setListeners();
-
-        //TextDrawable ctemplarTest = new TextDrawable("@ctemplar.com");
-
-        // editTextUsername.setCompoundDrawablesWithIntrinsicBounds(null,null, ctemplarTest, null);
-
-        // editTextUsername.setCompoundDrawablesWithIntrinsicBounds(0,0, R.drawable.ic_action_search, 0);
     }
 
     @Override
@@ -93,9 +86,15 @@ public class SignInFragment extends BaseFragment {
 
     @OnClick(R.id.fragment_sign_in_send)
     public void onClickLogin() {
-        if(isValid(editTextUsername.getText().toString(), editTextPassword.getText().toString())) {
+        String username = "";
+        String password = "";
+        if (editTextUsername.getText() != null && editTextPassword.getText() != null) {
+            username = editTextUsername.getText().toString().trim();
+            password = editTextPassword.getText().toString().trim();
+        }
+        if(isValid(username, password)) {
             loginActivityModel.showProgressDialog();
-            loginActivityModel.signIn(editTextUsername.getText().toString(), editTextPassword.getText().toString());
+            loginActivityModel.signIn(username, password);
         }
     }
 
@@ -189,10 +188,6 @@ public class SignInFragment extends BaseFragment {
             return false;
         }
 
-        if(!TextUtils.isEmpty(email) && !TextUtils.isEmpty(password) && EditTextUtils.isTextValid(email)) {
-            return true;
-        }
-
-        return false;
+        return !TextUtils.isEmpty(email) && !TextUtils.isEmpty(password) && EditTextUtils.isTextValid(email);
     }
 }

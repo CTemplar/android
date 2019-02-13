@@ -14,7 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import mobileapp.ctemplar.com.ctemplarapp.R;
-import mobileapp.ctemplar.com.ctemplarapp.contact.ContactFragment;
+import mobileapp.ctemplar.com.ctemplarapp.contacts.ContactFragment;
 import timber.log.Timber;
 
 public class MainFragment extends Fragment {

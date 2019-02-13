@@ -16,6 +16,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.request.PublicKeysRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SendMessageRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.ContactsResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.CreateAttachmentResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.DeleteAttachmentResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.KeyResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessageAttachment;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResponse;
@@ -85,6 +86,7 @@ public class SendMessageActivityViewModel extends ViewModel {
             String encryptedContent = pgpManager.encryptMessage(content, publicKeys);
             request.setContent(encryptedContent);
         }
+
         userRepository.updateMessage(id, request)
                 .subscribe(new Observer<MessagesResult>() {
                     @Override
@@ -203,6 +205,31 @@ public class SendMessageActivityViewModel extends ViewModel {
                     @Override
                     public void onError(Throwable e) {
                         uploadAttachmentStatus.postValue(ResponseStatus.RESPONSE_ERROR);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    public void deleteAttachment(long id) {
+        userRepository.deleteAttachment(id)
+                .subscribe(new Observer<DeleteAttachmentResponse>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(DeleteAttachmentResponse messageAttachment) {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
                     }
 
                     @Override

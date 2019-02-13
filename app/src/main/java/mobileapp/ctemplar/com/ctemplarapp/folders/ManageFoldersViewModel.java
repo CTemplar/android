@@ -7,15 +7,11 @@ import android.arch.lifecycle.ViewModel;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
-import mobileapp.ctemplar.com.ctemplarapp.contact.Contact;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
-import mobileapp.ctemplar.com.ctemplarapp.net.request.AddFolderRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Folders.FoldersResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Folders.FoldersResult;
 import mobileapp.ctemplar.com.ctemplarapp.repository.ManageFoldersRepository;
-import okhttp3.ResponseBody;
 import retrofit2.Response;
-import timber.log.Timber;
 
 public class ManageFoldersViewModel extends ViewModel {
 

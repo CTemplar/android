@@ -6,7 +6,6 @@ import android.arch.lifecycle.ViewModel;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
-import mobileapp.ctemplar.com.ctemplarapp.contact.Contact;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.EditFolderRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Folders.FoldersResult;

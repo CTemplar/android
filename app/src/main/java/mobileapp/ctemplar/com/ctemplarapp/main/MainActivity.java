@@ -41,13 +41,13 @@ import mobileapp.ctemplar.com.ctemplarapp.login.LoginActivity;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Folders.FoldersResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Folders.FoldersResult;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.UnreadFoldersListResponse;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import mobileapp.ctemplar.com.ctemplarapp.settings.SettingsActivity;
 import mobileapp.ctemplar.com.ctemplarapp.view.ResizeAnimation;
 import timber.log.Timber;
 
-public class MainActivity
-        extends AppCompatActivity
+public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     private static final int CUSTOM_FOLDER_STEP = 10;
     private static final int DRAWER_MAX_WIDTH = 640;
@@ -65,8 +65,6 @@ public class MainActivity
     private boolean isTablet;
 
     private MainFragment mainFragment;
-
-
     private Handler handler = new Handler();
 
     @Override
@@ -124,7 +122,20 @@ public class MainActivity
             }
         });
 
-        loadCustomFolders();
+        mainModel.getUnreadFoldersResponse().observe(this, new Observer<UnreadFoldersListResponse>() {
+            @Override
+            public void onChanged(@Nullable UnreadFoldersListResponse unreadFoldersListResponse) {
+                if (unreadFoldersListResponse != null) {
+                    TextView inboxCounter = (TextView) navigationView.getMenu().findItem(R.id.nav_inbox).getActionView();
+                    int unreadInbox = unreadFoldersListResponse.getInbox();
+                    if (unreadInbox != 0) {
+                        inboxCounter.setText(String.valueOf(unreadInbox));
+                    }
+                }
+            }
+        });
+
+        loadFolders();
 
         // default folder
         setTitle("Inbox");
@@ -316,7 +327,7 @@ public class MainActivity
             startActivity(manageFolders);
         } else if (id == R.id.nav_manage_folders_more) {
             customFoldersShowCount += CUSTOM_FOLDER_STEP;
-            loadCustomFolders();
+            loadFolders();
             closeDrawer = false;
         } else {
             for (FoldersResult folderItem :
@@ -352,11 +363,12 @@ public class MainActivity
     @Override
     protected void onResume() {
         super.onResume();
-        loadCustomFolders();
+        loadFolders();
     }
 
-    private void loadCustomFolders() {
+    private void loadFolders() {
         mainModel.getFolders(customFoldersShowCount, 0);
+        mainModel.getUnreadFoldersList();
     }
 
     private boolean isPortrait() {
@@ -444,11 +456,12 @@ public class MainActivity
         if (defaultMailbox != null) {
             Timber.i("Standard startup");
             View headerView = navigationView.getHeaderView(0);
+            navigationView.setCheckedItem(R.id.nav_inbox);
+
             TextView navUsername = headerView.findViewById(R.id.main_activity_username);
             TextView navEmail = headerView.findViewById(R.id.main_activity_email);
             navUsername.setText(defaultMailbox.displayName);
             navEmail.setText(defaultMailbox.email);
-            navigationView.setCheckedItem(R.id.nav_inbox);
         }
     }
 

@@ -112,7 +112,24 @@
             android:lines="1"
             android:text="Apr 6, 2018"
             android:textColor="@color/colorGrey"
-            android:textSize="14sp" />
+            android:textSize="14sp"/>
+
+        <TextView
+            android:id="@+id/item_message_view_expanded_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp"
+            android:paddingLeft="2dp"
+            android:paddingRight="2dp"
+            android:text="Delete in 0d"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:background="@drawable/ic_message_status_yellow"
+            android:fontFamily="@font/lato_regular"
+            android:maxLines="1"
+            android:textColor="@android:color/white"
+            android:textSize="12sp"/>
 
         <TextView
             android:id="@+id/item_message_view_expanded_details"
@@ -121,12 +138,12 @@
             android:ellipsize="end"
             android:fontFamily="@font/lato_regular"
             android:gravity="left"
-            android:layout_marginRight="20dp"
-            android:layout_marginLeft="20dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp"
             android:lines="1"
             android:text="@string/txt_hide_details"
             android:textColor="@color/colorBlue"
-            android:textSize="14sp" />
+            android:textSize="14sp"/>
 
     </LinearLayout>
 

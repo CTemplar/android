@@ -1,7 +1,6 @@
 package mobileapp.ctemplar.com.ctemplarapp.repository;
 
 import io.reactivex.Observable;
-import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.net.RestService;
@@ -9,12 +8,13 @@ import mobileapp.ctemplar.com.ctemplarapp.net.request.AddFolderRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.EditFolderRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Folders.FoldersResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Folders.FoldersResult;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.UnreadFoldersListResponse;
 import okhttp3.ResponseBody;
 import retrofit2.Response;
 
 public class ManageFoldersRepository {
 
-    RestService service;
+    private RestService service;
 
     private static ManageFoldersRepository instance = new ManageFoldersRepository();
 
@@ -28,6 +28,12 @@ public class ManageFoldersRepository {
 
     public Observable<FoldersResponse> getFoldersList(int limit, int offset) {
         return service.getFolders(limit, offset)
+                .subscribeOn(io.reactivex.schedulers.Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public Observable<UnreadFoldersListResponse> getUnreadFoldersList() {
+        return service.getUnreadFolders()
                 .subscribeOn(io.reactivex.schedulers.Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }

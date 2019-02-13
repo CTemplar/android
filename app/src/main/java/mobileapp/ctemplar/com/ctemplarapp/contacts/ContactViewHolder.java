@@ -1,4 +1,4 @@
-package mobileapp.ctemplar.com.ctemplarapp.contact;
+package mobileapp.ctemplar.com.ctemplarapp.contacts;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
