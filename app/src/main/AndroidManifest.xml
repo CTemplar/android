@@ -47,8 +47,8 @@
                 android:resource="@xml/searchable" />
         </activity>
         <activity android:name=".message.SendMessageActivity" />
-        <activity android:name=".contact.AddContactActivity" />
-        <activity android:name=".contact.EditContactActivity" />
+        <activity android:name=".contacts.AddContactActivity" />
+        <activity android:name=".contacts.EditContactActivity" />
         <activity android:name=".message.ViewMessagesActivity" />
         <activity android:name=".settings.SettingsActivity"
             android:theme="@style/PreferenceScreen"/>

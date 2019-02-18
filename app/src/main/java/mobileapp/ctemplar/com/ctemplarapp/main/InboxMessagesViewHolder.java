@@ -10,18 +10,18 @@ import mobileapp.ctemplar.com.ctemplarapp.R;
 
 public class InboxMessagesViewHolder extends RecyclerView.ViewHolder{
     public View root;
-    public TextView txtUsername;
-    public TextView txtChildren;
-    public TextView txtStatus;
-    public TextView txtDate;
-    public TextView txtSubject;
-    public TextView txtContent;
-    public ImageView imgUnread;
-    public ImageView imgProtection;
-    public ImageView imgStarred;
-    public ImageView imgAttachment;
+    TextView txtUsername;
+    TextView txtChildren;
+    TextView txtStatus;
+    TextView txtDate;
+    TextView txtSubject;
+    TextView txtContent;
+    ImageView imgUnread;
+    ImageView imgProtection;
+    ImageView imgStarred;
+    ImageView imgAttachment;
 
-    public InboxMessagesViewHolder(@NonNull View itemView) {
+    InboxMessagesViewHolder(@NonNull View itemView) {
         super(itemView);
         root = itemView;
         txtUsername = itemView.findViewById(R.id.message_holder_username);

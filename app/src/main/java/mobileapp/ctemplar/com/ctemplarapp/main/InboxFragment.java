@@ -1,5 +1,6 @@
 package mobileapp.ctemplar.com.ctemplarapp.main;
 
+import android.app.SearchManager;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
@@ -13,6 +14,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -47,6 +49,7 @@ public class InboxFragment extends BaseFragment {
     private MainActivityViewModel mainModel;
     private InboxMessagesTouchListener touchListener;
     private String currentFolder;
+    private FilterDialogFragment dialogFragment;
 
     @BindView(R.id.fragment_inbox_recycler_view)
     RecyclerView recyclerView;
@@ -84,6 +87,8 @@ public class InboxFragment extends BaseFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        dialogFragment = new FilterDialogFragment();
+        dialogFragment.setOnApplyClickListener(onFilterApplyClickListener);
     }
 
     @Override
@@ -151,16 +156,28 @@ public class InboxFragment extends BaseFragment {
                     || currentFolder.equals("draft"));
         }
 
-//        MenuItem searchItem = menu.findItem(R.id.action_search);
-//        SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
-//
-//        SearchView searchView = null;
-//        if (searchItem != null) {
-//            searchView = (SearchView) searchItem.getActionView();
-//        }
-//        if (searchView != null) {
-//            searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
-//        }
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
+
+        SearchView searchView = null;
+        if (searchItem != null) {
+            searchView = (SearchView) searchItem.getActionView();
+        }
+        if (searchView != null) {
+            searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
+            searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                @Override
+                public boolean onQueryTextSubmit(String s) {
+                    return false;
+                }
+
+                @Override
+                public boolean onQueryTextChange(String s) {
+                    adapter.filter(s);
+                    return false;
+                }
+            });
+        }
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -173,9 +190,9 @@ public class InboxFragment extends BaseFragment {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_filter) {
-            FilterDialogFragment dialogFragment = new FilterDialogFragment();
-            dialogFragment.setOnApplyClickListener(onFilterApplyClickListener);
-            dialogFragment.show(getFragmentManager(), null);
+            if (getFragmentManager() != null) {
+                dialogFragment.show(getFragmentManager(), null);
+            }
             return true;
         } else if (id == R.id.action_search) {
             return true;

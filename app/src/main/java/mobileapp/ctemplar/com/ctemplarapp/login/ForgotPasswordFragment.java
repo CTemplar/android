@@ -1,6 +1,5 @@
 package mobileapp.ctemplar.com.ctemplarapp.login;
 
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
@@ -11,8 +10,6 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
-import android.widget.Button;
-import android.widget.Toast;
 
 import butterknife.BindInt;
 import butterknife.BindView;
@@ -20,10 +17,6 @@ import butterknife.OnClick;
 import mobileapp.ctemplar.com.ctemplarapp.BaseFragment;
 import mobileapp.ctemplar.com.ctemplarapp.LoginActivityActions;
 import mobileapp.ctemplar.com.ctemplarapp.R;
-import mobileapp.ctemplar.com.ctemplarapp.login.step.StepRegistrationActions;
-import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
-import mobileapp.ctemplar.com.ctemplarapp.net.request.RecoverPasswordRequest;
-import mobileapp.ctemplar.com.ctemplarapp.utils.DialogUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 
 public class ForgotPasswordFragment extends BaseFragment {

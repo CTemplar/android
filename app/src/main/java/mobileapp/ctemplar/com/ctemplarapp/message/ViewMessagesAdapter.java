@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.TextUtils;
 import android.util.Base64;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +27,7 @@ import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.main.AttachmentProvider;
 import mobileapp.ctemplar.com.ctemplarapp.main.MessageProvider;
+import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
 import timber.log.Timber;
 
 public class ViewMessagesAdapter extends BaseAdapter {
@@ -54,7 +56,7 @@ public class ViewMessagesAdapter extends BaseAdapter {
     }
 
     private View getViewByFlag(LayoutInflater inflater, ViewGroup parent, MessageProvider messageData, boolean isLast) {
-        View view = inflater.inflate(R.layout.item_message_view_selector, parent, false);
+        final View view = inflater.inflate(R.layout.item_message_view_selector, parent, false);
 
         final View collapsedView = view.findViewById(R.id.collappsed);
         final View expandedView = view.findViewById(R.id.expanded);
@@ -101,6 +103,7 @@ public class ViewMessagesAdapter extends BaseAdapter {
         senderTextView = view.findViewById(R.id.item_message_view_expanded_sender_name);
         TextView receiverTextView = view.findViewById(R.id.item_message_view_expanded_receiver_name);
         TextView dateTextView = view.findViewById(R.id.item_message_view_expanded_date);
+        TextView statusTextView = view.findViewById(R.id.item_message_view_expanded_status);
         final TextView detailsTextView = view.findViewById(R.id.item_message_view_expanded_details);
         TextView senderNameTextView = view.findViewById(R.id.item_message_view_from_name);
         TextView senderEmailTextView = view.findViewById(R.id.item_message_view_from_email);
@@ -121,11 +124,11 @@ public class ViewMessagesAdapter extends BaseAdapter {
                 if (credentialsVisibility == View.VISIBLE) {
                     expandedCredentialsLayout.setVisibility(View.GONE);
                     credentialsDivider.setVisibility(View.GONE);
-                    detailsTextView.setText("View details");
+                    detailsTextView.setText(view.getContext().getResources().getText(R.string.txt_hide_details));
                 } else {
                     expandedCredentialsLayout.setVisibility(View.VISIBLE);
                     credentialsDivider.setVisibility(View.VISIBLE);
-                    detailsTextView.setText("Hide details");
+                    detailsTextView.setText(view.getContext().getResources().getText(R.string.txt_view_details));
                 }
             }
         });
@@ -138,18 +141,35 @@ public class ViewMessagesAdapter extends BaseAdapter {
         }
         dateTextView.setText(getStringDate(messageData.getCreatedAt()));
 
+        // check for status (time delete, delayed delivery)
+        if (!TextUtils.isEmpty(messageData.getDelayedDelivery())) {
+            String leftTime = AppUtils.leftTime(messageData.getDelayedDelivery());
+            statusTextView.setText(view.getResources().getString(R.string.txt_left_time_delay_delivery, leftTime));
+            statusTextView.setBackgroundColor(view.getResources().getColor(R.color.colorDarkGreen));
+        } else if (!TextUtils.isEmpty(messageData.getDestructDate())) {
+            String leftTime = AppUtils.leftTime(messageData.getDestructDate());
+            statusTextView.setText(view.getResources().getString(R.string.txt_left_time_destruct, leftTime));
+        } else {
+            statusTextView.setVisibility(View.GONE);
+        }
+
         String[] sender = new String[] { messageData.getSender() };
         senderEmailTextView.setText(addQuotesToNames(sender));
+
         if (messageData.getReceivers() != null) {
             receiverEmailTextView.setText(addQuotesToNames(messageData.getReceivers()));
         }
 
         String[] cc = messageData.getCc();
-        if (cc != null) {
+        if (cc != null && cc.length > 0) {
             ccEmailTextView.setText(addQuotesToNames(messageData.getCc()));
         } else {
             ccLayout.setVisibility(View.GONE);
         }
+
+        senderNameTextView.setText("");
+        receiverNameTextView.setText("");
+        ccNameTextView.setText("");
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             contentWebView.setLayerType(View.LAYER_TYPE_HARDWARE, null);

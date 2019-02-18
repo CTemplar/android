@@ -1,4 +1,4 @@
-package mobileapp.ctemplar.com.ctemplarapp.contact;
+package mobileapp.ctemplar.com.ctemplarapp.contacts;
 
 import android.app.Activity;
 import android.arch.lifecycle.Observer;
@@ -14,10 +14,13 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -48,6 +51,9 @@ public class ContactFragment extends BaseFragment {
     @BindView(R.id.fragment_contact_add_layout)
     FrameLayout frameCompose;
 
+    @BindView(R.id.fragment_contact_search)
+    EditText searchEditText;
+
     private ContactAdapter adapter;
 
     private MainActivityViewModel mainModel;
@@ -68,13 +74,30 @@ public class ContactFragment extends BaseFragment {
         super.onViewCreated(view, savedInstanceState);
         setHasOptionsMenu(true);
 
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
+        LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(mLayoutManager);
         setupSwiperForRecyclerView();
 
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
-                ((LinearLayoutManager) mLayoutManager).getOrientation());
+                mLayoutManager.getOrientation());
         recyclerView.addItemDecoration(dividerItemDecoration);
+
+        searchEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                adapter.filter(s.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
 
         mainModel = ViewModelProviders.of(getActivity()).get(MainActivityViewModel.class);
         mainModel.getContactsResponse()

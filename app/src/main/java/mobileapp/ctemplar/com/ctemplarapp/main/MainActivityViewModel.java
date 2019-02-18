@@ -13,7 +13,7 @@ import io.reactivex.disposables.Disposable;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.DialogState;
 import mobileapp.ctemplar.com.ctemplarapp.SingleLiveEvent;
-import mobileapp.ctemplar.com.ctemplarapp.contact.Contact;
+import mobileapp.ctemplar.com.ctemplarapp.contacts.Contact;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SignInRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.ContactData;
@@ -22,6 +22,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.Folders.FoldersResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Mailboxes.MailboxesResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResult;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.UnreadFoldersListResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.SignInResponse;
 import mobileapp.ctemplar.com.ctemplarapp.repository.ContactsRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.ManageFoldersRepository;
@@ -50,6 +51,7 @@ public class MainActivityViewModel extends ViewModel {
     MutableLiveData<String> currentFolder = new MutableLiveData<>();
     MutableLiveData<SignInResponse> signResponse = new MutableLiveData<>();
     MutableLiveData<FoldersResponse> foldersResponse = new MutableLiveData<>();
+    MutableLiveData<UnreadFoldersListResponse> unreadFoldersResponse = new MutableLiveData<>();
 
     public MainActivityViewModel() {
         userRepository = CTemplarApp.getUserRepository();
@@ -456,11 +458,40 @@ public class MainActivityViewModel extends ViewModel {
                 });
     }
 
+    public void getUnreadFoldersList() {
+        manageFoldersRepository.getUnreadFoldersList()
+                .subscribe(new Observer<UnreadFoldersListResponse>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(UnreadFoldersListResponse unreadFoldersListResponse) {
+                        unreadFoldersResponse.postValue(unreadFoldersListResponse);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
     public LiveData<ResponseStatus> getToFolderStatus() {
         return toFolderStatus;
     }
 
-    public MutableLiveData<FoldersResponse> getFoldersResponse() {
+    MutableLiveData<FoldersResponse> getFoldersResponse() {
         return foldersResponse;
+    }
+
+    MutableLiveData<UnreadFoldersListResponse> getUnreadFoldersResponse() {
+        return unreadFoldersResponse;
     }
 }

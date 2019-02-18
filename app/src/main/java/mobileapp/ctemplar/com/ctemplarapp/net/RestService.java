@@ -18,7 +18,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.request.SignUpRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.CheckUsernameResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.ContactData;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.ContactsResponse;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.CreateAttachmentResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.DeleteAttachmentResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Folders.FoldersResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Folders.FoldersResult;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.KeyResponse;
@@ -26,6 +26,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.Mailboxes.MailboxesRespon
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessageAttachment;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResult;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.UnreadFoldersListResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.RecoverPasswordResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.SignInResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.SignUpResponse;
@@ -70,6 +71,9 @@ public interface RestService {
     @POST("/emails/attachments/create/")
     Observable<MessageAttachment> uploadAttachment(@Part MultipartBody.Part document, @Part("message") long message);
 
+    @DELETE("/emails/attachments/{id}/")
+    Observable<DeleteAttachmentResponse> deleteAttachment(@Path("id") long id);
+
     @GET("/emails/messages/")
     Observable<MessagesResponse> getMessages(@Query("limit") int limit, @Query("offset") int offset, @Query("folder") String folder);
 
@@ -99,6 +103,9 @@ public interface RestService {
 
     @GET("/emails/custom-folder/")
     Observable<FoldersResponse> getFolders(@Query("limit") int limit, @Query("offset") int offset);
+
+    @GET("/emails/unread/")
+    Observable<UnreadFoldersListResponse> getUnreadFolders();
 
     @POST("/emails/custom-folder/")
     Observable<ResponseBody> addFolder(@Body AddFolderRequest request);

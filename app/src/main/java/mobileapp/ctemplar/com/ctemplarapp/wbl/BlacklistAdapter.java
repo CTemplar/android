@@ -77,6 +77,9 @@ public class BlacklistAdapter extends RecyclerView.Adapter<BlacklistAdapter.Data
     }
 
     public void restoreItem(BlackListContact contact, int position) {
+        if (contactsList.contains(contact)) {
+            return;
+        }
         contactsList.add(position, contact);
         filteredList.add(position, contact);
         notifyItemInserted(position);

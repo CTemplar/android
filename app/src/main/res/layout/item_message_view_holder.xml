@@ -66,6 +66,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
+                android:layout_marginStart="8dp"
                 android:background="@drawable/ic_message_children"
                 android:ellipsize="end"
                 android:gravity="center"
@@ -79,11 +80,18 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
+                android:layout_marginStart="8dp"
+                android:paddingLeft="2dp"
+                android:paddingRight="2dp"
+                android:text="Delete in 0d"
+                android:ellipsize="end"
+                android:gravity="center"
                 android:background="@drawable/ic_message_status_yellow"
                 android:fontFamily="@font/lato_regular"
                 android:maxLines="1"
                 android:textColor="@android:color/white"
-                android:textSize="9sp" />
+                android:textSize="12sp"/>
+
         </LinearLayout>
 
         <LinearLayout

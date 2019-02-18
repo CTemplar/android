@@ -85,7 +85,7 @@
             android:id="@+id/activity_add_blacklist_contact_email_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/title_contact_name"
+            android:text="@string/title_contact_email"
             android:fontFamily="@font/lato_regular"
             android:textColor="@color/colorDarkBlue"
             android:textSize="14sp" />
