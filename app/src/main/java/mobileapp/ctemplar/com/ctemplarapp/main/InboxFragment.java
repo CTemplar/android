@@ -344,7 +344,7 @@ public class InboxFragment extends BaseFragment {
                 recyclerView.removeOnItemTouchListener(touchListener);
             }
             touchListener = new InboxMessagesTouchListener(getActivity(), recyclerView);
-            if (currentFolder.equals("draft")) {
+            if (currentFolder != null && currentFolder.equals("draft")) {
                 touchListener.setSwipeOptionViews(R.id.item_message_view_holder_delete);
             } else {
                 touchListener.setSwipeOptionViews(R.id.item_message_view_holder_spam, R.id.item_message_view_holder_move, R.id.item_message_view_holder_delete);

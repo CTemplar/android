@@ -19,6 +19,10 @@ public class FilterDialogFragment extends DialogFragment {
 
     private OnApplyClickListener onApplyClickListener;
 
+    interface OnApplyClickListener {
+        void onApply(boolean isStarred, boolean isUnread, boolean withAttachment);
+    }
+
     public void setOnApplyClickListener(OnApplyClickListener onApplyClickListener) {
         this.onApplyClickListener = onApplyClickListener;
     }
@@ -86,9 +90,4 @@ public class FilterDialogFragment extends DialogFragment {
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         return new Dialog(this.getActivity(), R.style.DialogAnimation);
     }
-
-    interface OnApplyClickListener {
-        void onApply(boolean isStarred, boolean isUnread, boolean withAttachment);
-    }
-
 }

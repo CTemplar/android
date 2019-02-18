@@ -318,66 +318,75 @@
             android:layout_height="match_parent">
 
             <ImageView
+                android:id="@+id/fragment_send_message_attachment_ico"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_attachment_small"
+                android:src="@drawable/ic_message_attachment_selector"
                 android:layout_centerInParent="true"
                 android:contentDescription="Attach" />
 
         </RelativeLayout>
 
         <RelativeLayout
+            android:id="@+id/fragment_send_message_encrypt_layout"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="match_parent">
 
             <ImageView
+                android:id="@+id/fragment_send_message_encrypt_ico"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:src="@drawable/ic_mail_outline"
+                android:src="@drawable/ic_encrypt_message_selector"
                 android:contentDescription="Secure email" />
 
         </RelativeLayout>
 
         <RelativeLayout
+            android:id="@+id/fragment_send_message_destruct_layout"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="match_parent">
 
             <ImageView
+                android:id="@+id/fragment_send_message_destruct_ico"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:contentDescription="Delete"
-                android:src="@drawable/ic_self_distruction_timer" />
+                android:src="@drawable/ic_destruct_timer_selector" />
 
         </RelativeLayout>
 
         <RelativeLayout
+            android:id="@+id/fragment_send_message_delayed_layout"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="match_parent">
 
             <ImageView
+                android:id="@+id/fragment_send_message_delayed_ico"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:contentDescription="Delayed delivery"
-                android:src="@drawable/ic_delayed_delivery" />
+                android:src="@drawable/ic_delayed_delivery_selector" />
 
         </RelativeLayout>
 
         <RelativeLayout
+            android:id="@+id/fragment_send_message_dead_layout"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="match_parent">
 
             <ImageView
+                android:id="@+id/fragment_send_message_dead_ico"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:src="@drawable/ic_dead_man_s_timer"
+                android:src="@drawable/ic_dead_mans_selector"
                 android:contentDescription="Dead" />
         </RelativeLayout>
 

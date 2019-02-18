@@ -7,6 +7,7 @@
         android:title="General settings">
 
         <PreferenceScreen
+            android:key="@string/recovery_email_holder"
             android:title="Recovery email">
 
             <CheckBoxPreference
@@ -43,7 +44,7 @@
 
             <SwitchPreference
                 android:title="Automatically save contacts"
-                android:key="auto_save_contacts_enabled" />
+                android:key="@string/auto_save_contacts_enabled" />
 
         </PreferenceScreen>
 
@@ -129,6 +130,7 @@
         </Preference>
 
         <Preference
+            android:key="@string/local_storage_limit"
             android:title="Local storage limit"
             android:summary="826KB of 500MB" />
 

@@ -14,6 +14,7 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.entity.AttachmentEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MessageEntity;
 import mobileapp.ctemplar.com.ctemplarapp.utils.PGPManager;
+import timber.log.Timber;
 
 public class MessageProvider {
 
@@ -247,7 +248,17 @@ public class MessageProvider {
 //    private MessagesResult[] children;
 
     private static MailboxEntity getCurrentMailbox() {
-        return CTemplarApp.getAppDatabase().mailboxDao().getDefault();
+        if (CTemplarApp.getAppDatabase().mailboxDao().getDefault() != null) {
+            return CTemplarApp.getAppDatabase().mailboxDao().getDefault();
+        } else {
+            Timber.e("Default mailbox is null");
+            if (!CTemplarApp.getAppDatabase().mailboxDao().getAll().isEmpty()) {
+                return CTemplarApp.getAppDatabase().mailboxDao().getAll().get(0);
+            } else {
+                Timber.e("Mailbox not found");
+            }
+        }
+        return null;
     }
 
     private static String decryptContent(String content) {
@@ -256,9 +267,12 @@ public class MessageProvider {
                         .getString("key_password", null);
 
         PGPManager pgpManager = new PGPManager();
-        String privateKey = getCurrentMailbox().getPrivateKey();
         String messageContent = "";
-        if (content != null && privateKey != null && password != null) {
+        String privateKey = null;
+        if (getCurrentMailbox() != null){
+            privateKey = getCurrentMailbox().getPrivateKey();
+        }
+        if (password != null && content != null && privateKey != null) {
             messageContent = pgpManager.decryptMessage(content, privateKey, password);
         }
         return messageContent.replaceAll("<img.+?>", "");

@@ -12,7 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import mobileapp.ctemplar.com.ctemplarapp.R;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.WhiteListContact;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.WhiteListContact;
 
 public class WhitelistAdapter extends RecyclerView.Adapter<WhitelistAdapter.DataViewHolder> {
 

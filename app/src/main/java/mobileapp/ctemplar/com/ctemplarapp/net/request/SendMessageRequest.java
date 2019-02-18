@@ -2,6 +2,7 @@ package mobileapp.ctemplar.com.ctemplarapp.net.request;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessageAttachment;
@@ -17,8 +18,26 @@ public class SendMessageRequest {
     @SerializedName("content")
     private String content;
 
+    @SerializedName("receiver")
+    private List<String> receivers;
+
+    @SerializedName("cc")
+    private List<String> cc;
+
+    @SerializedName("bcc")
+    private List<String> bcc;
+
     @SerializedName("folder")
     private String folder;
+
+    @SerializedName("destruct_date")
+    private String destructDate;
+
+    @SerializedName("delayed_delivery")
+    private String delayedDelivery;
+
+    @SerializedName("dead_man_duration")
+    private long deadManDuration;
 
     @SerializedName("send")
     private boolean send;
@@ -26,14 +45,11 @@ public class SendMessageRequest {
     @SerializedName("is_encrypted")
     private boolean isEncrypted;
 
-    @SerializedName("parent")
-    private Long parent;
-
     @SerializedName("mailbox")
     private long mailbox;
 
-    @SerializedName("receiver")
-    private List<String> receivers;
+    @SerializedName("parent")
+    private Long parent;
 
     @SerializedName("attachments")
     private List<MessageAttachment> attachments;
@@ -42,9 +58,18 @@ public class SendMessageRequest {
 
     }
 
-    public SendMessageRequest(String sender, String content, String folder, long mailbox) {
+    public SendMessageRequest(String sender,
+                              String content,
+                              ArrayList<String> receivers,
+                              ArrayList<String> cc,
+                              ArrayList<String> bcc,
+                              String folder,
+                              long mailbox) {
         this.sender = sender;
         this.content = content;
+        this.receivers = receivers;
+        this.cc = cc;
+        this.bcc = bcc;
         this.folder = folder;
         this.mailbox = mailbox;
     }
@@ -127,5 +152,45 @@ public class SendMessageRequest {
 
     public void setAttachments(List<MessageAttachment> attachments) {
         this.attachments = attachments;
+    }
+
+    public List<String> getCc() {
+        return cc;
+    }
+
+    public void setCc(List<String> cc) {
+        this.cc = cc;
+    }
+
+    public List<String> getBcc() {
+        return bcc;
+    }
+
+    public void setBcc(List<String> bcc) {
+        this.bcc = bcc;
+    }
+
+    public String getDelayedDelivery() {
+        return delayedDelivery;
+    }
+
+    public void setDelayedDelivery(String delayedDelivery) {
+        this.delayedDelivery = delayedDelivery;
+    }
+
+    public String getDestructDate() {
+        return destructDate;
+    }
+
+    public void setDestructDate(String destructDate) {
+        this.destructDate = destructDate;
+    }
+
+    public long getDeadManDuration() {
+        return deadManDuration;
+    }
+
+    public void setDeadManDuration(long deadManDuration) {
+        this.deadManDuration = deadManDuration;
     }
 }
