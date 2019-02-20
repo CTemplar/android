@@ -8,8 +8,7 @@ import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.BlackListContact;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.WhiteListContact;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.WhiteListContact;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
 import timber.log.Timber;
 

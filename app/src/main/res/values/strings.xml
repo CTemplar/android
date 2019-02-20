@@ -106,8 +106,18 @@ If you have further questions please email <![CDATA[<u><a href="mailto:support@c
     <string name="txt_loading">Loading...</string>
     <string name="txt_add_contact">Add contact</string>
     <string name="txt_edit_contact">Edit contact</string>
+
+    <!-- COMPOSE OPTIONS -->
     <string name="txt_left_time_destruct">Delete in %1$s</string>
-    <string name="txt_left_time_delay_delivery">Delay delivery in %1$s</string>
+    <string name="txt_left_time_delay_delivery">Delay in %1$s</string>
+    <string name="txt_destruct_message_title">Self-destructing Timer</string>
+    <string name="txt_dead_mans_title">Dead Man\'s Timer</string>
+    <string name="txt_delayed_message_title">Delayed delivery</string>
+    <string name="txt_delayed_message_summary">Email will be send automatically at the set time</string>
+    <string name="txt_destruct_message_summary">This email deletes itself from the receivers account after</string>
+    <string name="txt_dead_mans_summary">If you do not log into your account after the set time email will be sent after</string>
+    <string name="txt_schedule">Schedule</string>
+    <string name="txt_selected_datetime_is_past">Selected datetime is in past</string>
 
     <!-- VIEW MESSAGES -->
     <string name="txt_hide_details">View details</string>
@@ -231,6 +241,11 @@ If you have further questions please email <![CDATA[<u><a href="mailto:support@c
     <string name="mobile_signature_enabled">mobile_signature_enabled</string>
     <string name="mobile_signature">mobile_signature</string>
     <string name="email_addresses">email_addresses</string>
+    <string name="local_storage_limit">local_storage_limit</string>
+    <string name="recovery_email_holder">recovery_email_holder</string>
+    <string name="auto_save_contacts_enabled">auto_save_contacts_enabled</string>
+    <string name="setting_id">setting_id</string>
+    <string name="storage_limit_info">%1$s of %2$s</string>
 
     <string-array name="languages">
         <item>Dutch</item>

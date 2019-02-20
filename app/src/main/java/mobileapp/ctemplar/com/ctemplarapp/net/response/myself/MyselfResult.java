@@ -1,4 +1,4 @@
-package mobileapp.ctemplar.com.ctemplarapp.net.response.myself;
+package mobileapp.ctemplar.com.ctemplarapp.net.response.Myself;
 
 import com.google.gson.annotations.SerializedName;
 

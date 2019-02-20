@@ -1,12 +1,17 @@
 package mobileapp.ctemplar.com.ctemplarapp.settings;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
+import android.preference.PreferenceManager;
+import android.preference.PreferenceScreen;
+import android.preference.SwitchPreference;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -14,12 +19,21 @@ import android.widget.Toast;
 import java.util.Arrays;
 import java.util.List;
 
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.folders.ManageFoldersActivity;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.AutoSaveContactEnabledRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.RecoveryEmailRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.MyselfResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.SettingsEntity;
+import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
+import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 import mobileapp.ctemplar.com.ctemplarapp.wbl.WhiteBlackListActivity;
+import timber.log.Timber;
 
 public class SettingsActivity extends AppCompatPreferenceActivity {
 
@@ -36,10 +50,22 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     }
 
     public static class MainPreferenceFragment extends PreferenceFragment {
+        private UserRepository userRepository = CTemplarApp.getUserRepository();
+
+        private EditTextPreference preferenceRecoveryEmail;
+        private Preference localStorageLimitPreference;
+        private PreferenceScreen recoveryEmailHolder;
+        private SwitchPreference autoSaveContactsEnabledPreference;
+
         @Override
         public void onCreate(final Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
+
+            requestData();
+
             addPreferencesFromResource(R.xml.settings_screen);
+
+            recoveryEmailHolder = (PreferenceScreen) findPreference(getString(R.string.recovery_email_holder));
 
             Preference passwordKey = findPreference(getString(R.string.password_key));
             passwordKey.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
@@ -68,15 +94,17 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 }
             });
 
-            final EditTextPreference preferenceRecoveryEmail = (EditTextPreference) findPreference(getString(R.string.recovery_email));
+            preferenceRecoveryEmail = (EditTextPreference) findPreference(getString(R.string.recovery_email));
             if (preferenceRecoveryEmail.getText() != null && !preferenceRecoveryEmail.getText().isEmpty()) {
                 preferenceRecoveryEmail.setTitle(preferenceRecoveryEmail.getText());
+                recoveryEmailHolder.setSummary(preferenceRecoveryEmail.getText());
             }
             preferenceRecoveryEmail.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
                     String value = (String) newValue;
                     if (EditTextUtils.isEmailValid(value)) {
+                        updateRecoveryEmail(value);
                         preferenceRecoveryEmail.setTitle((String) newValue);
                         Toast.makeText(getActivity(), getResources().getString(R.string.toast_recovery_email_changed), Toast.LENGTH_SHORT).show();
                         return true;
@@ -169,6 +197,137 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 }
                 listPreferenceAddresses.setValueIndex(index);
             }
+
+            autoSaveContactsEnabledPreference = (SwitchPreference) findPreference(getString(R.string.auto_save_contacts_enabled));
+            autoSaveContactsEnabledPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    boolean value = (boolean) newValue;
+                    updateAutoSaveEnabled(value);
+                    return true;
+                }
+            });
+            localStorageLimitPreference = findPreference(getString(R.string.local_storage_limit));
+        }
+
+        private void updateAutoSaveEnabled(boolean isEnabled) {
+            long settingId = getSettingId();
+            if (settingId == -1) {
+                Timber.e("Setting id is not defined");
+                return;
+            }
+
+            AutoSaveContactEnabledRequest request = new AutoSaveContactEnabledRequest(isEnabled);
+            userRepository.updateAutoSaveEnabled(settingId, request)
+                    .subscribe(new Observer<SettingsEntity>() {
+                        @Override
+                        public void onSubscribe(Disposable d) {
+                            Timber.i("Updating auto save contact");
+                        }
+
+                        @Override
+                        public void onNext(SettingsEntity settingsEntity) {
+                            Timber.i("Auto save contact updated");
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            Timber.e(e);
+                        }
+
+                        @Override
+                        public void onComplete() {
+
+                        }
+                    });
+        }
+
+        private long getSettingId() {
+            SharedPreferences defaultPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
+            return defaultPreferences.getLong(getString(R.string.setting_id), -1);
+        }
+
+        private void setSettingId(long id) {
+            SharedPreferences defaultPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
+            defaultPreferences.edit().putLong(getString(R.string.setting_id), id).apply();
+        }
+
+        private void updateRecoveryEmail(String newRecoveryEmail) {
+            long settingId = getSettingId();
+            if (settingId == -1) {
+                Timber.e("Setting id is not defined");
+                return;
+            }
+
+            RecoveryEmailRequest request = new RecoveryEmailRequest(newRecoveryEmail);
+            userRepository.updateRecoveryEmail(settingId, request)
+                    .subscribe(new Observer<SettingsEntity>() {
+                        @Override
+                        public void onSubscribe(Disposable d) {
+                            Timber.i("Updating recovery email");
+                        }
+
+                        @Override
+                        public void onNext(SettingsEntity settingsEntity) {
+                            Timber.i("Recovery email updated");
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            Timber.e(e);
+                        }
+
+                        @Override
+                        public void onComplete() {
+
+                        }
+                    });
+        }
+
+        private void requestData() {
+            userRepository.getMyselfInfo()
+                    .subscribe(new Observer<MyselfResponse>() {
+                        @Override
+                        public void onSubscribe(Disposable d) {
+                            Timber.i("Request myself info");
+                        }
+
+                        @Override
+                        public void onNext(MyselfResponse myselfResponse) {
+                            if (myselfResponse.result != null && myselfResponse.result.length > 0) {
+                                SettingsEntity settings = myselfResponse.result[0].settings;
+                                setSettingId(settings.id);
+                                updateData(settings);
+                            }
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            Timber.e(e);
+                        }
+
+                        @Override
+                        public void onComplete() {
+
+                        }
+                    });
+        }
+
+        private void updateData(SettingsEntity settingsEntity) {
+            localStorageLimitPreference.setSummary(getString(R.string.storage_limit_info,
+                    AppUtils.usedStorage(settingsEntity.getUsedStorage()),
+                    AppUtils.usedStorage(settingsEntity.getAllocatedStorage())));
+
+            String recoveryEmail = settingsEntity.recoveryEmail;
+            if (!recoveryEmail.isEmpty()) {
+                preferenceRecoveryEmail.setText(recoveryEmail);
+                preferenceRecoveryEmail.setTitle(recoveryEmail);
+                recoveryEmailHolder.setSummary(recoveryEmail);
+            }
+
+            autoSaveContactsEnabledPreference.setChecked(settingsEntity.saveContacts);
+
+
         }
     }
 

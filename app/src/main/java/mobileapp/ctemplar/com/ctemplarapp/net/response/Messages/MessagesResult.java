@@ -51,7 +51,7 @@ public class MessagesResult {
     @SerializedName("destruct_date")
     private String destructDate;
 
-    @SerializedName("ic_delayed_delivery")
+    @SerializedName("delayed_delivery")
     private String delayedDelivery;
 
     @SerializedName("dead_man_duration")

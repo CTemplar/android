@@ -11,7 +11,7 @@
             android:id="@+id/nav_inbox"
             android:icon="@drawable/ic_drawer_inbox"
             android:title="@string/nav_drawer_inbox"
-            app:actionLayout="@layout/menu_message_counter"/>
+            app:actionLayout="@layout/menu_message_counter" />
         <item
             android:id="@+id/nav_draft"
             android:icon="@drawable/ic_drawer_draft"
@@ -23,7 +23,8 @@
         <item
             android:id="@+id/nav_outbox"
             android:icon="@drawable/ic_drawer_outbox"
-            android:title="@string/nav_drawer_outbox" />
+            android:title="@string/nav_drawer_outbox"
+            app:actionLayout="@layout/menu_message_counter" />
         <item
             android:id="@+id/nav_starred"
             android:icon="@drawable/ic_drawer_star"

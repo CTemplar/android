@@ -12,7 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import mobileapp.ctemplar.com.ctemplarapp.R;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.BlackListContact;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.BlackListContact;
 
 public class BlacklistAdapter extends RecyclerView.Adapter<BlacklistAdapter.DataViewHolder> {
     private List<BlackListContact> contactsList;

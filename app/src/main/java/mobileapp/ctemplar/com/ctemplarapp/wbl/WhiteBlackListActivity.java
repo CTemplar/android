@@ -31,8 +31,8 @@ import android.widget.EditText;
 import mobileapp.ctemplar.com.ctemplarapp.BaseActivity;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.main.RecycleDeleteSwiper;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.BlackListContact;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.WhiteListContact;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.BlackListContact;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.WhiteListContact;
 
 public class WhiteBlackListActivity extends BaseActivity {
 

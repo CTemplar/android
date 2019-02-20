@@ -26,6 +26,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -126,10 +127,18 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onChanged(@Nullable UnreadFoldersListResponse unreadFoldersListResponse) {
                 if (unreadFoldersListResponse != null) {
-                    TextView inboxCounter = (TextView) navigationView.getMenu().findItem(R.id.nav_inbox).getActionView();
-                    int unreadInbox = unreadFoldersListResponse.getInbox();
-                    if (unreadInbox != 0) {
-                        inboxCounter.setText(String.valueOf(unreadInbox));
+                    Menu navigationMenu = navigationView.getMenu();
+                    TextView inboxCounter = (TextView) navigationMenu.findItem(R.id.nav_inbox).getActionView();
+                    TextView outboxCounter = (TextView) navigationMenu.findItem(R.id.nav_outbox).getActionView();
+
+                    int inboxUnread = unreadFoldersListResponse.getInbox();
+                    int outboxDelayed = unreadFoldersListResponse.getOutboxDelayedDeliveryCounter();
+
+                    if (inboxUnread > 0) {
+                        inboxCounter.setText(String.valueOf(inboxUnread));
+                    }
+                    if (outboxDelayed > 0) {
+                        outboxCounter.setText(String.valueOf(outboxDelayed));
                     }
                 }
             }

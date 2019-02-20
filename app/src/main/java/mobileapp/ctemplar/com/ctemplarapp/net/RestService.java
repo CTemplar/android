@@ -2,8 +2,10 @@ package mobileapp.ctemplar.com.ctemplarapp.net;
 
 import javax.inject.Singleton;
 
+import io.reactivex.Flowable;
 import io.reactivex.Observable;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.AddFolderRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.AutoSaveContactEnabledRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.ChangePasswordRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.CheckUsernameRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.EditFolderRequest;
@@ -12,7 +14,9 @@ import mobileapp.ctemplar.com.ctemplarapp.net.request.MarkMessageIsStarredReques
 import mobileapp.ctemplar.com.ctemplarapp.net.request.MoveToFolderRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.PublicKeysRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.RecoverPasswordRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.RecoveryEmailRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SendMessageRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.SettingsRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SignInRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SignUpRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.CheckUsernameResponse;
@@ -27,12 +31,13 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessageAttachmen
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResult;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.UnreadFoldersListResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.SettingsEntity;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.RecoverPasswordResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.SignInResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.SignUpResponse;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.BlackListContact;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.MyselfResponse;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.WhiteListContact;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.BlackListContact;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.MyselfResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.WhiteListContact;
 import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
 import retrofit2.Response;
@@ -131,6 +136,9 @@ public interface RestService {
     @PATCH("/emails/messages/{id}/")
     Observable<MessagesResult> updateMessage(@Path("id") long id, @Body SendMessageRequest request);
 
+    @PATCH("/users/settings/{id}/")
+    Observable<ResponseBody> updateSettings(@Path("id") long id, @Body SettingsRequest request);
+
     @GET("/users/contacts/")
     Observable<ContactsResponse> getContacts(@Query("limit") int limit, @Query("offset") int offset, @Query("id__in") String id__in);
 
@@ -161,4 +169,10 @@ public interface RestService {
 
     @POST("/users/whitelist/")
     Observable<WhiteListContact> addWhitelistContact(@Body WhiteListContact contact);
+
+    @PATCH("/users/settings/{id}/")
+    Observable<SettingsEntity> updateRecoveryEmail(@Path("id") long settingId, @Body RecoveryEmailRequest body);
+
+    @PATCH("/users/settings/{id}/")
+    Observable<SettingsEntity> updateAutoSaveEnabled(@Path("id") long settingId, @Body AutoSaveContactEnabledRequest request);
 }

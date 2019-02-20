@@ -4,9 +4,6 @@ import android.text.TextUtils;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.security.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -20,6 +17,29 @@ public class AppUtils {
 
     private static String DATE_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
     private static String LEFT_DATE_PATTERN = "yyyy-MM-dd'T'HH:mm:ss'Z'";
+
+    public static String datetimeForServer(long timeInMillis) {
+        DateFormat standardFormat = new SimpleDateFormat(DATE_PATTERN, Locale.getDefault());
+        return standardFormat.format(timeInMillis);
+    }
+
+    public static String dateFormat(long timeInMillis) {
+        DateFormat dateFormat = new SimpleDateFormat("E, dd MMM yyyy", Locale.getDefault());
+        return dateFormat.format(timeInMillis);
+    }
+
+    public static String timeFormat(long timeInMillis) {
+        DateFormat timeFormat = new SimpleDateFormat("h:mm aa", Locale.getDefault());
+        return timeFormat.format(timeInMillis);
+    }
+
+    public static String usedStorage(long volume) {
+        if (volume > 1024) {
+            return String.format(Locale.getDefault(), "%.2f", ((double) volume / 1024)) + "MB";
+        } else {
+            return String.format(Locale.getDefault(), "%.2d",volume) + "KB";
+        }
+    }
 
     public static String leftTime(String stringDate) {
         if (!TextUtils.isEmpty(stringDate)) {
