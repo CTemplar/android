@@ -247,7 +247,7 @@ public class MessageProvider {
     }
 //    private MessagesResult[] children;
 
-    private static MailboxEntity getCurrentMailbox() {
+    public static MailboxEntity getDefaultMailbox() {
         if (CTemplarApp.getAppDatabase().mailboxDao().getDefault() != null) {
             return CTemplarApp.getAppDatabase().mailboxDao().getDefault();
         } else {
@@ -261,7 +261,7 @@ public class MessageProvider {
         return null;
     }
 
-    private static String decryptContent(String content) {
+    private static String decryptContent(String content, long mailboxId) {
         String password = CTemplarApp.getInstance()
                         .getSharedPreferences("pref_user", Context.MODE_PRIVATE)
                         .getString("key_password", null);
@@ -269,8 +269,9 @@ public class MessageProvider {
         PGPManager pgpManager = new PGPManager();
         String messageContent = "";
         String privateKey = null;
-        if (getCurrentMailbox() != null){
-            privateKey = getCurrentMailbox().getPrivateKey();
+        MailboxEntity mailboxEntity = CTemplarApp.getAppDatabase().mailboxDao().getById(mailboxId);
+        if (mailboxEntity != null){
+            privateKey = mailboxEntity.getPrivateKey();
         }
         if (password != null && content != null && privateKey != null) {
             messageContent = pgpManager.decryptMessage(content, privateKey, password);
@@ -312,7 +313,7 @@ public class MessageProvider {
         result.hasChildren = message.hasChildren();
         result.childrenCount = message.getChildrenCount();
         result.subject = message.getSubject();
-        result.content = decryptContent(message.getContent());
+        result.content = decryptContent(message.getContent(), message.getMailboxId());
         result.receivers = message.getReceivers();
         result.cc = message.getCC();
         result.bcc = message.getBCC();
@@ -464,7 +465,7 @@ public class MessageProvider {
         result.setHasChildren(message.hasChildren());
         result.setChildrenCount(message.getChildrenCount());
         result.setSubject(message.getSubject());
-        result.setContent(decryptContent(message.getContent()));
+        result.setContent(decryptContent(message.getContent(), message.getMailboxId()));
         result.setReceivers(arrayToList(message.getReceivers()));
         result.setCc(arrayToList(message.getCC()));
         result.setBcc(arrayToList(message.getBCC()));

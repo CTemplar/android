@@ -7,19 +7,17 @@ import android.arch.lifecycle.ViewModel;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.reactivex.Flowable;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
+import mobileapp.ctemplar.com.ctemplarapp.main.MessageProvider;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.PublicKeysRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SendMessageRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.ContactsResponse;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.CreateAttachmentResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.DeleteAttachmentResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.KeyResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessageAttachment;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResult;
 import mobileapp.ctemplar.com.ctemplarapp.repository.ContactsRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
@@ -27,13 +25,11 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import mobileapp.ctemplar.com.ctemplarapp.utils.PGPManager;
 import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
-import timber.log.Timber;
 
 public class SendMessageActivityViewModel extends ViewModel {
 
     UserRepository userRepository;
     ContactsRepository contactsRepository;
-    MailboxEntity currentMailbox;
     MutableLiveData<ResponseStatus> responseStatus = new MutableLiveData<>();
     MutableLiveData<ResponseStatus> uploadAttachmentStatus = new MutableLiveData<>();
     MutableLiveData<MessageAttachment> uploadAttachmentResponse = new MutableLiveData<>();
@@ -46,7 +42,6 @@ public class SendMessageActivityViewModel extends ViewModel {
     public SendMessageActivityViewModel() {
         userRepository = CTemplarApp.getUserRepository();
         contactsRepository = CTemplarApp.getContactsRepository();
-        currentMailbox = CTemplarApp.getAppDatabase().mailboxDao().getDefault();
     }
 
     public void createMessage(SendMessageRequest request) {
@@ -75,11 +70,12 @@ public class SendMessageActivityViewModel extends ViewModel {
                 });
     }
 
-    public void updateMessage(long id, SendMessageRequest request, ArrayList<String> receiverPublicKeys) {
+    public void updateMessage(long id, SendMessageRequest request, ArrayList<String> receiverPublicKeys, long mailboxId) {
         String content = request.getContent();
 
-        if (!receiverPublicKeys.contains(null)) {
-            receiverPublicKeys.add(currentMailbox.getPublicKey());
+        MailboxEntity mailboxEntity = CTemplarApp.getAppDatabase().mailboxDao().getById(mailboxId);
+        if (!receiverPublicKeys.contains(null) && mailboxEntity != null) {
+            receiverPublicKeys.add(mailboxEntity.getPublicKey());
             String[] publicKeys = receiverPublicKeys.toArray(new String[0]);
 
             PGPManager pgpManager = new PGPManager();

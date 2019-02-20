@@ -26,7 +26,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,7 +34,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import mobileapp.ctemplar.com.ctemplarapp.ActivityInterface;
-import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.folders.ManageFoldersActivity;
 import mobileapp.ctemplar.com.ctemplarapp.login.LoginActivity;
@@ -461,7 +459,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void showMailboxDetailsInNavigationDrawer() {
-        MailboxEntity defaultMailbox = CTemplarApp.getAppDatabase().mailboxDao().getDefault();
+        MailboxEntity defaultMailbox = MessageProvider.getDefaultMailbox();
         if (defaultMailbox != null) {
             Timber.i("Standard startup");
             View headerView = navigationView.getHeaderView(0);

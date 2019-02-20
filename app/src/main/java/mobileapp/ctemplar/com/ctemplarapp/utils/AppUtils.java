@@ -19,7 +19,7 @@ public class AppUtils {
     private static String LEFT_DATE_PATTERN = "yyyy-MM-dd'T'HH:mm:ss'Z'";
 
     public static String datetimeForServer(long timeInMillis) {
-        DateFormat standardFormat = new SimpleDateFormat(DATE_PATTERN, Locale.getDefault());
+        DateFormat standardFormat = new SimpleDateFormat(LEFT_DATE_PATTERN, Locale.getDefault());
         return standardFormat.format(timeInMillis);
     }
 

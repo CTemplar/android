@@ -8,6 +8,7 @@ import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.main.MainActivityActions;
+import mobileapp.ctemplar.com.ctemplarapp.main.MessageProvider;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.ChangePasswordRequest;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
@@ -24,7 +25,7 @@ public class ChangePasswordViewModel extends ViewModel {
 
     public ChangePasswordViewModel() {
         userRepository = CTemplarApp.getUserRepository();
-        currentMailbox = CTemplarApp.getAppDatabase().mailboxDao().getDefault();
+        currentMailbox = MessageProvider.getDefaultMailbox();
     }
 
     void changePassword(String oldPassword, String password, String confirmPassword) {

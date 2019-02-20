@@ -39,6 +39,7 @@ import mobileapp.ctemplar.com.ctemplarapp.message.SendMessageFragment;
 import mobileapp.ctemplar.com.ctemplarapp.message.ViewMessagesActivity;
 import mobileapp.ctemplar.com.ctemplarapp.message.ViewMessagesFragment;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
+import timber.log.Timber;
 
 import static mobileapp.ctemplar.com.ctemplarapp.message.ViewMessagesActivity.PARENT_ID;
 import static mobileapp.ctemplar.com.ctemplarapp.message.ViewMessagesFragment.FOLDER_NAME;
@@ -262,7 +263,8 @@ public class InboxFragment extends BaseFragment {
         if(status != null) {
             switch(status) {
                 case RESPONSE_ERROR:
-                    Toast.makeText(getActivity(), getResources().getString(R.string.error_server), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), getString(R.string.error_server), Toast.LENGTH_SHORT).show();
+                    Timber.e("Response error");
                     break;
                 case RESPONSE_NEXT_MESSAGES:
                     // adapter = new InboxMessagesAdapter(mainModel.getMessagesResponse().getValue().getMessagesList());
