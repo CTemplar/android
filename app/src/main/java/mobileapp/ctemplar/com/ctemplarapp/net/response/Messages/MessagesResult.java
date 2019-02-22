@@ -9,8 +9,8 @@ public class MessagesResult {
     @SerializedName("id")
     private long id;
 
-    @SerializedName("encryption")
-    private String encryption;
+//    @SerializedName("encryption")
+//    private String encryption; TODO
 
     @SerializedName("sender")
     private String sender;
@@ -92,7 +92,7 @@ public class MessagesResult {
     }
 
     public String getEncryption() {
-        return encryption;
+        return "";
     }
 
     public String getSender() {

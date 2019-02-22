@@ -40,6 +40,7 @@ import java.util.List;
 import mobileapp.ctemplar.com.ctemplarapp.ActivityInterface;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.R;
+import mobileapp.ctemplar.com.ctemplarapp.main.MessageProvider;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.PublicKeysRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SendMessageRequest;
@@ -137,7 +138,6 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
     private Long destructDeliveryInMillis;
     private Long deadDeliveryInHours;
 
-    private MailboxDao mailboxDao = CTemplarApp.getAppDatabase().mailboxDao();
     private MessageSendAttachmentAdapter messageSendAttachmentAdapter;
 
     private DelayedDeliveryDialogFragment.OnScheduleDelayedDelivery onScheduleDelayedDelivery
@@ -411,7 +411,10 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
     }
 
     private void createMessage() {
-        MailboxEntity defaultMailbox = mailboxDao.getDefault();
+        MailboxEntity defaultMailbox = MessageProvider.getDefaultMailbox();
+        if (defaultMailbox == null) {
+            return;
+        }
         long mailboxId = defaultMailbox.id;
         String mailboxEmail = defaultMailbox.email;
 
@@ -435,17 +438,16 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         }
 
         ContactData[] contacts = contactsResponse.getResults();
-//        List<ContactData> contactsList = new LinkedList<>();
-//        contactsList.addAll(Arrays.asList(contacts));
         List<ContactData> contactsList = new ArrayList<>(Arrays.asList(contacts));
         RecipientsListAdapter recipientsAdapter = new RecipientsListAdapter(getActivity(), R.layout.recipients_list_view_item, contactsList);
         toEmailTextView.setAdapter(recipientsAdapter);
     }
 
     private void sendMessage(ArrayList<String> emails, ArrayList<String> publicKeys) {
-        MailboxEntity defaultMailbox = CTemplarApp.getAppDatabase().mailboxDao().getDefault();
-        long mailboxId = defaultMailbox.id;
-        String mailboxEmail = defaultMailbox.email;
+        String fromEmail = spinnerFrom.getSelectedItem().toString();
+        MailboxEntity fromMailbox = CTemplarApp.getAppDatabase().mailboxDao().getByEmail(fromEmail);
+        long mailboxId = fromMailbox.id;
+        String mailboxEmail = fromMailbox.email;
 
         String subject = subjectEditText.getText().toString();
         String compose = Html.toHtml(composeEditText.getText());
@@ -454,8 +456,6 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         sendMessageRequest.setSender(mailboxEmail);
         sendMessageRequest.setSubject(subject);
         sendMessageRequest.setContent(compose);
-        sendMessageRequest.setFolder("sent");
-        sendMessageRequest.setSend(true);
         sendMessageRequest.setMailbox(mailboxId);
         sendMessageRequest.setParent(parentId);
 
@@ -463,15 +463,25 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
             sendMessageRequest.setIsEncrypted(true);
         }
 
-//        if (!emails.isEmpty()) {
-//            sendMessageRequest.setReceivers(emails);
-//        } else {
-//            sendMessageRequest.setReceivers(new ArrayList<String>());
-//        }
+        if (destructDeliveryInMillis != null) {
+            sendMessageRequest.setDestructDate(AppUtils.datetimeForServer(destructDeliveryInMillis));
+        }
 
-        sendMessageRequest.setDestructDate(AppUtils.datetimeForServer(destructDeliveryInMillis));
-        sendMessageRequest.setDelayedDelivery(AppUtils.datetimeForServer(delayedDeliveryInMillis));
-        sendMessageRequest.setDeadManDuration(deadDeliveryInHours);
+        String messageFolder = "sent";
+        boolean messageSent = true;
+        sendMessageRequest.setSend(true);
+        if (delayedDeliveryInMillis != null) {
+            sendMessageRequest.setDelayedDelivery(AppUtils.datetimeForServer(delayedDeliveryInMillis));
+            messageFolder = "outbox";
+            messageSent = false;
+        }
+        if (deadDeliveryInHours != null) {
+            sendMessageRequest.setDeadManDuration(deadDeliveryInHours);
+            messageFolder = "outbox";
+            messageSent = false;
+        }
+        sendMessageRequest.setSend(messageSent);
+        sendMessageRequest.setFolder(messageFolder);
 
         sendMessageRequest.setReceivers(emails);
 
@@ -494,7 +504,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
             sendMessageRequest.setAttachments(attachments);
         }
 
-        mainModel.updateMessage(currentMessageId, sendMessageRequest, publicKeys);
+        mainModel.updateMessage(currentMessageId, sendMessageRequest, publicKeys, mailboxId);
         if (sendingProgress != null) {
             sendingProgress.dismiss();
         }
@@ -682,9 +692,10 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
     }
 
     private void sendMessageToDraft() {
-        MailboxEntity defaultMailbox = CTemplarApp.getAppDatabase().mailboxDao().getDefault();
-        long mailboxId = defaultMailbox.id;
-        String mailboxEmail = defaultMailbox.email;
+        String fromEmail = spinnerFrom.getSelectedItem().toString();
+        MailboxEntity fromMailbox = CTemplarApp.getAppDatabase().mailboxDao().getByEmail(fromEmail);
+        long mailboxId = fromMailbox.id;
+        String mailboxEmail = fromMailbox.email;
 
         String toEmail = toEmailTextView.getText().toString();
         String subject = subjectEditText.getText().toString();
@@ -725,7 +736,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         }
         messageRequestToDraft.setBcc(bccEmailsList);
 
-        mainModel.updateMessage(currentMessageId, messageRequestToDraft, new ArrayList<String>());
+        mainModel.updateMessage(currentMessageId, messageRequestToDraft, new ArrayList<String>(), mailboxId);
     }
 
     private void addListeners() {

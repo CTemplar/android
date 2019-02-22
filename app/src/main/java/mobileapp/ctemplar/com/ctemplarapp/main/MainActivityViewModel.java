@@ -135,9 +135,9 @@ public class MainActivityViewModel extends ViewModel {
                         List<MessagesResult> messages = response.getMessagesList();
                         List<MessageEntity> messageEntities = MessageProvider
                                 .fromMessagesResultsToEntities(messages);
-                        // ToDo
-//                                List<MessageProvider> messageProviders = MessageProvider
-//                                        .fromMessageEntities(messageEntities);
+
+//                        List<MessageProvider> messageProviders = MessageProvider
+//                                .fromMessageEntities(messageEntities); TODO
 
                         messagesRepository.deleteLocalMessagesByFolderName(folder);
                         messagesRepository.addMessagesToDatabase(messageEntities);
@@ -153,6 +153,7 @@ public class MainActivityViewModel extends ViewModel {
             @Override
             public void onError(Throwable e) {
                 responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
+                Timber.e(e.getCause());
             }
 
             @Override
@@ -183,6 +184,7 @@ public class MainActivityViewModel extends ViewModel {
                     @Override
                     public void onError(Throwable e) {
                         responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
+                        Timber.e(e.getCause());
                     }
 
                     @Override
@@ -221,6 +223,7 @@ public class MainActivityViewModel extends ViewModel {
                     @Override
                     public void onError(Throwable e) {
                         responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
+                        Timber.e(e.getCause());
                     }
 
                     @Override
@@ -259,6 +262,7 @@ public class MainActivityViewModel extends ViewModel {
                             }
                         }
                         responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
+                        Timber.e(e.getCause());
                     }
 
                     @Override
@@ -449,6 +453,7 @@ public class MainActivityViewModel extends ViewModel {
                     @Override
                     public void onError(Throwable e) {
                         responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
+                        Timber.e(e.getCause());
                     }
 
                     @Override
@@ -474,6 +479,7 @@ public class MainActivityViewModel extends ViewModel {
                     @Override
                     public void onError(Throwable e) {
                         responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
+                        Timber.e(e.getCause());
                     }
 
                     @Override
