@@ -5,9 +5,13 @@ import com.google.gson.annotations.SerializedName;
 import java.util.ArrayList;
 import java.util.List;
 
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.EncryptionMessage;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessageAttachment;
 
 public class SendMessageRequest {
+
+    @SerializedName("encryption")
+    private EncryptionMessage encryptionMessage;
 
     @SerializedName("sender")
     private String sender;
@@ -192,5 +196,13 @@ public class SendMessageRequest {
 
     public void setDeadManDuration(long deadManDuration) {
         this.deadManDuration = deadManDuration;
+    }
+
+    public EncryptionMessage getEncryptionMessage() {
+        return encryptionMessage;
+    }
+
+    public void setEncryptionMessage(EncryptionMessage encryptionMessage) {
+        this.encryptionMessage = encryptionMessage;
     }
 }

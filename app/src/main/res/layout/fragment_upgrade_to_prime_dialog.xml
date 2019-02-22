@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+        android:id="@+id/fragment_upgrade_to_prime_dialog_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/title_upgrade_to_prime"
+        android:textColor="@color/colorBlack4"
+        android:textSize="18sp"
+        android:fontFamily="@font/lato_bold"
+        android:gravity="center"
+        android:paddingLeft="24dp"
+        android:paddingStart="24dp"
+        android:paddingRight="24dp"
+        android:paddingEnd="24dp"
+        android:layout_marginTop="25dp"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <LinearLayout
+        android:id="@+id/fragment_upgrade_to_prime_dialog_features_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="24dp"
+        android:paddingStart="24dp"
+        android:paddingRight="24dp"
+        android:paddingEnd="24dp"
+        android:layout_marginTop="10dp"
+        android:orientation="vertical"
+        android:divider="@drawable/dialog_divider"
+        android:showDividers="middle"
+        app:layout_constraintTop_toBottomOf="@id/fragment_upgrade_to_prime_dialog_title">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="15dp"
+            android:paddingBottom="15dp"
+            android:text="@string/txt_one_user"
+            android:fontFamily="@font/lato_regular"
+            android:textSize="14sp"
+            android:textColor="@color/colorBlack4"
+            android:drawablePadding="16dp"
+            android:drawableLeft="@drawable/ic_prime_check"
+            android:drawableStart="@drawable/ic_prime_check"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="15dp"
+            android:paddingBottom="15dp"
+            android:text="@string/txt_from_five_gb_storage"
+            android:fontFamily="@font/lato_regular"
+            android:textSize="14sp"
+            android:textColor="@color/colorBlack4"
+            android:drawablePadding="16dp"
+            android:drawableLeft="@drawable/ic_prime_check"
+            android:drawableStart="@drawable/ic_prime_check"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="15dp"
+            android:paddingBottom="15dp"
+            android:text="@string/txt_from_three_email_addresses"
+            android:fontFamily="@font/lato_regular"
+            android:textSize="14sp"
+            android:textColor="@color/colorBlack4"
+            android:drawablePadding="16dp"
+            android:drawableLeft="@drawable/ic_prime_check"
+            android:drawableStart="@drawable/ic_prime_check"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="15dp"
+            android:paddingBottom="15dp"
+            android:text="@string/txt_from_one_custom_domain"
+            android:fontFamily="@font/lato_regular"
+            android:textSize="14sp"
+            android:textColor="@color/colorBlack4"
+            android:drawablePadding="16dp"
+            android:drawableLeft="@drawable/ic_prime_check"
+            android:drawableStart="@drawable/ic_prime_check"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="15dp"
+            android:paddingBottom="15dp"
+            android:text="@string/txt_thousand_messages_per_day"
+            android:fontFamily="@font/lato_regular"
+            android:textSize="14sp"
+            android:textColor="@color/colorBlack4"
+            android:drawablePadding="16dp"
+            android:drawableLeft="@drawable/ic_prime_check"
+            android:drawableStart="@drawable/ic_prime_check"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="15dp"
+            android:paddingBottom="15dp"
+            android:text="@string/txt_two_hundred_folders"
+            android:fontFamily="@font/lato_regular"
+            android:textSize="14sp"
+            android:textColor="@color/colorBlack4"
+            android:drawablePadding="16dp"
+            android:drawableLeft="@drawable/ic_prime_check"
+            android:drawableStart="@drawable/ic_prime_check"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="15dp"
+            android:paddingBottom="15dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/txt_dead_mans_title"
+                android:fontFamily="@font/lato_regular"
+                android:textSize="14sp"
+                android:textColor="@color/colorBlack4"
+                android:drawablePadding="16dp"
+                android:drawableLeft="@drawable/ic_prime_check"
+                android:drawableStart="@drawable/ic_prime_check"/>
+
+            <TextView
+                android:id="@+id/fragment_upgrade_to_prime_dialog_more"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="32dp"
+                android:layout_marginStart="32dp"
+                android:text="@string/txt_and_more_features"
+                android:fontFamily="@font/lato_regular"
+                android:textSize="14sp"
+                android:textColor="@color/colorBlue"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_marginTop="15dp"
+        android:paddingLeft="24dp"
+        android:paddingStart="24dp"
+        android:paddingRight="24dp"
+        android:paddingEnd="24dp"
+        app:layout_constraintTop_toBottomOf="@id/fragment_upgrade_to_prime_dialog_features_layout">
+
+        <Button
+            android:id="@+id/fragment_upgrade_to_prime_dialog_upgrade"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginEnd="10dp"
+            android:background="@drawable/button_background_premium"
+            android:fontFamily="@font/lato_bold"
+            android:text="@string/title_upgrade_to_prime"
+            android:textColor="@android:color/white"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/fragment_upgrade_to_prime_dialog_not_now"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:text="@string/txt_not_now"
+            android:textSize="16sp"
+            android:fontFamily="@font/lato_regular"
+            android:textColor="@color/colorDarkBlue2"/>
+
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>

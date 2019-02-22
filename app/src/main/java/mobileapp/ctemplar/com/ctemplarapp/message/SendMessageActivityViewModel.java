@@ -5,6 +5,7 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import io.reactivex.Observer;
@@ -12,19 +13,23 @@ import io.reactivex.disposables.Disposable;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.main.MessageProvider;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
+import mobileapp.ctemplar.com.ctemplarapp.net.entity.PGPKeyEntity;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.PublicKeysRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SendMessageRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.ContactsResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.DeleteAttachmentResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.KeyResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.EncryptionMessage;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessageAttachment;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResult;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.MyselfResponse;
 import mobileapp.ctemplar.com.ctemplarapp.repository.ContactsRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import mobileapp.ctemplar.com.ctemplarapp.utils.PGPManager;
 import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
+import timber.log.Timber;
 
 public class SendMessageActivityViewModel extends ViewModel {
 
@@ -38,6 +43,8 @@ public class SendMessageActivityViewModel extends ViewModel {
     MutableLiveData<ResponseStatus> createMessageStatus = new MutableLiveData<>();
     MutableLiveData<ContactsResponse> contactsResponse = new MutableLiveData<>();
     MutableLiveData<KeyResponse> keyResponse = new MutableLiveData<>();
+    MutableLiveData<MessagesResult> messageEncryptionResult = new MutableLiveData<>();
+    MutableLiveData<MyselfResponse> myselfResponse = new MutableLiveData<>();
 
     public SendMessageActivityViewModel() {
         userRepository = CTemplarApp.getUserRepository();
@@ -74,14 +81,36 @@ public class SendMessageActivityViewModel extends ViewModel {
         String content = request.getContent();
 
         MailboxEntity mailboxEntity = CTemplarApp.getAppDatabase().mailboxDao().getById(mailboxId);
-        if (!receiverPublicKeys.contains(null) && mailboxEntity != null) {
+        PGPManager pgpManager = new PGPManager();
+
+        if (!receiverPublicKeys.contains(null)) {
             receiverPublicKeys.add(mailboxEntity.getPublicKey());
+
+            String[] publicKeys = receiverPublicKeys.toArray(new String[0]);
+            content = pgpManager.encryptMessage(content, publicKeys);
+
+        } else if (request.getEncryptionMessage() != null) {
+            receiverPublicKeys.add(mailboxEntity.getPublicKey());
+
+            // GENERATION MESSAGE KEYS
+            String randomSecret = request.getEncryptionMessage().getRandomSecret();
+            String password = request.getEncryptionMessage().getPassword();
+            PGPKeyEntity pgpKeyEntity = pgpManager.generateKeys(randomSecret, password);
+            receiverPublicKeys.add(pgpKeyEntity.getPublicKey());
+
+            receiverPublicKeys.removeAll(Collections.singleton(null));
             String[] publicKeys = receiverPublicKeys.toArray(new String[0]);
 
-            PGPManager pgpManager = new PGPManager();
-            String encryptedContent = pgpManager.encryptMessage(content, publicKeys);
-            request.setContent(encryptedContent);
+            // ENCRYPTION
+            content = pgpManager.encryptMessage(content, publicKeys);
+
+            // ADD KEYS IN MESSAGE
+            EncryptionMessage encryptionMessage = request.getEncryptionMessage();
+            encryptionMessage.setPublicKey(pgpKeyEntity.getPublicKey());
+            encryptionMessage.setPrivateKey(pgpKeyEntity.getPrivateKey());
+            request.setEncryptionMessage(encryptionMessage);
         }
+        request.setContent(content);
 
         userRepository.updateMessage(id, request)
                 .subscribe(new Observer<MessagesResult>() {
@@ -99,6 +128,31 @@ public class SendMessageActivityViewModel extends ViewModel {
                     @Override
                     public void onError(Throwable e) {
                         responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    public void setEncryptionMessage(long id, SendMessageRequest sendMessageRequest) {
+        userRepository.updateMessage(id, sendMessageRequest)
+                .subscribe(new Observer<MessagesResult>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(MessagesResult messagesResult) {
+                        messageEncryptionResult.postValue(messagesResult);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Timber.e(e.getCause());
                     }
 
                     @Override
@@ -235,6 +289,31 @@ public class SendMessageActivityViewModel extends ViewModel {
                 });
     }
 
+    public void mySelfData() {
+        userRepository.getMyselfInfo()
+                .subscribe(new Observer<MyselfResponse>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(MyselfResponse response) {
+                        myselfResponse.postValue(response);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Timber.e(e);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
     public List<MailboxEntity> getMailboxes() {
         return CTemplarApp.getAppDatabase().mailboxDao().getAll();
     }
@@ -269,5 +348,13 @@ public class SendMessageActivityViewModel extends ViewModel {
 
     public LiveData<MessageAttachment> getUploadAttachmentResponse() {
         return uploadAttachmentResponse;
+    }
+
+    public LiveData<MessagesResult> getMessageEncryptionResult() {
+        return messageEncryptionResult;
+    }
+
+    public LiveData<MyselfResponse> getMySelfResponse() {
+        return myselfResponse;
     }
 }

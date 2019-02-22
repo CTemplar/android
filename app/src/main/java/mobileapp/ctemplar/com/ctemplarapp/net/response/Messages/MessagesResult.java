@@ -2,6 +2,8 @@ package mobileapp.ctemplar.com.ctemplarapp.net.response.Messages;
 
 import com.google.gson.annotations.SerializedName;
 
+import org.spongycastle.math.Primes;
+
 import java.util.List;
 
 public class MessagesResult {
@@ -9,8 +11,8 @@ public class MessagesResult {
     @SerializedName("id")
     private long id;
 
-//    @SerializedName("encryption")
-//    private String encryption; TODO
+    @SerializedName("encryption")
+    private EncryptionMessage encryption;
 
     @SerializedName("sender")
     private String sender;
@@ -89,10 +91,6 @@ public class MessagesResult {
 
     public long getId() {
         return id;
-    }
-
-    public String getEncryption() {
-        return "";
     }
 
     public String getSender() {
@@ -204,5 +202,13 @@ public class MessagesResult {
 
     public void setChildren(MessagesResult[] children) {
         this.children = children;
+    }
+
+    public EncryptionMessage getEncryption() {
+        return encryption;
+    }
+
+    public void setEncryption(EncryptionMessage encryption) {
+        this.encryption = encryption;
     }
 }

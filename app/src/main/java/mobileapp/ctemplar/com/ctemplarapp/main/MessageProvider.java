@@ -305,7 +305,7 @@ public class MessageProvider {
         MessageProvider result = new MessageProvider();
 
         result.id = message.getId();
-        result.encryption = message.getEncryption();
+        result.encryption = ""; //TODO
         result.sender = message.getSender();
         result.hasAttachments = !isNullOrEmpty(message.getAttachments());
         result.attachments = convertResponseAttachmentsListToProviderList(message.getAttachments());
@@ -457,7 +457,7 @@ public class MessageProvider {
         MessageEntity result = new MessageEntity();
 
         result.setId(message.getId());
-        result.setEncryption(message.getEncryption());
+        result.setEncryption(""); // TODO
         result.setSender(message.getSender());
         result.setHasAttachments(!isNullOrEmpty(message.getAttachments()));
         result.setAttachments(convertAttachmentsListFromResponsesToEntities(message.getAttachments()));
