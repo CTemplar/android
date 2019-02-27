@@ -109,14 +109,17 @@ If you have further questions please email <![CDATA[<u><a href="mailto:support@c
 
     <!-- COMPOSE OPTIONS -->
     <string name="txt_left_time_destruct">Delete in %1$s</string>
-    <string name="txt_left_time_delay_delivery">Delay in %1$s</string>
+    <string name="txt_left_time_delay_delivery">Delivery in %1$s</string>
+    <string name="txt_encrypt_message_title">Set Password</string>
     <string name="txt_destruct_message_title">Self-destructing Timer</string>
     <string name="txt_dead_mans_title">Dead Man\'s Timer</string>
     <string name="txt_delayed_message_title">Delayed delivery</string>
+    <string name="txt_encrypt_message_summary">Encrypt for non-Ctemplar Mail Users</string>
     <string name="txt_delayed_message_summary">Email will be send automatically at the set time</string>
     <string name="txt_destruct_message_summary">This email deletes itself from the receivers account after</string>
     <string name="txt_dead_mans_summary">If you do not log into your account after the set time email will be sent after</string>
     <string name="txt_schedule">Schedule</string>
+    <string name="txt_encrypt">Encrypt</string>
     <string name="txt_selected_datetime_is_past">Selected datetime is in past</string>
 
     <!-- VIEW MESSAGES -->
@@ -146,6 +149,10 @@ If you have further questions please email <![CDATA[<u><a href="mailto:support@c
     <string name="dialog_change_password_confirm">Are you sure you want change password? All data will be lost</string>
     <string name="btn_change">CHANGE</string>
     <string name="btn_change_lowercase">Change</string>
+    <string name="title_message_password">Message Password</string>
+    <string name="title_message_password_confirm">Confirm Password</string>
+    <string name="title_message_password_hint">Password Hint</string>
+    <string name="txt_encrypt_message_password_summary">Encrypted messages to non-Ctemplar recipients will expire in 28 days unless a shorter expiration time is set.</string>
 
     <!-- CONTACT -->
     <string name="toast_not_saved">Not saved</string>
@@ -247,6 +254,20 @@ If you have further questions please email <![CDATA[<u><a href="mailto:support@c
     <string name="setting_id">setting_id</string>
     <string name="storage_limit_info">%1$s of %2$s</string>
 
+    <!-- UPGRADE TO PRIME -->
+    <string name="title_upgrade_to_prime">Upgrade to Prime</string>
+    <string name="txt_one_user">1 User</string>
+    <string name="txt_from_five_gb_storage">from 5 Gb Storage</string>
+    <string name="txt_from_three_email_addresses">from 3 E-mail Addresses</string>
+    <string name="txt_from_one_custom_domain">from 1 Custom Domain</string>
+    <string name="txt_thousand_messages_per_day">1000 Messages per Day</string>
+    <string name="txt_two_hundred_folders">200 Folders and 200 Labels</string>
+    <string name="txt_dead_mans_timer">Dead Mans Timer</string>
+    <string name="txt_and_more_features">and more features</string>
+    <string name="txt_not_now">Not now</string>
+    <string name="url_prime_upgrade">https://ctemplar.com/signup</string>
+    <string name="url_prime_more">https://ctemplar.com/pricing</string>
+
     <string-array name="languages">
         <item>Dutch</item>
         <item>English</item>
@@ -269,6 +290,7 @@ If you have further questions please email <![CDATA[<u><a href="mailto:support@c
     <string name="error_username_incorrect">Username incorrect</string>
     <string name="error_username_exists">Username is not available</string>
     <string name="error_password_not_match">Passwords do not match</string>
+    <string name="error_password_not_match_or_small">Passwords do not match or less than 8 symbols</string>
     <string name="error_current_password_not_match">Current password do not match</string>
     <string name="error_new_password_not_match">New passwords do not match</string>
     <string name="error_empty_email">Empty email</string>

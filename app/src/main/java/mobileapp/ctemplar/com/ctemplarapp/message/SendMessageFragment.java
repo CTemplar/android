@@ -2,6 +2,7 @@ package mobileapp.ctemplar.com.ctemplarapp.message;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.app.TimePickerDialog;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
@@ -18,6 +19,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.Html;
 import android.text.TextWatcher;
+import android.text.style.TtsSpan;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,6 +43,7 @@ import mobileapp.ctemplar.com.ctemplarapp.ActivityInterface;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.main.MessageProvider;
+import mobileapp.ctemplar.com.ctemplarapp.main.UpgradeToPrimeFragment;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.PublicKeysRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SendMessageRequest;
@@ -48,8 +51,10 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.ContactData;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.ContactsResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.KeyResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.KeyResult;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.EncryptionMessage;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessageAttachment;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResult;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.MyselfResponse;
 import mobileapp.ctemplar.com.ctemplarapp.repository.MailboxDao;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
@@ -132,11 +137,14 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
     private SendMessageActivityViewModel mainModel;
     private ProgressDialog sendingProgress;
 
+    // COMPOSE OPTIONS
     private long currentMessageId;
     private Long parentId;
+    private boolean userIsPrime = false;
     private Long delayedDeliveryInMillis;
     private Long destructDeliveryInMillis;
     private Long deadDeliveryInHours;
+    private EncryptionMessage messageEncryptionResult;
 
     private MessageSendAttachmentAdapter messageSendAttachmentAdapter;
 
@@ -191,6 +199,38 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         }
     };
 
+    private EncryptMessageDialogFragment.OnSetEncryptMessagePassword onSetEncryptMessagePassword
+            = new EncryptMessageDialogFragment.OnSetEncryptMessagePassword() {
+        @Override
+        public void onSet(String password, String passwordHint) {
+            if (password == null && passwordHint == null) {
+                messageEncryptionResult = null;
+                if (getActivity() == null) {
+                    return;
+                }
+                ImageView sendMessageEncryptIco = getActivity().findViewById(R.id.fragment_send_message_encrypt_ico);
+                sendMessageEncryptIco.setSelected(false);
+                return;
+            }
+
+            EncryptionMessage encryptionMessage = new EncryptionMessage();
+            encryptionMessage.setPassword(password);
+            encryptionMessage.setPasswordHint(passwordHint);
+
+            MailboxEntity defaultMailbox = MessageProvider.getDefaultMailbox();
+            if (defaultMailbox == null) {
+                return;
+            }
+            long mailboxId = defaultMailbox.id;
+
+            SendMessageRequest setEncryptionRequest = new SendMessageRequest();
+            setEncryptionRequest.setMailbox(mailboxId);
+            setEncryptionRequest.setEncryptionMessage(encryptionMessage);
+
+            mainModel.setEncryptionMessage(currentMessageId, setEncryptionRequest);
+        }
+    };
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -222,6 +262,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         root.findViewById(R.id.fragment_send_message_delayed_layout).setOnClickListener(this);
         root.findViewById(R.id.fragment_send_message_destruct_layout).setOnClickListener(this);
         root.findViewById(R.id.fragment_send_message_dead_layout).setOnClickListener(this);
+        root.findViewById(R.id.fragment_send_message_encrypt_layout).setOnClickListener(this);
         root.findViewById(R.id.fragment_send_message_to_add_button).setOnClickListener(this);
         root.findViewById(R.id.fragment_send_message_back).setOnClickListener(this);
 
@@ -408,6 +449,33 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
                     }
                 });
 
+        mainModel.getMessageEncryptionResult()
+                .observe(this, new Observer<MessagesResult>() {
+                    @Override
+                    public void onChanged(@Nullable MessagesResult messagesResult) {
+                        if (messagesResult != null) {
+                            messageEncryptionResult = messagesResult.getEncryption();
+
+                            if (getActivity() == null) {
+                                return;
+                            }
+                            ImageView sendMessageEncryptIco = getActivity().findViewById(R.id.fragment_send_message_encrypt_ico);
+                            if (messageEncryptionResult != null) {
+                                sendMessageEncryptIco.setSelected(true);
+                            }
+                        }
+                    }
+                });
+
+        mainModel.getMySelfResponse()
+                .observe(this, new Observer<MyselfResponse>() {
+                    @Override
+                    public void onChanged(@Nullable MyselfResponse myselfResponse) {
+                        if (myselfResponse != null) {
+                            userIsPrime = myselfResponse.result[0].isPrime;
+                        }
+                    }
+                });
     }
 
     private void createMessage() {
@@ -429,6 +497,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         );
 
         mainModel.createMessage(createMessageRequest);
+        mainModel.mySelfData();
     }
 
     private void handleContactsList(@Nullable ContactsResponse contactsResponse) {
@@ -443,16 +512,16 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         toEmailTextView.setAdapter(recipientsAdapter);
     }
 
-    private void sendMessage(ArrayList<String> emails, ArrayList<String> publicKeys) {
+    private void sendMessage(ArrayList<String> emails, final ArrayList<String> publicKeys) {
         String fromEmail = spinnerFrom.getSelectedItem().toString();
         MailboxEntity fromMailbox = CTemplarApp.getAppDatabase().mailboxDao().getByEmail(fromEmail);
-        long mailboxId = fromMailbox.id;
+        final long mailboxId = fromMailbox.id;
         String mailboxEmail = fromMailbox.email;
 
         String subject = subjectEditText.getText().toString();
         String compose = Html.toHtml(composeEditText.getText());
 
-        SendMessageRequest sendMessageRequest = new SendMessageRequest();
+        final SendMessageRequest sendMessageRequest = new SendMessageRequest();
         sendMessageRequest.setSender(mailboxEmail);
         sendMessageRequest.setSubject(subject);
         sendMessageRequest.setContent(compose);
@@ -504,10 +573,19 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
             sendMessageRequest.setAttachments(attachments);
         }
 
-        mainModel.updateMessage(currentMessageId, sendMessageRequest, publicKeys, mailboxId);
-        if (sendingProgress != null) {
-            sendingProgress.dismiss();
+        if (messageEncryptionResult != null) {
+            sendMessageRequest.setEncryptionMessage(messageEncryptionResult);
         }
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                mainModel.updateMessage(currentMessageId, sendMessageRequest, publicKeys, mailboxId);
+                if (sendingProgress != null) {
+                    sendingProgress.dismiss();
+                }
+            }
+        }).start();
     }
 
     private boolean inputFieldsNotEmpty() {
@@ -539,10 +617,12 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
                 }
                 break;
             case R.id.fragment_send_message_delayed_layout:
-                if (getFragmentManager() != null) {
+                if (getFragmentManager() != null && userIsPrime) {
                     DelayedDeliveryDialogFragment delayedDeliveryDialogFragment = new DelayedDeliveryDialogFragment();
                     delayedDeliveryDialogFragment.show(getFragmentManager(), "DelayedDeliveryDialogFragment");
                     delayedDeliveryDialogFragment.setOnScheduleDelayedDelivery(onScheduleDelayedDelivery);
+                } else {
+                    upgradeToPrimeDialog();
                 }
                 break;
             case R.id.fragment_send_message_destruct_layout:
@@ -553,11 +633,27 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
                 }
                 break;
             case R.id.fragment_send_message_dead_layout:
-                if (getFragmentManager() != null) {
+                if (getFragmentManager() != null && userIsPrime) {
                     DeadMansDeliveryDialogFragment deadMansDeliveryDialogFragment = new DeadMansDeliveryDialogFragment();
                     deadMansDeliveryDialogFragment.show(getFragmentManager(), "DeadMansDialogFragment");
                     deadMansDeliveryDialogFragment.setOnScheduleDeadMansDelivery(onScheduleDeadMansDelivery);
+                } else {
+                    upgradeToPrimeDialog();
                 }
+                break;
+            case R.id.fragment_send_message_encrypt_layout:
+                if (getFragmentManager() != null) {
+                    EncryptMessageDialogFragment encryptMessageDialogFragment = new EncryptMessageDialogFragment();
+                    encryptMessageDialogFragment.show(getFragmentManager(), "EncryptMessageDialogFragment");
+                    encryptMessageDialogFragment.setEncryptMessagePassword(onSetEncryptMessagePassword);
+                }
+        }
+    }
+
+    private void upgradeToPrimeDialog() {
+        if (getFragmentManager() != null) {
+            UpgradeToPrimeFragment upgradeToPrimeFragment = new UpgradeToPrimeFragment();
+            upgradeToPrimeFragment.show(getFragmentManager(), "UpgradeToPrimeFragment");
         }
     }
 

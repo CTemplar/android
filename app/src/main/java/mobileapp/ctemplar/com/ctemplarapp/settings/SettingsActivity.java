@@ -11,7 +11,6 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
 import android.preference.SwitchPreference;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -61,7 +60,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         public void onCreate(final Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
 
-            requestData();
+            requestMySelfData();
 
             addPreferencesFromResource(R.xml.settings_screen);
 
@@ -284,7 +283,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                     });
         }
 
-        private void requestData() {
+        private void requestMySelfData() {
             userRepository.getMyselfInfo()
                     .subscribe(new Observer<MyselfResponse>() {
                         @Override

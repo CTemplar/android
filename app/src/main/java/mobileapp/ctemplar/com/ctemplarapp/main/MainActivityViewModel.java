@@ -135,7 +135,6 @@ public class MainActivityViewModel extends ViewModel {
                         List<MessagesResult> messages = response.getMessagesList();
                         List<MessageEntity> messageEntities = MessageProvider
                                 .fromMessagesResultsToEntities(messages);
-
 //                        List<MessageProvider> messageProviders = MessageProvider
 //                                .fromMessageEntities(messageEntities); TODO
 
