@@ -60,8 +60,8 @@ public class DestructTimerDialogFragment extends DialogFragment {
         closeDialog.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onScheduleDestructTimerDelivery.onSchedule(null);
-                dismiss();
+            onScheduleDestructTimerDelivery.onSchedule(null);
+            dismiss();
             }
         });
 

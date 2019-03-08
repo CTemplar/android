@@ -36,9 +36,9 @@ public class AppUtils {
 
     public static String usedStorage(long volume) {
         if (volume > 1024) {
-            return String.format(Locale.getDefault(), "%.2f", ((double) volume / 1024)) + "MB";
+            return String.format(Locale.getDefault(), "%.2fMB", ((double) volume / 1024));
         } else {
-            return String.format(Locale.getDefault(), "%.2d",volume) + "KB";
+            return String.format(Locale.getDefault(), "%dKB", volume);
         }
     }
 

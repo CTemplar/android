@@ -94,8 +94,8 @@ public class StepRegistrationViewModel extends ViewModel {
                 .observeOn(AndroidSchedulers.mainThread())
                 .flatMap(new Function<PGPKeyEntity, Observable<SignUpResponse>>() {
                     @Override
-                    public Observable<SignUpResponse> apply(PGPKeyEntity pgpKeyEntity) throws Exception {
-                        generatePGPKeys();
+                    public Observable<SignUpResponse> apply(PGPKeyEntity pgpKeyEntity) {
+                        generatePGPKeys(pgpKeyEntity);
                         hashPassword();
                         return userRepository.signUp(signUpRequest);
                     }
@@ -126,15 +126,13 @@ public class StepRegistrationViewModel extends ViewModel {
         });
     }
 
-    public void generatePGPKeys() {
-        PGPManager pgpManager = new PGPManager();
-        PGPKeyEntity entity = pgpManager.generateKeys(signUpRequest.getUsername(), signUpRequest.getPassword());
-        signUpRequest.setPrivateKey(entity.getPrivateKey());
-        signUpRequest.setPublicKey(entity.getPublicKey());
-        signUpRequest.setFingerprint(entity.getFingerprint());
+    private void generatePGPKeys(PGPKeyEntity pgpKeyEntity) {
+        signUpRequest.setPrivateKey(pgpKeyEntity.getPrivateKey());
+        signUpRequest.setPublicKey(pgpKeyEntity.getPublicKey());
+        signUpRequest.setFingerprint(pgpKeyEntity.getFingerprint());
     }
 
-    public void hashPassword() {
+    private void hashPassword() {
         signUpRequest.setPasswordHashed(EncodeUtils.encodePassword(signUpRequest.getUsername(), signUpRequest.getPassword()));
     }
 

@@ -150,4 +150,41 @@ public class PGPManager {
         return pgpKeyEntity;
     }
 
+    public PGPKeyEntity changePrivateKeyPassword(String privateKey, String oldPassword, String password) {
+        PGPKeyEntity pgpKeyEntity = new PGPKeyEntity();
+        ByteArrayOutputStream publicKeyStream = new ByteArrayOutputStream();
+        ByteArrayOutputStream privateKeyStream = new ByteArrayOutputStream();
+
+        try {
+            KeyStore keyStore = new KeyStore();
+
+            InputStream inputPrivateKeyStream = new ByteArrayInputStream(privateKey.getBytes());
+            KeyPairInformation[] keyPairInformation = keyStore.importPrivateKey(inputPrivateKeyStream);
+            long keyId = keyPairInformation[0].getKeyID();
+
+            keyStore.changePrivateKeyPassword(keyId, oldPassword, password);
+
+            String fingerprint = keyPairInformation[0].getFingerprint();
+            keyStore.exportPublicKey(publicKeyStream, keyId, asciiArmor);
+            keyStore.exportPrivateKey(privateKeyStream, keyId, asciiArmor);
+
+            pgpKeyEntity.setFingerprint(fingerprint);
+            pgpKeyEntity.setPublicKey(publicKeyStream.toString());
+            pgpKeyEntity.setPrivateKey(privateKeyStream.toString());
+
+        } catch (PGPException | IOException e) {
+            e.printStackTrace();
+            Timber.e("Pgp generation key error: %s", e.getMessage());
+
+        } finally {
+            try {
+                publicKeyStream.close();
+                privateKeyStream.close();
+            } catch (IOException e) {
+                Timber.e("Pgp close stream error: %s", e.getMessage());
+            }
+        }
+
+        return pgpKeyEntity;
+    }
 }

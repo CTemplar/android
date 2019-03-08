@@ -4,6 +4,8 @@ import android.app.Application;
 import android.arch.persistence.room.Room;
 import android.support.multidex.MultiDexApplication;
 
+import com.bugsnag.android.Bugsnag;
+
 import mobileapp.ctemplar.com.ctemplarapp.net.RestClient;
 import mobileapp.ctemplar.com.ctemplarapp.repository.AppDatabase;
 import mobileapp.ctemplar.com.ctemplarapp.repository.ContactsRepository;
@@ -33,6 +35,7 @@ public class CTemplarApp extends MultiDexApplication {
     public void onCreate() {
         super.onCreate();
         Timber.plant(new Timber.DebugTree());
+        Bugsnag.init(this);
         instance = this;
         installProviders(this);
     }
