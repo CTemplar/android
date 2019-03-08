@@ -7,11 +7,9 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.TextUtils;
 import android.util.Base64;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
@@ -143,12 +141,20 @@ public class ViewMessagesAdapter extends BaseAdapter {
 
         // check for status (time delete, delayed delivery)
         if (!TextUtils.isEmpty(messageData.getDelayedDelivery())) {
-            String leftTime = AppUtils.leftTime(messageData.getDelayedDelivery());
-            statusTextView.setText(view.getResources().getString(R.string.txt_left_time_delay_delivery, leftTime));
-            statusTextView.setBackgroundColor(view.getResources().getColor(R.color.colorDarkGreen));
+            String leftTime = AppUtils.elapsedTime(messageData.getDelayedDelivery());
+            if (leftTime != null) {
+                statusTextView.setText(view.getResources().getString(R.string.txt_left_time_delay_delivery, leftTime));
+                statusTextView.setBackgroundColor(view.getResources().getColor(R.color.colorDarkGreen));
+            } else {
+                statusTextView.setVisibility(View.GONE);
+            }
         } else if (!TextUtils.isEmpty(messageData.getDestructDate())) {
-            String leftTime = AppUtils.leftTime(messageData.getDestructDate());
-            statusTextView.setText(view.getResources().getString(R.string.txt_left_time_destruct, leftTime));
+            String leftTime = AppUtils.elapsedTime(messageData.getDestructDate());
+            if (leftTime != null) {
+                statusTextView.setText(view.getResources().getString(R.string.txt_left_time_destruct, leftTime));
+            } else {
+                statusTextView.setVisibility(View.GONE);
+            }
         } else {
             statusTextView.setVisibility(View.GONE);
         }

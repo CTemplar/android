@@ -84,12 +84,20 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesView
 
         // check for status (time delete, delayed delivery)
         if (!TextUtils.isEmpty(messages.getDelayedDelivery())) {
-            String leftTime = AppUtils.leftTime(messages.getDelayedDelivery());
-            holder.txtStatus.setText(holder.root.getResources().getString(R.string.txt_left_time_delay_delivery, leftTime));
-            holder.txtStatus.setBackgroundColor(holder.root.getResources().getColor(R.color.colorDarkGreen));
+            String leftTime = AppUtils.elapsedTime(messages.getDelayedDelivery());
+            if (leftTime != null) {
+                holder.txtStatus.setText(holder.root.getResources().getString(R.string.txt_left_time_delay_delivery, leftTime));
+                holder.txtStatus.setBackgroundColor(holder.root.getResources().getColor(R.color.colorDarkGreen));
+            } else {
+                holder.txtStatus.setVisibility(View.GONE);
+            }
         } else if (!TextUtils.isEmpty(messages.getDestructDate())) {
-            String leftTime = AppUtils.leftTime(messages.getDestructDate());
-            holder.txtStatus.setText(holder.root.getResources().getString(R.string.txt_left_time_destruct, leftTime));
+            String leftTime = AppUtils.elapsedTime(messages.getDestructDate());
+            if (leftTime != null) {
+                holder.txtStatus.setText(holder.root.getResources().getString(R.string.txt_left_time_destruct, leftTime));
+            } else {
+                holder.txtStatus.setVisibility(View.GONE);
+            }
         } else {
             holder.txtStatus.setVisibility(View.GONE);
         }

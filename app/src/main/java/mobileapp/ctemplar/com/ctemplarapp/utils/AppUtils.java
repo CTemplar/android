@@ -10,6 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
 
 import timber.log.Timber;
 
@@ -41,18 +42,31 @@ public class AppUtils {
         }
     }
 
-    public static String leftTime(String stringDate) {
+    public static String elapsedTime(String stringDate) {
         if (!TextUtils.isEmpty(stringDate)) {
             Calendar nowCalendar = Calendar.getInstance();
+            nowCalendar.add(Calendar.HOUR_OF_DAY, -offsetFromCalendar(nowCalendar));
+
             DateFormat parseFormat = new SimpleDateFormat(LEFT_DATE_PATTERN, Locale.getDefault());
-            DateFormat leftTimeFormat = new SimpleDateFormat("d'd' h:mm", Locale.getDefault());
+            String elapsedTimeFormat = "%2dd %02d:%02d";
 
             try {
                 Date parseDate = parseFormat.parse(stringDate);
                 long stringTimeInMillis = parseDate.getTime();
                 long diffInMillis = stringTimeInMillis - nowCalendar.getTimeInMillis();
 
-                return leftTimeFormat.format(diffInMillis);
+                if (diffInMillis < 0) {
+                    return null;
+                }
+
+                long seconds = diffInMillis / 1000;
+                long minutes = seconds / 60;
+                long hours = minutes / 60;
+                long days = hours / 24;
+                minutes %= 60;
+                hours %= 24;
+
+                return String.format(Locale.getDefault(), elapsedTimeFormat, days, hours, minutes);
             } catch (ParseException e) {
                 Timber.e("DateParse error: %s", e.getMessage());
             }
@@ -74,7 +88,7 @@ public class AppUtils {
 
                 if (nowCalendar.get(Calendar.YEAR) == parseCalendar.get(Calendar.YEAR)) {
                     if (nowCalendar.get(Calendar.DATE) == parseCalendar.get(Calendar.DATE)) {
-                        return timeFormat.format(date);
+                        return timeFormat.format(date); // TODO
                     } else if (nowCalendar.get(Calendar.DATE) - parseCalendar.get(Calendar.DATE) == 1) {
                         return "Yesterday";
                     } else {
@@ -88,6 +102,12 @@ public class AppUtils {
             }
         }
         return null;
+    }
+
+    public static int offsetFromCalendar(Calendar calendar) {
+        TimeZone timeZone = calendar.getTimeZone();
+        int timeZoneOffset = timeZone.getRawOffset();
+        return timeZoneOffset / 1000 / 60 / 60;
     }
 
     public static String formatDate(String stringDate) {

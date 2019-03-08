@@ -12,6 +12,7 @@
         android:background="@android:color/transparent"
         android:hint="@string/action_search"
         android:inputType="text"
+        android:imeOptions="actionDone"
         android:drawableStart="@drawable/ic_action_search" />
 
     <android.support.v7.widget.RecyclerView

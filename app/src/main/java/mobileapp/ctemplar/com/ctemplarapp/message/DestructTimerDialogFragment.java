@@ -18,9 +18,12 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import java.util.Calendar;
+import java.util.SimpleTimeZone;
 
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
+
+import static mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils.offsetFromCalendar;
 
 public class DestructTimerDialogFragment extends DialogFragment {
 
@@ -66,8 +69,11 @@ public class DestructTimerDialogFragment extends DialogFragment {
         scheduleButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onScheduleDestructTimerDelivery.onSchedule(calendar.getTimeInMillis());
-                dismiss();
+                if (validate()) {
+                    calendar.add(Calendar.HOUR_OF_DAY, -offsetFromCalendar(calendar));
+                    onScheduleDestructTimerDelivery.onSchedule(calendar.getTimeInMillis());
+                    dismiss();
+                }
             }
         });
 

@@ -39,6 +39,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.WhiteListContact;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
+import retrofit2.Response;
 
 @Singleton
 public class UserRepository {
@@ -182,13 +183,13 @@ public class UserRepository {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<MessagesResult> markMessageAsRead(long id) {
+    public Observable<Response<Void>> markMessageAsRead(long id) {
         return service.markMessageAsRead(id, new MarkMessageAsReadRequest())
                 .subscribeOn(io.reactivex.schedulers.Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<MessagesResult> markMessageIsStarred(long id, boolean starred) {
+    public Observable<Response<Void>> markMessageIsStarred(long id, boolean starred) {
         return service.markMessageIsStarred(id, new MarkMessageIsStarredRequest(starred))
                 .subscribeOn(io.reactivex.schedulers.Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());

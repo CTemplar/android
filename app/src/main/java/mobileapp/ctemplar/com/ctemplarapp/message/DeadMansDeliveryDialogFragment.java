@@ -57,8 +57,10 @@ public class DeadMansDeliveryDialogFragment extends DialogFragment {
         closeDialog.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onScheduleDeadMansDelivery.onSchedule(null);
-                dismiss();
+                if (validate()) {
+                    onScheduleDeadMansDelivery.onSchedule(null);
+                    dismiss();
+                }
             }
         });
 
