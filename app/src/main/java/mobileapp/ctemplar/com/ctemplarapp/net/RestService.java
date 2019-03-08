@@ -100,11 +100,11 @@ public interface RestService {
     @GET("/emails/messages/")
     Observable<MessagesResponse> getChainMessages(@Query("id__in") long id);
 
-    @PATCH("/emails/messages/{id}/")
-    Observable<MessagesResult> markMessageAsRead(@Path("id") long id, @Body MarkMessageAsReadRequest request);
+    @PATCH("/emails/messages/")
+    Observable<Response<Void>> markMessageAsRead(@Query("id__in") long id, @Body MarkMessageAsReadRequest request);
 
-    @PATCH("/emails/messages/{id}/")
-    Observable<MessagesResult> markMessageIsStarred(@Path("id") long id, @Body MarkMessageIsStarredRequest request);
+    @PATCH("/emails/messages/")
+    Observable<Response<Void>> markMessageIsStarred(@Query("id__in") long id, @Body MarkMessageIsStarredRequest request);
 
     @GET("/emails/custom-folder/")
     Observable<FoldersResponse> getFolders(@Query("limit") int limit, @Query("offset") int offset);

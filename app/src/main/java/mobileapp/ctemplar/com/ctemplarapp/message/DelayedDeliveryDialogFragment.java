@@ -30,6 +30,8 @@ import android.widget.Toast;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.SimpleTimeZone;
+import java.util.TimeZone;
 
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.folders.AddFolderActivity;
@@ -38,6 +40,8 @@ import mobileapp.ctemplar.com.ctemplarapp.main.FilterDialogFragment;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Folders.FoldersResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Folders.FoldersResult;
 import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
+
+import static mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils.offsetFromCalendar;
 
 public class DelayedDeliveryDialogFragment extends DialogFragment {
 
@@ -74,7 +78,9 @@ public class DelayedDeliveryDialogFragment extends DialogFragment {
         closeDialog.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onScheduleDelayedDelivery.onSchedule(null);
+                if (validate()) {
+                    onScheduleDelayedDelivery.onSchedule(null);
+                }
                 dismiss();
             }
         });
@@ -83,6 +89,7 @@ public class DelayedDeliveryDialogFragment extends DialogFragment {
         scheduleButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                calendar.add(Calendar.HOUR_OF_DAY, -offsetFromCalendar(calendar));
                 onScheduleDelayedDelivery.onSchedule(calendar.getTimeInMillis());
                 dismiss();
             }

@@ -20,6 +20,7 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.MessagesRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MessageEntity;
 import okhttp3.ResponseBody;
+import retrofit2.Response;
 import timber.log.Timber;
 
 public class ViewMessagesViewModel extends ViewModel {
@@ -28,7 +29,7 @@ public class ViewMessagesViewModel extends ViewModel {
     private ManageFoldersRepository manageFoldersRepository;
     private MutableLiveData<ResponseStatus> responseStatus = new MutableLiveData<>();
     private MutableLiveData<List<MessageProvider>> messagesResponse = new MutableLiveData<>();
-    private MutableLiveData<MessageProvider> starredResponse = new MutableLiveData<>();
+    private MutableLiveData<Boolean> starredResponse = new MutableLiveData<>();
     private MutableLiveData<FoldersResponse> foldersResponse = new MutableLiveData<>();
     private MutableLiveData<ResponseStatus> moveToFolderStatus = new MutableLiveData<>();
 
@@ -95,23 +96,28 @@ public class ViewMessagesViewModel extends ViewModel {
                 });
     }
 
-    public void markMessageIsStarred(long id, boolean starred) {
+    public void markMessageIsStarred(final long id, final boolean starred) {
         userRepository.markMessageIsStarred(id, starred)
-                .subscribe(new Observer<MessagesResult>() {
+                .subscribe(new Observer<Response<Void>>() {
                     @Override
                     public void onSubscribe(Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(MessagesResult messagesResult) {
-                        MessageProvider messageProvider = MessageProvider.fromMessagesResult(messagesResult);
-                        starredResponse.postValue(messageProvider);
+                    public void onNext(Response<Void> messageResponse) {
+                        int resultCode = messageResponse.code();
+                        if (resultCode == 204) {
+                            CTemplarApp.getAppDatabase().messageDao().updateIsStarred(id, starred);
+                            starredResponse.postValue(starred);
+                        } else {
+                            Timber.e("Update starred response is not success: code = %s", resultCode);
+                        }
                     }
 
                     @Override
                     public void onError(Throwable e) {
-
+                        Timber.e(e);
                     }
 
                     @Override
@@ -121,22 +127,27 @@ public class ViewMessagesViewModel extends ViewModel {
                 });
     }
 
-    public void markMessageAsRead(long id) {
+    public void markMessageAsRead(final long id) {
         userRepository.markMessageAsRead(id)
-                .subscribe(new Observer<MessagesResult>() {
+                .subscribe(new Observer<Response<Void>>() {
                     @Override
                     public void onSubscribe(Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(MessagesResult messagesResult) {
-                        Timber.i("Message marked as read");
+                    public void onNext(Response<Void> messageResponse) {
+                        int resultCode = messageResponse.code();
+                        if (resultCode == 204) {
+                            CTemplarApp.getAppDatabase().messageDao().updateIsRead(id, true);
+                        } else {
+                            Timber.e("Update isRead response is not success: code = %s", resultCode);
+                        }
                     }
 
                     @Override
                     public void onError(Throwable e) {
-
+                        Timber.e(e);
                     }
 
                     @Override
@@ -204,7 +215,7 @@ public class ViewMessagesViewModel extends ViewModel {
         return messagesResponse;
     }
 
-    MutableLiveData<MessageProvider> getStarredResponse() {
+    MutableLiveData<Boolean> getStarredResponse() {
         return starredResponse;
     }
 

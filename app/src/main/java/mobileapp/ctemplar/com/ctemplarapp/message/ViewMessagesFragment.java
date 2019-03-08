@@ -1,6 +1,7 @@
 package mobileapp.ctemplar.com.ctemplarapp.message;
 
 import android.app.Activity;
+import android.app.Application;
 import android.app.DownloadManager;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
@@ -47,6 +48,7 @@ import java.util.Locale;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import mobileapp.ctemplar.com.ctemplarapp.ActivityInterface;
+import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.main.MainActivity;
 import mobileapp.ctemplar.com.ctemplarapp.main.MainActivityViewModel;
@@ -214,19 +216,18 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
             }
         });
 
-        modelViewMessages.getStarredResponse().observe(this, new Observer<MessageProvider>() {
+        modelViewMessages.getStarredResponse().observe(this, new Observer<Boolean>() {
             @Override
-            public void onChanged(@Nullable MessageProvider messagesResult) {
-                if (messagesResult != null && messagesResult.getId() == parentMessage.getId()) {
-                    starImageView.setSelected(messagesResult.isStarred());
-                    parentMessage = messagesResult;
-                }
+            public void onChanged(@Nullable Boolean isStarred) {
+                boolean starred = isStarred == null ? false : isStarred;
+                starImageView.setSelected(starred);
+                parentMessage.setStarred(starred);
             }
         });
 
         BroadcastReceiver onComplete = new BroadcastReceiver() {
             public void onReceive(Context ctx, Intent intent) {
-                Toast.makeText(activity, getResources().getString(R.string.toast_download_complete), Toast.LENGTH_SHORT).show();
+                Toast.makeText(ctx, ctx.getResources().getString(R.string.toast_download_complete), Toast.LENGTH_SHORT).show();
             }
         };
         activity.registerReceiver(onComplete, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));

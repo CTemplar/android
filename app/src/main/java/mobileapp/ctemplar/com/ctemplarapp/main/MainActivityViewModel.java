@@ -33,6 +33,7 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MessageEntity;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EncodeUtils;
 import okhttp3.ResponseBody;
 import retrofit2.HttpException;
+import retrofit2.Response;
 import timber.log.Timber;
 
 public class MainActivityViewModel extends ViewModel {
@@ -411,22 +412,25 @@ public class MainActivityViewModel extends ViewModel {
                 });
     }
 
-    public void markMessageIsStarred(long id, boolean starred) {
+    public void markMessageIsStarred(final long id, final boolean starred) {
         userRepository.markMessageIsStarred(id, starred)
-                .subscribe(new Observer<MessagesResult>() {
+                .subscribe(new Observer<Response<Void>>() {
                     @Override
                     public void onSubscribe(Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(MessagesResult messagesResult) {
-                        //starredResponse.postValue(messagesResult);
+                    public void onNext(Response<Void> messageResponse) {
+                        int resultCode = messageResponse.code();
+                        if (resultCode == 204) {
+                            CTemplarApp.getAppDatabase().messageDao().updateIsStarred(id, starred);
+                        }
                     }
 
                     @Override
                     public void onError(Throwable e) {
-
+                        Timber.e(e);
                     }
 
                     @Override
