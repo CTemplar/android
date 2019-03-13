@@ -78,9 +78,7 @@ public class DelayedDeliveryDialogFragment extends DialogFragment {
         closeDialog.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (validate()) {
-                    onScheduleDelayedDelivery.onSchedule(null);
-                }
+                onScheduleDelayedDelivery.onSchedule(null);
                 dismiss();
             }
         });
@@ -89,9 +87,11 @@ public class DelayedDeliveryDialogFragment extends DialogFragment {
         scheduleButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                calendar.add(Calendar.HOUR_OF_DAY, -offsetFromCalendar(calendar));
-                onScheduleDelayedDelivery.onSchedule(calendar.getTimeInMillis());
-                dismiss();
+                if (validate()) {
+                    calendar.add(Calendar.HOUR_OF_DAY, -offsetFromCalendar(calendar));
+                    onScheduleDelayedDelivery.onSchedule(calendar.getTimeInMillis());
+                    dismiss();
+                }
             }
         });
 

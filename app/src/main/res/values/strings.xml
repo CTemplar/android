@@ -237,6 +237,7 @@ If you have further questions please email <![CDATA[<u><a href="mailto:support@c
     <string name="txt_type_mobile_signature">Type your mobile signature</string>
 
     <string name="password_key">password</string>
+    <string name="change_password_reset_data">Delete data</string>
     <string name="toast_email_not_valid">Email is not valid</string>
     <string name="toast_recovery_email_changed">Recovery email changed</string>
     <string name="white_black_list">white_black_list</string>
@@ -292,7 +293,7 @@ If you have further questions please email <![CDATA[<u><a href="mailto:support@c
     <string name="error_password_not_match">Passwords do not match</string>
     <string name="error_password_not_match_or_small">Passwords do not match or less than 8 symbols</string>
     <string name="error_current_password_not_match">Current password do not match</string>
-    <string name="error_new_password_not_match">New passwords do not match</string>
+    <string name="error_new_password_not_match">New passwords do not match or too short</string>
     <string name="error_empty_email">Empty email</string>
     <string name="error_empty_password">Empty password</string>
     <string name="error_authentication_failed">Wrong username or password</string>

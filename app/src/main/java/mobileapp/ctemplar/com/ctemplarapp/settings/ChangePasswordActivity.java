@@ -8,14 +8,19 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.AppCompatCheckBox;
 import android.text.TextUtils;
+import android.view.View;
+import android.view.WindowManager;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import butterknife.BindView;
 import butterknife.OnClick;
 import mobileapp.ctemplar.com.ctemplarapp.BaseActivity;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
+import mobileapp.ctemplar.com.ctemplarapp.DialogState;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.login.LoginActivity;
 import mobileapp.ctemplar.com.ctemplarapp.main.MainActivityActions;
@@ -28,10 +33,21 @@ public class ChangePasswordActivity extends BaseActivity {
 
     @BindView(R.id.activity_change_password_current_input)
     EditText editTextCurrentPassword;
+
     @BindView(R.id.activity_change_password_new_input)
     EditText editTextNewPassword;
+
     @BindView(R.id.activity_change_password_confirm_input)
     EditText editTextPasswordConfirmation;
+
+    @BindView(R.id.activity_change_password_reset_check)
+    AppCompatCheckBox checkBoxResetData;
+
+    @BindView(R.id.progress_bar)
+    public ProgressBar progress;
+
+    @BindView(R.id.progress_background)
+    public View progressBackground;
 
     @Override
     protected int getLayoutId() {
@@ -75,6 +91,7 @@ public class ChangePasswordActivity extends BaseActivity {
     }
 
     private void handleResponse(ResponseStatus responseStatus) {
+        dialogState(false);
         if (responseStatus == null || responseStatus == ResponseStatus.RESPONSE_ERROR) {
             Toast.makeText(this, getResources().getString(R.string.toast_password_not_changed), Toast.LENGTH_SHORT).show();
         } else if (responseStatus == ResponseStatus.RESPONSE_COMPLETE) {
@@ -88,6 +105,7 @@ public class ChangePasswordActivity extends BaseActivity {
         final String currentPassword = editTextCurrentPassword.getText().toString();
         final String newPassword = editTextNewPassword.getText().toString();
         final String passwordConfirmation = editTextPasswordConfirmation.getText().toString();
+        final boolean resetData = checkBoxResetData.isChecked();
 
         if(!TextUtils.equals(userCurrentPassword, currentPassword)) {
             Toast.makeText(this, getResources().getString(R.string.error_current_password_not_match),
@@ -95,14 +113,15 @@ public class ChangePasswordActivity extends BaseActivity {
             return;
         }
 
-        if (TextUtils.equals(newPassword, passwordConfirmation) && !newPassword.isEmpty() && newPassword.length() > 7) {
+        if (TextUtils.equals(newPassword, passwordConfirmation) && !newPassword.isEmpty() && newPassword.length() > 6) {
             new AlertDialog.Builder(this)
                     .setTitle(getResources().getString(R.string.dialog_change_password))
                     .setMessage(getResources().getString(R.string.dialog_change_password_confirm))
                     .setPositiveButton(getResources().getString(R.string.btn_change), new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    changePasswordModel.changePassword(currentPassword, newPassword, passwordConfirmation);
+                                    changePasswordModel.changePassword(currentPassword, newPassword, resetData);
+                                    dialogState(true);
                                 }
                             }
                     )
@@ -112,5 +131,26 @@ public class ChangePasswordActivity extends BaseActivity {
             Toast.makeText(this, getResources().getString(R.string.error_new_password_not_match),
                     Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void dialogState(boolean state) {
+        if (state) {
+            progress.setVisibility(View.VISIBLE);
+            progressBackground.setVisibility(View.VISIBLE);
+            blockUI();
+        } else {
+            progress.setVisibility(View.GONE);
+            progressBackground.setVisibility(View.GONE);
+            unlockUI();
+        }
+    }
+
+    public void blockUI() {
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+    }
+
+    public void unlockUI() {
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
     }
 }

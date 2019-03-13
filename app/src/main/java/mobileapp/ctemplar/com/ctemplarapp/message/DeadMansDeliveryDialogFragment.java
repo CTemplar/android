@@ -57,10 +57,8 @@ public class DeadMansDeliveryDialogFragment extends DialogFragment {
         closeDialog.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (validate()) {
-                    onScheduleDeadMansDelivery.onSchedule(null);
-                    dismiss();
-                }
+                onScheduleDeadMansDelivery.onSchedule(null);
+                dismiss();
             }
         });
 
@@ -68,9 +66,11 @@ public class DeadMansDeliveryDialogFragment extends DialogFragment {
         scheduleButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                long targetTimeInMillis = calendar.getTimeInMillis();
-                onScheduleDeadMansDelivery.onSchedule(durationInHours(targetTimeInMillis));
-                dismiss();
+                if (validate()) {
+                    long targetTimeInMillis = calendar.getTimeInMillis();
+                    onScheduleDeadMansDelivery.onSchedule(durationInHours(targetTimeInMillis));
+                    dismiss();
+                }
             }
         });
 

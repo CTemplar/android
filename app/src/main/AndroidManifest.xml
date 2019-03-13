@@ -59,6 +59,9 @@
         <activity android:name=".wbl.AddBlacklistContactActivity" />
         <activity android:name=".wbl.AddWhitelistContactActivity" />
         <activity android:name=".folders.EditFolderActivity" />
+        <meta-data
+            android:name="com.bugsnag.android.API_KEY"
+            android:value="80ecba732fffa236722506f5201dc6c7" />
     </application>
 
 </manifest>
