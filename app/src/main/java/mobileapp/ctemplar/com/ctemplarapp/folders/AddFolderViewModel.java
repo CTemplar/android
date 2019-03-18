@@ -17,7 +17,7 @@ public class AddFolderViewModel extends ViewModel {
     private ManageFoldersRepository manageFoldersRepository;
     private MutableLiveData<ResponseStatus> responseStatus = new MutableLiveData<>();
 
-    AddFolderViewModel() {
+    public AddFolderViewModel() {
         manageFoldersRepository = CTemplarApp.getManageFoldersRepository();
     }
 
