@@ -19,7 +19,7 @@ public class EditFolderViewModel extends ViewModel {
     private MutableLiveData<ResponseStatus> deletingStatus = new MutableLiveData<>();
     private MutableLiveData<FoldersResult> editResponse = new MutableLiveData<>();
 
-    EditFolderViewModel() {
+    public EditFolderViewModel() {
         manageFoldersRepository = CTemplarApp.getManageFoldersRepository();
     }
 

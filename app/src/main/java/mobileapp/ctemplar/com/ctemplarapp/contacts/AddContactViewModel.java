@@ -15,7 +15,6 @@ public class AddContactViewModel extends ViewModel {
     private ContactsRepository contactsRepository;
     private MutableLiveData<ResponseStatus> responseStatus = new MutableLiveData<>();
 
-
     public AddContactViewModel() {
         contactsRepository = CTemplarApp.getContactsRepository();
     }
