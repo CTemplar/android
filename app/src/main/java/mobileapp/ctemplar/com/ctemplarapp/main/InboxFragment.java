@@ -348,6 +348,8 @@ public class InboxFragment extends BaseFragment {
             touchListener = new InboxMessagesTouchListener(getActivity(), recyclerView);
             if (currentFolder != null && currentFolder.equals("draft")) {
                 touchListener.setSwipeOptionViews(R.id.item_message_view_holder_delete);
+            } else if (currentFolder != null && currentFolder.equals("spam")) {
+                touchListener.setSwipeOptionViews(R.id.item_message_view_holder_inbox, R.id.item_message_view_holder_move, R.id.item_message_view_holder_delete);
             } else {
                 touchListener.setSwipeOptionViews(R.id.item_message_view_holder_spam, R.id.item_message_view_holder_move, R.id.item_message_view_holder_delete);
             }
@@ -389,13 +391,33 @@ public class InboxFragment extends BaseFragment {
                                 case R.id.item_message_view_holder_spam:
                                     if (!currentFolder.equals("spam")) {
                                         final MessageProvider spamMessage = adapter.removeAt(position);
+                                        mainModel.toFolder(spamMessage.getId(), "spam");
                                         Snackbar snackbarSpam = Snackbar.make(frameCompose, getResources().getString(R.string.action_spam), Snackbar.LENGTH_LONG);
                                         snackbarSpam.setAction(getResources().getString(R.string.action_undo), new View.OnClickListener() {
                                             @Override
                                             public void onClick(View view) {
-                                                mainModel.toFolder(spamMessage.getId(), "spam");
                                                 if (currentFolder.equals(currentFolderFinal)) {
                                                     adapter.restoreMessage(spamMessage, position);
+                                                } else {
+                                                    getMessages();
+                                                }
+                                            }
+                                        });
+                                        snackbarSpam.setActionTextColor(Color.YELLOW);
+                                        snackbarSpam.show();
+                                    }
+                                    break;
+
+                                case R.id.item_message_view_holder_inbox:
+                                    if (currentFolder.equals("spam")) {
+                                        final MessageProvider notSpamMessage = adapter.removeAt(position);
+                                        mainModel.toFolder(notSpamMessage.getId(), "inbox");
+                                        Snackbar snackbarSpam = Snackbar.make(frameCompose, getResources().getString(R.string.action_moved_to_inbox), Snackbar.LENGTH_LONG);
+                                        snackbarSpam.setAction(getResources().getString(R.string.action_undo), new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View view) {
+                                                if (currentFolder.equals(currentFolderFinal)) {
+                                                    adapter.restoreMessage(notSpamMessage, position);
                                                 } else {
                                                     getMessages();
                                                 }
@@ -412,7 +434,9 @@ public class InboxFragment extends BaseFragment {
                                     Bundle moveFragmentBundle = new Bundle();
                                     moveFragmentBundle.putLong(PARENT_ID, movedMessage.getId());
                                     moveDialogFragment.setArguments(moveFragmentBundle);
-                                    moveDialogFragment.show(getFragmentManager(), "MoveDialogFragment");
+                                    if (getFragmentManager() != null) {
+                                        moveDialogFragment.show(getFragmentManager(), "MoveDialogFragment");
+                                    }
                                     break;
                             }
                         }

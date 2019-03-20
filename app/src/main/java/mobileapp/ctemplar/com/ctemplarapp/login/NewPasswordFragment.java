@@ -82,6 +82,14 @@ public class NewPasswordFragment extends BaseFragment {
     @OnClick(R.id.fragment_new_password_next_btn)
     public void onNextClick() {
 
+        if (editChoose.length() < 7) {
+            editConfirmLayout.setError(getResources().getString(R.string.error_password_small));
+            return;
+        }
+        if (editChoose.length() > 64) {
+            editConfirmLayout.setError(getResources().getString(R.string.error_password_big));
+            return;
+        }
         if(!TextUtils.equals(editConfirm.getText().toString(), editChoose.getText().toString())) {
             editConfirmLayout.setError(getResources().getString(R.string.error_password_not_match));
             return;
@@ -90,6 +98,7 @@ public class NewPasswordFragment extends BaseFragment {
         if(!TextUtils.isEmpty(editChoose.getText().toString()) &&
                 !TextUtils.isEmpty(editConfirm.getText().toString()) &&
                 TextUtils.equals(editChoose.getText().toString(), editConfirm.getText().toString())) {
+
             viewModel.getRecoverPasswordRequest().setPassword(editChoose.getText().toString());
             viewModel.showProgressDialog();
             viewModel.resetPassword();

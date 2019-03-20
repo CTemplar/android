@@ -65,7 +65,14 @@ public class StepPasswordFragment extends BaseFragment {
     @OnClick({R.id.fragment_step_password_next_btn})
     public void onClickNext() {
 
-        // check for matching
+        if (editChoose.length() < 7) {
+            editConfirmLayout.setError(getResources().getString(R.string.error_password_small));
+            return;
+        }
+        if (editChoose.length() > 64) {
+            editConfirmLayout.setError(getResources().getString(R.string.error_password_big));
+            return;
+        }
         if(!TextUtils.equals(editConfirm.getText().toString(), editChoose.getText().toString())) {
             editConfirmLayout.setError(getResources().getString(R.string.error_password_not_match));
             return;

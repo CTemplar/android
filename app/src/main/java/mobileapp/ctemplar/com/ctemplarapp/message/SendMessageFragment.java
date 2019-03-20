@@ -2,7 +2,6 @@ package mobileapp.ctemplar.com.ctemplarapp.message;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.app.TimePickerDialog;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
@@ -19,7 +18,6 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.Html;
 import android.text.TextWatcher;
-import android.text.style.TtsSpan;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -55,7 +53,6 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.EncryptionMessag
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessageAttachment;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResult;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.MyselfResponse;
-import mobileapp.ctemplar.com.ctemplarapp.repository.MailboxDao;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.FileUtils;
@@ -759,7 +756,12 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
 
         if (requestCode == PICK_FILE_FROM_STORAGE && resultCode == RESULT_OK && data != null && data.getData() != null) {
             Uri attachmentUri = data.getData();
-            uploadAttachment(attachmentUri);
+            if (attachmentUri != null) {
+                uploadAttachment(attachmentUri);
+            } else {
+                Toast.makeText(getActivity(), "Unable to read selected path", Toast.LENGTH_SHORT).show();
+                Timber.e("AttachmentUri is null");
+            }
         }
     }
 
@@ -770,7 +772,15 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         }
         String attachmentPath = FileUtils.getPath(activity, attachmentUri);
 
-        File attachmentFile = new File(attachmentPath);
+        File attachmentFile;
+        try {
+            attachmentFile = new File(attachmentPath);
+        } catch (Exception e) {
+            Toast.makeText(getActivity(), "Unable to read file in selected path", Toast.LENGTH_SHORT).show();
+            Timber.e(e);
+            return;
+        }
+
         MediaType mediaType;
         String type = activity.getContentResolver().getType(attachmentUri);
         if (type == null) {
