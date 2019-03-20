@@ -128,15 +128,20 @@ public class MainActivity extends AppCompatActivity
                     Menu navigationMenu = navigationView.getMenu();
                     TextView inboxCounter = (TextView) navigationMenu.findItem(R.id.nav_inbox).getActionView();
                     TextView outboxCounter = (TextView) navigationMenu.findItem(R.id.nav_outbox).getActionView();
+                    TextView spamCounter = (TextView) navigationMenu.findItem(R.id.nav_spam).getActionView();
 
                     int inboxUnread = unreadFoldersListResponse.getInbox();
                     int outboxDelayed = unreadFoldersListResponse.getOutboxDelayedDeliveryCounter();
+                    int spam = unreadFoldersListResponse.getSpam();
 
                     if (inboxUnread > 0) {
                         inboxCounter.setText(String.valueOf(inboxUnread));
                     }
                     if (outboxDelayed > 0) {
                         outboxCounter.setText(String.valueOf(outboxDelayed));
+                    }
+                    if (spam > 0) {
+                        spamCounter.setText(String.valueOf(spam));
                     }
                 }
             }

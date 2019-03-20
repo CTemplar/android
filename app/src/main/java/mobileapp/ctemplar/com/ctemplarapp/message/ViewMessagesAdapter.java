@@ -1,6 +1,5 @@
 package mobileapp.ctemplar.com.ctemplarapp.message;
 
-import android.content.Context;
 import android.os.Build;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -21,7 +20,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.main.AttachmentProvider;
 import mobileapp.ctemplar.com.ctemplarapp.main.MessageProvider;
@@ -58,10 +56,6 @@ public class ViewMessagesAdapter extends BaseAdapter {
 
         final View collapsedView = view.findViewById(R.id.collappsed);
         final View expandedView = view.findViewById(R.id.expanded);
-
-        String password = CTemplarApp.getInstance()
-                .getSharedPreferences("pref_user", Context.MODE_PRIVATE)
-                .getString("key_password", null);
 
         collapsedView.setOnClickListener(new View.OnClickListener() {
             @Override

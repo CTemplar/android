@@ -43,6 +43,8 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesView
         String currentFolder = mainModel.getCurrentFolder().getValue();
         if (currentFolder != null && currentFolder.equals("draft")) {
             backOptionsView = inflater.inflate(R.layout.swipe_actions_draft, backOptionsLayout, false);
+        } else if (currentFolder != null && currentFolder.equals("spam")) {
+            backOptionsView = inflater.inflate(R.layout.swipe_actions_spam, backOptionsLayout, false);
         } else {
             backOptionsView = inflater.inflate(R.layout.swipe_actions, backOptionsLayout, false);
         }
