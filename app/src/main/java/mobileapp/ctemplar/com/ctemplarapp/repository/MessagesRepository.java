@@ -40,6 +40,10 @@ public class MessagesRepository {
         CTemplarApp.getAppDatabase().messageDao().save(entity);
     }
 
+    public void updateMessageFolderName(long messageId, String newFolderName) {
+        CTemplarApp.getAppDatabase().messageDao().updateFolderName(messageId, newFolderName);
+    }
+
     public void deleteMessagesByParentId(long id) {
         CTemplarApp.getAppDatabase().messageDao().deleteAllByParentId(((Object)id).toString());
     }

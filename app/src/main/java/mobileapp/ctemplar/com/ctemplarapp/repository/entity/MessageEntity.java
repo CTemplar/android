@@ -36,6 +36,7 @@ public class MessageEntity {
     private String hash;
     private long mailboxId;
     private String parent;
+    private boolean showInInbox;
 
     public long getId() {
         return id;
@@ -251,5 +252,13 @@ public class MessageEntity {
 
     public void setAttachments(List<AttachmentEntity> attachments) {
         this.attachments = attachments;
+    }
+
+    public boolean isShowInInbox() {
+        return showInInbox;
+    }
+
+    public void setShowInInbox(boolean showInInbox) {
+        this.showInInbox = showInInbox;
     }
 }

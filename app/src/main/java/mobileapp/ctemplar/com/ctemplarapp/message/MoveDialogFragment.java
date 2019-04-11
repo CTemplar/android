@@ -34,6 +34,7 @@ public class MoveDialogFragment extends DialogFragment {
 
     private ViewMessagesViewModel viewMessagesModel;
     private List<FoldersResult> customFoldersList;
+    private OnMoveListener callback;
 
     @Override
     public void onResume() {
@@ -92,6 +93,9 @@ public class MoveDialogFragment extends DialogFragment {
                     if (checkedId == folderItem.getId()) {
                         String folderName = folderItem.getName();
                         viewMessagesModel.moveToFolder(parentMessageId, folderName);
+                        if (callback != null) {
+                            callback.onMove(folderName);
+                        }
                         String toastMessage = getResources().getString(R.string.toast_message_moved_to, folderName);
                         Toast.makeText(getActivity(), toastMessage, Toast.LENGTH_SHORT).show();
                         dismiss();
@@ -164,5 +168,13 @@ public class MoveDialogFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         return new Dialog(getActivity(), R.style.DialogAnimation);
+    }
+
+    public void setOnMoveCallback(OnMoveListener onMoveListener) {
+        this.callback = onMoveListener;
+    }
+
+    public interface OnMoveListener {
+        void onMove(String folderName);
     }
 }

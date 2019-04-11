@@ -63,6 +63,8 @@ import okhttp3.RequestBody;
 import timber.log.Timber;
 
 import static android.app.Activity.RESULT_OK;
+import static mobileapp.ctemplar.com.ctemplarapp.main.MainFolderNames.OUTBOX;
+import static mobileapp.ctemplar.com.ctemplarapp.main.MainFolderNames.SENT;
 
 public class SendMessageFragment extends Fragment implements View.OnClickListener, ActivityInterface {
 
@@ -142,6 +144,11 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
     private Long destructDeliveryInMillis;
     private Long deadDeliveryInHours;
     private EncryptionMessage messageEncryptionResult;
+
+    private DelayedDeliveryDialogFragment delayedDeliveryDialogFragment = new DelayedDeliveryDialogFragment();
+    private DestructTimerDialogFragment destructTimerDialogFragment = new DestructTimerDialogFragment();
+    private DeadMansDeliveryDialogFragment deadMansDeliveryDialogFragment = new DeadMansDeliveryDialogFragment();
+    private EncryptMessageDialogFragment encryptMessageDialogFragment = new EncryptMessageDialogFragment();
 
     private MessageSendAttachmentAdapter messageSendAttachmentAdapter;
 
@@ -533,17 +540,17 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
             sendMessageRequest.setDestructDate(AppUtils.datetimeForServer(destructDeliveryInMillis));
         }
 
-        String messageFolder = "sent";
+        String messageFolder = SENT;
         boolean messageSent = true;
         sendMessageRequest.setSend(true);
         if (delayedDeliveryInMillis != null) {
             sendMessageRequest.setDelayedDelivery(AppUtils.datetimeForServer(delayedDeliveryInMillis));
-            messageFolder = "outbox";
+            messageFolder = OUTBOX;
             messageSent = false;
         }
         if (deadDeliveryInHours != null) {
             sendMessageRequest.setDeadManDuration(deadDeliveryInHours);
-            messageFolder = "outbox";
+            messageFolder = OUTBOX;
             messageSent = false;
         }
         sendMessageRequest.setSend(messageSent);
@@ -615,7 +622,6 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
                 break;
             case R.id.fragment_send_message_delayed_layout:
                 if (getFragmentManager() != null && userIsPrime) {
-                    DelayedDeliveryDialogFragment delayedDeliveryDialogFragment = new DelayedDeliveryDialogFragment();
                     delayedDeliveryDialogFragment.show(getFragmentManager(), "DelayedDeliveryDialogFragment");
                     delayedDeliveryDialogFragment.setOnScheduleDelayedDelivery(onScheduleDelayedDelivery);
                 } else {
@@ -624,14 +630,12 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
                 break;
             case R.id.fragment_send_message_destruct_layout:
                 if (getFragmentManager() != null) {
-                    DestructTimerDialogFragment destructTimerDialogFragment = new DestructTimerDialogFragment();
                     destructTimerDialogFragment.show(getFragmentManager(), "DestructTimerDialogFragment");
                     destructTimerDialogFragment.setOnScheduleDestructTimerDelivery(onScheduleDestructTimerDelivery);
                 }
                 break;
             case R.id.fragment_send_message_dead_layout:
                 if (getFragmentManager() != null && userIsPrime) {
-                    DeadMansDeliveryDialogFragment deadMansDeliveryDialogFragment = new DeadMansDeliveryDialogFragment();
                     deadMansDeliveryDialogFragment.show(getFragmentManager(), "DeadMansDialogFragment");
                     deadMansDeliveryDialogFragment.setOnScheduleDeadMansDelivery(onScheduleDeadMansDelivery);
                 } else {
@@ -640,7 +644,6 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
                 break;
             case R.id.fragment_send_message_encrypt_layout:
                 if (getFragmentManager() != null) {
-                    EncryptMessageDialogFragment encryptMessageDialogFragment = new EncryptMessageDialogFragment();
                     encryptMessageDialogFragment.show(getFragmentManager(), "EncryptMessageDialogFragment");
                     encryptMessageDialogFragment.setEncryptMessagePassword(onSetEncryptMessagePassword);
                 }
@@ -815,7 +818,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         messageRequestToDraft.setIsEncrypted(true);
         messageRequestToDraft.setSend(false);
         messageRequestToDraft.setMailbox(mailboxId);
-        messageRequestToDraft.setParent(parentId);
+//        messageRequestToDraft.setParent(parentId);
 
         List<MessageAttachment> attachments = messageSendAttachmentAdapter.getAttachmentsList();
         if (attachments != null && !attachments.isEmpty()) {

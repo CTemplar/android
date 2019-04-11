@@ -22,6 +22,8 @@ import java.util.Calendar;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
 
+import static mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils.durationInHours;
+
 public class DeadMansDeliveryDialogFragment extends DialogFragment {
 
     private Calendar calendar = Calendar.getInstance();
@@ -135,10 +137,5 @@ public class DeadMansDeliveryDialogFragment extends DialogFragment {
         } else {
             return true;
         }
-    }
-
-    private long durationInHours(long timeInMillis) {
-        long currentTimeInMillis = System.currentTimeMillis();
-        return (timeInMillis - currentTimeInMillis) / 1000 / 60 / 60;
     }
 }

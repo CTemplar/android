@@ -454,6 +454,10 @@ public class MessageProvider {
     }
 
     public static MessageEntity fromMessagesResultToEntity(MessagesResult message) {
+        return fromMessagesResultToEntity(message, "");
+    }
+
+    public static MessageEntity fromMessagesResultToEntity(MessagesResult message, String requestFolder) {
         MessageEntity result = new MessageEntity();
 
         result.setId(message.getId());
@@ -484,13 +488,21 @@ public class MessageProvider {
         result.setMailboxId(message.getMailboxId());
         result.setParent(message.getParent());
 
+        if (requestFolder.equals("inbox") && message.getFolderName().equals("sent")) {
+            result.setShowInInbox(true);
+        }
+
         return result;
     }
 
     public static List<MessageEntity> fromMessagesResultsToEntities(List<MessagesResult> messages) {
+        return fromMessagesResultsToEntities(messages, "");
+    }
+
+    public static List<MessageEntity> fromMessagesResultsToEntities(List<MessagesResult> messages, String requestFolder) {
         List<MessageEntity> result = new ArrayList<>(messages.size());
         for (MessagesResult message : messages) {
-            result.add(MessageProvider.fromMessagesResultToEntity(message));
+            result.add(MessageProvider.fromMessagesResultToEntity(message, requestFolder));
         }
         return result;
     }
