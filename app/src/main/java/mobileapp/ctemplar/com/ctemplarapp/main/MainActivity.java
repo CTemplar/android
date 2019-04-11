@@ -102,6 +102,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onChanged(@Nullable String folder) {
                 showFragmentByFolder(folder);
+                loadFolders();
             }
         });
 
@@ -136,12 +137,18 @@ public class MainActivity extends AppCompatActivity
 
                     if (inboxUnread > 0) {
                         inboxCounter.setText(String.valueOf(inboxUnread));
+                    } else {
+                        inboxCounter.setText(null);
                     }
                     if (outboxDelayed > 0) {
                         outboxCounter.setText(String.valueOf(outboxDelayed));
+                    } else {
+                        outboxCounter.setText(null);
                     }
                     if (spam > 0) {
                         spamCounter.setText(String.valueOf(spam));
+                    } else {
+                        spamCounter.setText(null);
                     }
                 }
             }

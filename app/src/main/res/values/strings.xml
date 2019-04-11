@@ -172,7 +172,7 @@ If you have further questions please email <![CDATA[<u><a href="mailto:support@c
 
     <!-- FOLDERS -->
     <string name="toast_folder_created">Folder created</string>
-    <string name="toast_folder_not_created">Folder not created</string>
+    <string name="toast_folder_not_created">Folder with the same name already existed</string>
     <string name="txt_folder_deleted">Folder deleted</string>
     <string name="txt_folder_not_deleted">Folder not deleted</string>
     <string name="txt_folder_edited">Folder edited</string>
@@ -203,6 +203,11 @@ If you have further questions please email <![CDATA[<u><a href="mailto:support@c
     <string name="txt_cc">Cc:&#160;</string>g>
     <string name="txt_bcc">Bcc:&#160;</string>
     <string name="hint_compose">Compose email</string>
+
+    <!-- MESSAGING SERVICE -->
+    <string name="channel_name">CTemplar</string>
+    <string name="channel_description">New email</string>
+    <string name="channel_id">ctemplar</string>
 
     <!-- WHITE-BLACK LIST -->
     <string name="adding_blacklist_contact_error">Error adding contact to blacklist</string>
@@ -285,22 +290,23 @@ If you have further questions please email <![CDATA[<u><a href="mailto:support@c
     </string-array>
 
     <!-- ERRORS -->
-    <string name="error_invalid_email">Invalid email. Correct or remove it</string>
+    <string name="error_invalid_email">Please select a valid email or remove it</string>
     <string name="error_username_small">Minimum 4 symbols</string>
     <string name="error_username_big">Maximum 64 symbols</string>
     <string name="error_password_small">Minimum 8 symbols</string>
     <string name="error_password_big">Maximum 64 symbols</string>
-    <string name="error_username_incorrect">Username incorrect</string>
-    <string name="error_username_exists">Username is not available</string>
+    <string name="error_username_incorrect">Enter a valid email address</string>
+    <string name="error_username_exists">Email already exists!</string>
     <string name="error_password_not_match">Passwords do not match</string>
     <string name="error_password_not_match_or_small">Passwords do not match or less than 8 symbols</string>
-    <string name="error_current_password_not_match">Current password do not match</string>
-    <string name="error_new_password_not_match">New passwords do not match or too short</string>
+    <string name="error_current_password_not_match">Old password is not correct!</string>
+    <string name="error_new_password_not_match">Passwords do not match or too short</string>
     <string name="error_empty_email">Empty email</string>
     <string name="error_empty_password">Empty password</string>
-    <string name="error_authentication_failed">Wrong username or password</string>
+    <string name="error_enter_old_password">Please enter your old password</string>
+    <string name="error_authentication_failed">Unable to log in with provided credentials.</string>
     <string name="error_server">Server error</string>
-    <string name="error_recover_password">Incorrect Username or Email</string>
+    <string name="error_recover_password">Username or recovery email is not correct</string>
     <string name="title_activity_white_black_list">WhiteBlackList</string>
     <string name="section_format">Hello World from section: %1$d</string>
     <string name="toast_undefined_error">Undefined error</string>

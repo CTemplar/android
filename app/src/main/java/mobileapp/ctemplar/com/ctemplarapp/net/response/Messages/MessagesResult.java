@@ -2,8 +2,6 @@ package mobileapp.ctemplar.com.ctemplarapp.net.response.Messages;
 
 import com.google.gson.annotations.SerializedName;
 
-import org.spongycastle.math.Primes;
-
 import java.util.List;
 
 public class MessagesResult {

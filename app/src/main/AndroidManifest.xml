@@ -10,12 +10,21 @@
 
     <application
         android:name=".CTemplarApp"
+        android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:allowBackup="false"
         android:theme="@style/ActionBarLight">
+        <service
+            android:name=".services.MessagingService"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
         <activity
             android:name=".splash.SplashActivity"
             android:label="@string/app_name"
@@ -50,8 +59,9 @@
         <activity android:name=".contacts.AddContactActivity" />
         <activity android:name=".contacts.EditContactActivity" />
         <activity android:name=".message.ViewMessagesActivity" />
-        <activity android:name=".settings.SettingsActivity"
-            android:theme="@style/PreferenceScreen"/>
+        <activity
+            android:name=".settings.SettingsActivity"
+            android:theme="@style/PreferenceScreen" />
         <activity android:name=".settings.ChangePasswordActivity" />
         <activity android:name=".folders.ManageFoldersActivity" />
         <activity android:name=".folders.AddFolderActivity" />

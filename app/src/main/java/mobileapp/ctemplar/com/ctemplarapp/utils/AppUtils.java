@@ -9,6 +9,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -45,7 +46,7 @@ public class AppUtils {
     public static String elapsedTime(String stringDate) {
         if (!TextUtils.isEmpty(stringDate)) {
             Calendar nowCalendar = Calendar.getInstance();
-            int offsetInHours = -offsetFromCalendar(nowCalendar) / 1000 / 60 / 60;
+            int offsetInHours = -timezoneOffsetInMillis() / 1000 / 60 / 60;
             nowCalendar.add(Calendar.HOUR_OF_DAY, offsetInHours);
 
             DateFormat parseFormat = new SimpleDateFormat(LEFT_DATE_PATTERN, Locale.getDefault());
@@ -91,7 +92,7 @@ public class AppUtils {
             try {
                 Date date = parseFormat.parse(stringDate);
                 Calendar parseCalendar = parseFormat.getCalendar();
-                date.setTime(date.getTime() + offsetFromCalendar(nowCalendar));
+                date.setTime(date.getTime() + timezoneOffsetInMillis());
 
                 if (nowCalendar.get(Calendar.YEAR) == parseCalendar.get(Calendar.YEAR)) {
                     if (nowCalendar.get(Calendar.DATE) == parseCalendar.get(Calendar.DATE)) {
@@ -111,9 +112,16 @@ public class AppUtils {
         return null;
     }
 
-    public static int offsetFromCalendar(Calendar calendar) {
-        TimeZone timeZone = calendar.getTimeZone();
-        return timeZone.getRawOffset();
+    public static int timezoneOffsetInMillis() {
+        TimeZone timeZone = TimeZone.getDefault();
+        Calendar calendar = GregorianCalendar.getInstance(timeZone);
+        return timeZone.getOffset(calendar.getTimeInMillis());
+    }
+
+    public static long durationInHours(long timeInMillis) {
+        long utcTimeInMillis = timeInMillis - timezoneOffsetInMillis();
+        long currentTimeInMillis = System.currentTimeMillis();
+        return (utcTimeInMillis - currentTimeInMillis) / 1000 / 60 / 60;
     }
 
     public static String formatDate(String stringDate) {

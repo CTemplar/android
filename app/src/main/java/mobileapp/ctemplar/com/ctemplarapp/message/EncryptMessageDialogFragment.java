@@ -20,6 +20,9 @@ import mobileapp.ctemplar.com.ctemplarapp.R;
 
 public class EncryptMessageDialogFragment extends DialogFragment {
 
+    private String dialogPassword;
+    private String dialogHint;
+
     interface OnSetEncryptMessagePassword {
         void onSet(String password, String passwordHint);
     }
@@ -60,6 +63,14 @@ public class EncryptMessageDialogFragment extends DialogFragment {
             }
         });
 
+        if (dialogPassword != null && !dialogPassword.isEmpty()) {
+            messagePasswordEditText.setText(dialogPassword);
+            messagePasswordConfirmEditText.setText(dialogPassword);
+        }
+        if (dialogHint != null && !dialogHint.isEmpty()) {
+            messagePasswordHintEditText.setText(dialogHint);
+        }
+
         Button encryptButton = view.findViewById(R.id.fragment_encrypt_message_dialog_encrypt);
         encryptButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -72,8 +83,12 @@ public class EncryptMessageDialogFragment extends DialogFragment {
                         !messagePassword.isEmpty() &&
                         messagePassword.length() > 7) {
 
+                    dialogPassword = messagePassword;
+                    dialogHint = messagePasswordHint;
+
                     onSetEncryptMessagePassword.onSet(messagePassword, messagePasswordHint);
                     dismiss();
+
                 } else {
                     Toast.makeText(getActivity(), getString(R.string.error_password_not_match_or_small),
                             Toast.LENGTH_SHORT).show();

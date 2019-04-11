@@ -121,6 +121,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
                     Boolean value = (Boolean) newValue;
                     preferenceRecoveryEmail.setEnabled(value);
+                    Toast.makeText(getActivity(), getResources().getString(R.string.toast_recovery_email_changed), Toast.LENGTH_SHORT).show();
                     return true;
                 }
             });

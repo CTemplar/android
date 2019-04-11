@@ -2,7 +2,6 @@ package mobileapp.ctemplar.com.ctemplarapp.net;
 
 import javax.inject.Singleton;
 
-import io.reactivex.Flowable;
 import io.reactivex.Observable;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.AddFolderRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.AutoSaveContactEnabledRequest;
@@ -31,13 +30,15 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessageAttachmen
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResult;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.UnreadFoldersListResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.BlackListContact;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.MyselfResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.SettingsEntity;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.WhiteListContact;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.RecoverPasswordResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.SignInResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.SignUpResponse;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.BlackListContact;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.MyselfResponse;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.WhiteListContact;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.WhiteBlackLists.BlackListResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.WhiteBlackLists.WhiteListResponse;
 import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
 import retrofit2.Response;
@@ -91,8 +92,8 @@ public interface RestService {
     @DELETE("/emails/messages/{id}/")
     Observable<ResponseBody> deleteMessage(@Path("id") long id);
 
-    @DELETE("emails/messages/")
-    Observable<ResponseBody> deleteSeveralMessages(@Query("id__in") String messagesId);
+    @DELETE("/emails/messages/")
+    Observable<Response<Void>> deleteSeveralMessages(@Query("id__in") String messagesId);
 
     @PATCH("/emails/messages/")
     Observable<ResponseBody> toFolder(@Query("id__in") long id, @Body MoveToFolderRequest request);
@@ -164,8 +165,14 @@ public interface RestService {
     @DELETE("/users/whitelist/{id}/")
     Observable<ResponseBody> deleteWhitelistContact(@Path("id") long id);
 
+    @GET("/users/blacklist/")
+    Observable<BlackListResponse> getBlackListContacts();
+
     @POST("/users/blacklist/")
     Observable<BlackListContact> addBlacklistContact(@Body BlackListContact contact);
+
+    @GET("/users/whitelist/")
+    Observable<WhiteListResponse> getWhiteListContacts();
 
     @POST("/users/whitelist/")
     Observable<WhiteListContact> addWhitelistContact(@Body WhiteListContact contact);
