@@ -7,10 +7,10 @@ import android.arch.lifecycle.ViewModel;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
-import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.BlackListContact;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.MyselfResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.WhiteListContact;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.WhiteBlackLists.BlackListResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.WhiteBlackLists.WhiteListResponse;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
 import okhttp3.ResponseBody;
 import timber.log.Timber;
@@ -18,35 +18,57 @@ import timber.log.Timber;
 public class WhiteBlackListViewModel extends ViewModel {
 
     private UserRepository userRepository;
-    private MutableLiveData<ResponseStatus> responseStatus = new MutableLiveData<>();
     private MutableLiveData<BlackListContact[]> blacklistResponse = new MutableLiveData<>();
     private MutableLiveData<WhiteListContact[]> whitelistResponse = new MutableLiveData<>();
 
     private boolean isBlackListReady = false;
     private boolean isWhiteListReady = false;
 
-
     public WhiteBlackListViewModel() {
         userRepository = CTemplarApp.getUserRepository();
     }
 
-    public void getBlackListWhiteListContacts() {
-        userRepository.getMyselfInfo()
-                .subscribe(new Observer<MyselfResponse>() {
+    public void getWhiteListContacts() {
+        userRepository.getWhiteListContacts()
+                .subscribe(new Observer<WhiteListResponse>() {
                     @Override
                     public void onSubscribe(Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(MyselfResponse myselfResponse) {
-                        blacklistResponse.postValue(myselfResponse.result[0].blacklist);
-                        whitelistResponse.postValue(myselfResponse.result[0].whitelist);
+                    public void onNext(WhiteListResponse whiteListResponse) {
+                        whitelistResponse.postValue(whiteListResponse.getResults());
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
+                        Timber.e(e);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    public void getBlackListContacts() {
+        userRepository.getBlackListContacts()
+                .subscribe(new Observer<BlackListResponse>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(BlackListResponse blackListResponse) {
+                        blacklistResponse.postValue(blackListResponse.getResults());
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Timber.e(e);
                     }
 
                     @Override
@@ -67,14 +89,14 @@ public class WhiteBlackListViewModel extends ViewModel {
     public void blackListIsReady() {
         isBlackListReady = true;
         if (isWhiteListReady) {
-            getBlackListWhiteListContacts();
+            getWhiteListContacts();
         }
     }
 
     public void whiteListIsReady() {
         isWhiteListReady = true;
         if (isBlackListReady) {
-            getBlackListWhiteListContacts();
+            getBlackListContacts();
         }
     }
 

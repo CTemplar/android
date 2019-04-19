@@ -22,7 +22,7 @@ import java.util.Calendar;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
 
-import static mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils.offsetFromCalendar;
+import static mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils.timezoneOffsetInMillis;
 
 public class DestructTimerDialogFragment extends DialogFragment {
 
@@ -69,7 +69,8 @@ public class DestructTimerDialogFragment extends DialogFragment {
             @Override
             public void onClick(View v) {
                 if (validate()) {
-                    calendar.add(Calendar.HOUR_OF_DAY, -offsetFromCalendar(calendar));
+                    int offsetInHours = -timezoneOffsetInMillis() / 1000 / 60 / 60;
+                    calendar.add(Calendar.HOUR_OF_DAY, offsetInHours);
                     onScheduleDestructTimerDelivery.onSchedule(calendar.getTimeInMillis());
                     dismiss();
                 }
@@ -123,7 +124,6 @@ public class DestructTimerDialogFragment extends DialogFragment {
                 timePickerDialog.show();
             }
         });
-
 
         return view;
     }

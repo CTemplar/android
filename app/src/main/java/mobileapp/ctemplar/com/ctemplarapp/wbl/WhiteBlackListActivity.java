@@ -80,7 +80,8 @@ public class WhiteBlackListActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        model.getBlackListWhiteListContacts();
+        model.getWhiteListContacts();
+        model.getBlackListContacts();
     }
 
     class ViewPagerAdapter extends FragmentStatePagerAdapter {
