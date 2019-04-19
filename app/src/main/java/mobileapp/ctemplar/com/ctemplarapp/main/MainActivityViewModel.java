@@ -45,10 +45,11 @@ public class MainActivityViewModel extends ViewModel {
     MutableLiveData<MainActivityActions> actions = new SingleLiveEvent<>();
     MutableLiveData<DialogState> dialogState = new SingleLiveEvent<>();
     MutableLiveData<ResponseStatus> responseStatus = new MutableLiveData<>();
-    MutableLiveData<List<MessageProvider>> messagesResponse = new MutableLiveData<>();
+    MutableLiveData<ResponseMessagesData> messagesResponse = new MutableLiveData<>();
     MutableLiveData<List<MessageProvider>> starredMessagesResponse = new MutableLiveData<>();
     MutableLiveData<List<Contact>> contactsResponse = new MutableLiveData<>();
     MutableLiveData<ResponseStatus> toFolderStatus = new MutableLiveData<>();
+    MutableLiveData<ResponseStatus> deleteSeveralMessagesStatus = new MutableLiveData<>();
     MutableLiveData<String> currentFolder = new MutableLiveData<>();
     MutableLiveData<SignInResponse> signResponse = new MutableLiveData<>();
     MutableLiveData<FoldersResponse> foldersResponse = new MutableLiveData<>();
@@ -81,6 +82,10 @@ public class MainActivityViewModel extends ViewModel {
         dialogState.postValue(DialogState.HIDE_PROGRESS_DIALOG);
     }
 
+    public LiveData<ResponseStatus> getDeleteSeveralMessagesStatus() {
+        return deleteSeveralMessagesStatus;
+    }
+
     public LiveData<ResponseStatus> getResponseStatus() {
         return responseStatus;
     }
@@ -101,7 +106,7 @@ public class MainActivityViewModel extends ViewModel {
         return currentFolder;
     }
 
-    public LiveData<List<MessageProvider>> getMessagesResponse() {
+    public LiveData<ResponseMessagesData> getMessagesResponse() {
         return messagesResponse;
     }
 
@@ -119,7 +124,7 @@ public class MainActivityViewModel extends ViewModel {
     public void getMessages(int limit, int offset, final String folder) {
         List<MessageEntity> messageEntities = messagesRepository.getLocalMessagesByFolder(folder);
         List<MessageProvider> messageProviders = MessageProvider.fromMessageEntities(messageEntities);
-        messagesResponse.postValue(messageProviders);
+        messagesResponse.postValue(new ResponseMessagesData(messageProviders, folder));
 
         Observable<MessagesResponse> messagesObservable = userRepository.getMessagesList(limit, offset, folder);
         messagesObservable.subscribe(new Observer<MessagesResponse>() {
@@ -135,16 +140,16 @@ public class MainActivityViewModel extends ViewModel {
                     public void run() {
                         List<MessagesResult> messages = response.getMessagesList();
                         List<MessageEntity> messageEntities = MessageProvider
-                                .fromMessagesResultsToEntities(messages);
+                                .fromMessagesResultsToEntities(messages, folder);
 //                        List<MessageProvider> messageProviders = MessageProvider
-//                                .fromMessageEntities(messageEntities); TODO
+//                                .fromMessageEntities(messageEntities); TODO rewrite?
 
                         messagesRepository.deleteLocalMessagesByFolderName(folder);
                         messagesRepository.addMessagesToDatabase(messageEntities);
 
                         List<MessageEntity> localEntities = messagesRepository.getLocalMessagesByFolder(folder);
                         List<MessageProvider> messageProviders = MessageProvider.fromMessageEntities(localEntities);
-                        messagesResponse.postValue(messageProviders);
+                        messagesResponse.postValue(new ResponseMessagesData(messageProviders, folder));
                         responseStatus.postValue(ResponseStatus.RESPONSE_NEXT_MESSAGES);
                     }
                 }).start();
@@ -364,20 +369,20 @@ public class MainActivityViewModel extends ViewModel {
 
     public void deleteSeveralMessages(String messagesId) {
         userRepository.deleteSeveralMessages(messagesId)
-                .subscribe(new Observer<ResponseBody>() {
+                .subscribe(new Observer<Response<Void>>() {
                     @Override
                     public void onSubscribe(Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(ResponseBody responseBody) {
-
+                    public void onNext(Response<Void> response) {
+                        deleteSeveralMessagesStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
                     }
 
                     @Override
                     public void onError(Throwable e) {
-
+                        Timber.e(e);
                     }
 
                     @Override
@@ -387,7 +392,7 @@ public class MainActivityViewModel extends ViewModel {
                 });
     }
 
-    public void toFolder(long messageId, String folder) {
+    public void toFolder(final long messageId, final String folder) {
         userRepository.toFolder(messageId, folder)
                 .subscribe(new Observer<ResponseBody>() {
                     @Override
@@ -397,6 +402,7 @@ public class MainActivityViewModel extends ViewModel {
 
                     @Override
                     public void onNext(ResponseBody responseBody) {
+                        messagesRepository.updateMessageFolderName(messageId, folder);
                         toFolderStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
                     }
 

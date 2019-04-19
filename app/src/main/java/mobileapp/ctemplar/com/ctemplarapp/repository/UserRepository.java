@@ -4,7 +4,6 @@ import java.util.List;
 
 import javax.inject.Singleton;
 
-import io.reactivex.Flowable;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
@@ -29,13 +28,15 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.Mailboxes.MailboxesResult
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessageAttachment;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResult;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.BlackListContact;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.MyselfResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.SettingsEntity;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.WhiteListContact;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.RecoverPasswordResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.SignInResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.SignUpResponse;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.BlackListContact;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.MyselfResponse;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.WhiteListContact;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.WhiteBlackLists.BlackListResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.WhiteBlackLists.WhiteListResponse;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
@@ -46,11 +47,6 @@ public class UserRepository {
     private RestService service;
     private UserStore userStore;
     private static UserRepository instance = new UserRepository();
-
-//    @Inject
-//    public UserRepository(RestService service) {
-//        this.service = service;
-//    }
 
     public static UserRepository getInstance() {
         if(instance == null) {
@@ -165,7 +161,7 @@ public class UserRepository {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<ResponseBody> deleteSeveralMessages(String messagesId) {
+    public Observable<Response<Void>> deleteSeveralMessages(String messagesId) {
         return service.deleteSeveralMessages(messagesId)
                 .subscribeOn(io.reactivex.schedulers.Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
@@ -248,8 +244,20 @@ public class UserRepository {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
+    public Observable<BlackListResponse> getBlackListContacts() {
+        return service.getBlackListContacts()
+                .subscribeOn(io.reactivex.schedulers.Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
     public Observable<BlackListContact> addBlacklistContact(BlackListContact contact) {
         return service.addBlacklistContact(contact)
+                .subscribeOn(io.reactivex.schedulers.Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public Observable<WhiteListResponse> getWhiteListContacts() {
+        return service.getWhiteListContacts()
                 .subscribeOn(io.reactivex.schedulers.Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }

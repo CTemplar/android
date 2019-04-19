@@ -23,7 +23,8 @@
         android:id="@+id/item_message_view_holder_foreground"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorGreyLight6">
+        android:background="@color/colorGreyLight6"
+        app:layout_constraintTop_toTopOf="parent">
 
     <LinearLayout
         android:id="@+id/message_top_layout"
@@ -31,11 +32,13 @@
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:paddingTop="16dp">
+        android:paddingTop="16dp"
+        app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
             android:layout_marginLeft="16dp"
             android:layout_weight="1"
             android:gravity="center_vertical"
@@ -43,13 +46,13 @@
 
             <TextView
                 android:id="@+id/message_holder_username"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:fontFamily="@font/lato_bold"
-                android:gravity="left"
+                android:gravity="start"
+                android:layout_weight="1"
                 android:lines="1"
-                android:maxWidth="140dp"
                 android:text="USERNAME USERNAME USERNAME USERNAME"
                 android:textColor="@color/colorBlack4"
                 android:textSize="16sp" />
@@ -58,6 +61,7 @@
                 android:id="@+id/message_holder_new"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
                 android:layout_marginLeft="8dp"
                 android:src="@drawable/ic_unread" />
 
@@ -83,7 +87,7 @@
                 android:layout_marginStart="8dp"
                 android:paddingLeft="2dp"
                 android:paddingRight="2dp"
-                android:text="Delete in 0d"
+                android:text="Delete in 0d 00:00"
                 android:ellipsize="end"
                 android:gravity="center"
                 android:background="@drawable/ic_message_status_yellow"

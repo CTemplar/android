@@ -1,7 +1,6 @@
 package mobileapp.ctemplar.com.ctemplarapp.message;
 
 import android.app.Activity;
-import android.app.Application;
 import android.app.DownloadManager;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
@@ -25,7 +24,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -48,16 +46,23 @@ import java.util.Locale;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import mobileapp.ctemplar.com.ctemplarapp.ActivityInterface;
-import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.main.MainActivity;
 import mobileapp.ctemplar.com.ctemplarapp.main.MainActivityViewModel;
+import mobileapp.ctemplar.com.ctemplarapp.main.MainFolderNames;
 import mobileapp.ctemplar.com.ctemplarapp.main.MessageProvider;
 import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.PermissionCheck;
 import timber.log.Timber;
 
 import static android.content.Context.DOWNLOAD_SERVICE;
+import static mobileapp.ctemplar.com.ctemplarapp.main.MainFolderNames.ARCHIVE;
+import static mobileapp.ctemplar.com.ctemplarapp.main.MainFolderNames.DRAFT;
+import static mobileapp.ctemplar.com.ctemplarapp.main.MainFolderNames.INBOX;
+import static mobileapp.ctemplar.com.ctemplarapp.main.MainFolderNames.OUTBOX;
+import static mobileapp.ctemplar.com.ctemplarapp.main.MainFolderNames.SENT;
+import static mobileapp.ctemplar.com.ctemplarapp.main.MainFolderNames.SPAM;
+import static mobileapp.ctemplar.com.ctemplarapp.main.MainFolderNames.TRASH;
 import static mobileapp.ctemplar.com.ctemplarapp.message.ViewMessagesActivity.PARENT_ID;
 
 public class ViewMessagesFragment extends Fragment implements View.OnClickListener, ActivityInterface {
@@ -246,26 +251,27 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
                 return;
             }
         }
-        if (currentFolder.equals("inbox")) {
+
+        if (currentFolder.equals(INBOX)) {
             menu.findItem(R.id.menu_view_inbox).setVisible(false);
             menu.findItem(R.id.menu_view_not_spam).setVisible(false);
-        } else if (currentFolder.equals("sent")) {
+        } else if (currentFolder.equals(SENT)) {
             menu.findItem(R.id.menu_view_spam).setVisible(false);
             menu.findItem(R.id.menu_view_not_spam).setVisible(false);
-        } else if (currentFolder.equals("outbox")) {
+        } else if (currentFolder.equals(OUTBOX)) {
             menu.findItem(R.id.menu_view_spam).setVisible(false);
             menu.findItem(R.id.menu_view_not_spam).setVisible(false);
-        } else if (currentFolder.equals("spam")) {
+        } else if (currentFolder.equals(SPAM)) {
             menu.findItem(R.id.menu_view_spam).setVisible(false);
             menu.findItem(R.id.menu_view_archive).setVisible(false);
-        } else if (currentFolder.equals("archive")) {
+        } else if (currentFolder.equals(ARCHIVE)) {
             menu.findItem(R.id.menu_view_spam).setVisible(false);
             menu.findItem(R.id.menu_view_archive).setVisible(false);
             menu.findItem(R.id.menu_view_not_spam).setVisible(false);
-        } else if (currentFolder.equals("draft")) {
+        } else if (currentFolder.equals(DRAFT)) {
             menu.findItem(R.id.menu_view_spam).setVisible(false);
             menu.findItem(R.id.menu_view_not_spam).setVisible(false);
-        } else if (currentFolder.equals("trash")) {
+        } else if (currentFolder.equals(TRASH)) {
             menu.findItem(R.id.menu_view_spam).setVisible(false);
             menu.findItem(R.id.menu_view_not_spam).setVisible(false);
         } else {
@@ -280,26 +286,26 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
         int id = item.getItemId();
         switch(id) {
             case R.id.menu_view_archive:
-                showSnackbar("archive", getResources().getString(R.string.action_archived));
+                snackbarMove(ARCHIVE, getResources().getString(R.string.action_archived));
                 return true;
             case R.id.menu_view_inbox:
-                showSnackbar("inbox", getResources().getString(R.string.action_moved_to_inbox));
+                snackbarMove(INBOX, getResources().getString(R.string.action_moved_to_inbox));
                 return true;
             case R.id.menu_view_spam:
-                showSnackbar("spam", getResources().getString(R.string.action_reported_as_spam));
+                snackbarMove(SPAM, getResources().getString(R.string.action_reported_as_spam));
                 return true;
             case R.id.menu_view_not_spam:
-                showSnackbar("inbox", getResources().getString(R.string.action_reported_as_not_spam));
+                snackbarMove(INBOX, getResources().getString(R.string.action_reported_as_not_spam));
                 return true;
             case R.id.menu_view_trash:
-                showSnackbar("trash", getResources().getString(R.string.action_message_removed));
+                snackbarDelete(TRASH, getResources().getString(R.string.action_message_removed));
                 return true;
             case R.id.menu_view_move:
                 MoveDialogFragment moveDialogFragment = new MoveDialogFragment();
                 Bundle moveFragmentBundle = new Bundle();
                 moveFragmentBundle.putLong(PARENT_ID, parentMessage.getId());
                 moveDialogFragment.setArguments(moveFragmentBundle);
-                    moveDialogFragment.show(getActivity().getSupportFragmentManager(), "MoveDialogFragment");
+                moveDialogFragment.show(getActivity().getSupportFragmentManager(), "MoveDialogFragment");
                 return true;
             case android.R.id.home:
                 Activity activity = getActivity();
@@ -312,7 +318,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
         }
     }
 
-    private void showSnackbar(final String folder, String message) {
+    private void snackbarDelete(final String folder, String message) {
         Snackbar snackbar = Snackbar.make(messageActionsLayout, message, Snackbar.LENGTH_SHORT);
         snackbar.setAction("UNDO", new View.OnClickListener() {
             @Override
@@ -324,11 +330,37 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
             @Override
             public void onDismissed(Snackbar transientBottomBar, int event) {
                 if (event != DISMISS_EVENT_ACTION) {
-                    if (!currentFolder.equals("trash")) {
-                        mainModel.toFolder(parentMessage.getId(), folder);
-                    } else {
+                    if (currentFolder.equals(TRASH)) {
                         mainModel.deleteMessage(parentMessage.getId());
+                    } else {
+                        mainModel.toFolder(parentMessage.getId(), folder);
                     }
+                    Activity activity = getActivity();
+                    if (activity != null) {
+                        activity.onBackPressed();
+                    }
+                }
+                unlockUI();
+            }
+        });
+        snackbar.setActionTextColor(Color.YELLOW);
+        snackbar.show();
+    }
+
+    private void snackbarMove(final String folder, String message) {
+        Snackbar snackbar = Snackbar.make(messageActionsLayout, message, Snackbar.LENGTH_SHORT);
+        snackbar.setAction("UNDO", new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                blockUI();
+            }
+        });
+        snackbar.addCallback(new BaseTransientBottomBar.BaseCallback<Snackbar>() {
+            @Override
+            public void onDismissed(Snackbar transientBottomBar, int event) {
+                if (event != DISMISS_EVENT_ACTION) {
+                    mainModel.toFolder(parentMessage.getId(), folder);
+
                     Activity activity = getActivity();
                     if (activity != null) {
                         activity.onBackPressed();

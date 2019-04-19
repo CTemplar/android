@@ -15,7 +15,6 @@ import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.WhiteListContact;
 
 public class WhitelistAdapter extends RecyclerView.Adapter<WhitelistAdapter.DataViewHolder> {
-
     private List<WhiteListContact> contactsList;
     private List<WhiteListContact> filteredList;
 

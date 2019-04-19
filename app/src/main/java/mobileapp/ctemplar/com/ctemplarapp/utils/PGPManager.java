@@ -174,7 +174,7 @@ public class PGPManager {
 
         } catch (PGPException | IOException e) {
             e.printStackTrace();
-            Timber.e("Pgp generation key error: %s", e.getMessage());
+            Timber.e("Pgp regeneration key error: %s", e.getMessage());
 
         } finally {
             try {
