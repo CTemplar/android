@@ -110,6 +110,7 @@ If you have further questions please email <![CDATA[<u><a href="mailto:support@c
     <!-- COMPOSE OPTIONS -->
     <string name="txt_left_time_destruct">Delete in %1$s</string>
     <string name="txt_left_time_delay_delivery">Delivery in %1$s</string>
+    <string name="txt_left_time_dead_mans_timer">Dead mans in %1$s</string>
     <string name="txt_encrypt_message_title">Set Password</string>
     <string name="txt_destruct_message_title">Self-destructing Timer</string>
     <string name="txt_dead_mans_title">Dead Man\'s Timer</string>
@@ -125,6 +126,7 @@ If you have further questions please email <![CDATA[<u><a href="mailto:support@c
     <!-- VIEW MESSAGES -->
     <string name="txt_hide_details">View details</string>
     <string name="txt_view_details">Hide details</string>
+    <string name="toast_message_marked_unread">Message marked as unread</string>
     <string name="toast_message_moved_to">Message moved to %1$s</string>
     <string name="toast_messages_doesnt_exist">Messages doesn\'t exists</string>
     <string name="toast_download_started">Download started</string>
@@ -146,7 +148,8 @@ If you have further questions please email <![CDATA[<u><a href="mailto:support@c
     <string name="title_current_password">Current password</string>
     <string name="title_new_password">New password</string>
     <string name="title_new_password_confirm">Confirm new password</string>
-    <string name="dialog_change_password_confirm">Are you sure you want change password? All data will be lost</string>
+    <string name="dialog_change_password_confirm">Are you sure you want change password?</string>
+    <string name="dialog_change_password_confirm_reset">Are you sure you want change password? All data will be lost</string>
     <string name="btn_change">CHANGE</string>
     <string name="btn_change_lowercase">Change</string>
     <string name="title_message_password">Message Password</string>

@@ -149,6 +149,14 @@ public class ViewMessagesAdapter extends BaseAdapter {
             } else {
                 statusTextView.setVisibility(View.GONE);
             }
+        } else if (!TextUtils.isEmpty(messageData.getDeadManDuration())) {
+            String leftTime = AppUtils.deadMansTime(Long.valueOf(messageData.getDeadManDuration()));
+            if (leftTime != null) {
+                statusTextView.setText(view.getResources().getString(R.string.txt_left_time_dead_mans_timer, leftTime));
+                statusTextView.setBackgroundColor(view.getResources().getColor(R.color.colorRed0));
+            } else {
+                statusTextView.setVisibility(View.GONE);
+            }
         } else {
             statusTextView.setVisibility(View.GONE);
         }
