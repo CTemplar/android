@@ -179,8 +179,8 @@ public class UserRepository {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<Response<Void>> markMessageAsRead(long id) {
-        return service.markMessageAsRead(id, new MarkMessageAsReadRequest())
+    public Observable<Response<Void>> markMessageAsRead(long id, MarkMessageAsReadRequest request) {
+        return service.markMessageAsRead(id, request)
                 .subscribeOn(io.reactivex.schedulers.Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }

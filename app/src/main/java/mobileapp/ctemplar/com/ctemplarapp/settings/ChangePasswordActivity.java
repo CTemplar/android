@@ -127,9 +127,13 @@ public class ChangePasswordActivity extends BaseActivity {
         }
 
         if (TextUtils.equals(newPassword, passwordConfirmation) && !newPassword.isEmpty() && newPassword.length() > 6) {
+            String alertMessage = getResources().getString(R.string.dialog_change_password_confirm);
+            if (resetData) {
+                alertMessage = getResources().getString(R.string.dialog_change_password_confirm_reset);
+            }
             new AlertDialog.Builder(this)
                     .setTitle(getResources().getString(R.string.dialog_change_password))
-                    .setMessage(getResources().getString(R.string.dialog_change_password_confirm))
+                    .setMessage(alertMessage)
                     .setPositiveButton(getResources().getString(R.string.btn_change), new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {

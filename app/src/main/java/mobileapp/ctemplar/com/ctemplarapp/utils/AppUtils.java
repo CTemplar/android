@@ -17,8 +17,10 @@ import timber.log.Timber;
 
 public class AppUtils {
 
-    private static String DATE_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
-    private static String LEFT_DATE_PATTERN = "yyyy-MM-dd'T'HH:mm:ss'Z'";
+    private static final String DATE_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
+    private static final String LEFT_DATE_PATTERN = "yyyy-MM-dd'T'HH:mm:ss'Z'";
+    private static final String ELAPSED_TIME_FORMAT = "%2dd %02d:%02d";
+    private static final String ELAPSED_TIME_SHORT_FORMAT = "%02d:%02d";
 
     public static String datetimeForServer(long timeInMillis) {
         DateFormat standardFormat = new SimpleDateFormat(LEFT_DATE_PATTERN, Locale.getDefault());
@@ -50,8 +52,6 @@ public class AppUtils {
             nowCalendar.add(Calendar.HOUR_OF_DAY, offsetInHours);
 
             DateFormat parseFormat = new SimpleDateFormat(LEFT_DATE_PATTERN, Locale.getDefault());
-            String elapsedTimeFormat = "%2dd %02d:%02d";
-            String elapsedTimeShortFormat = "%02d:%02d";
 
             try {
                 Date parseDate = parseFormat.parse(stringDate);
@@ -69,16 +69,33 @@ public class AppUtils {
                 minutes %= 60;
                 hours %= 24;
 
-                if (days == 0) {
-                    return String.format(Locale.getDefault(), elapsedTimeShortFormat, hours, minutes);
+                if (days <= 0) {
+                    return String.format(Locale.getDefault(), ELAPSED_TIME_SHORT_FORMAT, hours, minutes);
                 } else {
-                    return String.format(Locale.getDefault(), elapsedTimeFormat, days, hours, minutes);
+                    return String.format(Locale.getDefault(), ELAPSED_TIME_FORMAT, days, hours, minutes);
                 }
             } catch (ParseException e) {
                 Timber.e("DateParse error: %s", e.getMessage());
             }
         }
         return null;
+    }
+
+    public static String deadMansTime(long hours) {
+        if (hours <= 0) {
+            return null;
+        }
+
+        long days = hours / 24;
+        long minutes = hours * 60;
+        hours %= 24;
+        minutes %= 60;
+
+        if (days <= 0) {
+            return String.format(Locale.getDefault(), ELAPSED_TIME_SHORT_FORMAT, hours, minutes);
+        } else {
+            return String.format(Locale.getDefault(), ELAPSED_TIME_FORMAT, days, hours, minutes);
+        }
     }
 
     public static String messageDate(String stringDate) {
@@ -119,7 +136,8 @@ public class AppUtils {
     }
 
     public static long durationInHours(long timeInMillis) {
-        long utcTimeInMillis = timeInMillis - timezoneOffsetInMillis();
+        TimeZone timeZone = TimeZone.getDefault();
+        long utcTimeInMillis = timeInMillis + timeZone.getDSTSavings();
         long currentTimeInMillis = System.currentTimeMillis();
         return (utcTimeInMillis - currentTimeInMillis) / 1000 / 60 / 60;
     }

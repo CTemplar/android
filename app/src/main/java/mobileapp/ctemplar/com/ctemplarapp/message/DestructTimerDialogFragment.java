@@ -69,9 +69,12 @@ public class DestructTimerDialogFragment extends DialogFragment {
             @Override
             public void onClick(View v) {
                 if (validate()) {
+                    Calendar timezoneCalendar = Calendar.getInstance();
+                    timezoneCalendar.setTimeInMillis(calendar.getTimeInMillis());
+
                     int offsetInHours = -timezoneOffsetInMillis() / 1000 / 60 / 60;
-                    calendar.add(Calendar.HOUR_OF_DAY, offsetInHours);
-                    onScheduleDestructTimerDelivery.onSchedule(calendar.getTimeInMillis());
+                    timezoneCalendar.add(Calendar.HOUR_OF_DAY, offsetInHours);
+                    onScheduleDestructTimerDelivery.onSchedule(timezoneCalendar.getTimeInMillis());
                     dismiss();
                 }
             }
