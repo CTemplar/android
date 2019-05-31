@@ -27,14 +27,22 @@ public class EditContactActivity extends BaseActivity {
 
     @BindView(R.id.activity_edit_contact_name_input)
     EditText editTextContactName;
+
     @BindView(R.id.activity_edit_contact_email_input)
     EditText editTextContactEmail;
+
     @BindView(R.id.activity_edit_contact_phone_input)
     EditText editTextContactPhoneNumber;
+
+    @BindView(R.id.activity_edit_contact_phone_input_second)
+    EditText editTextContactPhoneNumberSecond;
+
     @BindView(R.id.activity_edit_contact_address_input)
     EditText editTextContactAddress;
+
     @BindView(R.id.activity_edit_contact_note_input)
     EditText editTextContactNote;
+
     @BindView(R.id.activity_edit_contact_progress_bar)
     View progressBar;
 
@@ -86,6 +94,7 @@ public class EditContactActivity extends BaseActivity {
         editTextContactName.setText(contact.getName());
         editTextContactEmail.setText(contact.getEmail());
         editTextContactPhoneNumber.setText(contact.getPhone());
+        editTextContactPhoneNumberSecond.setText(contact.getPhone2());
         editTextContactAddress.setText(contact.getAddress());
         editTextContactNote.setText(contact.getNote());
     }
@@ -128,6 +137,7 @@ public class EditContactActivity extends BaseActivity {
         String contactName = editTextContactName.getText().toString();
         String contactEmail = editTextContactEmail.getText().toString();
         String contactPhone = editTextContactPhoneNumber.getText().toString();
+        String contactPhoneSecond = editTextContactPhoneNumberSecond.getText().toString();
         String contactAddress = editTextContactAddress.getText().toString();
         String contactNote = editTextContactNote.getText().toString();
 
@@ -150,6 +160,7 @@ public class EditContactActivity extends BaseActivity {
         contactData.setName(contactName);
         contactData.setEmail(contactEmail);
         contactData.setPhone(contactPhone);
+        contactData.setPhone2(contactPhoneSecond);
         contactData.setAddress(contactAddress);
         contactData.setNote(contactNote);
 

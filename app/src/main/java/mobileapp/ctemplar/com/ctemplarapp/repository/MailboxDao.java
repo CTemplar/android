@@ -20,6 +20,12 @@ public interface MailboxDao {
     @Query("SELECT * FROM mailboxes WHERE isDefault = 1")
     MailboxEntity getDefault();
 
+    @Query("UPDATE mailboxes SET isDefault = :state WHERE id = :mailboxId")
+    void setDefault(long mailboxId, boolean state);
+
+    @Query("UPDATE mailboxes SET isEnabled = :isEnabled WHERE id = :mailboxId")
+    void setEnabled(long mailboxId, boolean isEnabled);
+
     @Insert(onConflict = REPLACE)
     void save(MailboxEntity mailboxEntity);
 

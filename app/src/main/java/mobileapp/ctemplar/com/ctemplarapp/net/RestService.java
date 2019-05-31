@@ -5,9 +5,13 @@ import javax.inject.Singleton;
 import io.reactivex.Observable;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.AddFolderRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.AutoSaveContactEnabledRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.CaptchaVerifyRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.ChangePasswordRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.CheckUsernameRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.CreateMailboxRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.DefaultMailboxRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.EditFolderRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.EnabledMailboxRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.MarkMessageAsReadRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.MarkMessageIsStarredRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.MoveToFolderRequest;
@@ -18,14 +22,18 @@ import mobileapp.ctemplar.com.ctemplarapp.net.request.SendMessageRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SettingsRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SignInRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SignUpRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.CaptchaResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.CaptchaVerifyResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.CheckUsernameResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.ContactData;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.ContactsResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.DeleteAttachmentResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Domains.DomainsResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Folders.FoldersResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Folders.FoldersResult;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.KeyResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Mailboxes.MailboxesResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Mailboxes.MailboxesResult;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessageAttachment;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResult;
@@ -128,6 +136,9 @@ public interface RestService {
     @GET("/emails/mailboxes/")
     Observable<MailboxesResponse> getMailboxes(@Query("limit") int limit, @Query("offset") int offset);
 
+    @POST("/emails/mailboxes/")
+    Observable<Response<MailboxesResult>> createMailbox(@Body CreateMailboxRequest request);
+
     @POST("/emails/keys/")
     Observable<KeyResponse> getKeys(@Body PublicKeysRequest request);
 
@@ -177,9 +188,24 @@ public interface RestService {
     @POST("/users/whitelist/")
     Observable<WhiteListContact> addWhitelistContact(@Body WhiteListContact contact);
 
+    @PATCH("/emails/mailboxes/{id}/")
+    Observable<MailboxesResult> updateDefaultMailbox(@Path("id") long mailboxId, @Body DefaultMailboxRequest body);
+
+    @PATCH("/emails/mailboxes/{id}/")
+    Observable<MailboxesResult> updateEnabledMailbox(@Path("id") long mailboxId, @Body EnabledMailboxRequest body);
+
+    @GET("/emails/domains/")
+    Observable<DomainsResponse> getDomains();
+
     @PATCH("/users/settings/{id}/")
     Observable<SettingsEntity> updateRecoveryEmail(@Path("id") long settingId, @Body RecoveryEmailRequest body);
 
     @PATCH("/users/settings/{id}/")
     Observable<SettingsEntity> updateAutoSaveEnabled(@Path("id") long settingId, @Body AutoSaveContactEnabledRequest request);
+
+    @GET("/auth/captcha/")
+    Observable<CaptchaResponse> getCaptcha();
+
+    @POST("/auth/captcha-verify/")
+    Observable<CaptchaVerifyResponse> captchaVerify(@Body CaptchaVerifyRequest request);
 }

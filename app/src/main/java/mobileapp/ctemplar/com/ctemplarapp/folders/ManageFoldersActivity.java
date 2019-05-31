@@ -34,8 +34,8 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.Folders.FoldersResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Folders.FoldersResult;
 
 public class ManageFoldersActivity extends BaseActivity {
-
     private ManageFoldersViewModel manageFoldersModel;
+    private ManageFoldersAdapter manageFoldersAdapter;
 
     @BindView(R.id.activity_manage_folders_recycler_view)
     RecyclerView recyclerView;
@@ -47,8 +47,6 @@ public class ManageFoldersActivity extends BaseActivity {
     FrameLayout frameCompose;
     @BindView(R.id.manager_folders_footer_btn)
     Button footerAddFolder;
-
-    private ManageFoldersAdapter manageFoldersAdapter;
 
     @Override
     protected int getLayoutId() {

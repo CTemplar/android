@@ -172,7 +172,7 @@
             </android.support.constraint.ConstraintLayout>
 
             <android.support.constraint.ConstraintLayout
-                android:id="@+id/activity_edit_contact_address_container"
+                android:id="@+id/activity_edit_contact_phone_container_second"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
@@ -180,6 +180,55 @@
                 android:layout_marginTop="22dp"
                 android:layout_marginBottom="22dp"
                 app:layout_constraintTop_toBottomOf="@id/activity_edit_contact_phone_container">
+
+                <TextView
+                    android:id="@+id/activity_edit_contact_phone_title_second"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/title_phone_number_second"
+                    android:fontFamily="@font/lato_regular"
+                    android:textColor="@color/colorDarkBlue"
+                    android:textSize="14sp" />
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/activity_edit_contact_phone_input_second"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="@font/lato_regular"
+                    android:textSize="16sp"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp"
+                    android:minHeight="45dp"
+                    android:drawableLeft="@drawable/ic_contact_remove"
+                    android:drawableStart="@drawable/ic_contact_remove"
+                    android:hint="@string/title_phone_number_second"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/activity_edit_contact_phone_title_second"
+                    app:layout_constraintRight_toLeftOf="@id/activity_edit_contact_phone_add_second"
+                    android:background="@drawable/text_input_field" />
+
+                <ImageView
+                    android:id="@+id/activity_edit_contact_phone_add_second"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_contact_add_disabled"
+                    app:layout_constraintLeft_toRightOf="@id/activity_edit_contact_phone_input_second"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/activity_edit_contact_phone_input_second"
+                    app:layout_constraintBottom_toBottomOf="@id/activity_edit_contact_phone_input_second" />
+
+            </android.support.constraint.ConstraintLayout>
+
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/activity_edit_contact_address_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="22dp"
+                android:layout_marginBottom="22dp"
+                app:layout_constraintTop_toBottomOf="@id/activity_edit_contact_phone_container_second">
 
                 <TextView
                     android:id="@+id/activity_edit_contact_address_title"

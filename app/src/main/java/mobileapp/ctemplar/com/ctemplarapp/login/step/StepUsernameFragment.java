@@ -60,6 +60,7 @@ public class StepUsernameFragment extends BaseFragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        loginActivityModel = ViewModelProviders.of(getActivity()).get(LoginActivityViewModel.class);
         viewModel = ViewModelProviders.of(getActivity()).get(StepRegistrationViewModel.class);
         viewModel.getResponseStatus().observe(this, new Observer<ResponseStatus>() {
             @Override
@@ -67,7 +68,6 @@ public class StepUsernameFragment extends BaseFragment {
                 handleResponseStatus(responseStatus);
             }
         });
-        loginActivityModel = ViewModelProviders.of(getActivity()).get(LoginActivityViewModel.class);
 
         setListeners();
     }

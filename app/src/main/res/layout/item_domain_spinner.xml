@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    style="?android:attr/spinnerDropDownItemStyle"
+    android:layout_width="match_parent"
+    android:layout_height="40dp"
+    android:text="ctemplar.com"
+    android:textColor="@color/colorDarkBlue2"
+    android:textSize="16sp"
+    android:singleLine="true"
+    android:ellipsize="marquee" />
