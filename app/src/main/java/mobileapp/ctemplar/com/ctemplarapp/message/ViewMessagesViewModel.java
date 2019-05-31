@@ -12,6 +12,7 @@ import io.reactivex.disposables.Disposable;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.main.MessageProvider;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.MarkMessageAsReadRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Folders.FoldersResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResult;
@@ -127,8 +128,9 @@ public class ViewMessagesViewModel extends ViewModel {
                 });
     }
 
-    public void markMessageAsRead(final long id) {
-        userRepository.markMessageAsRead(id)
+    public void markMessageAsRead(final long id, final boolean isRead) {
+        MarkMessageAsReadRequest request = new MarkMessageAsReadRequest(isRead);
+        userRepository.markMessageAsRead(id, request)
                 .subscribe(new Observer<Response<Void>>() {
                     @Override
                     public void onSubscribe(Disposable d) {
@@ -139,7 +141,7 @@ public class ViewMessagesViewModel extends ViewModel {
                     public void onNext(Response<Void> messageResponse) {
                         int resultCode = messageResponse.code();
                         if (resultCode == 204) {
-                            CTemplarApp.getAppDatabase().messageDao().updateIsRead(id, true);
+                            CTemplarApp.getAppDatabase().messageDao().updateIsRead(id, isRead);
                         } else {
                             Timber.e("Update isRead response is not success: code = %s", resultCode);
                         }

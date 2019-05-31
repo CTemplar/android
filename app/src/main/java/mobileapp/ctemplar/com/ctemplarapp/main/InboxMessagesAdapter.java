@@ -84,7 +84,7 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesView
             holder.txtUsername.setTypeface(null, Typeface.BOLD);
         }
 
-        // check for status (time delete, delayed delivery)
+        // check for status (delivery in, delete in, dead mans in)
         if (!TextUtils.isEmpty(messages.getDelayedDelivery())) {
             String leftTime = AppUtils.elapsedTime(messages.getDelayedDelivery());
             if (leftTime != null) {
@@ -97,6 +97,14 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesView
             String leftTime = AppUtils.elapsedTime(messages.getDestructDate());
             if (leftTime != null) {
                 holder.txtStatus.setText(holder.root.getResources().getString(R.string.txt_left_time_destruct, leftTime));
+            } else {
+                holder.txtStatus.setVisibility(View.GONE);
+            }
+        } else if (!TextUtils.isEmpty(messages.getDeadManDuration())) {
+            String leftTime = AppUtils.deadMansTime(Long.valueOf(messages.getDeadManDuration()));
+            if (leftTime != null) {
+                holder.txtStatus.setText(holder.root.getResources().getString(R.string.txt_left_time_dead_mans_timer, leftTime));
+                holder.txtStatus.setBackgroundColor(holder.root.getResources().getColor(R.color.colorRed0));
             } else {
                 holder.txtStatus.setVisibility(View.GONE);
             }

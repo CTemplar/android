@@ -49,7 +49,6 @@ import mobileapp.ctemplar.com.ctemplarapp.ActivityInterface;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.main.MainActivity;
 import mobileapp.ctemplar.com.ctemplarapp.main.MainActivityViewModel;
-import mobileapp.ctemplar.com.ctemplarapp.main.MainFolderNames;
 import mobileapp.ctemplar.com.ctemplarapp.main.MessageProvider;
 import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.PermissionCheck;
@@ -212,7 +211,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
                 messagesListView.setAdapter(adapter);
 
                 if (!parentMessage.isRead()) {
-                    modelViewMessages.markMessageAsRead(parentMessage.getId());
+                    modelViewMessages.markMessageAsRead(parentMessage.getId(), true);
                 }
 
                 loadProgress.setVisibility(View.GONE);
@@ -299,6 +298,10 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
                 return true;
             case R.id.menu_view_trash:
                 snackbarDelete(TRASH, getResources().getString(R.string.action_message_removed));
+                return true;
+            case R.id.menu_view_unread:
+                modelViewMessages.markMessageAsRead(parentMessage.getId(), false);
+                Toast.makeText(getActivity(), getResources().getString(R.string.toast_message_marked_unread), Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.menu_view_move:
                 MoveDialogFragment moveDialogFragment = new MoveDialogFragment();
