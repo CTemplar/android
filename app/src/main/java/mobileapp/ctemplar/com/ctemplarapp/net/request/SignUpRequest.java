@@ -47,6 +47,12 @@ public class SignUpRequest {
     @SerializedName("payment_type")
     private String payment_type;
 
+    @SerializedName("captcha_key")
+    private String captcha_key;
+
+    @SerializedName("captcha_value")
+    private String captcha_value;
+
     public void SignUpRequest(String password, String username) {
         this.password = password;
         this.username = username;
@@ -94,5 +100,21 @@ public class SignUpRequest {
 
     public void setFingerprint(String fingerprint) {
         this.fingerprint = fingerprint;
+    }
+
+    public String getCaptchaKey() {
+        return captcha_key;
+    }
+
+    public void setCaptchaKey(String captcha_key) {
+        this.captcha_key = captcha_key;
+    }
+
+    public String getCaptchaValue() {
+        return captcha_value;
+    }
+
+    public void setCaptchaValue(String captcha_value) {
+        this.captcha_value = captcha_value;
     }
 }

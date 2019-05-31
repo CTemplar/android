@@ -1,19 +1,10 @@
 package mobileapp.ctemplar.com.ctemplarapp.services;
 
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.media.RingtoneManager;
-import android.net.Uri;
-import android.os.Build;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
-
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
 import java.util.Map;
 
-import mobileapp.ctemplar.com.ctemplarapp.R;
 import timber.log.Timber;
 
 public class MessagingService extends FirebaseMessagingService {
@@ -54,43 +45,11 @@ public class MessagingService extends FirebaseMessagingService {
             Timber.d("Message Notification Body: %s", remoteMessage.getNotification().getBody());
         }
 
-        createNotificationChannel();
-
-        Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        //builder.setSound(alarmSound);
-
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, getString(R.string.channel_id))
-                .setSmallIcon(R.drawable.ic_launcher_background)
-                .setContentTitle(remoteMessage.getNotification().getTitle())
-                .setContentText(remoteMessage.getNotification().getBody())
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
-
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
-
         // notificationId is a unique int for each notification that you must define
-        notificationManager.notify(0, builder.build());
 
         // Also if you intend on generating your own notifications as a result of a received FCM
         // message, here is where that should be initiated. See sendNotification method below.
     }
-
-    private void createNotificationChannel() {
-        // Create the NotificationChannel, but only on API 26+ because
-        // the NotificationChannel class is new and not in the support library
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = getString(R.string.channel_name);
-            String id = getString(R.string.channel_id);
-            String description = getString(R.string.channel_description);
-            int importance = NotificationManager.IMPORTANCE_DEFAULT;
-            NotificationChannel channel = new NotificationChannel(id, name, importance);
-            channel.setDescription(description);
-            // Register the channel with the system; you can't change the importance
-            // or other notification behaviors after this
-            NotificationManager notificationManager = getSystemService(NotificationManager.class);
-            notificationManager.createNotificationChannel(channel);
-        }
-    }
-
 
     /**
      * Called if InstanceID token is updated. This may occur if the security of

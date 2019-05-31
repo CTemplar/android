@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:key="key_recovery_email_holder">
+
+    <CheckBoxPreference
+        android:title="@string/settings_enable_recovery_email"
+        android:key="@string/recovery_email_enabled" />
+
+    <EditTextPreference
+        app:dependency="@string/recovery_email_enabled"
+        android:title="@string/settings_type_recovery_email"
+        android:key="@string/recovery_email" />
+
+</PreferenceScreen>

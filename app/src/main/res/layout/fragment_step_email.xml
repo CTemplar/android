@@ -73,11 +73,92 @@
 
             </android.support.design.widget.TextInputLayout>
 
+            <ImageView
+                android:id="@+id/fragment_step_email_captcha_checked"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:src="@drawable/ic_captcha_checked"
+                android:visibility="gone"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/fragment_step_email_input_layout" />
+
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/fragment_step_email_captcha_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/fragment_step_email_captcha_checked">
+
+                <ImageView
+                    android:id="@+id/fragment_step_email_captcha_img"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minWidth="120dp"
+                    android:minHeight="32dp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent" />
+
+                <ImageView
+                    android:id="@+id/fragment_step_email_captcha_refresh_img"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_refresh"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginStart="5dp"
+                    app:layout_constraintTop_toTopOf="@id/fragment_step_email_captcha_img"
+                    app:layout_constraintBottom_toBottomOf="@id/fragment_step_email_captcha_img"
+                    app:layout_constraintLeft_toRightOf="@id/fragment_step_email_captcha_img" />
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/fragment_step_email_captcha_input_layout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:minWidth="150dp"
+                    android:textColorHint="@color/colorDarkBlue2"
+                    app:hintEnabled="true"
+                    app:hintTextAppearance="@style/TextHintAppearanceDark"
+                    app:layout_constraintTop_toBottomOf="@id/fragment_step_email_captcha_img"
+                    app:layout_constraintLeft_toLeftOf="@id/fragment_step_email_captcha_img"
+                    app:layout_constraintRight_toRightOf="@id/fragment_step_email_captcha_img">
+
+                    <android.support.design.widget.TextInputEditText
+                        android:id="@+id/fragment_step_email_captcha_input"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/lato_regular"
+                        android:hint="@string/title_captcha"
+                        android:inputType="textEmailAddress"
+                        android:letterSpacing="0.05"
+                        android:textColor="@color/colorDarkBlue2"
+                        android:textSize="16sp"
+                        android:theme="@style/EditTextCredentialsThemeDark" />
+
+                </android.support.design.widget.TextInputLayout>
+
+                <ImageView
+                    android:id="@+id/fragment_step_email_captcha_confirm"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_captcha_confirm"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginStart="5dp"
+                    app:layout_constraintTop_toTopOf="@id/fragment_step_email_captcha_input_layout"
+                    app:layout_constraintBottom_toBottomOf="@id/fragment_step_email_captcha_input_layout"
+                    app:layout_constraintLeft_toRightOf="@id/fragment_step_email_captcha_input_layout" />
+
+            </android.support.constraint.ConstraintLayout>
+
             <android.support.v7.widget.AppCompatCheckBox
                 android:id="@+id/fragment_step_email_check"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="24dp"
+                android:layout_marginStart="24dp"
                 android:layout_marginTop="24dp"
                 android:button="@drawable/selector_check"
                 android:drawablePadding="16dp"
@@ -85,12 +166,14 @@
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintHorizontal_chainStyle="spread_inside"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/fragment_step_email_input_layout" />
+                app:layout_constraintTop_toBottomOf="@id/fragment_step_email_captcha_layout" />
 
             <TextView
                 android:id="@+id/fragment_step_email_check_text"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="24dp"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="24dp"
                 android:layout_marginTop="8dp"
@@ -110,14 +193,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="24dp"
-                android:layout_marginTop="100dp"
+                android:layout_marginTop="24dp"
                 android:layout_marginRight="24dp"
                 android:background="@drawable/selector_button_orange"
                 android:enabled="false"
                 android:fontFamily="@font/lato_regular"
                 android:text="@string/title_next"
                 android:textColor="@android:color/white"
-                app:layout_constraintTop_toBottomOf="@+id/fragment_step_email_input_layout" />
+                app:layout_constraintTop_toBottomOf="@id/fragment_step_email_check" />
 
         </android.support.constraint.ConstraintLayout>
 

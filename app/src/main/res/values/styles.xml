@@ -81,7 +81,7 @@
     <style name="ActionBarLight.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
     <style name="PreferenceScreen" parent="AppTheme.NoActionBar">
-        <item name="android:textColor">@color/colorDarkBlue5</item>
+        <item name="android:textColor">@color/preference_text_color</item>
         <item name="colorAccent">@color/colorBlue</item>
     </style>
 

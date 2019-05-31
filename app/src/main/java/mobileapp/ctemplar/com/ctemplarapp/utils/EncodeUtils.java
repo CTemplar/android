@@ -6,6 +6,7 @@ import java.util.concurrent.Callable;
 
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import mobileapp.ctemplar.com.ctemplarapp.net.entity.PGPKeyEntity;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.MailboxKey;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
@@ -71,6 +72,17 @@ public class EncodeUtils {
                 return mailboxKeys;
             }
         }).subscribeOn(io.reactivex.schedulers.Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public static Observable<PGPKeyEntity> generateAdditionalMailbox(final String username, final String password) {
+        return Observable.fromCallable(new Callable<PGPKeyEntity>() {
+            @Override
+            public PGPKeyEntity call() {
+                PGPManager pgpManager = new PGPManager();
+                return pgpManager.generateKeys(username, password);
+            }
+        }).subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 }

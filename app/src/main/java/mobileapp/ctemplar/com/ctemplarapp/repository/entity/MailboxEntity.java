@@ -10,8 +10,8 @@ public class MailboxEntity {
     public long id;
     public String email;
     public String displayName;
-    public int isDefault;
-    public int isEnabled;
+    public boolean isDefault;
+    public boolean isEnabled;
     public String privateKey;
     public String publicKey;
     public String fingerprint;
@@ -41,19 +41,19 @@ public class MailboxEntity {
         this.displayName = displayName;
     }
 
-    public int isDefault() {
+    public boolean isDefault() {
         return isDefault;
     }
 
-    public void setDefault(int isDefault) {
+    public void setDefault(boolean isDefault) {
         this.isDefault = isDefault;
     }
 
-    public int isEnabled() {
+    public boolean isEnabled() {
         return isEnabled;
     }
 
-    public void setEnabled(int isEnabled) {
+    public void setEnabled(boolean isEnabled) {
         this.isEnabled = isEnabled;
     }
 
