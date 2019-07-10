@@ -9,8 +9,12 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.net.RestService;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.AutoSaveContactEnabledRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.CaptchaVerifyRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.ChangePasswordRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.CheckUsernameRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.CreateMailboxRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.DefaultMailboxRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.EnabledMailboxRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.MarkMessageAsReadRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.MarkMessageIsStarredRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.MoveToFolderRequest;
@@ -20,8 +24,11 @@ import mobileapp.ctemplar.com.ctemplarapp.net.request.RecoveryEmailRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SendMessageRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SignInRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SignUpRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.CaptchaResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.CaptchaVerifyResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.CheckUsernameResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.DeleteAttachmentResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Domains.DomainsResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.KeyResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Mailboxes.MailboxesResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Mailboxes.MailboxesResult;
@@ -86,10 +93,10 @@ public class UserRepository {
 
                 MailboxEntity entity = new MailboxEntity();
                 entity.setId(result.getId());
-                entity.setDefault(result.isDefault()?1:0);
+                entity.setDefault(result.isDefault());
                 entity.setDisplayName(result.getDisplayName());
                 entity.setEmail(result.getEmail());
-                entity.setEnabled(result.isEnabled()?1:0);
+                entity.setEnabled(result.isEnabled());
                 entity.setFingerprint(result.getFingerprint());
                 entity.setPrivateKey(result.getPrivateKey());
                 entity.setPublicKey(result.getPublicKey());
@@ -268,6 +275,30 @@ public class UserRepository {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
+    public Observable<MailboxesResult> updateDefaultMailbox(long mailboxId, DefaultMailboxRequest request) {
+        return service.updateDefaultMailbox(mailboxId, request)
+                .subscribeOn(io.reactivex.schedulers.Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public Observable<MailboxesResult> updateEnabledMailbox(long mailboxId, EnabledMailboxRequest request) {
+        return service.updateEnabledMailbox(mailboxId, request)
+                .subscribeOn(io.reactivex.schedulers.Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public Observable<Response<MailboxesResult>> createMailbox(CreateMailboxRequest request) {
+        return service.createMailbox(request)
+                .subscribeOn(io.reactivex.schedulers.Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public Observable<DomainsResponse> getDomains() {
+        return service.getDomains()
+                .subscribeOn(io.reactivex.schedulers.Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
     public Observable<SettingsEntity> updateRecoveryEmail(long settingId, RecoveryEmailRequest request) {
         return service.updateRecoveryEmail(settingId, request)
                 .subscribeOn(io.reactivex.schedulers.Schedulers.io())
@@ -276,6 +307,18 @@ public class UserRepository {
 
     public Observable<SettingsEntity> updateAutoSaveEnabled(long settingId, AutoSaveContactEnabledRequest request) {
         return service.updateAutoSaveEnabled(settingId, request)
+                .subscribeOn(io.reactivex.schedulers.Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public Observable<CaptchaResponse> getCaptcha() {
+        return service.getCaptcha()
+                .subscribeOn(io.reactivex.schedulers.Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public Observable<CaptchaVerifyResponse> captchaVerify(CaptchaVerifyRequest request) {
+        return service.captchaVerify(request)
                 .subscribeOn(io.reactivex.schedulers.Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }

@@ -9,7 +9,8 @@
         android:id="@+id/activity_manage_folders_toolbar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:theme="@style/AppTheme.AppBarOverlay"
+        app:layout_constraintTop_toTopOf="parent">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/activity_manage_folders_toolbar"

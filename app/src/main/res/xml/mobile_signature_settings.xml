@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <CheckBoxPreference
+        android:title="@string/settings_enable_mobile_signature"
+        android:key="@string/mobile_signature_enabled" />
+
+    <EditTextPreference
+        app:dependency="@string/mobile_signature_enabled"
+        android:title="@string/settings_type_mobile_signature"
+        android:key="@string/mobile_signature" />
+
+</PreferenceScreen>

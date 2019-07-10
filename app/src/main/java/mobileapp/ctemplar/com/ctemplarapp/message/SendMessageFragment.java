@@ -322,18 +322,26 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         mainModel = ViewModelProviders.of(this).get(SendMessageActivityViewModel.class);
         createMessage();
 
+        int selectedAddress = 0;
         List<MailboxEntity> mailboxEntities = mainModel.getMailboxes();
-        String[] emails = new String[mailboxEntities.size()];
-        for (int i = 0; i < mailboxEntities.size(); i++) {
-            emails[i] = mailboxEntities.get(i).email;
+        List<String> mailboxAddresses = new ArrayList<>();
+        for (int position = 0; position < mailboxEntities.size(); position++) {
+            MailboxEntity mailboxEntity = mailboxEntities.get(position);
+            if (mailboxEntity.isEnabled) {
+                mailboxAddresses.add(mailboxEntity.email);
+                if (mailboxEntity.isDefault) {
+                    selectedAddress = position;
+                }
+            }
         }
 
         SpinnerAdapter adapter = new ArrayAdapter<>(
                 activity,
                 R.layout.fragment_send_message_spinner,
-                emails
+                mailboxAddresses
         );
         spinnerFrom.setAdapter(adapter);
+        spinnerFrom.setSelection(selectedAddress);
 
         messageSendAttachmentAdapter = new MessageSendAttachmentAdapter(getActivity());
         messageAttachmentsRecycleView.setAdapter(messageSendAttachmentAdapter);
@@ -476,7 +484,10 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
                     @Override
                     public void onChanged(@Nullable MyselfResponse myselfResponse) {
                         if (myselfResponse != null) {
-                            userIsPrime = myselfResponse.result[0].isPrime;
+                            String joinedDate = myselfResponse.result[0].joinedDate;
+                            boolean userTrial = AppUtils.twoWeeksTrial(joinedDate);
+                            boolean userPrime = myselfResponse.result[0].isPrime;
+                            userIsPrime = userPrime || userTrial;
                         }
                     }
                 });

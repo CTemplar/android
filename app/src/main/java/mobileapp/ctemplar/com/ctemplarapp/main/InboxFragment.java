@@ -4,6 +4,7 @@ import android.app.SearchManager;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -181,6 +183,10 @@ public class InboxFragment extends BaseFragment {
             emptyFolder.setVisible((inTrash || inSpam || inDraft) && messagesNotEmpty);
         }
 
+        if (getActivity() == null) {
+            return;
+        }
+
         MenuItem searchItem = menu.findItem(R.id.action_search);
         SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
 
@@ -223,7 +229,7 @@ public class InboxFragment extends BaseFragment {
             return true;
         } else if (id == R.id.action_empty_folder) {
             List<MessageProvider> messages = adapter.getAll();
-            StringBuilder messagesIds = new StringBuilder();
+            final StringBuilder messagesIds = new StringBuilder();
             for (MessageProvider messagesResult : messages) {
                 messagesIds.append(messagesResult.getId());
                 messagesIds.append(',');
@@ -232,7 +238,20 @@ public class InboxFragment extends BaseFragment {
                 messagesIds.deleteCharAt(messagesIds.length() - 1);
             }
 
-            mainModel.deleteSeveralMessages(messagesIds.toString());
+            if (getActivity() != null) {
+                new AlertDialog.Builder(getActivity())
+                        .setTitle(getString(R.string.title_clear_folder))
+                        .setMessage(getString(R.string.txt_clear_folder))
+                        .setPositiveButton(getString(R.string.btn_confirm), new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        mainModel.deleteSeveralMessages(messagesIds.toString());
+                                    }
+                                }
+                        )
+                        .setNeutralButton(getString(R.string.btn_cancel), null)
+                        .show();
+            }
             return true;
         }
 
@@ -405,8 +424,7 @@ public class InboxFragment extends BaseFragment {
                                 final String name = deletedMessage.getSubject();
 
                                 if (!currentFolderFinal.equals(TRASH)
-                                        && !currentFolderFinal.equals(SPAM)
-                                        && !currentFolderFinal.equals(DRAFT)) {
+                                        && !currentFolderFinal.equals(SPAM)) {
 
                                     mainModel.toFolder(deletedMessage.getId(), TRASH);
                                     Snackbar snackbarDelete = Snackbar.make(frameCompose, getResources().getString(R.string.txt_name_removed, name), Snackbar.LENGTH_LONG);

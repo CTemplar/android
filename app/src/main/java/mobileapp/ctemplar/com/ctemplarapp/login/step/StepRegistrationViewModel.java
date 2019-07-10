@@ -14,13 +14,16 @@ import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.SingleLiveEvent;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.net.entity.PGPKeyEntity;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.CaptchaVerifyRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.CheckUsernameRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SignUpRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.CaptchaResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.CaptchaVerifyResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.CheckUsernameResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.SignUpResponse;
-import mobileapp.ctemplar.com.ctemplarapp.utils.PGPManager;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EncodeUtils;
+import timber.log.Timber;
 
 public class StepRegistrationViewModel extends ViewModel {
 
@@ -29,6 +32,8 @@ public class StepRegistrationViewModel extends ViewModel {
     SignUpRequest signUpRequest = new SignUpRequest();
     MutableLiveData<StepRegistrationActions> actions = new SingleLiveEvent<>();
     MutableLiveData<ResponseStatus> responseStatus = new MutableLiveData<>();
+    MutableLiveData<CaptchaResponse> captchaResponse = new MutableLiveData<>();
+    MutableLiveData<CaptchaVerifyResponse> captchaVerifyResponse = new MutableLiveData<>();
 
     public void changeAction(StepRegistrationActions action) {
         actions.postValue(action);
@@ -52,6 +57,19 @@ public class StepRegistrationViewModel extends ViewModel {
 
     public void setRecoveryEmail(String email) {
         signUpRequest.setRecoveryEmail(email);
+    }
+
+    public void setCaptcha(String captchaKey, String captchaValue) {
+        signUpRequest.setCaptchaKey(captchaKey);
+        signUpRequest.setCaptchaValue(captchaValue);
+    }
+
+    public LiveData<CaptchaResponse> getCaptchaResponse() {
+        return captchaResponse;
+    }
+
+    public LiveData<CaptchaVerifyResponse> getCaptchaVerifyResponse() {
+        return captchaVerifyResponse;
     }
 
     public void checkUsername(final String username) {
@@ -124,6 +142,56 @@ public class StepRegistrationViewModel extends ViewModel {
 
             }
         });
+    }
+
+    public void getCaptcha() {
+        userRepository.getCaptcha()
+                .subscribe(new Observer<CaptchaResponse>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(CaptchaResponse response) {
+                        captchaResponse.postValue(response);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Timber.e(e);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    public void captchaVerify(String key, String value) {
+        userRepository.captchaVerify(new CaptchaVerifyRequest(key, value))
+                .subscribe(new Observer<CaptchaVerifyResponse>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(CaptchaVerifyResponse response) {
+                        captchaVerifyResponse.postValue(response);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Timber.e(e);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
     }
 
     private void generatePGPKeys(PGPKeyEntity pgpKeyEntity) {

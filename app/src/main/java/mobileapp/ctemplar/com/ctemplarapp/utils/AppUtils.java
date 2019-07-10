@@ -142,6 +142,23 @@ public class AppUtils {
         return (utcTimeInMillis - currentTimeInMillis) / 1000 / 60 / 60;
     }
 
+    public static boolean twoWeeksTrial(String stringDate) {
+        if (!TextUtils.isEmpty(stringDate)) {
+            DateFormat parseFormat = new SimpleDateFormat(DATE_PATTERN, Locale.getDefault());
+            try {
+                Date date = parseFormat.parse(stringDate);
+                long joinedDate = date.getTime();
+                long currentTime = System.currentTimeMillis();
+                long timeDifference = (currentTime - joinedDate) / 1000;
+
+                return timeDifference < 14 * 24 * 60 * 60;
+            } catch (ParseException e) {
+                Timber.e(e);
+            }
+        }
+        return false;
+    }
+
     public static String formatDate(String stringDate) {
         if (!TextUtils.isEmpty(stringDate)) {
             DateFormat parseFormat = new SimpleDateFormat(DATE_PATTERN, Locale.getDefault());
