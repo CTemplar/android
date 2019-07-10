@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:key="settings_activity">
+
+    <PreferenceCategory
+        android:title="General settings">
+
+        <PreferenceScreen
+            android:title="@string/settings_notifications"
+            android:fragment="mobileapp.ctemplar.com.ctemplarapp.settings.SettingsActivity$NotificationsFragment" />
+
+        <PreferenceScreen
+            android:title="@string/settings_recovery_email"
+            android:key="@string/recovery_email_holder"
+            android:fragment="mobileapp.ctemplar.com.ctemplarapp.settings.SettingsActivity$RecoveryEmailFragment" />
+
+        <Preference
+            android:title="@string/settings_password"
+            android:key="@string/password_key" />
+
+        <ListPreference
+            android:title="@string/settings_language"
+            android:key="language"
+            android:defaultValue="English"
+            android:summary="%s"
+            android:entries="@array/languages"
+            android:entryValues="@array/languages" />
+
+        <PreferenceScreen
+            android:title="@string/settings_saving_contacts"
+            android:fragment="mobileapp.ctemplar.com.ctemplarapp.settings.SettingsActivity$SavingContactsFragment" />
+
+        <Preference
+            android:title="@string/settings_wb_list"
+            android:key="@string/white_black_list" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/settings_folders">
+
+        <Preference
+            android:title="@string/settings_manage_folders"
+            android:key="@string/manage_folders" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/settings_mail">
+
+        <Preference
+            android:title="@string/settings_addresses"
+            android:key="@string/email_addresses" />
+
+        <PreferenceScreen
+            android:title="@string/settings_signature"
+            android:fragment="mobileapp.ctemplar.com.ctemplarapp.settings.SettingsActivity$SignatureFragment" />
+
+        <PreferenceScreen
+            android:title="@string/settings_mobile_signature"
+            android:fragment="mobileapp.ctemplar.com.ctemplarapp.settings.SettingsActivity$MobileSignatureFragment" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/settings_about">
+
+        <Preference
+            android:title="@string/settings_about_us">
+
+            <intent android:action="android.intent.action.VIEW"
+                android:data="@string/about_url" />
+
+        </Preference>
+
+        <Preference
+            android:title="@string/settings_policy_privacy">
+
+            <intent android:action="android.intent.action.VIEW"
+                android:data="@string/privacy_url" />
+
+        </Preference>
+
+        <Preference
+            android:title="@string/settings_term_and_conditions">
+
+            <intent android:action="android.intent.action.VIEW"
+                android:data="@string/terms_url" />
+
+        </Preference>
+
+        <Preference
+            android:title="@string/settings_local_storage_limit"
+            android:summary="826KB of 500MB"
+            android:key="@string/local_storage_limit" />
+
+        <Preference
+            android:title="@string/settings_app_version"
+            android:summary="1.0" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>
