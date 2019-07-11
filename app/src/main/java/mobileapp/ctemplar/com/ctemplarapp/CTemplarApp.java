@@ -4,8 +4,9 @@ import android.app.Application;
 import android.arch.persistence.room.Room;
 import android.support.multidex.MultiDexApplication;
 
-import com.bugsnag.android.Bugsnag;
+import com.crashlytics.android.Crashlytics;
 
+import io.fabric.sdk.android.Fabric;
 import mobileapp.ctemplar.com.ctemplarapp.net.RestClient;
 import mobileapp.ctemplar.com.ctemplarapp.repository.AppDatabase;
 import mobileapp.ctemplar.com.ctemplarapp.repository.ContactsRepository;
@@ -35,7 +36,11 @@ public class CTemplarApp extends MultiDexApplication {
     public void onCreate() {
         super.onCreate();
         Timber.plant(new Timber.DebugTree());
-        Bugsnag.init(this);
+        final Fabric fabric = new Fabric.Builder(this)
+                .kits(new Crashlytics())
+                .debuggable(true)
+                .build();
+        Fabric.with(fabric);
         instance = this;
         installProviders(this);
     }
