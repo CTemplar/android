@@ -1,13 +1,11 @@
 apply plugin: 'com.android.application'
-apply plugin: 'com.bugsnag.android.gradle'
 apply plugin: 'com.google.gms.google-services'
+apply plugin: 'io.fabric'
 
 repositories {
-    maven {
-        url "https://jitpack.io"
-    }
+    maven { url "https://jitpack.io" }
+    maven { url 'https://maven.fabric.io/public' }
 }
-
 
 android {
     compileSdkVersion 28
@@ -86,6 +84,10 @@ dependencies {
     implementation 'com.jakewharton.timber:timber:4.7.1'
     implementation 'com.jakewharton:butterknife:8.8.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
+
+    implementation ('com.crashlytics.sdk.android:crashlytics:2.10.1@aar') {
+        transitive = true;
+    }
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
