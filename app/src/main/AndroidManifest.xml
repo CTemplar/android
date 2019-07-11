@@ -76,8 +76,8 @@
             android:theme="@style/PreferenceScreen" />
 
         <meta-data
-            android:name="com.bugsnag.android.API_KEY"
-            android:value="80ecba732fffa236722506f5201dc6c7" />
+            android:name="io.fabric.ApiKey"
+            android:value="***REMOVED***" />
     </application>
 
 </manifest>
