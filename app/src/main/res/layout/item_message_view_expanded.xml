@@ -31,7 +31,8 @@
                 android:id="@+id/item_message_view_expanded_sender_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/txt_from_email"
+                android:layout_centerVertical="true"
+                android:text="@string/txt_from"
                 android:ellipsize="end"
                 android:fontFamily="@font/lato_regular"
                 android:textSize="14sp"
@@ -41,6 +42,7 @@
                 android:id="@+id/item_message_view_expanded_sender_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
                 android:text="CTemplar"
                 android:ellipsize="end"
                 android:textColor="@color/colorGrey"
@@ -51,6 +53,14 @@
                 android:layout_marginRight="5dp"
                 android:layout_marginEnd="5dp" />
 
+            <ImageView
+                android:id="@+id/item_message_view_expanded_reply_image_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:src="@drawable/ic_reply_message"
+                android:layout_toEndOf="@id/item_message_view_expanded_sender_name"
+                android:layout_toRightOf="@id/item_message_view_expanded_sender_name" />
 
         </RelativeLayout>
 
@@ -67,7 +77,7 @@
             android:id="@+id/item_message_view_expanded_receiver_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/txt_to_email"
+            android:text="@string/txt_to"
             android:ellipsize="end"
             android:fontFamily="@font/lato_regular"
             android:textSize="14sp"
@@ -77,7 +87,7 @@
             android:id="@+id/item_message_view_expanded_receiver_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="CTemplar"
+            android:text="John"
             android:ellipsize="end"
             android:textColor="@color/colorGrey"
             android:fontFamily="@font/lato_regular"
@@ -86,7 +96,6 @@
             android:layout_toRightOf="@id/item_message_view_expanded_receiver_text"
             android:layout_marginRight="5dp"
             android:layout_marginEnd="5dp" />
-
 
     </RelativeLayout>
 
@@ -186,28 +195,17 @@
                 android:textColor="@color/colorGreyLight5"/>
 
             <TextView
-                android:id="@+id/item_message_view_from_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="CTemplar"
-                android:fontFamily="@font/lato_regular"
-                android:textColor="@color/colorBlack4"
-                android:textSize="14sp"
-                android:layout_toRightOf="@id/item_message_view_from_text"
-                android:layout_toEndOf="@id/item_message_view_from_text"
-                android:layout_marginRight="5dp"
-                android:layout_marginEnd="5dp" />
-
-            <TextView
                 android:id="@+id/item_message_view_from_email"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="&lt;contact@ctemplar.ch&gt;"
+                android:text="CTemplar &lt;ctemplar@ctemplar.com&gt;"
                 android:fontFamily="@font/lato_regular"
                 android:textSize="14sp"
                 android:textColor="@color/colorGreyLight5"
-                android:layout_toRightOf="@id/item_message_view_from_name"
-                android:layout_toEndOf="@id/item_message_view_from_name" />
+                android:layout_marginRight="5dp"
+                android:layout_marginEnd="5dp"
+                android:layout_toRightOf="@id/item_message_view_from_text"
+                android:layout_toEndOf="@id/item_message_view_from_text" />
 
         </RelativeLayout>
 
@@ -228,28 +226,17 @@
                 android:textColor="@color/colorGreyLight5"/>
 
             <TextView
-                android:id="@+id/item_message_view_to_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="John Doe"
-                android:fontFamily="@font/lato_regular"
-                android:textColor="@color/colorBlack4"
-                android:textSize="14sp"
-                android:layout_toRightOf="@id/item_message_view_to_text"
-                android:layout_toEndOf="@id/item_message_view_to_text"
-                android:layout_marginRight="5dp"
-                android:layout_marginEnd="5dp" />
-
-            <TextView
                 android:id="@+id/item_message_view_to_email"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="&lt;johndoe@ctemplar.ch&gt;"
+                android:text="John &lt;john@ctemplar.com&gt;"
                 android:fontFamily="@font/lato_regular"
                 android:textSize="14sp"
                 android:textColor="@color/colorGreyLight5"
-                android:layout_toRightOf="@id/item_message_view_to_name"
-                android:layout_toEndOf="@id/item_message_view_to_name" />
+                android:layout_marginRight="5dp"
+                android:layout_marginEnd="5dp"
+                android:layout_toRightOf="@id/item_message_view_to_text"
+                android:layout_toEndOf="@id/item_message_view_to_text" />
 
         </RelativeLayout>
 
@@ -270,28 +257,48 @@
                 android:textColor="@color/colorGreyLight5"/>
 
             <TextView
-                android:id="@+id/item_message_view_CC_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Sam Smith"
-                android:fontFamily="@font/lato_regular"
-                android:textColor="@color/colorBlack4"
-                android:textSize="14sp"
-                android:layout_toRightOf="@id/item_message_view_CC_text"
-                android:layout_toEndOf="@id/item_message_view_CC_text"
-                android:layout_marginRight="5dp"
-                android:layout_marginEnd="5dp" />
-
-            <TextView
                 android:id="@+id/item_message_view_CC_email"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="&lt;samsmitht@ctemplar.ch&gt;"
+                android:text="Sam &lt;samsmith@ctemplar.com&gt;"
                 android:fontFamily="@font/lato_regular"
                 android:textSize="14sp"
                 android:textColor="@color/colorGreyLight5"
-                android:layout_toRightOf="@id/item_message_view_CC_name"
-                android:layout_toEndOf="@id/item_message_view_CC_name" />
+                android:layout_marginRight="5dp"
+                android:layout_marginEnd="5dp"
+                android:layout_toRightOf="@id/item_message_view_CC_text"
+                android:layout_toEndOf="@id/item_message_view_CC_text" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/item_message_view_BCC_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/item_message_view_CC_layout"
+            android:layout_marginTop="5dp">
+
+            <TextView
+                android:id="@+id/item_message_view_BCC_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/txt_bcc"
+                android:fontFamily="@font/lato_regular"
+                android:textSize="14sp"
+                android:textColor="@color/colorGreyLight5"/>
+
+            <TextView
+                android:id="@+id/item_message_view_BCC_email"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Support &lt;support@ctemplar.com&gt;"
+                android:fontFamily="@font/lato_regular"
+                android:textSize="14sp"
+                android:textColor="@color/colorGreyLight5"
+                android:layout_marginRight="5dp"
+                android:layout_marginEnd="5dp"
+                android:layout_toRightOf="@id/item_message_view_BCC_text"
+                android:layout_toEndOf="@id/item_message_view_BCC_text" />
 
         </RelativeLayout>
 

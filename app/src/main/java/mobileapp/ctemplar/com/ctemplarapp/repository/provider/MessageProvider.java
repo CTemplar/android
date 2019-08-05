@@ -1,4 +1,4 @@
-package mobileapp.ctemplar.com.ctemplarapp.repository.providers;
+package mobileapp.ctemplar.com.ctemplarapp.repository.provider;
 
 import android.content.Context;
 
@@ -28,6 +28,8 @@ public class MessageProvider {
     private String createdAt;
     private UserDisplayProvider senderDisplay;
     private List<UserDisplayProvider> receiverDisplayList;
+    private List<UserDisplayProvider> ccDisplayList;
+    private List<UserDisplayProvider> bccDisplayList;
     private boolean hasChildren;
     private int childrenCount;
     private String subject;
@@ -47,6 +49,9 @@ public class MessageProvider {
     private boolean isEncrypted;
     private boolean isProtected;
     private String hash;
+    private List<String> spamReason;
+    private String lastAction;
+    private String lastActionThread;
     private long mailboxId;
     private String parent;
 
@@ -74,6 +79,22 @@ public class MessageProvider {
         this.sender = sender;
     }
 
+    public boolean isHasAttachments() {
+        return hasAttachments;
+    }
+
+    public void setHasAttachments(boolean hasAttachments) {
+        this.hasAttachments = hasAttachments;
+    }
+
+    public List<AttachmentProvider> getAttachments() {
+        return attachments;
+    }
+
+    public void setAttachments(List<AttachmentProvider> attachments) {
+        this.attachments = attachments;
+    }
+
     public String getCreatedAt() {
         return createdAt;
     }
@@ -96,6 +117,22 @@ public class MessageProvider {
 
     public void setReceiverDisplayList(List<UserDisplayProvider> receiverDisplayList) {
         this.receiverDisplayList = receiverDisplayList;
+    }
+
+    public List<UserDisplayProvider> getCcDisplayList() {
+        return ccDisplayList;
+    }
+
+    public void setCcDisplayList(List<UserDisplayProvider> ccDisplayList) {
+        this.ccDisplayList = ccDisplayList;
+    }
+
+    public List<UserDisplayProvider> getBccDisplayList() {
+        return bccDisplayList;
+    }
+
+    public void setBccDisplayList(List<UserDisplayProvider> bccDisplayList) {
+        this.bccDisplayList = bccDisplayList;
     }
 
     public boolean isHasChildren() {
@@ -250,6 +287,30 @@ public class MessageProvider {
         this.hash = hash;
     }
 
+    public List<String> getSpamReason() {
+        return spamReason;
+    }
+
+    public void setSpamReason(List<String> spamReason) {
+        this.spamReason = spamReason;
+    }
+
+    public String getLastAction() {
+        return lastAction;
+    }
+
+    public void setLastAction(String lastAction) {
+        this.lastAction = lastAction;
+    }
+
+    public String getLastActionThread() {
+        return lastActionThread;
+    }
+
+    public void setLastActionThread(String lastActionThread) {
+        this.lastActionThread = lastActionThread;
+    }
+
     public long getMailboxId() {
         return mailboxId;
     }
@@ -348,11 +409,13 @@ public class MessageProvider {
         result.id = message.getId();
         result.encryption = ""; //TODO
         result.sender = message.getSender();
-        result.hasAttachments = !isNullOrEmpty(message.getAttachments());
+        result.hasAttachments = message.isHasAttachments();
         result.attachments = convertResponseAttachmentsListToProviderList(message.getAttachments());
         result.createdAt = message.getCreatedAt();
         result.senderDisplay = convertUserDisplayFromResponseToProvider(message.getSenderDisplay());
         result.receiverDisplayList = convertUserDisplayListFromResponseToProvider(message.getReceiverDisplay());
+        result.ccDisplayList = convertUserDisplayListFromResponseToProvider(message.getCcDisplay());
+        result.bccDisplayList = convertUserDisplayListFromResponseToProvider(message.getBccDisplay());
         result.hasChildren = message.isHasChildren();
         result.childrenCount = message.getChildrenCount();
         result.subject = message.getSubject();
@@ -372,6 +435,9 @@ public class MessageProvider {
         result.isEncrypted = message.isEncrypted();
         result.isProtected = message.isProtected();
         result.hash = message.getHash();
+        result.spamReason = message.getSpamReason();
+        result.lastAction = message.getLastAction();
+        result.lastActionThread = message.getLastActionThread();
         result.mailboxId = message.getMailboxId();
         result.parent = message.getParent();
 
@@ -461,6 +527,8 @@ public class MessageProvider {
         result.createdAt = message.getCreatedAt();
         result.senderDisplay = convertUserDisplayFromEntityToProvider(message.getSenderDisplay());
         result.receiverDisplayList = convertUserDisplayListFromEntityToProvider(message.getReceiverDisplayList());
+        result.ccDisplayList = convertUserDisplayListFromEntityToProvider(message.getCcDisplayList());
+        result.bccDisplayList = convertUserDisplayListFromEntityToProvider(message.getBccDisplayList());
         result.hasChildren = message.isHasChildren();
         result.childrenCount = message.getChildrenCount();
         result.subject = message.getSubject();
@@ -480,6 +548,9 @@ public class MessageProvider {
         result.isEncrypted = message.isEncrypted();
         result.isProtected = message.isProtected();
         result.hash = message.getHash();
+        result.spamReason = message.getSpamReason();
+        result.lastAction = message.getLastAction();
+        result.lastActionThread = message.getLastActionThread();
         result.mailboxId = message.getMailboxId();
         result.parent = message.getParent();
 
@@ -492,10 +563,6 @@ public class MessageProvider {
             result.add(MessageProvider.fromMessageEntity(message));
         }
         return result;
-    }
-
-    private static <T> boolean isNullOrEmpty(List<T> list) {
-        return list == null || list.isEmpty();
     }
 
     private static AttachmentEntity convertAttachmentFromResponseToEntity(MessageAttachment messageAttachment) {
@@ -550,11 +617,13 @@ public class MessageProvider {
         result.setId(message.getId());
         result.setEncryption(""); // TODO
         result.setSender(message.getSender());
-        result.setHasAttachments(!isNullOrEmpty(message.getAttachments()));
+        result.setHasAttachments(message.isHasAttachments());
         result.setAttachments(convertAttachmentsListFromResponsesToEntities(message.getAttachments()));
         result.setCreatedAt(message.getCreatedAt());
         result.setSenderDisplay(convertUserDisplayFromResponseToEntity(message.getSenderDisplay()));
         result.setReceiverDisplayList(convertUserDisplayListFromResponseToEntities(message.getReceiverDisplay()));
+        result.setCcDisplayList(convertUserDisplayListFromResponseToEntities(message.getCcDisplay()));
+        result.setBccDisplayList(convertUserDisplayListFromResponseToEntities(message.getBccDisplay()));
         result.setHasChildren(message.isHasChildren());
         result.setChildrenCount(message.getChildrenCount());
         result.setSubject(message.getSubject());
@@ -574,6 +643,9 @@ public class MessageProvider {
         result.setEncrypted(message.isEncrypted());
         result.setProtected(message.isProtected());
         result.setHash(message.getHash());
+        result.setSpamReason(message.getSpamReason());
+        result.setLastAction(message.getLastAction());
+        result.setLastActionThread(message.getLastActionThread());
         result.setMailboxId(message.getMailboxId());
         result.setParent(message.getParent());
 
@@ -594,21 +666,5 @@ public class MessageProvider {
             result.add(MessageProvider.fromMessagesResultToEntity(message, requestFolder));
         }
         return result;
-    }
-
-    public boolean isHasAttachments() {
-        return hasAttachments;
-    }
-
-    public void setHasAttachments(boolean hasAttachments) {
-        this.hasAttachments = hasAttachments;
-    }
-
-    public List<AttachmentProvider> getAttachments() {
-        return attachments;
-    }
-
-    public void setAttachments(List<AttachmentProvider> attachments) {
-        this.attachments = attachments;
     }
 }

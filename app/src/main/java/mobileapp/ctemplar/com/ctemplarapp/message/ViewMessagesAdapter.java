@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.text.DateFormat;
@@ -23,9 +24,9 @@ import java.util.List;
 import java.util.Locale;
 
 import mobileapp.ctemplar.com.ctemplarapp.R;
-import mobileapp.ctemplar.com.ctemplarapp.repository.providers.AttachmentProvider;
-import mobileapp.ctemplar.com.ctemplarapp.repository.providers.MessageProvider;
-import mobileapp.ctemplar.com.ctemplarapp.repository.providers.UserDisplayProvider;
+import mobileapp.ctemplar.com.ctemplarapp.repository.provider.AttachmentProvider;
+import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageProvider;
+import mobileapp.ctemplar.com.ctemplarapp.repository.provider.UserDisplayProvider;
 import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
 import timber.log.Timber;
 
@@ -92,6 +93,11 @@ public class ViewMessagesAdapter extends BaseAdapter {
         TextView contentTextView = view.findViewById(R.id.item_message_view_collapsed_content);
 
         UserDisplayProvider senderDisplay = messageData.getSenderDisplay();
+        List<UserDisplayProvider> receiverDisplayList = messageData.getReceiverDisplayList();
+        List<UserDisplayProvider> ccDisplayList = messageData.getCcDisplayList();
+        List<UserDisplayProvider> bccDisplayList = messageData.getBccDisplayList();
+        String lastAction = messageData.getLastAction();
+
         senderTextView.setText(senderDisplay.getName());
         contentTextView.setText(Html.fromHtml(encodedMessage));
 
@@ -101,13 +107,13 @@ public class ViewMessagesAdapter extends BaseAdapter {
         TextView dateTextView = view.findViewById(R.id.item_message_view_expanded_date);
         TextView statusTextView = view.findViewById(R.id.item_message_view_expanded_status);
         final TextView detailsTextView = view.findViewById(R.id.item_message_view_expanded_details);
-        TextView senderNameTextView = view.findViewById(R.id.item_message_view_from_name);
         TextView senderEmailTextView = view.findViewById(R.id.item_message_view_from_email);
-        TextView receiverNameTextView = view.findViewById(R.id.item_message_view_to_name);
         TextView receiverEmailTextView = view.findViewById(R.id.item_message_view_to_email);
         View ccLayout = view.findViewById(R.id.item_message_view_CC_layout);
-        TextView ccNameTextView = view.findViewById(R.id.item_message_view_CC_name);
         TextView ccEmailTextView = view.findViewById(R.id.item_message_view_CC_email);
+        View bccLayout = view.findViewById(R.id.item_message_view_BCC_layout);
+        ImageView replyMessageImageView = view.findViewById(R.id.item_message_view_expanded_reply_image_view);
+        TextView bccEmailTextView = view.findViewById(R.id.item_message_view_BCC_email);
         WebView contentWebView = view.findViewById(R.id.item_message_view_expanded_content);
         RecyclerView attachmentsRecyclerView = view.findViewById(R.id.item_message_view_expanded_attachment);
         final ViewGroup expandedCredentialsLayout = view.findViewById(R.id.item_message_view_expanded_credentials);
@@ -130,9 +136,7 @@ public class ViewMessagesAdapter extends BaseAdapter {
         });
 
         senderTextView.setText(senderDisplay.getName());
-        List<UserDisplayProvider> receiverDisplayList = messageData.getReceiverDisplayList();
         receiverTextView.setText(userDisplayListToNamesString(receiverDisplayList));
-
         dateTextView.setText(getStringDate(messageData.getCreatedAt()));
 
         // check for status (time delete, delayed delivery)
@@ -169,16 +173,27 @@ public class ViewMessagesAdapter extends BaseAdapter {
         String receiversDisplayString = userDisplayListToString(receiverDisplayList);
         receiverEmailTextView.setText(receiversDisplayString);
 
-        String[] cc = messageData.getCc();
-        if (cc != null && cc.length > 0) {
-            ccEmailTextView.setText(namesToString(messageData.getCc()));
+        if (!ccDisplayList.isEmpty()) {
+            String ccDisplayString = userDisplayListToString(ccDisplayList);
+            ccEmailTextView.setText(ccDisplayString);
+            ccLayout.setVisibility(View.VISIBLE);
         } else {
             ccLayout.setVisibility(View.GONE);
         }
 
-        senderNameTextView.setText("");
-        receiverNameTextView.setText("");
-        ccNameTextView.setText("");
+        if (!bccDisplayList.isEmpty()) {
+            String bccDisplayString = userDisplayListToString(bccDisplayList);
+            bccEmailTextView.setText(bccDisplayString);
+            bccLayout.setVisibility(View.VISIBLE);
+        } else {
+            bccLayout.setVisibility(View.GONE);
+        }
+
+        if (lastAction != null && lastAction.equals("REPLY")) {
+            replyMessageImageView.setVisibility(View.VISIBLE);
+        } else {
+            replyMessageImageView.setVisibility(View.GONE);
+        }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             contentWebView.setLayerType(View.LAYER_TYPE_HARDWARE, null);

@@ -1,4 +1,4 @@
-package mobileapp.ctemplar.com.ctemplarapp.repository.providers;
+package mobileapp.ctemplar.com.ctemplarapp.repository.provider;
 
 public class UserDisplayProvider {
 
