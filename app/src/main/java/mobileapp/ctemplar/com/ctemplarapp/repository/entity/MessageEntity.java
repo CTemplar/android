@@ -5,6 +5,8 @@ import android.arch.persistence.room.PrimaryKey;
 
 import java.util.List;
 
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.UserDisplay;
+
 @Entity(tableName = "messages")
 public class MessageEntity {
 
@@ -15,6 +17,8 @@ public class MessageEntity {
     private boolean hasAttachments;
     private List<AttachmentEntity> attachments;
     private String createdAt;
+    private UserDisplayEntity senderDisplay;
+    private List<UserDisplayEntity> receiverDisplayList;
     private boolean hasChildren;
     private int childrenCount;
     private String subject;
@@ -68,6 +72,22 @@ public class MessageEntity {
 
     public void setCreatedAt(String createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public UserDisplayEntity getSenderDisplay() {
+        return senderDisplay;
+    }
+
+    public void setSenderDisplay(UserDisplayEntity senderDisplay) {
+        this.senderDisplay = senderDisplay;
+    }
+
+    public List<UserDisplayEntity> getReceiverDisplayList() {
+        return receiverDisplayList;
+    }
+
+    public void setReceiverDisplayList(List<UserDisplayEntity> receiverDisplayList) {
+        this.receiverDisplayList = receiverDisplayList;
     }
 
     public boolean isHasChildren() {

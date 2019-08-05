@@ -16,13 +16,16 @@ import android.widget.TextView;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 import mobileapp.ctemplar.com.ctemplarapp.R;
-import mobileapp.ctemplar.com.ctemplarapp.main.AttachmentProvider;
-import mobileapp.ctemplar.com.ctemplarapp.main.MessageProvider;
+import mobileapp.ctemplar.com.ctemplarapp.repository.providers.AttachmentProvider;
+import mobileapp.ctemplar.com.ctemplarapp.repository.providers.MessageProvider;
+import mobileapp.ctemplar.com.ctemplarapp.repository.providers.UserDisplayProvider;
 import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
 import timber.log.Timber;
 
@@ -88,7 +91,8 @@ public class ViewMessagesAdapter extends BaseAdapter {
         TextView senderTextView = view.findViewById(R.id.item_message_view_collapsed_sender);
         TextView contentTextView = view.findViewById(R.id.item_message_view_collapsed_content);
 
-        senderTextView.setText(messageData.getSender());
+        UserDisplayProvider senderDisplay = messageData.getSenderDisplay();
+        senderTextView.setText(senderDisplay.getName());
         contentTextView.setText(Html.fromHtml(encodedMessage));
 
         // VIEW EXPANDED
@@ -125,12 +129,10 @@ public class ViewMessagesAdapter extends BaseAdapter {
             }
         });
 
-        if (messageData.getSender() != null) {
-            senderTextView.setText(messageData.getSender());
-        }
-        if (messageData.getReceivers() != null) {
-            receiverTextView.setText(TextUtils.join(", ", messageData.getReceivers()));
-        }
+        senderTextView.setText(senderDisplay.getName());
+        List<UserDisplayProvider> receiverDisplayList = messageData.getReceiverDisplayList();
+        receiverTextView.setText(userDisplayListToNamesString(receiverDisplayList));
+
         dateTextView.setText(getStringDate(messageData.getCreatedAt()));
 
         // check for status (time delete, delayed delivery)
@@ -161,16 +163,15 @@ public class ViewMessagesAdapter extends BaseAdapter {
             statusTextView.setVisibility(View.GONE);
         }
 
-        String[] sender = new String[] { messageData.getSender() };
-        senderEmailTextView.setText(addQuotesToNames(sender));
+        String senderUserDisplay = userDisplayListToString(Collections.singletonList(senderDisplay));
+        senderEmailTextView.setText(senderUserDisplay);
 
-        if (messageData.getReceivers() != null) {
-            receiverEmailTextView.setText(addQuotesToNames(messageData.getReceivers()));
-        }
+        String receiversDisplayString = userDisplayListToString(receiverDisplayList);
+        receiverEmailTextView.setText(receiversDisplayString);
 
         String[] cc = messageData.getCc();
         if (cc != null && cc.length > 0) {
-            ccEmailTextView.setText(addQuotesToNames(messageData.getCc()));
+            ccEmailTextView.setText(namesToString(messageData.getCc()));
         } else {
             ccLayout.setVisibility(View.GONE);
         }
@@ -207,13 +208,36 @@ public class ViewMessagesAdapter extends BaseAdapter {
         return getViewByFlag(inflater, parent, messageData, position + 1 == getCount());
     }
 
-    private String addQuotesToNames(String[] names) {
-        String[] nameList = new String[names.length];
-        for (int i = 0; i < nameList.length; i++) {
-            nameList[i] = "<" + names[i] + ">";
-        }
+    private String namesToString(String[] names) {
+        return TextUtils.join(", ", names);
+    }
 
-        return TextUtils.join(", ", nameList);
+    private String userDisplayListToNamesString(List<UserDisplayProvider> userDisplayProviderList) {
+        List<String> userNameList = new ArrayList<>();
+        for (UserDisplayProvider userDisplayProvider : userDisplayProviderList) {
+            String name = userDisplayProvider.getName();
+            if (name != null) {
+                userNameList.add(name);
+            }
+        }
+        return TextUtils.join(", ", userNameList);
+    }
+
+    private String userDisplayListToString(List<UserDisplayProvider> userDisplayProviderList) {
+        List<String> userDisplayList = new ArrayList<>();
+        for (UserDisplayProvider userDisplayProvider : userDisplayProviderList) {
+            String userDisplay = "";
+            String name = userDisplayProvider.getName();
+            String email = userDisplayProvider.getEmail();
+            if (name != null) {
+                userDisplay += name;
+            }
+            if (email != null) {
+                userDisplay += " <" + email + ">";
+            }
+            userDisplayList.add(userDisplay);
+        }
+        return TextUtils.join(", ", userDisplayList);
     }
 
     private String getStringDate(String stringDate) {

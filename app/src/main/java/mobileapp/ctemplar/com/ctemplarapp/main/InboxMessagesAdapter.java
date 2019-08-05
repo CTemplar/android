@@ -15,6 +15,8 @@ import java.util.List;
 
 import io.reactivex.subjects.PublishSubject;
 import mobileapp.ctemplar.com.ctemplarapp.R;
+import mobileapp.ctemplar.com.ctemplarapp.repository.providers.MessageProvider;
+import mobileapp.ctemplar.com.ctemplarapp.repository.providers.UserDisplayProvider;
 import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
 
 public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesViewHolder> {
@@ -57,26 +59,33 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesView
 
     @Override
     public void onBindViewHolder(@NonNull final InboxMessagesViewHolder holder, int position) {
-        final MessageProvider messages = filteredList.get(position);
+        final MessageProvider message = filteredList.get(position);
 
-        holder.txtUsername.setText(messages.getSender());
+        UserDisplayProvider senderDisplay = message.getSenderDisplay();
+        String name = senderDisplay.getName();
+        if (name != null && !name.isEmpty()) {
+            holder.txtUsername.setText(senderDisplay.getName());
+        } else {
+            holder.txtUsername.setText(senderDisplay.getEmail());
+        }
+
         holder.root.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onClickSubject.onNext(messages.getId());
+                onClickSubject.onNext(message.getId());
             }
         });
 
         // check for children count
-        if (messages.getChildrenCount() > 0) {
-            holder.txtChildren.setText(String.valueOf(messages.getChildrenCount()));
+        if (message.getChildrenCount() > 0) {
+            holder.txtChildren.setText(String.valueOf(message.getChildrenCount()));
             holder.txtChildren.setVisibility(View.VISIBLE);
         } else {
             holder.txtChildren.setVisibility(View.GONE);
         }
 
         // check for read/unread
-        if (messages.isRead()) {
+        if (message.isRead()) {
             holder.imgUnread.setVisibility(View.GONE);
             holder.txtUsername.setTypeface(null, Typeface.NORMAL);
         } else {
@@ -85,23 +94,23 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesView
         }
 
         // check for status (delivery in, delete in, dead mans in)
-        if (!TextUtils.isEmpty(messages.getDelayedDelivery())) {
-            String leftTime = AppUtils.elapsedTime(messages.getDelayedDelivery());
+        if (!TextUtils.isEmpty(message.getDelayedDelivery())) {
+            String leftTime = AppUtils.elapsedTime(message.getDelayedDelivery());
             if (leftTime != null) {
                 holder.txtStatus.setText(holder.root.getResources().getString(R.string.txt_left_time_delay_delivery, leftTime));
                 holder.txtStatus.setBackgroundColor(holder.root.getResources().getColor(R.color.colorDarkGreen));
             } else {
                 holder.txtStatus.setVisibility(View.GONE);
             }
-        } else if (!TextUtils.isEmpty(messages.getDestructDate())) {
-            String leftTime = AppUtils.elapsedTime(messages.getDestructDate());
+        } else if (!TextUtils.isEmpty(message.getDestructDate())) {
+            String leftTime = AppUtils.elapsedTime(message.getDestructDate());
             if (leftTime != null) {
                 holder.txtStatus.setText(holder.root.getResources().getString(R.string.txt_left_time_destruct, leftTime));
             } else {
                 holder.txtStatus.setVisibility(View.GONE);
             }
-        } else if (!TextUtils.isEmpty(messages.getDeadManDuration())) {
-            String leftTime = AppUtils.deadMansTime(Long.valueOf(messages.getDeadManDuration()));
+        } else if (!TextUtils.isEmpty(message.getDeadManDuration())) {
+            String leftTime = AppUtils.deadMansTime(Long.valueOf(message.getDeadManDuration()));
             if (leftTime != null) {
                 holder.txtStatus.setText(holder.root.getResources().getString(R.string.txt_left_time_dead_mans_timer, leftTime));
                 holder.txtStatus.setBackgroundColor(holder.root.getResources().getColor(R.color.colorRed0));
@@ -113,23 +122,23 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesView
         }
 
         // format creation date
-        if (!TextUtils.isEmpty(messages.getCreatedAt())) {
-            holder.txtDate.setText(AppUtils.messageDate(messages.getCreatedAt()));
+        if (!TextUtils.isEmpty(message.getCreatedAt())) {
+            holder.txtDate.setText(AppUtils.messageDate(message.getCreatedAt()));
         }
 
         holder.imgStarred.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                boolean isStarred = !messages.isStarred();
-                mainModel.markMessageIsStarred(messages.getId(), isStarred);
-                messages.setStarred(isStarred);
+                boolean isStarred = !message.isStarred();
+                mainModel.markMessageIsStarred(message.getId(), isStarred);
+                message.setStarred(isStarred);
                 holder.imgStarred.setSelected(isStarred);
             }
         });
 
-        holder.imgStarred.setSelected(messages.isStarred());
+        holder.imgStarred.setSelected(message.isStarred());
 
-        if (messages.isHasAttachments()) {
+        if (message.isHasAttachments()) {
             holder.imgAttachment.setVisibility(View.VISIBLE);
         } else {
             holder.imgAttachment.setVisibility(View.GONE);
@@ -137,7 +146,7 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesView
 
         holder.txtSubject.setText(filteredList.get(position).getSubject());
 
-        Spanned contentMessage = Html.fromHtml(messages.getContent());
+        Spanned contentMessage = Html.fromHtml(message.getContent());
         holder.txtContent.setText(contentMessage);
     }
 

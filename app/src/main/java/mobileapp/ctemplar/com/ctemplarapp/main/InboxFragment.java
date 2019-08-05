@@ -42,6 +42,7 @@ import mobileapp.ctemplar.com.ctemplarapp.message.SendMessageFragment;
 import mobileapp.ctemplar.com.ctemplarapp.message.ViewMessagesActivity;
 import mobileapp.ctemplar.com.ctemplarapp.message.ViewMessagesFragment;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
+import mobileapp.ctemplar.com.ctemplarapp.repository.providers.MessageProvider;
 import timber.log.Timber;
 
 import static mobileapp.ctemplar.com.ctemplarapp.main.MainFolderNames.DRAFT;
