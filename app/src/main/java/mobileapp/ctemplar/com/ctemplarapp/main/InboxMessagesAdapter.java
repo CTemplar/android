@@ -3,8 +3,6 @@ package mobileapp.ctemplar.com.ctemplarapp.main;
 import android.graphics.Typeface;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.text.Html;
-import android.text.Spanned;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,8 +13,10 @@ import java.util.List;
 
 import io.reactivex.subjects.PublishSubject;
 import mobileapp.ctemplar.com.ctemplarapp.R;
-import mobileapp.ctemplar.com.ctemplarapp.repository.providers.MessageProvider;
-import mobileapp.ctemplar.com.ctemplarapp.repository.providers.UserDisplayProvider;
+import mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames;
+import mobileapp.ctemplar.com.ctemplarapp.repository.constant.MessageActions;
+import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageProvider;
+import mobileapp.ctemplar.com.ctemplarapp.repository.provider.UserDisplayProvider;
 import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
 
 public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesViewHolder> {
@@ -43,9 +43,9 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesView
         ViewGroup backOptionsLayout = view.findViewById(R.id.item_message_view_holder_background_layout);
         View backOptionsView;
         String currentFolder = mainModel.getCurrentFolder().getValue();
-        if (currentFolder != null && currentFolder.equals("draft")) {
+        if (currentFolder != null && currentFolder.equals(MainFolderNames.DRAFT)) {
             backOptionsView = inflater.inflate(R.layout.swipe_actions_draft, backOptionsLayout, false);
-        } else if (currentFolder != null && currentFolder.equals("spam")) {
+        } else if (currentFolder != null && currentFolder.equals(MainFolderNames.SPAM)) {
             backOptionsView = inflater.inflate(R.layout.swipe_actions_spam, backOptionsLayout, false);
         } else {
             backOptionsView = inflater.inflate(R.layout.swipe_actions, backOptionsLayout, false);
@@ -76,8 +76,16 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesView
             }
         });
 
+        // check for reply
+        String lastActionThread = message.getLastActionThread();
+        if (lastActionThread != null && lastActionThread.equals(MessageActions.REPLY)) {
+            holder.imgReply.setVisibility(View.VISIBLE);
+        } else {
+            holder.imgReply.setVisibility(View.GONE);
+        }
+
         // check for children count
-        if (message.getChildrenCount() > 0) {
+        if (message.isHasChildren()) {
             holder.txtChildren.setText(String.valueOf(message.getChildrenCount()));
             holder.txtChildren.setVisibility(View.VISIBLE);
         } else {
@@ -145,9 +153,6 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesView
         }
 
         holder.txtSubject.setText(filteredList.get(position).getSubject());
-
-        Spanned contentMessage = Html.fromHtml(message.getContent());
-        holder.txtContent.setText(contentMessage);
     }
 
     @Override

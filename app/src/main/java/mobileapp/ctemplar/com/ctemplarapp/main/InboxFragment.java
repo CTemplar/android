@@ -42,14 +42,14 @@ import mobileapp.ctemplar.com.ctemplarapp.message.SendMessageFragment;
 import mobileapp.ctemplar.com.ctemplarapp.message.ViewMessagesActivity;
 import mobileapp.ctemplar.com.ctemplarapp.message.ViewMessagesFragment;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
-import mobileapp.ctemplar.com.ctemplarapp.repository.providers.MessageProvider;
+import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageProvider;
 import timber.log.Timber;
 
-import static mobileapp.ctemplar.com.ctemplarapp.main.MainFolderNames.DRAFT;
-import static mobileapp.ctemplar.com.ctemplarapp.main.MainFolderNames.INBOX;
-import static mobileapp.ctemplar.com.ctemplarapp.main.MainFolderNames.SPAM;
-import static mobileapp.ctemplar.com.ctemplarapp.main.MainFolderNames.STARRED;
-import static mobileapp.ctemplar.com.ctemplarapp.main.MainFolderNames.TRASH;
+import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.DRAFT;
+import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.INBOX;
+import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.SPAM;
+import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.STARRED;
+import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.TRASH;
 import static mobileapp.ctemplar.com.ctemplarapp.message.ViewMessagesActivity.PARENT_ID;
 import static mobileapp.ctemplar.com.ctemplarapp.message.ViewMessagesFragment.FOLDER_NAME;
 

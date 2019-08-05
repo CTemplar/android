@@ -49,19 +49,19 @@ import mobileapp.ctemplar.com.ctemplarapp.ActivityInterface;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.main.MainActivity;
 import mobileapp.ctemplar.com.ctemplarapp.main.MainActivityViewModel;
-import mobileapp.ctemplar.com.ctemplarapp.repository.providers.MessageProvider;
+import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageProvider;
 import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.PermissionCheck;
 import timber.log.Timber;
 
 import static android.content.Context.DOWNLOAD_SERVICE;
-import static mobileapp.ctemplar.com.ctemplarapp.main.MainFolderNames.ARCHIVE;
-import static mobileapp.ctemplar.com.ctemplarapp.main.MainFolderNames.DRAFT;
-import static mobileapp.ctemplar.com.ctemplarapp.main.MainFolderNames.INBOX;
-import static mobileapp.ctemplar.com.ctemplarapp.main.MainFolderNames.OUTBOX;
-import static mobileapp.ctemplar.com.ctemplarapp.main.MainFolderNames.SENT;
-import static mobileapp.ctemplar.com.ctemplarapp.main.MainFolderNames.SPAM;
-import static mobileapp.ctemplar.com.ctemplarapp.main.MainFolderNames.TRASH;
+import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.ARCHIVE;
+import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.DRAFT;
+import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.INBOX;
+import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.OUTBOX;
+import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.SENT;
+import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.SPAM;
+import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.TRASH;
 import static mobileapp.ctemplar.com.ctemplarapp.message.ViewMessagesActivity.PARENT_ID;
 
 public class ViewMessagesFragment extends Fragment implements View.OnClickListener, ActivityInterface {

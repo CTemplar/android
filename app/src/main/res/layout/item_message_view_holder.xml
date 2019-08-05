@@ -32,7 +32,7 @@
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:paddingTop="16dp"
+        android:paddingTop="18dp"
         app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
@@ -64,6 +64,14 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginLeft="8dp"
                 android:src="@drawable/ic_unread" />
+
+            <ImageView
+                android:id="@+id/message_holder_reply"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginLeft="8dp"
+                android:src="@drawable/ic_reply_message" />
 
             <TextView
                 android:id="@+id/message_holder_children"
@@ -129,70 +137,53 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="14dp"
+        android:layout_marginBottom="18dp"
         android:ellipsize="end"
         android:fontFamily="@font/lato_regular"
         android:gravity="left"
         android:lines="1"
-        android:text="ADJAOKLdjlakjdlkjadlhaljfhakjasdsadasdadsadsadsadadsaasdadadadsADSADSDAS"
+        android:text="Subject Subject Subject Subject Subject Subject Subject"
         android:textColor="@color/colorDarkBlue3"
         android:textSize="14sp"
-        app:layout_constraintEnd_toStartOf="@+id/message_holder_starred"
+        app:layout_constraintEnd_toStartOf="@+id/message_holder_attachment"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintHorizontal_chainStyle="spread"
         app:layout_constraintStart_toStartOf="@+id/message_top_layout"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/message_top_layout" />
-
-    <ImageView
-        android:id="@+id/message_holder_starred"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:src="@drawable/selector_starred"
-        app:layout_constraintBottom_toBottomOf="@+id/message_holder_subject"
-        app:layout_constraintEnd_toEndOf="@+id/message_top_layout"
-        app:layout_constraintRight_toRightOf="@id/message_top_layout"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/message_holder_subject"
-        app:layout_constraintTop_toTopOf="@+id/message_holder_subject" />
-
-    <TextView
-        android:id="@+id/message_holder_content"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="12dp"
-        android:layout_marginBottom="12dp"
-        android:ellipsize="end"
-        android:fontFamily="@font/lato_regular"
-        android:gravity="left"
-        android:lines="1"
-        android:text="akldgakljdgkjhagdkjhagdjhgakjdgakdhdkjaghdkjahgdkjahgdj"
-        android:textColor="@color/colorGrey"
-        android:textSize="14sp"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintEnd_toStartOf="@+id/message_holder_starred"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/message_top_layout"
-        app:layout_constraintTop_toBottomOf="@+id/message_holder_subject"
+        app:layout_constraintTop_toBottomOf="@+id/message_top_layout"
         app:layout_constraintBottom_toBottomOf="parent" />
 
     <ImageView
         android:id="@+id/message_holder_attachment"
         android:layout_width="20dp"
         android:layout_height="20dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginRight="5dp"
         android:src="@drawable/ic_attachment_small"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintEnd_toEndOf="@+id/message_top_layout"
-        app:layout_constraintStart_toEndOf="@+id/message_holder_content"
-        app:layout_constraintBottom_toBottomOf="@+id/message_holder_content"
-        app:layout_constraintTop_toTopOf="@+id/message_holder_content" />
+        app:layout_constraintTop_toTopOf="@+id/message_holder_subject"
+        app:layout_constraintBottom_toBottomOf="@+id/message_holder_subject"
+        app:layout_constraintStart_toEndOf="@+id/message_holder_subject"
+        app:layout_constraintEnd_toStartOf="@id/message_holder_starred" />
+
+    <ImageView
+        android:id="@+id/message_holder_starred"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:src="@drawable/selector_starred"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintTop_toTopOf="@+id/message_holder_subject"
+        app:layout_constraintBottom_toBottomOf="@+id/message_holder_subject"
+        app:layout_constraintStart_toEndOf="@+id/message_holder_attachment"
+        app:layout_constraintRight_toRightOf="@id/message_top_layout"
+        app:layout_constraintEnd_toEndOf="@+id/message_top_layout" />
 
     </android.support.constraint.ConstraintLayout>
 

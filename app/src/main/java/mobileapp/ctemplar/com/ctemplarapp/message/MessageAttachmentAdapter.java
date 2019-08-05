@@ -11,7 +11,7 @@ import java.util.List;
 
 import io.reactivex.subjects.PublishSubject;
 import mobileapp.ctemplar.com.ctemplarapp.R;
-import mobileapp.ctemplar.com.ctemplarapp.repository.providers.AttachmentProvider;
+import mobileapp.ctemplar.com.ctemplarapp.repository.provider.AttachmentProvider;
 import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
 import timber.log.Timber;
 

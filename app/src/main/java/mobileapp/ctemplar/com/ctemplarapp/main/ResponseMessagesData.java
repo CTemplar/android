@@ -2,7 +2,7 @@ package mobileapp.ctemplar.com.ctemplarapp.main;
 
 import java.util.List;
 
-import mobileapp.ctemplar.com.ctemplarapp.repository.providers.MessageProvider;
+import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageProvider;
 
 public class ResponseMessagesData {
     public final List<MessageProvider> messages;
