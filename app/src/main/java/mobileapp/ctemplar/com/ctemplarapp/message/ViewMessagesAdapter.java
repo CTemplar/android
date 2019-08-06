@@ -11,18 +11,22 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 import mobileapp.ctemplar.com.ctemplarapp.R;
-import mobileapp.ctemplar.com.ctemplarapp.main.AttachmentProvider;
-import mobileapp.ctemplar.com.ctemplarapp.main.MessageProvider;
+import mobileapp.ctemplar.com.ctemplarapp.repository.provider.AttachmentProvider;
+import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageProvider;
+import mobileapp.ctemplar.com.ctemplarapp.repository.provider.UserDisplayProvider;
 import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
 import timber.log.Timber;
 
@@ -88,7 +92,13 @@ public class ViewMessagesAdapter extends BaseAdapter {
         TextView senderTextView = view.findViewById(R.id.item_message_view_collapsed_sender);
         TextView contentTextView = view.findViewById(R.id.item_message_view_collapsed_content);
 
-        senderTextView.setText(messageData.getSender());
+        UserDisplayProvider senderDisplay = messageData.getSenderDisplay();
+        List<UserDisplayProvider> receiverDisplayList = messageData.getReceiverDisplayList();
+        List<UserDisplayProvider> ccDisplayList = messageData.getCcDisplayList();
+        List<UserDisplayProvider> bccDisplayList = messageData.getBccDisplayList();
+        String lastAction = messageData.getLastAction();
+
+        senderTextView.setText(senderDisplay.getName());
         contentTextView.setText(Html.fromHtml(encodedMessage));
 
         // VIEW EXPANDED
@@ -97,13 +107,13 @@ public class ViewMessagesAdapter extends BaseAdapter {
         TextView dateTextView = view.findViewById(R.id.item_message_view_expanded_date);
         TextView statusTextView = view.findViewById(R.id.item_message_view_expanded_status);
         final TextView detailsTextView = view.findViewById(R.id.item_message_view_expanded_details);
-        TextView senderNameTextView = view.findViewById(R.id.item_message_view_from_name);
         TextView senderEmailTextView = view.findViewById(R.id.item_message_view_from_email);
-        TextView receiverNameTextView = view.findViewById(R.id.item_message_view_to_name);
         TextView receiverEmailTextView = view.findViewById(R.id.item_message_view_to_email);
         View ccLayout = view.findViewById(R.id.item_message_view_CC_layout);
-        TextView ccNameTextView = view.findViewById(R.id.item_message_view_CC_name);
         TextView ccEmailTextView = view.findViewById(R.id.item_message_view_CC_email);
+        View bccLayout = view.findViewById(R.id.item_message_view_BCC_layout);
+        ImageView replyMessageImageView = view.findViewById(R.id.item_message_view_expanded_reply_image_view);
+        TextView bccEmailTextView = view.findViewById(R.id.item_message_view_BCC_email);
         WebView contentWebView = view.findViewById(R.id.item_message_view_expanded_content);
         RecyclerView attachmentsRecyclerView = view.findViewById(R.id.item_message_view_expanded_attachment);
         final ViewGroup expandedCredentialsLayout = view.findViewById(R.id.item_message_view_expanded_credentials);
@@ -125,12 +135,8 @@ public class ViewMessagesAdapter extends BaseAdapter {
             }
         });
 
-        if (messageData.getSender() != null) {
-            senderTextView.setText(messageData.getSender());
-        }
-        if (messageData.getReceivers() != null) {
-            receiverTextView.setText(TextUtils.join(", ", messageData.getReceivers()));
-        }
+        senderTextView.setText(senderDisplay.getName());
+        receiverTextView.setText(userDisplayListToNamesString(receiverDisplayList));
         dateTextView.setText(getStringDate(messageData.getCreatedAt()));
 
         // check for status (time delete, delayed delivery)
@@ -161,23 +167,33 @@ public class ViewMessagesAdapter extends BaseAdapter {
             statusTextView.setVisibility(View.GONE);
         }
 
-        String[] sender = new String[] { messageData.getSender() };
-        senderEmailTextView.setText(addQuotesToNames(sender));
+        String senderUserDisplay = userDisplayListToString(Collections.singletonList(senderDisplay));
+        senderEmailTextView.setText(senderUserDisplay);
 
-        if (messageData.getReceivers() != null) {
-            receiverEmailTextView.setText(addQuotesToNames(messageData.getReceivers()));
-        }
+        String receiversDisplayString = userDisplayListToString(receiverDisplayList);
+        receiverEmailTextView.setText(receiversDisplayString);
 
-        String[] cc = messageData.getCc();
-        if (cc != null && cc.length > 0) {
-            ccEmailTextView.setText(addQuotesToNames(messageData.getCc()));
+        if (!ccDisplayList.isEmpty()) {
+            String ccDisplayString = userDisplayListToString(ccDisplayList);
+            ccEmailTextView.setText(ccDisplayString);
+            ccLayout.setVisibility(View.VISIBLE);
         } else {
             ccLayout.setVisibility(View.GONE);
         }
 
-        senderNameTextView.setText("");
-        receiverNameTextView.setText("");
-        ccNameTextView.setText("");
+        if (!bccDisplayList.isEmpty()) {
+            String bccDisplayString = userDisplayListToString(bccDisplayList);
+            bccEmailTextView.setText(bccDisplayString);
+            bccLayout.setVisibility(View.VISIBLE);
+        } else {
+            bccLayout.setVisibility(View.GONE);
+        }
+
+        if (lastAction != null && lastAction.equals("REPLY")) {
+            replyMessageImageView.setVisibility(View.VISIBLE);
+        } else {
+            replyMessageImageView.setVisibility(View.GONE);
+        }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             contentWebView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
@@ -207,13 +223,36 @@ public class ViewMessagesAdapter extends BaseAdapter {
         return getViewByFlag(inflater, parent, messageData, position + 1 == getCount());
     }
 
-    private String addQuotesToNames(String[] names) {
-        String[] nameList = new String[names.length];
-        for (int i = 0; i < nameList.length; i++) {
-            nameList[i] = "<" + names[i] + ">";
-        }
+    private String namesToString(String[] names) {
+        return TextUtils.join(", ", names);
+    }
 
-        return TextUtils.join(", ", nameList);
+    private String userDisplayListToNamesString(List<UserDisplayProvider> userDisplayProviderList) {
+        List<String> userNameList = new ArrayList<>();
+        for (UserDisplayProvider userDisplayProvider : userDisplayProviderList) {
+            String name = userDisplayProvider.getName();
+            if (name != null) {
+                userNameList.add(name);
+            }
+        }
+        return TextUtils.join(", ", userNameList);
+    }
+
+    private String userDisplayListToString(List<UserDisplayProvider> userDisplayProviderList) {
+        List<String> userDisplayList = new ArrayList<>();
+        for (UserDisplayProvider userDisplayProvider : userDisplayProviderList) {
+            String userDisplay = "";
+            String name = userDisplayProvider.getName();
+            String email = userDisplayProvider.getEmail();
+            if (name != null) {
+                userDisplay += name;
+            }
+            if (email != null) {
+                userDisplay += " <" + email + ">";
+            }
+            userDisplayList.add(userDisplay);
+        }
+        return TextUtils.join(", ", userDisplayList);
     }
 
     private String getStringDate(String stringDate) {

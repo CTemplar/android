@@ -15,7 +15,7 @@ public class InboxMessagesViewHolder extends RecyclerView.ViewHolder{
     TextView txtStatus;
     TextView txtDate;
     TextView txtSubject;
-    TextView txtContent;
+    ImageView imgReply;
     ImageView imgUnread;
     ImageView imgProtection;
     ImageView imgStarred;
@@ -29,7 +29,7 @@ public class InboxMessagesViewHolder extends RecyclerView.ViewHolder{
         txtStatus = itemView.findViewById(R.id.message_holder_status);
         txtDate = itemView.findViewById(R.id.message_holder_date);
         txtSubject = itemView.findViewById(R.id.message_holder_subject);
-        txtContent = itemView.findViewById(R.id.message_holder_content);
+        imgReply = itemView.findViewById(R.id.message_holder_reply);
         imgUnread = itemView.findViewById(R.id.message_holder_new);
         imgProtection = itemView.findViewById(R.id.message_holder_protection);
         imgStarred = itemView.findViewById(R.id.message_holder_starred);

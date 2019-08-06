@@ -40,7 +40,7 @@ import java.util.List;
 import mobileapp.ctemplar.com.ctemplarapp.ActivityInterface;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.R;
-import mobileapp.ctemplar.com.ctemplarapp.main.MessageProvider;
+import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageProvider;
 import mobileapp.ctemplar.com.ctemplarapp.main.UpgradeToPrimeFragment;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.PublicKeysRequest;
@@ -63,8 +63,8 @@ import okhttp3.RequestBody;
 import timber.log.Timber;
 
 import static android.app.Activity.RESULT_OK;
-import static mobileapp.ctemplar.com.ctemplarapp.main.MainFolderNames.OUTBOX;
-import static mobileapp.ctemplar.com.ctemplarapp.main.MainFolderNames.SENT;
+import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.OUTBOX;
+import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.SENT;
 
 public class SendMessageFragment extends Fragment implements View.OnClickListener, ActivityInterface {
 
