@@ -143,8 +143,6 @@ If you have further questions please email <![CDATA[<u><a href="mailto:support@c
     <string name="txt_subject">Subject</string>
     <string name="txt_to">To:&#160;</string>
     <string name="txt_reply_all">Reply All</string>
-    <string name="txt_from_email">from:&#160;</string>
-    <string name="txt_to_email">to:&#160;</string>
 
     <!-- CHANGE PASSWORD -->
     <string name="toast_password_changed">Password changed</string>

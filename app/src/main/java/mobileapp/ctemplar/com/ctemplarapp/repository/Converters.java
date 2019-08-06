@@ -9,6 +9,7 @@ import java.lang.reflect.Type;
 import java.util.List;
 
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.AttachmentEntity;
+import mobileapp.ctemplar.com.ctemplarapp.repository.entity.UserDisplayEntity;
 
 public class Converters {
     @TypeConverter
@@ -34,6 +35,34 @@ public class Converters {
     public static String attachmentsToString(List<AttachmentEntity> list) {
         Gson gson = new Gson();
         Type type = new TypeToken<List<AttachmentEntity>>() {}.getType();
+        return gson.toJson(list, type);
+    }
+
+    @TypeConverter
+    public static UserDisplayEntity stringToUserDisplay(String json) {
+        Gson gson = new Gson();
+        Type type = new TypeToken<UserDisplayEntity>() {}.getType();
+        return gson.fromJson(json, type);
+    }
+
+    @TypeConverter
+    public static String userDisplayToString(UserDisplayEntity userDisplay) {
+        Gson gson = new Gson();
+        Type type = new TypeToken<UserDisplayEntity>() {}.getType();
+        return gson.toJson(userDisplay, type);
+    }
+
+    @TypeConverter
+    public static List<UserDisplayEntity> stringToUserDisplayList(String json) {
+        Gson gson = new Gson();
+        Type type = new TypeToken<List<UserDisplayEntity>>() {}.getType();
+        return gson.fromJson(json, type);
+    }
+
+    @TypeConverter
+    public static String userDisplayListToString(List<UserDisplayEntity> list) {
+        Gson gson = new Gson();
+        Type type = new TypeToken<List<UserDisplayEntity>>() {}.getType();
         return gson.toJson(list, type);
     }
 }

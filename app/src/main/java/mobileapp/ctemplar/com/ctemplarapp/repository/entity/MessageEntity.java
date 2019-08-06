@@ -15,6 +15,10 @@ public class MessageEntity {
     private boolean hasAttachments;
     private List<AttachmentEntity> attachments;
     private String createdAt;
+    private UserDisplayEntity senderDisplay;
+    private List<UserDisplayEntity> receiverDisplayList;
+    private List<UserDisplayEntity> ccDisplayList;
+    private List<UserDisplayEntity> bccDisplayList;
     private boolean hasChildren;
     private int childrenCount;
     private String subject;
@@ -34,6 +38,9 @@ public class MessageEntity {
     private boolean isEncrypted;
     private boolean isProtected;
     private String hash;
+    private List<String> spamReason;
+    private String lastAction;
+    private String lastActionThread;
     private long mailboxId;
     private String parent;
     private boolean showInInbox;
@@ -68,6 +75,38 @@ public class MessageEntity {
 
     public void setCreatedAt(String createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public UserDisplayEntity getSenderDisplay() {
+        return senderDisplay;
+    }
+
+    public void setSenderDisplay(UserDisplayEntity senderDisplay) {
+        this.senderDisplay = senderDisplay;
+    }
+
+    public List<UserDisplayEntity> getReceiverDisplayList() {
+        return receiverDisplayList;
+    }
+
+    public void setReceiverDisplayList(List<UserDisplayEntity> receiverDisplayList) {
+        this.receiverDisplayList = receiverDisplayList;
+    }
+
+    public List<UserDisplayEntity> getCcDisplayList() {
+        return ccDisplayList;
+    }
+
+    public void setCcDisplayList(List<UserDisplayEntity> ccDisplayList) {
+        this.ccDisplayList = ccDisplayList;
+    }
+
+    public List<UserDisplayEntity> getBccDisplayList() {
+        return bccDisplayList;
+    }
+
+    public void setBccDisplayList(List<UserDisplayEntity> bccDisplayList) {
+        this.bccDisplayList = bccDisplayList;
     }
 
     public boolean isHasChildren() {
@@ -220,6 +259,30 @@ public class MessageEntity {
 
     public void setHash(String hash) {
         this.hash = hash;
+    }
+
+    public List<String> getSpamReason() {
+        return spamReason;
+    }
+
+    public void setSpamReason(List<String> spamReason) {
+        this.spamReason = spamReason;
+    }
+
+    public String getLastAction() {
+        return lastAction;
+    }
+
+    public void setLastAction(String lastAction) {
+        this.lastAction = lastAction;
+    }
+
+    public String getLastActionThread() {
+        return lastActionThread;
+    }
+
+    public void setLastActionThread(String lastActionThread) {
+        this.lastActionThread = lastActionThread;
     }
 
     public long getMailboxId() {
