@@ -12,22 +12,30 @@
 
     <TextView
         android:id="@+id/item_message_view_collapsed_sender"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ellipsize="end"
         android:fontFamily="@font/lato_regular"
-        android:gravity="left"
+        android:gravity="start"
         android:lines="1"
         android:text="CTemplar"
         android:textColor="@color/colorDarkBlue3"
         android:textSize="14sp"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintHorizontal_chainStyle="spread" />
+
+    <ImageView
+        android:id="@+id/item_message_view_holder_reply_image_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:src="@drawable/ic_reply_message"
+        app:layout_constraintTop_toTopOf="@id/item_message_view_collapsed_sender"
+        app:layout_constraintBottom_toBottomOf="@id/item_message_view_collapsed_sender"
+        app:layout_constraintLeft_toRightOf="@id/item_message_view_collapsed_sender" />
 
     <TextView
         android:id="@+id/item_message_view_collapsed_content"
