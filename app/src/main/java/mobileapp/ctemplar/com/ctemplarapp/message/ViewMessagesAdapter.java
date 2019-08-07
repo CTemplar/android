@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Locale;
 
 import mobileapp.ctemplar.com.ctemplarapp.R;
+import mobileapp.ctemplar.com.ctemplarapp.repository.constant.MessageActions;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.AttachmentProvider;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageProvider;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.UserDisplayProvider;
@@ -91,12 +92,14 @@ public class ViewMessagesAdapter extends BaseAdapter {
         // VIEW COLLAPSED
         TextView senderTextView = view.findViewById(R.id.item_message_view_collapsed_sender);
         TextView contentTextView = view.findViewById(R.id.item_message_view_collapsed_content);
+        ImageView collapsedReplyMessageImageView = view.findViewById(R.id.item_message_view_holder_reply_image_view);
 
         UserDisplayProvider senderDisplay = messageData.getSenderDisplay();
         List<UserDisplayProvider> receiverDisplayList = messageData.getReceiverDisplayList();
         List<UserDisplayProvider> ccDisplayList = messageData.getCcDisplayList();
         List<UserDisplayProvider> bccDisplayList = messageData.getBccDisplayList();
         String lastAction = messageData.getLastAction();
+        String folderName = messageData.getFolderName();
 
         senderTextView.setText(senderDisplay.getName());
         contentTextView.setText(Html.fromHtml(encodedMessage));
@@ -106,6 +109,7 @@ public class ViewMessagesAdapter extends BaseAdapter {
         TextView receiverTextView = view.findViewById(R.id.item_message_view_expanded_receiver_name);
         TextView dateTextView = view.findViewById(R.id.item_message_view_expanded_date);
         TextView statusTextView = view.findViewById(R.id.item_message_view_expanded_status);
+        TextView folderTextView = view.findViewById(R.id.item_message_view_expanded_folder);
         final TextView detailsTextView = view.findViewById(R.id.item_message_view_expanded_details);
         TextView senderEmailTextView = view.findViewById(R.id.item_message_view_from_email);
         TextView receiverEmailTextView = view.findViewById(R.id.item_message_view_to_email);
@@ -138,6 +142,11 @@ public class ViewMessagesAdapter extends BaseAdapter {
         senderTextView.setText(senderDisplay.getName());
         receiverTextView.setText(userDisplayListToNamesString(receiverDisplayList));
         dateTextView.setText(getStringDate(messageData.getCreatedAt()));
+
+        // check for folder
+        if (folderName != null) {
+            folderTextView.setText(folderName);
+        }
 
         // check for status (time delete, delayed delivery)
         if (!TextUtils.isEmpty(messageData.getDelayedDelivery())) {
@@ -189,10 +198,16 @@ public class ViewMessagesAdapter extends BaseAdapter {
             bccLayout.setVisibility(View.GONE);
         }
 
-        if (lastAction != null && lastAction.equals("REPLY")) {
-            replyMessageImageView.setVisibility(View.VISIBLE);
-        } else {
+        // check for last action (reply, reply all, forward)
+        if (lastAction == null) {
             replyMessageImageView.setVisibility(View.GONE);
+            collapsedReplyMessageImageView.setVisibility(View.GONE);
+        } else if (lastAction.equals(MessageActions.REPLY_ALL)) {
+            replyMessageImageView.setImageResource(R.drawable.ic_reply_all_message);
+            collapsedReplyMessageImageView.setImageResource(R.drawable.ic_reply_all_message);
+        } else if (lastAction.equals(MessageActions.FORWARD)) {
+            replyMessageImageView.setImageResource(R.drawable.ic_forward_message);
+            collapsedReplyMessageImageView.setImageResource(R.drawable.ic_forward_message);
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -260,7 +275,7 @@ public class ViewMessagesAdapter extends BaseAdapter {
             return "";
         }
         DateFormat parseFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault());
-        DateFormat viewFormat = new SimpleDateFormat("MMM d, yyyy", Locale.getDefault());
+        DateFormat viewFormat = new SimpleDateFormat("MMM d, yyyy',' h:mm a", Locale.getDefault());
         try {
             Date date = parseFormat.parse(stringDate);
             stringDate = viewFormat.format(date);
@@ -270,5 +285,4 @@ public class ViewMessagesAdapter extends BaseAdapter {
         }
         return stringDate;
     }
-
 }

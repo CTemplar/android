@@ -323,7 +323,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
 
     private void snackbarDelete(final String folder, String message) {
         Snackbar snackbar = Snackbar.make(messageActionsLayout, message, Snackbar.LENGTH_SHORT);
-        snackbar.setAction("UNDO", new View.OnClickListener() {
+        snackbar.setAction(getString(R.string.action_undo), new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 blockUI();
@@ -352,7 +352,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
 
     private void snackbarMove(final String folder, String message) {
         Snackbar snackbar = Snackbar.make(messageActionsLayout, message, Snackbar.LENGTH_SHORT);
-        snackbar.setAction("UNDO", new View.OnClickListener() {
+        snackbar.setAction(getString(R.string.action_undo), new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 blockUI();
@@ -396,7 +396,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
             return "";
         }
         DateFormat parseFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault());
-        DateFormat viewFormat = new SimpleDateFormat("h:mm a',' MMMM d yyyy", Locale.getDefault());
+        DateFormat viewFormat = new SimpleDateFormat("EEE',' MMMM d, yyyy 'at' h:mm a", Locale.getDefault());
         try {
             Date date = parseFormat.parse(stringDate);
             stringDate = viewFormat.format(date);
@@ -409,7 +409,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
 
     private String replyHead() {
         String createdAt = getStringDate(lastMessage.getCreatedAt());
-        String sender = lastMessage.getSender();
+        String sender = "<" + lastMessage.getSender() + ">";
         return getResources().getString(R.string.txt_user_wrote, createdAt, sender);
     }
 

@@ -76,12 +76,14 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesView
             }
         });
 
-        // check for reply
+        // check for last action (reply, reply all, forward)
         String lastActionThread = message.getLastActionThread();
-        if (lastActionThread != null && lastActionThread.equals(MessageActions.REPLY)) {
-            holder.imgReply.setVisibility(View.VISIBLE);
-        } else {
+        if (lastActionThread == null) {
             holder.imgReply.setVisibility(View.GONE);
+        } else if (lastActionThread.equals(MessageActions.REPLY_ALL)) {
+            holder.imgReply.setImageResource(R.drawable.ic_reply_all_message);
+        } else if (lastActionThread.equals(MessageActions.FORWARD)) {
+            holder.imgReply.setImageResource(R.drawable.ic_forward_message);
         }
 
         // check for children count
