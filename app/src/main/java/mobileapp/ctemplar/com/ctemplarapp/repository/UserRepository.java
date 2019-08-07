@@ -29,6 +29,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.CaptchaVerifyResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.CheckUsernameResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.DeleteAttachmentResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Domains.DomainsResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Filters.FiltersResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.KeyResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Mailboxes.MailboxesResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Mailboxes.MailboxesResult;
@@ -51,9 +52,10 @@ import retrofit2.Response;
 
 @Singleton
 public class UserRepository {
+
+    private static UserRepository instance = new UserRepository();
     private RestService service;
     private UserStore userStore;
-    private static UserRepository instance = new UserRepository();
 
     public static UserRepository getInstance() {
         if(instance == null) {
@@ -71,8 +73,28 @@ public class UserRepository {
         return userStore.getToken();
     }
 
+    public void saveUserToken(String token) {
+        userStore.saveToken(token);
+    }
+
     public void clearToken() {
         userStore.clearToken();
+    }
+
+    public void saveUserPassword(String password) {
+        userStore.savePassword(password);
+    }
+
+    public void saveUserName(String username) {
+        userStore.saveUsername(username);
+    }
+
+    public String getUsername() {
+        return userStore.getUsername();
+    }
+
+    public String getUserPassword() {
+        return userStore.getUserPassword();
     }
 
     public void logout() {
@@ -80,10 +102,6 @@ public class UserRepository {
         CTemplarApp.getAppDatabase().mailboxDao().deleteAll();
         CTemplarApp.getAppDatabase().messageDao().deleteAll();
         CTemplarApp.getAppDatabase().contactDao().deleteAll();
-    }
-
-    public void saveUserToken(String token) {
-        userStore.saveToken(token);
     }
 
     public void saveMailboxes(List<MailboxesResult> mailboxes) {
@@ -239,6 +257,12 @@ public class UserRepository {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
+    public Observable<FiltersResponse> getFilterList() {
+        return service.getFilterList()
+                .subscribeOn(io.reactivex.schedulers.Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
     public Observable<ResponseBody> deleteBlacklistContact(BlackListContact contact) {
         return service.deleteBlacklistContact(contact.id)
                 .subscribeOn(io.reactivex.schedulers.Schedulers.io())
@@ -321,21 +345,5 @@ public class UserRepository {
         return service.captchaVerify(request)
                 .subscribeOn(io.reactivex.schedulers.Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
-    }
-
-    public void saveUserPassword(String password) {
-        userStore.savePassword(password);
-    }
-
-    public void saveUserName(String username) {
-        userStore.saveUsername(username);
-    }
-
-    public String getUsername() {
-        return userStore.getUsername();
-    }
-
-    public String getUserPassword() {
-        return userStore.getUserPassword();
     }
 }
