@@ -29,6 +29,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.ContactData;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.ContactsResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.DeleteAttachmentResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Domains.DomainsResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Filters.FiltersResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Folders.FoldersResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Folders.FoldersResult;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.KeyResponse;
@@ -169,6 +170,9 @@ public interface RestService {
     // Good if response code is 204 (no content)
     @DELETE("/users/contacts/{id}/")
     Observable<ResponseBody> deleteContact(@Path("id") long id);
+
+    @GET("/users/filters/")
+    Observable<FiltersResponse> getFilterList();
 
     @DELETE("/users/blacklist/{id}/")
     Observable<ResponseBody> deleteBlacklistContact(@Path("id") long id);

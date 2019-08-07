@@ -31,6 +31,10 @@
             android:fragment="mobileapp.ctemplar.com.ctemplarapp.settings.SettingsActivity$SavingContactsFragment" />
 
         <Preference
+            android:title="@string/settings_filters"
+            android:key="@string/filters" />
+
+        <Preference
             android:title="@string/settings_wb_list"
             android:key="@string/white_black_list" />
 
