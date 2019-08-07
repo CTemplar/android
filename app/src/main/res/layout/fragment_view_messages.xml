@@ -10,7 +10,8 @@
         android:id="@+id/activity_view_messages_bar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:theme="@style/AppTheme.AppBarOverlay"
+        app:layout_constraintTop_toTopOf="parent">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/activity_view_messages_bar"
@@ -20,55 +21,56 @@
             android:theme="@style/ActionBarLight"
             app:titleTextColor="@color/colorDarkBlue2"
             app:popupTheme="@style/AppTheme.PopupOverlay">
+
         </android.support.v7.widget.Toolbar>
 
     </android.support.design.widget.AppBarLayout>
 
-    <RelativeLayout
+    <android.support.constraint.ConstraintLayout
         android:id="@+id/activity_view_messages_subject_layout"
         android:layout_width="match_parent"
-        android:layout_height="47dp"
-        app:layout_constraintTop_toBottomOf="@id/activity_view_messages_bar_layout"
-        android:background="@color/colorWhiteLight">
+        android:layout_height="wrap_content"
+        android:background="@color/colorWhiteLight"
+        app:layout_constraintTop_toBottomOf="@id/activity_view_messages_bar_layout">
 
         <TextView
             android:id="@+id/activity_view_messages_subject_text"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:text="Welcome to CTemplar!"
             android:fontFamily="@font/lato_bold"
             android:textColor="@color/colorBlack4"
-            android:textSize="16sp"
+            android:textSize="18sp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
             android:layout_marginLeft="16dp"
             android:layout_marginStart="16dp"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_alignStart="@id/activity_view_messages_subject_star_image_layout"
-            android:layout_alignLeft="@id/activity_view_messages_subject_star_image_layout" />
+            android:layout_marginRight="16dp"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@id/activity_view_messages_subject_encrypted_image"/>
 
         <ImageView
             android:id="@+id/activity_view_messages_subject_encrypted_image"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/selector_encrypted"
-            android:layout_marginTop="15dp"
-
-            android:layout_toRightOf="@id/activity_view_messages_subject_text"
-            android:layout_toEndOf="@id/activity_view_messages_subject_text"
-
-            android:layout_marginLeft="7dp"
-            android:layout_marginStart="7dp" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toLeftOf="@id/activity_view_messages_subject_star_image_layout"/>
 
         <FrameLayout android:id="@+id/activity_view_messages_subject_star_image_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
             android:padding="10dp"
             android:layout_marginRight="10dp"
-            android:layout_marginEnd="10dp">
+            android:layout_marginEnd="10dp"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
 
             <ImageView
                 android:id="@+id/activity_view_messages_subject_star_image"
@@ -78,7 +80,7 @@
 
         </FrameLayout>
 
-    </RelativeLayout>
+    </android.support.constraint.ConstraintLayout>
 
     <View
         android:id="@+id/activity_view_messages_bottom_subject_divider"
