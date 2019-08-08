@@ -63,6 +63,8 @@
         <activity android:name=".contacts.AddContactActivity" />
         <activity android:name=".contacts.EditContactActivity" />
         <activity android:name=".filters.FiltersActivity" />
+        <activity android:name=".filters.AddFilterActivity" />
+        <activity android:name=".filters.EditFilterActivity" />
         <activity android:name=".folders.AddFolderActivity" />
         <activity android:name=".folders.EditFolderActivity" />
         <activity android:name=".folders.ManageFoldersActivity" />

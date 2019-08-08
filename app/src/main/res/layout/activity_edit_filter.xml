@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/app_bar_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/activity_edit_filter_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            android:theme="@style/ActionBarLight"
+            android:fontFamily="@font/lato_bold"
+            app:titleTextColor="@color/colorDarkBlue2"
+            app:title="@string/title_edit_custom_filter"
+            app:popupTheme="@style/AppTheme.PopupOverlay">
+
+        </android.support.v7.widget.Toolbar>
+
+    </android.support.design.widget.AppBarLayout>
+
+    <LinearLayout
+        android:id="@+id/activity_edit_filter_name_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@id/app_bar_layout">
+
+        <TextView
+            android:id="@+id/activity_edit_filter_name_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/txt_filter_name"
+            android:fontFamily="@font/lato_regular"
+            android:textColor="@color/colorDarkBlue"
+            android:textSize="16sp" />
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/activity_edit_filter_name_input_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:hintEnabled="false">
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/activity_edit_filter_name_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/lato_regular"
+                android:textSize="16sp"
+                android:padding="12dp"
+                android:inputType="text"
+                android:textColor="@color/colorDarkBlue"
+                android:minHeight="45dp"
+                android:background="@drawable/text_input_field" />
+
+        </android.support.design.widget.TextInputLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/activity_edit_filter_conditions_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@id/activity_edit_filter_name_layout">
+
+        <TextView
+            android:id="@+id/activity_edit_filter_conditions_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/txt_filter_conditions"
+            android:fontFamily="@font/lato_regular"
+            android:textColor="@color/colorDarkBlue"
+            android:textSize="16sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <Spinner
+                android:id="@+id/activity_edit_parameter_spinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginRight="4dp"
+                android:layout_marginEnd="4dp"
+                tools:listitem="@layout/item_filters_holder" />
+
+            <Spinner
+                android:id="@+id/activity_edit_condition_spinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginLeft="4dp"
+                android:layout_marginStart="4dp"
+                tools:listitem="@layout/item_filters_holder" />
+
+        </LinearLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/activity_edit_filter_text_input_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:hintEnabled="false">
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/activity_edit_filter_text_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/lato_regular"
+                android:textSize="16sp"
+                android:padding="12dp"
+                android:inputType="text"
+                android:textColor="@color/colorDarkBlue"
+                android:minHeight="45dp"
+                android:background="@drawable/text_input_field" />
+
+        </android.support.design.widget.TextInputLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/activity_edit_filter_actions_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@id/activity_edit_filter_conditions_layout">
+
+        <TextView
+            android:id="@+id/activity_edit_filter_actions_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/txt_filter_conditions"
+            android:fontFamily="@font/lato_regular"
+            android:textColor="@color/colorDarkBlue"
+            android:textSize="16sp" />
+
+        <LinearLayout
+            android:id="@+id/activity_edit_filter_select_folder_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:orientation="horizontal"
+            android:layout_gravity="center_vertical">
+
+            <CheckBox
+                android:id="@+id/activity_edit_filter_move_to_check_box"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginRight="4dp"
+                android:layout_marginEnd="4dp"
+                android:text="@string/txt_filter_move_to" />
+
+            <Spinner
+                android:id="@+id/activity_edit_filter_folder_spinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:listitem="@layout/item_filters_holder" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/activity_edit_filter_options_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal"
+            android:layout_gravity="center_vertical">
+
+            <CheckBox
+                android:id="@+id/activity_edit_filter_as_read_check_box"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginRight="4dp"
+                android:layout_marginEnd="4dp"
+                android:text="@string/txt_filter_mark_as_read" />
+
+            <CheckBox
+                android:id="@+id/activity_edit_filter_as_starred_check_box"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="4dp"
+                android:layout_marginStart="4dp"
+                android:text="@string/txt_filter_mark_as_starred" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/activity_edit_filter_action_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="30dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent">
+
+        <Button
+            android:id="@+id/activity_edit_filter_delete"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginRight="4dp"
+            android:layout_marginEnd="4dp"
+            android:textSize="18sp"
+            android:fontFamily="@font/lato_regular"
+            android:textColor="@color/colorDarkBlue2"
+            android:background="@drawable/dialog_cancel_button_background"
+            android:textAllCaps="false"
+            android:text="@string/txt_delete_filter"/>
+
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>
