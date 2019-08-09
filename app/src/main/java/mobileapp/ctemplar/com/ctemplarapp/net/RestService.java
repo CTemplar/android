@@ -9,6 +9,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.request.CaptchaVerifyRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.ChangePasswordRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.CheckUsernameRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.CreateMailboxRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.CustomFilterRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.DefaultMailboxRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.EditFolderRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.EnabledMailboxRequest;
@@ -29,6 +30,8 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.ContactData;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.ContactsResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.DeleteAttachmentResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Domains.DomainsResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Filters.FilterResult;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Filters.FiltersResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Folders.FoldersResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Folders.FoldersResult;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.KeyResponse;
@@ -169,6 +172,18 @@ public interface RestService {
     // Good if response code is 204 (no content)
     @DELETE("/users/contacts/{id}/")
     Observable<ResponseBody> deleteContact(@Path("id") long id);
+
+    @GET("/users/filters/")
+    Observable<FiltersResponse> getFilterList();
+
+    @POST("/users/filters/")
+    Observable<FilterResult> createFilter(@Body CustomFilterRequest customFilterRequest);
+
+    @PATCH("/users/filters/{id}/")
+    Observable<FilterResult> updateFilter(@Path("id") long id, @Body CustomFilterRequest customFilterRequest);
+
+    @DELETE("/users/filters/{id}/")
+    Observable<Response<Void>> deleteFilter(@Path("id") long id);
 
     @DELETE("/users/blacklist/{id}/")
     Observable<ResponseBody> deleteBlacklistContact(@Path("id") long id);

@@ -20,10 +20,6 @@ public class ManageFoldersViewModel extends ViewModel {
     private MutableLiveData<ResponseStatus> deletingStatus = new MutableLiveData<>();
     private MutableLiveData<FoldersResponse> foldersResponse = new MutableLiveData<>();
 
-    public ManageFoldersViewModel() {
-        manageFoldersRepository = CTemplarApp.getManageFoldersRepository();
-    }
-
     public MutableLiveData<FoldersResponse> getFoldersResponse() {
         return foldersResponse;
     }
@@ -34,6 +30,10 @@ public class ManageFoldersViewModel extends ViewModel {
 
     public MutableLiveData<ResponseStatus> getDeletingStatus() {
         return deletingStatus;
+    }
+
+    public ManageFoldersViewModel() {
+        manageFoldersRepository = CTemplarApp.getManageFoldersRepository();
     }
 
     public void getFolders(int limit, int offset) {
