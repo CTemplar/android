@@ -25,6 +25,7 @@ import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.R;
+import mobileapp.ctemplar.com.ctemplarapp.filters.FiltersActivity;
 import mobileapp.ctemplar.com.ctemplarapp.folders.ManageFoldersActivity;
 import mobileapp.ctemplar.com.ctemplarapp.mailboxes.MailboxesActivity;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.AutoSaveContactEnabledRequest;
@@ -95,6 +96,16 @@ public class SettingsActivity extends AppCompatActivity {
                 public boolean onPreferenceClick(Preference preference) {
                     Intent changePassword = new Intent(getActivity(), ChangePasswordActivity.class);
                     startActivity(changePassword);
+                    return false;
+                }
+            });
+
+            Preference filters = findPreference(getString(R.string.filters));
+            filters.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    Intent filtersIntent = new Intent(getActivity(), FiltersActivity.class);
+                    startActivity(filtersIntent);
                     return false;
                 }
             });

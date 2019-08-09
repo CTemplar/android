@@ -34,6 +34,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.Folders.FoldersResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Folders.FoldersResult;
 
 public class ManageFoldersActivity extends BaseActivity {
+
     private ManageFoldersViewModel manageFoldersModel;
     private ManageFoldersAdapter manageFoldersAdapter;
 
@@ -59,15 +60,17 @@ public class ManageFoldersActivity extends BaseActivity {
 
         Toolbar toolbar = findViewById(R.id.activity_manage_folders_toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setHomeButtonEnabled(true);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
+        LinearLayoutManager mLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(mLayoutManager);
         setupSwiperForRecyclerView();
 
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
-                ((LinearLayoutManager) mLayoutManager).getOrientation());
+                mLayoutManager.getOrientation());
         recyclerView.addItemDecoration(dividerItemDecoration);
 
         manageFoldersModel = ViewModelProviders.of(this).get(ManageFoldersViewModel.class);

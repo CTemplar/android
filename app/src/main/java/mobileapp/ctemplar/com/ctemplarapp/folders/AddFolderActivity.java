@@ -58,8 +58,10 @@ public class AddFolderActivity extends BaseActivity {
 
         Toolbar toolbar = findViewById(R.id.activity_add_folder_toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        if (getSupportActionBar() != null ) {
+            getSupportActionBar().setHomeButtonEnabled(true);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
         addFolderModel = ViewModelProviders.of(this).get(AddFolderViewModel.class);
         addFolderModel.getResponseStatus().observe(this, new Observer<ResponseStatus>() {
