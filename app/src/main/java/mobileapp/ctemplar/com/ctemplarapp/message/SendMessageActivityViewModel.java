@@ -78,6 +78,8 @@ public class SendMessageActivityViewModel extends ViewModel {
 
     public void updateMessage(long id, SendMessageRequest request, ArrayList<String> receiverPublicKeys, long mailboxId) {
         String content = request.getContent();
+        String subject = request.getSubject();
+        boolean isSubjectEncrypted = request.isSubjectEncrypted();
 
         MailboxEntity mailboxEntity = CTemplarApp.getAppDatabase().mailboxDao().getById(mailboxId);
         PGPManager pgpManager = new PGPManager();
@@ -87,6 +89,9 @@ public class SendMessageActivityViewModel extends ViewModel {
 
             String[] publicKeys = receiverPublicKeys.toArray(new String[0]);
             content = pgpManager.encryptMessage(content, publicKeys);
+            if (isSubjectEncrypted) {
+                subject = pgpManager.encryptMessage(subject, publicKeys);
+            }
 
         } else if (request.getEncryptionMessage() != null) {
             receiverPublicKeys.add(mailboxEntity.getPublicKey());
@@ -102,6 +107,9 @@ public class SendMessageActivityViewModel extends ViewModel {
 
             // ENCRYPTION
             content = pgpManager.encryptMessage(content, publicKeys);
+            if (isSubjectEncrypted) {
+                subject = pgpManager.encryptMessage(subject, publicKeys);
+            }
 
             // ADD KEYS IN MESSAGE
             EncryptionMessage encryptionMessage = request.getEncryptionMessage();
@@ -110,6 +118,7 @@ public class SendMessageActivityViewModel extends ViewModel {
             request.setEncryptionMessage(encryptionMessage);
         }
         request.setContent(content);
+        request.setSubject(subject);
 
         userRepository.updateMessage(id, request)
                 .subscribe(new Observer<MessagesResult>() {

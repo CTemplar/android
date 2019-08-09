@@ -132,6 +132,26 @@
     </LinearLayout>
 
     <TextView
+        android:id="@+id/message_holder_subject_encrypted"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
+        android:padding="2dp"
+        android:text="Encrypted subject"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:background="@drawable/ic_message_status_yellow"
+        android:fontFamily="@font/lato_regular"
+        android:maxLines="1"
+        android:textColor="@android:color/white"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toStartOf="@+id/message_holder_subject"
+        app:layout_constraintStart_toStartOf="@+id/message_top_layout"
+        app:layout_constraintTop_toBottomOf="@+id/message_top_layout"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <TextView
         android:id="@+id/message_holder_subject"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -141,16 +161,15 @@
         android:layout_marginBottom="18dp"
         android:ellipsize="end"
         android:fontFamily="@font/lato_regular"
-        android:gravity="left"
+        android:gravity="start"
         android:lines="1"
         android:text="Subject Subject Subject Subject Subject Subject Subject"
         android:textColor="@color/colorDarkBlue3"
         android:textSize="14sp"
-        app:layout_constraintEnd_toStartOf="@+id/message_holder_attachment"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintHorizontal_chainStyle="spread"
-        app:layout_constraintStart_toStartOf="@+id/message_top_layout"
-        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/message_holder_attachment"
+        app:layout_constraintStart_toEndOf="@+id/message_holder_subject_encrypted"
         app:layout_constraintTop_toBottomOf="@+id/message_top_layout"
         app:layout_constraintBottom_toBottomOf="parent" />
 

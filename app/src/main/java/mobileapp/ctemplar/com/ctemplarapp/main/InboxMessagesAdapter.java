@@ -21,9 +21,9 @@ import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
 
 public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesViewHolder> {
 
+    private final PublishSubject<Long> onClickSubject = PublishSubject.create();
     private List<MessageProvider> messagesList;
     private List<MessageProvider> filteredList;
-    private final PublishSubject<Long> onClickSubject = PublishSubject.create();
     private final MainActivityViewModel mainModel;
 
     InboxMessagesAdapter(List<MessageProvider> messagesList, MainActivityViewModel mainModel) {
@@ -52,7 +52,9 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesView
         }
 
         backOptionsLayout.removeAllViews();
-        backOptionsLayout.addView(backOptionsView, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        backOptionsLayout.addView(backOptionsView, new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT)
+        );
 
         return new InboxMessagesViewHolder(view);
     }
@@ -133,7 +135,8 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesView
 
         // format creation date
         if (!TextUtils.isEmpty(message.getCreatedAt())) {
-            holder.txtDate.setText(AppUtils.messageDate(message.getCreatedAt()));
+            String creationDate = AppUtils.messageDate(message.getCreatedAt());
+            holder.txtDate.setText(creationDate);
         }
 
         holder.imgStarred.setOnClickListener(new View.OnClickListener() {
@@ -148,13 +151,24 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesView
 
         holder.imgStarred.setSelected(message.isStarred());
 
+        // check for attachments
         if (message.isHasAttachments()) {
             holder.imgAttachment.setVisibility(View.VISIBLE);
         } else {
             holder.imgAttachment.setVisibility(View.GONE);
         }
 
-        holder.txtSubject.setText(filteredList.get(position).getSubject());
+        // check for subject
+        boolean isSubjectEncrypted = message.isSubjectEncrypted();
+        String subjectText = message.getSubject();
+        if (isSubjectEncrypted) {
+            holder.txtSubjectEncrypted.setVisibility(View.VISIBLE);
+            holder.txtSubject.setVisibility(View.INVISIBLE);
+        } else {
+            holder.txtSubject.setText(subjectText);
+            holder.txtSubjectEncrypted.setVisibility(View.GONE);
+            holder.txtSubject.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
