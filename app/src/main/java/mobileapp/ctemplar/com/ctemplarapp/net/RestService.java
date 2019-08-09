@@ -23,6 +23,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.request.SendMessageRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SettingsRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SignInRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SignUpRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.SubjectEncryptedRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.CaptchaResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.CaptchaVerifyResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.CheckUsernameResponse;
@@ -214,6 +215,9 @@ public interface RestService {
 
     @PATCH("/users/settings/{id}/")
     Observable<SettingsEntity> updateRecoveryEmail(@Path("id") long settingId, @Body RecoveryEmailRequest body);
+
+    @PATCH("/users/settings/{id}/")
+    Observable<SettingsEntity> updateSubjectEncrypted(@Path("id") long settingId, @Body SubjectEncryptedRequest body);
 
     @PATCH("/users/settings/{id}/")
     Observable<SettingsEntity> updateAutoSaveEnabled(@Path("id") long settingId, @Body AutoSaveContactEnabledRequest request);

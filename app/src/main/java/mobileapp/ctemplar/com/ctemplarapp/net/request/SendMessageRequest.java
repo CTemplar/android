@@ -49,6 +49,9 @@ public class SendMessageRequest {
     @SerializedName("is_encrypted")
     private boolean isEncrypted;
 
+    @SerializedName("is_subject_encrypted")
+    private boolean isSubjectEncrypted;
+
     @SerializedName("mailbox")
     private long mailbox;
 
@@ -124,6 +127,14 @@ public class SendMessageRequest {
 
     public void setIsEncrypted(boolean isEncrypted) {
         this.isEncrypted = isEncrypted;
+    }
+
+    public boolean isSubjectEncrypted() {
+        return isSubjectEncrypted;
+    }
+
+    public void setSubjectEncrypted(boolean subjectEncrypted) {
+        isSubjectEncrypted = subjectEncrypted;
     }
 
     public boolean isSend() {

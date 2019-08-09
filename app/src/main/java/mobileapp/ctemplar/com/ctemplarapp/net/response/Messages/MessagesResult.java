@@ -90,6 +90,9 @@ public class MessagesResult {
     @SerializedName("is_encrypted")
     private boolean isEncrypted;
 
+    @SerializedName("is_subject_encrypted")
+    private boolean isSubjectEncrypted;
+
     @SerializedName("is_protected")
     private boolean isProtected;
 
@@ -339,6 +342,14 @@ public class MessagesResult {
 
     public void setEncrypted(boolean encrypted) {
         isEncrypted = encrypted;
+    }
+
+    public boolean isSubjectEncrypted() {
+        return isSubjectEncrypted;
+    }
+
+    public void setSubjectEncrypted(boolean subjectEncrypted) {
+        isSubjectEncrypted = subjectEncrypted;
     }
 
     public boolean isProtected() {

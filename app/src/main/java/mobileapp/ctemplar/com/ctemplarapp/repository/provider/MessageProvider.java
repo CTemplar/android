@@ -11,6 +11,7 @@ import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessageAttachment;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResult;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.UserDisplay;
+import mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.AttachmentEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MessageEntity;
@@ -47,6 +48,7 @@ public class MessageProvider {
     private boolean isStarred;
     private String sentAt;
     private boolean isEncrypted;
+    private boolean isSubjectEncrypted;
     private boolean isProtected;
     private String hash;
     private List<String> spamReason;
@@ -271,6 +273,14 @@ public class MessageProvider {
         isEncrypted = encrypted;
     }
 
+    public boolean isSubjectEncrypted() {
+        return isSubjectEncrypted;
+    }
+
+    public void setSubjectEncrypted(boolean subjectEncrypted) {
+        isSubjectEncrypted = subjectEncrypted;
+    }
+
     public boolean isProtected() {
         return isProtected;
     }
@@ -360,6 +370,14 @@ public class MessageProvider {
         return messageContent.replaceAll("<img.+?>", "");
     }
 
+    private static String decryptSubject(String subject, long mailboxId, boolean isEncrypted) {
+        if (isEncrypted) {
+            return decryptContent(subject, mailboxId);
+        } else {
+            return subject;
+        }
+    }
+
     private static AttachmentProvider convertFromResponseMessageAttachmentToAttachmentProvider(MessageAttachment messageAttachment) {
         AttachmentProvider attachmentProvider = new AttachmentProvider();
         attachmentProvider.setId(messageAttachment.getId());
@@ -418,7 +436,7 @@ public class MessageProvider {
         result.bccDisplayList = convertUserDisplayListFromResponseToProvider(message.getBccDisplay());
         result.hasChildren = message.isHasChildren();
         result.childrenCount = message.getChildrenCount();
-        result.subject = message.getSubject();
+        result.subject = decryptSubject(message.getSubject(), message.getMailboxId(), message.isSubjectEncrypted());
         result.content = decryptContent(message.getContent(), message.getMailboxId());
         result.receivers = message.getReceivers();
         result.cc = message.getCc();
@@ -433,6 +451,7 @@ public class MessageProvider {
         result.isStarred = message.isStarred();
         result.sentAt = message.getSentAt();
         result.isEncrypted = message.isEncrypted();
+        result.isSubjectEncrypted = message.isSubjectEncrypted();
         result.isProtected = message.isProtected();
         result.hash = message.getHash();
         result.spamReason = message.getSpamReason();
@@ -546,6 +565,7 @@ public class MessageProvider {
         result.isStarred = message.isStarred();
         result.sentAt = message.getSentAt();
         result.isEncrypted = message.isEncrypted();
+        result.isSubjectEncrypted = message.isSubjectEncrypted();
         result.isProtected = message.isProtected();
         result.hash = message.getHash();
         result.spamReason = message.getSpamReason();
@@ -626,7 +646,7 @@ public class MessageProvider {
         result.setBccDisplayList(convertUserDisplayListFromResponseToEntities(message.getBccDisplay()));
         result.setHasChildren(message.isHasChildren());
         result.setChildrenCount(message.getChildrenCount());
-        result.setSubject(message.getSubject());
+        result.setSubject(decryptSubject(message.getSubject(), message.getMailboxId(), message.isSubjectEncrypted()));
         result.setContent(decryptContent(message.getContent(), message.getMailboxId()));
         result.setReceivers(arrayToList(message.getReceivers()));
         result.setCc(arrayToList(message.getCc()));
@@ -641,6 +661,7 @@ public class MessageProvider {
         result.setStarred(message.isStarred());
         result.setSentAt(message.getSentAt());
         result.setEncrypted(message.isEncrypted());
+        result.setSubjectEncrypted(message.isSubjectEncrypted());
         result.setProtected(message.isProtected());
         result.setHash(message.getHash());
         result.setSpamReason(message.getSpamReason());
@@ -649,7 +670,7 @@ public class MessageProvider {
         result.setMailboxId(message.getMailboxId());
         result.setParent(message.getParent());
 
-        if (requestFolder.equals("inbox") && message.getFolderName().equals("sent")) {
+        if (requestFolder.equals(MainFolderNames.INBOX) && message.getFolderName().equals(MainFolderNames.SENT)) {
             result.setShowInInbox(true);
         }
 
