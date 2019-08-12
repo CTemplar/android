@@ -38,6 +38,7 @@ public class StepEmailFragment extends BaseFragment {
     private StepRegistrationViewModel viewModel;
     private LoginActivityViewModel loginActivityModel;
 
+    public ImageView captchaImageView;
     private boolean captchaState;
     private String captchaKey;
     private String captchaValue;
@@ -56,9 +57,6 @@ public class StepEmailFragment extends BaseFragment {
 
     @BindView(R.id.fragment_step_email_check_text)
     TextView txtCheckHint;
-
-    @BindView(R.id.fragment_step_email_captcha_img)
-    ImageView captchaImageView;
 
     @BindView(R.id.fragment_step_email_captcha_input)
     TextInputEditText captchaEditText;
@@ -89,7 +87,11 @@ public class StepEmailFragment extends BaseFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        if (getActivity() == null) {
+            return;
+        }
 
+        captchaImageView = view.findViewById(R.id.fragment_step_email_captcha_img);
         loginActivityModel = ViewModelProviders.of(getActivity()).get(LoginActivityViewModel.class);
         viewModel = ViewModelProviders.of(getActivity()).get(StepRegistrationViewModel.class);
         viewModel.getResponseStatus().observe(this, new Observer<ResponseStatus>() {
