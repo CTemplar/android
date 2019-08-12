@@ -458,14 +458,4 @@
 
     </ScrollView>
 
-    <!--ToDo-->
-    <ListView android:id="@+id/fragment_send_message_from_list_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/fragment_send_message_from_input_layout"
-        android:visibility="gone">
-
-    </ListView>
-
-
 </android.support.constraint.ConstraintLayout>
