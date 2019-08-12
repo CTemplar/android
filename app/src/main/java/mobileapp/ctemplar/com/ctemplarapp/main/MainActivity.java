@@ -30,6 +30,10 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,11 +44,12 @@ import mobileapp.ctemplar.com.ctemplarapp.login.LoginActivity;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Folders.FoldersResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Folders.FoldersResult;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.UnreadFoldersListResponse;
+import mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageProvider;
 import mobileapp.ctemplar.com.ctemplarapp.settings.SettingsActivity;
 import mobileapp.ctemplar.com.ctemplarapp.view.ResizeAnimation;
+import okhttp3.ResponseBody;
 import timber.log.Timber;
 
 public class MainActivity extends AppCompatActivity
@@ -63,6 +68,7 @@ public class MainActivity extends AppCompatActivity
     private String toggleFolder;
     private int customFoldersShowCount = 3;
     private boolean isTablet;
+    private JSONObject unreadFolders;
 
     private MainFragment mainFragment;
     private Handler handler = new Handler();
@@ -123,45 +129,55 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        mainModel.getUnreadFoldersResponse().observe(this, new Observer<UnreadFoldersListResponse>() {
+        mainModel.getUnreadFoldersBody().observe(this, new Observer<ResponseBody>() {
             @Override
-            public void onChanged(@Nullable UnreadFoldersListResponse unreadFoldersListResponse) {
-                if (unreadFoldersListResponse != null) {
+            public void onChanged(@Nullable ResponseBody unreadFoldersBody) {
+                if (unreadFoldersBody != null) {
+                    mainModel.getFolders(customFoldersShowCount, 0);
                     Menu navigationMenu = navigationView.getMenu();
                     TextView inboxCounter = (TextView) navigationMenu.findItem(R.id.nav_inbox).getActionView();
                     TextView outboxCounter = (TextView) navigationMenu.findItem(R.id.nav_outbox).getActionView();
+                    TextView starredCounter = (TextView) navigationMenu.findItem(R.id.nav_starred).getActionView();
+                    TextView archiveCounter = (TextView) navigationMenu.findItem(R.id.nav_archive).getActionView();
                     TextView spamCounter = (TextView) navigationMenu.findItem(R.id.nav_spam).getActionView();
 
-                    int inboxUnread = unreadFoldersListResponse.getInbox();
-                    int outboxDelayed = unreadFoldersListResponse.getOutboxDelayedDeliveryCounter();
-                    int spam = unreadFoldersListResponse.getSpam();
+                    try {
+                        String unreadFoldersString = unreadFoldersBody.string();
+                        unreadFolders = new JSONObject(unreadFoldersString);
+                        int inbox = unreadFolders.getInt(MainFolderNames.INBOX);
+                        int starred = unreadFolders.getInt(MainFolderNames.STARRED);
+                        int archive = unreadFolders.getInt(MainFolderNames.ARCHIVE);
+                        int spam = unreadFolders.getInt(MainFolderNames.INBOX);
 
-                    if (inboxUnread > 0) {
-                        inboxCounter.setText(String.valueOf(inboxUnread));
-                    } else {
-                        inboxCounter.setText(null);
-                    }
-                    if (outboxDelayed > 0) {
-                        outboxCounter.setText(String.valueOf(outboxDelayed));
-                    } else {
-                        outboxCounter.setText(null);
-                    }
-                    if (spam > 0) {
-                        spamCounter.setText(String.valueOf(spam));
-                    } else {
-                        spamCounter.setText(null);
+                        int outboxDelayed = unreadFolders.getInt("outbox_delayed_delivery_counter");
+                        int outboxDead = unreadFolders.getInt("outbox_dead_man_counter");
+                        int outboxDestruct = unreadFolders.getInt("outbox_self_destruct_counter");
+                        int outbox = outboxDelayed + outboxDead + outboxDestruct;
+
+                        String inboxString = inbox > 0 ? String.valueOf(inbox) : null;
+                        String starredString = starred > 0 ? String.valueOf(starred) : null;
+                        String archiveString = archive > 0 ? String.valueOf(archive) : null;
+                        String spamString = spam > 0 ? String.valueOf(spam) : null;
+                        String outboxString = outbox > 0 ? String.valueOf(outbox) : null;
+
+                        inboxCounter.setText(inboxString);
+                        starredCounter.setText(starredString);
+                        archiveCounter.setText(archiveString);
+                        spamCounter.setText(spamString);
+                        outboxCounter.setText(outboxString);
+                    } catch (IOException | JSONException e) {
+                        Timber.e(e);
                     }
                 }
             }
         });
 
         loadFolders();
+        loadUserInfo();
 
         // default folder
         setTitle("Inbox");
-        mainModel.setCurrentFolder("inbox");
-
-        loadUserInfo();
+        mainModel.setCurrentFolder(MainFolderNames.INBOX);
     }
 
     public void showFragment(Fragment fragment) {
@@ -177,8 +193,7 @@ public class MainActivity extends AppCompatActivity
         Menu navigationMenu = navigationView.getMenu();
 
         List<FoldersResult> foldersListForDeleting = customFoldersListAll;
-        for (FoldersResult folderItem :
-                customFoldersListAll) {
+        for (FoldersResult folderItem : customFoldersListAll) {
             navigationMenu.removeItem((int) folderItem.getId());
         }
         customFoldersListAll.removeAll(foldersListForDeleting);
@@ -187,17 +202,34 @@ public class MainActivity extends AppCompatActivity
         String manageFoldersTitle = getResources().getString(R.string.nav_drawer_manage_folders_param, customFoldersCount);
         manageFolders.setTitle(manageFoldersTitle);
 
-        for (FoldersResult folderItem :
-                customFoldersList) {
+        for (FoldersResult folderItem : customFoldersList) {
             customFoldersListAll.add(folderItem);
-            MenuItem menuItem = navigationMenu.add(R.id.activity_main_drawer_folders,
-                    (int) folderItem.getId(), (int) folderItem.getId(), folderItem.getName());
+            int folderId = (int) folderItem.getId();
+            String folderName = folderItem.getName();
+            MenuItem menuItem = navigationMenu.add(
+                    R.id.activity_main_drawer_folders,
+                    folderId,
+                    folderId,
+                    folderName
+            );
             menuItem.setCheckable(true);
+
             menuItem.setIcon(R.drawable.ic_manage_folders);
             Drawable itemIcon = menuItem.getIcon();
             itemIcon.mutate();
             int folderColor = Color.parseColor(folderItem.getColor());
             itemIcon.setColorFilter(folderColor, PorterDuff.Mode.SRC_IN);
+
+            menuItem.setActionView(R.layout.menu_message_counter);
+            TextView actionView = (TextView) menuItem.getActionView();
+            try {
+                int unreadMessages = unreadFolders.getInt(folderName);
+                String unreadString = unreadMessages > 0
+                        ? String.valueOf(unreadMessages) : null;
+                actionView.setText(unreadString);
+            } catch (Exception e) {
+                Timber.e(e);
+            }
         }
 
         MenuItem moreFolders = navigationMenu.findItem(R.id.nav_manage_folders_more);
@@ -387,7 +419,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void loadFolders() {
-        mainModel.getFolders(customFoldersShowCount, 0);
         mainModel.getUnreadFoldersList();
     }
 

@@ -64,7 +64,9 @@ public class FiltersActivity extends BaseActivity {
         filtersModel.getFiltersResponse().observe(this, new Observer<FiltersResponse>() {
             @Override
             public void onChanged(@Nullable FiltersResponse filtersResponse) {
-                handleFiltersResponse(filtersResponse);
+                if (filtersResponse != null) {
+                    handleFiltersResponse(filtersResponse);
+                }
             }
         });
         filtersModel.getDeleteFilterResponseStatus().observe(this, new Observer<ResponseStatus>() {
@@ -86,9 +88,6 @@ public class FiltersActivity extends BaseActivity {
     }
 
     private void handleFiltersResponse(FiltersResponse filtersResponse) {
-        if (filtersResponse == null) {
-            return;
-        }
         List<FilterResult> filterList = filtersResponse.getFilterResultList();
         filtersAdapter = new FiltersAdapter(filterList);
         filtersRecyclerView.setAdapter(filtersAdapter);

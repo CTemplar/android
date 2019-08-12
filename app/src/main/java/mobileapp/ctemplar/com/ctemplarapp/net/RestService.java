@@ -41,7 +41,6 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.Mailboxes.MailboxesResult
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessageAttachment;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResult;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.UnreadFoldersListResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.BlackListContact;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.MyselfResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.SettingsEntity;
@@ -123,7 +122,7 @@ public interface RestService {
     Observable<FoldersResponse> getFolders(@Query("limit") int limit, @Query("offset") int offset);
 
     @GET("/emails/unread/")
-    Observable<UnreadFoldersListResponse> getUnreadFolders();
+    Observable<ResponseBody> getUnreadFolders();
 
     @POST("/emails/custom-folder/")
     Observable<ResponseBody> addFolder(@Body AddFolderRequest request);
