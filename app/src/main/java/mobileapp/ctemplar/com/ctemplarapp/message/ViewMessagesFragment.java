@@ -164,8 +164,9 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
                 }
 
                 MessageProvider currentParentMessage = messagesList.get(0);
+                String subjectText = currentParentMessage.getSubject();
+                subjectTextView.setText(subjectText);
                 parentMessage = currentParentMessage;
-                subjectTextView.setText(currentParentMessage.getSubject());
 
                 lastMessage = messagesList.get(messagesList.size() - 1);
                 decryptedLastMessage = lastMessage.getContent();
@@ -211,11 +212,11 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
                 messagesListView.setAdapter(adapter);
 
                 if (!parentMessage.isRead()) {
-                    modelViewMessages.markMessageAsRead(parentMessage.getId(), true);
+                    long parentMessageId = parentMessage.getId();
+                    modelViewMessages.markMessageAsRead(parentMessageId, true);
                 }
 
                 loadProgress.setVisibility(View.GONE);
-
                 activity.invalidateOptionsMenu();
             }
         });

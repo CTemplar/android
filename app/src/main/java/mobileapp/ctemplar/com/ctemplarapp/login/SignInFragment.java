@@ -17,12 +17,10 @@ import butterknife.BindInt;
 import butterknife.BindView;
 import butterknife.OnClick;
 import mobileapp.ctemplar.com.ctemplarapp.BaseFragment;
-import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.LoginActivityActions;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
-import mobileapp.ctemplar.com.ctemplarapp.view.TextDrawable;
 
 public class SignInFragment extends BaseFragment {
 
@@ -89,7 +87,8 @@ public class SignInFragment extends BaseFragment {
         String username = "";
         String password = "";
         if (editTextUsername.getText() != null && editTextPassword.getText() != null) {
-            username = editTextUsername.getText().toString().trim();
+            username = editTextUsername.getText().toString().trim()
+                    .replaceAll("@.+", "");
             password = editTextPassword.getText().toString().trim();
         }
         if(isValid(username, password)) {

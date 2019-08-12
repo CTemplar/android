@@ -40,6 +40,8 @@ import java.util.List;
 import mobileapp.ctemplar.com.ctemplarapp.ActivityInterface;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.R;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.MyselfResult;
+import mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageProvider;
 import mobileapp.ctemplar.com.ctemplarapp.main.UpgradeToPrimeFragment;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
@@ -139,11 +141,12 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
     // COMPOSE OPTIONS
     private long currentMessageId;
     private Long parentId;
-    private boolean userIsPrime = false;
     private Long delayedDeliveryInMillis;
     private Long destructDeliveryInMillis;
     private Long deadDeliveryInHours;
     private EncryptionMessage messageEncryptionResult;
+    private boolean userIsPrime = false;
+    private boolean isSubjectEncrypted = false;
 
     private DelayedDeliveryDialogFragment delayedDeliveryDialogFragment = new DelayedDeliveryDialogFragment();
     private DestructTimerDialogFragment destructTimerDialogFragment = new DestructTimerDialogFragment();
@@ -484,10 +487,12 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
                     @Override
                     public void onChanged(@Nullable MyselfResponse myselfResponse) {
                         if (myselfResponse != null) {
-                            String joinedDate = myselfResponse.result[0].joinedDate;
+                            MyselfResult myself = myselfResponse.result[0];
+                            String joinedDate = myself.joinedDate;
                             boolean userTrial = AppUtils.twoWeeksTrial(joinedDate);
-                            boolean userPrime = myselfResponse.result[0].isPrime;
+                            boolean userPrime = myself.isPrime;
                             userIsPrime = userPrime || userTrial;
+                            isSubjectEncrypted = myself.settings.isSubjectEncrypted;
                         }
                     }
                 });
@@ -542,6 +547,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         sendMessageRequest.setContent(compose);
         sendMessageRequest.setMailbox(mailboxId);
         sendMessageRequest.setParent(parentId);
+        sendMessageRequest.setSubjectEncrypted(isSubjectEncrypted);
 
         if (!publicKeys.contains(null)) {
             sendMessageRequest.setIsEncrypted(true);
@@ -825,10 +831,11 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         messageRequestToDraft.setSubject(subject);
         messageRequestToDraft.setSender(mailboxEmail);
         messageRequestToDraft.setContent(compose);
-        messageRequestToDraft.setFolder("draft");
+        messageRequestToDraft.setFolder(MainFolderNames.DRAFT);
         messageRequestToDraft.setIsEncrypted(true);
         messageRequestToDraft.setSend(false);
         messageRequestToDraft.setMailbox(mailboxId);
+        messageRequestToDraft.setSubjectEncrypted(isSubjectEncrypted);
 //        messageRequestToDraft.setParent(parentId);
 
         List<MessageAttachment> attachments = messageSendAttachmentAdapter.getAttachmentsList();

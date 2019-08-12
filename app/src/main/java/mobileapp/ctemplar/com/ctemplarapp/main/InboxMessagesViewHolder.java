@@ -9,11 +9,12 @@ import android.widget.TextView;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 
 public class InboxMessagesViewHolder extends RecyclerView.ViewHolder{
-    public View root;
+    View root;
     TextView txtUsername;
     TextView txtChildren;
     TextView txtStatus;
     TextView txtDate;
+    TextView txtSubjectEncrypted;
     TextView txtSubject;
     ImageView imgReply;
     ImageView imgUnread;
@@ -28,6 +29,7 @@ public class InboxMessagesViewHolder extends RecyclerView.ViewHolder{
         txtChildren = itemView.findViewById(R.id.message_holder_children);
         txtStatus = itemView.findViewById(R.id.message_holder_status);
         txtDate = itemView.findViewById(R.id.message_holder_date);
+        txtSubjectEncrypted = itemView.findViewById(R.id.message_holder_subject_encrypted);
         txtSubject = itemView.findViewById(R.id.message_holder_subject);
         imgReply = itemView.findViewById(R.id.message_holder_reply);
         imgUnread = itemView.findViewById(R.id.message_holder_new);

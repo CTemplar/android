@@ -36,6 +36,7 @@ public class MessageEntity {
     private boolean isStarred;
     private String sentAt;
     private boolean isEncrypted;
+    private boolean isSubjectEncrypted;
     private boolean isProtected;
     private String hash;
     private List<String> spamReason;
@@ -243,6 +244,14 @@ public class MessageEntity {
 
     public void setEncrypted(boolean encrypted) {
         isEncrypted = encrypted;
+    }
+
+    public boolean isSubjectEncrypted() {
+        return isSubjectEncrypted;
+    }
+
+    public void setSubjectEncrypted(boolean subjectEncrypted) {
+        isSubjectEncrypted = subjectEncrypted;
     }
 
     public boolean isProtected() {

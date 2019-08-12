@@ -182,6 +182,7 @@ public class ViewMessagesAdapter extends BaseAdapter {
         String receiversDisplayString = userDisplayListToString(receiverDisplayList);
         receiverEmailTextView.setText(receiversDisplayString);
 
+        // check for cc
         if (!ccDisplayList.isEmpty()) {
             String ccDisplayString = userDisplayListToString(ccDisplayList);
             ccEmailTextView.setText(ccDisplayString);
@@ -190,6 +191,7 @@ public class ViewMessagesAdapter extends BaseAdapter {
             ccLayout.setVisibility(View.GONE);
         }
 
+        // check for bcc
         if (!bccDisplayList.isEmpty()) {
             String bccDisplayString = userDisplayListToString(bccDisplayList);
             bccEmailTextView.setText(bccDisplayString);
