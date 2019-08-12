@@ -76,7 +76,7 @@ public class SendMessageActivityViewModel extends ViewModel {
                 });
     }
 
-    public void updateMessage(long id, SendMessageRequest request, ArrayList<String> receiverPublicKeys, long mailboxId) {
+    public void updateMessage(long id, SendMessageRequest request, List<String> receiverPublicKeys, long mailboxId) {
         String content = request.getContent();
         String subject = request.getSubject();
         boolean isSubjectEncrypted = request.isSubjectEncrypted();

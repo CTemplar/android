@@ -31,7 +31,7 @@
     <string name="nav_drawer_logout">Logout</string>
     <string name="nav_drawer_manage_folders">Manage Folders</string>
     <string name="nav_drawer_manage_folders_param">Manage Folders (%1$d)</string>
-    <string name="nav_drawer_folders_show_more">Show 10 more folders)</string>
+    <string name="nav_drawer_folders_show_more">Show 10 more folders</string>
 
     <!-- Tool Bar -->
     <string name="action_search">Search</string>
@@ -197,6 +197,8 @@ If you have further questions please email <![CDATA[<u><a href="mailto:support@c
     <string name="toast_message_not_created">Message not created</string>
     <string name="toast_attachment_upload_start">Attachment uploading started</string>
     <string name="toast_attachment_upload_complete">Attachment uploading complete</string>
+    <string name="toast_attachment_unable_read_file">Unable to read file in selected path</string>
+    <string name="toast_attachment_unable_read_path">"Unable to read selected path"</string>
     <string name="hint_enter_subject">Enter subject</string>
     <string name="hint_enter_message">Enter message</string>
     <string name="txt_sending_mail">Sending mail..</string>
