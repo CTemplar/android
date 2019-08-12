@@ -30,6 +30,7 @@ import mobileapp.ctemplar.com.ctemplarapp.folders.ManageFoldersActivity;
 import mobileapp.ctemplar.com.ctemplarapp.mailboxes.MailboxesActivity;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.AutoSaveContactEnabledRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.RecoveryEmailRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.SubjectEncryptedRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.MyselfResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.SettingsEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
@@ -187,6 +188,24 @@ public class SettingsActivity extends AppCompatActivity {
         }
     }
 
+    public static class SubjectEncryptionFragment extends BasePreferenceFragment {
+        @Override
+        public void onCreatePreferences(Bundle bundle, String rootKey) {
+            setPreferencesFromResource(R.xml.subject_encryption_settings, rootKey);
+
+            SwitchPreference subjectEncryptionSwitchPreference = (SwitchPreference) findPreference(getString(R.string.subject_encryption_enabled));
+            subjectEncryptionSwitchPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    Toast.makeText(getActivity(), getString(R.string.toast_subject_encryption_changed), Toast.LENGTH_SHORT).show();
+                    boolean value = (boolean) newValue;
+                    updateSubjectEncryption(value);
+                    return true;
+                }
+            });
+        }
+    }
+
     public static class SavingContactsFragment extends BasePreferenceFragment {
         @Override
         public void onCreatePreferences(Bundle bundle, String rootKey) {
@@ -261,7 +280,6 @@ public class SettingsActivity extends AppCompatActivity {
             checkBoxSignatureEnabled.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
-                    //
                     return true;
                 }
             });
@@ -345,6 +363,7 @@ public class SettingsActivity extends AppCompatActivity {
         sharedPreferences.edit()
                 .putString(getString(R.string.recovery_email), settingsEntity.recoveryEmail)
                 .putBoolean(getString(R.string.auto_save_contacts_enabled), settingsEntity.saveContacts)
+                .putBoolean(getString(R.string.subject_encryption_enabled), settingsEntity.isSubjectEncrypted)
                 .apply();
     }
 
@@ -374,6 +393,38 @@ public class SettingsActivity extends AppCompatActivity {
                     @Override
                     public void onNext(SettingsEntity settingsEntity) {
                         Timber.i("Recovery email updated");
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Timber.e(e);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    private static void updateSubjectEncryption(boolean isSubjectEncryption) {
+        long settingId = getSettingId();
+        if (settingId == -1) {
+            Timber.e("Setting id is not defined");
+            return;
+        }
+
+        SubjectEncryptedRequest subjectEncryptedRequest = new SubjectEncryptedRequest(isSubjectEncryption);
+        userRepository.updateSubjectEncrypted(settingId, subjectEncryptedRequest)
+                .subscribe(new Observer<SettingsEntity>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        Timber.i("Updating subject encryption");
+                    }
+
+                    @Override
+                    public void onNext(SettingsEntity settingsEntity) {
+                        Timber.i("Subject encryption updated");
                     }
 
                     @Override

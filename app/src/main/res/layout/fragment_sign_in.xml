@@ -67,7 +67,6 @@
                     android:hint="@string/title_username"
                     android:inputType="textEmailAddress"
                     android:letterSpacing="0.05"
-                    android:drawableRight="@drawable/ic_ctemplar_username"
                     android:textColor="@android:color/white"
                     android:theme="@style/EditTextCredentialsThemeLight" />
 
