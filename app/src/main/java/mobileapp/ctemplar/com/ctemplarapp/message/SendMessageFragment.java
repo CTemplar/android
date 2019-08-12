@@ -675,13 +675,29 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
 
     public void onClickSend() {
         String toEmail = toEmailTextView.getText().toString().trim();
+        String ccList = ccTextView.getText().toString().trim();
+        String bccList = bccTextView.getText().toString().trim();
         String subject = subjectEditText.getText().toString();
         String compose = composeEditText.getText().toString();
 
         if (EditTextUtils.isEmailListValid(toEmail)) {
             toEmailTextView.setError(null);
         } else {
-            toEmailTextView.setError(getResources().getString(R.string.txt_enter_valid_email));
+            toEmailTextView.setError(getString(R.string.txt_enter_valid_email));
+            return;
+        }
+
+        if (ccList.isEmpty() || EditTextUtils.isEmailListValid(ccList)) {
+            ccTextView.setError(null);
+        } else {
+            ccTextView.setError(getString(R.string.txt_enter_valid_email));
+            return;
+        }
+
+        if (bccList.isEmpty() || EditTextUtils.isEmailListValid(bccList)) {
+            bccTextView.setError(null);
+        } else {
+            bccTextView.setError(getString(R.string.txt_enter_valid_email));
             return;
         }
 
@@ -788,8 +804,8 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         if (activity == null) {
             return;
         }
-        String attachmentPath = FileUtils.getPath(activity, attachmentUri);
 
+        String attachmentPath = FileUtils.getPath(activity, attachmentUri);
         File attachmentFile;
         try {
             attachmentFile = new File(attachmentPath);
