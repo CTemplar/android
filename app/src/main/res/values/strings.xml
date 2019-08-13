@@ -75,6 +75,7 @@
     <string name="title_confirm_password">Confirm password</string>
     <string name="title_ctemplar_username">Ctemplar username to reset</string>
     <string name="title_recovery_email">Recovery email</string>
+    <string name="title_security_check">Security check</string>
     <string name="title_recovery_email_optional">Recovery email (Optional)</string>
     <string name="title_reset_password">Reset password</string>
     <string name="title_reset_code">Reset code</string>
@@ -92,7 +93,10 @@ If you have further questions please email <![CDATA[<u><a href="mailto:support@c
     <string name="title_username_and_domain">Username and domain</string>
     <string name="title_step_username_hint">This will be your new Ctemplar email address.</string>
     <string name="title_step_password_hint">Your password must be at least 10 characters. Password can contain only latin letters and cannot contain symbols such «-+!@. etc.</string>
-    <string name="title_step_email_hint">This is used to recover your account if you get locked out or forget your password</string>
+    <string name="hint_step_email_recovery_long">By checking this box you understand that If you lose your password and do not set a recovery email your account will not be recoverable.
+Your password is connected to your encryption key, if you change your password then you will be issued a new encryption key and ALL contents of your account will be lost except for your email address. <![CDATA[<u><font color="blue">Less</font></u>]]></string>
+    <string name="hint_step_email_recovery_short">By checking this box you understand that If you lose your password and do not set a recovery email your account will not be recoverable. <![CDATA[<u><font color="blue">More info</font></u>]]></string>
+    <string name="title_step_email_hint">This is used to recover your account if you forget your password</string>
     <string name="title_step_email_check_hint">Please check this box if you agree to abide by our <![CDATA[<u><a href="https://ctemplar.com/terms">Terms and Conditions</a></u>]]></string>
     <string name="title_more_info_link"><u>More Info</u>></string>
     <string name="title_empty_inbox">You have no inbox messages</string>
@@ -378,7 +382,7 @@ If you have further questions please email <![CDATA[<u><a href="mailto:support@c
     </string-array>
 
     <!-- ERRORS -->
-    <string name="error_invalid_email">Please select a valid email or remove it</string>
+    <string name="error_invalid_email">Please, select a valid email or select unrecoverable account</string>
     <string name="error_username_small">Minimum 4 symbols</string>
     <string name="error_username_small_two">Minimum 2 symbols</string>
     <string name="error_username_big">Maximum 64 symbols</string>
