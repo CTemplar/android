@@ -195,6 +195,8 @@ Your password is connected to your encryption key, if you change your password t
     <string name="txt_delete_folder">Delete folder</string>
     <string name="txt_manage_folders">Manage folders</string>
     <string name="txt_folders_empty">Folders empty</string>
+    <string name="txt_create_folder_free_error">Free users can only create a maximum of 5 folders.</string>
+    <string name="txt_create_folder_prime_error">Prime users can only create a maximum of 500 folders. </string>
 
     <!-- SEND MESSAGE -->
     <string name="toast_message_not_sent">Message not sent</string>

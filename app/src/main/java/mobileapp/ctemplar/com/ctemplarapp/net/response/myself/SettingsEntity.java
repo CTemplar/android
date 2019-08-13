@@ -46,6 +46,9 @@ public class SettingsEntity {
     @SerializedName("is_pending_payment")
     public boolean isPendingPayment;
 
+    @SerializedName("plan_type")
+    public String planType;
+
     @SerializedName("is_subject_encrypted")
     public boolean isSubjectEncrypted;
 
@@ -86,6 +89,10 @@ public class SettingsEntity {
 
     public int getEmailCount() {
         return emailCount;
+    }
+
+    public String getPlanType() {
+        return planType;
     }
 
     public boolean isSubjectEncrypted() {
