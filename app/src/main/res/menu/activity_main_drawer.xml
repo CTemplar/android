@@ -28,11 +28,13 @@
         <item
             android:id="@+id/nav_starred"
             android:icon="@drawable/ic_drawer_star"
-            android:title="@string/nav_drawer_starred" />
+            android:title="@string/nav_drawer_starred"
+            app:actionLayout="@layout/menu_message_counter" />
         <item
             android:id="@+id/nav_archive"
             android:icon="@drawable/ic_drawer_archive"
-            android:title="@string/nav_drawer_archive" />
+            android:title="@string/nav_drawer_archive"
+            app:actionLayout="@layout/menu_message_counter" />
         <item
             android:id="@+id/nav_spam"
             android:icon="@drawable/ic_drawer_spam"

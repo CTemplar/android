@@ -93,7 +93,9 @@ public class AddFilterActivity extends BaseActivity {
         filtersModel.getFoldersResponse().observe(this, new Observer<FoldersResponse>() {
             @Override
             public void onChanged(@Nullable FoldersResponse foldersResponse) {
-                handleCustomFolders(foldersResponse);
+                if (foldersResponse != null) {
+                    handleCustomFolders(foldersResponse);
+                }
             }
         });
         getCustomFolders();
@@ -101,10 +103,6 @@ public class AddFilterActivity extends BaseActivity {
     }
 
     private void handleCustomFolders(FoldersResponse foldersResponse) {
-        if (foldersResponse == null) {
-            return;
-        }
-
         List<FoldersResult> customFolderList = foldersResponse.getFoldersList();
         List<String> folderList = new ArrayList<>();
         folderList.add(MainFolderNames.INBOX);
@@ -159,7 +157,7 @@ public class AddFilterActivity extends BaseActivity {
             filterNameEditText.setError(getString(R.string.txt_filter_name_hint));
             return;
         }
-        if (!EditTextUtils.isTextValid(filterText) || !EditTextUtils.isTextLength(filterText, 1, 30)) {
+        if (!EditTextUtils.isTextLength(filterText, 1, 30)) {
             filterTextEditText.setError(getString(R.string.txt_filter_text_hint));
             return;
         }
