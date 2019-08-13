@@ -15,7 +15,7 @@ import butterknife.OnClick;
 import mobileapp.ctemplar.com.ctemplarapp.BaseFragment;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.login.step.SignUpFragmentsAdapter;
-import mobileapp.ctemplar.com.ctemplarapp.login.step.StepEmailFragment;
+import mobileapp.ctemplar.com.ctemplarapp.login.step.StepSecurityFragment;
 import mobileapp.ctemplar.com.ctemplarapp.login.step.StepPasswordFragment;
 import mobileapp.ctemplar.com.ctemplarapp.login.step.StepRegistrationActions;
 import mobileapp.ctemplar.com.ctemplarapp.login.step.StepRegistrationViewModel;
@@ -50,7 +50,7 @@ public class SignUpFragment extends BaseFragment{
         ArrayList<Fragment> list = new ArrayList<>();
         list.add(new StepUsernameFragment());
         list.add(new StepPasswordFragment());
-        list.add(new StepEmailFragment());
+        list.add(new StepSecurityFragment());
 
         viewPager.setAdapter(new SignUpFragmentsAdapter(getFragmentManager(), list));
         viewPager.setOnTouchListener(null);
