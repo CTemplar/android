@@ -13,14 +13,12 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -52,7 +50,7 @@ public class ContactFragment extends BaseFragment {
     FrameLayout frameCompose;
 
     @BindView(R.id.fragment_contact_search)
-    EditText searchEditText;
+    SearchView searchView;
 
     private ContactAdapter adapter;
 
@@ -82,20 +80,18 @@ public class ContactFragment extends BaseFragment {
                 mLayoutManager.getOrientation());
         recyclerView.addItemDecoration(dividerItemDecoration);
 
-        searchEditText.addTextChangedListener(new TextWatcher() {
+        searchView.onActionViewExpanded();
+        searchView.setIconifiedByDefault(false);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
+            public boolean onQueryTextSubmit(String query) {
+                return false;
             }
 
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                adapter.filter(s.toString());
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
+            public boolean onQueryTextChange(String newText) {
+                adapter.filter(newText);
+                return false;
             }
         });
 
@@ -166,11 +162,10 @@ public class ContactFragment extends BaseFragment {
                 final int deletedIndex = viewHolder.getAdapterPosition();
                 final Contact deletedContact =  adapter.removeAt(deletedIndex);
                 final String name = deletedContact.getName();
-                String undoTxt = getResources().getString(R.string.action_undo);
                 String removedTxt = getResources().getString(R.string.txt_name_removed, name);
                 Snackbar snackbar = Snackbar
                         .make(frameCompose, removedTxt, Snackbar.LENGTH_LONG);
-                snackbar.setAction(undoTxt, new View.OnClickListener() {
+                snackbar.setAction(getString(R.string.action_undo), new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         adapter.restoreItem(deletedContact, deletedIndex);
