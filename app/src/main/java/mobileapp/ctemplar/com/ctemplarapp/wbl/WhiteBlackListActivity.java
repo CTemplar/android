@@ -17,16 +17,14 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 
 import mobileapp.ctemplar.com.ctemplarapp.BaseActivity;
 import mobileapp.ctemplar.com.ctemplarapp.R;
@@ -113,21 +111,19 @@ public class WhiteBlackListActivity extends BaseActivity {
         public View onCreateView(@NonNull final LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
             View view = inflater.inflate(R.layout.content_whitelist_tab, container, false);
 
-            final EditText searchView = view.findViewById(R.id.whitelist_search);
-            searchView.addTextChangedListener(new TextWatcher() {
+            final SearchView searchView = view.findViewById(R.id.whitelist_search);
+            searchView.onActionViewExpanded();
+            searchView.setIconifiedByDefault(false);
+            searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                 @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
+                public boolean onQueryTextSubmit(String query) {
+                    return false;
                 }
 
                 @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    adapter.filter(s);
-                }
-
-                @Override
-                public void afterTextChanged(Editable s) {
-
+                public boolean onQueryTextChange(String newText) {
+                    adapter.filter(newText);
+                    return false;
                 }
             });
 
@@ -150,7 +146,7 @@ public class WhiteBlackListActivity extends BaseActivity {
                         WhitelistAdapter adapter = new WhitelistAdapter(whiteListContacts);
                         recyclerView.setAdapter(adapter);
                         WhitelistFragment.this.adapter = adapter;
-                        adapter.filter(searchView.getText().toString());
+                        adapter.filter(searchView.getQuery());
                     }
                 }
             });
@@ -192,8 +188,8 @@ public class WhiteBlackListActivity extends BaseActivity {
                     if(view == null) return;
 
                     Snackbar snackbar = Snackbar
-                            .make(view, name + " removed!", Snackbar.LENGTH_LONG);
-                    snackbar.setAction("UNDO", new View.OnClickListener() {
+                            .make(view, getString(R.string.txt_name_removed, name), Snackbar.LENGTH_SHORT);
+                    snackbar.setAction(getString(R.string.action_undo), new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
                             adapter.restoreItem(deletedContact, deletedIndex);
@@ -225,21 +221,19 @@ public class WhiteBlackListActivity extends BaseActivity {
         public View onCreateView(@NonNull final LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
             View view = inflater.inflate(R.layout.content_blacklist_tab, container, false);
 
-            final EditText searchView = view.findViewById(R.id.blacklist_search);
-            searchView.addTextChangedListener(new TextWatcher() {
+            final SearchView searchView = view.findViewById(R.id.blacklist_search);
+            searchView.onActionViewExpanded();
+            searchView.setIconifiedByDefault(false);
+            searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                 @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
+                public boolean onQueryTextSubmit(String query) {
+                    return false;
                 }
 
                 @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    adapter.filter(s);
-                }
-
-                @Override
-                public void afterTextChanged(Editable s) {
-
+                public boolean onQueryTextChange(String newText) {
+                    adapter.filter(newText);
+                    return false;
                 }
             });
 
@@ -261,7 +255,7 @@ public class WhiteBlackListActivity extends BaseActivity {
                         BlacklistAdapter adapter = new BlacklistAdapter(blackListContacts);
                         recyclerView.setAdapter(adapter);
                         BlacklistFragment.this.adapter = adapter;
-                        adapter.filter(searchView.getText().toString());
+                        adapter.filter(searchView.getQuery());
                     }
                 }
             });
@@ -302,8 +296,8 @@ public class WhiteBlackListActivity extends BaseActivity {
                     if(view == null) return;
 
                     Snackbar snackbar = Snackbar
-                            .make(view, name + " removed!", Snackbar.LENGTH_LONG);
-                    snackbar.setAction("UNDO", new View.OnClickListener() {
+                            .make(view, getString(R.string.txt_name_removed, name), Snackbar.LENGTH_SHORT);
+                    snackbar.setAction(getString(R.string.action_undo), new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
                             adapter.restoreItem(deletedContact, deletedIndex);
