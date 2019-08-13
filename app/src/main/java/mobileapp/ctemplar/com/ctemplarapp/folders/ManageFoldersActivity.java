@@ -32,20 +32,26 @@ import mobileapp.ctemplar.com.ctemplarapp.main.RecycleDeleteSwiper;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Folders.FoldersResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Folders.FoldersResult;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.MyselfResponse;
 
 public class ManageFoldersActivity extends BaseActivity {
 
     private ManageFoldersViewModel manageFoldersModel;
     private ManageFoldersAdapter manageFoldersAdapter;
+    private String planType;
 
     @BindView(R.id.activity_manage_folders_recycler_view)
     RecyclerView recyclerView;
+
     @BindView(R.id.activity_manage_folders_icon_empty)
     ImageView imgEmpty;
+
     @BindView(R.id.activity_manage_folders_title_empty)
     TextView txtEmpty;
+
     @BindView(R.id.activity_manage_folders_add_layout)
     FrameLayout frameCompose;
+
     @BindView(R.id.manager_folders_footer_btn)
     Button footerAddFolder;
 
@@ -92,8 +98,17 @@ public class ManageFoldersActivity extends BaseActivity {
                         }
                     }
                 });
-        getCustomFolders();
+        manageFoldersModel.getMySelfResponse().observe(this, new Observer<MyselfResponse>() {
+            @Override
+            public void onChanged(@Nullable MyselfResponse myselfResponse) {
+                if (myselfResponse != null) {
+                    planType = myselfResponse.result[0].settings.planType;
+                }
+            }
+        });
         footerAddFolder.setVisibility(View.GONE);
+        getCustomFolders();
+        manageFoldersModel.getMyselfData();
     }
 
     @Override
@@ -112,14 +127,12 @@ public class ManageFoldersActivity extends BaseActivity {
         }
 
         List<FoldersResult> foldersResults = new ArrayList<>(foldersResponse.getFoldersList());
-
         if (!foldersResults.isEmpty()) {
             imgEmpty.setVisibility(View.GONE);
             txtEmpty.setVisibility(View.GONE);
             frameCompose.setVisibility(View.GONE);
             footerAddFolder.setVisibility(View.VISIBLE);
         }
-
         manageFoldersAdapter = new ManageFoldersAdapter(foldersResults);
         recyclerView.setAdapter(manageFoldersAdapter);
     }
@@ -160,6 +173,29 @@ public class ManageFoldersActivity extends BaseActivity {
         itemTouchHelper.attachToRecyclerView(recyclerView);
     }
 
+    private void addFolder() {
+        int folderCount = manageFoldersAdapter.getItemCount();
+        if (planType == null) {
+            if (folderCount >= 5) {
+                Toast.makeText(getApplicationContext(), getString(R.string.txt_create_folder_free_error), Toast.LENGTH_SHORT).show();
+                return;
+            }
+        } else if (planType.equals("PRIME")) {
+            if (folderCount >= 500) {
+                Toast.makeText(getApplicationContext(), getString(R.string.txt_create_folder_prime_error), Toast.LENGTH_SHORT).show();
+                return;
+            }
+        } else if (!planType.equals("CHAMPION")) {
+            if (folderCount >= 5) {
+                Toast.makeText(getApplicationContext(), getString(R.string.txt_create_folder_free_error), Toast.LENGTH_SHORT).show();
+                return;
+            }
+        }
+
+        Intent addFolder = new Intent(this, AddFolderActivity.class);
+        startActivity(addFolder);
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
@@ -171,13 +207,11 @@ public class ManageFoldersActivity extends BaseActivity {
 
     @OnClick(R.id.manager_folders_footer_btn)
     public void OnClickAddFolderFooter() {
-        Intent addFolder = new Intent(this, AddFolderActivity.class);
-        startActivity(addFolder);
+        addFolder();
     }
 
     @OnClick(R.id.activity_manage_folders_add_layout)
     public void OnClickAddFolder() {
-        Intent addFolder = new Intent(this, AddFolderActivity.class);
-        startActivity(addFolder);
+        addFolder();
     }
 }

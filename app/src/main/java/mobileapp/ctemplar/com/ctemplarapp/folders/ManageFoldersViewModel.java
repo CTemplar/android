@@ -10,15 +10,20 @@ import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Folders.FoldersResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Folders.FoldersResult;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.MyselfResponse;
 import mobileapp.ctemplar.com.ctemplarapp.repository.ManageFoldersRepository;
+import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
 import retrofit2.Response;
+import timber.log.Timber;
 
 public class ManageFoldersViewModel extends ViewModel {
 
     private ManageFoldersRepository manageFoldersRepository;
+    private UserRepository userRepository;
     private MutableLiveData<ResponseStatus> responseStatus = new MutableLiveData<>();
     private MutableLiveData<ResponseStatus> deletingStatus = new MutableLiveData<>();
     private MutableLiveData<FoldersResponse> foldersResponse = new MutableLiveData<>();
+    MutableLiveData<MyselfResponse> myselfResponse = new MutableLiveData<>();
 
     public MutableLiveData<FoldersResponse> getFoldersResponse() {
         return foldersResponse;
@@ -32,8 +37,13 @@ public class ManageFoldersViewModel extends ViewModel {
         return deletingStatus;
     }
 
+    public LiveData<MyselfResponse> getMySelfResponse() {
+        return myselfResponse;
+    }
+
     public ManageFoldersViewModel() {
         manageFoldersRepository = CTemplarApp.getManageFoldersRepository();
+        userRepository = CTemplarApp.getUserRepository();
     }
 
     public void getFolders(int limit, int offset) {
@@ -77,6 +87,31 @@ public class ManageFoldersViewModel extends ViewModel {
                     @Override
                     public void onError(Throwable e) {
                         deletingStatus.postValue(ResponseStatus.RESPONSE_ERROR);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    public void getMyselfData() {
+        userRepository.getMyselfInfo()
+                .subscribe(new Observer<MyselfResponse>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(MyselfResponse response) {
+                        myselfResponse.postValue(response);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Timber.e(e);
                     }
 
                     @Override
