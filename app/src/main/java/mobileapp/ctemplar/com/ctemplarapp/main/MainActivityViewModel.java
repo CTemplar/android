@@ -22,7 +22,6 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.Folders.FoldersResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Mailboxes.MailboxesResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResult;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.UnreadFoldersListResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.SignInResponse;
 import mobileapp.ctemplar.com.ctemplarapp.repository.ContactsRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.ManageFoldersRepository;
@@ -54,7 +53,7 @@ public class MainActivityViewModel extends ViewModel {
     MutableLiveData<String> currentFolder = new MutableLiveData<>();
     MutableLiveData<SignInResponse> signResponse = new MutableLiveData<>();
     MutableLiveData<FoldersResponse> foldersResponse = new MutableLiveData<>();
-    MutableLiveData<UnreadFoldersListResponse> unreadFoldersResponse = new MutableLiveData<>();
+    MutableLiveData<ResponseBody> unreadFoldersBody = new MutableLiveData<>();
 
     public MainActivityViewModel() {
         userRepository = CTemplarApp.getUserRepository();
@@ -91,12 +90,16 @@ public class MainActivityViewModel extends ViewModel {
         return responseStatus;
     }
 
-    public void logout() {
-        if (userRepository != null) {
-            userRepository.logout();
-        }
+    public LiveData<ResponseStatus> getToFolderStatus() {
+        return toFolderStatus;
+    }
 
-        actions.postValue(MainActivityActions.ACTION_LOGOUT);
+    MutableLiveData<FoldersResponse> getFoldersResponse() {
+        return foldersResponse;
+    }
+
+    MutableLiveData<ResponseBody> getUnreadFoldersBody() {
+        return unreadFoldersBody;
     }
 
     public void setCurrentFolder(String currentFolder) {
@@ -117,6 +120,14 @@ public class MainActivityViewModel extends ViewModel {
 
     public LiveData<List<Contact>> getContactsResponse() {
         return contactsResponse;
+    }
+
+    public void logout() {
+        if (userRepository != null) {
+            userRepository.logout();
+        }
+
+        actions.postValue(MainActivityActions.ACTION_LOGOUT);
     }
 
     private Observable<MessagesResponse> messagesObservable;
@@ -475,15 +486,15 @@ public class MainActivityViewModel extends ViewModel {
 
     public void getUnreadFoldersList() {
         manageFoldersRepository.getUnreadFoldersList()
-                .subscribe(new Observer<UnreadFoldersListResponse>() {
+                .subscribe(new Observer<ResponseBody>() {
                     @Override
                     public void onSubscribe(Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(UnreadFoldersListResponse unreadFoldersListResponse) {
-                        unreadFoldersResponse.postValue(unreadFoldersListResponse);
+                    public void onNext(ResponseBody responseBody) {
+                        unreadFoldersBody.postValue(responseBody);
                     }
 
                     @Override
@@ -497,17 +508,5 @@ public class MainActivityViewModel extends ViewModel {
 
                     }
                 });
-    }
-
-    public LiveData<ResponseStatus> getToFolderStatus() {
-        return toFolderStatus;
-    }
-
-    MutableLiveData<FoldersResponse> getFoldersResponse() {
-        return foldersResponse;
-    }
-
-    MutableLiveData<UnreadFoldersListResponse> getUnreadFoldersResponse() {
-        return unreadFoldersResponse;
     }
 }

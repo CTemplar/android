@@ -6,7 +6,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class EditTextUtils {
-
     private static final Pattern EMAIL_LIST
             = Pattern.compile(
             "((,?)" +
