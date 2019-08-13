@@ -31,9 +31,8 @@ import mobileapp.ctemplar.com.ctemplarapp.login.LoginActivityViewModel;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.CaptchaResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.CaptchaVerifyResponse;
-import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 
-public class StepEmailFragment extends BaseFragment {
+public class StepSecurityFragment extends BaseFragment {
 
     private StepRegistrationViewModel viewModel;
     private LoginActivityViewModel loginActivityModel;
@@ -42,12 +41,6 @@ public class StepEmailFragment extends BaseFragment {
     private boolean captchaState;
     private String captchaKey;
     private String captchaValue;
-
-    @BindView(R.id.fragment_step_email_input_layout)
-    TextInputLayout editEmailLayout;
-
-    @BindView(R.id.fragment_step_email_input)
-    TextInputEditText editEmail;
 
     @BindView(R.id.fragment_step_email_next_btn)
     Button btnNext;
@@ -92,6 +85,7 @@ public class StepEmailFragment extends BaseFragment {
         }
 
         captchaImageView = view.findViewById(R.id.fragment_step_email_captcha_img);
+
         loginActivityModel = ViewModelProviders.of(getActivity()).get(LoginActivityViewModel.class);
         viewModel = ViewModelProviders.of(getActivity()).get(StepRegistrationViewModel.class);
         viewModel.getResponseStatus().observe(this, new Observer<ResponseStatus>() {
@@ -155,23 +149,12 @@ public class StepEmailFragment extends BaseFragment {
 
     @OnClick(R.id.fragment_step_email_next_btn)
     public void onClickNext() {
-
-        String recoveryEmail = editEmail.getText().toString();
-        handleErrorEmail(recoveryEmail);
-
         if (captchaState) {
+            loginActivityModel.showProgressDialog();
             viewModel.setCaptcha(captchaKey, captchaValue);
+            viewModel.signUp();
         } else {
             captchaInputLayout.setError(getResources().getString(R.string.txt_enter_valid_captcha));
-            return;
-        }
-
-        if(recoveryEmail.isEmpty() || EditTextUtils.isEmailValid(recoveryEmail)) {
-            loginActivityModel.showProgressDialog();
-            if (!recoveryEmail.isEmpty()) {
-                viewModel.setRecoveryEmail(recoveryEmail);
-            }
-            viewModel.signUp();
         }
     }
 
@@ -190,23 +173,6 @@ public class StepEmailFragment extends BaseFragment {
         txtCheckHint.setText(Html.fromHtml(getResources().getString(R.string.title_step_email_check_hint)));
         txtCheckHint.setMovementMethod(LinkMovementMethod.getInstance());
         txtCheckHint.setLinkTextColor(getResources().getColor(R.color.colorLinkBlue));
-
-        editEmail.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                editEmailLayout.setError(null);
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
 
         checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 
@@ -232,12 +198,6 @@ public class StepEmailFragment extends BaseFragment {
 
             }
         });
-    }
-
-    private void handleErrorEmail(String email) {
-        if(!email.isEmpty() && !EditTextUtils.isEmailValid(email)) {
-            editEmailLayout.setError(getResources().getString(R.string.error_invalid_email));
-        }
     }
 
     public void handleResponseStatus(ResponseStatus status) {
