@@ -16,6 +16,7 @@ import butterknife.OnClick;
 import mobileapp.ctemplar.com.ctemplarapp.BaseActivity;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
+import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 
 public class EditFolderActivity extends BaseActivity {
 
@@ -88,11 +89,10 @@ public class EditFolderActivity extends BaseActivity {
             folderColor = AddFolderActivity.getPickerColor(selectedColor);
         }
 
-        if (folderName.matches("^[a-zA-Z0-9]*$") && folderName.length() > 3 && folderName.length() < 31) {
+        if (EditTextUtils.isTextValid(folderName) && EditTextUtils.isTextLength(folderName, 4, 30)) {
             editFolderModel.editFolder(folderId, folderName, folderColor);
             editTextNameFolder.setError(null);
             finish();
-
         } else {
             editTextNameFolder.setError(getResources().getString(R.string.txt_folder_name_hint));
         }
