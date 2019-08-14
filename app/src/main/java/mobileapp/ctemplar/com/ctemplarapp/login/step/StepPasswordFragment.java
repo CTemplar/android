@@ -137,7 +137,7 @@ public class StepPasswordFragment extends BaseFragment {
             @Override
             public void onClick(View v) {
                 recoveryEmailCheckText.setText(
-                        v.isSelected() ? longHint : shortHint,
+                        v.isSelected() ? shortHint : longHint,
                         TextView.BufferType.SPANNABLE
                 );
                 recoveryEmailCheckText.setSelected(!v.isSelected());
