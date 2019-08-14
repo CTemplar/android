@@ -577,14 +577,14 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         String ccEmail = ccTextView.getText().toString().trim();
         List<String> ccEmailList = new ArrayList<>();
         if (!ccEmail.isEmpty()) {
-            ccEmailList = Arrays.asList(ccEmail.split(","));
+            ccEmailList = EditTextUtils.getListFromString(ccEmail);
         }
         sendMessageRequest.setCc(ccEmailList);
 
         String bccEmail = bccTextView.getText().toString().trim();
         List<String> bccEmailList = new ArrayList<>();
         if (!bccEmail.isEmpty()) {
-            bccEmailList = Arrays.asList(bccEmail.split(","));
+            bccEmailList = EditTextUtils.getListFromString(bccEmail);
         }
         sendMessageRequest.setBcc(bccEmailList);
 
@@ -721,7 +721,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         sendingProgress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         sendingProgress.show();
 
-        List<String> emailList = Arrays.asList(toEmail.split(","));
+        List<String> emailList = EditTextUtils.getListFromString(toEmail);
         PublicKeysRequest publicKeysRequest = new PublicKeysRequest(emailList);
         mainModel.getEmailPublicKeys(publicKeysRequest);
     }
@@ -858,21 +858,21 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
 
         List<String> emailList = new ArrayList<>();
         if (!toEmail.isEmpty()) {
-            emailList = Arrays.asList(toEmail.split(","));
+            emailList = EditTextUtils.getListFromString(toEmail);
         }
         messageRequestToDraft.setReceivers(emailList);
 
         String ccEmail = ccTextView.getText().toString().trim();
         List<String> ccEmailList = new ArrayList<>();
         if (!ccEmail.isEmpty()) {
-            ccEmailList = Arrays.asList(ccEmail.split(","));
+            ccEmailList = EditTextUtils.getListFromString(ccEmail);
         }
         messageRequestToDraft.setCc(ccEmailList);
 
         String bccEmail = bccTextView.getText().toString().trim();
         List<String> bccEmailList = new ArrayList<>();
         if (!bccEmail.isEmpty()) {
-            bccEmailList = Arrays.asList(bccEmail.split(","));
+            bccEmailList = EditTextUtils.getListFromString(bccEmail);
         }
         messageRequestToDraft.setBcc(bccEmailList);
 

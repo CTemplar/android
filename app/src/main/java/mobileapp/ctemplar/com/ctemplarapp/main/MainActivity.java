@@ -147,7 +147,7 @@ public class MainActivity extends AppCompatActivity
                         int inbox = unreadFolders.getInt(MainFolderNames.INBOX);
                         int starred = unreadFolders.getInt(MainFolderNames.STARRED);
                         int archive = unreadFolders.getInt(MainFolderNames.ARCHIVE);
-                        int spam = unreadFolders.getInt(MainFolderNames.INBOX);
+                        int spam = unreadFolders.getInt(MainFolderNames.SPAM);
 
                         int outboxDelayed = unreadFolders.getInt("outbox_delayed_delivery_counter");
                         int outboxDead = unreadFolders.getInt("outbox_dead_man_counter");
