@@ -208,8 +208,8 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
     private EncryptMessageDialogFragment.OnSetEncryptMessagePassword onSetEncryptMessagePassword
             = new EncryptMessageDialogFragment.OnSetEncryptMessagePassword() {
         @Override
-        public void onSet(String password, String passwordHint) {
-            if (password == null && passwordHint == null) {
+        public void onSet(String password, String passwordHint, Integer expireHours) {
+            if (password == null && passwordHint == null && expireHours == null) {
                 messageEncryptionResult = null;
                 if (getActivity() == null) {
                     return;
@@ -222,6 +222,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
             EncryptionMessage encryptionMessage = new EncryptionMessage();
             encryptionMessage.setPassword(password);
             encryptionMessage.setPasswordHint(passwordHint);
+            encryptionMessage.setExpireHours(expireHours);
 
             MailboxEntity defaultMailbox = MessageProvider.getDefaultMailbox();
             if (defaultMailbox == null) {
@@ -559,7 +560,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
 
         String messageFolder = SENT;
         boolean messageSent = true;
-        sendMessageRequest.setSend(true);
+        //sendMessageRequest.setSend(true);
         if (delayedDeliveryInMillis != null) {
             sendMessageRequest.setDelayedDelivery(AppUtils.datetimeForServer(delayedDeliveryInMillis));
             messageFolder = OUTBOX;
@@ -875,7 +876,6 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
             bccEmailList = EditTextUtils.getListFromString(bccEmail);
         }
         messageRequestToDraft.setBcc(bccEmailList);
-
         mainModel.updateMessage(currentMessageId, messageRequestToDraft, new ArrayList<String>(), mailboxId);
     }
 
