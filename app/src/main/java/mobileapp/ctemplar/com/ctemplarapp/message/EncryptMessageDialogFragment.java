@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
+import timber.log.Timber;
 
 public class EncryptMessageDialogFragment extends DialogFragment {
 
@@ -79,9 +80,7 @@ public class EncryptMessageDialogFragment extends DialogFragment {
                 String messagePasswordExpireDays = messagePasswordExpireDaysEditText.getText().toString();
                 String messagePasswordExpireHours = messagePasswordExpireHoursEditText.getText().toString();
 
-                int expireDays = Integer.valueOf(messagePasswordExpireDays);
-                int expireHours = Integer.valueOf(messagePasswordExpireHours);
-                int expire = 24 * expireDays + expireHours;
+                int expire = getHours(messagePasswordExpireDays, messagePasswordExpireHours);
 
                 if (!EditTextUtils.isTextLength(messagePassword, 8, 30)) {
                     Toast.makeText(getActivity(), getString(R.string.error_password_message), Toast.LENGTH_SHORT).show();
@@ -102,5 +101,22 @@ public class EncryptMessageDialogFragment extends DialogFragment {
         });
 
         return view;
+    }
+
+    private int getHours(String daysString, String hoursString) {
+        int days = 0;
+        int hours = 0;
+        try {
+            if (!daysString.isEmpty()) {
+                days = Integer.valueOf(daysString);
+            }
+            if (!hoursString.isEmpty()) {
+                hours = Integer.valueOf(hoursString);
+            }
+        } catch (NumberFormatException e) {
+            Timber.e(e);
+        }
+
+        return 24 * days + hours;
     }
 }
