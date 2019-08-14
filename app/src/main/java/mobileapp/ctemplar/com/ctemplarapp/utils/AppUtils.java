@@ -135,13 +135,6 @@ public class AppUtils {
         return timeZone.getOffset(calendar.getTimeInMillis());
     }
 
-    public static long durationInHours(long timeInMillis) {
-        TimeZone timeZone = TimeZone.getDefault();
-        long utcTimeInMillis = timeInMillis + timeZone.getDSTSavings();
-        long currentTimeInMillis = System.currentTimeMillis();
-        return (utcTimeInMillis - currentTimeInMillis) / 1000 / 60 / 60;
-    }
-
     public static boolean twoWeeksTrial(String stringDate) {
         if (!TextUtils.isEmpty(stringDate)) {
             DateFormat parseFormat = new SimpleDateFormat(DATE_PATTERN, Locale.getDefault());
