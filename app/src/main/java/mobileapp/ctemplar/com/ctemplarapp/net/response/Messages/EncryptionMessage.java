@@ -16,6 +16,9 @@ public class EncryptionMessage {
     @SerializedName("password_hint")
     private String passwordHint;
 
+    @SerializedName("expiry_hours")
+    private int expireHours;
+
     @SerializedName("private_key")
     private String privateKey;
 
@@ -61,6 +64,14 @@ public class EncryptionMessage {
 
     public void setPasswordHint(String passwordHint) {
         this.passwordHint = passwordHint;
+    }
+
+    public int getExpireHours() {
+        return expireHours;
+    }
+
+    public void setExpireHours(int expireHours) {
+        this.expireHours = expireHours;
     }
 
     public String getPrivateKey() {
