@@ -162,7 +162,9 @@ Your password is connected to your encryption key, if you change your password t
     <string name="title_message_password">Message Password</string>
     <string name="title_message_password_confirm">Confirm Password</string>
     <string name="title_message_password_hint">Password Hint</string>
-    <string name="txt_encrypt_message_password_summary">Encrypted messages to non-Ctemplar recipients will expire in 28 days unless a shorter expiration time is set.</string>
+    <string name="title_message_password_expire_days">Days</string>
+    <string name="title_message_password_expire_hours">Hours</string>
+    <string name="txt_encrypt_message_password_expiration">Expiration Time</string>
 
     <!-- CONTACT -->
     <string name="toast_not_saved">Not saved</string>
@@ -393,7 +395,7 @@ Your password is connected to your encryption key, if you change your password t
     <string name="error_username_incorrect">Enter a valid username</string>
     <string name="error_username_exists">Email already exists!</string>
     <string name="error_password_not_match">Passwords do not match</string>
-    <string name="error_password_not_match_or_small">Passwords do not match or less than 8 symbols</string>
+    <string name="error_password_message">Password must be between 8 and 30 characters</string>
     <string name="error_current_password_not_match">Old password is not correct!</string>
     <string name="error_new_password_not_match">Passwords do not match or too short</string>
     <string name="error_empty_email">Empty email</string>

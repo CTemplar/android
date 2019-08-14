@@ -100,7 +100,7 @@
                         android:textSize="16sp"
                         android:padding="16dp"
                         android:textColor="@color/colorDarkBlue"
-                        android:minHeight="40dp"
+                        android:minHeight="30dp"
                         android:inputType="textPassword"
                         android:hint="@string/title_message_password"
                         android:background="@drawable/text_input_field" />
@@ -142,7 +142,7 @@
                         android:textSize="16sp"
                         android:padding="16dp"
                         android:textColor="@color/colorDarkBlue"
-                        android:minHeight="40dp"
+                        android:minHeight="30dp"
                         android:inputType="textPassword"
                         android:hint="@string/title_message_password_confirm"
                         android:background="@drawable/text_input_field" />
@@ -184,7 +184,7 @@
                         android:textSize="16sp"
                         android:padding="16dp"
                         android:textColor="@color/colorDarkBlue"
-                        android:minHeight="40dp"
+                        android:minHeight="30dp"
                         android:inputType="text"
                         android:hint="@string/title_message_password_hint"
                         android:background="@drawable/text_input_field" />
@@ -193,14 +193,95 @@
 
             </LinearLayout>
 
-            <TextView
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="12sp"
-                android:layout_marginTop="8dp"
-                android:gravity="center"
-                android:textColor="@color/colorGreyLight5"
-                android:text="@string/txt_encrypt_message_password_summary"/>
+                android:layout_marginTop="18dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="14sp"
+                    android:fontFamily="@font/lato_regular"
+                    android:textColor="@color/colorDarkBlue"
+                    android:text="@string/txt_encrypt_message_password_expiration"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="9dp"
+                        android:layout_marginEnd="9dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/fragment_encrypt_message_dialog_expire_days_hint"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/title_message_password_expire_days"
+                            android:fontFamily="@font/lato_regular"
+                            android:textColor="@color/colorDarkBlue"
+                            android:textSize="14sp" />
+
+                        <EditText
+                            android:id="@+id/fragment_encrypt_message_dialog_expire_days_edit_text"
+                            android:layout_width="64dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:gravity="center"
+                            android:fontFamily="@font/lato_regular"
+                            android:textColor="@color/colorDarkBlue"
+                            android:inputType="number"
+                            android:textSize="16sp"
+                            android:text="5"
+                            android:paddingTop="8dp"
+                            android:paddingBottom="8dp"
+                            android:background="@drawable/text_input_field" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="9dp"
+                        android:layout_marginStart="9dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/fragment_encrypt_message_dialog_expire_hours_hint"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/title_message_password_expire_hours"
+                            android:fontFamily="@font/lato_regular"
+                            android:textColor="@color/colorDarkBlue"
+                            android:textSize="14sp" />
+
+                        <EditText
+                            android:id="@+id/fragment_encrypt_message_dialog_expire_hours_edit_text"
+                            android:layout_width="64dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:gravity="center"
+                            android:fontFamily="@font/lato_regular"
+                            android:textColor="@color/colorDarkBlue"
+                            android:inputType="number"
+                            android:textSize="16sp"
+                            android:text="0"
+                            android:paddingTop="8dp"
+                            android:paddingBottom="8dp"
+                            android:background="@drawable/text_input_field" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </LinearLayout>
 
         </LinearLayout>
 
