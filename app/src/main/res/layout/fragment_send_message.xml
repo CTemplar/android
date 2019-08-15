@@ -140,7 +140,6 @@
             android:layout_toRightOf="@id/fragment_send_message_to_text"
             android:layout_toEndOf="@id/fragment_send_message_to_text"
             android:inputType="textEmailAddress"
-            android:text=""
             android:letterSpacing="0.05"
             android:background="@android:color/transparent"
             android:textColor="@color/colorDarkBlue2"
