@@ -8,7 +8,6 @@ import java.util.List;
 
 import io.reactivex.Observable;
 import io.reactivex.Observer;
-import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.DialogState;
@@ -130,13 +129,13 @@ public class MainActivityViewModel extends ViewModel {
         actions.postValue(MainActivityActions.ACTION_LOGOUT);
     }
 
-    private Observable<MessagesResponse> messagesObservable;
-    private CompositeDisposable disposable;
-
     public void getMessages(int limit, int offset, final String folder) {
         List<MessageEntity> messageEntities = messagesRepository.getLocalMessagesByFolder(folder);
         List<MessageProvider> messageProviders = MessageProvider.fromMessageEntities(messageEntities);
-        messagesResponse.postValue(new ResponseMessagesData(messageProviders, folder));
+        ResponseMessagesData localMessagesData = new ResponseMessagesData(messageProviders, folder);
+        if (!localMessagesData.messages.isEmpty()) {
+            messagesResponse.postValue(localMessagesData);
+        }
 
         Observable<MessagesResponse> messagesObservable = userRepository.getMessagesList(limit, offset, folder);
         messagesObservable.subscribe(new Observer<MessagesResponse>() {
