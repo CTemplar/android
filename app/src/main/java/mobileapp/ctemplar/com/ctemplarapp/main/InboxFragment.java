@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -71,6 +72,12 @@ public class InboxFragment extends BaseFragment {
     @BindView(R.id.fragment_inbox_title_empty)
     TextView txtEmpty;
 
+    @BindView(R.id.fragment_inbox_list_empty_layout)
+    ConstraintLayout listEmptyLayout;
+
+    @BindView(R.id.fragment_inbox_progress_layout)
+    ConstraintLayout progressLayout;
+
     @BindView(R.id.fragment_inbox_send_layout)
     FrameLayout frameCompose;
 
@@ -121,7 +128,7 @@ public class InboxFragment extends BaseFragment {
             @Override
             public void onChanged(@Nullable ResponseMessagesData messagesResponse) {
                 if (messagesResponse != null) {
-                    handleMessagesList(messagesResponse.messages, false, messagesResponse.folderName);
+                    handleMessagesList(messagesResponse.messages, messagesResponse.folderName);
                 }
             }
         });
@@ -129,7 +136,7 @@ public class InboxFragment extends BaseFragment {
         mainModel.getStarredMessagesResponse().observe(this, new Observer<List<MessageProvider>>() {
             @Override
             public void onChanged(@Nullable List<MessageProvider> messagesResponse) {
-                handleMessagesList(messagesResponse, true, STARRED);
+                handleMessagesList(messagesResponse, STARRED);
             }
         });
 
@@ -335,20 +342,18 @@ public class InboxFragment extends BaseFragment {
     private void hideMessagesList() {
         recyclerView.setVisibility(View.GONE);
         fabCompose.hide();
-        imgEmpty.setVisibility(View.VISIBLE);
-        txtEmpty.setVisibility(View.VISIBLE);
-        frameCompose.setVisibility(View.VISIBLE);
+        listEmptyLayout.setVisibility(View.VISIBLE);
+        progressLayout.setVisibility(View.GONE);
     }
 
     private void showMessagesList() {
         recyclerView.setVisibility(View.VISIBLE);
         fabCompose.show();
-        imgEmpty.setVisibility(View.GONE);
-        txtEmpty.setVisibility(View.GONE);
-        frameCompose.setVisibility(View.GONE);
+        listEmptyLayout.setVisibility(View.GONE);
+        progressLayout.setVisibility(View.GONE);
     }
 
-    public void handleMessagesList(List<MessageProvider> messages, boolean starredMessages, String folderName) {
+    public void handleMessagesList(List<MessageProvider> messages, String folderName) {
         restartOptionsMenu();
         currentFolder = mainModel.getCurrentFolder().getValue();
         messagesNotEmpty = messages != null && !messages.isEmpty();
@@ -362,7 +367,6 @@ public class InboxFragment extends BaseFragment {
         if (messages == null || messages.isEmpty()) {
             hideMessagesList();
             messages = new ArrayList<>();
-
         } else {
             showMessagesList();
         }
