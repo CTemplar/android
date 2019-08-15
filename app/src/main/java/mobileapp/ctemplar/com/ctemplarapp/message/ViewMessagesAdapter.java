@@ -240,10 +240,6 @@ public class ViewMessagesAdapter extends BaseAdapter {
         return getViewByFlag(inflater, parent, messageData, position + 1 == getCount());
     }
 
-    private String namesToString(String[] names) {
-        return TextUtils.join(", ", names);
-    }
-
     private String userDisplayListToNamesString(List<UserDisplayProvider> userDisplayProviderList) {
         List<String> userNameList = new ArrayList<>();
         for (UserDisplayProvider userDisplayProvider : userDisplayProviderList) {
