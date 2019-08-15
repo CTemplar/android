@@ -71,7 +71,7 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesView
             holder.txtUsername.setText(senderDisplay.getEmail());
         }
 
-        holder.root.setOnClickListener(new View.OnClickListener() {
+        holder.foreground.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onClickSubject.onNext(message.getId());
@@ -139,7 +139,7 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesView
             holder.txtDate.setText(creationDate);
         }
 
-        holder.imgStarred.setOnClickListener(new View.OnClickListener() {
+        holder.imgStarredLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 boolean isStarred = !message.isStarred();
