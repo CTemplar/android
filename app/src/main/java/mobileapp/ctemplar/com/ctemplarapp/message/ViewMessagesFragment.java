@@ -55,6 +55,7 @@ import mobileapp.ctemplar.com.ctemplarapp.utils.PermissionCheck;
 import timber.log.Timber;
 
 import static android.content.Context.DOWNLOAD_SERVICE;
+import static mobileapp.ctemplar.com.ctemplarapp.message.ViewMessagesActivity.PARENT_ID;
 import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.ARCHIVE;
 import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.DRAFT;
 import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.INBOX;
@@ -62,7 +63,6 @@ import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderN
 import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.SENT;
 import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.SPAM;
 import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.TRASH;
-import static mobileapp.ctemplar.com.ctemplarapp.message.ViewMessagesActivity.PARENT_ID;
 
 public class ViewMessagesFragment extends Fragment implements View.OnClickListener, ActivityInterface {
 
@@ -192,7 +192,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
                                 documentRequest.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName);
                                 documentRequest.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
 
-                                if (PermissionCheck.readAndWriteExternalStorage(getActivity())) {
+                                if (getActivity() != null && PermissionCheck.readAndWriteExternalStorage(getActivity())) {
                                     DownloadManager downloadManager = (DownloadManager) getActivity().getApplicationContext().getSystemService(DOWNLOAD_SERVICE);
                                     downloadManager.enqueue(documentRequest);
                                     Toast.makeText(getActivity(), getResources().getString(R.string.toast_download_started), Toast.LENGTH_SHORT).show();
@@ -201,7 +201,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
 
                             @Override
                             public void onError(Throwable e) {
-
+                                Timber.e(e);
                             }
 
                             @Override

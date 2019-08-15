@@ -207,8 +207,6 @@ Your password is connected to your encryption key, if you change your password t
     <string name="toast_attachment_upload_complete">Attachment uploading complete</string>
     <string name="toast_attachment_unable_read_file">Unable to read file in selected path</string>
     <string name="toast_attachment_unable_read_path">"Unable to read selected path"</string>
-    <string name="hint_enter_subject">Enter subject</string>
-    <string name="hint_enter_message">Enter message</string>
     <string name="txt_sending_mail">Sending mail..</string>
     <string name="dialog_discard_mail">Discard mail</string>
     <string name="dialog_discard_confirm">Are you sure, you want to discard this email?</string>

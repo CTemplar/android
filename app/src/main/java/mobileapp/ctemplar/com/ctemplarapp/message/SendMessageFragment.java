@@ -352,7 +352,6 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         messageAttachmentsRecycleView.setAdapter(messageSendAttachmentAdapter);
 
         initResponses();
-
         addListeners();
 
         return root;
@@ -560,7 +559,6 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
 
         String messageFolder = SENT;
         boolean messageSent = true;
-        //sendMessageRequest.setSend(true);
         if (delayedDeliveryInMillis != null) {
             sendMessageRequest.setDelayedDelivery(AppUtils.datetimeForServer(delayedDeliveryInMillis));
             messageFolder = OUTBOX;
@@ -573,7 +571,13 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         }
         sendMessageRequest.setSend(messageSent);
         sendMessageRequest.setFolder(messageFolder);
-        sendMessageRequest.setReceivers(emails);
+
+        String toEmail = toEmailTextView.getText().toString().trim();
+        List<String> toEmailList = new ArrayList<>();
+        if (!toEmail.isEmpty()) {
+            toEmailList = EditTextUtils.getListFromString(toEmail);
+        }
+        sendMessageRequest.setReceivers(toEmailList);
 
         String ccEmail = ccTextView.getText().toString().trim();
         List<String> ccEmailList = new ArrayList<>();
@@ -611,10 +615,14 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
 
     private boolean inputFieldsNotEmpty() {
         String toEmail = toEmailTextView.getText().toString();
+        String ccEmail = ccTextView.getText().toString();
+        String bccEmail = bccTextView.getText().toString();
         String subject = subjectEditText.getText().toString();
         String compose = composeEditText.getText().toString();
 
-        return (!toEmail.isEmpty() && !subject.isEmpty() && !compose.isEmpty());
+        boolean receiversNotEmpty = !toEmail.isEmpty() || !ccEmail.isEmpty() || !bccEmail.isEmpty();
+        boolean contentNotEmpty = !subject.isEmpty() || !compose.isEmpty();
+        return receiversNotEmpty && contentNotEmpty;
     }
 
     @Override
@@ -676,44 +684,28 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
 
     public void onClickSend() {
         String toEmail = toEmailTextView.getText().toString().trim();
-        String ccList = ccTextView.getText().toString().trim();
-        String bccList = bccTextView.getText().toString().trim();
-        String subject = subjectEditText.getText().toString();
-        String compose = composeEditText.getText().toString();
+        String ccEmail = ccTextView.getText().toString().trim();
+        String bccEmail = bccTextView.getText().toString().trim();
 
-        if (EditTextUtils.isEmailListValid(toEmail)) {
+        if (toEmail.isEmpty() || EditTextUtils.isEmailListValid(toEmail)) {
             toEmailTextView.setError(null);
         } else {
             toEmailTextView.setError(getString(R.string.txt_enter_valid_email));
             return;
         }
 
-        if (ccList.isEmpty() || EditTextUtils.isEmailListValid(ccList)) {
+        if (ccEmail.isEmpty() || EditTextUtils.isEmailListValid(ccEmail)) {
             ccTextView.setError(null);
         } else {
             ccTextView.setError(getString(R.string.txt_enter_valid_email));
             return;
         }
 
-        if (bccList.isEmpty() || EditTextUtils.isEmailListValid(bccList)) {
+        if (bccEmail.isEmpty() || EditTextUtils.isEmailListValid(bccEmail)) {
             bccTextView.setError(null);
         } else {
             bccTextView.setError(getString(R.string.txt_enter_valid_email));
             return;
-        }
-
-        if (subject.length() < 1) {
-            subjectEditText.setError(getResources().getString(R.string.hint_enter_subject));
-            return;
-        } else {
-            subjectEditText.setError(null);
-        }
-
-        if (compose.length() < 1) {
-            composeEditText.setError(getResources().getString(R.string.hint_enter_message));
-            return;
-        } else {
-            composeEditText.setError(null);
         }
 
         sendingProgress = new ProgressDialog(getActivity());
@@ -722,8 +714,18 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         sendingProgress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         sendingProgress.show();
 
-        List<String> emailList = EditTextUtils.getListFromString(toEmail);
-        PublicKeysRequest publicKeysRequest = new PublicKeysRequest(emailList);
+        List<String> receiverList = new ArrayList<>();
+        if (!toEmail.isEmpty()) {
+            receiverList.addAll(EditTextUtils.getListFromString(toEmail));
+        }
+        if (!ccEmail.isEmpty()) {
+            receiverList.addAll(EditTextUtils.getListFromString(ccEmail));
+        }
+        if (!bccEmail.isEmpty()) {
+            receiverList.addAll(EditTextUtils.getListFromString(bccEmail));
+        }
+
+        PublicKeysRequest publicKeysRequest = new PublicKeysRequest(receiverList);
         mainModel.getEmailPublicKeys(publicKeysRequest);
     }
 
@@ -857,11 +859,11 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
             messageRequestToDraft.setAttachments(attachments);
         }
 
-        List<String> emailList = new ArrayList<>();
+        List<String> toEmailList = new ArrayList<>();
         if (!toEmail.isEmpty()) {
-            emailList = EditTextUtils.getListFromString(toEmail);
+            toEmailList = EditTextUtils.getListFromString(toEmail);
         }
-        messageRequestToDraft.setReceivers(emailList);
+        messageRequestToDraft.setReceivers(toEmailList);
 
         String ccEmail = ccTextView.getText().toString().trim();
         List<String> ccEmailList = new ArrayList<>();
@@ -881,7 +883,6 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
 
     private void addListeners() {
         sendMessage.setEnabled(false);
-
         toEmailTextView.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -899,7 +900,40 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
 
             }
         });
+        ccTextView.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                boolean state = inputFieldsNotEmpty();
+                sendMessage.setEnabled(state);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+        bccTextView.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                boolean state = inputFieldsNotEmpty();
+                sendMessage.setEnabled(state);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
         subjectEditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -917,7 +951,6 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
 
             }
         });
-
         composeEditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
