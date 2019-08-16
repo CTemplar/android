@@ -6,19 +6,20 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <ImageView
-        android:layout_width="38dp"
-        android:layout_height="40dp"
         android:id="@+id/recipients_list_view_item_user_ico"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:padding="3dp"
+        android:src="@drawable/icon_user"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:padding="8dp"
-        android:src="@drawable/ic_star_on"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <View
         android:id="@+id/recipients_list_view_item_divider"
         android:layout_width="1dp"
         android:layout_height="1dp"
         android:background="@android:color/transparent"
+        app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="@id/recipients_list_view_item_user_ico"
         app:layout_constraintBottom_toBottomOf="@id/recipients_list_view_item_user_ico"/>
 

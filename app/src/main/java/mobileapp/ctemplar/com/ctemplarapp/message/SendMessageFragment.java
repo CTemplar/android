@@ -14,6 +14,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.preference.PreferenceManager;
+import android.support.v7.widget.AppCompatMultiAutoCompleteTextView;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.Html;
@@ -23,7 +24,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -59,6 +59,7 @@ import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.FileUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.PermissionCheck;
+import mobileapp.ctemplar.com.ctemplarapp.utils.SpaceTokenizer;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -123,9 +124,9 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
 
     private EditText subjectEditText;
     private EditText composeEditText;
-    private AutoCompleteTextView toEmailTextView;
-    private AutoCompleteTextView ccTextView;
-    private AutoCompleteTextView bccTextView;
+    private AppCompatMultiAutoCompleteTextView toEmailTextView;
+    private AppCompatMultiAutoCompleteTextView ccTextView;
+    private AppCompatMultiAutoCompleteTextView bccTextView;
     private Spinner spinnerFrom;
     private RelativeLayout ccLayout;
     private RelativeLayout bccLayout;
@@ -530,6 +531,12 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         List<ContactData> contactsList = new ArrayList<>(Arrays.asList(contacts));
         RecipientsListAdapter recipientsAdapter = new RecipientsListAdapter(getActivity(), R.layout.recipients_list_view_item, contactsList);
         toEmailTextView.setAdapter(recipientsAdapter);
+        ccTextView.setAdapter(recipientsAdapter);
+        bccTextView.setAdapter(recipientsAdapter);
+
+        toEmailTextView.setTokenizer(new SpaceTokenizer());
+        ccTextView.setTokenizer(new SpaceTokenizer());
+        bccTextView.setTokenizer(new SpaceTokenizer());
     }
 
     private void sendMessage(List<String> emails, final List<String> publicKeys) {
