@@ -23,6 +23,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.request.SendMessageRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SettingsRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SignInRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SignUpRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.SignatureRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SubjectEncryptedRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.CaptchaResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.CaptchaVerifyResponse;
@@ -208,6 +209,9 @@ public interface RestService {
 
     @PATCH("/emails/mailboxes/{id}/")
     Observable<MailboxesResult> updateEnabledMailbox(@Path("id") long mailboxId, @Body EnabledMailboxRequest body);
+
+    @PATCH("/emails/mailboxes/{id}/")
+    Observable<SettingsEntity> updateSignature(@Path("id") long mailboxId, @Body SignatureRequest body);
 
     @GET("/emails/domains/")
     Observable<DomainsResponse> getDomains();
