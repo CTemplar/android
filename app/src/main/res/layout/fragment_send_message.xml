@@ -131,7 +131,7 @@
             android:layout_marginLeft="15dp"
             android:layout_marginStart="15dp" />
 
-        <android.support.v7.widget.AppCompatAutoCompleteTextView
+        <android.support.v7.widget.AppCompatMultiAutoCompleteTextView
             android:id="@+id/fragment_send_message_to_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -147,7 +147,7 @@
             android:layout_centerVertical="true"
             android:layout_toLeftOf="@id/fragment_send_message_to_add_button"
             android:layout_toStartOf="@id/fragment_send_message_to_add_button"
-            android:layout_marginRight="15dp"/>
+            android:layout_marginRight="15dp" />
 
         <ImageView
             android:id="@+id/fragment_send_message_to_add_button"
@@ -192,11 +192,12 @@
             android:layout_marginLeft="15dp"
             android:layout_marginStart="15dp" />
 
-        <android.support.v7.widget.AppCompatAutoCompleteTextView
+        <android.support.v7.widget.AppCompatMultiAutoCompleteTextView
             android:id="@+id/fragment_send_message_cc_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/lato_regular"
+            android:completionThreshold="1"
             android:layout_toRightOf="@id/fragment_send_message_cc_text"
             android:layout_toEndOf="@id/fragment_send_message_cc_text"
             android:inputType="textEmailAddress"
@@ -239,11 +240,12 @@
             android:layout_marginLeft="15dp"
             android:layout_marginStart="15dp" />
 
-        <android.support.v7.widget.AppCompatAutoCompleteTextView
+        <android.support.v7.widget.AppCompatMultiAutoCompleteTextView
             android:id="@+id/fragment_send_message_bcc_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/lato_regular"
+            android:completionThreshold="1"
             android:layout_toRightOf="@id/fragment_send_message_bcc_text"
             android:layout_toEndOf="@id/fragment_send_message_bcc_text"
             android:inputType="textEmailAddress"
