@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.DownloadManager;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -19,6 +20,7 @@ import android.support.design.widget.BaseTransientBottomBar;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -36,6 +38,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -46,6 +49,7 @@ import java.util.Locale;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import mobileapp.ctemplar.com.ctemplarapp.ActivityInterface;
+import mobileapp.ctemplar.com.ctemplarapp.BuildConfig;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.main.MainActivity;
 import mobileapp.ctemplar.com.ctemplarapp.main.MainActivityViewModel;
@@ -107,7 +111,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull final LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final Activity activity = getActivity();
         if (activity == null) {
             return null;
@@ -152,6 +156,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
             activity.onBackPressed();
         }
 
+        final String[] fileName = new String[1];
         modelViewMessages.getChainMessages(parentId);
         modelViewMessages.getMessagesResponse().observe(this, new Observer<List<MessageProvider>>() {
             @Override
@@ -186,10 +191,10 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
                             @Override
                             public void onNext(String documentLink) {
                                 Uri documentUri = Uri.parse(documentLink);
-                                String fileName = AppUtils.getFileNameFromURL(documentLink);
+                                fileName[0] = AppUtils.getFileNameFromURL(documentLink);
 
                                 DownloadManager.Request documentRequest = new DownloadManager.Request(documentUri);
-                                documentRequest.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName);
+                                documentRequest.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName[0]);
                                 documentRequest.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
 
                                 if (getActivity() != null && PermissionCheck.readAndWriteExternalStorage(getActivity())) {
@@ -233,6 +238,24 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
         BroadcastReceiver onComplete = new BroadcastReceiver() {
             public void onReceive(Context ctx, Intent intent) {
                 Toast.makeText(ctx, ctx.getResources().getString(R.string.toast_download_complete), Toast.LENGTH_SHORT).show();
+                File downloadedFile = new File(
+                        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
+                        fileName[0]
+                );
+                Uri fileUri = FileProvider.getUriForFile(
+                        ctx,
+                        BuildConfig.APPLICATION_ID + ".fileprovider",
+                        downloadedFile
+                );
+                try {
+                    Intent openIntent = new Intent(Intent.ACTION_VIEW);
+                    String fileType = activity.getContentResolver().getType(fileUri);
+                    openIntent.setDataAndType(fileUri, fileType);
+                    openIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    ctx.startActivity(openIntent);
+                } catch (ActivityNotFoundException e) {
+                    Timber.i(e);
+                }
             }
         };
         activity.registerReceiver(onComplete, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
