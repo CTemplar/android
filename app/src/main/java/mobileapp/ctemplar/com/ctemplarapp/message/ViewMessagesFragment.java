@@ -238,22 +238,15 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
         BroadcastReceiver onComplete = new BroadcastReceiver() {
             public void onReceive(Context ctx, Intent intent) {
                 Toast.makeText(ctx, ctx.getResources().getString(R.string.toast_download_complete), Toast.LENGTH_SHORT).show();
-                File downloadedFile = new File(
-                        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
-                        fileName[0]
-                );
-                Uri fileUri = FileProvider.getUriForFile(
-                        ctx,
-                        BuildConfig.APPLICATION_ID + ".fileprovider",
-                        downloadedFile
-                );
                 try {
-                    Intent openIntent = new Intent(Intent.ACTION_VIEW);
-                    String fileType = activity.getContentResolver().getType(fileUri);
-                    openIntent.setDataAndType(fileUri, fileType);
-                    openIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                    ctx.startActivity(openIntent);
-                } catch (ActivityNotFoundException e) {
+                    File externalStorage = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+                    File downloadedFile = new File(externalStorage, fileName[0]);
+
+                    Uri fileUri = FileProvider.getUriForFile(
+                            ctx, BuildConfig.APPLICATION_ID + ".fileprovider", downloadedFile
+                    );
+                    openFile(fileUri);
+                } catch (Exception e) {
                     Timber.i(e);
                 }
             }
@@ -261,6 +254,18 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
         activity.registerReceiver(onComplete, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
 
         return root;
+    }
+
+    private void openFile(Uri fileUri) {
+        try {
+            Intent openIntent = new Intent(Intent.ACTION_VIEW);
+            String fileType = getActivity().getContentResolver().getType(fileUri);
+            openIntent.setDataAndType(fileUri, fileType);
+            openIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            getActivity().startActivity(openIntent);
+        } catch (ActivityNotFoundException e) {
+            Timber.i(e);
+        }
     }
 
     @Override
