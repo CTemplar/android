@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import android.widget.MultiAutoCompleteTextView;
 
 public class SpaceTokenizer implements MultiAutoCompleteTextView.Tokenizer {
+
     @Override
     public int findTokenStart(CharSequence text, int cursor) {
         int i = cursor;
