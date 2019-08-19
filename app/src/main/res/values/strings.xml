@@ -290,6 +290,8 @@ Your password is connected to your encryption key, if you change your password t
     <string name="about_url">https://ctemplar.com/about</string>
     <string name="txt_type_signature">Type your signature</string>
     <string name="txt_type_mobile_signature">Type your mobile signature</string>
+    <string name="txt_signature_enabled">Signature enabled</string>
+    <string name="txt_mobile_signature_enabled">Mobile signature enabled</string>
 
     <string name="settings_general">General settings</string>
     <string name="settings_recovery_email">Recovery email</string>

@@ -295,6 +295,13 @@ public class SettingsActivity extends AppCompatActivity {
             checkBoxSignatureEnabled.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    boolean signatureEnabled = (boolean) newValue;
+                    if (signatureEnabled) {
+                        Toast.makeText(getActivity(), getString(R.string.txt_signature_enabled), Toast.LENGTH_SHORT).show();
+                        sharedPreferences.edit()
+                                .putBoolean(getString(R.string.mobile_signature_enabled), false)
+                                .apply();
+                    }
                     return true;
                 }
             });
@@ -358,6 +365,13 @@ public class SettingsActivity extends AppCompatActivity {
             checkBoxMobileSignatureEnabled.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    boolean mobileSignatureEnabled = (boolean) newValue;
+                    if (mobileSignatureEnabled) {
+                        Toast.makeText(getActivity(), getString(R.string.txt_mobile_signature_enabled), Toast.LENGTH_SHORT).show();
+                        sharedPreferences.edit()
+                                .putBoolean(getString(R.string.signature_enabled), false)
+                                .apply();
+                    }
                     return true;
                 }
             });
