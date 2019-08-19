@@ -10,7 +10,7 @@
         android:id="@+id/blacklist_search"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
+        android:focusable="false"
         app:queryHint="@string/action_search" />
 
     <ScrollView
@@ -31,7 +31,7 @@
                 tools:listfooter="@layout/blacklist_footer"
                 android:divider="@drawable/dialog_divider" />
 
-                <include layout="@layout/blacklist_footer"/>
+                <include layout="@layout/blacklist_footer" />
 
         </LinearLayout>
 

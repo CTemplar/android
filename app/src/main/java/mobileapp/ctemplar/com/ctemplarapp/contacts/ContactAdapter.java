@@ -11,6 +11,7 @@ import java.util.List;
 
 import io.reactivex.subjects.PublishSubject;
 import mobileapp.ctemplar.com.ctemplarapp.R;
+import mobileapp.ctemplar.com.ctemplarapp.repository.entity.Contact;
 
 public class ContactAdapter extends RecyclerView.Adapter<ContactViewHolder> {
 
