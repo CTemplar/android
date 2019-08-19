@@ -30,8 +30,11 @@ import mobileapp.ctemplar.com.ctemplarapp.folders.ManageFoldersActivity;
 import mobileapp.ctemplar.com.ctemplarapp.mailboxes.MailboxesActivity;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.AutoSaveContactEnabledRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.RecoveryEmailRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.SignatureRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SubjectEncryptedRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Mailboxes.MailboxesResult;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.MyselfResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.MyselfResult;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.SettingsEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
 import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
@@ -46,6 +49,7 @@ public class SettingsActivity extends AppCompatActivity {
     private static PreferenceScreen recoveryEmailPreferenceScreen;
     private static Preference storageLimitPreference;
     private static boolean userIsPrime;
+    private static long defaultMailboxId;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -77,6 +81,14 @@ public class SettingsActivity extends AppCompatActivity {
                 .replace(R.id.container, fragment)
                 .addToBackStack(null)
                 .commit();
+    }
+
+    private static long getSettingId() {
+        return sharedPreferences.getLong("setting_id", -1);
+    }
+
+    private static void setSettingId(long id) {
+        sharedPreferences.edit().putLong("setting_id", id).apply();
     }
 
     public static class SettingsFragment extends BasePreferenceFragment {
@@ -260,15 +272,18 @@ public class SettingsActivity extends AppCompatActivity {
             setPreferencesFromResource(R.xml.signature_settings, rootKey);
 
             final EditTextPreference preferenceSignature = (EditTextPreference) findPreference(getString(R.string.signature));
-            if (preferenceSignature.getText() != null && !preferenceSignature.getText().isEmpty()) {
-                preferenceSignature.setTitle(preferenceSignature.getText());
+            final String signatureText = preferenceSignature.getText();
+            if (signatureText != null && !signatureText.isEmpty()) {
+                preferenceSignature.setTitle(signatureText);
             }
 
             preferenceSignature.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
-                    if (!newValue.toString().isEmpty()) {
-                        preferenceSignature.setTitle((String) newValue);
+                    String newSignatureText = newValue.toString();
+                    if (!newSignatureText.isEmpty()) {
+                        preferenceSignature.setTitle(newSignatureText);
+                        updateSignature(newSignatureText);
                     } else {
                         preferenceSignature.setTitle(getString(R.string.txt_type_signature));
                     }
@@ -283,6 +298,37 @@ public class SettingsActivity extends AppCompatActivity {
                     return true;
                 }
             });
+        }
+
+        private void updateSignature(String signatureText) {
+            final long settingId = getSettingId();
+            if (settingId == -1 && defaultMailboxId != -1) {
+                Timber.e("Setting id is not defined");
+                return;
+            }
+
+            userRepository.updateSignature(defaultMailboxId, new SignatureRequest(signatureText))
+                    .subscribe(new Observer<SettingsEntity>() {
+                        @Override
+                        public void onSubscribe(Disposable d) {
+
+                        }
+
+                        @Override
+                        public void onNext(SettingsEntity settingsEntity) {
+                            Toast.makeText(getActivity(), "Signature updated", Toast.LENGTH_SHORT).show();
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            Timber.e(e);
+                        }
+
+                        @Override
+                        public void onComplete() {
+
+                        }
+                    });
         }
     }
 
@@ -312,7 +358,6 @@ public class SettingsActivity extends AppCompatActivity {
             checkBoxMobileSignatureEnabled.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
-                    //
                     return true;
                 }
             });
@@ -329,11 +374,11 @@ public class SettingsActivity extends AppCompatActivity {
 
                     @Override
                     public void onNext(MyselfResponse myselfResponse) {
-                        if (myselfResponse.result != null && myselfResponse.result.length > 0) {
-                            SettingsEntity settings = myselfResponse.result[0].settings;
-                            userIsPrime = myselfResponse.result[0].isPrime;
-                            setSettingId(settings.id);
-                            saveData(settings);
+                        if (myselfResponse != null && myselfResponse.result != null) {
+                            MyselfResult myselfResult = myselfResponse.result[0];
+                            userIsPrime = myselfResult.isPrime;
+                            setSettingId(myselfResult.id);
+                            saveData(myselfResult);
                         }
                     }
 
@@ -349,7 +394,11 @@ public class SettingsActivity extends AppCompatActivity {
                 });
     }
 
-    private void saveData(SettingsEntity settingsEntity) {
+    private void saveData(MyselfResult myselfResult) {
+        SettingsEntity settingsEntity = myselfResult.settings;
+        MailboxesResult mailboxesResult = myselfResult.mailboxes[0];
+        defaultMailboxId = mailboxesResult.getId();
+
         String usedStorage = AppUtils.usedStorage(settingsEntity.getUsedStorage());
         String allocatedStorage = AppUtils.usedStorage(settingsEntity.getAllocatedStorage());
 
@@ -358,21 +407,13 @@ public class SettingsActivity extends AppCompatActivity {
                 usedStorage,
                 allocatedStorage
         ));
-
         recoveryEmailPreferenceScreen.setSummary(settingsEntity.recoveryEmail);
         sharedPreferences.edit()
                 .putString(getString(R.string.recovery_email), settingsEntity.recoveryEmail)
+                .putString(getString(R.string.signature), mailboxesResult.getSignature())
                 .putBoolean(getString(R.string.auto_save_contacts_enabled), settingsEntity.saveContacts)
                 .putBoolean(getString(R.string.subject_encryption_enabled), settingsEntity.isSubjectEncrypted)
                 .apply();
-    }
-
-    private static long getSettingId() {
-        return sharedPreferences.getLong("setting_id", -1);
-    }
-
-    private static void setSettingId(long id) {
-        sharedPreferences.edit().putLong("setting_id", id).apply();
     }
 
     private static void updateRecoveryEmail(String newRecoveryEmail) {

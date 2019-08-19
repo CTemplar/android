@@ -145,8 +145,8 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
     private Long destructDeliveryInMillis;
     private Long deadDeliveryInHours;
     private EncryptionMessage messageEncryptionResult;
-    private boolean userIsPrime = false;
-    private boolean isSubjectEncrypted = false;
+    private boolean userIsPrime;
+    private boolean isSubjectEncrypted;
 
     private DelayedDeliveryDialogFragment delayedDeliveryDialogFragment = new DelayedDeliveryDialogFragment();
     private DestructTimerDialogFragment destructTimerDialogFragment = new DestructTimerDialogFragment();
@@ -310,9 +310,10 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
         boolean mobileSignatureEnabled = sharedPreferences.getBoolean(getString(R.string.mobile_signature_enabled), false);
-        String mobileSignature = sharedPreferences.getString(getString(R.string.mobile_signature), null);
+        String mobileSignature = sharedPreferences.getString(getString(R.string.mobile_signature), "");
         if (mobileSignatureEnabled) {
-            String text = "\n\n--------\n" + mobileSignature + '\n' + composeEditText.getText();
+            String compose = composeEditText.getText().toString();
+            String text = getString(R.string.txt_user_signature, mobileSignature, compose);
             composeEditText.setText(text);
         }
 
@@ -490,11 +491,12 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
                     public void onChanged(@Nullable MyselfResponse myselfResponse) {
                         if (myselfResponse != null) {
                             MyselfResult myself = myselfResponse.result[0];
+                            addSignature(myself.mailboxes[0].getSignature());
+                            isSubjectEncrypted = myself.settings.isSubjectEncrypted;
                             String joinedDate = myself.joinedDate;
                             boolean userTrial = AppUtils.twoWeeksTrial(joinedDate);
                             boolean userPrime = myself.isPrime;
                             userIsPrime = userPrime || userTrial;
-                            isSubjectEncrypted = myself.settings.isSubjectEncrypted;
                         }
                     }
                 });
@@ -828,7 +830,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         MediaType mediaType;
         String type = activity.getContentResolver().getType(attachmentUri);
         if (type == null) {
-            Timber.tag(TAG).wtf("Attachment type is null");
+            Timber.e("Attachment type is null");
             mediaType = null;
         } else {
             mediaType = MediaType.parse(type);
@@ -859,7 +861,6 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         messageRequestToDraft.setSend(false);
         messageRequestToDraft.setMailbox(mailboxId);
         messageRequestToDraft.setSubjectEncrypted(isSubjectEncrypted);
-//        messageRequestToDraft.setParent(parentId);
 
         List<MessageAttachment> attachments = messageSendAttachmentAdapter.getAttachmentsList();
         if (attachments != null && !attachments.isEmpty()) {
@@ -886,6 +887,15 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         }
         messageRequestToDraft.setBcc(bccEmailList);
         mainModel.updateMessage(currentMessageId, messageRequestToDraft, new ArrayList<String>(), mailboxId);
+    }
+
+    private void addSignature(String signatureText) {
+        boolean signatureEnabled = sharedPreferences.getBoolean(getString(R.string.signature_enabled), false);
+        if (signatureEnabled) {
+            String compose = composeEditText.getText().toString();
+            String text = getString(R.string.txt_user_signature, signatureText, compose);
+            composeEditText.setText(text);
+        }
     }
 
     private void addListeners() {
