@@ -15,12 +15,12 @@ import android.view.ViewGroup;
 
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.contacts.ContactFragment;
+import mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames;
 import timber.log.Timber;
 
 public class MainFragment extends Fragment {
 
     private static final String TAG = MainFragment.class.getSimpleName();
-
     private int contentLayoutId = R.id.content_frame;
 
     private InboxFragment inboxFragment;
@@ -89,7 +89,7 @@ public class MainFragment extends Fragment {
         }
         Fragment currentFragment = getCurrentFragment();
         switch (folder) {
-            case "contact":
+            case MainFolderNames.CONTACT:
                 if (!(currentFragment instanceof ContactFragment)) {
                     showFragment(contactFragment);
                 }
@@ -98,7 +98,6 @@ public class MainFragment extends Fragment {
                 if (!(currentFragment instanceof InboxFragment)) {
                     showFragment(inboxFragment);
                 }
-                break;
         }
     }
 
