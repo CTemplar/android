@@ -9,4 +9,5 @@ public class MainFolderNames {
     public static final String DRAFT = "draft";
     public static final String TRASH = "trash";
     public static final String STARRED = "starred";
+    public static final String CONTACT = "contact";
 }

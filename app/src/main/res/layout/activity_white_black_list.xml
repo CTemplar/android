@@ -19,7 +19,7 @@
             android:fontFamily="@font/lato_bold"
             app:title="@string/title_white_black_list"
             app:titleTextColor="@color/colorDarkBlue2"
-            app:popupTheme="@style/AppTheme.PopupOverlay"/>
+            app:popupTheme="@style/AppTheme.PopupOverlay" />
 
     </android.support.design.widget.AppBarLayout>
 

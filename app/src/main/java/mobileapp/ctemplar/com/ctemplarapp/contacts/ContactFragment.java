@@ -34,6 +34,7 @@ import mobileapp.ctemplar.com.ctemplarapp.BaseFragment;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.main.RecycleDeleteSwiper;
 import mobileapp.ctemplar.com.ctemplarapp.main.MainActivityViewModel;
+import mobileapp.ctemplar.com.ctemplarapp.repository.entity.Contact;
 
 public class ContactFragment extends BaseFragment {
 
@@ -80,8 +81,8 @@ public class ContactFragment extends BaseFragment {
                 mLayoutManager.getOrientation());
         recyclerView.addItemDecoration(dividerItemDecoration);
 
-        searchView.onActionViewExpanded();
         searchView.setIconifiedByDefault(false);
+        searchView.clearFocus();
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -203,7 +204,6 @@ public class ContactFragment extends BaseFragment {
 
             default:
                 return super.onOptionsItemSelected(item);
-
         }
         return true;
     }

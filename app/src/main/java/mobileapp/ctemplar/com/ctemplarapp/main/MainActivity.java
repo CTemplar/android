@@ -176,7 +176,7 @@ public class MainActivity extends AppCompatActivity
         loadUserInfo();
 
         // default folder
-        setTitle("Inbox");
+        setTitle(R.string.nav_drawer_inbox);
         mainModel.setCurrentFolder(MainFolderNames.INBOX);
     }
 
@@ -333,31 +333,31 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.nav_inbox) {
             setTitle(R.string.nav_drawer_inbox);
-            toggleFolder = "inbox";
+            toggleFolder = MainFolderNames.INBOX;
         } else if (id == R.id.nav_draft) {
             setTitle(R.string.nav_drawer_draft);
-            toggleFolder = "draft";
+            toggleFolder = MainFolderNames.DRAFT;
         } else if (id == R.id.nav_sent) {
             setTitle(R.string.nav_drawer_sent);
-            toggleFolder = "sent";
+            toggleFolder = MainFolderNames.SENT;
         } else if (id == R.id.nav_outbox) {
             setTitle(R.string.nav_drawer_outbox);
-            toggleFolder = "outbox";
+            toggleFolder = MainFolderNames.OUTBOX;
         } else if (id == R.id.nav_starred) {
             setTitle(R.string.nav_drawer_starred);
-            toggleFolder = "starred";
+            toggleFolder = MainFolderNames.STARRED;
         } else if (id == R.id.nav_archive) {
             setTitle(R.string.nav_drawer_archive);
-            toggleFolder = "archive";
+            toggleFolder = MainFolderNames.ARCHIVE;
         } else if (id == R.id.nav_spam) {
             setTitle(R.string.nav_drawer_spam);
-            toggleFolder = "spam";
+            toggleFolder = MainFolderNames.SPAM;
         } else if (id == R.id.nav_trash) {
             setTitle(R.string.nav_drawer_trash);
-            toggleFolder = "trash";
+            toggleFolder = MainFolderNames.TRASH;
         } else if (id == R.id.nav_contact) {
             setTitle(R.string.nav_drawer_contact);
-            toggleFolder = "contact";
+            toggleFolder = MainFolderNames.CONTACT;
         } else if (id == R.id.nav_settings) {
             Intent settingsScreen = new Intent(this, SettingsActivity.class);
             startActivity(settingsScreen);
