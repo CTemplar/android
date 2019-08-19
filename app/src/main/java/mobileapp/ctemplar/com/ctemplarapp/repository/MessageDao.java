@@ -13,6 +13,7 @@ import static android.arch.persistence.room.OnConflictStrategy.REPLACE;
 
 @Dao
 public interface MessageDao {
+
     @Query("SELECT * FROM messages")
     List<MessageEntity> getAll();
 
