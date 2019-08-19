@@ -1,10 +1,9 @@
-package mobileapp.ctemplar.com.ctemplarapp.contacts;
+package mobileapp.ctemplar.com.ctemplarapp.repository.entity;
 
 import java.util.LinkedList;
 import java.util.List;
 
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.ContactData;
-import mobileapp.ctemplar.com.ctemplarapp.repository.entity.ContactEntity;
 
 public class Contact {
     private long id;

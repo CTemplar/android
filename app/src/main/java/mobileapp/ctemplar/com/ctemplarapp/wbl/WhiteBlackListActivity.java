@@ -112,7 +112,6 @@ public class WhiteBlackListActivity extends BaseActivity {
             View view = inflater.inflate(R.layout.content_whitelist_tab, container, false);
 
             final SearchView searchView = view.findViewById(R.id.whitelist_search);
-            searchView.onActionViewExpanded();
             searchView.setIconifiedByDefault(false);
             searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                 @Override
@@ -222,7 +221,6 @@ public class WhiteBlackListActivity extends BaseActivity {
             View view = inflater.inflate(R.layout.content_blacklist_tab, container, false);
 
             final SearchView searchView = view.findViewById(R.id.blacklist_search);
-            searchView.onActionViewExpanded();
             searchView.setIconifiedByDefault(false);
             searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                 @Override

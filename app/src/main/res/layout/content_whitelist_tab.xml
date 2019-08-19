@@ -10,7 +10,7 @@
         android:id="@+id/whitelist_search"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
+        android:focusable="false"
         app:queryHint="@string/action_search" />
 
     <ScrollView
@@ -22,19 +22,19 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <android.support.v7.widget.RecyclerView android:id="@+id/whitelist_recycler_view"
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/whitelist_recycler_view"
                 app:layoutManager="android.support.v7.widget.LinearLayoutManager"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 tools:listitem="@layout/item_contact_holder"
                 tools:listfooter="@layout/whitelist_footer"
-                android:divider="@drawable/dialog_divider"/>
+                android:divider="@drawable/dialog_divider" />
 
-            <include layout="@layout/whitelist_footer"/>
+            <include layout="@layout/whitelist_footer" />
 
         </LinearLayout>
 
     </ScrollView>
-
 
 </LinearLayout>

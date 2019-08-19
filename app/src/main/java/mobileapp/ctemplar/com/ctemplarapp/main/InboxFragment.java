@@ -1,6 +1,5 @@
 package mobileapp.ctemplar.com.ctemplarapp.main;
 
-import android.app.SearchManager;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
@@ -43,16 +42,15 @@ import mobileapp.ctemplar.com.ctemplarapp.message.SendMessageFragment;
 import mobileapp.ctemplar.com.ctemplarapp.message.ViewMessagesActivity;
 import mobileapp.ctemplar.com.ctemplarapp.message.ViewMessagesFragment;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
+import mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageProvider;
 import timber.log.Timber;
 
-import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.DRAFT;
-import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.INBOX;
-import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.SPAM;
-import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.STARRED;
-import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.TRASH;
 import static mobileapp.ctemplar.com.ctemplarapp.message.ViewMessagesActivity.PARENT_ID;
 import static mobileapp.ctemplar.com.ctemplarapp.message.ViewMessagesFragment.FOLDER_NAME;
+import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.DRAFT;
+import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.SPAM;
+import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.STARRED;
 
 public class InboxFragment extends BaseFragment {
 
@@ -185,25 +183,18 @@ public class InboxFragment extends BaseFragment {
         // Function
         MenuItem emptyFolder = menu.findItem(R.id.action_empty_folder);
         if (currentFolder != null) {
-            boolean inTrash = currentFolder.equals(TRASH);
-            boolean inSpam = currentFolder.equals(SPAM);
-            boolean inDraft = currentFolder.equals(DRAFT);
+            boolean inTrash = currentFolder.equals(MainFolderNames.TRASH);
+            boolean inSpam = currentFolder.equals(MainFolderNames.SPAM);
+            boolean inDraft = currentFolder.equals(MainFolderNames.DRAFT);
             emptyFolder.setVisible((inTrash || inSpam || inDraft) && messagesNotEmpty);
         }
-
         if (getActivity() == null) {
             return;
         }
 
         MenuItem searchItem = menu.findItem(R.id.action_search);
-        SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
-
-        SearchView searchView = null;
-        if (searchItem != null) {
-            searchView = (SearchView) searchItem.getActionView();
-        }
+        SearchView searchView = (SearchView) searchItem.getActionView();
         if (searchView != null) {
-            searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
             searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                 @Override
                 public boolean onQueryTextSubmit(String s) {
@@ -331,7 +322,7 @@ public class InboxFragment extends BaseFragment {
     private void getMessages() {
         currentFolder = mainModel.getCurrentFolder().getValue();
         if (currentFolder != null) {
-            if (currentFolder.equals(STARRED)) {
+            if (currentFolder.equals(MainFolderNames.STARRED)) {
                 mainModel.getStarredMessages(50, 0, 1);
             } else {
                 mainModel.getMessages(50, 0, currentFolder);
@@ -354,7 +345,7 @@ public class InboxFragment extends BaseFragment {
     }
 
     public void handleMessagesList(List<MessageProvider> messages, String folderName) {
-        restartOptionsMenu();
+        //restartOptionsMenu();
         currentFolder = mainModel.getCurrentFolder().getValue();
         messagesNotEmpty = messages != null && !messages.isEmpty();
 
@@ -428,10 +419,10 @@ public class InboxFragment extends BaseFragment {
                                 final MessageProvider deletedMessage = adapter.removeAt(position);
                                 final String name = deletedMessage.getSubject();
 
-                                if (!currentFolderFinal.equals(TRASH)
+                                if (!currentFolderFinal.equals(MainFolderNames.TRASH)
                                         && !currentFolderFinal.equals(SPAM)) {
 
-                                    mainModel.toFolder(deletedMessage.getId(), TRASH);
+                                    mainModel.toFolder(deletedMessage.getId(), MainFolderNames.TRASH);
                                     Snackbar snackbarDelete = Snackbar.make(frameCompose, getResources().getString(R.string.txt_name_removed, name), Snackbar.LENGTH_LONG);
                                     snackbarDelete.setAction(getResources().getString(R.string.action_undo), new View.OnClickListener() {
                                         @Override
@@ -452,9 +443,9 @@ public class InboxFragment extends BaseFragment {
                                 break;
 
                             case R.id.item_message_view_holder_spam:
-                                if (!currentFolder.equals(SPAM)) {
+                                if (!currentFolder.equals(MainFolderNames.SPAM)) {
                                     final MessageProvider spamMessage = adapter.removeAt(position);
-                                    mainModel.toFolder(spamMessage.getId(), SPAM);
+                                    mainModel.toFolder(spamMessage.getId(), MainFolderNames.SPAM);
                                     Snackbar snackbarSpam = Snackbar.make(frameCompose, getResources().getString(R.string.action_spam), Snackbar.LENGTH_LONG);
                                     snackbarSpam.setAction(getResources().getString(R.string.action_undo), new View.OnClickListener() {
                                         @Override
@@ -473,9 +464,9 @@ public class InboxFragment extends BaseFragment {
                                 break;
 
                             case R.id.item_message_view_holder_inbox:
-                                if (currentFolder.equals(SPAM)) {
+                                if (currentFolder.equals(MainFolderNames.SPAM)) {
                                     final MessageProvider notSpamMessage = adapter.removeAt(position);
-                                    mainModel.toFolder(notSpamMessage.getId(), INBOX);
+                                    mainModel.toFolder(notSpamMessage.getId(), MainFolderNames.INBOX);
                                     Snackbar snackbarSpam = Snackbar.make(frameCompose, getResources().getString(R.string.action_moved_to_inbox), Snackbar.LENGTH_LONG);
                                     snackbarSpam.setAction(getResources().getString(R.string.action_undo), new View.OnClickListener() {
                                         @Override
