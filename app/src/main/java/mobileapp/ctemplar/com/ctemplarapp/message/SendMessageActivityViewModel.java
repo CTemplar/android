@@ -88,7 +88,7 @@ public class SendMessageActivityViewModel extends ViewModel {
 
             String[] publicKeys = receiverPublicKeys.toArray(new String[0]);
             content = pgpManager.encryptMessage(content, publicKeys);
-            if (isSubjectEncrypted) {
+            if (isSubjectEncrypted && !subject.isEmpty()) {
                 subject = pgpManager.encryptMessage(subject, publicKeys);
             }
 

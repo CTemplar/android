@@ -8,6 +8,7 @@ import com.didisoft.pgp.KeyPairInformation;
 import com.didisoft.pgp.KeyStore;
 import com.didisoft.pgp.PGPException;
 import com.didisoft.pgp.PGPLib;
+import com.didisoft.pgp.exceptions.NonPGPDataException;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -62,7 +63,7 @@ public class PGPManager {
         return outputMessageStream.toString();
     }
 
-    public String decryptMessage(String message, String privateKey, String password) {
+    public String decryptMessage(String message, String privateKey, String password) throws NonPGPDataException {
 
         ByteArrayInputStream inputMessageStream = new ByteArrayInputStream(message.getBytes());
         ByteArrayInputStream privateKeyStream = new ByteArrayInputStream(privateKey.getBytes());
@@ -70,6 +71,9 @@ public class PGPManager {
 
         try {
             pgpLib.decryptStream(inputMessageStream, privateKeyStream, password, outputMessageStream);
+
+        } catch (NonPGPDataException e) {
+            throw new NonPGPDataException("The supplied data is not a valid OpenPGP message", e);
 
         } catch (IOException | PGPException e) {
             Timber.e("Pgp decrypt error: %s", e.getMessage());
