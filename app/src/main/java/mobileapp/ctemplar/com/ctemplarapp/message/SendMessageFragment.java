@@ -137,6 +137,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
     private SharedPreferences sharedPreferences;
     private SendMessageActivityViewModel mainModel;
     private ProgressDialog sendingProgress;
+    private boolean draftMessage = true;
 
     // COMPOSE OPTIONS
     private long currentMessageId;
@@ -391,27 +392,17 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
             }
         });
 
-        mainModel.getResponseStatus().observe(this, new Observer<ResponseStatus>() {
-
-            @Override
-            public void onChanged(@Nullable ResponseStatus responseStatus) {
-                if (responseStatus == ResponseStatus.RESPONSE_ERROR) {
-                    if (sendingProgress != null) {
-                        sendingProgress.dismiss();
-                    }
-                    Toast.makeText(activity, getResources().getString(R.string.toast_message_not_sent), Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-
         mainModel.getMessagesResult()
                 .observe(this, new Observer<MessagesResult>() {
                     @Override
                     public void onChanged(@Nullable MessagesResult messagesResult) {
                         if (messagesResult == null) {
-                            Toast.makeText(activity, getResources().getString(R.string.toast_message_not_sent), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(activity, getString(R.string.toast_message_not_sent), Toast.LENGTH_SHORT).show();
                         } else {
-                            finish();
+                            String folderName = messagesResult.getFolderName();
+                            if (!folderName.equals(MainFolderNames.DRAFT)) {
+                                finish();
+                            }
                         }
                     }
                 });
@@ -566,6 +557,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
             sendMessageRequest.setDestructDate(AppUtils.datetimeForServer(destructDeliveryInMillis));
         }
 
+        draftMessage = false;
         String messageFolder = SENT;
         boolean messageSent = true;
         if (delayedDeliveryInMillis != null) {
@@ -779,6 +771,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
                 .setNegativeButton(getResources().getString(R.string.action_discard), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
+                                draftMessage = false;
                                 mainModel.deleteMessage(currentMessageId);
                                 dialog.dismiss();
                                 finish();
@@ -886,6 +879,8 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
             bccEmailList = EditTextUtils.getListFromString(bccEmail);
         }
         messageRequestToDraft.setBcc(bccEmailList);
+
+        Toast.makeText(getActivity(), getString(R.string.toast_message_saved_as_draft), Toast.LENGTH_SHORT).show();
         mainModel.updateMessage(currentMessageId, messageRequestToDraft, new ArrayList<String>(), mailboxId);
     }
 
@@ -985,6 +980,14 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
 
             }
         });
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (draftMessage) {
+            sendMessageToDraft();
+        }
     }
 
     private void finish() {
