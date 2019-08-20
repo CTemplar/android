@@ -391,8 +391,10 @@ public class SettingsActivity extends AppCompatActivity {
                         if (myselfResponse != null && myselfResponse.result != null) {
                             MyselfResult myselfResult = myselfResponse.result[0];
                             userIsPrime = myselfResult.isPrime;
-                            setSettingId(myselfResult.id);
                             saveData(myselfResult);
+
+                            SettingsEntity settingsEntity = myselfResult.settings;
+                            setSettingId(settingsEntity.id);
                         }
                     }
 

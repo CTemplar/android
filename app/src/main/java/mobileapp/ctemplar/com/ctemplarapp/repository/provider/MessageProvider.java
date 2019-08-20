@@ -2,6 +2,8 @@ package mobileapp.ctemplar.com.ctemplarapp.repository.provider;
 
 import android.content.Context;
 
+import com.didisoft.pgp.exceptions.NonPGPDataException;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -353,21 +355,26 @@ public class MessageProvider {
     }
 
     private static String decryptContent(String content, long mailboxId) {
+        MailboxEntity mailboxEntity = CTemplarApp.getAppDatabase().mailboxDao().getById(mailboxId);
         String password = CTemplarApp.getInstance()
                         .getSharedPreferences("pref_user", Context.MODE_PRIVATE)
                         .getString("key_password", null);
 
+        if (content == null) {
+            return "";
+        }
+
         PGPManager pgpManager = new PGPManager();
-        String messageContent = "";
-        String privateKey = null;
-        MailboxEntity mailboxEntity = CTemplarApp.getAppDatabase().mailboxDao().getById(mailboxId);
-        if (mailboxEntity != null){
-            privateKey = mailboxEntity.getPrivateKey();
+        if (mailboxEntity != null && password != null) {
+            String privateKey = mailboxEntity.getPrivateKey();
+            try {
+                content = pgpManager.decryptMessage(content, privateKey, password);
+            } catch (NonPGPDataException e) {
+                Timber.e(e);
+            }
         }
-        if (password != null && content != null && privateKey != null) {
-            messageContent = pgpManager.decryptMessage(content, privateKey, password);
-        }
-        return messageContent.replaceAll("<img.+?>", "");
+
+        return content.replaceAll("<img.+?>", "");
     }
 
     private static String decryptSubject(String subject, long mailboxId, boolean isEncrypted) {
