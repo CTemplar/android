@@ -11,6 +11,7 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import butterknife.BindInt;
@@ -41,6 +42,15 @@ public class SignInFragment extends BaseFragment {
 
     @BindView(R.id.fragment_sign_in_password_input_layout)
     TextInputLayout editTextPasswordLayout;
+
+    @BindView(R.id.fragment_sign_in_otp_code_input)
+    TextInputEditText editTextOtpCode;
+
+    @BindView(R.id.fragment_sign_in_otp_code_input_layout)
+    TextInputLayout editTextOtpLayout;
+
+    @BindView(R.id.fragment_sign_in_otp_code_title)
+    TextView textViewOtpTitle;
 
     private LoginActivityViewModel loginActivityModel;
 
@@ -86,14 +96,19 @@ public class SignInFragment extends BaseFragment {
     public void onClickLogin() {
         String username = "";
         String password = "";
+        String otp = null;
+
         if (editTextUsername.getText() != null && editTextPassword.getText() != null) {
             username = editTextUsername.getText().toString().trim()
                     .replaceAll("@.+", "");
             password = editTextPassword.getText().toString().trim();
         }
+        if (!editTextOtpCode.getText().toString().isEmpty()) {
+            otp = editTextOtpCode.getText().toString().trim();
+        }
         if(isValid(username, password)) {
             loginActivityModel.showProgressDialog();
-            loginActivityModel.signIn(username, password);
+            loginActivityModel.signIn(username, password, otp);
         }
     }
 
@@ -154,11 +169,21 @@ public class SignInFragment extends BaseFragment {
                 case RESPONSE_ERROR_AUTH_FAILED:
                     Toast.makeText(getActivity(), getResources().getString(R.string.error_authentication_failed), Toast.LENGTH_LONG).show();
                     break;
+                case RESPONSE_WAIT_OTP:
+                    show2FA();
+                    break;
                 case RESPONSE_NEXT:
                     loginActivityModel.changeAction(LoginActivityActions.CHANGE_ACTIVITY_MAIN);
                     break;
             }
         }
+    }
+
+    private void show2FA() {
+        editTextUsernameLayout.setVisibility(View.GONE);
+        editTextPasswordLayout.setVisibility(View.GONE);
+        textViewOtpTitle.setVisibility(View.VISIBLE);
+        editTextOtpLayout.setVisibility(View.VISIBLE);
     }
 
     private boolean isValid(String email, String password) {

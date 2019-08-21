@@ -60,12 +60,14 @@ public class LoginActivityViewModel extends ViewModel {
         return responseStatus;
     }
 
-    public void signIn(String username, String password) {
+    public void signIn(String username, String password, String otp) {
         userRepository.saveUserName(username);
         userRepository.saveUserPassword(password);
-        userRepository.signIn(new SignInRequest(username, EncodeUtils.encodePassword(username, password)))
-                .subscribe(new Observer<SignInResponse>() {
+        final SignInRequest signInRequest = new SignInRequest(username, EncodeUtils.encodePassword(username, password));
+        signInRequest.setOtp(otp);
 
+        userRepository.signIn(signInRequest)
+                .subscribe(new Observer<SignInResponse>() {
                     @Override
                     public void onError(Throwable e) {
                         if(e instanceof HttpException ) {
@@ -95,8 +97,14 @@ public class LoginActivityViewModel extends ViewModel {
 
                     @Override
                     public void onNext(SignInResponse signInResponse) {
-                        responseStatus.postValue(ResponseStatus.RESPONSE_NEXT);
-                        userRepository.saveUserToken(signInResponse.getToken());
+                        String token = signInResponse.getToken();
+                        boolean is2FA = signInResponse.is2FAEnabled();
+                        if (token == null && is2FA) {
+                            responseStatus.postValue(ResponseStatus.RESPONSE_WAIT_OTP);
+                        } else {
+                            responseStatus.postValue(ResponseStatus.RESPONSE_NEXT);
+                            userRepository.saveUserToken(signInResponse.getToken());
+                        }
                     }
                 });
     }
