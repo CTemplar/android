@@ -2,12 +2,16 @@ package mobileapp.ctemplar.com.ctemplarapp.net.response;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.util.List;
-
 public class SignInResponse {
 
     @SerializedName("token")
-    String token;
+    private String token;
+
+    @SerializedName("status")
+    private boolean status;
+
+    @SerializedName("is_2fa_enabled")
+    private boolean is2FAEnabled;
 
     public String getToken() {
         return token;
@@ -15,5 +19,21 @@ public class SignInResponse {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public boolean isStatus() {
+        return status;
+    }
+
+    public void setStatus(boolean status) {
+        this.status = status;
+    }
+
+    public boolean is2FAEnabled() {
+        return is2FAEnabled;
+    }
+
+    public void set2FAEnabled(boolean is2FAEnabled) {
+        this.is2FAEnabled = is2FAEnabled;
     }
 }
