@@ -41,7 +41,7 @@ public class SendMessageRequest {
     private String delayedDelivery;
 
     @SerializedName("dead_man_duration")
-    private long deadManDuration;
+    private Long deadManDuration;
 
     @SerializedName("send")
     private boolean send;
@@ -201,11 +201,11 @@ public class SendMessageRequest {
         this.destructDate = destructDate;
     }
 
-    public long getDeadManDuration() {
+    public Long getDeadManDuration() {
         return deadManDuration;
     }
 
-    public void setDeadManDuration(long deadManDuration) {
+    public void setDeadManDuration(Long deadManDuration) {
         this.deadManDuration = deadManDuration;
     }
 
