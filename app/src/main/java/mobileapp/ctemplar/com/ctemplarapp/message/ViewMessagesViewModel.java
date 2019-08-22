@@ -10,7 +10,6 @@ import java.util.List;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
-import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageProvider;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.MarkMessageAsReadRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Folders.FoldersResponse;
@@ -20,7 +19,7 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.ManageFoldersRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.MessagesRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MessageEntity;
-import okhttp3.ResponseBody;
+import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageProvider;
 import retrofit2.Response;
 import timber.log.Timber;
 
@@ -186,14 +185,14 @@ public class ViewMessagesViewModel extends ViewModel {
 
     public void moveToFolder(long messageId, String folder) {
         userRepository.toFolder(messageId, folder)
-                .subscribe(new Observer<ResponseBody>() {
+                .subscribe(new Observer<Response<Void>>() {
                     @Override
                     public void onSubscribe(Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(ResponseBody responseBody) {
+                    public void onNext(Response<Void> voidResponse) {
                         moveToFolderStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
                     }
 

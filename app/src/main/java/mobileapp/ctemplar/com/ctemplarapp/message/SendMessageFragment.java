@@ -553,13 +553,13 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
             sendMessageRequest.setIsEncrypted(true);
         }
 
+        draftMessage = false;
+        boolean messageSent = true;
+        String messageFolder = SENT;
+
         if (destructDeliveryInMillis != null) {
             sendMessageRequest.setDestructDate(AppUtils.datetimeForServer(destructDeliveryInMillis));
         }
-
-        draftMessage = false;
-        String messageFolder = SENT;
-        boolean messageSent = true;
         if (delayedDeliveryInMillis != null) {
             sendMessageRequest.setDelayedDelivery(AppUtils.datetimeForServer(delayedDeliveryInMillis));
             messageFolder = OUTBOX;

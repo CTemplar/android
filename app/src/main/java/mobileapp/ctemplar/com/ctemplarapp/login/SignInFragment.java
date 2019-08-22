@@ -22,6 +22,7 @@ import mobileapp.ctemplar.com.ctemplarapp.LoginActivityActions;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
+import timber.log.Timber;
 
 public class SignInFragment extends BaseFragment {
 
@@ -103,7 +104,7 @@ public class SignInFragment extends BaseFragment {
                     .replaceAll("@.+", "");
             password = editTextPassword.getText().toString().trim();
         }
-        if (!editTextOtpCode.getText().toString().isEmpty()) {
+        if (editTextOtpCode.getText() != null && !editTextOtpCode.getText().toString().isEmpty()) {
             otp = editTextOtpCode.getText().toString().trim();
         }
         if(isValid(username, password)) {
