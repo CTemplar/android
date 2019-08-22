@@ -108,7 +108,7 @@ public interface RestService {
     Observable<Response<Void>> deleteSeveralMessages(@Query("id__in") String messagesId);
 
     @PATCH("/emails/messages/")
-    Observable<ResponseBody> toFolder(@Query("id__in") long id, @Body MoveToFolderRequest request);
+    Observable<Response<Void>> toFolder(@Query("id__in") long id, @Body MoveToFolderRequest request);
 
     @GET("/emails/messages/")
     Observable<MessagesResponse> getChainMessages(@Query("id__in") long id);

@@ -196,7 +196,7 @@ public class UserRepository {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<ResponseBody> toFolder(long id, String folder) {
+    public Observable<Response<Void>> toFolder(long id, String folder) {
         return service.toFolder(id, new MoveToFolderRequest(folder))
                 .subscribeOn(io.reactivex.schedulers.Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
