@@ -13,9 +13,13 @@ import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
+import mobileapp.ctemplar.com.ctemplarapp.repository.UserStore;
 import timber.log.Timber;
 
 public class AppUtils {
+
+    private static UserStore userStore = CTemplarApp.getUserStore();
 
     private static final String DATE_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
     private static final String LEFT_DATE_PATTERN = "yyyy-MM-dd'T'HH:mm:ss'Z'";
@@ -130,7 +134,10 @@ public class AppUtils {
     }
 
     public static int timezoneOffsetInMillis() {
-        TimeZone timeZone = TimeZone.getDefault();
+        String userTimeZone = userStore.getTimeZone();
+        TimeZone timeZone = userTimeZone.isEmpty()
+                ? TimeZone.getDefault()
+                : TimeZone.getTimeZone(userTimeZone);
         Calendar calendar = GregorianCalendar.getInstance(timeZone);
         return timeZone.getOffset(calendar.getTimeInMillis());
     }
@@ -143,8 +150,8 @@ public class AppUtils {
                 long joinedDate = date.getTime();
                 long currentTime = System.currentTimeMillis();
                 long timeDifference = (currentTime - joinedDate) / 1000;
-
                 return timeDifference < 14 * 24 * 60 * 60;
+
             } catch (ParseException e) {
                 Timber.e(e);
             }

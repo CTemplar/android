@@ -73,20 +73,24 @@ public class UserRepository {
         userStore = CTemplarApp.getUserStore();
     }
 
-    public String getUserToken() {
-        return userStore.getToken();
+    public void clearToken() {
+        userStore.clearToken();
     }
 
     public void saveUserToken(String token) {
         userStore.saveToken(token);
     }
 
-    public void clearToken() {
-        userStore.clearToken();
+    public String getUserToken() {
+        return userStore.getToken();
     }
 
     public void saveUserPassword(String password) {
         userStore.savePassword(password);
+    }
+
+    public String getUserPassword() {
+        return userStore.getUserPassword();
     }
 
     public void saveUserName(String username) {
@@ -97,8 +101,12 @@ public class UserRepository {
         return userStore.getUsername();
     }
 
-    public String getUserPassword() {
-        return userStore.getUserPassword();
+    public void saveTimeZone(String timezone) {
+        userStore.saveTimeZone(timezone);
+    }
+
+    public String getTimeZone() {
+        return userStore.getTimeZone();
     }
 
     public void logout() {
