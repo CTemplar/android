@@ -370,7 +370,7 @@ public class MessageProvider {
             try {
                 content = pgpManager.decryptMessage(content, privateKey, password);
             } catch (NonPGPDataException e) {
-                Timber.e(e);
+                //
             }
         }
 

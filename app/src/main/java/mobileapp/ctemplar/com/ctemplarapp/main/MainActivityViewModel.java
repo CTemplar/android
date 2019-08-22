@@ -405,21 +405,21 @@ public class MainActivityViewModel extends ViewModel {
 
     public void toFolder(final long messageId, final String folder) {
         userRepository.toFolder(messageId, folder)
-                .subscribe(new Observer<ResponseBody>() {
+                .subscribe(new Observer<Response<Void>>() {
                     @Override
                     public void onSubscribe(Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(ResponseBody responseBody) {
+                    public void onNext(Response<Void> voidResponse) {
                         messagesRepository.updateMessageFolderName(messageId, folder);
                         toFolderStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        Timber.e(e, "Move message");
+                        Timber.e(e);
                     }
 
                     @Override
