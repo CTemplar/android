@@ -2,7 +2,6 @@ package mobileapp.ctemplar.com.ctemplarapp.repository;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Base64;
 
 import mobileapp.ctemplar.com.ctemplarapp.net.entity.UserEntity;
 
@@ -17,6 +16,7 @@ public class UserStoreImpl implements UserStore{
     private static final String KEY_PASSWORD_HASHED = "key_password_hashed";
     private static final String KEY_PUBLIC_KEY = "key_public_key";
     private static final String KEY_PRIVATE_KEY = "key_private_key";
+    private static final String KEY_TIMEZONE = "key_timezone";
 
     private Context context;
     private SharedPreferences preferences;
@@ -106,5 +106,15 @@ public class UserStoreImpl implements UserStore{
     @Override
     public String getUserPassword() {
         return preferences.getString(KEY_PASSWORD, "");
+    }
+
+    @Override
+    public void saveTimeZone(String timezone) {
+        preferences.edit().putString(KEY_TIMEZONE, timezone).apply();
+    }
+
+    @Override
+    public String getTimeZone() {
+        return preferences.getString(KEY_TIMEZONE, "");
     }
 }

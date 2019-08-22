@@ -12,7 +12,6 @@ import io.reactivex.disposables.Disposable;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.DialogState;
 import mobileapp.ctemplar.com.ctemplarapp.SingleLiveEvent;
-import mobileapp.ctemplar.com.ctemplarapp.repository.entity.Contact;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SignInRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.ContactData;
@@ -21,11 +20,15 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.Folders.FoldersResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Mailboxes.MailboxesResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResult;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.MyselfResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.MyselfResult;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.SettingsEntity;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.SignInResponse;
 import mobileapp.ctemplar.com.ctemplarapp.repository.ContactsRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.ManageFoldersRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.MessagesRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
+import mobileapp.ctemplar.com.ctemplarapp.repository.entity.Contact;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.ContactEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MessageEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageProvider;
@@ -53,6 +56,7 @@ public class MainActivityViewModel extends ViewModel {
     MutableLiveData<SignInResponse> signResponse = new MutableLiveData<>();
     MutableLiveData<FoldersResponse> foldersResponse = new MutableLiveData<>();
     MutableLiveData<ResponseBody> unreadFoldersBody = new MutableLiveData<>();
+    private MutableLiveData<MyselfResponse> myselfResponse = new MutableLiveData<>();
 
     public MainActivityViewModel() {
         userRepository = CTemplarApp.getUserRepository();
@@ -119,6 +123,10 @@ public class MainActivityViewModel extends ViewModel {
 
     public LiveData<List<Contact>> getContactsResponse() {
         return contactsResponse;
+    }
+
+    public MutableLiveData<MyselfResponse> getMyselfResponse() {
+        return myselfResponse;
     }
 
     public void logout() {
@@ -500,6 +508,36 @@ public class MainActivityViewModel extends ViewModel {
                     public void onError(Throwable e) {
                         responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
                         Timber.e(e.getCause());
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    public void getUserMyselfInfo() {
+        userRepository.getMyselfInfo()
+                .subscribe(new Observer<MyselfResponse>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(MyselfResponse myselfResponse) {
+                        if (myselfResponse != null) {
+                            MyselfResult myselfResult = myselfResponse.result[0];
+                            SettingsEntity settingsEntity = myselfResult.settings;
+                            String timezone = settingsEntity.timezone;
+                            userRepository.saveTimeZone(timezone);
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Timber.e(e);
                     }
 
                     @Override
