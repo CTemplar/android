@@ -22,11 +22,9 @@ import java.util.Calendar;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
 
-import static mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils.timezoneOffsetInMillis;
-
 public class DestructTimerDialogFragment extends DialogFragment {
 
-    private Calendar calendar = Calendar.getInstance();
+    private Calendar calendar = Calendar.getInstance(AppUtils.getTimeZone());
 
     interface OnScheduleDestructTimerDelivery {
         void onSchedule(Long timeInMilliseconds);
@@ -70,10 +68,9 @@ public class DestructTimerDialogFragment extends DialogFragment {
             public void onClick(View v) {
                 if (validate()) {
                     Calendar timezoneCalendar = Calendar.getInstance();
-                    timezoneCalendar.setTimeInMillis(calendar.getTimeInMillis());
-
-                    int offsetInHours = -timezoneOffsetInMillis() / 1000 / 60 / 60;
-                    timezoneCalendar.add(Calendar.HOUR_OF_DAY, offsetInHours);
+                    timezoneCalendar.setTimeInMillis(
+                            calendar.getTimeInMillis() - AppUtils.timezoneOffsetInMillis()
+                    );
                     onScheduleDestructTimerDelivery.onSchedule(timezoneCalendar.getTimeInMillis());
                     dismiss();
                 }
@@ -99,9 +96,8 @@ public class DestructTimerDialogFragment extends DialogFragment {
                     @Override
                     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                         calendar.set(year, month, dayOfMonth);
-                        if (validate()) {
-                            dateTextView.setText(AppUtils.dateFormat(calendar.getTimeInMillis()));
-                        }
+                        dateTextView.setText(AppUtils.dateFormat(calendar.getTimeInMillis()));
+                        validate();
                     }
                 }, currentYear, currentMonth, currentDayOfMonth);
                 datePickerDialog.show();
@@ -119,9 +115,8 @@ public class DestructTimerDialogFragment extends DialogFragment {
                         int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
 
                         calendar.set(year, month, dayOfMonth, hourOfDay, minute);
-                        if (validate()) {
-                            timeTextView.setText(AppUtils.timeFormat(calendar.getTimeInMillis()));
-                        }
+                        timeTextView.setText(AppUtils.timeFormat(calendar.getTimeInMillis()));
+                        validate();
                     }
                 }, currentHoursOfDay, currentMinute, false);
                 timePickerDialog.show();
@@ -132,7 +127,7 @@ public class DestructTimerDialogFragment extends DialogFragment {
     }
 
     private boolean validate() {
-        Calendar nowCalendar = Calendar.getInstance();
+        Calendar nowCalendar = Calendar.getInstance(AppUtils.getTimeZone());
         if (calendar.getTimeInMillis() < nowCalendar.getTimeInMillis()) {
             calendar = nowCalendar;
             Toast.makeText(getActivity(), getString(R.string.txt_selected_datetime_is_past), Toast.LENGTH_SHORT).show();

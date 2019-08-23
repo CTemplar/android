@@ -133,6 +133,7 @@ Your password is connected to your encryption key, if you change your password t
     <string name="txt_schedule">Schedule</string>
     <string name="txt_encrypt">Encrypt</string>
     <string name="txt_selected_datetime_is_past">Selected datetime is in past</string>
+    <string name="txt_yesterday">Yesterday</string>
 
     <!-- VIEW MESSAGES -->
     <string name="txt_hide_details">View details</string>
