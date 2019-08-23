@@ -17,6 +17,7 @@ import mobileapp.ctemplar.com.ctemplarapp.R;
 import timber.log.Timber;
 
 public class DeadMansDeliveryDialogFragment extends DialogFragment {
+
     private OnScheduleDeadMansDelivery onScheduleDeadMansDelivery;
 
     interface OnScheduleDeadMansDelivery {

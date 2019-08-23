@@ -14,14 +14,9 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.repository.constant.MessageActions;
@@ -29,7 +24,6 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.provider.AttachmentProvider
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageProvider;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.UserDisplayProvider;
 import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
-import timber.log.Timber;
 
 public class ViewMessagesAdapter extends BaseAdapter {
 
@@ -141,7 +135,7 @@ public class ViewMessagesAdapter extends BaseAdapter {
 
         senderTextView.setText(senderDisplay.getName());
         receiverTextView.setText(userDisplayListToNamesString(receiverDisplayList));
-        dateTextView.setText(getStringDate(messageData.getCreatedAt()));
+        dateTextView.setText(AppUtils.messageViewDate(messageData.getCreatedAt()));
 
         // check for folder
         if (folderName != null) {
@@ -266,21 +260,5 @@ public class ViewMessagesAdapter extends BaseAdapter {
             userDisplayList.add(userDisplay);
         }
         return TextUtils.join(", ", userDisplayList);
-    }
-
-    private String getStringDate(String stringDate) {
-        if (stringDate == null) {
-            return "";
-        }
-        DateFormat parseFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault());
-        DateFormat viewFormat = new SimpleDateFormat("MMM d, yyyy',' h:mm a", Locale.getDefault());
-        try {
-            Date date = parseFormat.parse(stringDate);
-            stringDate = viewFormat.format(date);
-
-        } catch (ParseException e) {
-            Timber.e("DateParse error: %s", e.getMessage());
-        }
-        return stringDate;
     }
 }

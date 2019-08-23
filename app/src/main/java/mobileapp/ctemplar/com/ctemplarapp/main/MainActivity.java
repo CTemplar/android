@@ -478,6 +478,7 @@ public class MainActivity extends AppCompatActivity
 
     private void loadUserInfo() {
         mainModel.getMailboxes(20, 0);
+        mainModel.getUserMyselfInfo();
     }
 
     private void handleMainActions(MainActivityActions actions) {
