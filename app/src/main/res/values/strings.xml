@@ -208,6 +208,7 @@ Your password is connected to your encryption key, if you change your password t
     <string name="toast_message_not_sent">Message not sent</string>
     <string name="toast_message_saved_as_draft">Message saved as draft</string>
     <string name="toast_message_not_created">Message not created</string>
+    <string name="toast_message_not_loaded">Message not loaded</string>
     <string name="toast_attachment_upload_start">Attachment uploading started</string>
     <string name="toast_attachment_upload_complete">Attachment uploading complete</string>
     <string name="toast_attachment_unable_read_file">Unable to read file in selected path</string>

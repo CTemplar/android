@@ -18,7 +18,7 @@ import android.support.v7.widget.AppCompatMultiAutoCompleteTextView;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.Html;
-import android.text.TextUtils;
+import android.text.Spanned;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -53,7 +53,9 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResult;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.MyselfResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.MyselfResult;
 import mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames;
+import mobileapp.ctemplar.com.ctemplarapp.repository.entity.AttachmentEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
+import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MessageEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageProvider;
 import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
@@ -66,12 +68,13 @@ import okhttp3.RequestBody;
 import timber.log.Timber;
 
 import static android.app.Activity.RESULT_OK;
+import static mobileapp.ctemplar.com.ctemplarapp.message.SendMessageActivity.MESSAGE_ID;
+import static mobileapp.ctemplar.com.ctemplarapp.message.SendMessageActivity.PARENT_ID;
 import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.OUTBOX;
 import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.SENT;
 
 public class SendMessageFragment extends Fragment implements View.OnClickListener, ActivityInterface {
 
-    private final static String PARENT_ID = SendMessageActivity.PARENT_ID;
     private final static String TAG = SendMessageFragment.class.getSimpleName();
     private final int PICK_FILE_FROM_STORAGE = 1;
     private boolean finished;
@@ -134,13 +137,18 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
     private ImageView sendMessage;
     private RecyclerView messageAttachmentsRecycleView;
 
+    private ImageView sendMessageDestructIco;
+    private ImageView sendMessageDelayedIco;
+    private ImageView sendMessageDeadIco;
+    private ImageView sendMessageAttachmentIco;
+
     private SharedPreferences sharedPreferences;
     private SendMessageActivityViewModel mainModel;
     private ProgressDialog sendingProgress;
     private boolean draftMessage = true;
 
     // COMPOSE OPTIONS
-    private long currentMessageId;
+    private long currentMessageId = -1;
     private Long parentId;
     private Long delayedDeliveryInMillis;
     private Long destructDeliveryInMillis;
@@ -148,6 +156,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
     private EncryptionMessage messageEncryptionResult;
     private boolean userIsPrime;
     private boolean isSubjectEncrypted;
+    private List<String> mailboxAddresses = new ArrayList<>();
 
     private DelayedDeliveryDialogFragment delayedDeliveryDialogFragment = new DelayedDeliveryDialogFragment();
     private DestructTimerDialogFragment destructTimerDialogFragment = new DestructTimerDialogFragment();
@@ -164,7 +173,6 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
             if (getActivity() == null) {
                 return;
             }
-            ImageView sendMessageDelayedIco = getActivity().findViewById(R.id.fragment_send_message_delayed_ico);
             if (timeInMilliseconds == null) {
                 sendMessageDelayedIco.setSelected(false);
             } else {
@@ -177,11 +185,10 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
             = new DestructTimerDialogFragment.OnScheduleDestructTimerDelivery() {
         @Override
         public void onSchedule(Long timeInMilliseconds) {
-            destructDeliveryInMillis = timeInMilliseconds;
             if (getActivity() == null) {
                 return;
             }
-            ImageView sendMessageDestructIco = getActivity().findViewById(R.id.fragment_send_message_destruct_ico);
+            destructDeliveryInMillis = timeInMilliseconds;
             if (timeInMilliseconds == null) {
                 sendMessageDestructIco.setSelected(false);
             } else {
@@ -194,11 +201,10 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
             = new DeadMansDeliveryDialogFragment.OnScheduleDeadMansDelivery() {
         @Override
         public void onSchedule(Long timeInHours) {
-            deadDeliveryInHours = timeInHours;
             if (getActivity() == null) {
                 return;
             }
-            ImageView sendMessageDeadIco = getActivity().findViewById(R.id.fragment_send_message_dead_ico);
+            deadDeliveryInHours = timeInHours;
             if (timeInHours == null) {
                 sendMessageDeadIco.setSelected(false);
             } else {
@@ -212,10 +218,10 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         @Override
         public void onSet(String password, String passwordHint, Integer expireHours) {
             if (password == null && passwordHint == null && expireHours == null) {
-                messageEncryptionResult = null;
                 if (getActivity() == null) {
                     return;
                 }
+                messageEncryptionResult = null;
                 ImageView sendMessageEncryptIco = getActivity().findViewById(R.id.fragment_send_message_encrypt_ico);
                 sendMessageEncryptIco.setSelected(false);
                 return;
@@ -262,6 +268,10 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         toAddIco = root.findViewById(R.id.fragment_send_message_to_add_button);
         sendMessage = root.findViewById(R.id.fragment_send_message_send);
         messageAttachmentsRecycleView = root.findViewById(R.id.fragment_send_message_attachments);
+        sendMessageDestructIco = root.findViewById(R.id.fragment_send_message_destruct_ico);
+        sendMessageDelayedIco = root.findViewById(R.id.fragment_send_message_delayed_ico);
+        sendMessageDeadIco = root.findViewById(R.id.fragment_send_message_dead_ico);
+        sendMessageAttachmentIco = root.findViewById(R.id.fragment_send_message_attachment_ico);
 
 
         // OnClicks
@@ -282,23 +292,20 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
             String bundleSubject = args.getString(Intent.EXTRA_SUBJECT);
             String bundleText = args.getString(Intent.EXTRA_TEXT);
             parentId = args.getLong(PARENT_ID, -1);
+            currentMessageId = args.getLong(MESSAGE_ID, -1);
             if (parentId < 0) {
                 parentId = null;
             }
-
             if (bundleEmails != null && bundleEmails.length > 0) {
-                String emailListString = TextUtils.join(",", bundleEmails);
-                toEmailTextView.setText(emailListString);
+                toEmailTextView.setText(EditTextUtils.getStringFromList(bundleEmails));
             }
             if (bundleCC != null && bundleCC.length > 0) {
                 ccLayout.setVisibility(View.VISIBLE);
-                String ccListString = TextUtils.join(",", bundleCC);
-                ccTextView.setText(ccListString);
+                ccTextView.setText(EditTextUtils.getStringFromList(bundleCC));
             }
             if (bundleBCC != null && bundleBCC.length > 0) {
                 bccLayout.setVisibility(View.VISIBLE);
-                String bccListString = TextUtils.join(",", bundleBCC);
-                bccTextView.setText(bccListString);
+                bccTextView.setText(EditTextUtils.getStringFromList(bundleBCC));
             }
             if (bundleSubject != null && !bundleSubject.isEmpty()) {
                 subjectEditText.setText(bundleSubject);
@@ -328,11 +335,14 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
 
 
         mainModel = ViewModelProviders.of(this).get(SendMessageActivityViewModel.class);
-        createMessage();
+        if (currentMessageId == -1) {
+            createMessage();
+        } else {
+            mainModel.openMessage(currentMessageId);
+        }
 
         int selectedAddress = 0;
         List<MailboxEntity> mailboxEntities = mainModel.getMailboxes();
-        List<String> mailboxAddresses = new ArrayList<>();
         for (int position = 0; position < mailboxEntities.size(); position++) {
             MailboxEntity mailboxEntity = mailboxEntities.get(position);
             if (mailboxEntity.isEnabled) {
@@ -431,6 +441,18 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
                     }
                 });
 
+        mainModel.getOpenMessageResponse().observe(this, new Observer<MessageEntity>() {
+            @Override
+            public void onChanged(@Nullable MessageEntity messageEntity) {
+                if (messageEntity != null) {
+                    loadMessageHandler(messageEntity);
+                } else {
+                    Toast.makeText(activity, getString(R.string.toast_message_not_loaded), Toast.LENGTH_SHORT).show();
+                    finish();
+                }
+            }
+        });
+
         mainModel.uploadAttachmentStatus
                 .observe(this, new Observer<ResponseStatus>() {
                     @Override
@@ -513,6 +535,67 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
 
         mainModel.createMessage(createMessageRequest);
         mainModel.mySelfData();
+    }
+
+    private void loadMessageHandler(MessageEntity messageEntity) {
+        String messageSender = messageEntity.getSender();
+        List<String> messageReceivers = messageEntity.getReceivers();
+        List<String> messageCc = messageEntity.getCc();
+        List<String> messageBcc = messageEntity.getBcc();
+        String messageSubject = messageEntity.getSubject();
+        String messageContent = messageEntity.getContent();
+        String messageDestruct = messageEntity.getDestructDate();
+        String messageDelayed = messageEntity.getDelayedDelivery();
+        String messageDeadMan = messageEntity.getDeadManDuration();
+        List<AttachmentEntity> messageAttachmentList = messageEntity.getAttachments();
+
+        if (messageSender != null && !messageSender.isEmpty()) {
+            int senderPosition = mailboxAddresses.indexOf(messageSender);
+            spinnerFrom.setSelection(senderPosition);
+        }
+        if (messageReceivers != null && messageReceivers.size() > 0) {
+            toEmailTextView.setText(EditTextUtils.getStringFromList(messageReceivers));
+        }
+        if (messageCc != null && messageCc.size() > 0) {
+            ccLayout.setVisibility(View.VISIBLE);
+            ccTextView.setText(EditTextUtils.getStringFromList(messageCc));
+        }
+        if (messageBcc != null && messageBcc.size() > 0) {
+            bccLayout.setVisibility(View.VISIBLE);
+            bccTextView.setText(EditTextUtils.getStringFromList(messageBcc));
+        }
+        if (messageSubject != null && !messageSubject.isEmpty()) {
+            subjectEditText.setText(messageSubject);
+        }
+        if (messageContent != null && !messageContent.isEmpty()) {
+            Spanned messageSpanned = Html.fromHtml(messageContent);
+            composeEditText.setText(messageSpanned);
+        }
+        if (messageDestruct != null && !messageDestruct.isEmpty()) {
+            sendMessageDestructIco.setSelected(true);
+            destructDeliveryInMillis = AppUtils.millisFromServer(messageDestruct);
+        }
+        if (messageDelayed != null && !messageDelayed.isEmpty()) {
+            sendMessageDelayedIco.setSelected(true);
+            delayedDeliveryInMillis = AppUtils.millisFromServer(messageDelayed);
+        }
+        if (messageDeadMan != null && !messageDeadMan.isEmpty()) {
+            sendMessageDeadIco.setSelected(true);
+            deadDeliveryInHours = Long.parseLong(messageDeadMan);
+        }
+        if (messageAttachmentList != null) {
+            for (AttachmentEntity attachmentEntity : messageAttachmentList) {
+                MessageAttachment messageAttachment = new MessageAttachment();
+                messageAttachment.setId(attachmentEntity.getId());
+                messageAttachment.setMessage(attachmentEntity.getMessage());
+                messageAttachment.setContent_id(attachmentEntity.getContentId());
+                messageAttachment.setDocumentLink(attachmentEntity.getDocumentLink());
+                messageSendAttachmentAdapter.addAttachment(messageAttachment);
+            }
+        }
+        if (messageSendAttachmentAdapter.getItemCount() > 0) {
+            sendMessageAttachmentIco.setSelected(true);
+        }
     }
 
     private void handleContactsList(@Nullable ContactsResponse contactsResponse) {
@@ -854,6 +937,16 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         messageRequestToDraft.setSend(false);
         messageRequestToDraft.setMailbox(mailboxId);
         messageRequestToDraft.setSubjectEncrypted(isSubjectEncrypted);
+
+        if (destructDeliveryInMillis != null) {
+            messageRequestToDraft.setDestructDate(AppUtils.datetimeForServer(destructDeliveryInMillis));
+        }
+        if (delayedDeliveryInMillis != null) {
+            messageRequestToDraft.setDelayedDelivery(AppUtils.datetimeForServer(delayedDeliveryInMillis));
+        }
+        if (deadDeliveryInHours != null) {
+            messageRequestToDraft.setDeadManDuration(deadDeliveryInHours);
+        }
 
         List<MessageAttachment> attachments = messageSendAttachmentAdapter.getAttachmentsList();
         if (attachments != null && !attachments.isEmpty()) {

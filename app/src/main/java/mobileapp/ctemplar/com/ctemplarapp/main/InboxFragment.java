@@ -46,6 +46,7 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageProvider;
 import timber.log.Timber;
 
+import static mobileapp.ctemplar.com.ctemplarapp.message.SendMessageActivity.MESSAGE_ID;
 import static mobileapp.ctemplar.com.ctemplarapp.message.ViewMessagesActivity.PARENT_ID;
 import static mobileapp.ctemplar.com.ctemplarapp.message.ViewMessagesFragment.FOLDER_NAME;
 import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.DRAFT;
@@ -290,17 +291,29 @@ public class InboxFragment extends BaseFragment {
         }
         String folderName = mainModel.currentFolder.getValue();
 
-        Intent intent = new Intent(activity, ViewMessagesActivity.class);
-        intent.putExtra(PARENT_ID, parentId);
-        intent.putExtra(FOLDER_NAME, folderName);
+        if (folderName != null && folderName.equals(DRAFT)) {
+            Intent draftIntent = new Intent(activity, SendMessageActivity.class);
+            draftIntent.putExtra(MESSAGE_ID, parentId);
 
-        Fragment fragment = ViewMessagesFragment.newInstance();
-        Bundle bundle = new Bundle();
-        bundle.putLong(PARENT_ID, parentId);
-        bundle.putString(FOLDER_NAME, folderName);
-        fragment.setArguments(bundle);
+            Fragment draftFragment = SendMessageFragment.newInstance();
+            Bundle bundle = new Bundle();
+            bundle.putLong(MESSAGE_ID, parentId);
+            draftFragment.setArguments(bundle);
 
-        activity.showActivityOrFragment(intent, fragment);
+            activity.showActivityOrFragment(draftIntent, draftFragment);
+        } else {
+            Intent intent = new Intent(activity, ViewMessagesActivity.class);
+            intent.putExtra(PARENT_ID, parentId);
+            intent.putExtra(FOLDER_NAME, folderName);
+
+            Fragment fragment = ViewMessagesFragment.newInstance();
+            Bundle bundle = new Bundle();
+            bundle.putLong(PARENT_ID, parentId);
+            bundle.putString(FOLDER_NAME, folderName);
+            fragment.setArguments(bundle);
+
+            activity.showActivityOrFragment(intent, fragment);
+        }
     }
 
     public void handleResponseStatus(ResponseStatus status) {

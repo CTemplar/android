@@ -165,6 +165,17 @@ public class AppUtils {
         return standardFormat.format(timeInMillis);
     }
 
+    public static Long millisFromServer(String stringDate) {
+        DateFormat parseFormat = new SimpleDateFormat(LEFT_DATE_PATTERN, Locale.getDefault());
+        try {
+            Date parseDate = parseFormat.parse(stringDate);
+            return parseDate.getTime();
+        } catch (ParseException e) {
+            Timber.e(e);
+        }
+        return null;
+    }
+
     public static String dateFormat(long timeInMillis) {
         DateFormat dateFormat = new SimpleDateFormat("E, dd MMM yyyy", Locale.getDefault());
         dateFormat.setTimeZone(getTimeZone());
