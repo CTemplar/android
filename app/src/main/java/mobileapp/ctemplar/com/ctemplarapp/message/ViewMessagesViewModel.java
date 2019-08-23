@@ -39,6 +39,22 @@ public class ViewMessagesViewModel extends ViewModel {
         manageFoldersRepository = CTemplarApp.getManageFoldersRepository();
     }
 
+    public MutableLiveData<ResponseStatus> getMoveToFolderStatus() {
+        return moveToFolderStatus;
+    }
+
+    public MutableLiveData<List<MessageProvider>> getMessagesResponse() {
+        return messagesResponse;
+    }
+
+    public MutableLiveData<Boolean> getStarredResponse() {
+        return starredResponse;
+    }
+
+    public MutableLiveData<FoldersResponse> getFoldersResponse() {
+        return foldersResponse;
+    }
+
     public void getChainMessages(long id) {
 
         final MessageEntity parentMessage = messagesRepository.getLocalMessage(id);
@@ -206,21 +222,5 @@ public class ViewMessagesViewModel extends ViewModel {
 
                     }
                 });
-    }
-
-    MutableLiveData<ResponseStatus> getMoveToFolderStatus() {
-        return moveToFolderStatus;
-    }
-
-    MutableLiveData<List<MessageProvider>> getMessagesResponse() {
-        return messagesResponse;
-    }
-
-    MutableLiveData<Boolean> getStarredResponse() {
-        return starredResponse;
-    }
-
-    MutableLiveData<FoldersResponse> getFoldersResponse() {
-        return foldersResponse;
     }
 }
