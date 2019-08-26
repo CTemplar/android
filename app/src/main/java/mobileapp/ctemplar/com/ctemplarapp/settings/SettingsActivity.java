@@ -37,6 +37,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.MyselfResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.MyselfResult;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.SettingsEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
+import mobileapp.ctemplar.com.ctemplarapp.repository.UserStore;
 import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 import mobileapp.ctemplar.com.ctemplarapp.wbl.WhiteBlackListActivity;
@@ -44,10 +45,14 @@ import timber.log.Timber;
 
 public class SettingsActivity extends AppCompatActivity {
     public static final String USER_IS_PRIME = "user_is_prime";
-    private static SharedPreferences sharedPreferences;
+
     private static UserRepository userRepository = CTemplarApp.getUserRepository();
+    private static UserStore userStore = CTemplarApp.getUserStore();
+
     private static PreferenceScreen recoveryEmailPreferenceScreen;
     private static Preference storageLimitPreference;
+    private static SharedPreferences sharedPreferences;
+
     private static boolean userIsPrime;
     private static long defaultMailboxId;
 
@@ -158,6 +163,20 @@ public class SettingsActivity extends AppCompatActivity {
         @Override
         public void onCreatePreferences(Bundle bundle, String rootKey) {
             setPreferencesFromResource(R.xml.notifications_settings, rootKey);
+
+            boolean isEnabled = userStore.getNotificationsEnabled();
+            SwitchPreference switchPreferenceNotificationsEnabled = (SwitchPreference) findPreference(getString(R.string.push_notifications_enabled));
+
+            switchPreferenceNotificationsEnabled.setChecked(isEnabled);
+            switchPreferenceNotificationsEnabled.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    boolean isEnabled = (boolean) newValue;
+                    userStore.setNotificationsEnabled(isEnabled);
+                    return true;
+                }
+            });
+
         }
     }
 
@@ -240,7 +259,6 @@ public class SettingsActivity extends AppCompatActivity {
                 Timber.e("Setting id is not defined");
                 return;
             }
-
             userRepository.updateAutoSaveEnabled(settingId, new AutoSaveContactEnabledRequest(isEnabled))
                     .subscribe(new Observer<SettingsEntity>() {
                         @Override

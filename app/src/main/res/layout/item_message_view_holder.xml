@@ -143,7 +143,7 @@
             android:layout_marginLeft="16dp"
             android:layout_marginStart="16dp"
             android:padding="2dp"
-            android:text="Encrypted subject"
+            android:text="@string/txt_encrypted_subject"
             android:ellipsize="end"
             android:gravity="center"
             android:background="@drawable/ic_message_status_yellow"

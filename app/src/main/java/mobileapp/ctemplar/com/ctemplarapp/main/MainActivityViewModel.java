@@ -131,9 +131,12 @@ public class MainActivityViewModel extends ViewModel {
 
     public void logout() {
         if (userRepository != null) {
-            userRepository.logout();
+            deleteFBToken();
         }
+    }
 
+    public void exit() {
+        userRepository.logout();
         actions.postValue(MainActivityActions.ACTION_LOGOUT);
     }
 
@@ -533,6 +536,32 @@ public class MainActivityViewModel extends ViewModel {
                             String timezone = settingsEntity.timezone;
                             userRepository.saveTimeZone(timezone);
                         }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Timber.e(e);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    public void deleteFBToken() {
+        String token = userRepository.getFirebaseToken();
+        userRepository.deleteFirebaseToken(token)
+                .subscribe(new Observer<Response<Void>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(Response<Void> voidResponse) {
+                        exit();
                     }
 
                     @Override

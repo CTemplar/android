@@ -13,6 +13,9 @@ public interface UserStore {
     void saveToken(String token);
     String getToken();
 
+    void saveFirebaseToken(String token);
+    String getFirebaseToken();
+
     void saveUsername(String username);
     String getUsername();
 
@@ -21,4 +24,7 @@ public interface UserStore {
 
     void saveTimeZone(String timezone);
     String getTimeZone();
+
+    void setNotificationsEnabled(boolean state);
+    boolean getNotificationsEnabled();
 }
