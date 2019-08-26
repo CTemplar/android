@@ -1,5 +1,6 @@
 package mobileapp.ctemplar.com.ctemplarapp.utils;
 
+import android.text.TextUtils;
 import android.util.Patterns;
 
 import java.util.Arrays;
@@ -42,5 +43,13 @@ public class EditTextUtils {
 
     public static List<String> getListFromString(String text) {
         return Arrays.asList(text.split("[, ]+"));
+    }
+
+    public static String getStringFromList(List<String> stringList) {
+        return TextUtils.join(",", stringList);
+    }
+
+    public static String getStringFromList(String[] stringArray) {
+        return TextUtils.join(",", stringArray);
     }
 }

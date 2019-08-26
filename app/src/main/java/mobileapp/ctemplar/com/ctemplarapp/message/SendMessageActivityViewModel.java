@@ -22,8 +22,10 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessageAttachmen
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResult;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.MyselfResponse;
 import mobileapp.ctemplar.com.ctemplarapp.repository.ContactsRepository;
+import mobileapp.ctemplar.com.ctemplarapp.repository.MessagesRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
+import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MessageEntity;
 import mobileapp.ctemplar.com.ctemplarapp.utils.PGPManager;
 import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
@@ -32,6 +34,7 @@ import timber.log.Timber;
 public class SendMessageActivityViewModel extends ViewModel {
 
     UserRepository userRepository;
+    MessagesRepository messagesRepository;
     ContactsRepository contactsRepository;
     MutableLiveData<ResponseStatus> responseStatus = new MutableLiveData<>();
     MutableLiveData<ResponseStatus> uploadAttachmentStatus = new MutableLiveData<>();
@@ -43,10 +46,60 @@ public class SendMessageActivityViewModel extends ViewModel {
     MutableLiveData<KeyResponse> keyResponse = new MutableLiveData<>();
     MutableLiveData<MessagesResult> messageEncryptionResult = new MutableLiveData<>();
     MutableLiveData<MyselfResponse> myselfResponse = new MutableLiveData<>();
+    MutableLiveData<MessageEntity> openMessageResponse = new MutableLiveData<>();
 
     public SendMessageActivityViewModel() {
         userRepository = CTemplarApp.getUserRepository();
+        messagesRepository = MessagesRepository.getInstance();
         contactsRepository = CTemplarApp.getContactsRepository();
+    }
+
+    public List<MailboxEntity> getMailboxes() {
+        return CTemplarApp.getAppDatabase().mailboxDao().getAll();
+    }
+
+    public LiveData<MessagesResult> getMessagesResult() {
+        return messagesResult;
+    }
+
+    public LiveData<ResponseStatus> getResponseStatus() {
+        return responseStatus;
+    }
+
+    public LiveData<ContactsResponse> getContactsResponse() {
+        return contactsResponse;
+    }
+
+    public LiveData<KeyResponse> getKeyResponse() {
+        return keyResponse;
+    }
+
+    public LiveData<MessagesResult> getCreateMessageResponse() {
+        return  createMessageResponse;
+    }
+
+    public LiveData<ResponseStatus> getCreateMessageStatus() {
+        return createMessageStatus;
+    }
+
+    public LiveData<ResponseStatus> getUploadAttachmentStatus() {
+        return uploadAttachmentStatus;
+    }
+
+    public LiveData<MessageAttachment> getUploadAttachmentResponse() {
+        return uploadAttachmentResponse;
+    }
+
+    public LiveData<MessagesResult> getMessageEncryptionResult() {
+        return messageEncryptionResult;
+    }
+
+    public LiveData<MyselfResponse> getMySelfResponse() {
+        return myselfResponse;
+    }
+
+    public LiveData<MessageEntity> getOpenMessageResponse() {
+        return openMessageResponse;
     }
 
     public void createMessage(SendMessageRequest request) {
@@ -73,6 +126,11 @@ public class SendMessageActivityViewModel extends ViewModel {
 
                     }
                 });
+    }
+
+    public void openMessage(long id) {
+        MessageEntity messageEntity = messagesRepository.getLocalMessage(id);
+        openMessageResponse.postValue(messageEntity);
     }
 
     public void updateMessage(long id, SendMessageRequest request, List<String> receiverPublicKeys, long mailboxId) {
@@ -319,49 +377,5 @@ public class SendMessageActivityViewModel extends ViewModel {
 
                     }
                 });
-    }
-
-    public List<MailboxEntity> getMailboxes() {
-        return CTemplarApp.getAppDatabase().mailboxDao().getAll();
-    }
-
-    public LiveData<MessagesResult> getMessagesResult() {
-        return messagesResult;
-    }
-
-    public LiveData<ResponseStatus> getResponseStatus() {
-        return responseStatus;
-    }
-
-    public LiveData<ContactsResponse> getContactsResponse() {
-        return contactsResponse;
-    }
-
-    public LiveData<KeyResponse> getKeyResponse() {
-        return keyResponse;
-    }
-
-    public LiveData<MessagesResult> getCreateMessageResponse() {
-        return  createMessageResponse;
-    }
-
-    public LiveData<ResponseStatus> getCreateMessageStatus() {
-        return createMessageStatus;
-    }
-
-    public LiveData<ResponseStatus> getUploadAttachmentStatus() {
-        return uploadAttachmentStatus;
-    }
-
-    public LiveData<MessageAttachment> getUploadAttachmentResponse() {
-        return uploadAttachmentResponse;
-    }
-
-    public LiveData<MessagesResult> getMessageEncryptionResult() {
-        return messageEncryptionResult;
-    }
-
-    public LiveData<MyselfResponse> getMySelfResponse() {
-        return myselfResponse;
     }
 }
