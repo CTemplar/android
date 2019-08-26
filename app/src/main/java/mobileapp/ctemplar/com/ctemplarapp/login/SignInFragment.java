@@ -14,6 +14,10 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
+
 import butterknife.BindInt;
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -22,7 +26,6 @@ import mobileapp.ctemplar.com.ctemplarapp.LoginActivityActions;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
-import timber.log.Timber;
 
 public class SignInFragment extends BaseFragment {
 
@@ -174,7 +177,7 @@ public class SignInFragment extends BaseFragment {
                     show2FA();
                     break;
                 case RESPONSE_NEXT:
-                    loginActivityModel.changeAction(LoginActivityActions.CHANGE_ACTIVITY_MAIN);
+                    sendFBToken();
                     break;
             }
         }
@@ -185,6 +188,23 @@ public class SignInFragment extends BaseFragment {
         editTextPasswordLayout.setVisibility(View.GONE);
         textViewOtpTitle.setVisibility(View.VISIBLE);
         editTextOtpLayout.setVisibility(View.VISIBLE);
+    }
+
+    private void sendFBToken() {
+        loginActivityModel.getAddFirebaseTokenStatus().observe(this, new Observer<ResponseStatus>() {
+            @Override
+            public void onChanged(@Nullable ResponseStatus responseStatus) {
+                loginActivityModel.changeAction(LoginActivityActions.CHANGE_ACTIVITY_MAIN);
+            }
+        });
+
+        FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(getActivity(), new OnSuccessListener<InstanceIdResult>() {
+            @Override
+            public void onSuccess(InstanceIdResult instanceIdResult) {
+                String token = instanceIdResult.getToken();
+                loginActivityModel.addFirebaseToken(token, "android");
+            }
+        });
     }
 
     private boolean isValid(String email, String password) {

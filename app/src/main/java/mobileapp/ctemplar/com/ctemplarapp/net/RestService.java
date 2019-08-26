@@ -3,6 +3,7 @@ package mobileapp.ctemplar.com.ctemplarapp.net;
 import javax.inject.Singleton;
 
 import io.reactivex.Observable;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.AddFirebaseTokenRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.AddFolderRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.AutoSaveContactEnabledRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.CaptchaVerifyRequest;
@@ -25,6 +26,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.request.SignInRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SignUpRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SignatureRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SubjectEncryptedRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.AddFirebaseTokenResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.CaptchaResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.CaptchaVerifyResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.CheckUsernameResponse;
@@ -85,6 +87,12 @@ public interface RestService {
     @POST("/auth/change-password/")
     Observable<ResponseBody> changePassword(@Body ChangePasswordRequest request);
 
+    @GET("/auth/captcha/")
+    Observable<CaptchaResponse> getCaptcha();
+
+    @POST("/auth/captcha-verify/")
+    Observable<CaptchaVerifyResponse> captchaVerify(@Body CaptchaVerifyRequest request);
+
     @Multipart
     @POST("/emails/attachments/create/")
     Observable<MessageAttachment> uploadAttachment(@Part MultipartBody.Part document, @Part("message") long message);
@@ -134,9 +142,6 @@ public interface RestService {
     @PATCH("/emails/custom-folder/{id}/")
     Observable<FoldersResult> editFolder(@Path("id") long id, @Body EditFolderRequest request);
 
-    @GET("/users/myself/")
-    Observable<MyselfResponse> getMyself();
-
     @GET("/emails/mailboxes/")
     Observable<MailboxesResponse> getMailboxes(@Query("limit") int limit, @Query("offset") int offset);
 
@@ -151,6 +156,21 @@ public interface RestService {
 
     @PATCH("/emails/messages/{id}/")
     Observable<MessagesResult> updateMessage(@Path("id") long id, @Body SendMessageRequest request);
+
+    @PATCH("/emails/mailboxes/{id}/")
+    Observable<MailboxesResult> updateDefaultMailbox(@Path("id") long mailboxId, @Body DefaultMailboxRequest body);
+
+    @PATCH("/emails/mailboxes/{id}/")
+    Observable<MailboxesResult> updateEnabledMailbox(@Path("id") long mailboxId, @Body EnabledMailboxRequest body);
+
+    @PATCH("/emails/mailboxes/{id}/")
+    Observable<SettingsEntity> updateSignature(@Path("id") long mailboxId, @Body SignatureRequest body);
+
+    @GET("/emails/domains/")
+    Observable<DomainsResponse> getDomains();
+
+    @GET("/users/myself/")
+    Observable<MyselfResponse> getMyself();
 
     @PATCH("/users/settings/{id}/")
     Observable<ResponseBody> updateSettings(@Path("id") long id, @Body SettingsRequest request);
@@ -204,18 +224,6 @@ public interface RestService {
     @POST("/users/whitelist/")
     Observable<WhiteListContact> addWhitelistContact(@Body WhiteListContact contact);
 
-    @PATCH("/emails/mailboxes/{id}/")
-    Observable<MailboxesResult> updateDefaultMailbox(@Path("id") long mailboxId, @Body DefaultMailboxRequest body);
-
-    @PATCH("/emails/mailboxes/{id}/")
-    Observable<MailboxesResult> updateEnabledMailbox(@Path("id") long mailboxId, @Body EnabledMailboxRequest body);
-
-    @PATCH("/emails/mailboxes/{id}/")
-    Observable<SettingsEntity> updateSignature(@Path("id") long mailboxId, @Body SignatureRequest body);
-
-    @GET("/emails/domains/")
-    Observable<DomainsResponse> getDomains();
-
     @PATCH("/users/settings/{id}/")
     Observable<SettingsEntity> updateRecoveryEmail(@Path("id") long settingId, @Body RecoveryEmailRequest body);
 
@@ -225,9 +233,9 @@ public interface RestService {
     @PATCH("/users/settings/{id}/")
     Observable<SettingsEntity> updateAutoSaveEnabled(@Path("id") long settingId, @Body AutoSaveContactEnabledRequest request);
 
-    @GET("/auth/captcha/")
-    Observable<CaptchaResponse> getCaptcha();
+    @POST("/users/app-token/")
+    Observable<AddFirebaseTokenResponse> addFirebaseToken(@Body AddFirebaseTokenRequest request);
 
-    @POST("/auth/captcha-verify/")
-    Observable<CaptchaVerifyResponse> captchaVerify(@Body CaptchaVerifyRequest request);
+    @DELETE("/users/app-token/{token}/")
+    Observable<Response<Void>> deleteFirebaseToken(@Path("token") String token);
 }

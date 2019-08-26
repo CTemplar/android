@@ -16,21 +16,26 @@ import mobileapp.ctemplar.com.ctemplarapp.LoginActivityActions;
 import mobileapp.ctemplar.com.ctemplarapp.SingleLiveEvent;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.net.entity.PGPKeyEntity;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.AddFirebaseTokenRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.RecoverPasswordRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SignInRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.AddFirebaseTokenResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.RecoverPasswordResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.SignInResponse;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EncodeUtils;
 import retrofit2.HttpException;
+import timber.log.Timber;
 
 public class LoginActivityViewModel extends ViewModel {
 
     UserRepository userRepository;
+    RecoverPasswordRequest recoverPasswordRequest;
+
     MutableLiveData<LoginActivityActions> actions = new SingleLiveEvent<>();
     MutableLiveData<DialogState> dialogState = new SingleLiveEvent<>();
     MutableLiveData<ResponseStatus> responseStatus = new MutableLiveData<>();
-    RecoverPasswordRequest recoverPasswordRequest;
+    MutableLiveData<ResponseStatus> addFirebaseTokenStatus = new MutableLiveData<>();
 
     public LoginActivityViewModel() {
         userRepository = CTemplarApp.getUserRepository();
@@ -60,6 +65,18 @@ public class LoginActivityViewModel extends ViewModel {
         return responseStatus;
     }
 
+    public void setRecoveryPassword(String username, String email) {
+        recoverPasswordRequest = new RecoverPasswordRequest(username, email);
+    }
+
+    public RecoverPasswordRequest getRecoverPasswordRequest() {
+        return recoverPasswordRequest;
+    }
+
+    public LiveData<ResponseStatus> getAddFirebaseTokenStatus() {
+        return addFirebaseTokenStatus;
+    }
+
     public void signIn(String username, String password, String otp) {
         userRepository.saveUserName(username);
         userRepository.saveUserPassword(password);
@@ -72,13 +89,10 @@ public class LoginActivityViewModel extends ViewModel {
                     public void onError(Throwable e) {
                         if(e instanceof HttpException ) {
                             HttpException exception = (HttpException)e;
-                            switch (exception.code()) {
-                                case 400:
-                                    responseStatus.postValue(ResponseStatus.RESPONSE_ERROR_AUTH_FAILED);
-                                    break;
-                                default:
-                                    responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
-                                    break;
+                            if (exception.code() == 400) {
+                                responseStatus.postValue(ResponseStatus.RESPONSE_ERROR_AUTH_FAILED);
+                            } else {
+                                responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
                             }
                         } else {
                             responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
@@ -102,8 +116,8 @@ public class LoginActivityViewModel extends ViewModel {
                         if (token == null && is2FA) {
                             responseStatus.postValue(ResponseStatus.RESPONSE_WAIT_OTP);
                         } else {
-                            responseStatus.postValue(ResponseStatus.RESPONSE_NEXT);
                             userRepository.saveUserToken(signInResponse.getToken());
+                            responseStatus.postValue(ResponseStatus.RESPONSE_NEXT);
                         }
                     }
                 });
@@ -186,13 +200,10 @@ public class LoginActivityViewModel extends ViewModel {
             public void onError(Throwable e) {
                 if(e instanceof HttpException ) {
                     HttpException exception = (HttpException)e;
-                    switch (exception.code()) {
-                        case 400:
-                            responseStatus.postValue(ResponseStatus.RESPONSE_ERROR_CODE_NOT_MATCH);
-                            break;
-                        default:
-                            responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
-                            break;
+                    if (exception.code() == 400) {
+                        responseStatus.postValue(ResponseStatus.RESPONSE_ERROR_CODE_NOT_MATCH);
+                    } else {
+                        responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
                     }
                 } else {
                     responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
@@ -206,11 +217,29 @@ public class LoginActivityViewModel extends ViewModel {
         });
     }
 
-    public void setRecoveryPassword(String username, String email) {
-        recoverPasswordRequest = new RecoverPasswordRequest(username, email);
-    }
+    public void addFirebaseToken(String token, String platform) {
+        userRepository.addFirebaseToken(new AddFirebaseTokenRequest(token, platform))
+                .subscribe(new Observer<AddFirebaseTokenResponse>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
 
-    public RecoverPasswordRequest getRecoverPasswordRequest() {
-        return recoverPasswordRequest;
+                    }
+
+                    @Override
+                    public void onNext(AddFirebaseTokenResponse response) {
+                        addFirebaseTokenStatus.postValue(ResponseStatus.RESPONSE_NEXT);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        addFirebaseTokenStatus.postValue(ResponseStatus.RESPONSE_NEXT);
+                        Timber.e(e);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
     }
 }
