@@ -146,13 +146,10 @@ public class LoginActivityViewModel extends ViewModel {
                     public void onError(Throwable e) {
                         if(e instanceof HttpException ) {
                             HttpException exception = (HttpException)e;
-                            switch (exception.code()) {
-                                case 400:
-                                    responseStatus.postValue(ResponseStatus.RESPONSE_ERROR_RECOVER_PASS_FAILED);
-                                    break;
-                                default:
-                                    responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
-                                    break;
+                            if (exception.code() == 400) {
+                                responseStatus.postValue(ResponseStatus.RESPONSE_ERROR_RECOVER_PASS_FAILED);
+                            } else {
+                                responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
                             }
                         } else {
                             responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
