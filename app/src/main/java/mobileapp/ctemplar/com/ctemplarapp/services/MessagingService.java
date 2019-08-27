@@ -1,72 +1,122 @@
 package mobileapp.ctemplar.com.ctemplarapp.services;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.media.RingtoneManager;
+import android.os.Build;
+import android.support.v4.app.NotificationCompat;
+
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
 import java.util.Map;
+import java.util.Random;
 
+import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
+import mobileapp.ctemplar.com.ctemplarapp.R;
+import mobileapp.ctemplar.com.ctemplarapp.message.ViewMessagesActivity;
+import mobileapp.ctemplar.com.ctemplarapp.repository.UserStore;
 import timber.log.Timber;
 
+import static mobileapp.ctemplar.com.ctemplarapp.message.ViewMessagesActivity.PARENT_ID;
+import static mobileapp.ctemplar.com.ctemplarapp.message.ViewMessagesFragment.FOLDER_NAME;
+
 public class MessagingService extends FirebaseMessagingService {
+    private Random random = new Random();
+    private UserStore userStore;
 
     public MessagingService() {
-
+        userStore = CTemplarApp.getUserStore();
     }
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
-        // ...
-        // TODO(developer): Handle FCM messages here.
-        // Not getting messages here? See why this may be: https://goo.gl/39bRNJ
         Timber.d("From: %s", remoteMessage.getFrom());
 
-        // Check if message contains a data payload.
         if (remoteMessage.getData().size() > 0) {
             Timber.d("Message data payload: %s", remoteMessage.getData());
-
             Map<String, String> data = remoteMessage.getData();
 
-            for (Map.Entry<String, String> entry : data.entrySet()) {
-                //entry.
+            String subject = data.get("subject");
+            String folder = data.get("folder");
+            String sender = data.get("sender");
+            String messageIdString = data.get("message_id");
+            String parentIdString = data.get("parent_id");
+            String isSubjectEncryptedString = data.get("is_subject_encrypted");
+
+            long messageId = -1;
+            if (messageIdString != null && !messageIdString.isEmpty()) {
+                try {
+                    messageId = Long.parseLong(messageIdString);
+                } catch (NumberFormatException e) {
+                    Timber.e(e);
+                }
             }
-
-            if (/* Check if data needs to be processed by long running job */ true) {
-                // For long-running tasks (10 seconds or more) use Firebase Job Dispatcher.
-                //scheduleJob();
-            } else {
-                // Handle message within 10 seconds
-                //handleNow();
+            long parentId = -1;
+            if (parentIdString != null && !parentIdString.isEmpty()) {
+                try {
+                    parentId = Long.parseLong(parentIdString);
+                } catch (NumberFormatException e) {
+                    Timber.e(e);
+                }
             }
+            boolean isSubjectEncrypted = Boolean.parseBoolean(isSubjectEncryptedString);
 
+            boolean isNotificationsEnabled = userStore.getNotificationsEnabled();
+            if (isNotificationsEnabled) {
+                sendNotification(sender, subject, folder, messageId, parentId, isSubjectEncrypted);
+            }
         }
-
-        // Check if message contains a notification payload.
-        if (remoteMessage.getNotification() != null) {
-            Timber.d("Message Notification Body: %s", remoteMessage.getNotification().getBody());
-        }
-
-        // notificationId is a unique int for each notification that you must define
-
-        // Also if you intend on generating your own notifications as a result of a received FCM
-        // message, here is where that should be initiated. See sendNotification method below.
     }
 
-    /**
-     * Called if InstanceID token is updated. This may occur if the security of
-     * the previous token had been compromised. Note that this is called when the InstanceID token
-     * is initially generated so this is where you would retrieve the token.
-     */
-    @Override
-    public void onNewToken(String token) {
-        Timber.d("Refreshed token: %s", token);
+    private void sendNotification(String sender, String subject, String folder, long messageId, long parentId, boolean isSubjectEncrypted) {
+        long id = (parentId == -1) ? messageId : parentId;
+        String content = (isSubjectEncrypted) ? getString(R.string.txt_encrypted_subject) : subject;
 
-        // If you want to send messages to this application instance or
-        // manage this apps subscriptions on the server side, send the
-        // Instance ID token to your app server.
-        sendRegistrationToServer(token);
-    }
+        Bitmap icon = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
+        String channelId = "ctemplar";
+        String channelName = "messages";
 
-    private void sendRegistrationToServer(String token) {
-        Timber.e("TOKEN: %s", token);
+        Intent intent = new Intent(this, ViewMessagesActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.putExtra(PARENT_ID, id);
+        intent.putExtra(FOLDER_NAME, folder);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
+
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, channelId)
+                .setContentTitle(sender)
+                .setContentText(content)
+                .setAutoCancel(true)
+                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+                .setContentIntent(pendingIntent)
+                .setContentInfo(sender)
+                .setLargeIcon(icon)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setDefaults(NotificationCompat.DEFAULT_VIBRATE)
+                .setSmallIcon(R.mipmap.ic_launcher);
+
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(
+                    channelId, channelName, NotificationManager.IMPORTANCE_HIGH
+            );
+            channel.setDescription(getString(R.string.app_name));
+            channel.setShowBadge(true);
+            channel.canShowBadge();
+            channel.enableLights(true);
+            channel.setLightColor(Color.RED);
+            channel.enableVibration(true);
+            notificationManager.createNotificationChannel(channel);
+        }
+
+        int randomId = random.nextInt(1000);
+        notificationManager.notify(randomId, notificationBuilder.build());
     }
 }

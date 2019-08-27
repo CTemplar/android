@@ -217,8 +217,11 @@ public class ViewMessagesAdapter extends BaseAdapter {
 
         List<AttachmentProvider> attachmentsList = messageData.getAttachments();
 
-        RecyclerView.LayoutManager mLayoutManager
-                = new LinearLayoutManager(attachmentsRecyclerView.getContext(), LinearLayoutManager.HORIZONTAL, false);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(
+                attachmentsRecyclerView.getContext(),
+                LinearLayoutManager.HORIZONTAL,
+                false
+        );
         attachmentsRecyclerView.setLayoutManager(mLayoutManager);
 
         messageAttachmentAdapter.setAttachmentsList(attachmentsList);

@@ -11,12 +11,14 @@ public class UserStoreImpl implements UserStore{
 
     private static final String PREF_USER = "pref_user";
     private static final String KEY_USER_TOKEN = "key_user_token";
+    private static final String KEY_FIREBASE_TOKEN = "key_firebase_token";
     private static final String KEY_USERNAME = "key_username";
     private static final String KEY_PASSWORD = "key_password";
     private static final String KEY_PASSWORD_HASHED = "key_password_hashed";
     private static final String KEY_PUBLIC_KEY = "key_public_key";
     private static final String KEY_PRIVATE_KEY = "key_private_key";
     private static final String KEY_TIMEZONE = "key_timezone";
+    private static final String KEY_NOTIFICATIONS_ENABLED = "key_notifications_enabled";
 
     private Context context;
     private SharedPreferences preferences;
@@ -25,7 +27,6 @@ public class UserStoreImpl implements UserStore{
         if(instance == null) {
             instance = new UserStoreImpl(context);
         }
-
         return instance;
     }
 
@@ -35,34 +36,34 @@ public class UserStoreImpl implements UserStore{
     }
 
     @Override
+    public void saveToken(String token) {
+        preferences.edit().putString(KEY_USER_TOKEN, token).commit();
+    }
+
+    @Override
     public String getToken() {
         return preferences.getString(KEY_USER_TOKEN, "");
     }
 
     @Override
-    public void saveToken(String token) {
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putString(KEY_USER_TOKEN, token);
-        editor.commit();
+    public void saveFirebaseToken(String token) {
+        preferences.edit().putString(KEY_FIREBASE_TOKEN, token).commit();
     }
 
     @Override
-    //TODO: store in db instead
-    public void savePassword(String password) {
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putString(KEY_PASSWORD, password);
-        editor.commit();
+    public String getFirebaseToken() {
+        return preferences.getString(KEY_FIREBASE_TOKEN, "");
     }
 
     @Override
     public void saveUserPref(String username, String pass, String passHashed, String privateKey, String publicKey) {
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putString(KEY_USERNAME, username);
-        editor.putString(KEY_PASSWORD, pass);
-        editor.putString(KEY_PASSWORD_HASHED, passHashed);
-        editor.putString(KEY_PRIVATE_KEY, privateKey);
-        editor.putString(KEY_PUBLIC_KEY, publicKey);
-        editor.commit();
+        preferences.edit()
+        .putString(KEY_USERNAME, username)
+        .putString(KEY_PASSWORD, pass)
+        .putString(KEY_PASSWORD_HASHED, passHashed)
+        .putString(KEY_PRIVATE_KEY, privateKey)
+        .putString(KEY_PUBLIC_KEY, publicKey)
+        .commit();
     }
 
     @Override
@@ -74,33 +75,32 @@ public class UserStoreImpl implements UserStore{
         entity.setPrivateKey(preferences.getString(KEY_PRIVATE_KEY, ""));
         entity.setPublicKey(preferences.getString(KEY_PUBLIC_KEY, ""));
         entity.setToken(preferences.getString(KEY_USER_TOKEN, ""));
-        return null;
+        return entity;
     }
 
     @Override
     public void clearToken() {
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.remove(KEY_USER_TOKEN);
-        editor.commit();
+        preferences.edit().remove(KEY_USER_TOKEN).commit();
     }
 
     @Override
     public void logout() {
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.clear();
-        editor.commit();
+        preferences.edit().clear().commit();
     }
 
     @Override
     public void saveUsername(String username) {
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putString(KEY_USERNAME, username);
-        editor.commit();
+        preferences.edit().putString(KEY_USERNAME, username).commit();
     }
 
     @Override
     public String getUsername() {
-        return preferences.getString(KEY_USERNAME, "<Undefined>");
+        return preferences.getString(KEY_USERNAME, "");
+    }
+
+    @Override
+    public void savePassword(String password) {
+        preferences.edit().putString(KEY_PASSWORD, password).commit();
     }
 
     @Override
@@ -110,11 +110,21 @@ public class UserStoreImpl implements UserStore{
 
     @Override
     public void saveTimeZone(String timezone) {
-        preferences.edit().putString(KEY_TIMEZONE, timezone).apply();
+        preferences.edit().putString(KEY_TIMEZONE, timezone).commit();
     }
 
     @Override
     public String getTimeZone() {
         return preferences.getString(KEY_TIMEZONE, "");
+    }
+
+    @Override
+    public void setNotificationsEnabled(boolean state) {
+        preferences.edit().putBoolean(KEY_NOTIFICATIONS_ENABLED, state).commit();
+    }
+
+    @Override
+    public boolean getNotificationsEnabled() {
+        return preferences.getBoolean(KEY_NOTIFICATIONS_ENABLED, false);
     }
 }
