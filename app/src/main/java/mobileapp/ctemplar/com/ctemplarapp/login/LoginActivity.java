@@ -19,6 +19,7 @@ import mobileapp.ctemplar.com.ctemplarapp.DialogState;
 import mobileapp.ctemplar.com.ctemplarapp.LoginActivityActions;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.main.MainActivity;
+import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 
 public class LoginActivity extends BaseFragmentActivity {
 
@@ -61,6 +62,15 @@ public class LoginActivity extends BaseFragmentActivity {
                 handleDialogState(dialogState);
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        ResponseStatus responseStatus = loginViewModel.getResponseStatus().getValue();
+        if (responseStatus != ResponseStatus.RESPONSE_WAIT_OTP) {
+            return;
+        }
+        super.onBackPressed();
     }
 
     public void blockUI() {
