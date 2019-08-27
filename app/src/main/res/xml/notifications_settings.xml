@@ -3,6 +3,6 @@
 
     <SwitchPreference
         android:title="@string/settings_enable_notifications"
-        android:key="push_notifications_enabled" />
+        android:key="@string/push_notifications_enabled" />
 
 </PreferenceScreen>

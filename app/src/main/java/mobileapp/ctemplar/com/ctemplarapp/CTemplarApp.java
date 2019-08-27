@@ -49,7 +49,6 @@ public class CTemplarApp extends MultiDexApplication {
         if(instance == null) {
             instance = new CTemplarApp();
         }
-
         return instance;
     }
 
