@@ -90,7 +90,8 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesView
 
         // check for children count
         if (message.isHasChildren()) {
-            holder.txtChildren.setText(String.valueOf(message.getChildrenCount()));
+            int chainCount = message.getChildrenCount() + 1;
+            holder.txtChildren.setText(String.valueOf(chainCount));
             holder.txtChildren.setVisibility(View.VISIBLE);
         } else {
             holder.txtChildren.setVisibility(View.GONE);
