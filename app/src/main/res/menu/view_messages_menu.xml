@@ -7,11 +7,6 @@
         android:title="@string/menu_spam"
         app:showAsAction="always" />
     <item
-        android:id="@+id/menu_view_not_spam"
-        android:icon="@drawable/icon_unread"
-        android:title="@string/menu_not_spam"
-        app:showAsAction="always" />
-    <item
         android:id="@+id/menu_view_move"
         android:icon="@drawable/ic_move"
         android:title="@string/menu_move"
@@ -21,6 +16,11 @@
         android:icon="@drawable/ic_trash"
         android:title="@string/menu_trash"
         app:showAsAction="always" />
+    <item
+        android:id="@+id/menu_view_not_spam"
+        android:icon="@drawable/icon_unread"
+        android:title="@string/menu_not_spam"
+        app:showAsAction="never" />
     <item
         android:id="@+id/menu_view_inbox"
         android:title="@string/menu_move_to_inbox"

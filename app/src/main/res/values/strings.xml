@@ -49,7 +49,7 @@
     <string name="menu_save">Save</string>
     <string name="menu_edit">Edit</string>
     <string name="menu_spam">Spam</string>
-    <string name="menu_not_spam">Not spam</string>
+    <string name="menu_not_spam">Mark not spam</string>
     <string name="menu_move">Move</string>
     <string name="menu_trash">Trash</string>
     <string name="menu_move_to_inbox">Move to inbox</string>
@@ -268,6 +268,7 @@ Your password is connected to your encryption key, if you change your password t
     <!-- WHITE-BLACK LIST -->
     <string name="adding_blacklist_contact_error">Error adding contact to blacklist</string>
     <string name="adding_whitelist_contact_error">Error adding contact to whitelist</string>
+    <string name="added_to_whitelist">Email added to whitelist</string>
     <string name="title_contact_name">Contact name</string>
     <string name="title_contact_email">Contact email</string>
     <string name="title_add_to_blacklist">Add to blacklist</string>
