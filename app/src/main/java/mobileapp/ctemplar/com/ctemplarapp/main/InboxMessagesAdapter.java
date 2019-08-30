@@ -62,13 +62,23 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesView
     @Override
     public void onBindViewHolder(@NonNull final InboxMessagesViewHolder holder, int position) {
         final MessageProvider message = filteredList.get(position);
+        String currentFolder = mainModel.getCurrentFolder().getValue();
 
-        UserDisplayProvider senderDisplay = message.getSenderDisplay();
-        String name = senderDisplay.getName();
+        List<UserDisplayProvider> userDisplayList = new ArrayList<>();
+        if (currentFolder != null && currentFolder.equals(MainFolderNames.SENT)) {
+            userDisplayList.addAll(message.getReceiverDisplayList());
+            userDisplayList.addAll(message.getCcDisplayList());
+            userDisplayList.addAll(message.getBccDisplayList());
+        }
+        if (userDisplayList.isEmpty()) {
+            userDisplayList.add(message.getSenderDisplay());
+        }
+        UserDisplayProvider userDisplay = userDisplayList.get(0);
+        String name = userDisplay.getName();
         if (name != null && !name.isEmpty()) {
-            holder.txtUsername.setText(senderDisplay.getName());
+            holder.txtUsername.setText(userDisplay.getName());
         } else {
-            holder.txtUsername.setText(senderDisplay.getEmail());
+            holder.txtUsername.setText(userDisplay.getEmail());
         }
 
         holder.foreground.setOnClickListener(new View.OnClickListener() {
