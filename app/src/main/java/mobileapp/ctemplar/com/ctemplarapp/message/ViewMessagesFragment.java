@@ -53,7 +53,9 @@ import mobileapp.ctemplar.com.ctemplarapp.BuildConfig;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.main.MainActivity;
 import mobileapp.ctemplar.com.ctemplarapp.main.MainActivityViewModel;
+import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageProvider;
+import mobileapp.ctemplar.com.ctemplarapp.repository.provider.UserDisplayProvider;
 import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.PermissionCheck;
 import timber.log.Timber;
@@ -234,6 +236,17 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
                 parentMessage.setStarred(starred);
             }
         });
+        modelViewMessages.getAddWhitelistStatus().observe(this, new Observer<ResponseStatus>() {
+            @Override
+            public void onChanged(@Nullable ResponseStatus responseStatus) {
+                if (responseStatus == ResponseStatus.RESPONSE_COMPLETE) {
+                    Toast.makeText(getActivity(), getString(R.string.added_to_whitelist), Toast.LENGTH_SHORT).show();
+                    getActivity().onBackPressed();
+                } else {
+                    Toast.makeText(getActivity(), getString(R.string.error_server), Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
 
         BroadcastReceiver onComplete = new BroadcastReceiver() {
             public void onReceive(Context ctx, Intent intent) {
@@ -333,11 +346,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
                 Toast.makeText(getActivity(), getResources().getString(R.string.toast_message_marked_unread), Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.menu_view_move:
-                MoveDialogFragment moveDialogFragment = new MoveDialogFragment();
-                Bundle moveFragmentBundle = new Bundle();
-                moveFragmentBundle.putLong(PARENT_ID, parentMessage.getId());
-                moveDialogFragment.setArguments(moveFragmentBundle);
-                moveDialogFragment.show(getActivity().getSupportFragmentManager(), "MoveDialogFragment");
+                showMoveDialog();
                 return true;
             case android.R.id.home:
                 Activity activity = getActivity();
@@ -392,17 +401,28 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
             public void onDismissed(Snackbar transientBottomBar, int event) {
                 if (event != DISMISS_EVENT_ACTION) {
                     mainModel.toFolder(parentMessage.getId(), folder);
-
-                    Activity activity = getActivity();
-                    if (activity != null) {
-                        activity.onBackPressed();
-                    }
+                    markNotSpam();
                 }
                 unlockUI();
             }
         });
         snackbar.setActionTextColor(Color.YELLOW);
         snackbar.show();
+    }
+
+    private void markNotSpam() {
+        UserDisplayProvider senderDisplay = parentMessage.getSenderDisplay();
+        String senderName = senderDisplay.getName();
+        String senderEmail = senderDisplay.getEmail();
+        modelViewMessages.addWhitelistContact(senderName, senderEmail);
+    }
+
+    private void showMoveDialog() {
+        MoveDialogFragment moveDialogFragment = new MoveDialogFragment();
+        Bundle moveFragmentBundle = new Bundle();
+        moveFragmentBundle.putLong(PARENT_ID, parentMessage.getId());
+        moveDialogFragment.setArguments(moveFragmentBundle);
+        moveDialogFragment.show(getActivity().getSupportFragmentManager(), "MoveDialogFragment");
     }
 
     private void blockUI() {

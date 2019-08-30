@@ -46,7 +46,7 @@ public class AddWhitelistContactActivity extends BaseActivity {
                         if (responseStatus == ResponseStatus.RESPONSE_COMPLETE) {
                             onBackPressed();
                         } else {
-                            Toast.makeText(AddWhitelistContactActivity.this, getResources().getString(R.string.adding_whitelist_contact_error), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(AddWhitelistContactActivity.this, getString(R.string.adding_whitelist_contact_error), Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
