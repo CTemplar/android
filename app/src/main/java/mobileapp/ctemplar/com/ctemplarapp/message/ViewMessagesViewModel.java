@@ -15,6 +15,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.request.MarkMessageAsReadRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Folders.FoldersResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResult;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.WhiteListContact;
 import mobileapp.ctemplar.com.ctemplarapp.repository.ManageFoldersRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.MessagesRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
@@ -24,14 +25,17 @@ import retrofit2.Response;
 import timber.log.Timber;
 
 public class ViewMessagesViewModel extends ViewModel {
+
     private UserRepository userRepository;
     private MessagesRepository messagesRepository;
     private ManageFoldersRepository manageFoldersRepository;
+
     private MutableLiveData<ResponseStatus> responseStatus = new MutableLiveData<>();
     private MutableLiveData<List<MessageProvider>> messagesResponse = new MutableLiveData<>();
     private MutableLiveData<Boolean> starredResponse = new MutableLiveData<>();
     private MutableLiveData<FoldersResponse> foldersResponse = new MutableLiveData<>();
     private MutableLiveData<ResponseStatus> moveToFolderStatus = new MutableLiveData<>();
+    private MutableLiveData<ResponseStatus> addWhitelistStatus = new MutableLiveData<>();
 
     public ViewMessagesViewModel() {
         userRepository = UserRepository.getInstance();
@@ -53,6 +57,10 @@ public class ViewMessagesViewModel extends ViewModel {
 
     public MutableLiveData<FoldersResponse> getFoldersResponse() {
         return foldersResponse;
+    }
+
+    public MutableLiveData<ResponseStatus> getAddWhitelistStatus() {
+        return addWhitelistStatus;
     }
 
     public void getChainMessages(long id) {
@@ -215,6 +223,32 @@ public class ViewMessagesViewModel extends ViewModel {
                     @Override
                     public void onError(Throwable e) {
                         Timber.e(e, "Move message");
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    public void addWhitelistContact(String name, String email) {
+        userRepository.addWhitelistContact(new WhiteListContact(name, email))
+                .subscribe(new Observer<WhiteListContact>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(WhiteListContact whiteListContact) {
+                        addWhitelistStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
+                        Timber.e(e);
                     }
 
                     @Override
