@@ -29,6 +29,7 @@ import mobileapp.ctemplar.com.ctemplarapp.filters.FiltersActivity;
 import mobileapp.ctemplar.com.ctemplarapp.folders.ManageFoldersActivity;
 import mobileapp.ctemplar.com.ctemplarapp.mailboxes.MailboxesActivity;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.AutoSaveContactEnabledRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.ContactsEncryptionRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.RecoveryEmailRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SignatureRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SubjectEncryptedRequest;
@@ -164,10 +165,7 @@ public class SettingsActivity extends AppCompatActivity {
         public void onCreatePreferences(Bundle bundle, String rootKey) {
             setPreferencesFromResource(R.xml.notifications_settings, rootKey);
 
-            boolean isEnabled = userStore.getNotificationsEnabled();
             SwitchPreference switchPreferenceNotificationsEnabled = (SwitchPreference) findPreference(getString(R.string.push_notifications_enabled));
-
-            switchPreferenceNotificationsEnabled.setChecked(isEnabled);
             switchPreferenceNotificationsEnabled.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
@@ -231,6 +229,25 @@ public class SettingsActivity extends AppCompatActivity {
                     Toast.makeText(getActivity(), getString(R.string.toast_subject_encryption_changed), Toast.LENGTH_SHORT).show();
                     boolean value = (boolean) newValue;
                     updateSubjectEncryption(value);
+                    return true;
+                }
+            });
+        }
+    }
+
+    public static class ContactsEncryptionFragment extends BasePreferenceFragment {
+        @Override
+        public void onCreatePreferences(Bundle bundle, String rootKey) {
+            setPreferencesFromResource(R.xml.contacts_encryption_settings, rootKey);
+
+            SwitchPreference contactsEncryptionSwitchPreference = (SwitchPreference) findPreference(getString(R.string.contacts_encryption_enabled));
+            contactsEncryptionSwitchPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    Toast.makeText(getActivity(), getString(R.string.toast_contacts_encryption_changed), Toast.LENGTH_SHORT).show();
+                    boolean value = (boolean) newValue;
+                    userStore.setContactsEncryptionEnabled(value);
+                    updateContactsEncryption(value);
                     return true;
                 }
             });
@@ -436,6 +453,8 @@ public class SettingsActivity extends AppCompatActivity {
         String usedStorage = AppUtils.usedStorage(settingsEntity.getUsedStorage());
         String allocatedStorage = AppUtils.usedStorage(settingsEntity.getAllocatedStorage());
 
+        boolean isNotificationsEnabled = userStore.getNotificationsEnabled();
+
         storageLimitPreference.setSummary(getString(
                 R.string.storage_limit_info,
                 usedStorage,
@@ -447,6 +466,8 @@ public class SettingsActivity extends AppCompatActivity {
                 .putString(getString(R.string.signature), mailboxesResult.getSignature())
                 .putBoolean(getString(R.string.auto_save_contacts_enabled), settingsEntity.saveContacts)
                 .putBoolean(getString(R.string.subject_encryption_enabled), settingsEntity.isSubjectEncrypted)
+                .putBoolean(getString(R.string.contacts_encryption_enabled), settingsEntity.isContactsEncrypted)
+                .putBoolean(getString(R.string.push_notifications_enabled), isNotificationsEnabled)
                 .apply();
     }
 
@@ -500,6 +521,38 @@ public class SettingsActivity extends AppCompatActivity {
                     @Override
                     public void onNext(SettingsEntity settingsEntity) {
                         Timber.i("Subject encryption updated");
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Timber.e(e);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    private static void updateContactsEncryption(boolean isContactsEncryption) {
+        long settingId = getSettingId();
+        if (settingId == -1) {
+            Timber.e("Setting id is not defined");
+            return;
+        }
+
+        ContactsEncryptionRequest contactsEncryptionRequest = new ContactsEncryptionRequest(isContactsEncryption);
+        userRepository.updateContactsEncryption(settingId, contactsEncryptionRequest)
+                .subscribe(new Observer<SettingsEntity>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(SettingsEntity settingsEntity) {
+                        Timber.i("Contacts encryption updated");
                     }
 
                     @Override

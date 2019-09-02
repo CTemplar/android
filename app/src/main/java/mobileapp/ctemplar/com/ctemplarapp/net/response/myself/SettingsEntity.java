@@ -52,6 +52,9 @@ public class SettingsEntity {
     @SerializedName("is_subject_encrypted")
     public boolean isSubjectEncrypted;
 
+    @SerializedName("is_contacts_encrypted")
+    public boolean isContactsEncrypted;
+
     @SerializedName("stripe_customer_code")
     public String stripeCustomerCode;
 
@@ -97,6 +100,10 @@ public class SettingsEntity {
 
     public boolean isSubjectEncrypted() {
         return isSubjectEncrypted;
+    }
+
+    public boolean isContactsEncrypted() {
+        return isContactsEncrypted;
     }
 
     public long getAllocatedStorage() {

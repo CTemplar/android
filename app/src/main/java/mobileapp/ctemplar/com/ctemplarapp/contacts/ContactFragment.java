@@ -35,8 +35,12 @@ import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.main.RecycleDeleteSwiper;
 import mobileapp.ctemplar.com.ctemplarapp.main.MainActivityViewModel;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.Contact;
+import timber.log.Timber;
 
 public class ContactFragment extends BaseFragment {
+
+    private MainActivityViewModel mainModel;
+    private ContactAdapter contactAdapter;
 
     @BindView(R.id.fragment_contact_recycler_view)
     RecyclerView recyclerView;
@@ -52,10 +56,6 @@ public class ContactFragment extends BaseFragment {
 
     @BindView(R.id.fragment_contact_search)
     SearchView searchView;
-
-    private ContactAdapter adapter;
-
-    private MainActivityViewModel mainModel;
 
     @Override
     protected int getLayoutId() {
@@ -91,7 +91,7 @@ public class ContactFragment extends BaseFragment {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                adapter.filter(newText);
+                contactAdapter.filter(newText);
                 return false;
             }
         });
@@ -107,8 +107,8 @@ public class ContactFragment extends BaseFragment {
         mainModel.getContacts(200, 0);
     }
 
-    private void handleContactsList(@Nullable List<Contact> contacts) {
-        if (contacts == null || contacts.size() == 0) {
+    private void handleContactsList(@Nullable List<Contact> contactList) {
+        if (contactList == null || contactList.isEmpty()) {
             return;
         }
 
@@ -116,11 +116,10 @@ public class ContactFragment extends BaseFragment {
         txtEmpty.setVisibility(View.GONE);
         frameCompose.setVisibility(View.GONE);
 
-        List<Contact> contactsList = new LinkedList<>();
-        contactsList.addAll(contacts);
+        List<Contact> contactsList = new LinkedList<>(contactList);
 
-        adapter = new ContactAdapter(contactsList);
-        adapter.getOnClickSubject()
+        contactAdapter = new ContactAdapter(contactsList);
+        contactAdapter.getOnClickSubject()
                 .subscribeOn(io.reactivex.schedulers.Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new io.reactivex.Observer<Long>() {
@@ -141,7 +140,7 @@ public class ContactFragment extends BaseFragment {
 
                     @Override
                     public void onError(Throwable e) {
-
+                        Timber.e(e);
                     }
 
                     @Override
@@ -149,14 +148,15 @@ public class ContactFragment extends BaseFragment {
 
                     }
                 });
-        recyclerView.setAdapter(adapter);
+
+        recyclerView.setAdapter(contactAdapter);
     }
 
     private void setupSwiperForRecyclerView() {
         RecycleDeleteSwiper swipeHandler = new RecycleDeleteSwiper(getActivity()) {
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
-                final ContactAdapter adapter = ContactFragment.this.adapter;
+                final ContactAdapter adapter = ContactFragment.this.contactAdapter;
                 if (adapter == null) {
                     return;
                 }
@@ -197,13 +197,10 @@ public class ContactFragment extends BaseFragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        switch (id) {
-            case R.id.action_add_contact:
-                startAddContactActivity();
-                break;
-
-            default:
-                return super.onOptionsItemSelected(item);
+        if (id == R.id.action_add_contact) {
+            startAddContactActivity();
+        } else {
+            return super.onOptionsItemSelected(item);
         }
         return true;
     }

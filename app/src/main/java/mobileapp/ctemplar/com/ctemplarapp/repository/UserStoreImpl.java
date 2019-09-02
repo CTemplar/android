@@ -19,6 +19,7 @@ public class UserStoreImpl implements UserStore{
     private static final String KEY_PRIVATE_KEY = "key_private_key";
     private static final String KEY_TIMEZONE = "key_timezone";
     private static final String KEY_NOTIFICATIONS_ENABLED = "key_notifications_enabled";
+    private static final String KEY_CONTACTS_ENCRYPTION_ENABLED = "key_contacts_encryption_enabled";
 
     private Context context;
     private SharedPreferences preferences;
@@ -126,5 +127,15 @@ public class UserStoreImpl implements UserStore{
     @Override
     public boolean getNotificationsEnabled() {
         return preferences.getBoolean(KEY_NOTIFICATIONS_ENABLED, false);
+    }
+
+    @Override
+    public void setContactsEncryptionEnabled(boolean state) {
+        preferences.edit().putBoolean(KEY_CONTACTS_ENCRYPTION_ENABLED, state).commit();
+    }
+
+    @Override
+    public boolean getContactsEncryptionEnabled() {
+        return preferences.getBoolean(KEY_CONTACTS_ENCRYPTION_ENABLED, false);
     }
 }

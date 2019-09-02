@@ -38,9 +38,9 @@ public class ChangePasswordViewModel extends ViewModel {
         final ChangePasswordRequest changePasswordRequest = new ChangePasswordRequest();
         String userName = userRepository.getUsername();
 
-        changePasswordRequest.setOldPassword(EncodeUtils.encodePassword(userName, oldPassword));
-        changePasswordRequest.setPassword(EncodeUtils.encodePassword(userName, password));
-        changePasswordRequest.setConfirmPassword(EncodeUtils.encodePassword(userName, password));
+        changePasswordRequest.setOldPassword(EncodeUtils.generateHash(userName, oldPassword));
+        changePasswordRequest.setPassword(EncodeUtils.generateHash(userName, password));
+        changePasswordRequest.setConfirmPassword(EncodeUtils.generateHash(userName, password));
         changePasswordRequest.setDeleteData(resetKeys);
 
         EncodeUtils.generateMailboxKeys(userName, oldPassword, password, resetKeys, mailboxEntities)

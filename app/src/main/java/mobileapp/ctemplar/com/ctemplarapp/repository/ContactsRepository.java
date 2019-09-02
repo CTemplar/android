@@ -12,13 +12,14 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.entity.ContactEntity;
 import okhttp3.ResponseBody;
 
 public class ContactsRepository {
+
+    private RestService service;
+
     private static ContactsRepository instance = new ContactsRepository();
 
     public static ContactsRepository getInstance() {
         return instance;
     }
-
-    RestService service;
 
     public ContactsRepository() {
         service = CTemplarApp.getRestClient().getRestService();
@@ -57,7 +58,7 @@ public class ContactsRepository {
 
     public Observable<ContactData> updateContact(ContactData contactData) {
         if (contactData.getId() == 0) {
-            throw new IllegalArgumentException("Contact data id must be not 0");
+            throw new IllegalArgumentException("Contact ID should not be 0");
         }
         return updateContact(contactData.getId(), contactData);
     }
@@ -74,9 +75,8 @@ public class ContactsRepository {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-
     public void saveContacts(ContactData[] contacts) {
-        if(contacts != null && contacts.length>0) {
+        if(contacts != null && contacts.length > 0) {
             for (ContactData contactData : contacts) {
                 ContactEntity entity = new ContactEntity();
 
@@ -88,6 +88,9 @@ public class ContactsRepository {
                 entity.setPhone(contactData.getPhone());
                 entity.setPhone2(contactData.getPhone2());
                 entity.setProvider(contactData.getProvider());
+                entity.setEncrypted(contactData.getEncrypted());
+                entity.setEncryptedData(contactData.getEncryptedData());
+                entity.setEmailHash(contactData.getEmailHash());
 
                 CTemplarApp.getAppDatabase().contactDao().save(entity);
             }
@@ -117,8 +120,10 @@ public class ContactsRepository {
         entity.setPhone(contactData.getPhone());
         entity.setPhone2(contactData.getPhone2());
         entity.setProvider(contactData.getProvider());
+        entity.setEncrypted(contactData.getEncrypted());
+        entity.setEncryptedData(contactData.getEncryptedData());
+        entity.setEmailHash(contactData.getEmailHash());
 
         CTemplarApp.getAppDatabase().contactDao().save(entity);
     }
-
 }

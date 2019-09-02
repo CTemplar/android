@@ -27,4 +27,7 @@ public interface UserStore {
 
     void setNotificationsEnabled(boolean state);
     boolean getNotificationsEnabled();
+
+    void setContactsEncryptionEnabled(boolean state);
+    boolean getContactsEncryptionEnabled();
 }
