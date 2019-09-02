@@ -128,5 +128,4 @@ public class Contact {
 
         return result;
     }
-
 }

@@ -19,6 +19,14 @@
             android:key="@string/subject_encryption"
             android:fragment="mobileapp.ctemplar.com.ctemplarapp.settings.SettingsActivity$SubjectEncryptionFragment" />
 
+        <PreferenceScreen
+            android:title="@string/settings_contacts_encryption"
+            android:fragment="mobileapp.ctemplar.com.ctemplarapp.settings.SettingsActivity$ContactsEncryptionFragment" />
+
+        <PreferenceScreen
+            android:title="@string/settings_saving_contacts"
+            android:fragment="mobileapp.ctemplar.com.ctemplarapp.settings.SettingsActivity$SavingContactsFragment" />
+
         <Preference
             android:title="@string/settings_password"
             android:key="@string/password_key" />
@@ -30,10 +38,6 @@
             android:summary="%s"
             android:entries="@array/languages"
             android:entryValues="@array/languages" />
-
-        <PreferenceScreen
-            android:title="@string/settings_saving_contacts"
-            android:fragment="mobileapp.ctemplar.com.ctemplarapp.settings.SettingsActivity$SavingContactsFragment" />
 
         <Preference
             android:title="@string/settings_filters"

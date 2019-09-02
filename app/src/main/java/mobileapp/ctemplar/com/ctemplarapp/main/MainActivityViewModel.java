@@ -6,7 +6,6 @@ import android.arch.lifecycle.ViewModel;
 
 import java.util.List;
 
-import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
@@ -148,8 +147,7 @@ public class MainActivityViewModel extends ViewModel {
             messagesResponse.postValue(localMessagesData);
         }
 
-        Observable<MessagesResponse> messagesObservable = userRepository.getMessagesList(limit, offset, folder);
-        messagesObservable.subscribe(new Observer<MessagesResponse>() {
+        userRepository.getMessagesList(limit, offset, folder).subscribe(new Observer<MessagesResponse>() {
             @Override
             public void onSubscribe(Disposable d) {
 
@@ -225,7 +223,6 @@ public class MainActivityViewModel extends ViewModel {
         List<ContactEntity> contactEntities = contactsRepository.getLocalContacts();
 
         List<Contact> contacts = Contact.fromEntities(contactEntities);
-
         contactsResponse.postValue(contacts);
 
         contactsRepository.getContactsList(limit, offset)
@@ -240,7 +237,6 @@ public class MainActivityViewModel extends ViewModel {
                         ContactData[] contacts = response.getResults();
 
                         contactsRepository.saveContacts(contacts);
-
                         List<Contact> contactsList = Contact.fromResponseResults(contacts);
 
                         contactsResponse.postValue(contactsList);
@@ -304,7 +300,7 @@ public class MainActivityViewModel extends ViewModel {
         String password = userRepository.getUserPassword();
         SignInRequest signInRequest = new SignInRequest(
                 username,
-                EncodeUtils.encodePassword(username, password)
+                EncodeUtils.generateHash(username, password)
         );
 
         userRepository.signIn(signInRequest)
@@ -533,8 +529,12 @@ public class MainActivityViewModel extends ViewModel {
                         if (myselfResponse != null) {
                             MyselfResult myselfResult = myselfResponse.result[0];
                             SettingsEntity settingsEntity = myselfResult.settings;
+
                             String timezone = settingsEntity.timezone;
+                            boolean isContactsEncrypted = settingsEntity.isContactsEncrypted;
+
                             userRepository.saveTimeZone(timezone);
+                            userRepository.setContactsEncryptionEnabled(isContactsEncrypted);
                         }
                     }
 

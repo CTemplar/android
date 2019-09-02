@@ -5,6 +5,7 @@ import android.arch.persistence.room.PrimaryKey;
 
 @Entity(tableName = "contacts")
 public class ContactEntity {
+
     @PrimaryKey
     public long id;
     public String email;
@@ -14,6 +15,9 @@ public class ContactEntity {
     public String phone;
     public String phone2;
     public String provider;
+    public Boolean isEncrypted;
+    public String encryptedData;
+    public String emailHash;
 
     public long getId() {
         return id;
@@ -77,5 +81,29 @@ public class ContactEntity {
 
     public void setProvider(String provider) {
         this.provider = provider;
+    }
+
+    public Boolean isEncrypted() {
+        return isEncrypted;
+    }
+
+    public void setEncrypted(Boolean isEncrypted) {
+        this.isEncrypted = isEncrypted;
+    }
+
+    public String getEncryptedData() {
+        return encryptedData;
+    }
+
+    public void setEncryptedData(String encryptedData) {
+        this.encryptedData = encryptedData;
+    }
+
+    public String getEmailHash() {
+        return emailHash;
+    }
+
+    public void setEmailHash(String emailHash) {
+        this.emailHash = emailHash;
     }
 }
