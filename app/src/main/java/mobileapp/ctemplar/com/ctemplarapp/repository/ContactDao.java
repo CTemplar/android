@@ -13,7 +13,7 @@ import static android.arch.persistence.room.OnConflictStrategy.REPLACE;
 @Dao
 public interface ContactDao {
 
-    @Query("SELECT * FROM contacts ORDER BY id DESC")
+    @Query("SELECT * FROM contacts ORDER BY id")
     List<ContactEntity> getAll();
 
     @Insert(onConflict = REPLACE)

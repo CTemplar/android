@@ -235,9 +235,10 @@ public class MainActivityViewModel extends ViewModel {
                     @Override
                     public void onNext(ContactsResponse response) {
                         ContactData[] contacts = response.getResults();
+                        ContactData[] decryptedContacts = Contact.decryptContactData(contacts);
 
-                        contactsRepository.saveContacts(contacts);
-                        List<Contact> contactsList = Contact.fromResponseResults(contacts);
+                        contactsRepository.saveContacts(decryptedContacts);
+                        List<Contact> contactsList = Contact.fromResponseResults(decryptedContacts);
 
                         contactsResponse.postValue(contactsList);
                         responseStatus.postValue(ResponseStatus.RESPONSE_NEXT_CONTACTS);
@@ -246,7 +247,7 @@ public class MainActivityViewModel extends ViewModel {
                     @Override
                     public void onError(Throwable e) {
                         responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
-                        Timber.e(e.getCause());
+                        Timber.e(e);
                     }
 
                     @Override

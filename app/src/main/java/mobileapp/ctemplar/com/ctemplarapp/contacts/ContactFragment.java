@@ -116,9 +116,7 @@ public class ContactFragment extends BaseFragment {
         txtEmpty.setVisibility(View.GONE);
         frameCompose.setVisibility(View.GONE);
 
-        List<Contact> contactsList = new LinkedList<>(contactList);
-
-        contactAdapter = new ContactAdapter(contactsList);
+        contactAdapter = new ContactAdapter(contactList);
         contactAdapter.getOnClickSubject()
                 .subscribeOn(io.reactivex.schedulers.Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

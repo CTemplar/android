@@ -36,41 +36,11 @@ public class EditContactViewModel extends ViewModel {
 
     public void getContact(long id) {
         ContactEntity contactEntity = contactsRepository.getLocalContact(id);
-        if (contactEntity != null) {
+        if (contactEntity == null) {
+            contactResponse.postValue(null);
+        } else {
             contactResponse.postValue(Contact.fromEntity(contactEntity));
-            return;
         }
-
-        contactsRepository.getContact(id)
-                .subscribe(new Observer<ContactsResponse>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(ContactsResponse contactsResponse) {
-                        ContactData[] contacts = contactsResponse.getResults();
-
-                        if (contacts == null || contacts.length == 0) {
-                            responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
-                        } else {
-                            contactResponse.postValue(Contact.fromResponseResult(contacts[0]));
-                            responseStatus.postValue(ResponseStatus.RESPONSE_NEXT);
-                        }
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
-                        Timber.e(e);
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
     }
 
     public void updateContact(ContactData contactData) {

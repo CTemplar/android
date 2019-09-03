@@ -88,7 +88,7 @@ public class ContactsRepository {
                 entity.setPhone(contactData.getPhone());
                 entity.setPhone2(contactData.getPhone2());
                 entity.setProvider(contactData.getProvider());
-                entity.setEncrypted(contactData.getEncrypted());
+                entity.setEncrypted(contactData.isEncrypted());
                 entity.setEncryptedData(contactData.getEncryptedData());
                 entity.setEmailHash(contactData.getEmailHash());
 
@@ -120,7 +120,7 @@ public class ContactsRepository {
         entity.setPhone(contactData.getPhone());
         entity.setPhone2(contactData.getPhone2());
         entity.setProvider(contactData.getProvider());
-        entity.setEncrypted(contactData.getEncrypted());
+        entity.setEncrypted(contactData.isEncrypted());
         entity.setEncryptedData(contactData.getEncryptedData());
         entity.setEmailHash(contactData.getEmailHash());
 

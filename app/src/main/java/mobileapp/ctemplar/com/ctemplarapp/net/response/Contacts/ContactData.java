@@ -107,7 +107,7 @@ public class ContactData {
         this.provider = provider;
     }
 
-    public Boolean getEncrypted() {
+    public Boolean isEncrypted() {
         return isEncrypted;
     }
 
