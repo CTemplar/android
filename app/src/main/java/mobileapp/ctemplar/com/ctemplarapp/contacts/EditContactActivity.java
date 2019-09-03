@@ -4,6 +4,7 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.util.Patterns;
 import android.view.Menu;
@@ -59,8 +60,11 @@ public class EditContactActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ActionBar supportActionBar = getSupportActionBar();
+        if (supportActionBar != null) {
+            supportActionBar.setHomeButtonEnabled(true);
+            supportActionBar.setDisplayHomeAsUpEnabled(true);
+        }
 
         viewModel = ViewModelProviders.of(this).get(EditContactViewModel.class);
         viewModel.getResponseStatus().observe(this, new Observer<ResponseStatus>() {
@@ -69,7 +73,6 @@ public class EditContactActivity extends BaseActivity {
                 handleResponse(responseStatus);
             }
         });
-
         viewModel.getContactResponse().observe(this, new Observer<Contact>() {
             @Override
             public void onChanged(@Nullable Contact contact) {
@@ -82,7 +85,7 @@ public class EditContactActivity extends BaseActivity {
 
         long id = getIntent().getLongExtra(ARG_ID, -1);
         if (id == -1) {
-            Timber.e("Argument id is not defined");
+            Timber.e("Contact id is not defined");
             onBackPressed();
             return;
         }

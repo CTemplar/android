@@ -13,6 +13,8 @@ import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessageAttachment;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResult;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.UserDisplay;
+import mobileapp.ctemplar.com.ctemplarapp.repository.MailboxDao;
+import mobileapp.ctemplar.com.ctemplarapp.repository.UserStore;
 import mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.AttachmentEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
@@ -340,13 +342,15 @@ public class MessageProvider {
     }
 //    private MessagesResult[] children;
 
+    private static UserStore userStore = CTemplarApp.getUserStore();
+    private static MailboxDao mailboxDao = CTemplarApp.getAppDatabase().mailboxDao();
+
     public static MailboxEntity getDefaultMailbox() {
-        if (CTemplarApp.getAppDatabase().mailboxDao().getDefault() != null) {
-            return CTemplarApp.getAppDatabase().mailboxDao().getDefault();
+        if (mailboxDao.getDefault() != null) {
+            return mailboxDao.getDefault();
         } else {
-            Timber.e("Default mailbox is null");
-            if (!CTemplarApp.getAppDatabase().mailboxDao().getAll().isEmpty()) {
-                return CTemplarApp.getAppDatabase().mailboxDao().getAll().get(0);
+            if (!mailboxDao.getAll().isEmpty()) {
+                return mailboxDao.getAll().get(0);
             } else {
                 Timber.e("Mailbox not found");
             }
@@ -355,17 +359,15 @@ public class MessageProvider {
     }
 
     private static String decryptContent(String content, long mailboxId) {
-        MailboxEntity mailboxEntity = CTemplarApp.getAppDatabase().mailboxDao().getById(mailboxId);
-        String password = CTemplarApp.getInstance()
-                        .getSharedPreferences("pref_user", Context.MODE_PRIVATE)
-                        .getString("key_password", null);
-
         if (content == null) {
             return "";
         }
 
+        MailboxEntity mailboxEntity = mailboxDao.getById(mailboxId);
+        String password = userStore.getUserPassword();
+
         PGPManager pgpManager = new PGPManager();
-        if (mailboxEntity != null && password != null) {
+        if (mailboxEntity != null) {
             String privateKey = mailboxEntity.getPrivateKey();
             try {
                 content = pgpManager.decryptMessage(content, privateKey, password);
