@@ -331,6 +331,9 @@ Your password is connected to your encryption key, if you change your password t
     <string name="settings_term_and_conditions">Terms &amp; Conditions</string>
     <string name="settings_local_storage_limit">Local storage limit</string>
     <string name="settings_app_version">App version</string>
+    <string name="settings_disable_contacts_encryption">Are you sure you want to disable contacts encryption?</string>
+    <string name="settings_disable_contacts_encryption_note">Disabling contacts encryption can take several minutes depending upon the number of contacts you have. After you confirm, all your contacts will be decrypted on your device and saved on the server.</string>
+    <string name="txt_contact_decryption">Contact decryption..</string>
     <string name="toast_recovery_email_changed">Recovery email changed</string>
     <string name="toast_subject_encryption_changed">Subject encryption changed</string>
     <string name="toast_contacts_encryption_changed">Contacts encryption changed</string>

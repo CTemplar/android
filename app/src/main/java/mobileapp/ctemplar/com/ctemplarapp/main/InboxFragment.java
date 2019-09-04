@@ -355,16 +355,12 @@ public class InboxFragment extends BaseFragment {
     }
 
     public void handleMessagesList(List<MessageProvider> messages, String folderName) {
-        //restartOptionsMenu();
         currentFolder = mainModel.getCurrentFolder().getValue();
         messagesNotEmpty = messages != null && !messages.isEmpty();
 
-        if (messagesNotEmpty) {
-            if (currentFolder != null && !currentFolder.equals(folderName)) {
-                return;
-            }
+        if (messagesNotEmpty && currentFolder != null && !currentFolder.equals(folderName)) {
+            return;
         }
-
         if (messages == null || messages.isEmpty()) {
             hideMessagesList();
             messages = new ArrayList<>();

@@ -142,6 +142,7 @@ public class MainActivityViewModel extends ViewModel {
     public void getMessages(int limit, int offset, final String folder) {
         List<MessageEntity> messageEntities = messagesRepository.getLocalMessagesByFolder(folder);
         List<MessageProvider> messageProviders = MessageProvider.fromMessageEntities(messageEntities);
+
         ResponseMessagesData localMessagesData = new ResponseMessagesData(messageProviders, folder);
         if (!localMessagesData.messages.isEmpty()) {
             messagesResponse.postValue(localMessagesData);
@@ -169,6 +170,7 @@ public class MainActivityViewModel extends ViewModel {
 
                         List<MessageEntity> localEntities = messagesRepository.getLocalMessagesByFolder(folder);
                         List<MessageProvider> messageProviders = MessageProvider.fromMessageEntities(localEntities);
+
                         messagesResponse.postValue(new ResponseMessagesData(messageProviders, folder));
                         responseStatus.postValue(ResponseStatus.RESPONSE_NEXT_MESSAGES);
                     }
@@ -178,7 +180,7 @@ public class MainActivityViewModel extends ViewModel {
             @Override
             public void onError(Throwable e) {
                 responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
-                Timber.e(e.getCause());
+                Timber.e(e);
             }
 
             @Override
@@ -223,7 +225,11 @@ public class MainActivityViewModel extends ViewModel {
         List<ContactEntity> contactEntities = contactsRepository.getLocalContacts();
 
         List<Contact> contacts = Contact.fromEntities(contactEntities);
-        contactsResponse.postValue(contacts);
+        if (contacts.isEmpty()) {
+            contactsResponse.postValue(null);
+        } else {
+            contactsResponse.postValue(contacts);
+        }
 
         contactsRepository.getContactsList(limit, offset)
                 .subscribe(new Observer<ContactsResponse>() {
