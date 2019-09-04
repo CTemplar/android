@@ -34,6 +34,14 @@ public class ChangePasswordViewModel extends ViewModel {
         mailboxEntities = CTemplarApp.getAppDatabase().mailboxDao().getAll();
     }
 
+    LiveData<MainActivityActions> getActionsStatus() {
+        return actions;
+    }
+
+    public MutableLiveData<ResponseStatus> getResponseStatus() {
+        return responseStatus;
+    }
+
     void changePassword(String oldPassword, String password, boolean resetKeys) {
         final ChangePasswordRequest changePasswordRequest = new ChangePasswordRequest();
         String userName = userRepository.getUsername();
@@ -79,15 +87,6 @@ public class ChangePasswordViewModel extends ViewModel {
         if (userRepository != null) {
             userRepository.logout();
         }
-
         actions.postValue(MainActivityActions.ACTION_LOGOUT);
-    }
-
-    LiveData<MainActivityActions> getActionsStatus() {
-        return actions;
-    }
-
-    public MutableLiveData<ResponseStatus> getResponseStatus() {
-        return responseStatus;
     }
 }

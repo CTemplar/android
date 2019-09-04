@@ -1,5 +1,9 @@
 package mobileapp.ctemplar.com.ctemplarapp.settings;
 
+import android.app.ProgressDialog;
+import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -8,6 +12,7 @@ import android.support.annotation.Nullable;
 import android.support.v14.preference.SwitchPreference;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.CheckBoxPreference;
 import android.support.v7.preference.EditTextPreference;
@@ -20,6 +25,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
+
+import javax.xml.validation.Validator;
 
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
@@ -45,8 +52,11 @@ import mobileapp.ctemplar.com.ctemplarapp.wbl.WhiteBlackListActivity;
 import timber.log.Timber;
 
 public class SettingsActivity extends AppCompatActivity {
-    public static final String USER_IS_PRIME = "user_is_prime";
 
+    public static final String USER_IS_PRIME = "user_is_prime";
+    public static final String SETTING_ID = "setting_id";
+
+    private static SettingsActivityViewModel settingsModel;
     private static UserRepository userRepository = CTemplarApp.getUserRepository();
     private static UserStore userStore = CTemplarApp.getUserStore();
 
@@ -61,6 +71,7 @@ public class SettingsActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.settings_activity);
+        settingsModel = ViewModelProviders.of(this).get(SettingsActivityViewModel.class);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         requestMySelfData();
 
@@ -71,7 +82,6 @@ public class SettingsActivity extends AppCompatActivity {
             actionBar.setHomeButtonEnabled(true);
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-
         if (savedInstanceState == null) {
             Fragment preferenceFragment = new SettingsFragment();
             getSupportFragmentManager()
@@ -90,11 +100,11 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     private static long getSettingId() {
-        return sharedPreferences.getLong("setting_id", -1);
+        return sharedPreferences.getLong(SETTING_ID, -1);
     }
 
     private static void setSettingId(long id) {
-        sharedPreferences.edit().putLong("setting_id", id).apply();
+        sharedPreferences.edit().putLong(SETTING_ID, id).apply();
     }
 
     public static class SettingsFragment extends BasePreferenceFragment {
@@ -240,17 +250,42 @@ public class SettingsActivity extends AppCompatActivity {
         public void onCreatePreferences(Bundle bundle, String rootKey) {
             setPreferencesFromResource(R.xml.contacts_encryption_settings, rootKey);
 
-            SwitchPreference contactsEncryptionSwitchPreference = (SwitchPreference) findPreference(getString(R.string.contacts_encryption_enabled));
+            final SwitchPreference contactsEncryptionSwitchPreference = (SwitchPreference) findPreference(getString(R.string.contacts_encryption_enabled));
             contactsEncryptionSwitchPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
-                    Toast.makeText(getActivity(), getString(R.string.toast_contacts_encryption_changed), Toast.LENGTH_SHORT).show();
                     boolean value = (boolean) newValue;
-                    userStore.setContactsEncryptionEnabled(value);
-                    updateContactsEncryption(value);
+                    if (value) {
+                        userStore.setContactsEncryptionEnabled(true);
+                        updateContactsEncryption(true);
+                        Toast.makeText(getActivity(), getString(R.string.toast_contacts_encryption_changed), Toast.LENGTH_SHORT).show();
+                    } else {
+                        disableContactsEncryption();
+                        return false;
+                    }
                     return true;
                 }
             });
+        }
+
+        private void disableContactsEncryption() {
+            final ProgressDialog progressDialog = new ProgressDialog(getActivity());
+            progressDialog.setCanceledOnTouchOutside(false);
+            progressDialog.setMessage(getString(R.string.txt_contact_decryption));
+            progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+
+            new AlertDialog.Builder(getActivity())
+                    .setTitle(getActivity().getString(R.string.settings_disable_contacts_encryption))
+                    .setMessage(getActivity().getString(R.string.settings_disable_contacts_encryption_note))
+                    .setPositiveButton(getActivity().getString(R.string.btn_confirm), new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    progressDialog.show();
+                                }
+                            }
+                    )
+                    .setNeutralButton(getActivity().getString(R.string.btn_cancel), null)
+                    .show();
         }
     }
 

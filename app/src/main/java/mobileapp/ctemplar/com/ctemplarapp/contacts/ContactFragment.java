@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.BaseTransientBottomBar;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.DividerItemDecoration;
@@ -20,10 +21,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.TextView;
 
-import java.util.LinkedList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -32,8 +30,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import mobileapp.ctemplar.com.ctemplarapp.BaseFragment;
 import mobileapp.ctemplar.com.ctemplarapp.R;
-import mobileapp.ctemplar.com.ctemplarapp.main.RecycleDeleteSwiper;
 import mobileapp.ctemplar.com.ctemplarapp.main.MainActivityViewModel;
+import mobileapp.ctemplar.com.ctemplarapp.main.RecycleDeleteSwiper;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.Contact;
 import timber.log.Timber;
 
@@ -45,17 +43,17 @@ public class ContactFragment extends BaseFragment {
     @BindView(R.id.fragment_contact_recycler_view)
     RecyclerView recyclerView;
 
-    @BindView(R.id.fragment_contact_icon_empty)
-    ImageView imgEmpty;
-
-    @BindView(R.id.fragment_contact_title_empty)
-    TextView txtEmpty;
-
     @BindView(R.id.fragment_contact_add_layout)
     FrameLayout frameCompose;
 
     @BindView(R.id.fragment_contact_search)
     SearchView searchView;
+
+    @BindView(R.id.fragment_contact_list_empty_layout)
+    ConstraintLayout listEmptyLayout;
+
+    @BindView(R.id.fragment_contact_progress_layout)
+    ConstraintLayout progressLayout;
 
     @Override
     protected int getLayoutId() {
@@ -108,13 +106,18 @@ public class ContactFragment extends BaseFragment {
     }
 
     private void handleContactsList(@Nullable List<Contact> contactList) {
-        if (contactList == null || contactList.isEmpty()) {
+        if (contactList == null) {
+            progressLayout.setVisibility(View.VISIBLE);
+            listEmptyLayout.setVisibility(View.GONE);
             return;
         }
-
-        imgEmpty.setVisibility(View.GONE);
-        txtEmpty.setVisibility(View.GONE);
-        frameCompose.setVisibility(View.GONE);
+        if (contactList.isEmpty()) {
+            progressLayout.setVisibility(View.GONE);
+            listEmptyLayout.setVisibility(View.VISIBLE);
+            return;
+        }
+        progressLayout.setVisibility(View.GONE);
+        listEmptyLayout.setVisibility(View.GONE);
 
         contactAdapter = new ContactAdapter(contactList);
         contactAdapter.getOnClickSubject()
