@@ -14,6 +14,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.net.entity.PGPKeyEntity;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.PublicKeysRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SendMessageRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.ContactData;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.ContactsResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.DeleteAttachmentResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.KeyResponse;
@@ -24,6 +25,8 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.MyselfResponse;
 import mobileapp.ctemplar.com.ctemplarapp.repository.ContactsRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.MessagesRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
+import mobileapp.ctemplar.com.ctemplarapp.repository.entity.Contact;
+import mobileapp.ctemplar.com.ctemplarapp.repository.entity.ContactEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MessageEntity;
 import mobileapp.ctemplar.com.ctemplarapp.utils.PGPManager;
@@ -42,7 +45,7 @@ public class SendMessageActivityViewModel extends ViewModel {
     MutableLiveData<MessagesResult> messagesResult = new MutableLiveData<>();
     MutableLiveData<MessagesResult> createMessageResponse = new MutableLiveData<>();
     MutableLiveData<ResponseStatus> createMessageStatus = new MutableLiveData<>();
-    MutableLiveData<ContactsResponse> contactsResponse = new MutableLiveData<>();
+    MutableLiveData<List<Contact>> contactsResponse = new MutableLiveData<>();
     MutableLiveData<KeyResponse> keyResponse = new MutableLiveData<>();
     MutableLiveData<MessagesResult> messageEncryptionResult = new MutableLiveData<>();
     MutableLiveData<MyselfResponse> myselfResponse = new MutableLiveData<>();
@@ -66,7 +69,7 @@ public class SendMessageActivityViewModel extends ViewModel {
         return responseStatus;
     }
 
-    public LiveData<ContactsResponse> getContactsResponse() {
+    public LiveData<List<Contact>> getContactsResponse() {
         return contactsResponse;
     }
 
@@ -268,6 +271,7 @@ public class SendMessageActivityViewModel extends ViewModel {
                     @Override
                     public void onError(Throwable e) {
                         responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
+                        Timber.e(e);
                     }
 
                     @Override
@@ -278,6 +282,15 @@ public class SendMessageActivityViewModel extends ViewModel {
     }
 
     public void getContacts(int limit, int offset) {
+        List<ContactEntity> contactEntities = contactsRepository.getLocalContacts();
+        List<Contact> contactList = Contact.fromEntities(contactEntities);
+        if (contactList.isEmpty()) {
+            contactsResponse.postValue(null);
+        } else {
+            contactsResponse.postValue(contactList);
+            return;
+        }
+
         contactsRepository.getContactsList(limit, offset)
                 .subscribe(new Observer<ContactsResponse>() {
                     @Override
@@ -286,14 +299,24 @@ public class SendMessageActivityViewModel extends ViewModel {
                     }
 
                     @Override
-                    public void onNext(ContactsResponse response) {
-                        contactsResponse.postValue(response);
-                        responseStatus.postValue(ResponseStatus.RESPONSE_NEXT_CONTACTS);
+                    public void onNext(final ContactsResponse response) {
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                ContactData[] contacts = response.getResults();
+                                ContactData[] decryptedContacts = Contact.decryptContactData(contacts);
+
+                                contactsRepository.saveContacts(decryptedContacts);
+                                List<Contact> contactList = Contact.fromResponseResults(decryptedContacts);
+
+                                contactsResponse.postValue(contactList);
+                            }
+                        }).start();
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
+                        Timber.e(e);
                     }
 
                     @Override

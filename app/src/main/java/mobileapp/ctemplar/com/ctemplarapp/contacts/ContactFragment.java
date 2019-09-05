@@ -28,6 +28,7 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 import mobileapp.ctemplar.com.ctemplarapp.BaseFragment;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.main.MainActivityViewModel;
@@ -121,7 +122,7 @@ public class ContactFragment extends BaseFragment {
 
         contactAdapter = new ContactAdapter(contactList);
         contactAdapter.getOnClickSubject()
-                .subscribeOn(io.reactivex.schedulers.Schedulers.io())
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new io.reactivex.Observer<Long>() {
                     @Override

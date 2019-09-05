@@ -2,7 +2,6 @@ package mobileapp.ctemplar.com.ctemplarapp.settings;
 
 import android.app.ProgressDialog;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -26,8 +25,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import javax.xml.validation.Validator;
-
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
@@ -35,6 +32,7 @@ import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.filters.FiltersActivity;
 import mobileapp.ctemplar.com.ctemplarapp.folders.ManageFoldersActivity;
 import mobileapp.ctemplar.com.ctemplarapp.mailboxes.MailboxesActivity;
+import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.AutoSaveContactEnabledRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.ContactsEncryptionRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.RecoveryEmailRequest;
@@ -246,11 +244,14 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     public static class ContactsEncryptionFragment extends BasePreferenceFragment {
+
+        private SwitchPreference contactsEncryptionSwitchPreference;
+
         @Override
         public void onCreatePreferences(Bundle bundle, String rootKey) {
             setPreferencesFromResource(R.xml.contacts_encryption_settings, rootKey);
 
-            final SwitchPreference contactsEncryptionSwitchPreference = (SwitchPreference) findPreference(getString(R.string.contacts_encryption_enabled));
+            contactsEncryptionSwitchPreference = (SwitchPreference) findPreference(getString(R.string.contacts_encryption_enabled));
             contactsEncryptionSwitchPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
@@ -258,7 +259,7 @@ public class SettingsActivity extends AppCompatActivity {
                     if (value) {
                         userStore.setContactsEncryptionEnabled(true);
                         updateContactsEncryption(true);
-                        Toast.makeText(getActivity(), getString(R.string.toast_contacts_encryption_changed), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), getString(R.string.toast_contacts_encrypted), Toast.LENGTH_SHORT).show();
                     } else {
                         disableContactsEncryption();
                         return false;
@@ -274,6 +275,26 @@ public class SettingsActivity extends AppCompatActivity {
             progressDialog.setMessage(getString(R.string.txt_contact_decryption));
             progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 
+            final int[] listOffset = {0};
+            settingsModel.getDecryptionStatus().observe(this, new android.arch.lifecycle.Observer<ResponseStatus>() {
+                @Override
+                public void onChanged(@Nullable ResponseStatus responseStatus) {
+                    if (responseStatus == ResponseStatus.RESPONSE_NEXT) {
+                        listOffset[0] += 20;
+                        settingsModel.decryptContacts(listOffset[0]);
+                    } else if (responseStatus == ResponseStatus.RESPONSE_COMPLETE) {
+                        userStore.setContactsEncryptionEnabled(false);
+                        updateContactsEncryption(false);
+                        contactsEncryptionSwitchPreference.setChecked(false);
+                        progressDialog.dismiss();
+                        Toast.makeText(getActivity(), getString(R.string.toast_contacts_decrypted), Toast.LENGTH_SHORT).show();
+                    } else if (responseStatus == ResponseStatus.RESPONSE_ERROR) {
+                        progressDialog.dismiss();
+                        Toast.makeText(getActivity(), getString(R.string.toast_decryption_error), Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+
             new AlertDialog.Builder(getActivity())
                     .setTitle(getActivity().getString(R.string.settings_disable_contacts_encryption))
                     .setMessage(getActivity().getString(R.string.settings_disable_contacts_encryption_note))
@@ -281,6 +302,7 @@ public class SettingsActivity extends AppCompatActivity {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     progressDialog.show();
+                                    settingsModel.decryptContacts(listOffset[0]);
                                 }
                             }
                     )
