@@ -2,6 +2,8 @@ package mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts;
 
 import com.google.gson.annotations.SerializedName;
 
+import org.jetbrains.annotations.NotNull;
+
 public class ContactData {
 
     @SerializedName("id")
@@ -37,11 +39,11 @@ public class ContactData {
     @SerializedName("email_hash")
     private String emailHash;
 
+    @NotNull
     @Override
     public String toString() {
         return email;
     }
-
 
     public long getId() {
         return id;

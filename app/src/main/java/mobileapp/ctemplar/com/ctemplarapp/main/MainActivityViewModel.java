@@ -223,12 +223,11 @@ public class MainActivityViewModel extends ViewModel {
 
     public void getContacts(int limit, int offset) {
         List<ContactEntity> contactEntities = contactsRepository.getLocalContacts();
-
-        List<Contact> contacts = Contact.fromEntities(contactEntities);
-        if (contacts.isEmpty()) {
+        List<Contact> contactList = Contact.fromEntities(contactEntities);
+        if (contactList.isEmpty()) {
             contactsResponse.postValue(null);
         } else {
-            contactsResponse.postValue(contacts);
+            contactsResponse.postValue(contactList);
         }
 
         contactsRepository.getContactsList(limit, offset)
@@ -239,15 +238,20 @@ public class MainActivityViewModel extends ViewModel {
                     }
 
                     @Override
-                    public void onNext(ContactsResponse response) {
-                        ContactData[] contacts = response.getResults();
-                        ContactData[] decryptedContacts = Contact.decryptContactData(contacts);
+                    public void onNext(final ContactsResponse response) {
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                ContactData[] contacts = response.getResults();
+                                ContactData[] decryptedContacts = Contact.decryptContactData(contacts);
 
-                        contactsRepository.saveContacts(decryptedContacts);
-                        List<Contact> contactsList = Contact.fromResponseResults(decryptedContacts);
+                                contactsRepository.saveContacts(decryptedContacts);
+                                List<Contact> contactList = Contact.fromResponseResults(decryptedContacts);
 
-                        contactsResponse.postValue(contactsList);
-                        responseStatus.postValue(ResponseStatus.RESPONSE_NEXT_CONTACTS);
+                                contactsResponse.postValue(contactList);
+                                responseStatus.postValue(ResponseStatus.RESPONSE_NEXT_CONTACTS);
+                            }
+                        }).start();
                     }
 
                     @Override

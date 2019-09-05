@@ -119,24 +119,24 @@ public class Contact {
     private static UserStore userStore = CTemplarApp.getUserStore();
 
     public static String encryptData(String content) {
-        MailboxEntity mailboxEntity = mailboxDao.getAll().get(0);
-        if (content == null || mailboxEntity == null) {
+        if (content == null || mailboxDao.getAll().isEmpty()) {
             return "";
         }
 
+        MailboxEntity mailboxEntity = mailboxDao.getAll().get(0);
         PGPManager pgpManager = new PGPManager();
         String publicKey = mailboxEntity.getPublicKey();
         String[] keys = { publicKey };
         return pgpManager.encryptMessage(content, keys);
     }
 
-    private static String decryptData(String content) {
-        MailboxEntity mailboxEntity = mailboxDao.getAll().get(0);
-        String password = userStore.getUserPassword();
-        if (content == null || mailboxEntity == null || password == null) {
+    public static String decryptData(String content) {
+        if (content == null || mailboxDao.getAll().isEmpty()) {
             return "";
         }
 
+        String password = userStore.getUserPassword();
+        MailboxEntity mailboxEntity = mailboxDao.getAll().get(0);
         PGPManager pgpManager = new PGPManager();
         String privateKey = mailboxEntity.getPrivateKey();
         try {

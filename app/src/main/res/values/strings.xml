@@ -336,7 +336,9 @@ Your password is connected to your encryption key, if you change your password t
     <string name="txt_contact_decryption">Contact decryption..</string>
     <string name="toast_recovery_email_changed">Recovery email changed</string>
     <string name="toast_subject_encryption_changed">Subject encryption changed</string>
-    <string name="toast_contacts_encryption_changed">Contacts encryption changed</string>
+    <string name="toast_contacts_encrypted">Contacts are encrypted</string>
+    <string name="toast_contacts_decrypted">Contacts are decrypted</string>
+    <string name="toast_decryption_error">An error occurred while decrypting. Try again</string>
 
     <!-- PREFERENCE KEYS -->
     <string name="password_key">password</string>
