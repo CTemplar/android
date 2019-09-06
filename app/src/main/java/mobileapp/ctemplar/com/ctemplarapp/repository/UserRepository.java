@@ -13,6 +13,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.request.AutoSaveContactEnabledRequ
 import mobileapp.ctemplar.com.ctemplarapp.net.request.CaptchaVerifyRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.ChangePasswordRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.CheckUsernameRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.ContactsEncryptionRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.CreateMailboxRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.CustomFilterRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.DefaultMailboxRequest;
@@ -117,6 +118,14 @@ public class UserRepository {
 
     public String getTimeZone() {
         return userStore.getTimeZone();
+    }
+
+    public void setContactsEncryptionEnabled(boolean isContactsEncryptionEnabled) {
+        userStore.setContactsEncryptionEnabled(isContactsEncryptionEnabled);
+    }
+
+    public boolean getContactsEncryptionEnabled() {
+        return userStore.getContactsEncryptionEnabled();
     }
 
     public void logout() {
@@ -375,14 +384,20 @@ public class UserRepository {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<SettingsEntity> updateSignature(long mailboxId, SignatureRequest request) {
-        return service.updateSignature(mailboxId, request)
+    public Observable<SettingsEntity> updateContactsEncryption(long settingId, ContactsEncryptionRequest request) {
+        return service.updateContactsEncryption(settingId, request)
                 .subscribeOn(io.reactivex.schedulers.Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
     public Observable<SettingsEntity> updateAutoSaveEnabled(long settingId, AutoSaveContactEnabledRequest request) {
         return service.updateAutoSaveEnabled(settingId, request)
+                .subscribeOn(io.reactivex.schedulers.Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public Observable<SettingsEntity> updateSignature(long mailboxId, SignatureRequest request) {
+        return service.updateSignature(mailboxId, request)
                 .subscribeOn(io.reactivex.schedulers.Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }

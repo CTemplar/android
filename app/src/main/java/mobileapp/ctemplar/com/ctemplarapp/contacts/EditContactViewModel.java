@@ -3,66 +3,77 @@ package mobileapp.ctemplar.com.ctemplarapp.contacts;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 
+import com.google.gson.Gson;
+
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.ContactData;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.ContactsResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.EncryptContact;
 import mobileapp.ctemplar.com.ctemplarapp.repository.ContactsRepository;
+import mobileapp.ctemplar.com.ctemplarapp.repository.UserStore;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.Contact;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.ContactEntity;
 import timber.log.Timber;
 
 public class EditContactViewModel extends ViewModel {
+
     private ContactsRepository contactsRepository;
+    private UserStore userStore;
+
     private MutableLiveData<ResponseStatus> responseStatus = new MutableLiveData<>();
     private MutableLiveData<Contact> contactResponse = new MutableLiveData<>();
 
     public EditContactViewModel() {
-        this.contactsRepository = CTemplarApp.getContactsRepository();;
+        contactsRepository = CTemplarApp.getContactsRepository();
+        userStore = CTemplarApp.getUserStore();
+    }
+
+    public MutableLiveData<ResponseStatus> getResponseStatus() {
+        return responseStatus;
+    }
+
+    public MutableLiveData<Contact> getContactResponse() {
+        return contactResponse;
     }
 
     public void getContact(long id) {
         ContactEntity contactEntity = contactsRepository.getLocalContact(id);
-        if (contactEntity != null) {
-            contactResponse.postValue(Contact.fromEntity(contactEntity));
+        if (contactEntity == null) {
+            contactResponse.postValue(null);
         } else {
-
-            contactsRepository.getContact(id)
-                    .subscribe(new Observer<ContactsResponse>() {
-                        @Override
-                        public void onSubscribe(Disposable d) {
-
-                        }
-
-                        @Override
-                        public void onNext(ContactsResponse contactsResponse) {
-                            ContactData[] contacts = contactsResponse.getResults();
-
-                            if (contacts == null || contacts.length == 0) {
-                                responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
-                            } else {
-                                contactResponse.postValue(Contact.fromResponseResult(contacts[0]));
-                                responseStatus.postValue(ResponseStatus.RESPONSE_NEXT);
-                            }
-                        }
-
-                        @Override
-                        public void onError(Throwable e) {
-                            responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
-                            Timber.e(e, "Updating contact error");
-                        }
-
-                        @Override
-                        public void onComplete() {
-
-                        }
-                    });
+            contactResponse.postValue(Contact.fromEntity(contactEntity));
         }
     }
 
     public void updateContact(ContactData contactData) {
+        boolean contactsEncryption = userStore.getContactsEncryptionEnabled();
+        if (contactsEncryption) {
+            EncryptContact encryptContact = new EncryptContact();
+            encryptContact.setEmail(contactData.getEmail());
+            encryptContact.setName(contactData.getName());
+            encryptContact.setAddress(contactData.getAddress());
+            encryptContact.setNote(contactData.getNote());
+            encryptContact.setPhone(contactData.getPhone());
+            encryptContact.setPhone2(contactData.getPhone2());
+            encryptContact.setProvider(contactData.getProvider());
+
+            contactData.setEmail(null);
+            contactData.setName(null);
+            contactData.setAddress(null);
+            contactData.setNote(null);
+            contactData.setPhone(null);
+            contactData.setPhone2(null);
+            contactData.setProvider(null);
+            contactData.setEncrypted(true);
+
+            Gson gson = new Gson();
+            String contactString = gson.toJson(encryptContact);
+            String encryptedContactString = Contact.encryptData(contactString);
+            contactData.setEncryptedData(encryptedContactString);
+        }
+
         contactsRepository.updateContact(contactData)
                 .subscribe(new Observer<ContactData>() {
                     @Override
@@ -79,7 +90,7 @@ public class EditContactViewModel extends ViewModel {
                     @Override
                     public void onError(Throwable e) {
                         responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
-                        Timber.e(e, "Saving contact error");
+                        Timber.e(e);
                     }
 
                     @Override
@@ -87,13 +98,5 @@ public class EditContactViewModel extends ViewModel {
 
                     }
                 });
-    }
-
-    public MutableLiveData<ResponseStatus> getResponseStatus() {
-        return responseStatus;
-    }
-
-    public MutableLiveData<Contact> getContactResponse() {
-        return contactResponse;
     }
 }

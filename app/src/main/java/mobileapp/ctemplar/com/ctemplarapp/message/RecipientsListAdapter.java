@@ -14,76 +14,72 @@ import java.util.ArrayList;
 import java.util.List;
 
 import mobileapp.ctemplar.com.ctemplarapp.R;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.ContactData;
+import mobileapp.ctemplar.com.ctemplarapp.repository.entity.Contact;
 
-public class RecipientsListAdapter extends ArrayAdapter<ContactData> implements Filterable {
+public class RecipientsListAdapter extends ArrayAdapter<Contact> implements Filterable {
 
-    Context context;
-    int textViewResourceId;
-    List<ContactData> contacts, tempContacts, suggestions;
+    private Context context;
 
-    public RecipientsListAdapter(Context context, int textViewResourceId, List<ContactData> contacts) {
-        super(context, textViewResourceId, contacts);
+    private List<Contact> contactList;
+    private List<Contact> tempContactList;
+    private List<Contact> suggestionList;
+
+    RecipientsListAdapter(Context context, int textViewResourceId, List<Contact> contactList) {
+        super(context, textViewResourceId, contactList);
         this.context = context;
-        this.textViewResourceId = textViewResourceId;
-        this.contacts = contacts;
-        tempContacts = new ArrayList<>(contacts);
-        suggestions = new ArrayList<>();
+        this.contactList = contactList;
+
+        tempContactList = new ArrayList<>(contactList);
+        suggestionList = new ArrayList<>();
     }
 
     @NonNull
     @Override
     public View getView(int position, View convertView, @NonNull ViewGroup parent) {
-        View view = convertView;
-        if (view == null) {
+        View view;
+        if (convertView == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             view = inflater.inflate(R.layout.recipients_list_view_item, parent, false);
+        } else {
+            view = convertView;
         }
 
-        ContactData contactData = contacts.get(position);
-        if (contactData != null) {
+        Contact contact = contactList.get(position);
+        if (contact != null) {
             TextView firstLastName = view.findViewById(R.id.recipients_list_view_item_first_last_name);
-            TextView mail = view.findViewById(R.id.recipients_list_view_item_mail);
-            if (firstLastName != null) {
-                firstLastName.setText(contactData.getName());
-            }
-            if (mail != null) {
-                mail.setText(contactData.getEmail());
-            }
+            TextView email = view.findViewById(R.id.recipients_list_view_item_mail);
+
+            firstLastName.setText(contact.getName());
+            email.setText(contact.getEmail());
         }
 
         return view;
     }
 
-    @NonNull
-    @Override
-    public Filter getFilter() {
-        return mFilter;
-    }
-
-    Filter mFilter = new Filter() {
-
+    private Filter mFilter = new Filter() {
         @Override
         public CharSequence convertResultToString(Object resultValue) {
-            String str = ((ContactData) resultValue).getEmail();
-            return str;
+            return ((Contact) resultValue).getEmail();
         }
 
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
             if (constraint != null) {
-                suggestions.clear();
-                for (ContactData contacts : tempContacts) {
-                    if (contacts.getName().toLowerCase().contains(constraint.toString().toLowerCase())
-                            || contacts.getEmail().toLowerCase().contains(constraint.toString().toLowerCase())) {
+                suggestionList.clear();
+                for (Contact contact : tempContactList) {
+                    String contactName = contact.getName().toLowerCase();
+                    String contactEmail = contact.getEmail().toLowerCase();
 
-                        suggestions.add(contacts);
+                    if (contactName.contains(constraint.toString().toLowerCase()) ||
+                            contactEmail.contains(constraint.toString().toLowerCase())
+                    ) {
+                        suggestionList.add(contact);
                     }
                 }
 
                 FilterResults filterResults = new FilterResults();
-                filterResults.values = suggestions;
-                filterResults.count = suggestions.size();
+                filterResults.values = suggestionList;
+                filterResults.count = suggestionList.size();
                 return filterResults;
             } else {
                 return new FilterResults();
@@ -92,14 +88,20 @@ public class RecipientsListAdapter extends ArrayAdapter<ContactData> implements 
 
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
-            List<ContactData> filterList = (ArrayList<ContactData>) results.values;
-            if (results != null && results.count > 0) {
+            List<Contact> filterList = (List<Contact>) results.values;
+            if (results.count > 0) {
                 clear();
-                for (ContactData contacts : filterList) {
-                    add(contacts);
+                for (Contact contact : filterList) {
+                    add(contact);
                     notifyDataSetChanged();
                 }
             }
         }
     };
+
+    @NonNull
+    @Override
+    public Filter getFilter() {
+        return mFilter;
+    }
 }

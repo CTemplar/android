@@ -6,7 +6,6 @@ import android.arch.lifecycle.ViewModel;
 
 import java.util.List;
 
-import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
@@ -143,13 +142,13 @@ public class MainActivityViewModel extends ViewModel {
     public void getMessages(int limit, int offset, final String folder) {
         List<MessageEntity> messageEntities = messagesRepository.getLocalMessagesByFolder(folder);
         List<MessageProvider> messageProviders = MessageProvider.fromMessageEntities(messageEntities);
+
         ResponseMessagesData localMessagesData = new ResponseMessagesData(messageProviders, folder);
         if (!localMessagesData.messages.isEmpty()) {
             messagesResponse.postValue(localMessagesData);
         }
 
-        Observable<MessagesResponse> messagesObservable = userRepository.getMessagesList(limit, offset, folder);
-        messagesObservable.subscribe(new Observer<MessagesResponse>() {
+        userRepository.getMessagesList(limit, offset, folder).subscribe(new Observer<MessagesResponse>() {
             @Override
             public void onSubscribe(Disposable d) {
 
@@ -171,6 +170,7 @@ public class MainActivityViewModel extends ViewModel {
 
                         List<MessageEntity> localEntities = messagesRepository.getLocalMessagesByFolder(folder);
                         List<MessageProvider> messageProviders = MessageProvider.fromMessageEntities(localEntities);
+
                         messagesResponse.postValue(new ResponseMessagesData(messageProviders, folder));
                         responseStatus.postValue(ResponseStatus.RESPONSE_NEXT_MESSAGES);
                     }
@@ -180,7 +180,7 @@ public class MainActivityViewModel extends ViewModel {
             @Override
             public void onError(Throwable e) {
                 responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
-                Timber.e(e.getCause());
+                Timber.e(e);
             }
 
             @Override
@@ -223,10 +223,12 @@ public class MainActivityViewModel extends ViewModel {
 
     public void getContacts(int limit, int offset) {
         List<ContactEntity> contactEntities = contactsRepository.getLocalContacts();
-
-        List<Contact> contacts = Contact.fromEntities(contactEntities);
-
-        contactsResponse.postValue(contacts);
+        List<Contact> contactList = Contact.fromEntities(contactEntities);
+        if (contactList.isEmpty()) {
+            contactsResponse.postValue(null);
+        } else {
+            contactsResponse.postValue(contactList);
+        }
 
         contactsRepository.getContactsList(limit, offset)
                 .subscribe(new Observer<ContactsResponse>() {
@@ -236,21 +238,26 @@ public class MainActivityViewModel extends ViewModel {
                     }
 
                     @Override
-                    public void onNext(ContactsResponse response) {
-                        ContactData[] contacts = response.getResults();
+                    public void onNext(final ContactsResponse response) {
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                ContactData[] contacts = response.getResults();
+                                ContactData[] decryptedContacts = Contact.decryptContactData(contacts);
 
-                        contactsRepository.saveContacts(contacts);
+                                contactsRepository.saveContacts(decryptedContacts);
+                                List<Contact> contactList = Contact.fromResponseResults(decryptedContacts);
 
-                        List<Contact> contactsList = Contact.fromResponseResults(contacts);
-
-                        contactsResponse.postValue(contactsList);
-                        responseStatus.postValue(ResponseStatus.RESPONSE_NEXT_CONTACTS);
+                                contactsResponse.postValue(contactList);
+                                responseStatus.postValue(ResponseStatus.RESPONSE_NEXT_CONTACTS);
+                            }
+                        }).start();
                     }
 
                     @Override
                     public void onError(Throwable e) {
                         responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
-                        Timber.e(e.getCause());
+                        Timber.e(e);
                     }
 
                     @Override
@@ -304,7 +311,7 @@ public class MainActivityViewModel extends ViewModel {
         String password = userRepository.getUserPassword();
         SignInRequest signInRequest = new SignInRequest(
                 username,
-                EncodeUtils.encodePassword(username, password)
+                EncodeUtils.generateHash(username, password)
         );
 
         userRepository.signIn(signInRequest)
@@ -533,8 +540,12 @@ public class MainActivityViewModel extends ViewModel {
                         if (myselfResponse != null) {
                             MyselfResult myselfResult = myselfResponse.result[0];
                             SettingsEntity settingsEntity = myselfResult.settings;
+
                             String timezone = settingsEntity.timezone;
+                            boolean isContactsEncrypted = settingsEntity.isContactsEncrypted;
+
                             userRepository.saveTimeZone(timezone);
+                            userRepository.setContactsEncryptionEnabled(isContactsEncrypted);
                         }
                     }
 

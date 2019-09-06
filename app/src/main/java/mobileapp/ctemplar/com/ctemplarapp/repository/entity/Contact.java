@@ -1,11 +1,20 @@
 package mobileapp.ctemplar.com.ctemplarapp.repository.entity;
 
+import com.didisoft.pgp.exceptions.NonPGPDataException;
+import com.google.gson.Gson;
+
 import java.util.LinkedList;
 import java.util.List;
 
+import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.ContactData;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.EncryptContact;
+import mobileapp.ctemplar.com.ctemplarapp.repository.MailboxDao;
+import mobileapp.ctemplar.com.ctemplarapp.repository.UserStore;
+import mobileapp.ctemplar.com.ctemplarapp.utils.PGPManager;
 
 public class Contact {
+
     private long id;
     private String email;
     private String name;
@@ -14,6 +23,8 @@ public class Contact {
     private String phone;
     private String phone2;
     private String provider;
+    private Boolean isEncrypted;
+    private String encryptedData;
 
     public long getId() {
         return id;
@@ -79,19 +90,75 @@ public class Contact {
         this.provider = provider;
     }
 
-    public static Contact fromEntity(ContactEntity entity) {
-        Contact result = new Contact();
+    public Boolean isEncrypted() {
+        return isEncrypted;
+    }
 
-        result.setId(entity.getId());
-        result.setEmail(entity.getEmail());
-        result.setName(entity.getName());
-        result.setAddress(entity.getAddress());
-        result.setNote(entity.getNote());
-        result.setPhone(entity.getPhone());
-        result.setPhone2(entity.getPhone2());
-        result.setProvider(entity.getProvider());
+    public void setEncrypted(Boolean isEncrypted) {
+        this.isEncrypted = isEncrypted;
+    }
 
-        return result;
+    public String getEncryptedData() {
+        return encryptedData;
+    }
+
+    public void setEncryptedData(String encryptedData) {
+        this.encryptedData = encryptedData;
+    }
+
+    private static MailboxDao mailboxDao = CTemplarApp.getAppDatabase().mailboxDao();
+    private static UserStore userStore = CTemplarApp.getUserStore();
+
+    public static String encryptData(String content) {
+        if (content == null || mailboxDao.getAll().isEmpty()) {
+            return "";
+        }
+
+        MailboxEntity mailboxEntity = mailboxDao.getAll().get(0);
+        PGPManager pgpManager = new PGPManager();
+        String publicKey = mailboxEntity.getPublicKey();
+        String[] keys = { publicKey };
+        return pgpManager.encryptMessage(content, keys);
+    }
+
+    public static String decryptData(String content) {
+        if (content == null || mailboxDao.getAll().isEmpty()) {
+            return "";
+        }
+
+        String password = userStore.getUserPassword();
+        MailboxEntity mailboxEntity = mailboxDao.getAll().get(0);
+        PGPManager pgpManager = new PGPManager();
+        String privateKey = mailboxEntity.getPrivateKey();
+        try {
+            return pgpManager.decryptMessage(content, privateKey, password);
+        } catch (NonPGPDataException e) {
+            //
+        }
+        return "";
+    }
+
+    public static ContactData[] decryptContactData(ContactData[] contacts) {
+        for (ContactData contactData : contacts) {
+            if (contactData.isEncrypted()) {
+                Gson gson = new Gson();
+                String encryptedData = contactData.getEncryptedData();
+                String decryptedData = decryptData(encryptedData);
+                if (decryptedData == null || decryptedData.isEmpty()) {
+                    continue;
+                }
+                EncryptContact decryptedContact = gson.fromJson(decryptedData, EncryptContact.class);
+
+                contactData.setEmail(decryptedContact.getEmail());
+                contactData.setName(decryptedContact.getName());
+                contactData.setAddress(decryptedContact.getAddress());
+                contactData.setNote(decryptedContact.getNote());
+                contactData.setPhone(decryptedContact.getPhone());
+                contactData.setPhone2(decryptedContact.getPhone2());
+                contactData.setProvider(decryptedContact.getProvider());
+            }
+        }
+        return contacts;
     }
 
     public static Contact fromResponseResult(ContactData contactData) {
@@ -105,6 +172,25 @@ public class Contact {
         result.setPhone(contactData.getPhone());
         result.setPhone2(contactData.getPhone2());
         result.setProvider(contactData.getProvider());
+        result.setEncrypted(contactData.isEncrypted());
+        result.setEncryptedData(contactData.getEncryptedData());
+
+        return result;
+    }
+
+    public static Contact fromEntity(ContactEntity entity) {
+        Contact result = new Contact();
+
+        result.setId(entity.getId());
+        result.setEmail(entity.getEmail());
+        result.setName(entity.getName());
+        result.setAddress(entity.getAddress());
+        result.setNote(entity.getNote());
+        result.setPhone(entity.getPhone());
+        result.setPhone2(entity.getPhone2());
+        result.setProvider(entity.getProvider());
+        result.setEncrypted(entity.isEncrypted());
+        result.setEncryptedData(entity.getEncryptedData());
 
         return result;
     }
@@ -128,5 +214,4 @@ public class Contact {
 
         return result;
     }
-
 }

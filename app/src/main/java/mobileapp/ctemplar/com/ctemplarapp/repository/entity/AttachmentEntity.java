@@ -3,14 +3,19 @@ package mobileapp.ctemplar.com.ctemplarapp.repository.entity;
 import com.google.gson.annotations.SerializedName;
 
 public class AttachmentEntity {
+
     @SerializedName("id")
     private long id;
+
     @SerializedName("document_link")
     private String documentLink;
+
     @SerializedName("is_inline")
     private boolean isInline;
+
     @SerializedName("content_id")
     private String contentId;
+
     @SerializedName("message")
     private long message;
 

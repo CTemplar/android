@@ -80,7 +80,7 @@ public class LoginActivityViewModel extends ViewModel {
     public void signIn(String username, String password, String otp) {
         userRepository.saveUserName(username);
         userRepository.saveUserPassword(password);
-        final SignInRequest signInRequest = new SignInRequest(username, EncodeUtils.encodePassword(username, password));
+        final SignInRequest signInRequest = new SignInRequest(username, EncodeUtils.generateHash(username, password));
         signInRequest.setOtp(otp);
 
         userRepository.signIn(signInRequest)
@@ -176,7 +176,12 @@ public class LoginActivityViewModel extends ViewModel {
 
                         recoverPasswordRequest.setPrivateKey(pgpKeyEntity.getPrivateKey());
                         recoverPasswordRequest.setPublicKey(pgpKeyEntity.getPublicKey());
-                        recoverPasswordRequest.setPassword(EncodeUtils.encodePassword(recoverPasswordRequest.getUsername(), recoverPasswordRequest.getPassword()));
+                        recoverPasswordRequest.setPassword(
+                                EncodeUtils.generateHash(
+                                        recoverPasswordRequest.getUsername(),
+                                        recoverPasswordRequest.getPassword()
+                                )
+                        );
 
                         return userRepository.resetPassword(recoverPasswordRequest);
                     }
