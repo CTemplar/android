@@ -36,9 +36,6 @@ public class ContactData {
     @SerializedName("encrypted_data")
     private String encryptedData;
 
-    @SerializedName("email_hash")
-    private String emailHash;
-
     @NotNull
     @Override
     public String toString() {
@@ -123,13 +120,5 @@ public class ContactData {
 
     public void setEncryptedData(String encryptedData) {
         this.encryptedData = encryptedData;
-    }
-
-    public String getEmailHash() {
-        return emailHash;
-    }
-
-    public void setEmailHash(String emailHash) {
-        this.emailHash = emailHash;
     }
 }
