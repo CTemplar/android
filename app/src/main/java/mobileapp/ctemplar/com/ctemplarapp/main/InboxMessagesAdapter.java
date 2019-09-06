@@ -22,14 +22,14 @@ import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
 public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesViewHolder> {
 
     private final PublishSubject<Long> onClickSubject = PublishSubject.create();
-    private List<MessageProvider> messagesList;
+    private List<MessageProvider> messageList;
     private List<MessageProvider> filteredList;
     private final MainActivityViewModel mainModel;
 
-    InboxMessagesAdapter(List<MessageProvider> messagesList, MainActivityViewModel mainModel) {
-        this.messagesList = messagesList;
+    InboxMessagesAdapter(List<MessageProvider> messageList, MainActivityViewModel mainModel) {
+        this.messageList = messageList;
         filteredList = new ArrayList<>();
-        filteredList.addAll(messagesList);
+        filteredList.addAll(messageList);
         this.mainModel = mainModel;
     }
 
@@ -215,7 +215,6 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesView
         this.isUnread = isUnread;
         this.withAttachment = withAttachment;
         filter();
-
     }
 
     void filter(String filter) {
@@ -229,7 +228,7 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesView
 
     private void filter() {
         filteredList.clear();
-        for (MessageProvider messageResult : messagesList) {
+        for (MessageProvider messageResult : messageList) {
             if (matchFiltering(messageResult)) {
                 filteredList.add(messageResult);
             }

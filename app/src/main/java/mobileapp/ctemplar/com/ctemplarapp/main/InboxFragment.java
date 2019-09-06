@@ -62,6 +62,10 @@ public class InboxFragment extends BaseFragment {
     private String currentFolder;
     private boolean messagesNotEmpty;
 
+    private boolean filterIsStarred;
+    private boolean filterIsUnread;
+    private boolean filterWithAttachment;
+
     @BindView(R.id.fragment_inbox_recycler_view)
     RecyclerView recyclerView;
 
@@ -88,6 +92,15 @@ public class InboxFragment extends BaseFragment {
         @Override
         public void onApply(boolean isStarred, boolean isUnread, boolean withAttachment) {
             adapter.filter(isStarred, isUnread, withAttachment);
+            filterIsStarred = isStarred;
+            filterIsUnread = isUnread;
+            filterWithAttachment = withAttachment;
+            restartOptionsMenu();
+            if (adapter.getItemCount() > 0) {
+                showMessagesList();
+            } else {
+                hideMessagesList();
+            }
         }
     };
 
@@ -180,6 +193,13 @@ public class InboxFragment extends BaseFragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.main, menu);
+
+        MenuItem filterIcon = menu.findItem(R.id.action_filter);
+        if (filterIsStarred || filterIsUnread || filterWithAttachment) {
+            filterIcon.setIcon(R.drawable.ic_action_filter_on);
+        } else {
+            filterIcon.setIcon(R.drawable.ic_action_filter_off);
+        }
 
         // Function
         MenuItem emptyFolder = menu.findItem(R.id.action_empty_folder);
@@ -394,6 +414,14 @@ public class InboxFragment extends BaseFragment {
                     }
                 });
         recyclerView.setAdapter(adapter);
+        if (filterIsStarred || filterIsUnread || filterWithAttachment) {
+            adapter.filter(filterIsStarred, filterIsUnread, filterWithAttachment);
+            if (adapter.getItemCount() > 0) {
+                showMessagesList();
+            } else {
+                hideMessagesList();
+            }
+        }
 
         if (touchListener != null) {
             recyclerView.removeOnItemTouchListener(touchListener);
