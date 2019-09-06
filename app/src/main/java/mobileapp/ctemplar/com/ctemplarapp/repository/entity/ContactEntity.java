@@ -17,7 +17,6 @@ public class ContactEntity {
     public String provider;
     public Boolean isEncrypted;
     public String encryptedData;
-    public String emailHash;
 
     public long getId() {
         return id;
@@ -97,13 +96,5 @@ public class ContactEntity {
 
     public void setEncryptedData(String encryptedData) {
         this.encryptedData = encryptedData;
-    }
-
-    public String getEmailHash() {
-        return emailHash;
-    }
-
-    public void setEmailHash(String emailHash) {
-        this.emailHash = emailHash;
     }
 }

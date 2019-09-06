@@ -23,9 +23,8 @@ public class Contact {
     private String phone;
     private String phone2;
     private String provider;
-    public Boolean isEncrypted;
-    public String encryptedData;
-    public String emailHash;
+    private Boolean isEncrypted;
+    private String encryptedData;
 
     public long getId() {
         return id;
@@ -107,14 +106,6 @@ public class Contact {
         this.encryptedData = encryptedData;
     }
 
-    public String getEmailHash() {
-        return emailHash;
-    }
-
-    public void setEmailHash(String emailHash) {
-        this.emailHash = emailHash;
-    }
-
     private static MailboxDao mailboxDao = CTemplarApp.getAppDatabase().mailboxDao();
     private static UserStore userStore = CTemplarApp.getUserStore();
 
@@ -183,7 +174,6 @@ public class Contact {
         result.setProvider(contactData.getProvider());
         result.setEncrypted(contactData.isEncrypted());
         result.setEncryptedData(contactData.getEncryptedData());
-        result.setEmailHash(contactData.getEmailHash());
 
         return result;
     }
@@ -201,7 +191,6 @@ public class Contact {
         result.setProvider(entity.getProvider());
         result.setEncrypted(entity.isEncrypted());
         result.setEncryptedData(entity.getEncryptedData());
-        result.setEmailHash(entity.getEmailHash());
 
         return result;
     }

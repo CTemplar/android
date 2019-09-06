@@ -15,7 +15,6 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.ContactsRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserStore;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.Contact;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.ContactEntity;
-import mobileapp.ctemplar.com.ctemplarapp.utils.EncodeUtils;
 import timber.log.Timber;
 
 public class EditContactViewModel extends ViewModel {
@@ -49,9 +48,6 @@ public class EditContactViewModel extends ViewModel {
     }
 
     public void updateContact(ContactData contactData) {
-        String contactEmail = contactData.getEmail();
-        contactData.setEmailHash(EncodeUtils.generateHash(contactEmail, contactEmail));
-
         boolean contactsEncryption = userStore.getContactsEncryptionEnabled();
         if (contactsEncryption) {
             EncryptContact encryptContact = new EncryptContact();

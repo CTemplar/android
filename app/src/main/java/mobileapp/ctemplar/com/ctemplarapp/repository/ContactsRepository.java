@@ -90,7 +90,6 @@ public class ContactsRepository {
                 entity.setProvider(contactData.getProvider());
                 entity.setEncrypted(contactData.isEncrypted());
                 entity.setEncryptedData(contactData.getEncryptedData());
-                entity.setEmailHash(contactData.getEmailHash());
 
                 CTemplarApp.getAppDatabase().contactDao().save(entity);
             }
@@ -122,7 +121,6 @@ public class ContactsRepository {
         entity.setProvider(contactData.getProvider());
         entity.setEncrypted(contactData.isEncrypted());
         entity.setEncryptedData(contactData.getEncryptedData());
-        entity.setEmailHash(contactData.getEmailHash());
 
         CTemplarApp.getAppDatabase().contactDao().save(entity);
     }
