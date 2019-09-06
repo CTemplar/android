@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.BaseTransientBottomBar;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.DividerItemDecoration;
@@ -20,32 +21,28 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.TextView;
 
-import java.util.LinkedList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 import mobileapp.ctemplar.com.ctemplarapp.BaseFragment;
 import mobileapp.ctemplar.com.ctemplarapp.R;
-import mobileapp.ctemplar.com.ctemplarapp.main.RecycleDeleteSwiper;
 import mobileapp.ctemplar.com.ctemplarapp.main.MainActivityViewModel;
+import mobileapp.ctemplar.com.ctemplarapp.main.RecycleDeleteSwiper;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.Contact;
+import timber.log.Timber;
 
 public class ContactFragment extends BaseFragment {
 
+    private MainActivityViewModel mainModel;
+    private ContactAdapter contactAdapter;
+
     @BindView(R.id.fragment_contact_recycler_view)
     RecyclerView recyclerView;
-
-    @BindView(R.id.fragment_contact_icon_empty)
-    ImageView imgEmpty;
-
-    @BindView(R.id.fragment_contact_title_empty)
-    TextView txtEmpty;
 
     @BindView(R.id.fragment_contact_add_layout)
     FrameLayout frameCompose;
@@ -53,9 +50,11 @@ public class ContactFragment extends BaseFragment {
     @BindView(R.id.fragment_contact_search)
     SearchView searchView;
 
-    private ContactAdapter adapter;
+    @BindView(R.id.fragment_contact_list_empty_layout)
+    ConstraintLayout listEmptyLayout;
 
-    private MainActivityViewModel mainModel;
+    @BindView(R.id.fragment_contact_progress_layout)
+    ConstraintLayout progressLayout;
 
     @Override
     protected int getLayoutId() {
@@ -91,7 +90,7 @@ public class ContactFragment extends BaseFragment {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                adapter.filter(newText);
+                contactAdapter.filter(newText);
                 return false;
             }
         });
@@ -107,21 +106,23 @@ public class ContactFragment extends BaseFragment {
         mainModel.getContacts(200, 0);
     }
 
-    private void handleContactsList(@Nullable List<Contact> contacts) {
-        if (contacts == null || contacts.size() == 0) {
+    private void handleContactsList(@Nullable List<Contact> contactList) {
+        if (contactList == null) {
+            progressLayout.setVisibility(View.VISIBLE);
+            listEmptyLayout.setVisibility(View.GONE);
             return;
         }
+        if (contactList.isEmpty()) {
+            progressLayout.setVisibility(View.GONE);
+            listEmptyLayout.setVisibility(View.VISIBLE);
+            return;
+        }
+        progressLayout.setVisibility(View.GONE);
+        listEmptyLayout.setVisibility(View.GONE);
 
-        imgEmpty.setVisibility(View.GONE);
-        txtEmpty.setVisibility(View.GONE);
-        frameCompose.setVisibility(View.GONE);
-
-        List<Contact> contactsList = new LinkedList<>();
-        contactsList.addAll(contacts);
-
-        adapter = new ContactAdapter(contactsList);
-        adapter.getOnClickSubject()
-                .subscribeOn(io.reactivex.schedulers.Schedulers.io())
+        contactAdapter = new ContactAdapter(contactList);
+        contactAdapter.getOnClickSubject()
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new io.reactivex.Observer<Long>() {
                     @Override
@@ -141,7 +142,7 @@ public class ContactFragment extends BaseFragment {
 
                     @Override
                     public void onError(Throwable e) {
-
+                        Timber.e(e);
                     }
 
                     @Override
@@ -149,14 +150,15 @@ public class ContactFragment extends BaseFragment {
 
                     }
                 });
-        recyclerView.setAdapter(adapter);
+
+        recyclerView.setAdapter(contactAdapter);
     }
 
     private void setupSwiperForRecyclerView() {
         RecycleDeleteSwiper swipeHandler = new RecycleDeleteSwiper(getActivity()) {
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
-                final ContactAdapter adapter = ContactFragment.this.adapter;
+                final ContactAdapter adapter = ContactFragment.this.contactAdapter;
                 if (adapter == null) {
                     return;
                 }
@@ -197,13 +199,10 @@ public class ContactFragment extends BaseFragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        switch (id) {
-            case R.id.action_add_contact:
-                startAddContactActivity();
-                break;
-
-            default:
-                return super.onOptionsItemSelected(item);
+        if (id == R.id.action_add_contact) {
+            startAddContactActivity();
+        } else {
+            return super.onOptionsItemSelected(item);
         }
         return true;
     }

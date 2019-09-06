@@ -2,23 +2,45 @@ package mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts;
 
 import com.google.gson.annotations.SerializedName;
 
+import org.jetbrains.annotations.NotNull;
+
 public class ContactData {
+
     @SerializedName("id")
     private long id;
-    @SerializedName("email")
-    private String email;
-    @SerializedName("name")
-    private String name;
+
     @SerializedName("address")
     private String address;
+
+    @SerializedName("email")
+    private String email;
+
+    @SerializedName("name")
+    private String name;
+
     @SerializedName("note")
     private String note;
+
     @SerializedName("phone")
     private String phone;
+
     @SerializedName("phone2")
     private String phone2;
+
     @SerializedName("provider")
     private String provider;
+
+    @SerializedName("is_encrypted")
+    private Boolean isEncrypted;
+
+    @SerializedName("encrypted_data")
+    private String encryptedData;
+
+    @NotNull
+    @Override
+    public String toString() {
+        return email;
+    }
 
     public long getId() {
         return id;
@@ -26,6 +48,14 @@ public class ContactData {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public String getEmail() {
@@ -42,14 +72,6 @@ public class ContactData {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
     }
 
     public String getNote() {
@@ -84,9 +106,19 @@ public class ContactData {
         this.provider = provider;
     }
 
+    public Boolean isEncrypted() {
+        return isEncrypted;
+    }
 
-    @Override
-    public String toString() {
-        return email;
+    public void setEncrypted(Boolean encrypted) {
+        isEncrypted = encrypted;
+    }
+
+    public String getEncryptedData() {
+        return encryptedData;
+    }
+
+    public void setEncryptedData(String encryptedData) {
+        this.encryptedData = encryptedData;
     }
 }

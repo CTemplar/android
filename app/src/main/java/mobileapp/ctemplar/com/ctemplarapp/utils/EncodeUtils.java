@@ -26,7 +26,7 @@ public class EncodeUtils {
         }
     }
 
-    public static String encodePassword(String username, String password) {
+    public static String generateHash(String username, String password) {
         return BCrypt.hashpw(password, generateSaltWithUsername(username, ENCODE_SCHEME));
     }
 

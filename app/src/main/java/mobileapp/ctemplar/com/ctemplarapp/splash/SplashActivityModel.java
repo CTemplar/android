@@ -56,7 +56,7 @@ public class SplashActivityModel extends ViewModel {
         String username = userRepository.getUsername();
         String password = userRepository.getUserPassword();
         SignInRequest signInRequest = new SignInRequest(
-                username, EncodeUtils.encodePassword(username, password)
+                username, EncodeUtils.generateHash(username, password)
         );
         userRepository.signIn(signInRequest)
                 .subscribe(new Observer<SignInResponse>() {

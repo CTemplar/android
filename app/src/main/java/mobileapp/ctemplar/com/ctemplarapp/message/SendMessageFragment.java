@@ -33,7 +33,6 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import mobileapp.ctemplar.com.ctemplarapp.ActivityInterface;
@@ -43,8 +42,6 @@ import mobileapp.ctemplar.com.ctemplarapp.main.UpgradeToPrimeFragment;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.PublicKeysRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SendMessageRequest;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.ContactData;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.ContactsResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.KeyResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.KeyResult;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.EncryptionMessage;
@@ -54,6 +51,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.MyselfResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.MyselfResult;
 import mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.AttachmentEntity;
+import mobileapp.ctemplar.com.ctemplarapp.repository.entity.Contact;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MessageEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageProvider;
@@ -76,9 +74,9 @@ import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderN
 public class SendMessageFragment extends Fragment implements View.OnClickListener, ActivityInterface {
 
     private final static String TAG = SendMessageFragment.class.getSimpleName();
+
     private final int PICK_FILE_FROM_STORAGE = 1;
     private boolean finished;
-
 
     public static SendMessageFragment newInstance(
             @Nullable String subject,
@@ -376,14 +374,16 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
             return;
         }
 
-        // Load contacts to autocomplete
-        mainModel.getContactsResponse().observe(this, new Observer<ContactsResponse>() {
+        // Load contacts for autocomplete
+        mainModel.getContactsResponse().observe(this, new Observer<List<Contact>>() {
             @Override
-            public void onChanged(@Nullable ContactsResponse contactsResponse) {
-                handleContactsList(contactsResponse);
+            public void onChanged(@Nullable List<Contact> contactList) {
+                if (contactList != null) {
+                    handleContactsList(contactList);
+                }
             }
         });
-        mainModel.getContacts(20, 0);
+        mainModel.getContacts(200, 0);
 
         // Load keys before sending message
         mainModel.getKeyResponse().observe(this, new Observer<KeyResponse>() {
@@ -598,14 +598,10 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         }
     }
 
-    private void handleContactsList(@Nullable ContactsResponse contactsResponse) {
-        if (contactsResponse == null || contactsResponse.getResults() == null || contactsResponse.getResults().length == 0) {
-            return; // empty list
-        }
-
-        ContactData[] contacts = contactsResponse.getResults();
-        List<ContactData> contactsList = new ArrayList<>(Arrays.asList(contacts));
-        RecipientsListAdapter recipientsAdapter = new RecipientsListAdapter(getActivity(), R.layout.recipients_list_view_item, contactsList);
+    private void handleContactsList(List<Contact> contactList) {
+        RecipientsListAdapter recipientsAdapter = new RecipientsListAdapter(
+                getActivity(), R.layout.recipients_list_view_item, contactList
+        );
         toEmailTextView.setAdapter(recipientsAdapter);
         ccTextView.setAdapter(recipientsAdapter);
         bccTextView.setAdapter(recipientsAdapter);

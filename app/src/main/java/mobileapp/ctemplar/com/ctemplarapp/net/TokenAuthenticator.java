@@ -36,7 +36,7 @@ public class TokenAuthenticator implements Authenticator {
         String username = userRepository.getUsername();
         String password = userRepository.getUserPassword();
         SignInRequest signInRequest = new SignInRequest(
-                username, EncodeUtils.encodePassword(username, password)
+                username, EncodeUtils.generateHash(username, password)
         );
         SignInResponse signInResponse = new RestClient()
                 .getRestService()

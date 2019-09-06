@@ -9,6 +9,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.request.AutoSaveContactEnabledRequ
 import mobileapp.ctemplar.com.ctemplarapp.net.request.CaptchaVerifyRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.ChangePasswordRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.CheckUsernameRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.ContactsEncryptionRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.CreateMailboxRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.CustomFilterRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.DefaultMailboxRequest;
@@ -229,6 +230,9 @@ public interface RestService {
 
     @PATCH("/users/settings/{id}/")
     Observable<SettingsEntity> updateSubjectEncrypted(@Path("id") long settingId, @Body SubjectEncryptedRequest body);
+
+    @PATCH("/users/settings/{id}/")
+    Observable<SettingsEntity> updateContactsEncryption(@Path("id") long settingId, @Body ContactsEncryptionRequest body);
 
     @PATCH("/users/settings/{id}/")
     Observable<SettingsEntity> updateAutoSaveEnabled(@Path("id") long settingId, @Body AutoSaveContactEnabledRequest request);

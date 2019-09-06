@@ -1,5 +1,8 @@
 package mobileapp.ctemplar.com.ctemplarapp.settings;
 
+import android.app.ProgressDialog;
+import android.arch.lifecycle.ViewModelProviders;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -8,6 +11,7 @@ import android.support.annotation.Nullable;
 import android.support.v14.preference.SwitchPreference;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.CheckBoxPreference;
 import android.support.v7.preference.EditTextPreference;
@@ -28,7 +32,9 @@ import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.filters.FiltersActivity;
 import mobileapp.ctemplar.com.ctemplarapp.folders.ManageFoldersActivity;
 import mobileapp.ctemplar.com.ctemplarapp.mailboxes.MailboxesActivity;
+import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.AutoSaveContactEnabledRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.ContactsEncryptionRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.RecoveryEmailRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SignatureRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SubjectEncryptedRequest;
@@ -44,8 +50,11 @@ import mobileapp.ctemplar.com.ctemplarapp.wbl.WhiteBlackListActivity;
 import timber.log.Timber;
 
 public class SettingsActivity extends AppCompatActivity {
-    public static final String USER_IS_PRIME = "user_is_prime";
 
+    public static final String USER_IS_PRIME = "user_is_prime";
+    public static final String SETTING_ID = "setting_id";
+
+    private static SettingsActivityViewModel settingsModel;
     private static UserRepository userRepository = CTemplarApp.getUserRepository();
     private static UserStore userStore = CTemplarApp.getUserStore();
 
@@ -60,6 +69,7 @@ public class SettingsActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.settings_activity);
+        settingsModel = ViewModelProviders.of(this).get(SettingsActivityViewModel.class);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         requestMySelfData();
 
@@ -70,7 +80,6 @@ public class SettingsActivity extends AppCompatActivity {
             actionBar.setHomeButtonEnabled(true);
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-
         if (savedInstanceState == null) {
             Fragment preferenceFragment = new SettingsFragment();
             getSupportFragmentManager()
@@ -89,11 +98,11 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     private static long getSettingId() {
-        return sharedPreferences.getLong("setting_id", -1);
+        return sharedPreferences.getLong(SETTING_ID, -1);
     }
 
     private static void setSettingId(long id) {
-        sharedPreferences.edit().putLong("setting_id", id).apply();
+        sharedPreferences.edit().putLong(SETTING_ID, id).apply();
     }
 
     public static class SettingsFragment extends BasePreferenceFragment {
@@ -164,10 +173,7 @@ public class SettingsActivity extends AppCompatActivity {
         public void onCreatePreferences(Bundle bundle, String rootKey) {
             setPreferencesFromResource(R.xml.notifications_settings, rootKey);
 
-            boolean isEnabled = userStore.getNotificationsEnabled();
             SwitchPreference switchPreferenceNotificationsEnabled = (SwitchPreference) findPreference(getString(R.string.push_notifications_enabled));
-
-            switchPreferenceNotificationsEnabled.setChecked(isEnabled);
             switchPreferenceNotificationsEnabled.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
@@ -234,6 +240,74 @@ public class SettingsActivity extends AppCompatActivity {
                     return true;
                 }
             });
+        }
+    }
+
+    public static class ContactsEncryptionFragment extends BasePreferenceFragment {
+
+        private SwitchPreference contactsEncryptionSwitchPreference;
+
+        @Override
+        public void onCreatePreferences(Bundle bundle, String rootKey) {
+            setPreferencesFromResource(R.xml.contacts_encryption_settings, rootKey);
+
+            contactsEncryptionSwitchPreference = (SwitchPreference) findPreference(getString(R.string.contacts_encryption_enabled));
+            contactsEncryptionSwitchPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    boolean value = (boolean) newValue;
+                    if (value) {
+                        userStore.setContactsEncryptionEnabled(true);
+                        updateContactsEncryption(true);
+                        Toast.makeText(getActivity(), getString(R.string.toast_contacts_encrypted), Toast.LENGTH_SHORT).show();
+                    } else {
+                        disableContactsEncryption();
+                        return false;
+                    }
+                    return true;
+                }
+            });
+        }
+
+        private void disableContactsEncryption() {
+            final ProgressDialog progressDialog = new ProgressDialog(getActivity());
+            progressDialog.setCanceledOnTouchOutside(false);
+            progressDialog.setMessage(getString(R.string.txt_contact_decryption));
+            progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+
+            final int[] listOffset = {0};
+            settingsModel.getDecryptionStatus().observe(this, new android.arch.lifecycle.Observer<ResponseStatus>() {
+                @Override
+                public void onChanged(@Nullable ResponseStatus responseStatus) {
+                    if (responseStatus == ResponseStatus.RESPONSE_NEXT) {
+                        listOffset[0] += 20;
+                        settingsModel.decryptContacts(listOffset[0]);
+                    } else if (responseStatus == ResponseStatus.RESPONSE_COMPLETE) {
+                        userStore.setContactsEncryptionEnabled(false);
+                        updateContactsEncryption(false);
+                        contactsEncryptionSwitchPreference.setChecked(false);
+                        progressDialog.dismiss();
+                        Toast.makeText(getActivity(), getString(R.string.toast_contacts_decrypted), Toast.LENGTH_SHORT).show();
+                    } else if (responseStatus == ResponseStatus.RESPONSE_ERROR) {
+                        progressDialog.dismiss();
+                        Toast.makeText(getActivity(), getString(R.string.toast_decryption_error), Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+
+            new AlertDialog.Builder(getActivity())
+                    .setTitle(getActivity().getString(R.string.settings_disable_contacts_encryption))
+                    .setMessage(getActivity().getString(R.string.settings_disable_contacts_encryption_note))
+                    .setPositiveButton(getActivity().getString(R.string.btn_confirm), new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    progressDialog.show();
+                                    settingsModel.decryptContacts(listOffset[0]);
+                                }
+                            }
+                    )
+                    .setNeutralButton(getActivity().getString(R.string.btn_cancel), null)
+                    .show();
         }
     }
 
@@ -436,6 +510,8 @@ public class SettingsActivity extends AppCompatActivity {
         String usedStorage = AppUtils.usedStorage(settingsEntity.getUsedStorage());
         String allocatedStorage = AppUtils.usedStorage(settingsEntity.getAllocatedStorage());
 
+        boolean isNotificationsEnabled = userStore.getNotificationsEnabled();
+
         storageLimitPreference.setSummary(getString(
                 R.string.storage_limit_info,
                 usedStorage,
@@ -447,6 +523,8 @@ public class SettingsActivity extends AppCompatActivity {
                 .putString(getString(R.string.signature), mailboxesResult.getSignature())
                 .putBoolean(getString(R.string.auto_save_contacts_enabled), settingsEntity.saveContacts)
                 .putBoolean(getString(R.string.subject_encryption_enabled), settingsEntity.isSubjectEncrypted)
+                .putBoolean(getString(R.string.contacts_encryption_enabled), settingsEntity.isContactsEncrypted)
+                .putBoolean(getString(R.string.push_notifications_enabled), isNotificationsEnabled)
                 .apply();
     }
 
@@ -500,6 +578,38 @@ public class SettingsActivity extends AppCompatActivity {
                     @Override
                     public void onNext(SettingsEntity settingsEntity) {
                         Timber.i("Subject encryption updated");
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Timber.e(e);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    private static void updateContactsEncryption(boolean isContactsEncryption) {
+        long settingId = getSettingId();
+        if (settingId == -1) {
+            Timber.e("Setting id is not defined");
+            return;
+        }
+
+        ContactsEncryptionRequest contactsEncryptionRequest = new ContactsEncryptionRequest(isContactsEncryption);
+        userRepository.updateContactsEncryption(settingId, contactsEncryptionRequest)
+                .subscribe(new Observer<SettingsEntity>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(SettingsEntity settingsEntity) {
+                        Timber.i("Contacts encryption updated");
                     }
 
                     @Override
