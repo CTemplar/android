@@ -34,6 +34,7 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 import mobileapp.ctemplar.com.ctemplarapp.BaseFragment;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.message.MoveDialogFragment;
@@ -65,6 +66,7 @@ public class InboxFragment extends BaseFragment {
     private boolean filterIsStarred;
     private boolean filterIsUnread;
     private boolean filterWithAttachment;
+    private String filterText;
 
     @BindView(R.id.fragment_inbox_recycler_view)
     RecyclerView recyclerView;
@@ -218,13 +220,14 @@ public class InboxFragment extends BaseFragment {
         if (searchView != null) {
             searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                 @Override
-                public boolean onQueryTextSubmit(String s) {
+                public boolean onQueryTextSubmit(String text) {
                     return false;
                 }
 
                 @Override
-                public boolean onQueryTextChange(String s) {
-                    adapter.filter(s);
+                public boolean onQueryTextChange(String text) {
+                    adapter.filter(text);
+                    filterText = text;
                     return false;
                 }
             });
@@ -390,7 +393,7 @@ public class InboxFragment extends BaseFragment {
 
         adapter = new InboxMessagesAdapter(messages, mainModel);
         adapter.getOnClickSubject()
-                .subscribeOn(io.reactivex.schedulers.Schedulers.io())
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new io.reactivex.Observer<Long>() {
                     @Override
@@ -416,11 +419,14 @@ public class InboxFragment extends BaseFragment {
         recyclerView.setAdapter(adapter);
         if (filterIsStarred || filterIsUnread || filterWithAttachment) {
             adapter.filter(filterIsStarred, filterIsUnread, filterWithAttachment);
-            if (adapter.getItemCount() > 0) {
-                showMessagesList();
-            } else {
-                hideMessagesList();
-            }
+        }
+        if (filterText != null) {
+            adapter.filter(filterText);
+        }
+        if (adapter.getItemCount() > 0) {
+            showMessagesList();
+        } else {
+            hideMessagesList();
         }
 
         if (touchListener != null) {
