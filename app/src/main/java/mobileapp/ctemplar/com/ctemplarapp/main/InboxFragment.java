@@ -12,6 +12,7 @@ import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -89,6 +90,9 @@ public class InboxFragment extends BaseFragment {
     @BindView(R.id.fragment_inbox_fab_compose)
     FloatingActionButton fabCompose;
 
+    @BindView(R.id.fragment_inbox_swiperefresh)
+    SwipeRefreshLayout swipeRefreshLayout;
+
     private FilterDialogFragment.OnApplyClickListener onFilterApplyClickListener
             = new FilterDialogFragment.OnApplyClickListener() {
         @Override
@@ -144,6 +148,7 @@ public class InboxFragment extends BaseFragment {
                 if (messagesResponse != null) {
                     handleMessagesList(messagesResponse.messages, messagesResponse.folderName);
                 }
+                swipeRefreshLayout.setRefreshing(false);
             }
         });
 
@@ -151,6 +156,7 @@ public class InboxFragment extends BaseFragment {
             @Override
             public void onChanged(@Nullable List<MessageProvider> messagesResponse) {
                 handleMessagesList(messagesResponse, STARRED);
+                swipeRefreshLayout.setRefreshing(false);
             }
         });
 
@@ -168,6 +174,13 @@ public class InboxFragment extends BaseFragment {
             @Override
             public void onChanged(@Nullable ResponseStatus responseStatus) {
                 mainModel.getMessages(50, 0, currentFolder);
+            }
+        });
+
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                getMessages();
             }
         });
 
