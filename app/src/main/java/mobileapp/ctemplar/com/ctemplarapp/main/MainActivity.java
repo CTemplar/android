@@ -487,6 +487,7 @@ public class MainActivity extends AppCompatActivity
         }
         switch (actions) {
             case ACTION_LOGOUT:
+                finish();
                 startSignInActivity();
                 break;
         }
