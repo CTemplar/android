@@ -215,7 +215,7 @@ public class ViewMessagesAdapter extends BaseAdapter {
         contentWebView.getSettings().setLoadWithOverviewMode(true);
         contentWebView.loadData(encodedContent, "text/html", "base64");
 
-        List<AttachmentProvider> attachmentsList = messageData.getAttachments();
+        List<AttachmentProvider> attachmentList = messageData.getAttachments();
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(
                 attachmentsRecyclerView.getContext(),
@@ -224,7 +224,7 @@ public class ViewMessagesAdapter extends BaseAdapter {
         );
         attachmentsRecyclerView.setLayoutManager(mLayoutManager);
 
-        messageAttachmentAdapter.setAttachmentsList(attachmentsList);
+        messageAttachmentAdapter.setAttachmentList(attachmentList);
         attachmentsRecyclerView.setAdapter(messageAttachmentAdapter);
 
         return view;

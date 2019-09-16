@@ -20,6 +20,10 @@
             android:fragment="mobileapp.ctemplar.com.ctemplarapp.settings.SettingsActivity$SubjectEncryptionFragment" />
 
         <PreferenceScreen
+            android:title="@string/settings_attachments_encryption"
+            android:fragment="mobileapp.ctemplar.com.ctemplarapp.settings.SettingsActivity$AttachmentsEncryptionFragment" />
+
+        <PreferenceScreen
             android:title="@string/settings_contacts_encryption"
             android:fragment="mobileapp.ctemplar.com.ctemplarapp.settings.SettingsActivity$ContactsEncryptionFragment" />
 

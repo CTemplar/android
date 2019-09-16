@@ -1,11 +1,17 @@
 package mobileapp.ctemplar.com.ctemplarapp.repository.provider;
 
 public class AttachmentProvider {
+
     private long id;
     private String documentLink;
     private boolean isInline;
     private String contentId;
+    private boolean isEncrypted;
     private long message;
+
+    public AttachmentProvider() {
+
+    }
 
     public long getId() {
         return id;
@@ -37,6 +43,14 @@ public class AttachmentProvider {
 
     public void setContentId(String contentId) {
         this.contentId = contentId;
+    }
+
+    public boolean isEncrypted() {
+        return isEncrypted;
+    }
+
+    public void setEncrypted(boolean encrypted) {
+        isEncrypted = encrypted;
     }
 
     public long getMessage() {

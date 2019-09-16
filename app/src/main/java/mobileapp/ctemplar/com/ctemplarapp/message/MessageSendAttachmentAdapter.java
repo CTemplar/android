@@ -16,15 +16,16 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessageAttachmen
 import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
 
 public class MessageSendAttachmentAdapter extends RecyclerView.Adapter<MessageSendAttachmentHolder> {
-    private List<MessageAttachment> attachmentsList = new ArrayList<>();
+
+    private List<MessageAttachment> attachmentList = new ArrayList<>();
     private SendMessageActivityViewModel sendMessageActivityViewModel;
 
     public MessageSendAttachmentAdapter(FragmentActivity fragmentActivity) {
         sendMessageActivityViewModel = ViewModelProviders.of(fragmentActivity).get(SendMessageActivityViewModel.class);
     }
 
-    public List<MessageAttachment> getAttachmentsList() {
-        return attachmentsList;
+    public List<MessageAttachment> getAttachmentList() {
+        return attachmentList;
     }
 
     @NonNull
@@ -37,7 +38,7 @@ public class MessageSendAttachmentAdapter extends RecyclerView.Adapter<MessageSe
 
     @Override
     public void onBindViewHolder(@NonNull MessageSendAttachmentHolder holder, int position) {
-        final MessageAttachment messageAttachment = attachmentsList.get(position);
+        final MessageAttachment messageAttachment = attachmentList.get(position);
         final String documentLink = messageAttachment.getDocumentLink();
         final String fileName = AppUtils.getFileNameFromURL(documentLink);
 
@@ -52,19 +53,19 @@ public class MessageSendAttachmentAdapter extends RecyclerView.Adapter<MessageSe
 
     @Override
     public int getItemCount() {
-        return attachmentsList.size();
+        return attachmentList.size();
     }
 
     public void addAttachment(MessageAttachment messageAttachment) {
-        attachmentsList.add(messageAttachment);
-        notifyItemInserted(attachmentsList.size() - 1);
+        attachmentList.add(messageAttachment);
+        notifyItemInserted(attachmentList.size() - 1);
     }
 
     public void deleteAttachment(MessageAttachment messageAttachment) {
         sendMessageActivityViewModel.deleteAttachment(messageAttachment.getId());
-        int attachmentPosition = attachmentsList.indexOf(messageAttachment);
+        int attachmentPosition = attachmentList.indexOf(messageAttachment);
         if (attachmentPosition != -1) {
-            attachmentsList.remove(attachmentPosition);
+            attachmentList.remove(attachmentPosition);
             notifyItemRemoved(attachmentPosition);
         }
     }

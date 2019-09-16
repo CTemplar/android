@@ -19,6 +19,7 @@ public class UserStoreImpl implements UserStore{
     private static final String KEY_PRIVATE_KEY = "key_private_key";
     private static final String KEY_TIMEZONE = "key_timezone";
     private static final String KEY_NOTIFICATIONS_ENABLED = "key_notifications_enabled";
+    private static final String KEY_ATTACHMENTS_ENCRYPTION_ENABLED = "key_attachments_encryption_enabled";
     private static final String KEY_CONTACTS_ENCRYPTION_ENABLED = "key_contacts_encryption_enabled";
 
     private Context context;
@@ -127,6 +128,16 @@ public class UserStoreImpl implements UserStore{
     @Override
     public boolean getNotificationsEnabled() {
         return preferences.getBoolean(KEY_NOTIFICATIONS_ENABLED, false);
+    }
+
+    @Override
+    public void setAttachmentsEncryptionEnabled(boolean state) {
+        preferences.edit().putBoolean(KEY_ATTACHMENTS_ENCRYPTION_ENABLED, state).commit();
+    }
+
+    @Override
+    public boolean getAttachmentsEncryptionEnabled() {
+        return preferences.getBoolean(KEY_ATTACHMENTS_ENCRYPTION_ENABLED, false);
     }
 
     @Override

@@ -542,9 +542,11 @@ public class MainActivityViewModel extends ViewModel {
                             SettingsEntity settingsEntity = myselfResult.settings;
 
                             String timezone = settingsEntity.timezone;
+                            boolean isAttachmentsEncrypted = settingsEntity.isAttachmentsEncrypted;
                             boolean isContactsEncrypted = settingsEntity.isContactsEncrypted;
 
                             userRepository.saveTimeZone(timezone);
+                            userRepository.setAttachmentsEncryptionEnabled(isAttachmentsEncrypted);
                             userRepository.setContactsEncryptionEnabled(isContactsEncrypted);
                         }
                     }

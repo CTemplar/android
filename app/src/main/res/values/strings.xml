@@ -210,11 +210,11 @@ Your password is connected to your encryption key, if you change your password t
     <string name="toast_message_saved_as_draft">Message saved as draft</string>
     <string name="toast_message_not_created">Message not created</string>
     <string name="toast_message_not_loaded">Message not loaded</string>
-    <string name="toast_attachment_upload_start">Attachment uploading started</string>
-    <string name="toast_attachment_upload_complete">Attachment uploading complete</string>
+    <string name="toast_upload_error">Upload error</string>
     <string name="toast_attachment_unable_read_file">Unable to read file in selected path</string>
     <string name="toast_attachment_unable_read_path">"Unable to read selected path"</string>
     <string name="txt_sending_mail">Sending mail..</string>
+    <string name="txt_uploading">Uploading..</string>
     <string name="dialog_discard_mail">Discard mail</string>
     <string name="dialog_discard_confirm">Are you sure, you want to discard this email?</string>
     <string name="dialog_save_in_drafts">Save in drafts</string>
@@ -311,6 +311,7 @@ Your password is connected to your encryption key, if you change your password t
     <string name="settings_enable_notifications">Enable push notifications</string>
     <string name="settings_enable_subject_encryption">Subject encryption</string>
     <string name="settings_contacts_encryption">Contacts encryption</string>
+    <string name="settings_attachments_encryption">Attachments encryption</string>
     <string name="settings_saving_contacts">Saving contacts</string>
     <string name="settings_auto_save_contacts">Automatically save contacts</string>
     <string name="settings_filters">Filters</string>
@@ -334,8 +335,7 @@ Your password is connected to your encryption key, if you change your password t
     <string name="settings_disable_contacts_encryption">Are you sure you want to disable contacts encryption?</string>
     <string name="settings_disable_contacts_encryption_note">Disabling contacts encryption can take several minutes depending upon the number of contacts you have. After you confirm, all your contacts will be decrypted on your device and saved on the server.</string>
     <string name="txt_contact_decryption">Contact decryption..</string>
-    <string name="toast_recovery_email_changed">Recovery email changed</string>
-    <string name="toast_subject_encryption_changed">Subject encryption changed</string>
+    <string name="toast_saved">Saved.</string>
     <string name="toast_contacts_encrypted">Contacts are encrypted</string>
     <string name="toast_contacts_decrypted">Contacts are decrypted</string>
     <string name="toast_decryption_error">An error occurred while decrypting. Try again</string>
@@ -359,6 +359,7 @@ Your password is connected to your encryption key, if you change your password t
     <string name="recovery_email_holder" translatable="false">recovery_email_holder</string>
     <string name="subject_encryption" translatable="false">subject_encryption</string>
     <string name="subject_encryption_enabled" translatable="false">subject_encryption_enabled</string>
+    <string name="attachments_encryption_enabled" translatable="false">attachments_encryption_enabled</string>
     <string name="contacts_encryption_enabled" translatable="false">contacts_encryption_enabled</string>
     <string name="auto_save_contacts_enabled" translatable="false">auto_save_contacts_enabled</string>
     <string name="setting_id" translatable="false">setting_id</string>

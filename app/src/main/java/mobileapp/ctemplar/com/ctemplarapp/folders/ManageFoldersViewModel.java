@@ -13,6 +13,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.Folders.FoldersResult;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.MyselfResponse;
 import mobileapp.ctemplar.com.ctemplarapp.repository.ManageFoldersRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
+import okhttp3.ResponseBody;
 import retrofit2.Response;
 import timber.log.Timber;
 

@@ -139,6 +139,7 @@ public class InboxFragment extends BaseFragment {
             @Override
             public void onChanged(@Nullable ResponseStatus status) {
                 handleResponseStatus(status);
+                swipeRefreshLayout.setRefreshing(false);
             }
         });
 
@@ -148,7 +149,6 @@ public class InboxFragment extends BaseFragment {
                 if (messagesResponse != null) {
                     handleMessagesList(messagesResponse.messages, messagesResponse.folderName);
                 }
-                swipeRefreshLayout.setRefreshing(false);
             }
         });
 
@@ -167,6 +167,7 @@ public class InboxFragment extends BaseFragment {
                 String emptyFolderString = getResources().getString(R.string.title_empty_messages, currentFolder);
                 txtEmpty.setText(emptyFolderString);
                 restartOptionsMenu();
+                swipeRefreshLayout.setRefreshing(false);
             }
         });
 

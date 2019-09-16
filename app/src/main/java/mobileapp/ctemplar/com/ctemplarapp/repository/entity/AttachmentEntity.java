@@ -16,6 +16,9 @@ public class AttachmentEntity {
     @SerializedName("content_id")
     private String contentId;
 
+    @SerializedName("is_encrypted")
+    private boolean isEncrypted;
+
     @SerializedName("message")
     private long message;
 
@@ -49,6 +52,14 @@ public class AttachmentEntity {
 
     public void setContentId(String contentId) {
         this.contentId = contentId;
+    }
+
+    public boolean isEncrypted() {
+        return isEncrypted;
+    }
+
+    public void setEncrypted(boolean encrypted) {
+        isEncrypted = encrypted;
     }
 
     public long getMessage() {
