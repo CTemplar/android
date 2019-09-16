@@ -46,7 +46,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import mobileapp.ctemplar.com.ctemplarapp.ActivityInterface;
 import mobileapp.ctemplar.com.ctemplarapp.BuildConfig;
@@ -54,9 +53,12 @@ import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.main.MainActivity;
 import mobileapp.ctemplar.com.ctemplarapp.main.MainActivityViewModel;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
+import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
+import mobileapp.ctemplar.com.ctemplarapp.repository.provider.AttachmentProvider;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageProvider;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.UserDisplayProvider;
 import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
+import mobileapp.ctemplar.com.ctemplarapp.utils.EncryptUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.PermissionCheck;
 import timber.log.Timber;
 
@@ -74,7 +76,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
 
     public static final String FOLDER_NAME = "folder_name";
     private MainActivityViewModel mainModel;
-    private ViewMessagesViewModel modelViewMessages;
+    private ViewMessagesViewModel viewModel;
     private MessageProvider parentMessage;
     private MessageProvider lastMessage;
     private String decryptedLastMessage;
@@ -146,7 +148,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
         root.findViewById(R.id.activity_view_messages_subject_star_image_layout).setOnClickListener(this);
 
         mainModel = ViewModelProviders.of(this).get(MainActivityViewModel.class);
-        modelViewMessages = ViewModelProviders.of(this).get(ViewMessagesViewModel.class);
+        viewModel = ViewModelProviders.of(this).get(ViewMessagesViewModel.class);
 
         Bundle args = getArguments();
         long parentId = -1;
@@ -158,9 +160,9 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
             activity.onBackPressed();
         }
 
-        final String[] fileName = new String[1];
-        modelViewMessages.getChainMessages(parentId);
-        modelViewMessages.getMessagesResponse().observe(this, new Observer<List<MessageProvider>>() {
+        final AttachmentProvider[] attachmentProvider = {new AttachmentProvider()};
+        viewModel.getChainMessages(parentId);
+        viewModel.getMessagesResponse().observe(this, new Observer<List<MessageProvider>>() {
             @Override
             public void onChanged(@Nullable List<MessageProvider> messagesList) {
                 if (messagesList == null || messagesList.isEmpty()) {
@@ -179,48 +181,55 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
                 decryptedLastMessage = lastMessage.getContent();
                 starImageView.setSelected(parentMessage.isStarred());
 
-                MessageAttachmentAdapter messageAttachmentAdapter = new MessageAttachmentAdapter();
+                final MessageAttachmentAdapter messageAttachmentAdapter = new MessageAttachmentAdapter();
                 ViewMessagesAdapter adapter = new ViewMessagesAdapter(messagesList, messageAttachmentAdapter);
-                messageAttachmentAdapter.getOnClickAttachmentLink()
-                        .subscribeOn(io.reactivex.schedulers.Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(new io.reactivex.Observer<String>() {
-                            @Override
-                            public void onSubscribe(Disposable d) {
+                messageAttachmentAdapter.getOnClickAttachmentLink().subscribe(new io.reactivex.Observer<Integer>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
 
-                            }
+                    }
 
-                            @Override
-                            public void onNext(String documentLink) {
-                                Uri documentUri = Uri.parse(documentLink);
-                                fileName[0] = AppUtils.getFileNameFromURL(documentLink);
+                    @Override
+                    public void onNext(Integer position) {
+                        attachmentProvider[0] = messageAttachmentAdapter.getAttachment(position);
+                        String documentLink = attachmentProvider[0].getDocumentLink();
+                        if (documentLink == null) {
+                            Toast.makeText(getActivity(), "AttachmentUrl is empty", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
 
-                                DownloadManager.Request documentRequest = new DownloadManager.Request(documentUri);
-                                documentRequest.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName[0]);
-                                documentRequest.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+                        Uri documentUri = Uri.parse(documentLink);
+                        String fileName = AppUtils.getFileNameFromURL(documentLink);
+                        if (attachmentProvider[0].isEncrypted()) {
+                            fileName += "-encrypted";
+                        }
 
-                                if (getActivity() != null && PermissionCheck.readAndWriteExternalStorage(getActivity())) {
-                                    DownloadManager downloadManager = (DownloadManager) getActivity().getApplicationContext().getSystemService(DOWNLOAD_SERVICE);
-                                    downloadManager.enqueue(documentRequest);
-                                    Toast.makeText(getActivity(), getResources().getString(R.string.toast_download_started), Toast.LENGTH_SHORT).show();
-                                }
-                            }
+                        DownloadManager.Request documentRequest = new DownloadManager.Request(documentUri);
+                        documentRequest.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName);
+                        documentRequest.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
 
-                            @Override
-                            public void onError(Throwable e) {
-                                Timber.e(e);
-                            }
+                        if (getActivity() != null && PermissionCheck.readAndWriteExternalStorage(getActivity())) {
+                            DownloadManager downloadManager = (DownloadManager) getActivity().getApplicationContext().getSystemService(DOWNLOAD_SERVICE);
+                            downloadManager.enqueue(documentRequest);
+                            Toast.makeText(getActivity(), getString(R.string.toast_download_started), Toast.LENGTH_SHORT).show();
+                        }
+                    }
 
-                            @Override
-                            public void onComplete() {
+                    @Override
+                    public void onError(Throwable e) {
+                        Timber.e(e);
+                    }
 
-                            }
-                        });
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
                 messagesListView.setAdapter(adapter);
 
                 if (!parentMessage.isRead()) {
                     long parentMessageId = parentMessage.getId();
-                    modelViewMessages.markMessageAsRead(parentMessageId, true);
+                    viewModel.markMessageAsRead(parentMessageId, true);
                 }
 
                 loadProgress.setVisibility(View.GONE);
@@ -228,7 +237,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
             }
         });
 
-        modelViewMessages.getStarredResponse().observe(this, new Observer<Boolean>() {
+        viewModel.getStarredResponse().observe(this, new Observer<Boolean>() {
             @Override
             public void onChanged(@Nullable Boolean isStarred) {
                 boolean starred = isStarred == null ? false : isStarred;
@@ -236,7 +245,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
                 parentMessage.setStarred(starred);
             }
         });
-        modelViewMessages.getAddWhitelistStatus().observe(this, new Observer<ResponseStatus>() {
+        viewModel.getAddWhitelistStatus().observe(this, new Observer<ResponseStatus>() {
             @Override
             public void onChanged(@Nullable ResponseStatus responseStatus) {
                 if (responseStatus == ResponseStatus.RESPONSE_COMPLETE) {
@@ -250,15 +259,38 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
 
         BroadcastReceiver onComplete = new BroadcastReceiver() {
             public void onReceive(Context ctx, Intent intent) {
-                Toast.makeText(ctx, ctx.getResources().getString(R.string.toast_download_complete), Toast.LENGTH_SHORT).show();
+                Toast.makeText(ctx, ctx.getString(R.string.toast_download_complete), Toast.LENGTH_SHORT).show();
                 try {
-                    File externalStorage = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-                    File downloadedFile = new File(externalStorage, fileName[0]);
+                    String documentLink = attachmentProvider[0].getDocumentLink();
+                    String fileName = AppUtils.getFileNameFromURL(documentLink);
+                    boolean isEncrypted = attachmentProvider[0].isEncrypted();
 
-                    Uri fileUri = FileProvider.getUriForFile(
-                            ctx, BuildConfig.APPLICATION_ID + ".fileprovider", downloadedFile
-                    );
-                    openFile(fileUri);
+                    File externalStorageFile = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+
+                    if (isEncrypted) {
+                        File downloadedFile = new File(externalStorageFile, fileName + "-encrypted");
+                        File decryptedFile = new File(externalStorageFile, fileName);
+
+                        MailboxEntity mailboxEntity = viewModel.getMailboxes().get(0);
+                        String password = viewModel.getUserPassword();
+                        String privateKey = mailboxEntity.getPrivateKey();
+                        boolean attachmentDecrypted = EncryptUtils.decryptAttachment(downloadedFile, decryptedFile, password, privateKey);
+                        downloadedFile.delete();
+
+                        Uri decryptedUri = FileProvider.getUriForFile(
+                                ctx, BuildConfig.APPLICATION_ID + ".fileprovider", decryptedFile
+                        );
+                        if (attachmentDecrypted) {
+                            openFile(decryptedUri);
+                        }
+                    } else {
+                        File downloadedFile = new File(externalStorageFile, fileName);
+                        Uri fileUri = FileProvider.getUriForFile(
+                                ctx, BuildConfig.APPLICATION_ID + ".fileprovider", downloadedFile
+                        );
+                        openFile(fileUri);
+                    }
+
                 } catch (Exception e) {
                     Timber.i(e);
                 }
@@ -293,31 +325,40 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
             }
         }
 
-        if (currentFolder.equals(INBOX)) {
-            menu.findItem(R.id.menu_view_inbox).setVisible(false);
-            menu.findItem(R.id.menu_view_not_spam).setVisible(false);
-        } else if (currentFolder.equals(SENT)) {
-            menu.findItem(R.id.menu_view_spam).setVisible(false);
-            menu.findItem(R.id.menu_view_not_spam).setVisible(false);
-        } else if (currentFolder.equals(OUTBOX)) {
-            menu.findItem(R.id.menu_view_spam).setVisible(false);
-            menu.findItem(R.id.menu_view_not_spam).setVisible(false);
-        } else if (currentFolder.equals(SPAM)) {
-            menu.findItem(R.id.menu_view_spam).setVisible(false);
-            menu.findItem(R.id.menu_view_archive).setVisible(false);
-        } else if (currentFolder.equals(ARCHIVE)) {
-            menu.findItem(R.id.menu_view_spam).setVisible(false);
-            menu.findItem(R.id.menu_view_archive).setVisible(false);
-            menu.findItem(R.id.menu_view_not_spam).setVisible(false);
-        } else if (currentFolder.equals(DRAFT)) {
-            menu.findItem(R.id.menu_view_spam).setVisible(false);
-            menu.findItem(R.id.menu_view_not_spam).setVisible(false);
-        } else if (currentFolder.equals(TRASH)) {
-            menu.findItem(R.id.menu_view_spam).setVisible(false);
-            menu.findItem(R.id.menu_view_not_spam).setVisible(false);
-        } else {
-            menu.findItem(R.id.menu_view_not_spam).setVisible(false);
-            menu.findItem(R.id.menu_view_spam).setVisible(false);
+        switch (currentFolder) {
+            case INBOX:
+                menu.findItem(R.id.menu_view_inbox).setVisible(false);
+                menu.findItem(R.id.menu_view_not_spam).setVisible(false);
+                break;
+            case SENT:
+                menu.findItem(R.id.menu_view_spam).setVisible(false);
+                menu.findItem(R.id.menu_view_not_spam).setVisible(false);
+                break;
+            case OUTBOX:
+                menu.findItem(R.id.menu_view_spam).setVisible(false);
+                menu.findItem(R.id.menu_view_not_spam).setVisible(false);
+                break;
+            case SPAM:
+                menu.findItem(R.id.menu_view_spam).setVisible(false);
+                menu.findItem(R.id.menu_view_archive).setVisible(false);
+                break;
+            case ARCHIVE:
+                menu.findItem(R.id.menu_view_spam).setVisible(false);
+                menu.findItem(R.id.menu_view_archive).setVisible(false);
+                menu.findItem(R.id.menu_view_not_spam).setVisible(false);
+                break;
+            case DRAFT:
+                menu.findItem(R.id.menu_view_spam).setVisible(false);
+                menu.findItem(R.id.menu_view_not_spam).setVisible(false);
+                break;
+            case TRASH:
+                menu.findItem(R.id.menu_view_spam).setVisible(false);
+                menu.findItem(R.id.menu_view_not_spam).setVisible(false);
+                break;
+            default:
+                menu.findItem(R.id.menu_view_not_spam).setVisible(false);
+                menu.findItem(R.id.menu_view_spam).setVisible(false);
+                break;
         }
         super.onCreateOptionsMenu(menu, inflater);
     }
@@ -325,6 +366,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
+
         switch(id) {
             case R.id.menu_view_archive:
                 snackbarMove(ARCHIVE, getResources().getString(R.string.action_archived));
@@ -342,7 +384,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
                 snackbarDelete(TRASH, getResources().getString(R.string.action_message_removed));
                 return true;
             case R.id.menu_view_unread:
-                modelViewMessages.markMessageAsRead(parentMessage.getId(), false);
+                viewModel.markMessageAsRead(parentMessage.getId(), false);
                 Toast.makeText(getActivity(), getResources().getString(R.string.toast_message_marked_unread), Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.menu_view_move:
@@ -414,7 +456,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
         UserDisplayProvider senderDisplay = parentMessage.getSenderDisplay();
         String senderName = senderDisplay.getName();
         String senderEmail = senderDisplay.getEmail();
-        modelViewMessages.addWhitelistContact(senderName, senderEmail);
+        viewModel.addWhitelistContact(senderName, senderEmail);
     }
 
     private void showMoveDialog() {
@@ -560,7 +602,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
             case R.id.activity_view_messages_subject_star_image_layout:
                 if (parentMessage != null) {
                     boolean isStarred = !parentMessage.isStarred();
-                    modelViewMessages.markMessageIsStarred(parentMessage.getId(), isStarred);
+                    viewModel.markMessageIsStarred(parentMessage.getId(), isStarred);
                 }
         }
     }

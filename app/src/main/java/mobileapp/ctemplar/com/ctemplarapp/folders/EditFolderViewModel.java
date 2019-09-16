@@ -10,6 +10,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.EditFolderRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Folders.FoldersResult;
 import mobileapp.ctemplar.com.ctemplarapp.repository.ManageFoldersRepository;
+import okhttp3.ResponseBody;
 import retrofit2.Response;
 
 public class EditFolderViewModel extends ViewModel {

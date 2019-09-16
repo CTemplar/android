@@ -4,21 +4,17 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 
-import java.util.Collections;
 import java.util.List;
 
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
-import mobileapp.ctemplar.com.ctemplarapp.net.entity.PGPKeyEntity;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.PublicKeysRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SendMessageRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.ContactData;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.ContactsResponse;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.DeleteAttachmentResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.KeyResponse;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.EncryptionMessage;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessageAttachment;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResult;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.MyselfResponse;
@@ -32,24 +28,28 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MessageEntity;
 import mobileapp.ctemplar.com.ctemplarapp.utils.PGPManager;
 import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
+import retrofit2.Response;
 import timber.log.Timber;
 
 public class SendMessageActivityViewModel extends ViewModel {
 
-    UserRepository userRepository;
-    MessagesRepository messagesRepository;
-    ContactsRepository contactsRepository;
-    MutableLiveData<ResponseStatus> responseStatus = new MutableLiveData<>();
-    MutableLiveData<ResponseStatus> uploadAttachmentStatus = new MutableLiveData<>();
-    MutableLiveData<MessageAttachment> uploadAttachmentResponse = new MutableLiveData<>();
-    MutableLiveData<MessagesResult> messagesResult = new MutableLiveData<>();
-    MutableLiveData<MessagesResult> createMessageResponse = new MutableLiveData<>();
-    MutableLiveData<ResponseStatus> createMessageStatus = new MutableLiveData<>();
-    MutableLiveData<List<Contact>> contactsResponse = new MutableLiveData<>();
-    MutableLiveData<KeyResponse> keyResponse = new MutableLiveData<>();
-    MutableLiveData<MessagesResult> messageEncryptionResult = new MutableLiveData<>();
-    MutableLiveData<MyselfResponse> myselfResponse = new MutableLiveData<>();
-    MutableLiveData<MessageEntity> openMessageResponse = new MutableLiveData<>();
+    private UserRepository userRepository;
+    private MessagesRepository messagesRepository;
+    private ContactsRepository contactsRepository;
+
+    private MutableLiveData<ResponseStatus> responseStatus = new MutableLiveData<>();
+    private MutableLiveData<ResponseStatus> uploadAttachmentStatus = new MutableLiveData<>();
+    private MutableLiveData<MessageAttachment> uploadAttachmentResponse = new MutableLiveData<>();
+    private MutableLiveData<ResponseStatus> deleteAttachmentStatus = new MutableLiveData<>();
+    private MutableLiveData<ResponseStatus> updateAttachmentStatus = new MutableLiveData<>();
+    private MutableLiveData<MessagesResult> messagesResult = new MutableLiveData<>();
+    private MutableLiveData<MessagesResult> createMessageResponse = new MutableLiveData<>();
+    private MutableLiveData<ResponseStatus> createMessageStatus = new MutableLiveData<>();
+    private MutableLiveData<List<Contact>> contactsResponse = new MutableLiveData<>();
+    private MutableLiveData<KeyResponse> keyResponse = new MutableLiveData<>();
+    private MutableLiveData<MessagesResult> messageEncryptionResult = new MutableLiveData<>();
+    private MutableLiveData<MyselfResponse> myselfResponse = new MutableLiveData<>();
+    private MutableLiveData<MessageEntity> openMessageResponse = new MutableLiveData<>();
 
     public SendMessageActivityViewModel() {
         userRepository = CTemplarApp.getUserRepository();
@@ -59,6 +59,18 @@ public class SendMessageActivityViewModel extends ViewModel {
 
     public List<MailboxEntity> getMailboxes() {
         return CTemplarApp.getAppDatabase().mailboxDao().getAll();
+    }
+
+    public MailboxEntity getMailboxById(long id) {
+        return CTemplarApp.getAppDatabase().mailboxDao().getById(id);
+    }
+
+    public String getUserPassword() {
+        return userRepository.getUserPassword();
+    }
+
+    public boolean getAttachmentsEncryptionEnabled() {
+        return userRepository.getAttachmentsEncryptionEnabled();
     }
 
     public LiveData<MessagesResult> getMessagesResult() {
@@ -89,8 +101,16 @@ public class SendMessageActivityViewModel extends ViewModel {
         return uploadAttachmentStatus;
     }
 
+    public LiveData<ResponseStatus> getUpdateAttachmentStatus() {
+        return updateAttachmentStatus;
+    }
+
     public LiveData<MessageAttachment> getUploadAttachmentResponse() {
         return uploadAttachmentResponse;
+    }
+
+    public LiveData<ResponseStatus> getDeleteAttachmentStatus() {
+        return deleteAttachmentStatus;
     }
 
     public LiveData<MessagesResult> getMessageEncryptionResult() {
@@ -136,49 +156,22 @@ public class SendMessageActivityViewModel extends ViewModel {
         openMessageResponse.postValue(messageEntity);
     }
 
-    public void updateMessage(long id, SendMessageRequest request, List<String> receiverPublicKeys, long mailboxId) {
+    public void updateMessage(long id, SendMessageRequest request, List<String> receiverPublicKeys) {
         String content = request.getContent();
         String subject = request.getSubject();
         boolean isSubjectEncrypted = request.isSubjectEncrypted();
 
-        MailboxEntity mailboxEntity = CTemplarApp.getAppDatabase().mailboxDao().getById(mailboxId);
-        PGPManager pgpManager = new PGPManager();
-
-        if (!receiverPublicKeys.contains(null)) {
-            receiverPublicKeys.add(mailboxEntity.getPublicKey());
-
+        if (!receiverPublicKeys.isEmpty()) {
+            PGPManager pgpManager = new PGPManager();
             String[] publicKeys = receiverPublicKeys.toArray(new String[0]);
             content = pgpManager.encryptMessage(content, publicKeys);
             if (isSubjectEncrypted && !subject.isEmpty()) {
                 subject = pgpManager.encryptMessage(subject, publicKeys);
             }
-
-        } else if (request.getEncryptionMessage() != null) {
-            receiverPublicKeys.add(mailboxEntity.getPublicKey());
-
-            // GENERATION MESSAGE KEYS
-            String randomSecret = request.getEncryptionMessage().getRandomSecret();
-            String password = request.getEncryptionMessage().getPassword();
-            PGPKeyEntity pgpKeyEntity = pgpManager.generateKeys(randomSecret, password);
-            receiverPublicKeys.add(pgpKeyEntity.getPublicKey());
-
-            receiverPublicKeys.removeAll(Collections.singleton(null));
-            String[] publicKeys = receiverPublicKeys.toArray(new String[0]);
-
-            // ENCRYPTION
-            content = pgpManager.encryptMessage(content, publicKeys);
-            if (isSubjectEncrypted) {
-                subject = pgpManager.encryptMessage(subject, publicKeys);
-            }
-
-            // ADD KEYS IN MESSAGE
-            EncryptionMessage encryptionMessage = request.getEncryptionMessage();
-            encryptionMessage.setPublicKey(pgpKeyEntity.getPublicKey());
-            encryptionMessage.setPrivateKey(pgpKeyEntity.getPrivateKey());
-            request.setEncryptionMessage(encryptionMessage);
+            request.setContent(content);
+            request.setSubject(subject);
         }
-        request.setContent(content);
-        request.setSubject(subject);
+        request.setIsEncrypted(!receiverPublicKeys.isEmpty());
 
         userRepository.updateMessage(id, request)
                 .subscribe(new Observer<MessagesResult>() {
@@ -326,8 +319,8 @@ public class SendMessageActivityViewModel extends ViewModel {
                 });
     }
 
-    public void uploadAttachment(MultipartBody.Part attachment, final long message) {
-        userRepository.uploadAttachment(attachment, message)
+    public void uploadAttachment(MultipartBody.Part attachment, final long message, boolean isEncrypted) {
+        userRepository.uploadAttachment(attachment, message, isEncrypted)
                 .subscribe(new Observer<MessageAttachment>() {
                     @Override
                     public void onSubscribe(Disposable d) {
@@ -352,22 +345,49 @@ public class SendMessageActivityViewModel extends ViewModel {
                 });
     }
 
-    public void deleteAttachment(long id) {
-        userRepository.deleteAttachment(id)
-                .subscribe(new Observer<DeleteAttachmentResponse>() {
+    public void updateAttachment(long id, MultipartBody.Part attachment, long message, boolean isEncrypted) {
+        userRepository.updateAttachment(id, attachment, message, isEncrypted)
+                .subscribe(new Observer<MessageAttachment>() {
                     @Override
                     public void onSubscribe(Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(DeleteAttachmentResponse messageAttachment) {
-
+                    public void onNext(MessageAttachment messageAttachment) {
+                        updateAttachmentStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
                     }
 
                     @Override
                     public void onError(Throwable e) {
+                        updateAttachmentStatus.postValue(ResponseStatus.RESPONSE_ERROR);
+                        Timber.e(e);
+                    }
 
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    public void deleteAttachment(long id) {
+        userRepository.deleteAttachment(id)
+                .subscribe(new Observer<Response<Void>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(Response<Void> voidResponse) {
+                        deleteAttachmentStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        deleteAttachmentStatus.postValue(ResponseStatus.RESPONSE_ERROR);
+                        Timber.e(e);
                     }
 
                     @Override

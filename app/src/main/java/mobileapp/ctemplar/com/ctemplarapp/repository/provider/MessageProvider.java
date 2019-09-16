@@ -1,9 +1,5 @@
 package mobileapp.ctemplar.com.ctemplarapp.repository.provider;
 
-import android.content.Context;
-
-import com.didisoft.pgp.exceptions.NonPGPDataException;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -371,8 +367,8 @@ public class MessageProvider {
             String privateKey = mailboxEntity.getPrivateKey();
             try {
                 content = pgpManager.decryptMessage(content, privateKey, password);
-            } catch (NonPGPDataException e) {
-                //
+            } catch (Exception e) {
+                Timber.i(e);
             }
         }
 
@@ -390,9 +386,10 @@ public class MessageProvider {
     private static AttachmentProvider convertFromResponseMessageAttachmentToAttachmentProvider(MessageAttachment messageAttachment) {
         AttachmentProvider attachmentProvider = new AttachmentProvider();
         attachmentProvider.setId(messageAttachment.getId());
-        attachmentProvider.setContentId(messageAttachment.getContent_id());
+        attachmentProvider.setContentId(messageAttachment.getContentId());
         attachmentProvider.setDocumentLink(messageAttachment.getDocumentLink());
         attachmentProvider.setInline(messageAttachment.isInline());
+        attachmentProvider.setEncrypted(messageAttachment.isEncrypted());
         attachmentProvider.setMessage(messageAttachment.getMessage());
         return attachmentProvider;
     }
@@ -507,6 +504,7 @@ public class MessageProvider {
         attachmentProvider.setContentId(attachmentEntity.getContentId());
         attachmentProvider.setMessage(attachmentEntity.getMessage());
         attachmentProvider.setInline(attachmentEntity.isInline());
+        attachmentProvider.setEncrypted(attachmentEntity.isEncrypted());
         attachmentProvider.setDocumentLink(attachmentEntity.getDocumentLink());
         return attachmentProvider;
     }
@@ -597,9 +595,10 @@ public class MessageProvider {
     private static AttachmentEntity convertAttachmentFromResponseToEntity(MessageAttachment messageAttachment) {
         AttachmentEntity attachmentEntity = new AttachmentEntity();
         attachmentEntity.setId(messageAttachment.getId());
-        attachmentEntity.setContentId(messageAttachment.getContent_id());
+        attachmentEntity.setContentId(messageAttachment.getContentId());
         attachmentEntity.setDocumentLink(messageAttachment.getDocumentLink());
         attachmentEntity.setInline(messageAttachment.isInline());
+        attachmentEntity.setEncrypted(messageAttachment.isEncrypted());
         attachmentEntity.setMessage(messageAttachment.getMessage());
         return attachmentEntity;
     }
