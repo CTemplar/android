@@ -1,6 +1,7 @@
 package mobileapp.ctemplar.com.ctemplarapp.utils;
 
 import android.text.TextUtils;
+import android.webkit.MimeTypeMap;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -226,6 +227,15 @@ public class AppUtils {
 
         int endIndex = Math.min(lastQMPos, lastHashPos);
         return url.substring(startIndex, endIndex);
+    }
+
+    public static String getMimeType(String url) {
+        String type = null;
+        String extension = MimeTypeMap.getFileExtensionFromUrl(url);
+        if (extension != null) {
+            type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
+        }
+        return type;
     }
 
     public static String formatDate(String stringDate) {

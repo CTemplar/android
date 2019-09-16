@@ -14,7 +14,10 @@ public class MessageAttachment {
     private boolean isInline;
 
     @SerializedName("content_id")
-    private String content_id;
+    private String contentId;
+
+    @SerializedName("is_encrypted")
+    private boolean isEncrypted;
 
     @SerializedName("message")
     private long message;
@@ -43,12 +46,20 @@ public class MessageAttachment {
         isInline = inline;
     }
 
-    public String getContent_id() {
-        return content_id;
+    public String getContentId() {
+        return contentId;
     }
 
-    public void setContent_id(String content_id) {
-        this.content_id = content_id;
+    public void setContentId(String contentId) {
+        this.contentId = contentId;
+    }
+
+    public boolean isEncrypted() {
+        return isEncrypted;
+    }
+
+    public void setEncrypted(boolean encrypted) {
+        isEncrypted = encrypted;
     }
 
     public long getMessage() {

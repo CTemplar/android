@@ -33,11 +33,6 @@ import mobileapp.ctemplar.com.ctemplarapp.filters.FiltersActivity;
 import mobileapp.ctemplar.com.ctemplarapp.folders.ManageFoldersActivity;
 import mobileapp.ctemplar.com.ctemplarapp.mailboxes.MailboxesActivity;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
-import mobileapp.ctemplar.com.ctemplarapp.net.request.AutoSaveContactEnabledRequest;
-import mobileapp.ctemplar.com.ctemplarapp.net.request.ContactsEncryptionRequest;
-import mobileapp.ctemplar.com.ctemplarapp.net.request.RecoveryEmailRequest;
-import mobileapp.ctemplar.com.ctemplarapp.net.request.SignatureRequest;
-import mobileapp.ctemplar.com.ctemplarapp.net.request.SubjectEncryptedRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Mailboxes.MailboxesResult;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.MyselfResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.MyselfResult;
@@ -63,7 +58,8 @@ public class SettingsActivity extends AppCompatActivity {
     private static SharedPreferences sharedPreferences;
 
     private static boolean userIsPrime;
-    private static long defaultMailboxId;
+    private static long defaultMailboxId = -1;
+    private static long settingId = -1;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -195,7 +191,7 @@ public class SettingsActivity extends AppCompatActivity {
             checkBoxRecoveryEmailEnabled.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
-                    Toast.makeText(getActivity(), getString(R.string.toast_recovery_email_changed), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), getString(R.string.toast_saved), Toast.LENGTH_SHORT).show();
                     return true;
                 }
             });
@@ -211,10 +207,10 @@ public class SettingsActivity extends AppCompatActivity {
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
                     String value = (String) newValue;
                     if (EditTextUtils.isEmailValid(value)) {
-                        updateRecoveryEmail(value);
+                        settingsModel.updateRecoveryEmail(settingId, value);
                         preferenceRecoveryEmail.setTitle((String) newValue);
                         recoveryEmailPreferenceScreen.setSummary((String) newValue);
-                        Toast.makeText(getActivity(), getString(R.string.toast_recovery_email_changed), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), getString(R.string.toast_saved), Toast.LENGTH_SHORT).show();
                         return true;
                     } else {
                         Toast.makeText(getActivity(), getString(R.string.toast_email_not_valid), Toast.LENGTH_SHORT).show();
@@ -234,9 +230,28 @@ public class SettingsActivity extends AppCompatActivity {
             subjectEncryptionSwitchPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
-                    Toast.makeText(getActivity(), getString(R.string.toast_subject_encryption_changed), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), getString(R.string.toast_saved), Toast.LENGTH_SHORT).show();
                     boolean value = (boolean) newValue;
-                    updateSubjectEncryption(value);
+                    settingsModel.updateSubjectEncryption(settingId, value);
+                    return true;
+                }
+            });
+        }
+    }
+
+    public static class AttachmentsEncryptionFragment extends BasePreferenceFragment {
+        @Override
+        public void onCreatePreferences(Bundle bundle, String rootKey) {
+            setPreferencesFromResource(R.xml.attachments_encryption_settings, rootKey);
+
+            SwitchPreference attachmentsEncryptionSwitchPreference = (SwitchPreference) findPreference(getString(R.string.attachments_encryption_enabled));
+            attachmentsEncryptionSwitchPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    Toast.makeText(getActivity(), getString(R.string.toast_saved), Toast.LENGTH_SHORT).show();
+                    boolean value = (boolean) newValue;
+                    userStore.setAttachmentsEncryptionEnabled(value);
+                    settingsModel.updateAttachmentsEncryption(settingId, value);
                     return true;
                 }
             });
@@ -258,7 +273,7 @@ public class SettingsActivity extends AppCompatActivity {
                     boolean value = (boolean) newValue;
                     if (value) {
                         userStore.setContactsEncryptionEnabled(true);
-                        updateContactsEncryption(true);
+                        settingsModel.updateContactsEncryption(settingId, true);
                         Toast.makeText(getActivity(), getString(R.string.toast_contacts_encrypted), Toast.LENGTH_SHORT).show();
                     } else {
                         disableContactsEncryption();
@@ -284,7 +299,7 @@ public class SettingsActivity extends AppCompatActivity {
                         settingsModel.decryptContacts(listOffset[0]);
                     } else if (responseStatus == ResponseStatus.RESPONSE_COMPLETE) {
                         userStore.setContactsEncryptionEnabled(false);
-                        updateContactsEncryption(false);
+                        settingsModel.updateContactsEncryption(settingId, false);
                         contactsEncryptionSwitchPreference.setChecked(false);
                         progressDialog.dismiss();
                         Toast.makeText(getActivity(), getString(R.string.toast_contacts_decrypted), Toast.LENGTH_SHORT).show();
@@ -321,40 +336,10 @@ public class SettingsActivity extends AppCompatActivity {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
                     boolean isEnabled = (boolean) newValue;
-                    updateAutoSaveEnabled(isEnabled);
+                    settingsModel.updateAutoSaveEnabled(settingId, isEnabled);
                     return true;
                 }
             });
-        }
-
-        private void updateAutoSaveEnabled(boolean isEnabled) {
-            final long settingId = getSettingId();
-            if (settingId == -1) {
-                Timber.e("Setting id is not defined");
-                return;
-            }
-            userRepository.updateAutoSaveEnabled(settingId, new AutoSaveContactEnabledRequest(isEnabled))
-                    .subscribe(new Observer<SettingsEntity>() {
-                        @Override
-                        public void onSubscribe(Disposable d) {
-
-                        }
-
-                        @Override
-                        public void onNext(SettingsEntity settingsEntity) {
-
-                        }
-
-                        @Override
-                        public void onError(Throwable e) {
-                            Timber.e(e);
-                        }
-
-                        @Override
-                        public void onComplete() {
-
-                        }
-                    });
         }
     }
 
@@ -375,7 +360,7 @@ public class SettingsActivity extends AppCompatActivity {
                     String newSignatureText = newValue.toString();
                     if (!newSignatureText.isEmpty()) {
                         preferenceSignature.setTitle(newSignatureText);
-                        updateSignature(newSignatureText);
+                        settingsModel.updateSignature(settingId, defaultMailboxId, newSignatureText);
                     } else {
                         preferenceSignature.setTitle(getString(R.string.txt_type_signature));
                     }
@@ -397,37 +382,6 @@ public class SettingsActivity extends AppCompatActivity {
                     return true;
                 }
             });
-        }
-
-        private void updateSignature(String signatureText) {
-            final long settingId = getSettingId();
-            if (settingId == -1 && defaultMailboxId != -1) {
-                Timber.e("Setting id is not defined");
-                return;
-            }
-
-            userRepository.updateSignature(defaultMailboxId, new SignatureRequest(signatureText))
-                    .subscribe(new Observer<SettingsEntity>() {
-                        @Override
-                        public void onSubscribe(Disposable d) {
-
-                        }
-
-                        @Override
-                        public void onNext(SettingsEntity settingsEntity) {
-                            Toast.makeText(getActivity(), "Signature updated", Toast.LENGTH_SHORT).show();
-                        }
-
-                        @Override
-                        public void onError(Throwable e) {
-                            Timber.e(e);
-                        }
-
-                        @Override
-                        public void onComplete() {
-
-                        }
-                    });
         }
     }
 
@@ -487,6 +441,7 @@ public class SettingsActivity extends AppCompatActivity {
 
                             SettingsEntity settingsEntity = myselfResult.settings;
                             setSettingId(settingsEntity.id);
+                            settingId = settingsEntity.id;
                         }
                     }
 
@@ -523,105 +478,10 @@ public class SettingsActivity extends AppCompatActivity {
                 .putString(getString(R.string.signature), mailboxesResult.getSignature())
                 .putBoolean(getString(R.string.auto_save_contacts_enabled), settingsEntity.saveContacts)
                 .putBoolean(getString(R.string.subject_encryption_enabled), settingsEntity.isSubjectEncrypted)
+                .putBoolean(getString(R.string.attachments_encryption_enabled), settingsEntity.isAttachmentsEncrypted)
                 .putBoolean(getString(R.string.contacts_encryption_enabled), settingsEntity.isContactsEncrypted)
                 .putBoolean(getString(R.string.push_notifications_enabled), isNotificationsEnabled)
                 .apply();
-    }
-
-    private static void updateRecoveryEmail(String newRecoveryEmail) {
-        long settingId = getSettingId();
-        if (settingId == -1) {
-            Timber.e("Setting id is not defined");
-            return;
-        }
-
-        RecoveryEmailRequest request = new RecoveryEmailRequest(newRecoveryEmail);
-        userRepository.updateRecoveryEmail(settingId, request)
-                .subscribe(new Observer<SettingsEntity>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-                        Timber.i("Updating recovery email");
-                    }
-
-                    @Override
-                    public void onNext(SettingsEntity settingsEntity) {
-                        Timber.i("Recovery email updated");
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Timber.e(e);
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
-    }
-
-    private static void updateSubjectEncryption(boolean isSubjectEncryption) {
-        long settingId = getSettingId();
-        if (settingId == -1) {
-            Timber.e("Setting id is not defined");
-            return;
-        }
-
-        SubjectEncryptedRequest subjectEncryptedRequest = new SubjectEncryptedRequest(isSubjectEncryption);
-        userRepository.updateSubjectEncrypted(settingId, subjectEncryptedRequest)
-                .subscribe(new Observer<SettingsEntity>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-                        Timber.i("Updating subject encryption");
-                    }
-
-                    @Override
-                    public void onNext(SettingsEntity settingsEntity) {
-                        Timber.i("Subject encryption updated");
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Timber.e(e);
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
-    }
-
-    private static void updateContactsEncryption(boolean isContactsEncryption) {
-        long settingId = getSettingId();
-        if (settingId == -1) {
-            Timber.e("Setting id is not defined");
-            return;
-        }
-
-        ContactsEncryptionRequest contactsEncryptionRequest = new ContactsEncryptionRequest(isContactsEncryption);
-        userRepository.updateContactsEncryption(settingId, contactsEncryptionRequest)
-                .subscribe(new Observer<SettingsEntity>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(SettingsEntity settingsEntity) {
-                        Timber.i("Contacts encryption updated");
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Timber.e(e);
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
     }
 
     public static abstract class BasePreferenceFragment extends PreferenceFragmentCompat {

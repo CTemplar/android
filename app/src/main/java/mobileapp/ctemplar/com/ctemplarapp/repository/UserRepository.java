@@ -9,6 +9,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.net.RestService;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.AddFirebaseTokenRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.AttachmentsEncryptedRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.AutoSaveContactEnabledRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.CaptchaVerifyRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.ChangePasswordRequest;
@@ -33,7 +34,6 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.AddFirebaseTokenResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.CaptchaResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.CaptchaVerifyResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.CheckUsernameResponse;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.DeleteAttachmentResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Domains.DomainsResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Filters.FilterResult;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Filters.FiltersResponse;
@@ -118,6 +118,14 @@ public class UserRepository {
 
     public String getTimeZone() {
         return userStore.getTimeZone();
+    }
+
+    public void setAttachmentsEncryptionEnabled(boolean state) {
+        userStore.setAttachmentsEncryptionEnabled(state);
+    }
+
+    public boolean getAttachmentsEncryptionEnabled() {
+        return userStore.getAttachmentsEncryptionEnabled();
     }
 
     public void setContactsEncryptionEnabled(boolean isContactsEncryptionEnabled) {
@@ -270,13 +278,19 @@ public class UserRepository {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<MessageAttachment> uploadAttachment(MultipartBody.Part attachment, long message) {
-        return service.uploadAttachment(attachment, message)
+    public Observable<MessageAttachment> uploadAttachment(MultipartBody.Part attachment, long message, boolean isEncrypted) {
+        return service.uploadAttachment(attachment, message, isEncrypted)
                 .subscribeOn(io.reactivex.schedulers.Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<DeleteAttachmentResponse> deleteAttachment(long id) {
+    public Observable<MessageAttachment> updateAttachment(long id, MultipartBody.Part attachment, long message, boolean isEncrypted) {
+        return service.updateAttachment(id, attachment, message, isEncrypted)
+                .subscribeOn(io.reactivex.schedulers.Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public Observable<Response<Void>> deleteAttachment(long id) {
         return service.deleteAttachment(id)
                 .subscribeOn(io.reactivex.schedulers.Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
@@ -380,6 +394,12 @@ public class UserRepository {
 
     public Observable<SettingsEntity> updateSubjectEncrypted(long settingId, SubjectEncryptedRequest request) {
         return service.updateSubjectEncrypted(settingId, request)
+                .subscribeOn(io.reactivex.schedulers.Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public Observable<SettingsEntity> updateAttachmentsEncrypted(long settingId, AttachmentsEncryptedRequest request) {
+        return service.updateAttachmentsEncrypted(settingId, request)
                 .subscribeOn(io.reactivex.schedulers.Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }

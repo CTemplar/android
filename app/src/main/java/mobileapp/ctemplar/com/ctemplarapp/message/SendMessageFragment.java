@@ -31,8 +31,14 @@ import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 import android.widget.Toast;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import mobileapp.ctemplar.com.ctemplarapp.ActivityInterface;
@@ -40,6 +46,7 @@ import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.main.UpgradeToPrimeFragment;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
+import mobileapp.ctemplar.com.ctemplarapp.net.entity.PGPKeyEntity;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.PublicKeysRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SendMessageRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.KeyResponse;
@@ -57,7 +64,9 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MessageEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageProvider;
 import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
+import mobileapp.ctemplar.com.ctemplarapp.utils.EncryptUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.FileUtils;
+import mobileapp.ctemplar.com.ctemplarapp.utils.PGPManager;
 import mobileapp.ctemplar.com.ctemplarapp.utils.PermissionCheck;
 import mobileapp.ctemplar.com.ctemplarapp.utils.SpaceTokenizer;
 import okhttp3.MediaType;
@@ -125,9 +134,11 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
 
     private EditText subjectEditText;
     private EditText composeEditText;
+
     private AppCompatMultiAutoCompleteTextView toEmailTextView;
     private AppCompatMultiAutoCompleteTextView ccTextView;
     private AppCompatMultiAutoCompleteTextView bccTextView;
+
     private Spinner spinnerFrom;
     private RelativeLayout ccLayout;
     private RelativeLayout bccLayout;
@@ -139,11 +150,12 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
     private ImageView sendMessageDelayedIco;
     private ImageView sendMessageDeadIco;
     private ImageView sendMessageAttachmentIco;
+    private ImageView sendMessageEncryptIco;
 
     private SharedPreferences sharedPreferences;
-    private SendMessageActivityViewModel mainModel;
+    private SendMessageActivityViewModel sendModel;
     private ProgressDialog sendingProgress;
-    private boolean draftMessage = true;
+    private ProgressDialog uploadProgress;
 
     // COMPOSE OPTIONS
     private long currentMessageId = -1;
@@ -154,7 +166,13 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
     private EncryptionMessage messageEncryptionResult;
     private boolean userIsPrime;
     private boolean isSubjectEncrypted;
+
+    private SendMessageRequest sendMessageRequest;
+    private List<String> publicKeyList;
     private List<String> mailboxAddresses = new ArrayList<>();
+    private List<File> cacheFileList = new ArrayList<>();
+    private boolean draftMessage = true;
+    private int updateAttachmentPosition = 0;
 
     private DelayedDeliveryDialogFragment delayedDeliveryDialogFragment = new DelayedDeliveryDialogFragment();
     private DestructTimerDialogFragment destructTimerDialogFragment = new DestructTimerDialogFragment();
@@ -240,7 +258,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
             setEncryptionRequest.setMailbox(mailboxId);
             setEncryptionRequest.setEncryptionMessage(encryptionMessage);
 
-            mainModel.setEncryptionMessage(currentMessageId, setEncryptionRequest);
+            sendModel.setEncryptionMessage(currentMessageId, setEncryptionRequest);
         }
     };
 
@@ -270,6 +288,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         sendMessageDelayedIco = root.findViewById(R.id.fragment_send_message_delayed_ico);
         sendMessageDeadIco = root.findViewById(R.id.fragment_send_message_dead_ico);
         sendMessageAttachmentIco = root.findViewById(R.id.fragment_send_message_attachment_ico);
+        sendMessageEncryptIco = root.findViewById(R.id.fragment_send_message_encrypt_ico);
 
 
         // OnClicks
@@ -332,15 +351,15 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         }
 
 
-        mainModel = ViewModelProviders.of(this).get(SendMessageActivityViewModel.class);
+        sendModel = ViewModelProviders.of(this).get(SendMessageActivityViewModel.class);
         if (currentMessageId == -1) {
             createMessage();
         } else {
-            mainModel.openMessage(currentMessageId);
+            sendModel.openMessage(currentMessageId);
         }
 
         int selectedAddress = 0;
-        List<MailboxEntity> mailboxEntities = mainModel.getMailboxes();
+        List<MailboxEntity> mailboxEntities = sendModel.getMailboxes();
         for (int position = 0; position < mailboxEntities.size(); position++) {
             MailboxEntity mailboxEntity = mailboxEntities.get(position);
             if (mailboxEntity.isEnabled) {
@@ -375,7 +394,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         }
 
         // Load contacts for autocomplete
-        mainModel.getContactsResponse().observe(this, new Observer<List<Contact>>() {
+        sendModel.getContactsResponse().observe(this, new Observer<List<Contact>>() {
             @Override
             public void onChanged(@Nullable List<Contact> contactList) {
                 if (contactList != null) {
@@ -383,26 +402,56 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
                 }
             }
         });
-        mainModel.getContacts(200, 0);
+        sendModel.getContacts(200, 0);
 
         // Load keys before sending message
-        mainModel.getKeyResponse().observe(this, new Observer<KeyResponse>() {
+        sendModel.getKeyResponse().observe(this, new Observer<KeyResponse>() {
             @Override
             public void onChanged(@Nullable KeyResponse keyResponse) {
                 if (keyResponse != null && keyResponse.getKeyResult() != null && keyResponse.getKeyResult().length > 0) {
-                    List<String> emails = new ArrayList<>();
-                    List<String> publicKeys = new ArrayList<>();
-
+                    publicKeyList = new ArrayList<>();
                     for (KeyResult key : keyResponse.getKeyResult()) {
-                        emails.add(key.getEmail());
-                        publicKeys.add(key.getPublicKey());
+                        String emailPublicKey = key.getPublicKey();
+                        publicKeyList.add(emailPublicKey);
                     }
-                    sendMessage(emails, publicKeys);
+                    sendMessage();
                 }
             }
         });
 
-        mainModel.getMessagesResult()
+        // Check attachment task
+        sendModel.getUpdateAttachmentStatus().observe(this, new Observer<ResponseStatus>() {
+            @Override
+            public void onChanged(@Nullable ResponseStatus responseStatus) {
+                if (responseStatus == ResponseStatus.RESPONSE_COMPLETE) {
+                    List<MessageAttachment> attachmentList = messageSendAttachmentAdapter.getAttachmentList();
+                    int attachmentListSize = attachmentList.size();
+                    if (updateAttachmentPosition < attachmentListSize) {
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                updateAttachments();
+                                updateAttachmentPosition++;
+                            }
+                        }).start();
+                        return;
+                    } else {
+                        sendModel.updateMessage(currentMessageId, sendMessageRequest, publicKeyList);
+                    }
+                } else {
+                    Toast.makeText(activity, "ERROR ATTACHMENT UPDATE", Toast.LENGTH_SHORT).show();
+                }
+                for (File cacheFile : cacheFileList) {
+                    cacheFile.delete();
+                }
+                if (sendingProgress != null) {
+                    sendingProgress.dismiss();
+                }
+
+            }
+        });
+
+        sendModel.getMessagesResult()
                 .observe(this, new Observer<MessagesResult>() {
                     @Override
                     public void onChanged(@Nullable MessagesResult messagesResult) {
@@ -417,7 +466,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
                     }
                 });
 
-        mainModel.getCreateMessageStatus()
+        sendModel.getCreateMessageStatus()
                 .observe(this, new Observer<ResponseStatus>() {
                     @Override
                     public void onChanged(@Nullable ResponseStatus responseStatus) {
@@ -428,7 +477,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
                     }
                 });
 
-        mainModel.getCreateMessageResponse()
+        sendModel.getCreateMessageResponse()
                 .observe(this, new Observer<MessagesResult>() {
                     @Override
                     public void onChanged(@Nullable MessagesResult messagesResult) {
@@ -441,7 +490,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
                     }
                 });
 
-        mainModel.getOpenMessageResponse().observe(this, new Observer<MessageEntity>() {
+        sendModel.getOpenMessageResponse().observe(this, new Observer<MessageEntity>() {
             @Override
             public void onChanged(@Nullable MessageEntity messageEntity) {
                 if (messageEntity != null) {
@@ -453,44 +502,53 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
             }
         });
 
-        mainModel.uploadAttachmentStatus
+        sendModel.getUploadAttachmentStatus()
                 .observe(this, new Observer<ResponseStatus>() {
                     @Override
                     public void onChanged(@Nullable ResponseStatus responseStatus) {
-                        if (responseStatus == ResponseStatus.RESPONSE_COMPLETE) {
-                            Toast.makeText(activity, getResources().getString(R.string.toast_attachment_upload_complete), Toast.LENGTH_SHORT).show();
+                        if (responseStatus == ResponseStatus.RESPONSE_ERROR) {
+                            Toast.makeText(activity, getString(R.string.toast_upload_error), Toast.LENGTH_SHORT).show();
                         }
+                        uploadProgress.dismiss();
                     }
                 });
 
-        mainModel.uploadAttachmentResponse
+        sendModel.getUploadAttachmentResponse()
                 .observe(this, new Observer<MessageAttachment>() {
                     @Override
                     public void onChanged(@Nullable MessageAttachment messageAttachment) {
                         if (messageAttachment != null) {
                             messageSendAttachmentAdapter.addAttachment(messageAttachment);
-                        }
-                        if (messageSendAttachmentAdapter.getItemCount() > 0) {
-                            if (getActivity() == null) {
-                                return;
+                            if (messageSendAttachmentAdapter.getItemCount() > 0) {
+                                sendMessageAttachmentIco.setSelected(true);
                             }
-                            ImageView sendMessageAttachmentIco = getActivity().findViewById(R.id.fragment_send_message_attachment_ico);
-                            sendMessageAttachmentIco.setSelected(true);
+                        }
+                        if (!cacheFileList.isEmpty()) {
+                            File cacheFile = cacheFileList.get(0);
+                            cacheFile.delete();
                         }
                     }
                 });
 
-        mainModel.getMessageEncryptionResult()
+        sendModel.getDeleteAttachmentStatus()
+                .observe(this, new Observer<ResponseStatus>() {
+                    @Override
+                    public void onChanged(@Nullable ResponseStatus responseStatus) {
+                        if (responseStatus == ResponseStatus.RESPONSE_COMPLETE) {
+                            int attachmentCount = messageSendAttachmentAdapter.getItemCount();
+                            if (attachmentCount < 1) {
+                                sendMessageAttachmentIco.setSelected(false);
+                            }
+                        }
+                    }
+                });
+
+        sendModel.getMessageEncryptionResult()
                 .observe(this, new Observer<MessagesResult>() {
                     @Override
                     public void onChanged(@Nullable MessagesResult messagesResult) {
                         if (messagesResult != null) {
                             messageEncryptionResult = messagesResult.getEncryption();
-
-                            if (getActivity() == null) {
-                                return;
-                            }
-                            ImageView sendMessageEncryptIco = getActivity().findViewById(R.id.fragment_send_message_encrypt_ico);
                             if (messageEncryptionResult != null) {
                                 sendMessageEncryptIco.setSelected(true);
                             }
@@ -498,7 +556,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
                     }
                 });
 
-        mainModel.getMySelfResponse()
+        sendModel.getMySelfResponse()
                 .observe(this, new Observer<MyselfResponse>() {
                     @Override
                     public void onChanged(@Nullable MyselfResponse myselfResponse) {
@@ -533,8 +591,8 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
                 mailboxId
         );
 
-        mainModel.createMessage(createMessageRequest);
-        mainModel.mySelfData();
+        sendModel.createMessage(createMessageRequest);
+        sendModel.mySelfData();
     }
 
     private void loadMessageHandler(MessageEntity messageEntity) {
@@ -588,7 +646,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
                 MessageAttachment messageAttachment = new MessageAttachment();
                 messageAttachment.setId(attachmentEntity.getId());
                 messageAttachment.setMessage(attachmentEntity.getMessage());
-                messageAttachment.setContent_id(attachmentEntity.getContentId());
+                messageAttachment.setContentId(attachmentEntity.getContentId());
                 messageAttachment.setDocumentLink(attachmentEntity.getDocumentLink());
                 messageSendAttachmentAdapter.addAttachment(messageAttachment);
             }
@@ -611,7 +669,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         bccTextView.setTokenizer(new SpaceTokenizer());
     }
 
-    private void sendMessage(List<String> emails, final List<String> publicKeys) {
+    private void sendMessage() {
         String fromEmail = spinnerFrom.getSelectedItem().toString();
         MailboxEntity fromMailbox = CTemplarApp.getAppDatabase().mailboxDao().getByEmail(fromEmail);
         final long mailboxId = fromMailbox.id;
@@ -620,17 +678,13 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         String subject = subjectEditText.getText().toString();
         String compose = Html.toHtml(composeEditText.getText());
 
-        final SendMessageRequest sendMessageRequest = new SendMessageRequest();
+        sendMessageRequest = new SendMessageRequest();
         sendMessageRequest.setSender(mailboxEmail);
         sendMessageRequest.setSubject(subject);
         sendMessageRequest.setContent(compose);
         sendMessageRequest.setMailbox(mailboxId);
         sendMessageRequest.setParent(parentId);
         sendMessageRequest.setSubjectEncrypted(isSubjectEncrypted);
-
-        if (!publicKeys.contains(null)) {
-            sendMessageRequest.setIsEncrypted(true);
-        }
 
         draftMessage = false;
         boolean messageSent = true;
@@ -673,19 +727,45 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         }
         sendMessageRequest.setBcc(bccEmailList);
 
-        List<MessageAttachment> attachments = messageSendAttachmentAdapter.getAttachmentsList();
+        List<MessageAttachment> attachments = messageSendAttachmentAdapter.getAttachmentList();
         if (attachments != null && !attachments.isEmpty()) {
             sendMessageRequest.setAttachments(attachments);
-        }
-
-        if (messageEncryptionResult != null) {
-            sendMessageRequest.setEncryptionMessage(messageEncryptionResult);
         }
 
         new Thread(new Runnable() {
             @Override
             public void run() {
-                mainModel.updateMessage(currentMessageId, sendMessageRequest, publicKeys, mailboxId);
+                if (messageEncryptionResult != null) {
+                    String randomSecret = messageEncryptionResult.getRandomSecret();
+                    String password = messageEncryptionResult.getPassword();
+
+                    PGPManager pgpManager = new PGPManager();
+                    PGPKeyEntity pgpKeyEntity = pgpManager.generateKeys(randomSecret, password);
+                    messageEncryptionResult.setPublicKey(pgpKeyEntity.getPublicKey());
+                    messageEncryptionResult.setPrivateKey(pgpKeyEntity.getPrivateKey());
+
+                    publicKeyList.add(pgpKeyEntity.getPublicKey());
+                    sendMessageRequest.setEncryptionMessage(messageEncryptionResult);
+                }
+
+                MailboxEntity mailboxEntity = sendModel.getMailboxById(mailboxId);
+                String senderPublicKey = mailboxEntity.getPublicKey();
+                publicKeyList.add(senderPublicKey);
+
+                if (publicKeyList.contains(null) && messageEncryptionResult == null) {
+                    publicKeyList.clear();
+                } else if (publicKeyList.contains(null)) {
+                    publicKeyList.removeAll(Collections.singleton(null));
+                }
+
+                int attachmentCount = messageSendAttachmentAdapter.getItemCount();
+                if (attachmentCount > 0) {
+                    boolean needUpdate = updateAttachments();
+                    if (needUpdate) {
+                        return;
+                    }
+                }
+                sendModel.updateMessage(currentMessageId, sendMessageRequest, publicKeyList);
                 if (sendingProgress != null) {
                     sendingProgress.dismiss();
                 }
@@ -693,16 +773,204 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         }).start();
     }
 
-    private boolean inputFieldsNotEmpty() {
-        String toEmail = toEmailTextView.getText().toString();
-        String ccEmail = ccTextView.getText().toString();
-        String bccEmail = bccTextView.getText().toString();
-        String subject = subjectEditText.getText().toString();
-        String compose = composeEditText.getText().toString();
+    private void sendMessageToDraft() {
+        String fromEmail = spinnerFrom.getSelectedItem().toString();
+        MailboxEntity fromMailbox = CTemplarApp.getAppDatabase().mailboxDao().getByEmail(fromEmail);
+        final long mailboxId = fromMailbox.id;
+        String mailboxEmail = fromMailbox.email;
 
-        boolean receiversNotEmpty = !toEmail.isEmpty() || !ccEmail.isEmpty() || !bccEmail.isEmpty();
-        boolean contentNotEmpty = !subject.isEmpty() || !compose.isEmpty();
-        return receiversNotEmpty && contentNotEmpty;
+        String toEmail = toEmailTextView.getText().toString().trim();
+        String subject = subjectEditText.getText().toString();
+        String compose = Html.toHtml(composeEditText.getText());
+
+        updateAttachmentPosition = 0;
+        final SendMessageRequest messageRequestToDraft = new SendMessageRequest();
+        messageRequestToDraft.setSubject(subject);
+        messageRequestToDraft.setSender(mailboxEmail);
+        messageRequestToDraft.setContent(compose);
+        messageRequestToDraft.setFolder(MainFolderNames.DRAFT);
+        messageRequestToDraft.setIsEncrypted(true);
+        messageRequestToDraft.setSend(false);
+        messageRequestToDraft.setMailbox(mailboxId);
+        messageRequestToDraft.setSubjectEncrypted(isSubjectEncrypted);
+
+        if (destructDeliveryInMillis != null) {
+            messageRequestToDraft.setDestructDate(AppUtils.datetimeForServer(destructDeliveryInMillis));
+        }
+        if (delayedDeliveryInMillis != null) {
+            messageRequestToDraft.setDelayedDelivery(AppUtils.datetimeForServer(delayedDeliveryInMillis));
+        }
+        if (deadDeliveryInHours != null) {
+            messageRequestToDraft.setDeadManDuration(deadDeliveryInHours);
+        }
+
+        List<MessageAttachment> attachments = messageSendAttachmentAdapter.getAttachmentList();
+        if (attachments != null && !attachments.isEmpty()) {
+            messageRequestToDraft.setAttachments(attachments);
+        }
+
+        List<String> toEmailList = new ArrayList<>();
+        if (!toEmail.isEmpty()) {
+            toEmailList = EditTextUtils.getListFromString(toEmail);
+        }
+        messageRequestToDraft.setReceivers(toEmailList);
+
+        String ccEmail = ccTextView.getText().toString().trim();
+        List<String> ccEmailList = new ArrayList<>();
+        if (!ccEmail.isEmpty()) {
+            ccEmailList = EditTextUtils.getListFromString(ccEmail);
+        }
+        messageRequestToDraft.setCc(ccEmailList);
+
+        String bccEmail = bccTextView.getText().toString().trim();
+        List<String> bccEmailList = new ArrayList<>();
+        if (!bccEmail.isEmpty()) {
+            bccEmailList = EditTextUtils.getListFromString(bccEmail);
+        }
+        messageRequestToDraft.setBcc(bccEmailList);
+
+        MailboxEntity mailboxEntity = sendModel.getMailboxById(mailboxId);
+        String senderPublicKey = mailboxEntity.getPublicKey();
+        List<String> publicKeyList = Collections.singletonList(senderPublicKey);
+
+        sendModel.updateMessage(currentMessageId, messageRequestToDraft, publicKeyList);
+        Toast.makeText(getActivity(), getString(R.string.toast_message_saved_as_draft), Toast.LENGTH_SHORT).show();
+    }
+
+    private boolean updateAttachments() {
+        if (getActivity() == null) {
+            return false;
+        }
+        boolean isEncryptionEnabled = sendModel.getAttachmentsEncryptionEnabled();
+
+        List<MessageAttachment> attachmentList = messageSendAttachmentAdapter.getAttachmentList();
+        MessageAttachment messageAttachment = attachmentList.get(updateAttachmentPosition);
+
+        boolean attachmentIsEncrypted = messageAttachment.isEncrypted();
+        if (!(isEncryptionEnabled || attachmentList.get(0).isEncrypted())) {
+            return false;
+        }
+
+        final long id = messageAttachment.getId();
+        String documentLink = messageAttachment.getDocumentLink();
+        String fileName = AppUtils.getFileNameFromURL(documentLink);
+        String type = AppUtils.getMimeType(documentLink);
+        if (type == null) {
+            return false;
+        }
+        MediaType mediaType = MediaType.parse(type);
+
+        try {
+            File cacheDir = getActivity().getCacheDir();
+            File downloadedFile = File.createTempFile("attachment", ".ext", cacheDir);
+            File encryptedFile = File.createTempFile("attachment", ".ext", cacheDir);
+
+            BufferedInputStream bufferedInputStream = new BufferedInputStream(new URL(documentLink).openStream());
+
+            BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(downloadedFile));
+            byte[] dataBuffer = new byte[1024];
+            int bytesRead;
+            while ((bytesRead = bufferedInputStream.read(dataBuffer, 0, 1024)) != -1) {
+                bufferedOutputStream.write(dataBuffer, 0, bytesRead);
+                bufferedOutputStream.flush();
+            }
+            bufferedOutputStream.close();
+
+            if (attachmentIsEncrypted) {
+                MailboxEntity mailboxEntity = sendModel.getMailboxes().get(0);
+                String privateKey = mailboxEntity.getPrivateKey();
+                String password = sendModel.getUserPassword();
+                EncryptUtils.decryptAttachment(downloadedFile, downloadedFile, password, privateKey);
+            }
+
+            RequestBody attachmentPart;
+            if (isEncryptionEnabled && !publicKeyList.isEmpty()) {
+                EncryptUtils.encryptAttachment(downloadedFile, encryptedFile, publicKeyList);
+                downloadedFile.delete();
+                cacheFileList.add(encryptedFile);
+                attachmentPart = RequestBody.create(mediaType, encryptedFile);
+            } else {
+                attachmentPart = RequestBody.create(mediaType, downloadedFile);
+                cacheFileList.add(downloadedFile);
+            }
+
+            final MultipartBody.Part multipartAttachment = MultipartBody.Part.createFormData("document", fileName, attachmentPart);
+            sendModel.updateAttachment(id, multipartAttachment, currentMessageId, isEncryptionEnabled);
+
+        } catch (IOException e) {
+            Timber.e(e);
+        }
+
+        return true;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == PICK_FILE_FROM_STORAGE && resultCode == RESULT_OK && data != null && data.getData() != null) {
+            Uri attachmentUri = data.getData();
+            if (attachmentUri != null) {
+                uploadAttachment(attachmentUri);
+            } else {
+                Toast.makeText(getActivity(), getString(R.string.toast_attachment_unable_read_path), Toast.LENGTH_SHORT).show();
+                Timber.e("AttachmentUri is null");
+            }
+        }
+    }
+
+    private void uploadAttachment(Uri attachmentUri) {
+        Activity activity = getActivity();
+        if (activity == null) {
+            return;
+        }
+
+        String attachmentPath = FileUtils.getPath(activity, attachmentUri);
+        File attachmentFile;
+        try {
+            attachmentFile = new File(attachmentPath);
+        } catch (Exception e) {
+            Toast.makeText(getActivity(), getString(R.string.toast_attachment_unable_read_file), Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String type = activity.getContentResolver().getType(attachmentUri);
+        if (type == null) {
+            return;
+        }
+        MediaType mediaType = MediaType.parse(type);
+
+        boolean isEncryptionEnabled = sendModel.getAttachmentsEncryptionEnabled();
+        MailboxEntity mailboxEntity = sendModel.getMailboxes().get(0);
+        String mailboxPublicKey = mailboxEntity.getPublicKey();
+
+        RequestBody attachmentPart;
+        if (isEncryptionEnabled) {
+            try {
+                File cacheDir = getActivity().getCacheDir();
+                File encryptedFile = File.createTempFile("attachment", ".ext", cacheDir);
+                EncryptUtils.encryptAttachment(attachmentFile, encryptedFile, Collections.singletonList(mailboxPublicKey));
+                attachmentPart = RequestBody.create(mediaType, encryptedFile);
+                cacheFileList.add(encryptedFile);
+
+            } catch (IOException e) {
+                Timber.e(e);
+                return;
+            }
+        } else {
+            attachmentPart = RequestBody.create(mediaType, attachmentFile);
+        }
+
+        String attachmentName = attachmentFile.getName();
+        MultipartBody.Part multipartAttachment = MultipartBody.Part.createFormData("document", attachmentName, attachmentPart);
+
+        sendModel.uploadAttachment(multipartAttachment, currentMessageId, isEncryptionEnabled);
+
+        uploadProgress = new ProgressDialog(getActivity());
+        uploadProgress.setCanceledOnTouchOutside(false);
+        uploadProgress.setMessage(getResources().getString(R.string.txt_uploading));
+        uploadProgress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        uploadProgress.show();
     }
 
     @Override
@@ -755,13 +1023,6 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         }
     }
 
-    private void upgradeToPrimeDialog() {
-        if (getFragmentManager() != null) {
-            UpgradeToPrimeFragment upgradeToPrimeFragment = new UpgradeToPrimeFragment();
-            upgradeToPrimeFragment.show(getFragmentManager(), "UpgradeToPrimeFragment");
-        }
-    }
-
     public void onClickSend() {
         String toEmail = toEmailTextView.getText().toString().trim();
         String ccEmail = ccTextView.getText().toString().trim();
@@ -806,7 +1067,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         }
 
         PublicKeysRequest publicKeysRequest = new PublicKeysRequest(receiverList);
-        mainModel.getEmailPublicKeys(publicKeysRequest);
+        sendModel.getEmailPublicKeys(publicKeysRequest);
     }
 
     public void onClickAttachment() {
@@ -851,7 +1112,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 draftMessage = false;
-                                mainModel.deleteMessage(currentMessageId);
+                                sendModel.deleteMessage(currentMessageId);
                                 dialog.dismiss();
                                 finish();
                             }
@@ -863,122 +1124,31 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         return false;
     }
 
-    @Override
-    public boolean onBackPressed() {
-        return finished || onHandleBackPressed();
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == PICK_FILE_FROM_STORAGE && resultCode == RESULT_OK && data != null && data.getData() != null) {
-            Uri attachmentUri = data.getData();
-            if (attachmentUri != null) {
-                uploadAttachment(attachmentUri);
-            } else {
-                Toast.makeText(getActivity(), getString(R.string.toast_attachment_unable_read_path), Toast.LENGTH_SHORT).show();
-                Timber.e("AttachmentUri is null");
-            }
-        }
-    }
-
-    private void uploadAttachment(Uri attachmentUri) {
-        Activity activity = getActivity();
-        if (activity == null) {
-            return;
-        }
-
-        String attachmentPath = FileUtils.getPath(activity, attachmentUri);
-        File attachmentFile;
-        try {
-            attachmentFile = new File(attachmentPath);
-        } catch (Exception e) {
-            Toast.makeText(getActivity(), getString(R.string.toast_attachment_unable_read_file), Toast.LENGTH_SHORT).show();
-            Timber.e(e);
-            return;
-        }
-
-        MediaType mediaType;
-        String type = activity.getContentResolver().getType(attachmentUri);
-        if (type == null) {
-            Timber.e("Attachment type is null");
-            mediaType = null;
-        } else {
-            mediaType = MediaType.parse(type);
-        }
-        RequestBody attachmentPart = RequestBody.create(mediaType, attachmentFile);
-        MultipartBody.Part multipartAttachment = MultipartBody.Part.createFormData("document", attachmentFile.getName(), attachmentPart);
-
-        Toast.makeText(activity, getString(R.string.toast_attachment_upload_start), Toast.LENGTH_SHORT).show();
-        mainModel.uploadAttachment(multipartAttachment, currentMessageId);
-    }
-
-    private void sendMessageToDraft() {
-        String fromEmail = spinnerFrom.getSelectedItem().toString();
-        MailboxEntity fromMailbox = CTemplarApp.getAppDatabase().mailboxDao().getByEmail(fromEmail);
-        long mailboxId = fromMailbox.id;
-        String mailboxEmail = fromMailbox.email;
-
-        String toEmail = toEmailTextView.getText().toString().trim();
-        String subject = subjectEditText.getText().toString();
-        String compose = Html.toHtml(composeEditText.getText());
-
-        SendMessageRequest messageRequestToDraft = new SendMessageRequest();
-        messageRequestToDraft.setSubject(subject);
-        messageRequestToDraft.setSender(mailboxEmail);
-        messageRequestToDraft.setContent(compose);
-        messageRequestToDraft.setFolder(MainFolderNames.DRAFT);
-        messageRequestToDraft.setIsEncrypted(true);
-        messageRequestToDraft.setSend(false);
-        messageRequestToDraft.setMailbox(mailboxId);
-        messageRequestToDraft.setSubjectEncrypted(isSubjectEncrypted);
-
-        if (destructDeliveryInMillis != null) {
-            messageRequestToDraft.setDestructDate(AppUtils.datetimeForServer(destructDeliveryInMillis));
-        }
-        if (delayedDeliveryInMillis != null) {
-            messageRequestToDraft.setDelayedDelivery(AppUtils.datetimeForServer(delayedDeliveryInMillis));
-        }
-        if (deadDeliveryInHours != null) {
-            messageRequestToDraft.setDeadManDuration(deadDeliveryInHours);
-        }
-
-        List<MessageAttachment> attachments = messageSendAttachmentAdapter.getAttachmentsList();
-        if (attachments != null && !attachments.isEmpty()) {
-            messageRequestToDraft.setAttachments(attachments);
-        }
-
-        List<String> toEmailList = new ArrayList<>();
-        if (!toEmail.isEmpty()) {
-            toEmailList = EditTextUtils.getListFromString(toEmail);
-        }
-        messageRequestToDraft.setReceivers(toEmailList);
-
-        String ccEmail = ccTextView.getText().toString().trim();
-        List<String> ccEmailList = new ArrayList<>();
-        if (!ccEmail.isEmpty()) {
-            ccEmailList = EditTextUtils.getListFromString(ccEmail);
-        }
-        messageRequestToDraft.setCc(ccEmailList);
-
-        String bccEmail = bccTextView.getText().toString().trim();
-        List<String> bccEmailList = new ArrayList<>();
-        if (!bccEmail.isEmpty()) {
-            bccEmailList = EditTextUtils.getListFromString(bccEmail);
-        }
-        messageRequestToDraft.setBcc(bccEmailList);
-
-        Toast.makeText(getActivity(), getString(R.string.toast_message_saved_as_draft), Toast.LENGTH_SHORT).show();
-        mainModel.updateMessage(currentMessageId, messageRequestToDraft, new ArrayList<String>(), mailboxId);
-    }
-
     private void addSignature(String signatureText) {
         boolean signatureEnabled = sharedPreferences.getBoolean(getString(R.string.signature_enabled), false);
         if (signatureEnabled) {
             String compose = composeEditText.getText().toString();
             String text = getString(R.string.txt_user_signature, signatureText, compose);
             composeEditText.setText(text);
+        }
+    }
+
+    private boolean inputFieldsNotEmpty() {
+        String toEmail = toEmailTextView.getText().toString();
+        String ccEmail = ccTextView.getText().toString();
+        String bccEmail = bccTextView.getText().toString();
+        String subject = subjectEditText.getText().toString();
+        String compose = composeEditText.getText().toString();
+
+        boolean receiversNotEmpty = !toEmail.isEmpty() || !ccEmail.isEmpty() || !bccEmail.isEmpty();
+        boolean contentNotEmpty = !subject.isEmpty() || !compose.isEmpty();
+        return receiversNotEmpty && contentNotEmpty;
+    }
+
+    private void upgradeToPrimeDialog() {
+        if (getFragmentManager() != null) {
+            UpgradeToPrimeFragment upgradeToPrimeFragment = new UpgradeToPrimeFragment();
+            upgradeToPrimeFragment.show(getFragmentManager(), "UpgradeToPrimeFragment");
         }
     }
 
@@ -1077,6 +1247,11 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         if (draftMessage) {
             sendMessageToDraft();
         }
+    }
+
+    @Override
+    public boolean onBackPressed() {
+        return finished || onHandleBackPressed();
     }
 
     private void finish() {

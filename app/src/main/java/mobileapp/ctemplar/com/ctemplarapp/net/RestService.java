@@ -5,6 +5,7 @@ import javax.inject.Singleton;
 import io.reactivex.Observable;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.AddFirebaseTokenRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.AddFolderRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.AttachmentsEncryptedRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.AutoSaveContactEnabledRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.CaptchaVerifyRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.ChangePasswordRequest;
@@ -33,7 +34,6 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.CaptchaVerifyResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.CheckUsernameResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.ContactData;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.ContactsResponse;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.DeleteAttachmentResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Domains.DomainsResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Filters.FilterResult;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Filters.FiltersResponse;
@@ -96,10 +96,23 @@ public interface RestService {
 
     @Multipart
     @POST("/emails/attachments/create/")
-    Observable<MessageAttachment> uploadAttachment(@Part MultipartBody.Part document, @Part("message") long message);
+    Observable<MessageAttachment> uploadAttachment(
+            @Part MultipartBody.Part document,
+            @Part("message") long message,
+            @Part("is_encrypted") boolean isEncrypted
+    );
+
+    @Multipart
+    @PATCH("/emails/attachments/update/{id}/")
+    Observable<MessageAttachment> updateAttachment(
+            @Path("id") long id,
+            @Part MultipartBody.Part document,
+            @Part("message") long message,
+            @Part("is_encrypted") boolean isEncrypted
+    );
 
     @DELETE("/emails/attachments/{id}/")
-    Observable<DeleteAttachmentResponse> deleteAttachment(@Path("id") long id);
+    Observable<Response<Void>> deleteAttachment(@Path("id") long id);
 
     @GET("/emails/messages/")
     Observable<MessagesResponse> getMessages(@Query("limit") int limit, @Query("offset") int offset, @Query("folder") String folder);
@@ -230,6 +243,9 @@ public interface RestService {
 
     @PATCH("/users/settings/{id}/")
     Observable<SettingsEntity> updateSubjectEncrypted(@Path("id") long settingId, @Body SubjectEncryptedRequest body);
+
+    @PATCH("/users/settings/{id}/")
+    Observable<SettingsEntity> updateAttachmentsEncrypted(@Path("id") long settingId, @Body AttachmentsEncryptedRequest body);
 
     @PATCH("/users/settings/{id}/")
     Observable<SettingsEntity> updateContactsEncryption(@Path("id") long settingId, @Body ContactsEncryptionRequest body);
