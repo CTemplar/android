@@ -29,9 +29,13 @@ public class PGPManager {
         pgpLib = new PGPLib();
     }
 
-    public String encryptMessage(String message, String[] pubicKeys) {
+    public String encryptMessage(String message, String[] publicKeys) {
+        return new String(encryptBytes(message.getBytes(), publicKeys));
+    }
 
-        ByteArrayInputStream inputMessageStream = new ByteArrayInputStream(message.getBytes());
+    public byte[] encryptBytes(byte[] bytes, String[] pubicKeys) {
+
+        ByteArrayInputStream inputMessageStream = new ByteArrayInputStream(bytes);
         ByteArrayOutputStream outputMessageStream = new ByteArrayOutputStream();
 
         try {
@@ -48,24 +52,27 @@ public class PGPManager {
                     asciiArmor, withIntegrityCheck);
 
         } catch (IOException | PGPException e) {
-            e.printStackTrace();
-            Timber.e("Pgp encrypt error: %s", e.getMessage());
+            Timber.e(e);
 
         } finally {
             try {
                 inputMessageStream.close();
                 outputMessageStream.close();
             } catch (IOException e) {
-                Timber.e("Pgp close stream error: %s", e.getMessage());
+                Timber.e(e);
             }
         }
 
-        return outputMessageStream.toString();
+        return outputMessageStream.toByteArray();
     }
 
     public String decryptMessage(String message, String privateKey, String password) throws NonPGPDataException {
+        return new String(decryptBytes(message.getBytes(), privateKey, password));
+    }
 
-        ByteArrayInputStream inputMessageStream = new ByteArrayInputStream(message.getBytes());
+    public byte[] decryptBytes(byte[] bytes, String privateKey, String password) throws NonPGPDataException {
+
+        ByteArrayInputStream inputMessageStream = new ByteArrayInputStream(bytes);
         ByteArrayInputStream privateKeyStream = new ByteArrayInputStream(privateKey.getBytes());
         ByteArrayOutputStream outputMessageStream = new ByteArrayOutputStream();
 
@@ -76,7 +83,7 @@ public class PGPManager {
             throw new NonPGPDataException("The supplied data is not a valid OpenPGP message", e);
 
         } catch (IOException | PGPException e) {
-            Timber.e("Pgp decrypt error: %s", e.getMessage());
+            Timber.e(e);
 
         } finally {
             try {
@@ -84,11 +91,11 @@ public class PGPManager {
                 outputMessageStream.close();
                 privateKeyStream.close();
             } catch (IOException e) {
-                Timber.e("Pgp close stream error: %s", e.getMessage());
+                Timber.e(e);
             }
         }
 
-        return outputMessageStream.toString();
+        return outputMessageStream.toByteArray();
     }
 
     public PGPKeyEntity generateKeys(String userId, String password) {
@@ -140,14 +147,14 @@ public class PGPManager {
 
         } catch (PGPException | IOException e) {
             e.printStackTrace();
-            Timber.e("Pgp generation key error: %s", e.getMessage());
+            Timber.e(e);
 
         } finally {
             try {
                 publicKeyStream.close();
                 privateKeyStream.close();
             } catch (IOException e) {
-                Timber.e("Pgp close stream error: %s", e.getMessage());
+                Timber.e(e);
             }
         }
 
@@ -177,15 +184,14 @@ public class PGPManager {
             pgpKeyEntity.setPrivateKey(privateKeyStream.toString());
 
         } catch (PGPException | IOException e) {
-            e.printStackTrace();
-            Timber.e("Pgp regeneration key error: %s", e.getMessage());
+            Timber.e(e);
 
         } finally {
             try {
                 publicKeyStream.close();
                 privateKeyStream.close();
             } catch (IOException e) {
-                Timber.e("Pgp close stream error: %s", e.getMessage());
+                Timber.e(e);
             }
         }
 

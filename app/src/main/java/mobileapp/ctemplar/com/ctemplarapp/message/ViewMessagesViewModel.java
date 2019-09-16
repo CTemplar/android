@@ -19,6 +19,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.WhiteListContact;
 import mobileapp.ctemplar.com.ctemplarapp.repository.ManageFoldersRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.MessagesRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
+import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MessageEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageProvider;
 import retrofit2.Response;
@@ -41,6 +42,14 @@ public class ViewMessagesViewModel extends ViewModel {
         userRepository = UserRepository.getInstance();
         messagesRepository = MessagesRepository.getInstance();
         manageFoldersRepository = CTemplarApp.getManageFoldersRepository();
+    }
+
+    List<MailboxEntity> getMailboxes() {
+        return CTemplarApp.getAppDatabase().mailboxDao().getAll();
+    }
+
+    String getUserPassword() {
+        return userRepository.getUserPassword();
     }
 
     public MutableLiveData<ResponseStatus> getMoveToFolderStatus() {

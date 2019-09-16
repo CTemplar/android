@@ -52,6 +52,9 @@ public class SettingsEntity {
     @SerializedName("is_subject_encrypted")
     public boolean isSubjectEncrypted;
 
+    @SerializedName("is_attachments_encrypted")
+    public boolean isAttachmentsEncrypted;
+
     @SerializedName("is_contacts_encrypted")
     public boolean isContactsEncrypted;
 
@@ -100,6 +103,10 @@ public class SettingsEntity {
 
     public boolean isSubjectEncrypted() {
         return isSubjectEncrypted;
+    }
+
+    public boolean isAttachmentsEncrypted() {
+        return isAttachmentsEncrypted;
     }
 
     public boolean isContactsEncrypted() {

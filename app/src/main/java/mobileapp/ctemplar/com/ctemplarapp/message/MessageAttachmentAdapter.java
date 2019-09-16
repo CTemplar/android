@@ -5,7 +5,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import java.util.List;
 
@@ -13,7 +12,6 @@ import io.reactivex.subjects.PublishSubject;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.AttachmentProvider;
 import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
-import timber.log.Timber;
 
 public class MessageAttachmentAdapter extends RecyclerView.Adapter<MessageAttachmentHolder> {
 
@@ -21,12 +19,21 @@ public class MessageAttachmentAdapter extends RecyclerView.Adapter<MessageAttach
     final private static String DOC = "DOC";
     final private static String PNG = "PNG";
     final private static String JPG = "JPG";
+    final private static String JPEG = "JPEG";
 
-    private List<AttachmentProvider> attachmentsList;
-    private final PublishSubject<String> onClickAttachmentLink = PublishSubject.create();
+    private List<AttachmentProvider> attachmentList;
+    private final PublishSubject<Integer> onClickAttachmentLink = PublishSubject.create();
 
-    public void setAttachmentsList(List<AttachmentProvider> attachmentsList) {
-        this.attachmentsList = attachmentsList;
+    public void setAttachmentList(List<AttachmentProvider> attachmentList) {
+        this.attachmentList = attachmentList;
+    }
+
+    public AttachmentProvider getAttachment(int position) {
+        return attachmentList.get(position);
+    }
+
+    public PublishSubject<Integer> getOnClickAttachmentLink() {
+        return onClickAttachmentLink;
     }
 
     @NonNull
@@ -39,44 +46,43 @@ public class MessageAttachmentAdapter extends RecyclerView.Adapter<MessageAttach
 
     @Override
     public void onBindViewHolder(@NonNull final MessageAttachmentHolder holder, int position) {
-        final AttachmentProvider messageAttachment = attachmentsList.get(position);
+        final AttachmentProvider messageAttachment = attachmentList.get(position);
         final String documentLink = messageAttachment.getDocumentLink();
         final String fileName = AppUtils.getFileNameFromURL(documentLink);
+        final int attachmentPosition = position;
 
         holder.txtName.setText(fileName);
         String fileExt = fileName.substring(fileName.lastIndexOf('.') + 1).toUpperCase();
 
-        if (fileExt.equals(PDF)) {
-            holder.imgExt.setImageResource(R.drawable.ic_pdf);
-        } else if (fileExt.equals(DOC)) {
-            holder.imgExt.setImageResource(R.drawable.ic_doc);
-        } else if (fileExt.equals(PNG)) {
-            holder.imgExt.setImageResource(R.drawable.ic_png);
-        } else if (fileExt.equals(JPG)) {
-            holder.imgExt.setImageResource(R.drawable.ic_jpg);
-        } else {
-            holder.imgExt.setImageResource(R.drawable.ic_other);
+        switch (fileExt) {
+            case PDF:
+                holder.imgExt.setImageResource(R.drawable.ic_pdf);
+                break;
+            case DOC:
+                holder.imgExt.setImageResource(R.drawable.ic_doc);
+                break;
+            case PNG:
+                holder.imgExt.setImageResource(R.drawable.ic_png);
+                break;
+            case JPG:
+            case JPEG:
+                holder.imgExt.setImageResource(R.drawable.ic_jpg);
+                break;
+            default:
+                holder.imgExt.setImageResource(R.drawable.ic_other);
+                break;
         }
 
         holder.root.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (documentLink != null) {
-                    onClickAttachmentLink.onNext(documentLink);
-                } else {
-                    Toast.makeText(holder.root.getContext(), "AttachmentUrl is empty", Toast.LENGTH_SHORT).show();
-                    Timber.e("AttachmentUrl is null");
-                }
+                onClickAttachmentLink.onNext(attachmentPosition);
             }
         });
     }
 
     @Override
     public int getItemCount() {
-        return attachmentsList.size();
-    }
-
-    public PublishSubject<String> getOnClickAttachmentLink() {
-        return onClickAttachmentLink;
+        return attachmentList.size();
     }
 }
