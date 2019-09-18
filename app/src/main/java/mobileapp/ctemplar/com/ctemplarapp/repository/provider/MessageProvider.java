@@ -1,5 +1,7 @@
 package mobileapp.ctemplar.com.ctemplarapp.repository.provider;
 
+import com.didisoft.pgp.exceptions.NonPGPDataException;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -367,6 +369,8 @@ public class MessageProvider {
             String privateKey = mailboxEntity.getPrivateKey();
             try {
                 content = pgpManager.decryptMessage(content, privateKey, password);
+            } catch (NonPGPDataException e) {
+                //
             } catch (Exception e) {
                 Timber.i(e);
             }
