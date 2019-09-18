@@ -90,7 +90,9 @@ public class ContactFragment extends BaseFragment {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                contactAdapter.filter(newText);
+                if (contactAdapter != null) {
+                    contactAdapter.filter(newText);
+                }
                 return false;
             }
         });
