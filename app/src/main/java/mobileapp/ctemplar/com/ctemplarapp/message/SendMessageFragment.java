@@ -844,6 +844,9 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         boolean isEncryptionEnabled = sendModel.getAttachmentsEncryptionEnabled();
 
         List<MessageAttachment> attachmentList = messageSendAttachmentAdapter.getAttachmentList();
+        if (updateAttachmentPosition >= attachmentList.size()) {
+            return false;
+        }
         MessageAttachment messageAttachment = attachmentList.get(updateAttachmentPosition);
 
         boolean attachmentIsEncrypted = messageAttachment.isEncrypted();
