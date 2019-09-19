@@ -361,7 +361,7 @@ public class MainActivityViewModel extends ViewModel {
 
                     @Override
                     public void onError(Throwable e) {
-                        Timber.e(e, "Delete contact");
+                        Timber.e(e);
                     }
 
                     @Override
@@ -386,7 +386,7 @@ public class MainActivityViewModel extends ViewModel {
 
                     @Override
                     public void onError(Throwable e) {
-                        Timber.e(e, "Delete message");
+                        Timber.e(e);
                     }
 
                     @Override
