@@ -1,5 +1,6 @@
 package mobileapp.ctemplar.com.ctemplarapp.repository.entity;
 
+import com.didisoft.pgp.exceptions.NonPGPDataException;
 import com.google.gson.Gson;
 
 import java.util.LinkedList;
@@ -12,6 +13,7 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.MailboxDao;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserStore;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageProvider;
 import mobileapp.ctemplar.com.ctemplarapp.utils.PGPManager;
+import timber.log.Timber;
 
 public class Contact {
 
@@ -132,8 +134,10 @@ public class Contact {
         String privateKey = mailboxEntity.getPrivateKey();
         try {
             return pgpManager.decryptMessage(content, privateKey, password);
-        } catch (Exception e) {
+        } catch (NonPGPDataException e) {
             //
+        } catch (Exception e) {
+            Timber.w(e);
         }
         return "";
     }

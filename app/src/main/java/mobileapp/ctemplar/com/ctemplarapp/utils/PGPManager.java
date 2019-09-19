@@ -8,7 +8,6 @@ import com.didisoft.pgp.KeyPairInformation;
 import com.didisoft.pgp.KeyStore;
 import com.didisoft.pgp.PGPException;
 import com.didisoft.pgp.PGPLib;
-import com.didisoft.pgp.exceptions.NonPGPDataException;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -66,33 +65,24 @@ public class PGPManager {
         return outputMessageStream.toByteArray();
     }
 
-    public String decryptMessage(String message, String privateKey, String password) throws NonPGPDataException {
+    public String decryptMessage(String message, String privateKey, String password) throws Exception {
         return new String(decryptBytes(message.getBytes(), privateKey, password));
     }
 
-    public byte[] decryptBytes(byte[] bytes, String privateKey, String password) throws NonPGPDataException {
+    public byte[] decryptBytes(byte[] bytes, String privateKey, String password) throws Exception {
 
         ByteArrayInputStream inputMessageStream = new ByteArrayInputStream(bytes);
         ByteArrayInputStream privateKeyStream = new ByteArrayInputStream(privateKey.getBytes());
         ByteArrayOutputStream outputMessageStream = new ByteArrayOutputStream();
 
+        pgpLib.decryptStream(inputMessageStream, privateKeyStream, password, outputMessageStream);
+
         try {
-            pgpLib.decryptStream(inputMessageStream, privateKeyStream, password, outputMessageStream);
-
-        } catch (NonPGPDataException e) {
-            throw new NonPGPDataException("The supplied data is not a valid OpenPGP message", e);
-
-        } catch (IOException | PGPException e) {
+            inputMessageStream.close();
+            outputMessageStream.close();
+            privateKeyStream.close();
+        } catch (IOException e) {
             Timber.e(e);
-
-        } finally {
-            try {
-                inputMessageStream.close();
-                outputMessageStream.close();
-                privateKeyStream.close();
-            } catch (IOException e) {
-                Timber.e(e);
-            }
         }
 
         return outputMessageStream.toByteArray();
