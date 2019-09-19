@@ -6,8 +6,10 @@ import android.arch.lifecycle.ViewModel;
 
 import java.util.List;
 
+import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.DialogState;
 import mobileapp.ctemplar.com.ctemplarapp.SingleLiveEvent;
@@ -27,6 +29,7 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.ContactsRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.ManageFoldersRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.MessagesRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
+import mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.Contact;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.ContactEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MessageEntity;
@@ -47,7 +50,6 @@ public class MainActivityViewModel extends ViewModel {
     MutableLiveData<DialogState> dialogState = new SingleLiveEvent<>();
     MutableLiveData<ResponseStatus> responseStatus = new MutableLiveData<>();
     MutableLiveData<ResponseMessagesData> messagesResponse = new MutableLiveData<>();
-    MutableLiveData<List<MessageProvider>> starredMessagesResponse = new MutableLiveData<>();
     MutableLiveData<List<Contact>> contactsResponse = new MutableLiveData<>();
     MutableLiveData<ResponseStatus> toFolderStatus = new MutableLiveData<>();
     MutableLiveData<ResponseStatus> deleteSeveralMessagesStatus = new MutableLiveData<>();
@@ -116,10 +118,6 @@ public class MainActivityViewModel extends ViewModel {
         return messagesResponse;
     }
 
-    public LiveData<List<MessageProvider>> getStarredMessagesResponse() {
-        return starredMessagesResponse;
-    }
-
     public LiveData<List<Contact>> getContactsResponse() {
         return contactsResponse;
     }
@@ -139,59 +137,26 @@ public class MainActivityViewModel extends ViewModel {
         actions.postValue(MainActivityActions.ACTION_LOGOUT);
     }
 
-    public void getMessages(int limit, int offset, final String folder) {
+    public void getMessages(int limit, final int offset, final String folder) {
+        if (folder == null) {
+            return;
+        }
         List<MessageEntity> messageEntities = messagesRepository.getLocalMessagesByFolder(folder);
         List<MessageProvider> messageProviders = MessageProvider.fromMessageEntities(messageEntities);
 
-        ResponseMessagesData localMessagesData = new ResponseMessagesData(messageProviders, folder);
-        if (!localMessagesData.messages.isEmpty()) {
-            messagesResponse.postValue(localMessagesData);
+        if (offset == 0 && !folder.equals(MainFolderNames.STARRED)) {
+            ResponseMessagesData localMessagesData = new ResponseMessagesData(messageProviders, folder, offset);
+            if (!localMessagesData.messages.isEmpty()) {
+                messagesResponse.postValue(localMessagesData);
+            }
         }
 
-        userRepository.getMessagesList(limit, offset, folder).subscribe(new Observer<MessagesResponse>() {
-            @Override
-            public void onSubscribe(Disposable d) {
+        Observable<MessagesResponse> messagesResponseObservable
+                = folder.equals(MainFolderNames.STARRED) ?
+                userRepository.getStarredMessagesList(limit, offset, 1) :
+                userRepository.getMessagesList(limit, offset, folder);
 
-            }
-
-            @Override
-            public void onNext(final MessagesResponse response) {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        List<MessagesResult> messages = response.getMessagesList();
-                        List<MessageEntity> messageEntities = MessageProvider
-                                .fromMessagesResultsToEntities(messages, folder);
-//                        List<MessageProvider> messageProviders = MessageProvider
-//                                .fromMessageEntities(messageEntities); TODO rewrite?
-
-                        messagesRepository.deleteLocalMessagesByFolderName(folder);
-                        messagesRepository.addMessagesToDatabase(messageEntities);
-
-                        List<MessageEntity> localEntities = messagesRepository.getLocalMessagesByFolder(folder);
-                        List<MessageProvider> messageProviders = MessageProvider.fromMessageEntities(localEntities);
-
-                        messagesResponse.postValue(new ResponseMessagesData(messageProviders, folder));
-                        responseStatus.postValue(ResponseStatus.RESPONSE_NEXT_MESSAGES);
-                    }
-                }).start();
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
-                Timber.e(e);
-            }
-
-            @Override
-            public void onComplete() {
-
-            }
-        });
-    }
-
-    public void getStarredMessages(int limit, int offset, int starred) {
-        userRepository.getStarredMessagesList(limit, offset, starred)
+        messagesResponseObservable.observeOn(Schedulers.computation())
                 .subscribe(new Observer<MessagesResponse>() {
                     @Override
                     public void onSubscribe(Disposable d) {
@@ -199,19 +164,30 @@ public class MainActivityViewModel extends ViewModel {
                     }
 
                     @Override
-                    public void onNext(MessagesResponse response) {
+                    public void onNext(final MessagesResponse response) {
                         List<MessagesResult> messages = response.getMessagesList();
-                        List<MessageProvider> messageProviders = MessageProvider
-                                .fromMessagesResults(messages);
+                        List<MessageEntity> messageEntities = MessageProvider
+                                .fromMessagesResultsToEntities(messages, folder);
 
-                        starredMessagesResponse.postValue(messageProviders);
+                        List<MessageProvider> messageProviders;
+                        if (offset > 0 || folder == MainFolderNames.STARRED) {
+                            messageProviders = MessageProvider.fromMessageEntities(messageEntities);
+                        } else {
+                            messagesRepository.deleteLocalMessagesByFolderName(folder);
+                            messagesRepository.addMessagesToDatabase(messageEntities);
+
+                            List<MessageEntity> localEntities = messagesRepository.getLocalMessagesByFolder(folder);
+                            messageProviders = MessageProvider.fromMessageEntities(localEntities);
+                        }
+
+                        messagesResponse.postValue(new ResponseMessagesData(messageProviders, folder, offset));
                         responseStatus.postValue(ResponseStatus.RESPONSE_NEXT_MESSAGES);
                     }
 
                     @Override
                     public void onError(Throwable e) {
                         responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
-                        Timber.e(e.getCause());
+                        Timber.e(e);
                     }
 
                     @Override
@@ -231,6 +207,7 @@ public class MainActivityViewModel extends ViewModel {
         }
 
         contactsRepository.getContactsList(limit, offset)
+                .observeOn(Schedulers.computation())
                 .subscribe(new Observer<ContactsResponse>() {
                     @Override
                     public void onSubscribe(Disposable d) {
@@ -239,19 +216,14 @@ public class MainActivityViewModel extends ViewModel {
 
                     @Override
                     public void onNext(final ContactsResponse response) {
-                        new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                ContactData[] contacts = response.getResults();
-                                ContactData[] decryptedContacts = Contact.decryptContactData(contacts);
+                        ContactData[] contacts = response.getResults();
+                        ContactData[] decryptedContacts = Contact.decryptContactData(contacts);
 
-                                contactsRepository.saveContacts(decryptedContacts);
-                                List<Contact> contactList = Contact.fromResponseResults(decryptedContacts);
+                        contactsRepository.saveContacts(decryptedContacts);
+                        List<Contact> contactList = Contact.fromResponseResults(decryptedContacts);
 
-                                contactsResponse.postValue(contactList);
-                                responseStatus.postValue(ResponseStatus.RESPONSE_NEXT_CONTACTS);
-                            }
-                        }).start();
+                        contactsResponse.postValue(contactList);
+                        responseStatus.postValue(ResponseStatus.RESPONSE_NEXT_CONTACTS);
                     }
 
                     @Override

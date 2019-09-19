@@ -1,6 +1,8 @@
 package mobileapp.ctemplar.com.ctemplarapp.main;
 
 import android.graphics.Typeface;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -25,12 +27,31 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesView
     private List<MessageProvider> messageList;
     private List<MessageProvider> filteredList;
     private final MainActivityViewModel mainModel;
+    private OnReachedBottomCallback onReachedBottomCallback;
+    private Handler onReachedBottomCallbackHandler;
 
-    InboxMessagesAdapter(List<MessageProvider> messageList, MainActivityViewModel mainModel) {
-        this.messageList = messageList;
-        filteredList = new ArrayList<>();
-        filteredList.addAll(messageList);
+    InboxMessagesAdapter(MainActivityViewModel mainModel) {
         this.mainModel = mainModel;
+        this.messageList = new ArrayList<>();
+        this.filteredList = new ArrayList<>();
+    }
+
+    public void clear() {
+        messageList.clear();
+        filteredList.clear();
+        notifyDataSetChanged();
+    }
+
+    public void addMessages(List<MessageProvider> messages) {
+        messageList.addAll(messages);
+        int beforeCount = getItemCount();
+        for (MessageProvider message : messages) {
+            if (matchFiltering(message)) {
+                filteredList.add(message);
+            }
+        }
+        int afterCount = getItemCount();
+        notifyItemRangeInserted(beforeCount, afterCount - beforeCount);
     }
 
     @NonNull
@@ -61,6 +82,18 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesView
 
     @Override
     public void onBindViewHolder(@NonNull final InboxMessagesViewHolder holder, int position) {
+        if (position == getItemCount() - 1 && onReachedBottomCallback != null) {
+            if (onReachedBottomCallbackHandler != null) {
+                onReachedBottomCallbackHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        onReachedBottomCallback.onReachedBottom();
+                    }
+                });
+            } else {
+                onReachedBottomCallback.onReachedBottom();
+            }
+        }
         final MessageProvider message = filteredList.get(position);
         String currentFolder = mainModel.getCurrentFolder().getValue();
 
@@ -267,6 +300,15 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesView
         return onClickSubject;
     }
 
+    public void setOnReachedBottomCallback(OnReachedBottomCallback onReachedBottomCallback) {
+        this.onReachedBottomCallback = onReachedBottomCallback;
+        if (onReachedBottomCallback == null || Looper.myLooper() == null) {
+            onReachedBottomCallbackHandler = null;
+        } else {
+            onReachedBottomCallbackHandler = new Handler();
+        }
+    }
+
     private static boolean containsInStringArrayWrapped(String[] array, String filter) {
         if (array == null) {
             return false;
@@ -284,5 +326,9 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesView
             return "";
         }
         return str.toLowerCase();
+    }
+
+    public interface OnReachedBottomCallback {
+        void onReachedBottom();
     }
 }
