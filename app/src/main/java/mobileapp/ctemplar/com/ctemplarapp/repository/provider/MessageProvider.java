@@ -372,7 +372,7 @@ public class MessageProvider {
             } catch (NonPGPDataException e) {
                 //
             } catch (Exception e) {
-                Timber.i(e);
+                Timber.w(e);
             }
         }
 

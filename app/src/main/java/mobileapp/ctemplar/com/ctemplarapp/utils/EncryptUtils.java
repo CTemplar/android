@@ -1,7 +1,5 @@
 package mobileapp.ctemplar.com.ctemplarapp.utils;
 
-import com.didisoft.pgp.exceptions.NonPGPDataException;
-
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -65,7 +63,7 @@ public class EncryptUtils {
             bufferedOutputStream.flush();
             bufferedOutputStream.close();
 
-        } catch (NonPGPDataException | IOException e) {
+        } catch (Exception e) {
             Timber.e(e);
             return false;
         }

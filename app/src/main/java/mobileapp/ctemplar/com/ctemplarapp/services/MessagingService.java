@@ -15,11 +15,13 @@ import android.support.v4.app.NotificationCompat;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
+import java.lang.ref.WeakReference;
 import java.util.Map;
 import java.util.Random;
 
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.R;
+import mobileapp.ctemplar.com.ctemplarapp.main.InboxFragment;
 import mobileapp.ctemplar.com.ctemplarapp.message.ViewMessagesActivity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserStore;
 import timber.log.Timber;
@@ -71,6 +73,13 @@ public class MessagingService extends FirebaseMessagingService {
             boolean isNotificationsEnabled = userStore.getNotificationsEnabled();
             if (isNotificationsEnabled) {
                 sendNotification(sender, subject, folder, messageId, parentId, isSubjectEncrypted);
+            }
+            WeakReference<InboxFragment> inboxFragmentReference = InboxFragment.instanceReference;
+            if (inboxFragmentReference != null) {
+                InboxFragment inboxFragment = inboxFragmentReference.get();
+                if (inboxFragment != null && !inboxFragment.isRemoving()) {
+                    inboxFragment.onNewMessage(messageId);
+                }
             }
         }
     }
