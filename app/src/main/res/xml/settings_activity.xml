@@ -83,37 +83,13 @@
         android:title="@string/settings_about">
 
         <Preference
-            android:title="@string/settings_about_us">
-
-            <intent android:action="android.intent.action.VIEW"
-                android:data="@string/about_url" />
-
-        </Preference>
-
-        <Preference
-            android:title="@string/settings_policy_privacy">
-
-            <intent android:action="android.intent.action.VIEW"
-                android:data="@string/privacy_url" />
-
-        </Preference>
-
-        <Preference
-            android:title="@string/settings_term_and_conditions">
-
-            <intent android:action="android.intent.action.VIEW"
-                android:data="@string/terms_url" />
-
-        </Preference>
-
-        <Preference
             android:title="@string/settings_local_storage_limit"
             android:summary="826KB of 500MB"
             android:key="@string/local_storage_limit" />
 
         <Preference
             android:title="@string/settings_app_version"
-            android:summary="1.0" />
+            android:summary="1.0.7" />
 
     </PreferenceCategory>
 
