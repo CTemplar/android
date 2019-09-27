@@ -435,6 +435,9 @@ public class InboxFragment extends BaseFragment
             Timber.e("RequestNextMessages: current folder is null");
             return;
         }
+        if (filterIsStarred || filterIsUnread || filterWithAttachment) {
+            return;
+        }
 
         currentFolder = mainModel.currentFolder.getValue();
         mainModel.getMessages(REQUEST_MESSAGES_COUNT, currentOffset, currentFolder);
