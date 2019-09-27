@@ -440,8 +440,8 @@ public class SettingsActivity extends AppCompatActivity {
                             saveData(myselfResult);
 
                             SettingsEntity settingsEntity = myselfResult.settings;
-                            setSettingId(settingsEntity.id);
-                            settingId = settingsEntity.id;
+                            setSettingId(settingsEntity.getId());
+                            settingId = settingsEntity.getId();
                         }
                     }
 
@@ -472,14 +472,14 @@ public class SettingsActivity extends AppCompatActivity {
                 usedStorage,
                 allocatedStorage
         ));
-        recoveryEmailPreferenceScreen.setSummary(settingsEntity.recoveryEmail);
+        recoveryEmailPreferenceScreen.setSummary(settingsEntity.getRecoveryEmail());
         sharedPreferences.edit()
-                .putString(getString(R.string.recovery_email), settingsEntity.recoveryEmail)
+                .putString(getString(R.string.recovery_email), settingsEntity.getRecoveryEmail())
                 .putString(getString(R.string.signature), mailboxesResult.getSignature())
-                .putBoolean(getString(R.string.auto_save_contacts_enabled), settingsEntity.saveContacts)
-                .putBoolean(getString(R.string.subject_encryption_enabled), settingsEntity.isSubjectEncrypted)
-                .putBoolean(getString(R.string.attachments_encryption_enabled), settingsEntity.isAttachmentsEncrypted)
-                .putBoolean(getString(R.string.contacts_encryption_enabled), settingsEntity.isContactsEncrypted)
+                .putBoolean(getString(R.string.auto_save_contacts_enabled), settingsEntity.isSaveContacts())
+                .putBoolean(getString(R.string.subject_encryption_enabled), settingsEntity.isSubjectEncrypted())
+                .putBoolean(getString(R.string.attachments_encryption_enabled), settingsEntity.isAttachmentsEncrypted())
+                .putBoolean(getString(R.string.contacts_encryption_enabled), settingsEntity.isContactsEncrypted())
                 .putBoolean(getString(R.string.push_notifications_enabled), isNotificationsEnabled)
                 .apply();
     }

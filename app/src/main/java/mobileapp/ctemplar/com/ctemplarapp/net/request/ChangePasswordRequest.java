@@ -21,6 +21,17 @@ public class ChangePasswordRequest {
     @SerializedName("new_keys")
     private List<MailboxKey> mailboxesKeys;
 
+    public ChangePasswordRequest() {
+
+    }
+
+    public ChangePasswordRequest(String oldPassword, String password, String confirmPassword, Boolean deleteData) {
+        this.oldPassword = oldPassword;
+        this.password = password;
+        this.confirmPassword = confirmPassword;
+        this.deleteData = deleteData;
+    }
+
     public String getOldPassword() {
         return oldPassword;
     }

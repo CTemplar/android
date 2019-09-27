@@ -513,9 +513,9 @@ public class MainActivityViewModel extends ViewModel {
                             MyselfResult myselfResult = myselfResponse.result[0];
                             SettingsEntity settingsEntity = myselfResult.settings;
 
-                            String timezone = settingsEntity.timezone;
-                            boolean isAttachmentsEncrypted = settingsEntity.isAttachmentsEncrypted;
-                            boolean isContactsEncrypted = settingsEntity.isContactsEncrypted;
+                            String timezone = settingsEntity.getTimezone();
+                            boolean isAttachmentsEncrypted = settingsEntity.isAttachmentsEncrypted();
+                            boolean isContactsEncrypted = settingsEntity.isContactsEncrypted();
 
                             userRepository.saveTimeZone(timezone);
                             userRepository.setAttachmentsEncryptionEnabled(isAttachmentsEncrypted);

@@ -102,7 +102,7 @@ public class ManageFoldersActivity extends BaseActivity {
             @Override
             public void onChanged(@Nullable MyselfResponse myselfResponse) {
                 if (myselfResponse != null) {
-                    planType = myselfResponse.result[0].settings.planType;
+                    planType = myselfResponse.result[0].settings.getPlanType();
                 }
             }
         });
