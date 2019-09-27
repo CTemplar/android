@@ -170,7 +170,7 @@ public class MainActivityViewModel extends ViewModel {
                                 .fromMessagesResultsToEntities(messages, folder);
 
                         List<MessageProvider> messageProviders;
-                        if (offset > 0 || folder == MainFolderNames.STARRED) {
+                        if (offset > 0 || folder.equals(MainFolderNames.STARRED)) {
                             messageProviders = MessageProvider.fromMessageEntities(messageEntities);
                         } else {
                             messagesRepository.deleteLocalMessagesByFolderName(folder);
