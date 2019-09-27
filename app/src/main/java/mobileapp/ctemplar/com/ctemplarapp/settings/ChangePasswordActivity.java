@@ -30,6 +30,7 @@ import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.login.LoginActivity;
 import mobileapp.ctemplar.com.ctemplarapp.main.MainActivityActions;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
+import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 
 public class ChangePasswordActivity extends BaseActivity {
 
@@ -137,7 +138,7 @@ public class ChangePasswordActivity extends BaseActivity {
             return;
         }
 
-        if (TextUtils.equals(newPassword, passwordConfirmation) && !newPassword.isEmpty() && newPassword.length() > 6) {
+        if (TextUtils.equals(newPassword, passwordConfirmation) && EditTextUtils.isTextLength(newPassword, 8, 64)) {
             String alertMessage = getResources().getString(R.string.dialog_change_password_confirm);
             if (resetData) {
                 alertMessage = getResources().getString(R.string.dialog_change_password_confirm_reset);
@@ -156,8 +157,7 @@ public class ChangePasswordActivity extends BaseActivity {
                     .setNeutralButton(getResources().getString(R.string.btn_cancel), null)
                     .show();
         } else {
-            Toast.makeText(this, getResources().getString(R.string.error_new_password_not_match),
-                    Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.error_password_small), Toast.LENGTH_SHORT).show();
         }
     }
 
