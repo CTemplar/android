@@ -78,7 +78,7 @@ public class LoginActivityViewModel extends ViewModel {
     }
 
     public void signIn(String username, String password, String otp) {
-        userRepository.saveUserName(username);
+        userRepository.saveUsername(username);
         userRepository.saveUserPassword(password);
         final SignInRequest signInRequest = new SignInRequest(username, EncodeUtils.generateHash(username, password));
         signInRequest.setOtp(otp);
