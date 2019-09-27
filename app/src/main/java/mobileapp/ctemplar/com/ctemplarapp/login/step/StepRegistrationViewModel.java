@@ -107,7 +107,8 @@ public class StepRegistrationViewModel extends ViewModel {
         if(signUpRequest == null) {
             return;
         }
-        EncodeUtils.getPGPKeyObservable(signUpRequest.getPassword())
+        String password = signUpRequest.getPassword();
+        EncodeUtils.getPGPKeyObservable(password)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .flatMap(new Function<PGPKeyEntity, Observable<SignUpResponse>>() {
@@ -126,6 +127,7 @@ public class StepRegistrationViewModel extends ViewModel {
 
             @Override
             public void onNext(SignUpResponse signUpResponse) {
+                userRepository.saveUsername(signUpRequest.getUsername());
                 userRepository.saveUserToken(signUpResponse.getToken());
                 userRepository.saveUserPassword(signUpRequest.getPassword());
                 responseStatus.postValue(ResponseStatus.RESPONSE_NEXT_STEP_EMAIL);

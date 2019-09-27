@@ -409,7 +409,6 @@ Your password is connected to your encryption key, if you change your password t
     <string name="error_password_not_match">Passwords do not match</string>
     <string name="error_password_message">Password must be between 8 and 30 characters</string>
     <string name="error_current_password_not_match">Old password is not correct!</string>
-    <string name="error_new_password_not_match">Passwords do not match or too short</string>
     <string name="error_empty_email">Empty email</string>
     <string name="error_empty_password">Empty password</string>
     <string name="error_enter_old_password">Please enter your old password</string>
