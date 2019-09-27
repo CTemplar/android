@@ -7,6 +7,7 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -290,6 +291,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         sendMessageAttachmentIco = root.findViewById(R.id.fragment_send_message_attachment_ico);
         sendMessageEncryptIco = root.findViewById(R.id.fragment_send_message_encrypt_ico);
 
+        composeEditText.setPaintFlags(composeEditText.getPaintFlags() & (~ Paint.UNDERLINE_TEXT_FLAG));
 
         // OnClicks
         root.findViewById(R.id.fragment_send_message_send).setOnClickListener(this);
@@ -676,7 +678,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         String mailboxEmail = fromMailbox.email;
 
         String subject = subjectEditText.getText().toString();
-        String compose = Html.toHtml(composeEditText.getText());
+        String compose = composeEditText.getText().toString();
 
         sendMessageRequest = new SendMessageRequest();
         sendMessageRequest.setSender(mailboxEmail);
@@ -781,7 +783,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
 
         String toEmail = toEmailTextView.getText().toString().trim();
         String subject = subjectEditText.getText().toString();
-        String compose = Html.toHtml(composeEditText.getText());
+        String compose = composeEditText.getText().toString();
 
         updateAttachmentPosition = 0;
         final SendMessageRequest messageRequestToDraft = new SendMessageRequest();
