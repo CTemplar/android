@@ -46,10 +46,9 @@ public class ChangePasswordViewModel extends ViewModel {
 
         String oldPasswordHash = EncodeUtils.generateHash(username, oldPassword);
         String passwordHash = EncodeUtils.generateHash(username, password);
-        String confirmPasswordHash = EncodeUtils.generateHash(username, password);
 
         final ChangePasswordRequest changePasswordRequest = new ChangePasswordRequest(
-                oldPasswordHash, passwordHash, confirmPasswordHash, resetKeys
+                oldPasswordHash, passwordHash, passwordHash, resetKeys
         );
 
         EncodeUtils.generateMailboxKeys(username, oldPassword, password, resetKeys, mailboxEntities)
