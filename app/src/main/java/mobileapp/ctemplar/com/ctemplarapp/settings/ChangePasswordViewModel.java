@@ -8,7 +8,6 @@ import java.util.List;
 
 import io.reactivex.Observable;
 import io.reactivex.Observer;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
@@ -43,17 +42,19 @@ public class ChangePasswordViewModel extends ViewModel {
     }
 
     void changePassword(String oldPassword, String password, boolean resetKeys) {
-        final ChangePasswordRequest changePasswordRequest = new ChangePasswordRequest();
-        String userName = userRepository.getUsername();
+        String username = userRepository.getUsername();
 
-        changePasswordRequest.setOldPassword(EncodeUtils.generateHash(userName, oldPassword));
-        changePasswordRequest.setPassword(EncodeUtils.generateHash(userName, password));
-        changePasswordRequest.setConfirmPassword(EncodeUtils.generateHash(userName, password));
-        changePasswordRequest.setDeleteData(resetKeys);
+        String oldPasswordHash = EncodeUtils.generateHash(username, oldPassword);
+        String passwordHash = EncodeUtils.generateHash(username, password);
+        String confirmPasswordHash = EncodeUtils.generateHash(username, password);
 
-        EncodeUtils.generateMailboxKeys(userName, oldPassword, password, resetKeys, mailboxEntities)
+        final ChangePasswordRequest changePasswordRequest = new ChangePasswordRequest(
+                oldPasswordHash, passwordHash, confirmPasswordHash, resetKeys
+        );
+
+        EncodeUtils.generateMailboxKeys(username, oldPassword, password, resetKeys, mailboxEntities)
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(Schedulers.computation())
                 .flatMap(new Function<List<MailboxKey>, Observable<ResponseBody>>() {
                     @Override
                     public Observable<ResponseBody> apply(List<MailboxKey> mailboxKeys) {

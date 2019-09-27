@@ -41,7 +41,7 @@ public class EncodeUtils {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public static Observable<List<MailboxKey>> generateMailboxKeys(final String userName,
+    public static Observable<List<MailboxKey>> generateMailboxKeys(final String username,
                                                                    final String oldPassword,
                                                                    final String password,
                                                                    final boolean resetKeys,
@@ -56,7 +56,7 @@ public class EncodeUtils {
                 for (MailboxEntity mailboxEntity : mailboxEntities) {
                     PGPKeyEntity pgpKeyEntity;
                     if (resetKeys) {
-                        pgpKeyEntity = pgpManager.generateKeys(userName, password);
+                        pgpKeyEntity = pgpManager.generateKeys(username, password);
                     } else {
                         pgpKeyEntity = pgpManager.changePrivateKeyPassword(mailboxEntity.getPrivateKey(), oldPassword, password);
                     }
