@@ -104,7 +104,7 @@ public class UserRepository {
         return userStore.getUserPassword();
     }
 
-    public void saveUserName(String username) {
+    public void saveUsername(String username) {
         userStore.saveUsername(username);
     }
 
