@@ -89,7 +89,7 @@
 
         <Preference
             android:title="@string/settings_app_version"
-            android:summary="1.0.7" />
+            android:summary="1.0.9" />
 
     </PreferenceCategory>
 
