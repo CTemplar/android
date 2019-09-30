@@ -20,7 +20,6 @@ import mobileapp.ctemplar.com.ctemplarapp.BaseActivity;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import mobileapp.ctemplar.com.ctemplarapp.settings.SettingsActivity;
-import mobileapp.ctemplar.com.ctemplarapp.wbl.WhiteBlackListActivity;
 
 public class MailboxesActivity extends BaseActivity {
     private MailboxesViewModel mailboxesModel;
