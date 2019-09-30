@@ -13,6 +13,7 @@ import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 
 public class MailboxesAdapter extends RecyclerView.Adapter<MailboxesViewHolder> {
+
     private MailboxesViewModel mailboxesModel;
     private List<MailboxEntity> mailboxEntityList;
     private MailboxesViewHolder lastSelectedHolder;
@@ -33,24 +34,24 @@ public class MailboxesAdapter extends RecyclerView.Adapter<MailboxesViewHolder> 
     @Override
     public void onBindViewHolder(@NonNull final MailboxesViewHolder holder, int position) {
         final MailboxEntity mailboxEntity = mailboxEntityList.get(position);
-        holder.address.setText(mailboxEntity.email);
+        holder.address.setText(mailboxEntity.getEmail());
         setMailboxEnabled(holder, mailboxEntity.isEnabled);
-        if (mailboxEntity.isDefault) {
+        if (mailboxEntity.isDefault()) {
             holder.enabled.setVisibility(View.INVISIBLE);
             holder.address.setSelected(true);
             lastSelectedHolder = holder;
-            lastSelectedMailboxId = mailboxEntity.id;
+            lastSelectedMailboxId = mailboxEntity.getId();
         }
 
         holder.address.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View addressView) {
-                mailboxesModel.updateDefaultMailbox(lastSelectedMailboxId, mailboxEntity.id);
+                mailboxesModel.updateDefaultMailbox(lastSelectedMailboxId, mailboxEntity.getId());
                 lastSelectedHolder.address.setSelected(false);
                 lastSelectedHolder.enabled.setVisibility(View.VISIBLE);
 
                 lastSelectedHolder = holder;
-                lastSelectedMailboxId = mailboxEntity.id;
+                lastSelectedMailboxId = mailboxEntity.getId();
 
                 addressView.setSelected(true);
                 holder.enabled.setVisibility(View.INVISIBLE);
@@ -62,7 +63,7 @@ public class MailboxesAdapter extends RecyclerView.Adapter<MailboxesViewHolder> 
             public void onClick(View view) {
                 boolean isSelected = view.isSelected();
                 setMailboxEnabled(holder, !isSelected);
-                mailboxesModel.updateEnabledMailbox(mailboxEntity.id, !isSelected);
+                mailboxesModel.updateEnabledMailbox(mailboxEntity.getId(), !isSelected);
             }
         });
     }
