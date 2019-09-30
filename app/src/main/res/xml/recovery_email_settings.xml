@@ -8,8 +8,8 @@
         android:key="@string/recovery_email_enabled" />
 
     <EditTextPreference
-        app:dependency="@string/recovery_email_enabled"
         android:title="@string/settings_type_recovery_email"
-        android:key="@string/recovery_email" />
+        android:key="@string/recovery_email"
+        app:dependency="@string/recovery_email_enabled" />
 
 </PreferenceScreen>

@@ -187,7 +187,7 @@ public class SettingsActivity extends AppCompatActivity {
         public void onCreatePreferences(Bundle bundle, String rootKey) {
             setPreferencesFromResource(R.xml.recovery_email_settings, rootKey);
 
-            CheckBoxPreference checkBoxRecoveryEmailEnabled = (CheckBoxPreference) findPreference(getString(R.string.recovery_email_enabled));
+            final CheckBoxPreference checkBoxRecoveryEmailEnabled = (CheckBoxPreference) findPreference(getString(R.string.recovery_email_enabled));
             checkBoxRecoveryEmailEnabled.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
@@ -206,10 +206,15 @@ public class SettingsActivity extends AppCompatActivity {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
                     String value = (String) newValue;
-                    if (EditTextUtils.isEmailValid(value)) {
-                        settingsModel.updateRecoveryEmail(settingId, value);
-                        preferenceRecoveryEmail.setTitle((String) newValue);
+                    if (EditTextUtils.isEmailValid(value) || value.isEmpty()) {
+                        if (value.isEmpty()) {
+                            preferenceRecoveryEmail.setTitle(getString(R.string.settings_type_recovery_email));
+                            checkBoxRecoveryEmailEnabled.setChecked(false);
+                        } else {
+                            preferenceRecoveryEmail.setTitle((String) newValue);
+                        }
                         recoveryEmailPreferenceScreen.setSummary((String) newValue);
+                        settingsModel.updateRecoveryEmail(settingId, value);
                         Toast.makeText(getActivity(), getString(R.string.toast_saved), Toast.LENGTH_SHORT).show();
                         return true;
                     } else {
@@ -465,6 +470,7 @@ public class SettingsActivity extends AppCompatActivity {
         String usedStorage = AppUtils.usedStorage(settingsEntity.getUsedStorage());
         String allocatedStorage = AppUtils.usedStorage(settingsEntity.getAllocatedStorage());
 
+        String recoveryEmail = settingsEntity.getRecoveryEmail();
         boolean isNotificationsEnabled = userStore.getNotificationsEnabled();
 
         storageLimitPreference.setSummary(getString(
@@ -474,8 +480,9 @@ public class SettingsActivity extends AppCompatActivity {
         ));
         recoveryEmailPreferenceScreen.setSummary(settingsEntity.getRecoveryEmail());
         sharedPreferences.edit()
-                .putString(getString(R.string.recovery_email), settingsEntity.getRecoveryEmail())
+                .putString(getString(R.string.recovery_email), recoveryEmail)
                 .putString(getString(R.string.signature), mailboxesResult.getSignature())
+                .putBoolean(getString(R.string.recovery_email_enabled), !recoveryEmail.isEmpty())
                 .putBoolean(getString(R.string.auto_save_contacts_enabled), settingsEntity.isSaveContacts())
                 .putBoolean(getString(R.string.subject_encryption_enabled), settingsEntity.isSubjectEncrypted())
                 .putBoolean(getString(R.string.attachments_encryption_enabled), settingsEntity.isAttachmentsEncrypted())
