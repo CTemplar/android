@@ -52,6 +52,7 @@ public class MessageProvider {
     private boolean isEncrypted;
     private boolean isSubjectEncrypted;
     private boolean isProtected;
+    private boolean isHtml;
     private String hash;
     private List<String> spamReason;
     private String lastAction;
@@ -291,6 +292,14 @@ public class MessageProvider {
         isProtected = aProtected;
     }
 
+    public boolean isHtml() {
+        return isHtml;
+    }
+
+    public void setHtml(boolean html) {
+        isHtml = html;
+    }
+
     public String getHash() {
         return hash;
     }
@@ -463,6 +472,7 @@ public class MessageProvider {
         result.isEncrypted = message.isEncrypted();
         result.isSubjectEncrypted = message.isSubjectEncrypted();
         result.isProtected = message.isProtected();
+        result.isHtml = message.isHtml();
         result.hash = message.getHash();
         result.spamReason = message.getSpamReason();
         result.lastAction = message.getLastAction();
@@ -578,6 +588,7 @@ public class MessageProvider {
         result.isEncrypted = message.isEncrypted();
         result.isSubjectEncrypted = message.isSubjectEncrypted();
         result.isProtected = message.isProtected();
+        result.isHtml = message.isHtml();
         result.hash = message.getHash();
         result.spamReason = message.getSpamReason();
         result.lastAction = message.getLastAction();
@@ -675,6 +686,7 @@ public class MessageProvider {
         result.setEncrypted(message.isEncrypted());
         result.setSubjectEncrypted(message.isSubjectEncrypted());
         result.setProtected(message.isProtected());
+        result.setHtml(message.isHtml());
         result.setHash(message.getHash());
         result.setSpamReason(message.getSpamReason());
         result.setLastAction(message.getLastAction());
