@@ -134,10 +134,10 @@ public class StepUsernameFragment extends BaseFragment {
             loginActivityModel.hideProgressDialog();
             switch (status) {
                 case RESPONSE_ERROR:
-                    Toast.makeText(getActivity(), getResources().getString(R.string.error_server), Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity(), getString(R.string.error_server), Toast.LENGTH_LONG).show();
                     break;
                 case RESPONSE_ERROR_USERNAME_EXISTS:
-                    editUsernameLayout.setError(getResources().getString(R.string.error_username_exists));
+                    editUsernameLayout.setError(getString(R.string.error_username_exists));
                     break;
                 case RESPONSE_NEXT_STEP_USERNAME:
                     viewModel.changeAction(StepRegistrationActions.ACTION_NEXT);

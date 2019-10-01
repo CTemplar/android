@@ -187,20 +187,26 @@ public class SettingsActivity extends AppCompatActivity {
         public void onCreatePreferences(Bundle bundle, String rootKey) {
             setPreferencesFromResource(R.xml.recovery_email_settings, rootKey);
 
-            final CheckBoxPreference checkBoxRecoveryEmailEnabled = (CheckBoxPreference) findPreference(getString(R.string.recovery_email_enabled));
-            checkBoxRecoveryEmailEnabled.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-                @Override
-                public boolean onPreferenceChange(Preference preference, Object newValue) {
-                    Toast.makeText(getActivity(), getString(R.string.toast_saved), Toast.LENGTH_SHORT).show();
-                    return true;
-                }
-            });
-
             final EditTextPreference preferenceRecoveryEmail = (EditTextPreference) findPreference(getString(R.string.recovery_email));
             String recoveryEmail = sharedPreferences.getString(getString(R.string.recovery_email), null);
             if (recoveryEmail != null && !recoveryEmail.isEmpty()) {
                 preferenceRecoveryEmail.setTitle(recoveryEmail);
             }
+
+            final CheckBoxPreference checkBoxRecoveryEmailEnabled = (CheckBoxPreference) findPreference(getString(R.string.recovery_email_enabled));
+            checkBoxRecoveryEmailEnabled.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    Boolean value = (Boolean) newValue;
+                    if (!value) {
+                        preferenceRecoveryEmail.setTitle(getString(R.string.settings_type_recovery_email));
+                        recoveryEmailPreferenceScreen.setSummary("");
+                        settingsModel.updateRecoveryEmail(settingId, "");
+                    }
+                    Toast.makeText(getActivity(), getString(R.string.toast_saved), Toast.LENGTH_SHORT).show();
+                    return true;
+                }
+            });
 
             preferenceRecoveryEmail.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override

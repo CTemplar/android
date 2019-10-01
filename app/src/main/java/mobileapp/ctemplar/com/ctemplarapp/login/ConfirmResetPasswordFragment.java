@@ -93,10 +93,10 @@ public class ConfirmResetPasswordFragment extends BaseFragment {
 
             switch (status) {
                 case RESPONSE_ERROR:
-                    Toast.makeText(getActivity(), getResources().getString(R.string.error_server), Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity(), getString(R.string.error_reset_password), Toast.LENGTH_LONG).show();
                     break;
                 case RESPONSE_ERROR_RECOVER_PASS_FAILED:
-                    Toast.makeText(getActivity(), getResources().getString(R.string.error_recover_password), Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity(), getString(R.string.error_recover_password), Toast.LENGTH_LONG).show();
                     break;
                 case RESPONSE_NEXT_RECOVER_PASSWORD:
                     loginActivityModel.changeAction(LoginActivityActions.CHANGE_FRAGMENT_RESET_CODE);
@@ -104,5 +104,4 @@ public class ConfirmResetPasswordFragment extends BaseFragment {
             }
         }
     }
-
 }
