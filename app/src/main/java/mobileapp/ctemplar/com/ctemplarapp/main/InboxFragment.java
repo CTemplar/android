@@ -530,7 +530,7 @@ public class InboxFragment extends BaseFragment
         if(status != null) {
             switch(status) {
                 case RESPONSE_ERROR:
-                    Toast.makeText(getActivity(), getString(R.string.error_server), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), getString(R.string.error_messages), Toast.LENGTH_SHORT).show();
                     Timber.e("Response error");
                     break;
                 case RESPONSE_NEXT_MESSAGES:
