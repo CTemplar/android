@@ -193,7 +193,7 @@ public class InboxFragment extends BaseFragment
                 updateTouchListenerSwipeOptions(folderName);
                 String emptyFolderString = getResources().getString(R.string.title_empty_messages, folderName);
                 txtEmpty.setText(emptyFolderString);
-                progressLayout.setVisibility(View.VISIBLE);
+                loadMessagesList();
                 swipeRefreshLayout.setRefreshing(false);
             }
         });
@@ -539,6 +539,13 @@ public class InboxFragment extends BaseFragment
                     break;
             }
         }
+    }
+
+    private void loadMessagesList() {
+        recyclerView.setVisibility(View.GONE);
+        fabCompose.hide();
+        listEmptyLayout.setVisibility(View.GONE);
+        progressLayout.setVisibility(View.VISIBLE);
     }
 
     private void hideMessagesList() {
