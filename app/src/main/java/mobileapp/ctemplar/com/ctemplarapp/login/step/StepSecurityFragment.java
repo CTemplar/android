@@ -205,7 +205,7 @@ public class StepSecurityFragment extends BaseFragment {
             loginActivityModel.hideProgressDialog();
             switch (status) {
                 case RESPONSE_ERROR:
-                    Toast.makeText(getActivity(), getResources().getString(R.string.error_server), Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity(), getString(R.string.error_server), Toast.LENGTH_LONG).show();
                     break;
                 case RESPONSE_NEXT_STEP_EMAIL:
                     loginActivityModel.changeAction(LoginActivityActions.CHANGE_ACTIVITY_MAIN);

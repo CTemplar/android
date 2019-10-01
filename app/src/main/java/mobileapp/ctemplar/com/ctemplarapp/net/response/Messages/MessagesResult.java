@@ -96,6 +96,9 @@ public class MessagesResult {
     @SerializedName("is_protected")
     private boolean isProtected;
 
+    @SerializedName("is_html")
+    private boolean isHtml;
+
     @SerializedName("hash")
     private String hash;
 
@@ -358,6 +361,14 @@ public class MessagesResult {
 
     public void setProtected(boolean aProtected) {
         isProtected = aProtected;
+    }
+
+    public boolean isHtml() {
+        return isHtml;
+    }
+
+    public void setHtml(boolean html) {
+        isHtml = html;
     }
 
     public String getHash() {

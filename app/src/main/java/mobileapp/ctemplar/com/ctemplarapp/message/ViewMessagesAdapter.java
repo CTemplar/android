@@ -77,26 +77,24 @@ public class ViewMessagesAdapter extends BaseAdapter {
             expandedView.setVisibility(View.VISIBLE);
         }
 
-        String encodedMessage = messageData.getContent();
+        UserDisplayProvider senderDisplay = messageData.getSenderDisplay();
 
-        String style = "<style type=\"text/css\">*{width:auto;}</style>";
-        String messageWithStyle = style + messageData.getContent();
-        String encodedContent = Base64.encodeToString(messageWithStyle.getBytes(), Base64.NO_PADDING);
+        List<UserDisplayProvider> receiverDisplayList = messageData.getReceiverDisplayList();
+        List<UserDisplayProvider> ccDisplayList = messageData.getCcDisplayList();
+        List<UserDisplayProvider> bccDisplayList = messageData.getBccDisplayList();
+        String lastAction = messageData.getLastAction();
+
+        String folderName = messageData.getFolderName();
+        String message = messageData.getContent();
+        boolean isHtml = messageData.isHtml();
 
         // VIEW COLLAPSED
         TextView senderTextView = view.findViewById(R.id.item_message_view_collapsed_sender);
         TextView contentTextView = view.findViewById(R.id.item_message_view_collapsed_content);
         ImageView collapsedReplyMessageImageView = view.findViewById(R.id.item_message_view_holder_reply_image_view);
 
-        UserDisplayProvider senderDisplay = messageData.getSenderDisplay();
-        List<UserDisplayProvider> receiverDisplayList = messageData.getReceiverDisplayList();
-        List<UserDisplayProvider> ccDisplayList = messageData.getCcDisplayList();
-        List<UserDisplayProvider> bccDisplayList = messageData.getBccDisplayList();
-        String lastAction = messageData.getLastAction();
-        String folderName = messageData.getFolderName();
-
         senderTextView.setText(senderDisplay.getName());
-        contentTextView.setText(Html.fromHtml(encodedMessage));
+        contentTextView.setText(Html.fromHtml(message));
 
         // VIEW EXPANDED
         senderTextView = view.findViewById(R.id.item_message_view_expanded_sender_name);
@@ -113,6 +111,7 @@ public class ViewMessagesAdapter extends BaseAdapter {
         ImageView replyMessageImageView = view.findViewById(R.id.item_message_view_expanded_reply_image_view);
         TextView bccEmailTextView = view.findViewById(R.id.item_message_view_BCC_email);
         WebView contentWebView = view.findViewById(R.id.item_message_view_expanded_content);
+        TextView contentText = view.findViewById(R.id.item_message_text_view_expanded_content);
         RecyclerView attachmentsRecyclerView = view.findViewById(R.id.item_message_view_expanded_attachment);
         final ViewGroup expandedCredentialsLayout = view.findViewById(R.id.item_message_view_expanded_credentials);
         final View credentialsDivider = view.findViewById(R.id.item_message_view_expanded_credentials_divider);
@@ -212,8 +211,15 @@ public class ViewMessagesAdapter extends BaseAdapter {
             contentWebView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
         }
 
-        contentWebView.getSettings().setLoadWithOverviewMode(true);
-        contentWebView.loadData(encodedContent, "text/html", "base64");
+        // display message
+        if (isHtml) {
+            String messageWithStyle = "<style type=\"text/css\">*{width:auto;}</style>" + message;
+            String encodedContent = Base64.encodeToString(messageWithStyle.getBytes(), Base64.NO_PADDING);
+            contentWebView.getSettings().setLoadWithOverviewMode(true);
+            contentWebView.loadData(encodedContent, "text/html", "base64");
+        } else {
+            contentText.setText(Html.fromHtml(message));
+        }
 
         List<AttachmentProvider> attachmentList = messageData.getAttachments();
 

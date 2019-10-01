@@ -355,8 +355,15 @@
         <WebView
             android:id="@+id/item_message_view_expanded_content"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-        </WebView>
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/item_message_text_view_expanded_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:textSize="16sp"
+            android:textColor="@android:color/black" />
 
     </RelativeLayout>
 
