@@ -8,7 +8,7 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.entity.ContactEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MessageEntity;
 
-@Database(entities = {MailboxEntity.class, ContactEntity.class, MessageEntity.class}, version = 6)
+@Database(entities = {MailboxEntity.class, ContactEntity.class, MessageEntity.class}, version = 7)
 @TypeConverters({Converters.class})
 public abstract class AppDatabase extends RoomDatabase {
     public abstract MailboxDao mailboxDao();

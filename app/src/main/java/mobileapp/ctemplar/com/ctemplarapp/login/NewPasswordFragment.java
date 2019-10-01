@@ -111,10 +111,10 @@ public class NewPasswordFragment extends BaseFragment {
 
             switch (status) {
                 case RESPONSE_ERROR:
-                    Toast.makeText(getActivity(), getResources().getString(R.string.error_server), Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity(), getString(R.string.error_change_password), Toast.LENGTH_LONG).show();
                     break;
                 case RESPONSE_ERROR_CODE_NOT_MATCH:
-                    Toast.makeText(getActivity(), getResources().getString(R.string.error_authentication_failed), Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity(), getString(R.string.error_authentication_failed), Toast.LENGTH_LONG).show();
                     break;
                 case RESPONSE_NEXT_NEW_PASSWORD:
                     viewModel.changeAction(LoginActivityActions.CHANGE_ACTIVITY_MAIN);

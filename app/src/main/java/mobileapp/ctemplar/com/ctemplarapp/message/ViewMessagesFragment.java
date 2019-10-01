@@ -252,7 +252,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
                     Toast.makeText(getActivity(), getString(R.string.added_to_whitelist), Toast.LENGTH_SHORT).show();
                     getActivity().onBackPressed();
                 } else {
-                    Toast.makeText(getActivity(), getString(R.string.error_server), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), getString(R.string.adding_whitelist_contact_error), Toast.LENGTH_SHORT).show();
                 }
             }
         });
