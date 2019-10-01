@@ -168,10 +168,10 @@ public class SignInFragment extends BaseFragment {
 
             switch (status) {
                 case RESPONSE_ERROR:
-                    Toast.makeText(getActivity(), getResources().getString(R.string.error_server), Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity(), getString(R.string.error_sign_in), Toast.LENGTH_LONG).show();
                     break;
                 case RESPONSE_ERROR_AUTH_FAILED:
-                    Toast.makeText(getActivity(), getResources().getString(R.string.error_authentication_failed), Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity(), getString(R.string.error_authentication_failed), Toast.LENGTH_LONG).show();
                     break;
                 case RESPONSE_WAIT_OTP:
                     show2FA();

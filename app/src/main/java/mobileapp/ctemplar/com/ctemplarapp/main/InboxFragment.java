@@ -193,7 +193,7 @@ public class InboxFragment extends BaseFragment
                 updateTouchListenerSwipeOptions(folderName);
                 String emptyFolderString = getResources().getString(R.string.title_empty_messages, folderName);
                 txtEmpty.setText(emptyFolderString);
-                progressLayout.setVisibility(View.VISIBLE);
+                loadMessagesList();
                 swipeRefreshLayout.setRefreshing(false);
             }
         });
@@ -530,7 +530,7 @@ public class InboxFragment extends BaseFragment
         if(status != null) {
             switch(status) {
                 case RESPONSE_ERROR:
-                    Toast.makeText(getActivity(), getString(R.string.error_server), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), getString(R.string.error_messages), Toast.LENGTH_SHORT).show();
                     Timber.e("Response error");
                     break;
                 case RESPONSE_NEXT_MESSAGES:
@@ -539,6 +539,13 @@ public class InboxFragment extends BaseFragment
                     break;
             }
         }
+    }
+
+    private void loadMessagesList() {
+        recyclerView.setVisibility(View.GONE);
+        fabCompose.hide();
+        listEmptyLayout.setVisibility(View.GONE);
+        progressLayout.setVisibility(View.VISIBLE);
     }
 
     private void hideMessagesList() {

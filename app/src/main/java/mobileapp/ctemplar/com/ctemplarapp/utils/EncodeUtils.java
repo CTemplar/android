@@ -17,8 +17,11 @@ public class EncodeUtils {
     private static String ENCODE_SCHEME = "$2a$10$";
 
     private static String generateSaltWithUsername(String username, String salt) {
-        username = username.replaceAll("[^a-zA-Z]", "");
+        if (username.isEmpty()) {
+            return "";
+        }
 
+        username = username.replaceAll("[^a-zA-Z]", "");
         if(salt.length() < MAX_SYMBOLS) {
             return generateSaltWithUsername(username, salt + username);
         } else {

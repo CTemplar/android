@@ -38,6 +38,7 @@ public class MessageEntity {
     private boolean isEncrypted;
     private boolean isSubjectEncrypted;
     private boolean isProtected;
+    private boolean isHtml;
     private String hash;
     private List<String> spamReason;
     private String lastAction;
@@ -260,6 +261,14 @@ public class MessageEntity {
 
     public void setProtected(boolean aProtected) {
         isProtected = aProtected;
+    }
+
+    public boolean isHtml() {
+        return isHtml;
+    }
+
+    public void setHtml(boolean html) {
+        isHtml = html;
     }
 
     public String getHash() {
