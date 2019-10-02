@@ -85,7 +85,7 @@
             android:text="@string/txt_starred"
             android:button="@null"
             android:drawableRight="@drawable/selector_check_filter"
-            android:drawableEnd="@drawable/selector_check_filter"/>
+            android:drawableEnd="@drawable/selector_check_filter" />
 
         <CheckBox
             android:id="@+id/fragment_messages_filter_dialog_unread"
