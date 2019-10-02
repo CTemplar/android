@@ -138,9 +138,7 @@ public class UserRepository {
 
     public void logout() {
         userStore.logout();
-        CTemplarApp.getAppDatabase().mailboxDao().deleteAll();
-        CTemplarApp.getAppDatabase().messageDao().deleteAll();
-        CTemplarApp.getAppDatabase().contactDao().deleteAll();
+        CTemplarApp.getAppDatabase().clearAllTables();
     }
 
     public void saveMailboxes(List<MailboxesResult> mailboxes) {

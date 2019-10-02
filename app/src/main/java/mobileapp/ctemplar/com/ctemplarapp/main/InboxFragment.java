@@ -190,10 +190,11 @@ public class InboxFragment extends BaseFragment
                 currentFolder = folderName;
                 requestNewMessages();
                 restartOptionsMenu();
-                updateTouchListenerSwipeOptions(folderName);
                 String emptyFolderString = getResources().getString(R.string.title_empty_messages, folderName);
                 txtEmpty.setText(emptyFolderString);
                 loadMessagesList();
+                recyclerView.setAdapter(adapter);
+                updateTouchListenerSwipeOptions(currentFolder);
                 swipeRefreshLayout.setRefreshing(false);
             }
         });
