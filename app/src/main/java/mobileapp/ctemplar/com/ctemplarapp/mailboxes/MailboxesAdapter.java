@@ -35,10 +35,12 @@ public class MailboxesAdapter extends RecyclerView.Adapter<MailboxesViewHolder> 
     public void onBindViewHolder(@NonNull final MailboxesViewHolder holder, int position) {
         final MailboxEntity mailboxEntity = mailboxEntityList.get(position);
         holder.address.setText(mailboxEntity.getEmail());
-        setMailboxEnabled(holder, mailboxEntity.isEnabled);
+        setMailboxEnabled(holder, mailboxEntity.isEnabled());
         if (mailboxEntity.isDefault()) {
-            holder.enabled.setVisibility(View.INVISIBLE);
+            holder.enabled.setVisibility(View.GONE);
+            holder.checkMark.setVisibility(View.VISIBLE);
             holder.address.setSelected(true);
+
             lastSelectedHolder = holder;
             lastSelectedMailboxId = mailboxEntity.getId();
         }
@@ -49,12 +51,14 @@ public class MailboxesAdapter extends RecyclerView.Adapter<MailboxesViewHolder> 
                 mailboxesModel.updateDefaultMailbox(lastSelectedMailboxId, mailboxEntity.getId());
                 lastSelectedHolder.address.setSelected(false);
                 lastSelectedHolder.enabled.setVisibility(View.VISIBLE);
+                lastSelectedHolder.checkMark.setVisibility(View.GONE);
 
                 lastSelectedHolder = holder;
                 lastSelectedMailboxId = mailboxEntity.getId();
 
                 addressView.setSelected(true);
-                holder.enabled.setVisibility(View.INVISIBLE);
+                holder.enabled.setVisibility(View.GONE);
+                holder.checkMark.setVisibility(View.VISIBLE);
             }
         });
 
