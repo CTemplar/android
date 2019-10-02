@@ -256,6 +256,15 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
                 }
             }
         });
+        mainModel.getToFolderStatus().observe(this, new Observer<ResponseStatus>() {
+            @Override
+            public void onChanged(@Nullable ResponseStatus responseStatus) {
+                Activity activity = getActivity();
+                if (activity != null) {
+                    activity.onBackPressed();
+                }
+            }
+        });
 
         BroadcastReceiver onComplete = new BroadcastReceiver() {
             public void onReceive(Context ctx, Intent intent) {
@@ -331,29 +340,25 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
                 menu.findItem(R.id.menu_view_not_spam).setVisible(false);
                 break;
             case SENT:
-                menu.findItem(R.id.menu_view_spam).setVisible(false);
-                menu.findItem(R.id.menu_view_not_spam).setVisible(false);
-                break;
             case OUTBOX:
+                menu.findItem(R.id.menu_view_inbox).setVisible(false);
+                menu.findItem(R.id.menu_view_unread).setVisible(false);
                 menu.findItem(R.id.menu_view_spam).setVisible(false);
                 menu.findItem(R.id.menu_view_not_spam).setVisible(false);
-                break;
-            case SPAM:
-                menu.findItem(R.id.menu_view_spam).setVisible(false);
-                menu.findItem(R.id.menu_view_archive).setVisible(false);
                 break;
             case ARCHIVE:
                 menu.findItem(R.id.menu_view_spam).setVisible(false);
                 menu.findItem(R.id.menu_view_archive).setVisible(false);
                 menu.findItem(R.id.menu_view_not_spam).setVisible(false);
                 break;
-            case DRAFT:
+            case SPAM:
                 menu.findItem(R.id.menu_view_spam).setVisible(false);
-                menu.findItem(R.id.menu_view_not_spam).setVisible(false);
+                menu.findItem(R.id.menu_view_archive).setVisible(false);
                 break;
             case TRASH:
                 menu.findItem(R.id.menu_view_spam).setVisible(false);
                 menu.findItem(R.id.menu_view_not_spam).setVisible(false);
+                menu.findItem(R.id.menu_view_unread).setVisible(false);
                 break;
             default:
                 menu.findItem(R.id.menu_view_not_spam).setVisible(false);
@@ -379,6 +384,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
                 return true;
             case R.id.menu_view_not_spam:
                 snackbarMove(INBOX, getResources().getString(R.string.action_reported_as_not_spam));
+                markNotSpam();
                 return true;
             case R.id.menu_view_trash:
                 snackbarDelete(TRASH, getResources().getString(R.string.action_message_removed));
@@ -443,7 +449,6 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
             public void onDismissed(Snackbar transientBottomBar, int event) {
                 if (event != DISMISS_EVENT_ACTION) {
                     mainModel.toFolder(parentMessage.getId(), folder);
-                    markNotSpam();
                 }
                 unlockUI();
             }
