@@ -47,7 +47,6 @@
 
     <!-- MENU -->
     <string name="menu_save">Save</string>
-    <string name="menu_edit">Edit</string>
     <string name="menu_spam">Spam</string>
     <string name="menu_not_spam">Mark not spam</string>
     <string name="menu_move">Move</string>
