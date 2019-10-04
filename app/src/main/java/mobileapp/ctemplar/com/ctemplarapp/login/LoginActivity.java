@@ -64,15 +64,6 @@ public class LoginActivity extends BaseFragmentActivity {
         });
     }
 
-    @Override
-    public void onBackPressed() {
-        ResponseStatus responseStatus = loginViewModel.getResponseStatus().getValue();
-        if (responseStatus != ResponseStatus.RESPONSE_WAIT_OTP) {
-            return;
-        }
-        super.onBackPressed();
-    }
-
     public void blockUI() {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
                 WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
