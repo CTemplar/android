@@ -59,6 +59,12 @@ public class EditContactViewModel extends ViewModel {
             encryptContact.setPhone2(contactData.getPhone2());
             encryptContact.setProvider(contactData.getProvider());
 
+            String contactString = new Gson().toJson(encryptContact);
+            String encryptedContactString = Contact.encryptData(contactString);
+            contactData.setEncryptedData(encryptedContactString);
+            contactData.setEncrypted(true);
+            contactsRepository.saveLocalContact(contactData);
+
             contactData.setEmail(null);
             contactData.setName(null);
             contactData.setAddress(null);
@@ -66,12 +72,8 @@ public class EditContactViewModel extends ViewModel {
             contactData.setPhone(null);
             contactData.setPhone2(null);
             contactData.setProvider(null);
-            contactData.setEncrypted(true);
-
-            Gson gson = new Gson();
-            String contactString = gson.toJson(encryptContact);
-            String encryptedContactString = Contact.encryptData(contactString);
-            contactData.setEncryptedData(encryptedContactString);
+        } else {
+            contactsRepository.saveLocalContact(contactData);
         }
 
         contactsRepository.updateContact(contactData)
@@ -83,7 +85,6 @@ public class EditContactViewModel extends ViewModel {
 
                     @Override
                     public void onNext(ContactData contactData) {
-                        contactsRepository.saveLocalContact(contactData);
                         responseStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
                     }
 
