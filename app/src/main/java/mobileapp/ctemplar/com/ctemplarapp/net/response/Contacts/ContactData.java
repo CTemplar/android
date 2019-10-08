@@ -36,6 +36,10 @@ public class ContactData {
     @SerializedName("encrypted_data")
     private String encryptedData;
 
+    public ContactData() {
+
+    }
+
     @NotNull
     @Override
     public String toString() {
