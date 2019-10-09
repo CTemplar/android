@@ -56,6 +56,7 @@ import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderN
 
 public class InboxFragment extends BaseFragment
         implements InboxMessagesAdapter.OnReachedBottomCallback {
+
     public static WeakReference<InboxFragment> instanceReference = null;
     private InboxMessagesAdapter adapter;
     private MainActivityViewModel mainModel;

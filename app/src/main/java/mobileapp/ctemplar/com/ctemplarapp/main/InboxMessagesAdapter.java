@@ -58,11 +58,10 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesView
     @Override
     public InboxMessagesViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
-        ViewGroup view = (ViewGroup) inflater
-                .inflate(R.layout.item_message_view_holder, viewGroup, false);
-
+        ViewGroup view = (ViewGroup) inflater.inflate(R.layout.item_message_view_holder, viewGroup, false);
         ViewGroup backOptionsLayout = view.findViewById(R.id.item_message_view_holder_background_layout);
         View backOptionsView;
+
         String currentFolder = mainModel.getCurrentFolder().getValue();
         if (currentFolder != null && currentFolder.equals(MainFolderNames.DRAFT)) {
             backOptionsView = inflater.inflate(R.layout.swipe_actions_draft, backOptionsLayout, false);
@@ -148,6 +147,9 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesView
             holder.imgUnread.setVisibility(View.VISIBLE);
             holder.txtUsername.setTypeface(null, Typeface.BOLD);
         }
+
+        // check for protection
+        holder.imgEncrypted.setSelected(message.isProtected());
 
         // check for status (delivery in, delete in, dead mans in)
         if (!TextUtils.isEmpty(message.getDelayedDelivery())) {

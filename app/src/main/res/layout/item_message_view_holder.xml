@@ -125,7 +125,7 @@
                     android:text="DATE" />
 
                 <ImageView
-                    android:id="@+id/message_holder_protection"
+                    android:id="@+id/message_holder_encrypted"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="8dp"
