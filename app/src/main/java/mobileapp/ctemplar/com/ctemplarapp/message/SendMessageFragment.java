@@ -508,8 +508,10 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
                 .observe(this, new Observer<ResponseStatus>() {
                     @Override
                     public void onChanged(@Nullable ResponseStatus responseStatus) {
-                        if (responseStatus == ResponseStatus.RESPONSE_ERROR) {
-                            Toast.makeText(activity, getString(R.string.toast_upload_error), Toast.LENGTH_SHORT).show();
+                        if (responseStatus == ResponseStatus.RESPONSE_ERROR_TOO_LARGE) {
+                            Toast.makeText(activity, getString(R.string.error_upload_attachment_too_large), Toast.LENGTH_SHORT).show();
+                        } else if (responseStatus == ResponseStatus.RESPONSE_ERROR) {
+                            Toast.makeText(activity, getString(R.string.error_upload_attachment), Toast.LENGTH_SHORT).show();
                         }
                         uploadProgress.dismiss();
                     }
