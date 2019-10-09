@@ -209,7 +209,6 @@ Your password is connected to your encryption key, if you change your password t
     <string name="toast_message_saved_as_draft">Message saved as draft</string>
     <string name="toast_message_not_created">Message not created</string>
     <string name="toast_message_not_loaded">Message not loaded</string>
-    <string name="toast_upload_error">Upload error</string>
     <string name="toast_attachment_unable_read_file">Unable to read file in selected path</string>
     <string name="toast_attachment_unable_read_path">"Unable to read selected path"</string>
     <string name="txt_sending_mail">Sending mail..</string>
@@ -418,6 +417,8 @@ Your password is connected to your encryption key, if you change your password t
     <string name="error_change_password">Password change error</string>
     <string name="error_reset_password">Password reset error</string>
     <string name="error_recover_password">Username or recovery email is not correct</string>
+    <string name="error_upload_attachment">Failed to upload attachment</string>
+    <string name="error_upload_attachment_too_large">File too large</string>
     <string name="title_activity_white_black_list">WhiteBlackList</string>
     <string name="section_format">Hello World from section: %1$d</string>
     <string name="toast_undefined_error">Undefined error</string>
