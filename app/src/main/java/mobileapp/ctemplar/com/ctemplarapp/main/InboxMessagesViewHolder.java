@@ -21,7 +21,7 @@ public class InboxMessagesViewHolder extends RecyclerView.ViewHolder{
     TextView txtSubject;
     ImageView imgReply;
     ImageView imgUnread;
-    ImageView imgProtection;
+    ImageView imgEncrypted;
     ImageView imgStarred;
     LinearLayout imgStarredLayout;
     ImageView imgAttachment;
@@ -38,7 +38,7 @@ public class InboxMessagesViewHolder extends RecyclerView.ViewHolder{
         txtSubject = itemView.findViewById(R.id.message_holder_subject);
         imgReply = itemView.findViewById(R.id.message_holder_reply);
         imgUnread = itemView.findViewById(R.id.message_holder_new);
-        imgProtection = itemView.findViewById(R.id.message_holder_protection);
+        imgEncrypted = itemView.findViewById(R.id.message_holder_encrypted);
         imgStarred = itemView.findViewById(R.id.message_holder_starred);
         imgStarredLayout = itemView.findViewById(R.id.message_holder_starred_layout);
         imgAttachment = itemView.findViewById(R.id.message_holder_attachment);
