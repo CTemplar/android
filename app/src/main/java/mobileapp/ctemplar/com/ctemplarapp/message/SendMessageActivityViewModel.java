@@ -28,6 +28,7 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MessageEntity;
 import mobileapp.ctemplar.com.ctemplarapp.utils.PGPManager;
 import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
+import retrofit2.HttpException;
 import retrofit2.Response;
 import timber.log.Timber;
 
@@ -238,7 +239,7 @@ public class SendMessageActivityViewModel extends ViewModel {
 
                     @Override
                     public void onError(Throwable e) {
-
+                        Timber.e(e);
                     }
 
                     @Override
@@ -335,7 +336,15 @@ public class SendMessageActivityViewModel extends ViewModel {
 
                     @Override
                     public void onError(Throwable e) {
-                        uploadAttachmentStatus.postValue(ResponseStatus.RESPONSE_ERROR);
+                        if(e instanceof HttpException) {
+                            if (((HttpException)e).code() == 413) {
+                                uploadAttachmentStatus.postValue(ResponseStatus.RESPONSE_ERROR_TOO_LARGE);
+                            } else {
+                                uploadAttachmentStatus.postValue(ResponseStatus.RESPONSE_ERROR);
+                            }
+                        } else {
+                            uploadAttachmentStatus.postValue(ResponseStatus.RESPONSE_ERROR);
+                        }
                     }
 
                     @Override
