@@ -108,6 +108,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
 
     private ListView messagesListView;
     private TextView subjectTextView;
+    private ImageView encryptedImageView;
     private ImageView starImageView;
     private View loadProgress;
     private Toolbar toolbar;
@@ -125,6 +126,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
 
         messagesListView = root.findViewById(R.id.activity_view_messages_messages);
         subjectTextView = root.findViewById(R.id.activity_view_messages_subject_text);
+        encryptedImageView = root.findViewById(R.id.activity_view_messages_subject_encrypted_image);
         starImageView = root.findViewById(R.id.activity_view_messages_subject_star_image);
         loadProgress = root.findViewById(R.id.activity_view_messages_progress);
         toolbar = root.findViewById(R.id.activity_view_messages_bar);
@@ -179,6 +181,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
 
                 lastMessage = messagesList.get(messagesList.size() - 1);
                 decryptedLastMessage = lastMessage.getContent();
+                encryptedImageView.setSelected(parentMessage.isProtected());
                 starImageView.setSelected(parentMessage.isStarred());
 
                 final MessageAttachmentAdapter messageAttachmentAdapter = new MessageAttachmentAdapter();
