@@ -369,8 +369,15 @@ public class SendMessageActivityViewModel extends ViewModel {
 
                     @Override
                     public void onError(Throwable e) {
-                        updateAttachmentStatus.postValue(ResponseStatus.RESPONSE_ERROR);
-                        Timber.e(e);
+                        if(e instanceof HttpException) {
+                            if (((HttpException)e).code() == 413) {
+                                updateAttachmentStatus.postValue(ResponseStatus.RESPONSE_ERROR_TOO_LARGE);
+                            } else {
+                                updateAttachmentStatus.postValue(ResponseStatus.RESPONSE_ERROR);
+                            }
+                        } else {
+                            updateAttachmentStatus.postValue(ResponseStatus.RESPONSE_ERROR);
+                        }
                     }
 
                     @Override
