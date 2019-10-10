@@ -68,12 +68,13 @@ public class MessagingService extends FirebaseMessagingService {
                     Timber.e(e);
                 }
             }
-            boolean isSubjectEncrypted = Boolean.parseBoolean(isSubjectEncryptedString);
 
+            boolean isSubjectEncrypted = Boolean.parseBoolean(isSubjectEncryptedString);
             boolean isNotificationsEnabled = userStore.getNotificationsEnabled();
             if (isNotificationsEnabled) {
                 sendNotification(sender, subject, folder, messageId, parentId, isSubjectEncrypted);
             }
+
             WeakReference<InboxFragment> inboxFragmentReference = InboxFragment.instanceReference;
             if (inboxFragmentReference != null) {
                 InboxFragment inboxFragment = inboxFragmentReference.get();
