@@ -120,6 +120,14 @@ public class UserRepository {
         return userStore.getTimeZone();
     }
 
+    public void setNotificationsEnabled(boolean isEnabled) {
+        userStore.setNotificationsEnabled(isEnabled);
+    }
+
+    public boolean isNotificationsEnabled() {
+        return userStore.getNotificationsEnabled();
+    }
+
     public void setAttachmentsEncryptionEnabled(boolean state) {
         userStore.setAttachmentsEncryptionEnabled(state);
     }

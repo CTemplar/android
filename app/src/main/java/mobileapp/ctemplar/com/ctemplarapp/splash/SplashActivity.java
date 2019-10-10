@@ -44,7 +44,6 @@ public class SplashActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
 
         viewModel = ViewModelProviders.of(this).get(SplashActivityModel.class);
-
         if (!TextUtils.isEmpty(viewModel.getToken())) {
             viewModel.getRefreshTokenResponse()
                     .observe(this, new Observer<String>() {
@@ -79,10 +78,10 @@ public class SplashActivity extends BaseActivity {
             @Override
             public void onSuccess(InstanceIdResult instanceIdResult) {
                 String token = instanceIdResult.getToken();
-                String storeToken = viewModel.getFirebaseToken();
-                if (!token.equals(storeToken)) {
-                    if (!storeToken.isEmpty()) {
-                        viewModel.deleteFirebaseToken(storeToken);
+                String storedToken = viewModel.getFirebaseToken();
+                if (!token.equals(storedToken)) {
+                    if (!storedToken.isEmpty()) {
+                        viewModel.deleteFirebaseToken(storedToken);
                     }
                     viewModel.addFirebaseToken(token, "android");
                     skipUpdate[0] = false;

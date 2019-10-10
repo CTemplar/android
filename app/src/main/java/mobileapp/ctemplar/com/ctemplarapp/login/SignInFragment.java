@@ -177,7 +177,7 @@ public class SignInFragment extends BaseFragment {
                     show2FA();
                     break;
                 case RESPONSE_NEXT:
-                    sendFBToken();
+                    sendFirebaseToken();
                     break;
             }
         }
@@ -190,7 +190,7 @@ public class SignInFragment extends BaseFragment {
         editTextOtpLayout.setVisibility(View.VISIBLE);
     }
 
-    private void sendFBToken() {
+    private void sendFirebaseToken() {
         loginActivityModel.getAddFirebaseTokenStatus().observe(this, new Observer<ResponseStatus>() {
             @Override
             public void onChanged(@Nullable ResponseStatus responseStatus) {

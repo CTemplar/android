@@ -229,6 +229,7 @@ public class LoginActivityViewModel extends ViewModel {
 
                     @Override
                     public void onNext(AddFirebaseTokenResponse response) {
+                        userRepository.saveFirebaseToken(response.getToken());
                         addFirebaseTokenStatus.postValue(ResponseStatus.RESPONSE_NEXT);
                     }
 
