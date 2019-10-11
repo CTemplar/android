@@ -15,21 +15,12 @@
             android:fragment="mobileapp.ctemplar.com.ctemplarapp.settings.SettingsActivity$RecoveryEmailFragment" />
 
         <PreferenceScreen
-            android:title="@string/settings_subject_encryption"
-            android:key="@string/subject_encryption"
-            android:fragment="mobileapp.ctemplar.com.ctemplarapp.settings.SettingsActivity$SubjectEncryptionFragment" />
-
-        <PreferenceScreen
-            android:title="@string/settings_attachments_encryption"
-            android:fragment="mobileapp.ctemplar.com.ctemplarapp.settings.SettingsActivity$AttachmentsEncryptionFragment" />
-
-        <PreferenceScreen
-            android:title="@string/settings_contacts_encryption"
-            android:fragment="mobileapp.ctemplar.com.ctemplarapp.settings.SettingsActivity$ContactsEncryptionFragment" />
-
-        <PreferenceScreen
             android:title="@string/settings_saving_contacts"
             android:fragment="mobileapp.ctemplar.com.ctemplarapp.settings.SettingsActivity$SavingContactsFragment" />
+
+        <PreferenceScreen
+            android:title="@string/settings_encryption"
+            android:fragment="mobileapp.ctemplar.com.ctemplarapp.settings.SettingsActivity$EncryptionFragment" />
 
         <Preference
             android:title="@string/settings_password"
@@ -89,7 +80,7 @@
 
         <Preference
             android:title="@string/settings_app_version"
-            android:summary="1.1.5" />
+            android:summary="1.1.6" />
 
     </PreferenceCategory>
 
