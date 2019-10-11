@@ -74,7 +74,7 @@
     <string name="title_forgot_password_hint">We will send reset link to your recovery email</string>
     <string name="title_choose_password">Choose password</string>
     <string name="title_confirm_password">Confirm password</string>
-    <string name="title_ctemplar_username">Ctemplar username to reset</string>
+    <string name="title_ctemplar_username">CTemplar username to reset</string>
     <string name="title_recovery_email">Recovery email</string>
     <string name="title_security_check">Security check</string>
     <string name="title_recovery_email_optional">Recovery email (Optional)</string>
@@ -92,7 +92,7 @@ If you have further questions please email <![CDATA[<u><a href="mailto:support@c
     <string name="title_forgot_username_hint">Enter your email address and we will send you your username</string>
     <string name="title_email_my_username">Email me my username</string>
     <string name="title_username_and_domain">Username and domain</string>
-    <string name="title_step_username_hint">This will be your new Ctemplar email address.</string>
+    <string name="title_step_username_hint">This will be your new CTemplar email address.</string>
     <string name="title_step_password_hint">Your password must be at least 10 characters. Password can contain only latin letters and cannot contain symbols such «-+!@. etc.</string>
     <string name="hint_step_email_recovery_long">By checking this box you understand that If you lose your password and do not set a recovery email your account will not be recoverable.
 Your password is connected to your encryption key, if you change your password then you will be issued a new encryption key and ALL contents of your account will be lost except for your email address. <![CDATA[<u><font color="blue">Less</font></u>]]></string>
@@ -307,6 +307,7 @@ Your password is connected to your encryption key, if you change your password t
     <string name="settings_enable_subject_encryption">Subject encryption</string>
     <string name="settings_contacts_encryption">Contacts encryption</string>
     <string name="settings_attachments_encryption">Attachments encryption</string>
+    <string name="settings_encryption">Encryption</string>
     <string name="settings_saving_contacts">Saving contacts</string>
     <string name="settings_auto_save_contacts">Automatically save contacts</string>
     <string name="settings_filters">Filters</string>
