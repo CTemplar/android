@@ -232,11 +232,30 @@ public class SettingsActivity extends AppCompatActivity {
         }
     }
 
-    public static class SubjectEncryptionFragment extends BasePreferenceFragment {
+    public static class SavingContactsFragment extends BasePreferenceFragment {
         @Override
         public void onCreatePreferences(Bundle bundle, String rootKey) {
-            setPreferencesFromResource(R.xml.subject_encryption_settings, rootKey);
+            setPreferencesFromResource(R.xml.saving_contacts_settings, rootKey);
 
+            SwitchPreference autoSaveContactsPreference = (SwitchPreference) findPreference(getString(R.string.auto_save_contacts_enabled));
+            autoSaveContactsPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    boolean isEnabled = (boolean) newValue;
+                    settingsModel.updateAutoSaveEnabled(settingId, isEnabled);
+                    return true;
+                }
+            });
+        }
+    }
+
+    public static class EncryptionFragment extends BasePreferenceFragment {
+
+        private SwitchPreference contactsEncryptionSwitchPreference;
+
+        @Override
+        public void onCreatePreferences(Bundle bundle, String rootKey) {
+            setPreferencesFromResource(R.xml.encryption_settings, rootKey);
             SwitchPreference subjectEncryptionSwitchPreference = (SwitchPreference) findPreference(getString(R.string.subject_encryption_enabled));
             subjectEncryptionSwitchPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
@@ -247,13 +266,6 @@ public class SettingsActivity extends AppCompatActivity {
                     return true;
                 }
             });
-        }
-    }
-
-    public static class AttachmentsEncryptionFragment extends BasePreferenceFragment {
-        @Override
-        public void onCreatePreferences(Bundle bundle, String rootKey) {
-            setPreferencesFromResource(R.xml.attachments_encryption_settings, rootKey);
 
             SwitchPreference attachmentsEncryptionSwitchPreference = (SwitchPreference) findPreference(getString(R.string.attachments_encryption_enabled));
             attachmentsEncryptionSwitchPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
@@ -266,16 +278,6 @@ public class SettingsActivity extends AppCompatActivity {
                     return true;
                 }
             });
-        }
-    }
-
-    public static class ContactsEncryptionFragment extends BasePreferenceFragment {
-
-        private SwitchPreference contactsEncryptionSwitchPreference;
-
-        @Override
-        public void onCreatePreferences(Bundle bundle, String rootKey) {
-            setPreferencesFromResource(R.xml.contacts_encryption_settings, rootKey);
 
             contactsEncryptionSwitchPreference = (SwitchPreference) findPreference(getString(R.string.contacts_encryption_enabled));
             contactsEncryptionSwitchPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
@@ -334,23 +336,6 @@ public class SettingsActivity extends AppCompatActivity {
                     )
                     .setNeutralButton(getActivity().getString(R.string.btn_cancel), null)
                     .show();
-        }
-    }
-
-    public static class SavingContactsFragment extends BasePreferenceFragment {
-        @Override
-        public void onCreatePreferences(Bundle bundle, String rootKey) {
-            setPreferencesFromResource(R.xml.saving_contacts_settings, rootKey);
-
-            SwitchPreference autoSaveContactsPreference = (SwitchPreference) findPreference(getString(R.string.auto_save_contacts_enabled));
-            autoSaveContactsPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-                @Override
-                public boolean onPreferenceChange(Preference preference, Object newValue) {
-                    boolean isEnabled = (boolean) newValue;
-                    settingsModel.updateAutoSaveEnabled(settingId, isEnabled);
-                    return true;
-                }
-            });
         }
     }
 
