@@ -25,6 +25,7 @@ public class AppUtils {
     private static final String DATE_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
     private static final String LEFT_DATE_PATTERN = "yyyy-MM-dd'T'HH:mm:ss'Z'";
     private static final String VIEW_DATE_PATTERN = "MMM d, yyyy',' h:mm a";
+    private static final String EMAIL_PATTERN = "EEE',' MMMM d, yyyy 'at' h:mm a";
 
     private static final String ELAPSED_TIME_FORMAT = "%2dd %02d:%02d";
     private static final String ELAPSED_TIME_SHORT_FORMAT = "%02d:%02d";
@@ -238,18 +239,19 @@ public class AppUtils {
         return type;
     }
 
-    public static String formatDate(String stringDate) {
-        if (!TextUtils.isEmpty(stringDate)) {
-            DateFormat parseFormat = new SimpleDateFormat(DATE_PATTERN, Locale.getDefault());
-            DateFormat viewFormat = new SimpleDateFormat("h:mm a d.MM.yyyy", Locale.getDefault());
-            try {
-                Date date = parseFormat.parse(stringDate);
-                stringDate = viewFormat.format(date);
-                return stringDate;
-            } catch (ParseException e) {
-                Timber.e("DateParse error: %s", e.getMessage());
-            }
+    public static String getStringDate(String stringDate) {
+        if (stringDate == null) {
+            return "";
         }
-        return null;
+        DateFormat parseFormat = new SimpleDateFormat(DATE_PATTERN, Locale.getDefault());
+        DateFormat viewFormat = new SimpleDateFormat(EMAIL_PATTERN, Locale.getDefault());
+        try {
+            Date date = parseFormat.parse(stringDate);
+            stringDate = viewFormat.format(date);
+
+        } catch (ParseException e) {
+            Timber.e("DateParse error: %s", e.getMessage());
+        }
+        return stringDate;
     }
 }

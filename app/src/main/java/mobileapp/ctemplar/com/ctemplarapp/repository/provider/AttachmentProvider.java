@@ -1,6 +1,8 @@
 package mobileapp.ctemplar.com.ctemplarapp.repository.provider;
 
-public class AttachmentProvider {
+import java.io.Serializable;
+
+public class AttachmentProvider implements Serializable {
 
     private long id;
     private String documentLink;
