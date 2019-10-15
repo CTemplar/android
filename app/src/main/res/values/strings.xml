@@ -287,6 +287,10 @@ Your password is connected to your encryption key, if you change your password t
     <!-- MOVE TO -->
     <string name="txt_move_to">Move to..</string>
     <string name="txt_select_folder">Select folder</string>
+    <string name="forward_attachments">Confirm Forward Attachments</string>
+    <string name="forward_attachments_description">Do you want to forward attachments of this message?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 
     <!-- SETTINGS -->
     <string name="txt_settings">Settings</string>

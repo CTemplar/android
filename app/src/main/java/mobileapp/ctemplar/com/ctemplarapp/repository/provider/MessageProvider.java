@@ -675,6 +675,7 @@ public class MessageProvider {
         result.setCc(arrayToList(message.getCc()));
         result.setBcc(arrayToList(message.getBcc()));
         result.setFolderName(message.getFolderName());
+        result.setRequestFolder(requestFolder);
         result.setUpdated(message.getUpdated());
         result.setDestructDate(message.getDestructDate());
         result.setDelayedDelivery(message.getDelayedDelivery());
@@ -694,9 +695,9 @@ public class MessageProvider {
         result.setMailboxId(message.getMailboxId());
         result.setParent(message.getParent());
 
-        if (requestFolder.equals(MainFolderNames.INBOX) && message.getFolderName().equals(MainFolderNames.SENT)) {
-            result.setShowInInbox(true);
-        }
+//        if (requestFolder.equals(MainFolderNames.INBOX) && message.getFolderName().equals(MainFolderNames.SENT)) {
+//            result.setShowInInbox(true);
+//        }
 
         return result;
     }

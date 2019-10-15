@@ -7,6 +7,7 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
@@ -22,6 +23,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
@@ -39,12 +41,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 
 import io.reactivex.disposables.Disposable;
 import mobileapp.ctemplar.com.ctemplarapp.ActivityInterface;
@@ -53,6 +51,7 @@ import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.main.MainActivity;
 import mobileapp.ctemplar.com.ctemplarapp.main.MainActivityViewModel;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
+import mobileapp.ctemplar.com.ctemplarapp.net.entity.AttachmentsEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.AttachmentProvider;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageProvider;
@@ -63,9 +62,9 @@ import mobileapp.ctemplar.com.ctemplarapp.utils.PermissionCheck;
 import timber.log.Timber;
 
 import static android.content.Context.DOWNLOAD_SERVICE;
+import static mobileapp.ctemplar.com.ctemplarapp.message.SendMessageActivity.ATTACHMENT_LIST;
 import static mobileapp.ctemplar.com.ctemplarapp.message.ViewMessagesActivity.PARENT_ID;
 import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.ARCHIVE;
-import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.DRAFT;
 import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.INBOX;
 import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.OUTBOX;
 import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.SENT;
@@ -490,24 +489,8 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
         }
     }
 
-    private String getStringDate(String stringDate) {
-        if (stringDate == null) {
-            return "";
-        }
-        DateFormat parseFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault());
-        DateFormat viewFormat = new SimpleDateFormat("EEE',' MMMM d, yyyy 'at' h:mm a", Locale.getDefault());
-        try {
-            Date date = parseFormat.parse(stringDate);
-            stringDate = viewFormat.format(date);
-
-        } catch (ParseException e) {
-            Timber.e("DateParse error: %s", e.getMessage());
-        }
-        return stringDate;
-    }
-
     private String replyHead() {
-        String createdAt = getStringDate(lastMessage.getCreatedAt());
+        String createdAt = AppUtils.getStringDate(lastMessage.getCreatedAt());
         String sender = "<" + lastMessage.getSender() + ">";
         return getResources().getString(R.string.txt_user_wrote, createdAt, sender);
     }
@@ -524,7 +507,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
     private String forwardHead() {
         String receiversString = addQuotesToNames(lastMessage.getReceivers());
         String sender = lastMessage.getSender();
-        String createdAt = getStringDate(lastMessage.getCreatedAt());
+        String createdAt = AppUtils.getStringDate(lastMessage.getCreatedAt());
         String subject = lastMessage.getSubject();
 
         return "\n\n---------- " + getResources().getString(R.string.txt_forwarded_message) + "----------\n" +
@@ -532,6 +515,36 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
                 getResources().getString(R.string.txt_date) + ": " + createdAt + "\n" +
                 getResources().getString(R.string.txt_subject) + ": " + subject + "\n" +
                 getResources().getString(R.string.txt_to) + " " + receiversString + "\n\n";
+    }
+
+    private void forwardMessage(boolean withAttachments) {
+        Intent intentForward = new Intent(getActivity(), SendMessageActivity.class);
+        intentForward.putExtra(Intent.EXTRA_SUBJECT, lastMessage.getSubject());
+        intentForward.putExtra(Intent.EXTRA_TEXT, forwardHead() + Html.fromHtml(decryptedLastMessage));
+
+        Bundle extras = new Bundle();
+        AttachmentsEntity attachmentsEntity = withAttachments
+                ? new AttachmentsEntity(lastMessage.getAttachments())
+                : new AttachmentsEntity(Collections.<AttachmentProvider>emptyList());
+        extras.putSerializable(ATTACHMENT_LIST, attachmentsEntity);
+        intentForward.putExtras(extras);
+
+        Fragment fragmentForward = SendMessageFragment.newInstance(
+                lastMessage.getSubject(),
+                forwardHead() + Html.fromHtml(decryptedLastMessage),
+                new String[] {},
+                new String[] {},
+                new String[] {},
+                attachmentsEntity,
+                null
+        );
+
+        FragmentActivity activity = getActivity();
+        if (activity instanceof MainActivity) {
+            ((MainActivity) activity).showActivityOrFragment(intentForward, fragmentForward);
+        } else {
+            startActivity(intentForward);
+        }
     }
 
     @Override
@@ -553,6 +566,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
                         new String[] { lastMessage.getSender() },
                         new String[] {},
                         new String[] {},
+                        new AttachmentsEntity(),
                         parentMessage.getId()
                 );
 
@@ -577,6 +591,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
                         new String[] { lastMessage.getSender() },
                         lastMessage.getCc(),
                         lastMessage.getBcc(),
+                        new AttachmentsEntity(),
                         parentMessage.getId()
                 );
 
@@ -587,25 +602,28 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
                 }
                 break;
             case R.id.activity_view_messages_forward:
-                Intent intentForward = new Intent(getActivity(), SendMessageActivity.class);
-                intentForward.putExtra(Intent.EXTRA_SUBJECT, lastMessage.getSubject());
-                intentForward.putExtra(Intent.EXTRA_TEXT, forwardHead() + Html.fromHtml(decryptedLastMessage));
-
-                Fragment fragmentForward = SendMessageFragment.newInstance(
-                        lastMessage.getSubject(),
-                        replyHead() + Html.fromHtml(decryptedLastMessage),
-                        new String[] {},
-                        new String[] {},
-                        new String[] {},
-                        null
-                );
-
-                activity = getActivity();
-                if (activity instanceof MainActivity) {
-                    ((MainActivity) activity).showActivityOrFragment(intentForward, fragmentForward);
-                } else {
-                    startActivity(intentForward);
+                if (lastMessage.getAttachments().isEmpty()) {
+                    forwardMessage(false);
+                    return;
                 }
+                AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
+                alertDialog.setTitle(getString(R.string.forward_attachments));
+                alertDialog.setMessage(getString(R.string.forward_attachments_description));
+                alertDialog.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                forwardMessage(true);
+                            }
+                        }
+                );
+                alertDialog.setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                forwardMessage(false);
+                            }
+                        }
+                );
+                alertDialog.show();
                 break;
             case R.id.activity_view_messages_subject_star_image_layout:
                 if (parentMessage != null) {
