@@ -48,6 +48,7 @@ import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.main.UpgradeToPrimeFragment;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.net.entity.PGPKeyEntity;
+import mobileapp.ctemplar.com.ctemplarapp.net.entity.AttachmentsEntity;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.PublicKeysRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SendMessageRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.KeyResponse;
@@ -76,6 +77,7 @@ import okhttp3.RequestBody;
 import timber.log.Timber;
 
 import static android.app.Activity.RESULT_OK;
+import static mobileapp.ctemplar.com.ctemplarapp.message.SendMessageActivity.ATTACHMENT_LIST;
 import static mobileapp.ctemplar.com.ctemplarapp.message.SendMessageActivity.MESSAGE_ID;
 import static mobileapp.ctemplar.com.ctemplarapp.message.SendMessageActivity.PARENT_ID;
 import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.OUTBOX;
@@ -94,6 +96,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
             @Nullable String[] receivers,
             @Nullable String[] cc,
             @Nullable String[] bcc,
+            @Nullable AttachmentsEntity attachmentsEntity,
             @Nullable Long parentId
     ) {
         Bundle args = new Bundle();
@@ -111,6 +114,9 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         }
         if (bcc != null && bcc.length > 0) {
             args.putStringArray(Intent.EXTRA_BCC, bcc);
+        }
+        if (attachmentsEntity != null && !attachmentsEntity.getAttachmentProviderList().isEmpty()) {
+            args.putSerializable(ATTACHMENT_LIST, attachmentsEntity);
         }
         if (parentId != null) {
             args.putLong(PARENT_ID, parentId);
@@ -310,6 +316,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
             String[] bundleBCC = args.getStringArray(Intent.EXTRA_BCC);
             String bundleSubject = args.getString(Intent.EXTRA_SUBJECT);
             String bundleText = args.getString(Intent.EXTRA_TEXT);
+            AttachmentsEntity attachmentList = (AttachmentsEntity) args.getSerializable(ATTACHMENT_LIST);
             parentId = args.getLong(PARENT_ID, -1);
             currentMessageId = args.getLong(MESSAGE_ID, -1);
             if (parentId < 0) {
@@ -331,6 +338,9 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
             }
             if (bundleText != null && !bundleText.isEmpty()) {
                 composeEditText.setText(bundleText);
+            }
+            if (attachmentList != null) {
+                Toast.makeText(getActivity(), "Attachments count " + attachmentList.getAttachmentProviderList().size(), Toast.LENGTH_SHORT).show();
             }
         }
 
