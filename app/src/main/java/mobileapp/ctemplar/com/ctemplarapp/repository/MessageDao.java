@@ -17,7 +17,7 @@ public interface MessageDao {
     @Query("SELECT * FROM messages")
     List<MessageEntity> getAll();
 
-    @Query("SELECT * FROM messages WHERE folderName=:folderName or (:folderName='inbox' AND showInInbox = 1) ORDER BY updated DESC")
+    @Query("SELECT * FROM messages WHERE requestFolder=:folderName ORDER BY updated DESC")
     List<MessageEntity> getAllByFolder(String folderName);
 
     @Insert(onConflict = REPLACE)

@@ -10,6 +10,7 @@ public class SendMessageActivity extends BaseActivity {
 
     public static final String PARENT_ID = "parent_id";
     public static final String MESSAGE_ID = "message_id";
+    public static final String ATTACHMENT_LIST = "attachment_list";
     private SendMessageFragment fragment;
 
     @Override

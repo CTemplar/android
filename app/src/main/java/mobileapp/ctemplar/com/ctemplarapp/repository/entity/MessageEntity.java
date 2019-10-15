@@ -27,6 +27,7 @@ public class MessageEntity {
     private List<String> cc;
     private List<String> bcc;
     private String folderName;
+    private String requestFolder;
     private String updated;
     private String destructDate;
     private String delayedDelivery;
@@ -45,7 +46,6 @@ public class MessageEntity {
     private String lastActionThread;
     private long mailboxId;
     private String parent;
-    private boolean showInInbox;
 
     public long getId() {
         return id;
@@ -173,6 +173,14 @@ public class MessageEntity {
 
     public void setFolderName(String folderName) {
         this.folderName = folderName;
+    }
+
+    public String getRequestFolder() {
+        return requestFolder;
+    }
+
+    public void setRequestFolder(String requestFolder) {
+        this.requestFolder = requestFolder;
     }
 
     public String getUpdated() {
@@ -333,13 +341,5 @@ public class MessageEntity {
 
     public void setAttachments(List<AttachmentEntity> attachments) {
         this.attachments = attachments;
-    }
-
-    public boolean isShowInInbox() {
-        return showInInbox;
-    }
-
-    public void setShowInInbox(boolean showInInbox) {
-        this.showInInbox = showInInbox;
     }
 }
