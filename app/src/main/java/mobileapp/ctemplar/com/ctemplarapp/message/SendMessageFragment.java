@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.AppCompatMultiAutoCompleteTextView;
@@ -37,6 +38,7 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -47,8 +49,8 @@ import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.main.UpgradeToPrimeFragment;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
-import mobileapp.ctemplar.com.ctemplarapp.net.entity.PGPKeyEntity;
 import mobileapp.ctemplar.com.ctemplarapp.net.entity.AttachmentsEntity;
+import mobileapp.ctemplar.com.ctemplarapp.net.entity.PGPKeyEntity;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.PublicKeysRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SendMessageRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.KeyResponse;
@@ -63,6 +65,7 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.entity.AttachmentEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.Contact;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MessageEntity;
+import mobileapp.ctemplar.com.ctemplarapp.repository.provider.AttachmentProvider;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageProvider;
 import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
@@ -84,60 +87,10 @@ import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderN
 import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.SENT;
 
 public class SendMessageFragment extends Fragment implements View.OnClickListener, ActivityInterface {
-
     private final static String TAG = SendMessageFragment.class.getSimpleName();
+    private final static int PICK_FILE_FROM_STORAGE = 1;
 
-    private final int PICK_FILE_FROM_STORAGE = 1;
     private boolean finished;
-
-    public static SendMessageFragment newInstance(
-            @Nullable String subject,
-            @Nullable String text,
-            @Nullable String[] receivers,
-            @Nullable String[] cc,
-            @Nullable String[] bcc,
-            @Nullable AttachmentsEntity attachmentsEntity,
-            @Nullable Long parentId
-    ) {
-        Bundle args = new Bundle();
-        if (subject != null) {
-            args.putString(Intent.EXTRA_SUBJECT, subject);
-        }
-        if (text != null) {
-            args.putString(Intent.EXTRA_TEXT, text);
-        }
-        if (receivers != null && receivers.length > 0) {
-            args.putStringArray(Intent.EXTRA_EMAIL, receivers);
-        }
-        if (cc != null && cc.length > 0) {
-            args.putStringArray(Intent.EXTRA_CC, cc);
-        }
-        if (bcc != null && bcc.length > 0) {
-            args.putStringArray(Intent.EXTRA_BCC, bcc);
-        }
-        if (attachmentsEntity != null && !attachmentsEntity.getAttachmentProviderList().isEmpty()) {
-            args.putSerializable(ATTACHMENT_LIST, attachmentsEntity);
-        }
-        if (parentId != null) {
-            args.putLong(PARENT_ID, parentId);
-        }
-
-        SendMessageFragment fragment = new SendMessageFragment();
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @NonNull
-    public static SendMessageFragment newInstance() {
-        return new SendMessageFragment();
-    }
-
-    public static SendMessageFragment newInstance(Bundle args) {
-        SendMessageFragment fragment = newInstance();
-        fragment.setArguments(args);
-        return fragment;
-    }
-
 
     private EditText subjectEditText;
     private EditText composeEditText;
@@ -269,10 +222,30 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         }
     };
 
+    private List<AttachmentProvider> forwardedAttachments;
+
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        Bundle args = getArguments();
+        if (args != null) {
+            Serializable attachmentList = args.getSerializable(ATTACHMENT_LIST);
+            if (attachmentList instanceof AttachmentsEntity) {
+                AttachmentsEntity attachmentsEntity = (AttachmentsEntity) attachmentList;
+                List<AttachmentProvider> attachmentProviderList = attachmentsEntity.getAttachmentProviderList();
+                if (attachmentProviderList != null && !attachmentProviderList.isEmpty()) {
+                    forwardedAttachments = attachmentProviderList;
+                }
+            }
+        }
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        final Activity activity = getActivity();
+        final FragmentActivity activity = getActivity();
         if (activity == null) {
             Timber.tag(TAG).wtf("Activity is null");
             return null;
@@ -316,7 +289,6 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
             String[] bundleBCC = args.getStringArray(Intent.EXTRA_BCC);
             String bundleSubject = args.getString(Intent.EXTRA_SUBJECT);
             String bundleText = args.getString(Intent.EXTRA_TEXT);
-            AttachmentsEntity attachmentList = (AttachmentsEntity) args.getSerializable(ATTACHMENT_LIST);
             parentId = args.getLong(PARENT_ID, -1);
             currentMessageId = args.getLong(MESSAGE_ID, -1);
             if (parentId < 0) {
@@ -339,12 +311,9 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
             if (bundleText != null && !bundleText.isEmpty()) {
                 composeEditText.setText(bundleText);
             }
-            if (attachmentList != null) {
-                Toast.makeText(getActivity(), "Attachments count " + attachmentList.getAttachmentProviderList().size(), Toast.LENGTH_SHORT).show();
-            }
         }
 
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity);
 
         boolean mobileSignatureEnabled = sharedPreferences.getBoolean(getString(R.string.mobile_signature_enabled), false);
         String mobileSignature = sharedPreferences.getString(getString(R.string.mobile_signature), "");
@@ -390,13 +359,160 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         spinnerFrom.setAdapter(adapter);
         spinnerFrom.setSelection(selectedAddress);
 
-        messageSendAttachmentAdapter = new MessageSendAttachmentAdapter(getActivity());
+        messageSendAttachmentAdapter = new MessageSendAttachmentAdapter(activity);
         messageAttachmentsRecycleView.setAdapter(messageSendAttachmentAdapter);
 
         initResponses();
         addListeners();
 
         return root;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == PICK_FILE_FROM_STORAGE && resultCode == RESULT_OK && data != null && data.getData() != null) {
+            Uri attachmentUri = data.getData();
+            if (attachmentUri != null) {
+                uploadAttachment(attachmentUri);
+            } else {
+                Toast.makeText(getActivity(), getString(R.string.toast_attachment_unable_read_path), Toast.LENGTH_SHORT).show();
+                Timber.e("AttachmentUri is null");
+            }
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (draftMessage) {
+            sendMessageToDraft();
+        }
+    }
+
+    @Override
+    public boolean onBackPressed() {
+        return finished || onHandleBackPressed();
+    }
+
+
+    @Override
+    public void onClick(View v) {
+        int id = v.getId();
+
+        switch (id) {
+            case R.id.fragment_send_message_send:
+                onClickSend();
+                break;
+            case R.id.fragment_send_message_attachment_layout:
+                onClickAttachment();
+                break;
+            case R.id.fragment_send_message_to_add_button:
+                onClickAddReceiver();
+                break;
+            case R.id.fragment_send_message_back:
+                Activity activity = getActivity();
+                if (activity != null) {
+                    activity.onBackPressed();
+                }
+                break;
+            case R.id.fragment_send_message_delayed_layout:
+                if (getFragmentManager() != null && userIsPrime) {
+                    delayedDeliveryDialogFragment.show(getFragmentManager(), "DelayedDeliveryDialogFragment");
+                    delayedDeliveryDialogFragment.setOnScheduleDelayedDelivery(onScheduleDelayedDelivery);
+                } else {
+                    upgradeToPrimeDialog();
+                }
+                break;
+            case R.id.fragment_send_message_destruct_layout:
+                if (getFragmentManager() != null) {
+                    destructTimerDialogFragment.show(getFragmentManager(), "DestructTimerDialogFragment");
+                    destructTimerDialogFragment.setOnScheduleDestructTimerDelivery(onScheduleDestructTimerDelivery);
+                }
+                break;
+            case R.id.fragment_send_message_dead_layout:
+                if (getFragmentManager() != null && userIsPrime) {
+                    deadMansDeliveryDialogFragment.show(getFragmentManager(), "DeadMansDialogFragment");
+                    deadMansDeliveryDialogFragment.setOnScheduleDeadMansDelivery(onScheduleDeadMansDelivery);
+                } else {
+                    upgradeToPrimeDialog();
+                }
+                break;
+            case R.id.fragment_send_message_encrypt_layout:
+                if (getFragmentManager() != null) {
+                    encryptMessageDialogFragment.show(getFragmentManager(), "EncryptMessageDialogFragment");
+                    encryptMessageDialogFragment.setEncryptMessagePassword(onSetEncryptMessagePassword);
+                }
+        }
+    }
+
+
+    public void onClickSend() {
+        String toEmail = toEmailTextView.getText().toString().trim();
+        String ccEmail = ccTextView.getText().toString().trim();
+        String bccEmail = bccTextView.getText().toString().trim();
+
+        if (toEmail.isEmpty() || EditTextUtils.isEmailListValid(toEmail)) {
+            toEmailTextView.setError(null);
+        } else {
+            toEmailTextView.setError(getString(R.string.txt_enter_valid_email));
+            return;
+        }
+
+        if (ccEmail.isEmpty() || EditTextUtils.isEmailListValid(ccEmail)) {
+            ccTextView.setError(null);
+        } else {
+            ccTextView.setError(getString(R.string.txt_enter_valid_email));
+            return;
+        }
+
+        if (bccEmail.isEmpty() || EditTextUtils.isEmailListValid(bccEmail)) {
+            bccTextView.setError(null);
+        } else {
+            bccTextView.setError(getString(R.string.txt_enter_valid_email));
+            return;
+        }
+
+        sendingProgress = new ProgressDialog(getActivity());
+        sendingProgress.setCanceledOnTouchOutside(false);
+        sendingProgress.setMessage(getResources().getString(R.string.txt_sending_mail));
+        sendingProgress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        sendingProgress.show();
+
+        List<String> receiverList = new ArrayList<>();
+        if (!toEmail.isEmpty()) {
+            receiverList.addAll(EditTextUtils.getListFromString(toEmail));
+        }
+        if (!ccEmail.isEmpty()) {
+            receiverList.addAll(EditTextUtils.getListFromString(ccEmail));
+        }
+        if (!bccEmail.isEmpty()) {
+            receiverList.addAll(EditTextUtils.getListFromString(bccEmail));
+        }
+
+        PublicKeysRequest publicKeysRequest = new PublicKeysRequest(receiverList);
+        sendModel.getEmailPublicKeys(publicKeysRequest);
+    }
+
+    public void onClickAttachment() {
+        if (PermissionCheck.readAndWriteExternalStorage(getActivity())) {
+            Intent chooseIntent = new Intent(Intent.ACTION_GET_CONTENT);
+            chooseIntent.setType("*/*");
+            startActivityForResult(chooseIntent, PICK_FILE_FROM_STORAGE);
+        }
+    }
+
+    public void onClickAddReceiver() {
+        if (ccLayout.getVisibility() == View.GONE) {
+            toAddIco.setImageResource(R.drawable.ic_remove);
+            ccLayout.setVisibility(View.VISIBLE);
+            bccLayout.setVisibility(View.VISIBLE);
+        } else {
+            toAddIco.setImageResource(R.drawable.ic_add_active);
+            ccLayout.setVisibility(View.GONE);
+            bccLayout.setVisibility(View.GONE);
+        }
     }
 
     private void initResponses() {
@@ -498,6 +614,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
                     public void onChanged(@Nullable MessagesResult messagesResult) {
                         if (messagesResult != null) {
                             currentMessageId = messagesResult.getId();
+                            grabForwardedAttachments();
                         } else {
                             Toast.makeText(activity, getResources().getString(R.string.toast_message_not_created), Toast.LENGTH_SHORT).show();
                             finish();
@@ -526,7 +643,9 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
                         } else if (responseStatus == ResponseStatus.RESPONSE_ERROR) {
                             Toast.makeText(activity, getString(R.string.error_upload_attachment), Toast.LENGTH_SHORT).show();
                         }
-                        uploadProgress.dismiss();
+                        if (uploadProgress != null) {
+                            uploadProgress.dismiss();
+                        }
                     }
                 });
 
@@ -924,21 +1043,6 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         return true;
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == PICK_FILE_FROM_STORAGE && resultCode == RESULT_OK && data != null && data.getData() != null) {
-            Uri attachmentUri = data.getData();
-            if (attachmentUri != null) {
-                uploadAttachment(attachmentUri);
-            } else {
-                Toast.makeText(getActivity(), getString(R.string.toast_attachment_unable_read_path), Toast.LENGTH_SHORT).show();
-                Timber.e("AttachmentUri is null");
-            }
-        }
-    }
-
     private void uploadAttachment(Uri attachmentUri) {
         Activity activity = getActivity();
         if (activity == null) {
@@ -991,123 +1095,6 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         uploadProgress.setMessage(getResources().getString(R.string.txt_uploading));
         uploadProgress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         uploadProgress.show();
-    }
-
-    @Override
-    public void onClick(View v) {
-        int id = v.getId();
-
-        switch (id) {
-            case R.id.fragment_send_message_send:
-                onClickSend();
-                break;
-            case R.id.fragment_send_message_attachment_layout:
-                onClickAttachment();
-                break;
-            case R.id.fragment_send_message_to_add_button:
-                onClickAddReceiver();
-                break;
-            case R.id.fragment_send_message_back:
-                Activity activity = getActivity();
-                if (activity != null) {
-                    activity.onBackPressed();
-                }
-                break;
-            case R.id.fragment_send_message_delayed_layout:
-                if (getFragmentManager() != null && userIsPrime) {
-                    delayedDeliveryDialogFragment.show(getFragmentManager(), "DelayedDeliveryDialogFragment");
-                    delayedDeliveryDialogFragment.setOnScheduleDelayedDelivery(onScheduleDelayedDelivery);
-                } else {
-                    upgradeToPrimeDialog();
-                }
-                break;
-            case R.id.fragment_send_message_destruct_layout:
-                if (getFragmentManager() != null) {
-                    destructTimerDialogFragment.show(getFragmentManager(), "DestructTimerDialogFragment");
-                    destructTimerDialogFragment.setOnScheduleDestructTimerDelivery(onScheduleDestructTimerDelivery);
-                }
-                break;
-            case R.id.fragment_send_message_dead_layout:
-                if (getFragmentManager() != null && userIsPrime) {
-                    deadMansDeliveryDialogFragment.show(getFragmentManager(), "DeadMansDialogFragment");
-                    deadMansDeliveryDialogFragment.setOnScheduleDeadMansDelivery(onScheduleDeadMansDelivery);
-                } else {
-                    upgradeToPrimeDialog();
-                }
-                break;
-            case R.id.fragment_send_message_encrypt_layout:
-                if (getFragmentManager() != null) {
-                    encryptMessageDialogFragment.show(getFragmentManager(), "EncryptMessageDialogFragment");
-                    encryptMessageDialogFragment.setEncryptMessagePassword(onSetEncryptMessagePassword);
-                }
-        }
-    }
-
-    public void onClickSend() {
-        String toEmail = toEmailTextView.getText().toString().trim();
-        String ccEmail = ccTextView.getText().toString().trim();
-        String bccEmail = bccTextView.getText().toString().trim();
-
-        if (toEmail.isEmpty() || EditTextUtils.isEmailListValid(toEmail)) {
-            toEmailTextView.setError(null);
-        } else {
-            toEmailTextView.setError(getString(R.string.txt_enter_valid_email));
-            return;
-        }
-
-        if (ccEmail.isEmpty() || EditTextUtils.isEmailListValid(ccEmail)) {
-            ccTextView.setError(null);
-        } else {
-            ccTextView.setError(getString(R.string.txt_enter_valid_email));
-            return;
-        }
-
-        if (bccEmail.isEmpty() || EditTextUtils.isEmailListValid(bccEmail)) {
-            bccTextView.setError(null);
-        } else {
-            bccTextView.setError(getString(R.string.txt_enter_valid_email));
-            return;
-        }
-
-        sendingProgress = new ProgressDialog(getActivity());
-        sendingProgress.setCanceledOnTouchOutside(false);
-        sendingProgress.setMessage(getResources().getString(R.string.txt_sending_mail));
-        sendingProgress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        sendingProgress.show();
-
-        List<String> receiverList = new ArrayList<>();
-        if (!toEmail.isEmpty()) {
-            receiverList.addAll(EditTextUtils.getListFromString(toEmail));
-        }
-        if (!ccEmail.isEmpty()) {
-            receiverList.addAll(EditTextUtils.getListFromString(ccEmail));
-        }
-        if (!bccEmail.isEmpty()) {
-            receiverList.addAll(EditTextUtils.getListFromString(bccEmail));
-        }
-
-        PublicKeysRequest publicKeysRequest = new PublicKeysRequest(receiverList);
-        sendModel.getEmailPublicKeys(publicKeysRequest);
-    }
-
-    public void onClickAttachment() {
-        if (PermissionCheck.readAndWriteExternalStorage(getActivity())) {
-            Intent chooseIntent = new Intent(Intent.ACTION_GET_CONTENT);
-            chooseIntent.setType("*/*");
-            startActivityForResult(chooseIntent, PICK_FILE_FROM_STORAGE);
-        }
-    }
-
-    public void onClickAddReceiver() {
-        if (ccLayout.getVisibility() == View.GONE) {
-            toAddIco.setImageResource(R.drawable.ic_remove);
-            ccLayout.setVisibility(View.VISIBLE);
-            bccLayout.setVisibility(View.VISIBLE);
-        } else {
-            toAddIco.setImageResource(R.drawable.ic_add_active);
-            ccLayout.setVisibility(View.GONE);
-            bccLayout.setVisibility(View.GONE);
-        }
     }
 
     private boolean onHandleBackPressed() {
@@ -1174,7 +1161,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
 
     private void addListeners() {
         sendMessage.setEnabled(false);
-        toEmailTextView.addTextChangedListener(new TextWatcher() {
+        TextWatcher textWatcher = new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -1190,88 +1177,12 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
             public void afterTextChanged(Editable s) {
 
             }
-        });
-        ccTextView.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                boolean state = inputFieldsNotEmpty();
-                sendMessage.setEnabled(state);
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
-        bccTextView.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                boolean state = inputFieldsNotEmpty();
-                sendMessage.setEnabled(state);
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
-        subjectEditText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                boolean state = inputFieldsNotEmpty();
-                sendMessage.setEnabled(state);
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
-        composeEditText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                boolean state = inputFieldsNotEmpty();
-                sendMessage.setEnabled(state);
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        if (draftMessage) {
-            sendMessageToDraft();
-        }
-    }
-
-    @Override
-    public boolean onBackPressed() {
-        return finished || onHandleBackPressed();
+        };
+        toEmailTextView.addTextChangedListener(textWatcher);
+        ccTextView.addTextChangedListener(textWatcher);
+        bccTextView.addTextChangedListener(textWatcher);
+        subjectEditText.addTextChangedListener(textWatcher);
+        composeEditText.addTextChangedListener(textWatcher);
     }
 
     private void finish() {
@@ -1281,4 +1192,59 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
             activity.onBackPressed();
         }
     }
+
+    private void grabForwardedAttachments() {
+        if (forwardedAttachments != null) {
+            sendModel.grabForwardedAttachments(forwardedAttachments, currentMessageId);
+        }
+    }
+
+    public static SendMessageFragment newInstance(
+            @Nullable String subject,
+            @Nullable String text,
+            @Nullable String[] receivers,
+            @Nullable String[] cc,
+            @Nullable String[] bcc,
+            @Nullable AttachmentsEntity attachmentsEntity,
+            @Nullable Long parentId
+    ) {
+        Bundle args = new Bundle();
+        if (subject != null) {
+            args.putString(Intent.EXTRA_SUBJECT, subject);
+        }
+        if (text != null) {
+            args.putString(Intent.EXTRA_TEXT, text);
+        }
+        if (receivers != null && receivers.length > 0) {
+            args.putStringArray(Intent.EXTRA_EMAIL, receivers);
+        }
+        if (cc != null && cc.length > 0) {
+            args.putStringArray(Intent.EXTRA_CC, cc);
+        }
+        if (bcc != null && bcc.length > 0) {
+            args.putStringArray(Intent.EXTRA_BCC, bcc);
+        }
+        if (attachmentsEntity != null && !attachmentsEntity.getAttachmentProviderList().isEmpty()) {
+            args.putSerializable(ATTACHMENT_LIST, attachmentsEntity);
+        }
+        if (parentId != null) {
+            args.putLong(PARENT_ID, parentId);
+        }
+
+        SendMessageFragment fragment = new SendMessageFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @NonNull
+    public static SendMessageFragment newInstance() {
+        return new SendMessageFragment();
+    }
+
+    public static SendMessageFragment newInstance(Bundle args) {
+        SendMessageFragment fragment = newInstance();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
 }

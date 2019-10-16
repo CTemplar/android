@@ -80,6 +80,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
     private MessageProvider lastMessage;
     private String decryptedLastMessage;
     private String currentFolder;
+    private DownloadCompleteReceiver downloadReceiver = new DownloadCompleteReceiver();
 
     public static ViewMessagesFragment newInstance(
             @Nullable Long parentId
@@ -112,6 +113,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
     private View loadProgress;
     private Toolbar toolbar;
     private ConstraintLayout messageActionsLayout;
+    private AttachmentProvider attachmentProvider;
 
     @Nullable
     @Override
@@ -161,7 +163,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
             activity.onBackPressed();
         }
 
-        final AttachmentProvider[] attachmentProvider = {new AttachmentProvider()};
+        attachmentProvider = new AttachmentProvider();
         viewModel.getChainMessages(parentId);
         viewModel.getMessagesResponse().observe(this, new Observer<List<MessageProvider>>() {
             @Override
@@ -193,8 +195,8 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
 
                     @Override
                     public void onNext(Integer position) {
-                        attachmentProvider[0] = messageAttachmentAdapter.getAttachment(position);
-                        String documentLink = attachmentProvider[0].getDocumentLink();
+                        attachmentProvider = messageAttachmentAdapter.getAttachment(position);
+                        String documentLink = attachmentProvider.getDocumentLink();
                         if (documentLink == null) {
                             Toast.makeText(getActivity(), "AttachmentUrl is empty", Toast.LENGTH_SHORT).show();
                             return;
@@ -202,7 +204,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
 
                         Uri documentUri = Uri.parse(documentLink);
                         String fileName = AppUtils.getFileNameFromURL(documentLink);
-                        if (attachmentProvider[0].isEncrypted()) {
+                        if (attachmentProvider.isEncrypted()) {
                             fileName += "-encrypted";
                         }
 
@@ -268,48 +270,26 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
             }
         });
 
-        BroadcastReceiver onComplete = new BroadcastReceiver() {
-            public void onReceive(Context ctx, Intent intent) {
-                Toast.makeText(ctx, ctx.getString(R.string.toast_download_complete), Toast.LENGTH_SHORT).show();
-                try {
-                    String documentLink = attachmentProvider[0].getDocumentLink();
-                    String fileName = AppUtils.getFileNameFromURL(documentLink);
-                    boolean isEncrypted = attachmentProvider[0].isEncrypted();
-
-                    File externalStorageFile = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-
-                    if (isEncrypted) {
-                        File downloadedFile = new File(externalStorageFile, fileName + "-encrypted");
-                        File decryptedFile = new File(externalStorageFile, fileName);
-
-                        MailboxEntity mailboxEntity = viewModel.getMailboxes().get(0);
-                        String password = viewModel.getUserPassword();
-                        String privateKey = mailboxEntity.getPrivateKey();
-                        boolean attachmentDecrypted = EncryptUtils.decryptAttachment(downloadedFile, decryptedFile, password, privateKey);
-                        downloadedFile.delete();
-
-                        Uri decryptedUri = FileProvider.getUriForFile(
-                                ctx, BuildConfig.APPLICATION_ID + ".fileprovider", decryptedFile
-                        );
-                        if (attachmentDecrypted) {
-                            openFile(decryptedUri);
-                        }
-                    } else {
-                        File downloadedFile = new File(externalStorageFile, fileName);
-                        Uri fileUri = FileProvider.getUriForFile(
-                                ctx, BuildConfig.APPLICATION_ID + ".fileprovider", downloadedFile
-                        );
-                        openFile(fileUri);
-                    }
-
-                } catch (Exception e) {
-                    Timber.i(e);
-                }
-            }
-        };
-        activity.registerReceiver(onComplete, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
 
         return root;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        FragmentActivity activity = getActivity();
+        if (activity != null) {
+            activity.registerReceiver(downloadReceiver, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        FragmentActivity activity = getActivity();
+        if (activity != null) {
+            activity.unregisterReceiver(downloadReceiver);
+        }
     }
 
     private void openFile(Uri fileUri) {
@@ -637,4 +617,45 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
     public boolean onBackPressed() {
         return true;
     }
+
+
+    private class DownloadCompleteReceiver extends BroadcastReceiver {
+        public void onReceive(Context ctx, Intent intent) {
+            Toast.makeText(ctx, ctx.getString(R.string.toast_download_complete), Toast.LENGTH_SHORT).show();
+            try {
+                String documentLink = attachmentProvider.getDocumentLink();
+                String fileName = AppUtils.getFileNameFromURL(documentLink);
+                boolean isEncrypted = attachmentProvider.isEncrypted();
+
+                File externalStorageFile = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+
+                if (isEncrypted) {
+                    File downloadedFile = new File(externalStorageFile, fileName + "-encrypted");
+                    File decryptedFile = new File(externalStorageFile, fileName);
+
+                    MailboxEntity mailboxEntity = viewModel.getMailboxes().get(0);
+                    String password = viewModel.getUserPassword();
+                    String privateKey = mailboxEntity.getPrivateKey();
+                    boolean attachmentDecrypted = EncryptUtils.decryptAttachment(downloadedFile, decryptedFile, password, privateKey);
+                    downloadedFile.delete();
+
+                    Uri decryptedUri = FileProvider.getUriForFile(
+                            ctx, BuildConfig.APPLICATION_ID + ".fileprovider", decryptedFile
+                    );
+                    if (attachmentDecrypted) {
+                        openFile(decryptedUri);
+                    }
+                } else {
+                    File downloadedFile = new File(externalStorageFile, fileName);
+                    Uri fileUri = FileProvider.getUriForFile(
+                            ctx, BuildConfig.APPLICATION_ID + ".fileprovider", downloadedFile
+                    );
+                    openFile(fileUri);
+                }
+
+            } catch (Exception e) {
+                Timber.i(e);
+            }
+        }
+    };
 }
