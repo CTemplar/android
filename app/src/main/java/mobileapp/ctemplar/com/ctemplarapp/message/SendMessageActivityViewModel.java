@@ -3,11 +3,26 @@ package mobileapp.ctemplar.com.ctemplarapp.message;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 
 import io.reactivex.Observer;
+import io.reactivex.Single;
+import io.reactivex.SingleEmitter;
+import io.reactivex.SingleOnSubscribe;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.PublicKeysRequest;
@@ -25,8 +40,13 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.entity.Contact;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.ContactEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MessageEntity;
+import mobileapp.ctemplar.com.ctemplarapp.repository.provider.AttachmentProvider;
+import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
+import mobileapp.ctemplar.com.ctemplarapp.utils.FileUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.PGPManager;
+import okhttp3.MediaType;
 import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.HttpException;
 import retrofit2.Response;
@@ -354,6 +374,31 @@ public class SendMessageActivityViewModel extends ViewModel {
                 });
     }
 
+    @Nullable
+    MessageAttachment uploadAttachmentSync(
+            MultipartBody.Part attachment,
+            final long message,
+            boolean isEncrypted
+    ) {
+        try {
+            return userRepository
+                    .uploadAttachment(attachment, message, isEncrypted)
+                    .blockingSingle();
+        } catch (Throwable e) {
+            if(e instanceof HttpException) {
+                if (((HttpException)e).code() == 413) {
+                    uploadAttachmentStatus.postValue(ResponseStatus.RESPONSE_ERROR_TOO_LARGE);
+                } else {
+                    uploadAttachmentStatus.postValue(ResponseStatus.RESPONSE_ERROR);
+                }
+            } else {
+                uploadAttachmentStatus.postValue(ResponseStatus.RESPONSE_ERROR);
+            }
+            Timber.e(e, "uploadAttachmentSync blocking error");
+            return null;
+        }
+    }
+
     public void updateAttachment(long id, MultipartBody.Part attachment, long message, boolean isEncrypted) {
         userRepository.updateAttachment(id, attachment, message, isEncrypted)
                 .subscribe(new Observer<MessageAttachment>() {
@@ -436,5 +481,105 @@ public class SendMessageActivityViewModel extends ViewModel {
 
                     }
                 });
+    }
+
+
+
+    void grabForwardedAttachments(
+            @NonNull final List<AttachmentProvider> forwardedAttachments,
+            final long messageId
+    ) {
+        Single.create(new SingleOnSubscribe<Object>() {
+            @Override
+            public void subscribe(SingleEmitter<Object> emitter) throws Exception {
+                for (AttachmentProvider forwardedAttachment : forwardedAttachments) {
+                    MessageAttachment attachment = remakeAttachment(forwardedAttachment, messageId);
+                    if (attachment != null) {
+                        uploadAttachmentResponse.postValue(attachment);
+                    } else {
+                        Timber.e("grabForwardedAttachments uploaded attachment is null");
+                    }
+                }
+                Timber.i("Grabbed all forwarded attachments");
+            }
+        })
+                .subscribeOn(Schedulers.io())
+                .subscribe();
+    }
+
+    private MessageAttachment remakeAttachment(AttachmentProvider attachmentProvider, long messageId) {
+        File cacheDir = CTemplarApp.getInstance().getCacheDir();
+        URL url;
+        try {
+            url = new URL(attachmentProvider.getDocumentLink());
+        } catch (MalformedURLException e) {
+            Timber.e(e, "remakeAttachment MalformedURLException");
+            return null;
+        }
+        InputStream downloadStream;
+        try {
+            downloadStream = url.openStream();
+        } catch (IOException e) {
+            Timber.e(e, "remakeAttachment download stream error");
+            return null;
+        }
+        BufferedInputStream inputStream = new BufferedInputStream(downloadStream);
+        File downloadedFile;
+        try {
+            downloadedFile = File.createTempFile("AtTouchMeNow", ".ext", cacheDir);
+        } catch (IOException e) {
+            Timber.e(e, "remakeAttachment createTempFile error");
+            return null;
+        }
+        FileOutputStream fileOutputStream;
+        try {
+            fileOutputStream = new FileOutputStream(downloadedFile);
+        } catch (FileNotFoundException e) {
+            Timber.wtf(e, "remakeAttachment Temp file not found");
+            if (!downloadedFile.delete()) {
+                Timber.e("Downloaded file is not deleted");
+            }
+            return null;
+        }
+        BufferedOutputStream outputStream = new BufferedOutputStream(fileOutputStream);
+        try {
+            FileUtils.copyBytes(inputStream, fileOutputStream);
+        } catch (IOException e) {
+            Timber.e(e, "remakeAttachment copyBytes error");
+            return null;
+        } finally {
+            try {
+                inputStream.close();
+            } catch (IOException e) {
+                Timber.e(e, "remakeAttachment close inputStream error");
+            }
+            try {
+                outputStream.close();
+            } catch (IOException e) {
+                Timber.e(e, "remakeAttachment close outputStream error");
+            }
+            try {
+                fileOutputStream.close();
+            } catch (IOException e) {
+                Timber.e(e, "remakeAttachment close fileOutputStream error");
+            }
+        }
+        String documentLink = attachmentProvider.getDocumentLink();
+        String fileName = AppUtils.getFileNameFromURL(documentLink);
+        String type = AppUtils.getMimeType(documentLink);
+        if (type == null) {
+            type = "";
+        }
+        MediaType mediaType = MediaType.parse(type);
+        RequestBody attachmentPart = RequestBody.create(mediaType, downloadedFile);
+        final MultipartBody.Part multipartAttachment = MultipartBody.Part
+                .createFormData("document", fileName, attachmentPart);
+
+        MessageAttachment messageAttachment = uploadAttachmentSync(
+                multipartAttachment, messageId, attachmentProvider.isEncrypted());
+        if (!downloadedFile.delete()) {
+            Timber.e("Downloaded file is not deleted (2)");
+        }
+        return messageAttachment;
     }
 }

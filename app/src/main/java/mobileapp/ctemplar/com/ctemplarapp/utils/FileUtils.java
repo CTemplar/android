@@ -695,5 +695,17 @@ public class FileUtils {
         int index = filename.lastIndexOf('/');
         return filename.substring(index + 1);
     }
+
+
+    public static void copyBytes(InputStream inputStream, OutputStream outputStream)
+            throws IOException {
+        int bufferSize = 1024;
+        byte[] dataBuffer = new byte[bufferSize];
+        int bytesRead;
+        while ((bytesRead = inputStream.read(dataBuffer, 0, bufferSize)) != -1) {
+            outputStream.write(dataBuffer, 0, bytesRead);
+            outputStream.flush();
+        }
+    }
 }
 
