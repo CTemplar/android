@@ -85,7 +85,7 @@ public class StepPasswordFragment extends BaseFragment {
 
     @OnClick({R.id.fragment_step_password_next_btn})
     public void onClickNext() {
-        if (editChoose.length() < 8) {
+        if (editChoose.length() < 10) {
             editConfirmLayout.setError(getString(R.string.error_password_small));
             return;
         }

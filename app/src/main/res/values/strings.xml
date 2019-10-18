@@ -405,12 +405,12 @@ Your password is connected to your encryption key, if you change your password t
     <string name="error_username_small">Minimum 4 symbols</string>
     <string name="error_username_small_two">Minimum 2 symbols</string>
     <string name="error_username_big">Maximum 64 symbols</string>
-    <string name="error_password_small">Minimum 8 symbols</string>
+    <string name="error_password_small">Minimum 10 symbols</string>
     <string name="error_password_big">Maximum 64 symbols</string>
     <string name="error_username_incorrect">Enter a valid username</string>
     <string name="error_username_exists">Email already exists!</string>
     <string name="error_password_not_match">Passwords do not match</string>
-    <string name="error_password_message">Password must be between 8 and 30 characters</string>
+    <string name="error_password_message">Password must be between 10 and 30 characters</string>
     <string name="error_current_password_not_match">Old password is not correct!</string>
     <string name="error_empty_email">Empty email</string>
     <string name="error_empty_password">Empty password</string>
