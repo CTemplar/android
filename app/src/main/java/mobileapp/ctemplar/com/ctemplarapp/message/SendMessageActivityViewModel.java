@@ -209,6 +209,7 @@ public class SendMessageActivityViewModel extends ViewModel {
 
                     @Override
                     public void onError(Throwable e) {
+                        messagesResult.postValue(null);
                         responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
                     }
 

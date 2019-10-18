@@ -138,7 +138,9 @@ public class ChangePasswordActivity extends BaseActivity {
             return;
         }
 
-        if (TextUtils.equals(newPassword, passwordConfirmation) && EditTextUtils.isTextLength(newPassword, 8, 64)) {
+        if (TextUtils.equals(newPassword, passwordConfirmation)
+                && EditTextUtils.isTextLength(newPassword, 10, 64)) {
+
             String alertMessage = getResources().getString(R.string.dialog_change_password_confirm);
             if (resetData) {
                 alertMessage = getResources().getString(R.string.dialog_change_password_confirm_reset);
