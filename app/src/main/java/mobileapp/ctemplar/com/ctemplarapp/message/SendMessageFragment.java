@@ -586,6 +586,9 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
                 .observe(this, new Observer<MessagesResult>() {
                     @Override
                     public void onChanged(@Nullable MessagesResult messagesResult) {
+                        if (sendingProgress != null && sendingProgress.isShowing()) {
+                            sendingProgress.dismiss();
+                        }
                         if (messagesResult == null) {
                             Toast.makeText(activity, getString(R.string.toast_message_not_sent), Toast.LENGTH_SHORT).show();
                         } else {
@@ -902,9 +905,6 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
                     }
                 }
                 sendModel.updateMessage(currentMessageId, sendMessageRequest, publicKeyList);
-                if (sendingProgress != null) {
-                    sendingProgress.dismiss();
-                }
             }
         }).start();
     }
