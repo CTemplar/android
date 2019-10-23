@@ -270,7 +270,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         sendMessageAttachmentIco = root.findViewById(R.id.fragment_send_message_attachment_ico);
         sendMessageEncryptIco = root.findViewById(R.id.fragment_send_message_encrypt_ico);
 
-        composeEditText.setPaintFlags(composeEditText.getPaintFlags() & (~ Paint.UNDERLINE_TEXT_FLAG));
+        composeEditText.setPaintFlags(composeEditText.getPaintFlags() & (~Paint.UNDERLINE_TEXT_FLAG));
 
         // OnClicks
         root.findViewById(R.id.fragment_send_message_send).setOnClickListener(this);
@@ -1224,7 +1224,10 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         if (bcc != null && bcc.length > 0) {
             args.putStringArray(Intent.EXTRA_BCC, bcc);
         }
-        if (attachmentsEntity != null && !attachmentsEntity.getAttachmentProviderList().isEmpty()) {
+        if (attachmentsEntity != null
+                && attachmentsEntity.getAttachmentProviderList() != null
+                && !attachmentsEntity.getAttachmentProviderList().isEmpty()
+        ) {
             args.putSerializable(ATTACHMENT_LIST, attachmentsEntity);
         }
         if (parentId != null) {
