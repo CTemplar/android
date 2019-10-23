@@ -22,7 +22,6 @@ public class UserStoreImpl implements UserStore{
     private static final String KEY_ATTACHMENTS_ENCRYPTION_ENABLED = "key_attachments_encryption_enabled";
     private static final String KEY_CONTACTS_ENCRYPTION_ENABLED = "key_contacts_encryption_enabled";
 
-    private Context context;
     private SharedPreferences preferences;
 
     public static UserStoreImpl getInstance(Context context) {
@@ -33,7 +32,6 @@ public class UserStoreImpl implements UserStore{
     }
 
     public UserStoreImpl(Context context) {
-        this.context = context;
         preferences = context.getSharedPreferences(PREF_USER, Context.MODE_PRIVATE);
     }
 
@@ -60,12 +58,12 @@ public class UserStoreImpl implements UserStore{
     @Override
     public void saveUserPref(String username, String pass, String passHashed, String privateKey, String publicKey) {
         preferences.edit()
-        .putString(KEY_USERNAME, username)
-        .putString(KEY_PASSWORD, pass)
-        .putString(KEY_PASSWORD_HASHED, passHashed)
-        .putString(KEY_PRIVATE_KEY, privateKey)
-        .putString(KEY_PUBLIC_KEY, publicKey)
-        .commit();
+                .putString(KEY_USERNAME, username)
+                .putString(KEY_PASSWORD, pass)
+                .putString(KEY_PASSWORD_HASHED, passHashed)
+                .putString(KEY_PRIVATE_KEY, privateKey)
+                .putString(KEY_PUBLIC_KEY, publicKey)
+                .commit();
     }
 
     @Override
