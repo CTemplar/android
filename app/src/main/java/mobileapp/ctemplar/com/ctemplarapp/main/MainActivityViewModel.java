@@ -200,11 +200,7 @@ public class MainActivityViewModel extends ViewModel {
     public void getContacts(int limit, int offset) {
         List<ContactEntity> contactEntities = contactsRepository.getLocalContacts();
         List<Contact> contactList = Contact.fromEntities(contactEntities);
-        if (contactList.isEmpty()) {
-            contactsResponse.postValue(null);
-        } else {
-            contactsResponse.postValue(contactList);
-        }
+        contactsResponse.postValue(contactList.isEmpty() ? null : contactList);
 
         contactsRepository.getContactsList(limit, offset)
                 .observeOn(Schedulers.computation())
