@@ -63,6 +63,7 @@ public class SendMessageActivityViewModel extends ViewModel {
     private MutableLiveData<MessageAttachment> uploadAttachmentResponse = new MutableLiveData<>();
     private MutableLiveData<ResponseStatus> deleteAttachmentStatus = new MutableLiveData<>();
     private MutableLiveData<ResponseStatus> updateAttachmentStatus = new MutableLiveData<>();
+    private MutableLiveData<Boolean> grabAttachmentStatus = new MutableLiveData<>();
     private MutableLiveData<MessagesResult> messagesResult = new MutableLiveData<>();
     private MutableLiveData<MessagesResult> createMessageResponse = new MutableLiveData<>();
     private MutableLiveData<ResponseStatus> createMessageStatus = new MutableLiveData<>();
@@ -124,6 +125,10 @@ public class SendMessageActivityViewModel extends ViewModel {
 
     public LiveData<ResponseStatus> getUpdateAttachmentStatus() {
         return updateAttachmentStatus;
+    }
+
+    public LiveData<Boolean> getGrabAttachmentStatus() {
+        return grabAttachmentStatus;
     }
 
     public LiveData<MessageAttachment> getUploadAttachmentResponse() {
@@ -501,6 +506,7 @@ public class SendMessageActivityViewModel extends ViewModel {
                         Timber.e("grabForwardedAttachments uploaded attachment is null");
                     }
                 }
+                grabAttachmentStatus.postValue(true);
                 Timber.i("Grabbed all forwarded attachments");
             }
         })
