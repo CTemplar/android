@@ -31,6 +31,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.BufferedInputStream;
@@ -104,6 +105,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
     private RelativeLayout bccLayout;
     private ImageView toAddIco;
     private ImageView sendMessage;
+    private TextView messageAttachmentsProcessingTextView;
     private RecyclerView messageAttachmentsRecycleView;
 
     private ImageView sendMessageDestructIco;
@@ -126,6 +128,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
     private EncryptionMessage messageEncryptionResult;
     private boolean userIsPrime;
     private boolean isSubjectEncrypted;
+    private boolean attachmentsProcessingEnabled;
 
     private SendMessageRequest sendMessageRequest;
     private List<String> publicKeyList;
@@ -263,6 +266,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         bccLayout = root.findViewById(R.id.fragment_send_message_bcc_layout);
         toAddIco = root.findViewById(R.id.fragment_send_message_to_add_button);
         sendMessage = root.findViewById(R.id.fragment_send_message_send);
+        messageAttachmentsProcessingTextView = root.findViewById(R.id.fragment_send_message_attachments_processing_text_view);
         messageAttachmentsRecycleView = root.findViewById(R.id.fragment_send_message_attachments);
         sendMessageDestructIco = root.findViewById(R.id.fragment_send_message_destruct_ico);
         sendMessageDelayedIco = root.findViewById(R.id.fragment_send_message_delayed_ico);
@@ -474,6 +478,11 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
             return;
         }
 
+        if (attachmentsProcessingEnabled) {
+            Toast.makeText(getActivity(), getString(R.string.txt_attachments_in_processing), Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         sendingProgress = new ProgressDialog(getActivity());
         sendingProgress.setCanceledOnTouchOutside(false);
         sendingProgress.setMessage(getResources().getString(R.string.txt_sending_mail));
@@ -547,7 +556,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
             }
         });
 
-        // Check attachment task
+        // checking for attachment updates when sending
         sendModel.getUpdateAttachmentStatus().observe(this, new Observer<ResponseStatus>() {
             @Override
             public void onChanged(@Nullable ResponseStatus responseStatus) {
@@ -579,6 +588,14 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
                     sendingProgress.dismiss();
                 }
 
+            }
+        });
+
+        sendModel.getGrabAttachmentStatus().observe(this, new Observer<Boolean>() {
+            @Override
+            public void onChanged(@Nullable Boolean aBoolean) {
+                messageAttachmentsProcessingTextView.setVisibility(View.GONE);
+                attachmentsProcessingEnabled = false;
             }
         });
 
@@ -1196,6 +1213,8 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
     private void grabForwardedAttachments() {
         if (forwardedAttachments != null) {
             sendModel.grabForwardedAttachments(forwardedAttachments, currentMessageId);
+            messageAttachmentsProcessingTextView.setVisibility(View.VISIBLE);
+            attachmentsProcessingEnabled = true;
         }
     }
 
