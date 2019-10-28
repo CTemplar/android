@@ -19,7 +19,6 @@ import mobileapp.ctemplar.com.ctemplarapp.DialogState;
 import mobileapp.ctemplar.com.ctemplarapp.LoginActivityActions;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.main.MainActivity;
-import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 
 public class LoginActivity extends BaseFragmentActivity {
 

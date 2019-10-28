@@ -8,8 +8,6 @@ import android.widget.RadioButton;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 
-import mobileapp.ctemplar.com.ctemplarapp.R;
-
 public class RadioButtonTableLayout extends TableLayout implements OnClickListener {
 
     private RadioButton activeRadioButton;
