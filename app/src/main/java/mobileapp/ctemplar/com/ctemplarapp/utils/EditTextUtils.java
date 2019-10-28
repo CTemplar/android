@@ -32,7 +32,7 @@ public class EditTextUtils {
     }
 
     public static boolean isTextValid(String text) {
-        Pattern pattern = Pattern.compile("^[a-zA-Z0-9-_ ]+$");
+        Pattern pattern = Pattern.compile("^[a-zA-Z0-9-_. ]+$");
         Matcher matcher = pattern.matcher(text);
         return matcher.matches();
     }
