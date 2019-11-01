@@ -104,7 +104,7 @@ public class SignInFragment extends BaseFragment {
 
         if (editTextUsername.getText() != null && editTextPassword.getText() != null) {
             username = editTextUsername.getText().toString().trim()
-                    .replaceAll("@.+", "");
+                    .toLowerCase().replaceAll("@.+", "");
             password = editTextPassword.getText().toString().trim();
         }
         if (editTextOtpCode.getText() != null && !editTextOtpCode.getText().toString().isEmpty()) {
