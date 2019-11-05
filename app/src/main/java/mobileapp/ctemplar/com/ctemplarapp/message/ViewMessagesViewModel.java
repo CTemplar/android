@@ -216,7 +216,7 @@ public class ViewMessagesViewModel extends ViewModel {
                 });
     }
 
-    public void moveToFolder(long messageId, String folder) {
+    public void moveToFolder(final long messageId, final String folder) {
         userRepository.toFolder(messageId, folder)
                 .subscribe(new Observer<Response<Void>>() {
                     @Override
@@ -226,6 +226,7 @@ public class ViewMessagesViewModel extends ViewModel {
 
                     @Override
                     public void onNext(Response<Void> voidResponse) {
+                        messagesRepository.updateMessageFolderName(messageId, folder);
                         moveToFolderStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
                     }
 
