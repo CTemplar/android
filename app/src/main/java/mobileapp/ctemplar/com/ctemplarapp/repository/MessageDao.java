@@ -50,6 +50,6 @@ public interface MessageDao {
     @Query("SELECT * FROM messages WHERE parent=:id")
     List<MessageEntity> getByParentId(String id);
 
-    @Query("UPDATE messages SET folderName=:newFolderName WHERE id=:messageId")
+    @Query("UPDATE messages SET requestFolder=folderName=:newFolderName WHERE id=:messageId")
     void updateFolderName(long messageId, String newFolderName);
 }
