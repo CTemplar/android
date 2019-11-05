@@ -77,6 +77,10 @@ public class LoginActivityViewModel extends ViewModel {
         return addFirebaseTokenStatus;
     }
 
+    public void clearDB() {
+        CTemplarApp.getAppDatabase().clearAllTables();
+    }
+
     public void signIn(String username, String password, String otp) {
         userRepository.saveUsername(username);
         userRepository.saveUserPassword(password);
