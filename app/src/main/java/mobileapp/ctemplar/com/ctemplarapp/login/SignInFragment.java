@@ -194,6 +194,7 @@ public class SignInFragment extends BaseFragment {
         loginActivityModel.getAddFirebaseTokenStatus().observe(this, new Observer<ResponseStatus>() {
             @Override
             public void onChanged(@Nullable ResponseStatus responseStatus) {
+                loginActivityModel.clearDB();
                 loginActivityModel.changeAction(LoginActivityActions.CHANGE_ACTIVITY_MAIN);
             }
         });
