@@ -61,11 +61,6 @@ public class ContactFragment extends BaseFragment {
         return R.layout.fragment_contact;
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        mainModel.getContacts(200, 0);
-    }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -105,6 +100,12 @@ public class ContactFragment extends BaseFragment {
                         handleContactsList(contactsList);
                     }
                 });
+        mainModel.getContacts(200, 0);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
         mainModel.getContacts(200, 0);
     }
 

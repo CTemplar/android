@@ -144,8 +144,8 @@ public class AddFilterActivity extends BaseActivity {
 
     @OnClick(R.id.activity_add_filter_action_submit)
     public void onClickSubmit() {
-        String filterName = filterNameEditText.getText().toString();
-        String filterText = filterTextEditText.getText().toString();
+        String filterName = EditTextUtils.getText(filterNameEditText);
+        String filterText = EditTextUtils.getText(filterTextEditText);
         String selectedParameter = parameterSpinner.getSelectedItem().toString();
         String selectedCondition = conditionSpinner.getSelectedItem().toString();
         String selectedFolder = filterFolderSpinner.getSelectedItem().toString();

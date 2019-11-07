@@ -32,7 +32,7 @@ public class AddContactViewModel extends ViewModel {
         return responseStatus;
     }
 
-    public void saveContact(ContactData contactData) {
+    void saveContact(ContactData contactData) {
         boolean contactsEncryption = userStore.getContactsEncryptionEnabled();
         if (contactsEncryption) {
             EncryptContact encryptContact = new EncryptContact();
