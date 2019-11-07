@@ -62,7 +62,7 @@ public class FiltersAdapter extends RecyclerView.Adapter<FiltersViewHolder> {
         return deletedFilter;
     }
 
-    public void restoreItem(int position, FilterResult filterResult) {
+    void restoreItem(int position, FilterResult filterResult) {
         filterList.add(position, filterResult);
         notifyItemInserted(position);
     }

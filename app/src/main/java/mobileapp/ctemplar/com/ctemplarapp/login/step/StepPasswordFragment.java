@@ -17,6 +17,8 @@ import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 
+import org.jetbrains.annotations.NotNull;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 import mobileapp.ctemplar.com.ctemplarapp.BaseFragment;
@@ -66,7 +68,7 @@ public class StepPasswordFragment extends BaseFragment {
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NotNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         viewModel = ViewModelProviders.of(getActivity()).get(StepRegistrationViewModel.class);

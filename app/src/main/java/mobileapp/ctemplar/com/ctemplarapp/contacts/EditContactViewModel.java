@@ -34,11 +34,11 @@ public class EditContactViewModel extends ViewModel {
         return responseStatus;
     }
 
-    public MutableLiveData<Contact> getContactResponse() {
+    MutableLiveData<Contact> getContactResponse() {
         return contactResponse;
     }
 
-    public void getContact(long id) {
+    void getContact(long id) {
         ContactEntity contactEntity = contactsRepository.getLocalContact(id);
         if (contactEntity == null) {
             contactResponse.postValue(null);
@@ -47,7 +47,7 @@ public class EditContactViewModel extends ViewModel {
         }
     }
 
-    public void updateContact(ContactData contactData) {
+    void updateContact(ContactData contactData) {
         boolean contactsEncryption = userStore.getContactsEncryptionEnabled();
         if (contactsEncryption) {
             EncryptContact encryptContact = new EncryptContact();
