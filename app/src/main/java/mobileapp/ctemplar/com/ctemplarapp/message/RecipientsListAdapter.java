@@ -1,7 +1,7 @@
 package mobileapp.ctemplar.com.ctemplarapp.message;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -88,11 +88,18 @@ public class RecipientsListAdapter extends ArrayAdapter<Contact> implements Filt
 
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
-            List<Contact> filterList = (List<Contact>) results.values;
-            if (results.count > 0) {
+            Object object = results.values;
+            if (!(object instanceof List)) {
+                return;
+            }
+            List<?> objects = (List<?>) object;
+            if (objects.size() > 0) {
                 clear();
-                for (Contact contact : filterList) {
-                    add(contact);
+                for (Object contactObject : objects) {
+                    if (!(contactObject instanceof Contact)) {
+                        continue;
+                    }
+                    add((Contact) contactObject);
                     notifyDataSetChanged();
                 }
             }

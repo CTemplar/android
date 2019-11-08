@@ -1,6 +1,6 @@
 package mobileapp.ctemplar.com.ctemplarapp.net;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SignInRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.SignInResponse;

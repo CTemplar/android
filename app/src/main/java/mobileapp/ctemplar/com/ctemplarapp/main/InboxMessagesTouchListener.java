@@ -5,7 +5,7 @@ import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.graphics.Rect;
 import android.os.Handler;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;

@@ -1,17 +1,18 @@
 package mobileapp.ctemplar.com.ctemplarapp.login;
 
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.design.widget.TextInputEditText;
-import android.support.design.widget.TextInputLayout;
+import androidx.annotation.Nullable;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Toast;
+
+import org.jetbrains.annotations.NotNull;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -19,6 +20,7 @@ import mobileapp.ctemplar.com.ctemplarapp.BaseFragment;
 import mobileapp.ctemplar.com.ctemplarapp.LoginActivityActions;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
+import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 
 public class NewPasswordFragment extends BaseFragment {
 
@@ -39,7 +41,7 @@ public class NewPasswordFragment extends BaseFragment {
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NotNull Context context) {
         super.onAttach(context);
     }
 
@@ -48,17 +50,11 @@ public class NewPasswordFragment extends BaseFragment {
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NotNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         viewModel = ViewModelProviders.of(getActivity()).get(LoginActivityViewModel.class);
-        viewModel.getResponseStatus().observe(getActivity(), new Observer<ResponseStatus>() {
-
-            @Override
-            public void onChanged(@Nullable ResponseStatus status) {
-                handleStatus(status);
-            }
-        });
+        viewModel.getResponseStatus().observe(getActivity(), this::handleStatus);
 
         setListeners();
     }
@@ -89,16 +85,16 @@ public class NewPasswordFragment extends BaseFragment {
             editConfirmLayout.setError(getString(R.string.error_password_big));
             return;
         }
-        if(!TextUtils.equals(editConfirm.getText().toString(), editChoose.getText().toString())) {
+        if(!TextUtils.equals(EditTextUtils.getText(editConfirm), EditTextUtils.getText(editChoose))) {
             editConfirmLayout.setError(getString(R.string.error_password_not_match));
             return;
         }
 
-        if(!TextUtils.isEmpty(editChoose.getText().toString()) &&
-                !TextUtils.isEmpty(editConfirm.getText().toString()) &&
-                TextUtils.equals(editChoose.getText().toString(), editConfirm.getText().toString())) {
+        if(!TextUtils.isEmpty(EditTextUtils.getText(editChoose)) &&
+                !TextUtils.isEmpty(EditTextUtils.getText(editConfirm)) &&
+                TextUtils.equals(EditTextUtils.getText(editChoose), EditTextUtils.getText(editConfirm))) {
 
-            viewModel.getRecoverPasswordRequest().setPassword(editChoose.getText().toString());
+            viewModel.getRecoverPasswordRequest().setPassword(EditTextUtils.getText(editChoose));
             viewModel.showProgressDialog();
             viewModel.resetPassword();
         }

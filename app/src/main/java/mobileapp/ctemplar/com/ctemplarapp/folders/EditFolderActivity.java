@@ -1,10 +1,8 @@
 package mobileapp.ctemplar.com.ctemplarapp.folders;
 
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProviders;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.Toolbar;
+import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
@@ -43,8 +41,10 @@ public class EditFolderActivity extends BaseActivity {
 
         Toolbar toolbar = findViewById(R.id.activity_edit_folder_toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setHomeButtonEnabled(true);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
         folderId = getIntent().getLongExtra(ARG_ID, -1);
         if (folderId == -1) {
@@ -56,25 +56,19 @@ public class EditFolderActivity extends BaseActivity {
         }
         editFolderModel = ViewModelProviders.of(this).get(EditFolderViewModel.class);
         editFolderModel.getDeletingStatus()
-                .observe(this, new Observer<ResponseStatus>() {
-                    @Override
-                    public void onChanged(@Nullable ResponseStatus responseStatus) {
-                        if (responseStatus == null || responseStatus == ResponseStatus.RESPONSE_ERROR) {
-                            Toast.makeText(getApplicationContext(), getResources().getString(R.string.txt_folder_not_deleted), Toast.LENGTH_SHORT).show();
-                        } else if (responseStatus == ResponseStatus.RESPONSE_COMPLETE) {
-                            Toast.makeText(getApplicationContext(), getResources().getString(R.string.txt_folder_deleted), Toast.LENGTH_SHORT).show();
-                        }
+                .observe(this, responseStatus -> {
+                    if (responseStatus == null || responseStatus == ResponseStatus.RESPONSE_ERROR) {
+                        Toast.makeText(getApplicationContext(), getResources().getString(R.string.txt_folder_not_deleted), Toast.LENGTH_SHORT).show();
+                    } else if (responseStatus == ResponseStatus.RESPONSE_COMPLETE) {
+                        Toast.makeText(getApplicationContext(), getResources().getString(R.string.txt_folder_deleted), Toast.LENGTH_SHORT).show();
                     }
                 });
         editFolderModel.getResponseStatus()
-                .observe(this, new Observer<ResponseStatus>() {
-                    @Override
-                    public void onChanged(@Nullable ResponseStatus responseStatus) {
-                        if (responseStatus == null || responseStatus == ResponseStatus.RESPONSE_ERROR) {
-                            Toast.makeText(getApplicationContext(), getResources().getString(R.string.txt_folder_not_edited), Toast.LENGTH_SHORT).show();
-                        } else if (responseStatus == ResponseStatus.RESPONSE_COMPLETE) {
-                            Toast.makeText(getApplicationContext(), getResources().getString(R.string.txt_folder_edited), Toast.LENGTH_SHORT).show();
-                        }
+                .observe(this, responseStatus -> {
+                    if (responseStatus == null || responseStatus == ResponseStatus.RESPONSE_ERROR) {
+                        Toast.makeText(getApplicationContext(), getResources().getString(R.string.txt_folder_not_edited), Toast.LENGTH_SHORT).show();
+                    } else if (responseStatus == ResponseStatus.RESPONSE_COMPLETE) {
+                        Toast.makeText(getApplicationContext(), getResources().getString(R.string.txt_folder_edited), Toast.LENGTH_SHORT).show();
                     }
                 });
         radioGroupColor.setActive(firstRadioButton);

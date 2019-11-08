@@ -1,26 +1,26 @@
 package mobileapp.ctemplar.com.ctemplarapp.login.step;
 
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
-import android.support.design.widget.TextInputEditText;
-import android.support.design.widget.TextInputLayout;
-import android.support.v7.widget.AppCompatCheckBox;
+import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
+import androidx.appcompat.widget.AppCompatCheckBox;
 import android.text.Editable;
 import android.text.Html;
 import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
+
+import org.jetbrains.annotations.NotNull;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -37,7 +37,7 @@ public class StepSecurityFragment extends BaseFragment {
     private StepRegistrationViewModel viewModel;
     private LoginActivityViewModel loginActivityModel;
 
-    public ImageView captchaImageView;
+    private ImageView captchaImageView;
     private boolean captchaState;
     private String captchaKey;
     private String captchaValue;
@@ -69,7 +69,7 @@ public class StepSecurityFragment extends BaseFragment {
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NotNull Context context) {
         super.onAttach(context);
     }
 
@@ -78,7 +78,7 @@ public class StepSecurityFragment extends BaseFragment {
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NotNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         if (getActivity() == null) {
             return;
@@ -88,29 +88,18 @@ public class StepSecurityFragment extends BaseFragment {
 
         loginActivityModel = ViewModelProviders.of(getActivity()).get(LoginActivityViewModel.class);
         viewModel = ViewModelProviders.of(getActivity()).get(StepRegistrationViewModel.class);
-        viewModel.getResponseStatus().observe(this, new Observer<ResponseStatus>() {
-            @Override
-            public void onChanged(@Nullable ResponseStatus responseStatus) {
-                handleResponseStatus(responseStatus);
-            }
-        });
+        viewModel.getResponseStatus().observe(this, this::handleResponseStatus);
 
         viewModel.getCaptcha();
-        viewModel.getCaptchaResponse().observe(getActivity(), new Observer<CaptchaResponse>() {
-            @Override
-            public void onChanged(@Nullable CaptchaResponse response) {
-                if (response != null) {
-                    handleCaptchaResponse(response);
-                }
+        viewModel.getCaptchaResponse().observe(getActivity(), response -> {
+            if (response != null) {
+                handleCaptchaResponse(response);
             }
         });
 
-        viewModel.getCaptchaVerifyResponse().observe(getActivity(), new Observer<CaptchaVerifyResponse>() {
-            @Override
-            public void onChanged(@Nullable CaptchaVerifyResponse response) {
-                if (response != null) {
-                    handleCaptchaVerifyResponse(response);
-                }
+        viewModel.getCaptchaVerifyResponse().observe(getActivity(), response -> {
+            if (response != null) {
+                handleCaptchaVerifyResponse(response);
             }
         });
 
@@ -169,18 +158,12 @@ public class StepSecurityFragment extends BaseFragment {
         viewModel.captchaVerify(captchaKey, captchaValue);
     }
 
-    public void setListeners() {
+    private void setListeners() {
         txtCheckHint.setText(Html.fromHtml(getResources().getString(R.string.title_step_email_check_hint)));
         txtCheckHint.setMovementMethod(LinkMovementMethod.getInstance());
         txtCheckHint.setLinkTextColor(getResources().getColor(R.color.colorLinkBlue));
 
-        checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                btnNext.setEnabled(isChecked && captchaState);
-            }
-        });
+        checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> btnNext.setEnabled(isChecked && captchaState));
 
         captchaEditText.addTextChangedListener(new TextWatcher() {
             @Override
@@ -200,7 +183,7 @@ public class StepSecurityFragment extends BaseFragment {
         });
     }
 
-    public void handleResponseStatus(ResponseStatus status) {
+    private void handleResponseStatus(ResponseStatus status) {
         if(status != null) {
             loginActivityModel.hideProgressDialog();
             switch (status) {

@@ -1,8 +1,10 @@
 package mobileapp.ctemplar.com.ctemplarapp.login.step;
 
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentStatePagerAdapter;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -19,6 +21,7 @@ public class SignUpFragmentsAdapter extends FragmentStatePagerAdapter {
         return list.size();
     }
 
+    @NotNull
     @Override
     public Fragment getItem(int position) {
         return list.get(position);

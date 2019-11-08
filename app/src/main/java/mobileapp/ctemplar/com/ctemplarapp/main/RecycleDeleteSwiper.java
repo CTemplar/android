@@ -7,10 +7,10 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.helper.ItemTouchHelper;
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import android.view.View;
 
 import mobileapp.ctemplar.com.ctemplarapp.R;
@@ -21,13 +21,11 @@ abstract public class RecycleDeleteSwiper extends ItemTouchHelper.SimpleCallback
     private final int intrinsicHeight;
     private final Paint clearPaint;
 
-    private Context context;
     private ColorDrawable background = new ColorDrawable();
     private int backgroundColor;
 
     public RecycleDeleteSwiper(Context context) {
         super(0, ItemTouchHelper.LEFT);
-        this.context = context;
 
         deleteIcon = ContextCompat.getDrawable(context, R.drawable.ic_trash);
         intrinsicWidth = deleteIcon.getIntrinsicWidth();

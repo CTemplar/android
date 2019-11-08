@@ -2,30 +2,28 @@ package mobileapp.ctemplar.com.ctemplarapp.message;
 
 import android.app.Activity;
 import android.app.DownloadManager;
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProviders;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
-import android.support.design.widget.BaseTransientBottomBar;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.content.FileProvider;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import com.google.android.material.snackbar.BaseTransientBottomBar;
+import com.google.android.material.snackbar.Snackbar;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.core.content.FileProvider;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import android.text.Html;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -42,7 +40,6 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.util.Collections;
-import java.util.List;
 
 import io.reactivex.disposables.Disposable;
 import mobileapp.ctemplar.com.ctemplarapp.ActivityInterface;
@@ -165,108 +162,96 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
 
         attachmentProvider = new AttachmentProvider();
         viewModel.getChainMessages(parentId);
-        viewModel.getMessagesResponse().observe(this, new Observer<List<MessageProvider>>() {
-            @Override
-            public void onChanged(@Nullable List<MessageProvider> messagesList) {
-                if (messagesList == null || messagesList.isEmpty()) {
-                    Timber.e("Messages doesn't exists");
-                    Toast.makeText(activity.getApplicationContext(), getResources().getString(R.string.toast_messages_doesnt_exist), Toast.LENGTH_SHORT).show();
-                    activity.onBackPressed();
-                    return;
-                }
-
-                MessageProvider currentParentMessage = messagesList.get(0);
-                String subjectText = currentParentMessage.getSubject();
-                subjectTextView.setText(subjectText);
-                parentMessage = currentParentMessage;
-
-                lastMessage = messagesList.get(messagesList.size() - 1);
-                decryptedLastMessage = lastMessage.getContent();
-                encryptedImageView.setSelected(parentMessage.isProtected());
-                starImageView.setSelected(parentMessage.isStarred());
-
-                final MessageAttachmentAdapter messageAttachmentAdapter = new MessageAttachmentAdapter();
-                ViewMessagesAdapter adapter = new ViewMessagesAdapter(messagesList, messageAttachmentAdapter);
-                messageAttachmentAdapter.getOnClickAttachmentLink().subscribe(new io.reactivex.Observer<Integer>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(Integer position) {
-                        attachmentProvider = messageAttachmentAdapter.getAttachment(position);
-                        String documentLink = attachmentProvider.getDocumentLink();
-                        if (documentLink == null) {
-                            Toast.makeText(getActivity(), "AttachmentUrl is empty", Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-
-                        Uri documentUri = Uri.parse(documentLink);
-                        String fileName = AppUtils.getFileNameFromURL(documentLink);
-                        if (attachmentProvider.isEncrypted()) {
-                            fileName += "-encrypted";
-                        }
-
-                        DownloadManager.Request documentRequest = new DownloadManager.Request(documentUri);
-                        documentRequest.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName);
-                        documentRequest.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-
-                        if (getActivity() != null && PermissionCheck.readAndWriteExternalStorage(getActivity())) {
-                            DownloadManager downloadManager = (DownloadManager) getActivity().getApplicationContext().getSystemService(DOWNLOAD_SERVICE);
-                            downloadManager.enqueue(documentRequest);
-                            Toast.makeText(getActivity(), getString(R.string.toast_download_started), Toast.LENGTH_SHORT).show();
-                        }
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Timber.e(e);
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
-                messagesListView.setAdapter(adapter);
-
-                if (!parentMessage.isRead()) {
-                    long parentMessageId = parentMessage.getId();
-                    viewModel.markMessageAsRead(parentMessageId, true);
-                }
-
-                loadProgress.setVisibility(View.GONE);
-                activity.invalidateOptionsMenu();
+        viewModel.getMessagesResponse().observe(this, messagesList -> {
+            if (messagesList == null || messagesList.isEmpty()) {
+                Timber.e("Messages doesn't exists");
+                Toast.makeText(activity.getApplicationContext(), getResources().getString(R.string.toast_messages_doesnt_exist), Toast.LENGTH_SHORT).show();
+                activity.onBackPressed();
+                return;
             }
+
+            MessageProvider currentParentMessage = messagesList.get(0);
+            String subjectText = currentParentMessage.getSubject();
+            subjectTextView.setText(subjectText);
+            parentMessage = currentParentMessage;
+
+            lastMessage = messagesList.get(messagesList.size() - 1);
+            decryptedLastMessage = lastMessage.getContent();
+            encryptedImageView.setSelected(parentMessage.isProtected());
+            starImageView.setSelected(parentMessage.isStarred());
+
+            final MessageAttachmentAdapter messageAttachmentAdapter = new MessageAttachmentAdapter();
+            ViewMessagesAdapter adapter = new ViewMessagesAdapter(messagesList, messageAttachmentAdapter);
+            messageAttachmentAdapter.getOnClickAttachmentLink().subscribe(new io.reactivex.Observer<Integer>() {
+                @Override
+                public void onSubscribe(Disposable d) {
+
+                }
+
+                @Override
+                public void onNext(Integer position) {
+                    attachmentProvider = messageAttachmentAdapter.getAttachment(position);
+                    String documentLink = attachmentProvider.getDocumentLink();
+                    if (documentLink == null) {
+                        Toast.makeText(getActivity(), "AttachmentUrl is empty", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    Uri documentUri = Uri.parse(documentLink);
+                    String fileName = AppUtils.getFileNameFromURL(documentLink);
+                    if (attachmentProvider.isEncrypted()) {
+                        fileName += "-encrypted";
+                    }
+
+                    DownloadManager.Request documentRequest = new DownloadManager.Request(documentUri);
+                    documentRequest.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName);
+                    documentRequest.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+
+                    if (getActivity() != null && PermissionCheck.readAndWriteExternalStorage(getActivity())) {
+                        DownloadManager downloadManager = (DownloadManager) getActivity().getApplicationContext().getSystemService(DOWNLOAD_SERVICE);
+                        downloadManager.enqueue(documentRequest);
+                        Toast.makeText(getActivity(), getString(R.string.toast_download_started), Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onError(Throwable e) {
+                    Timber.e(e);
+                }
+
+                @Override
+                public void onComplete() {
+
+                }
+            });
+            messagesListView.setAdapter(adapter);
+
+            if (!parentMessage.isRead()) {
+                long parentMessageId = parentMessage.getId();
+                viewModel.markMessageAsRead(parentMessageId, true);
+            }
+
+            loadProgress.setVisibility(View.GONE);
+            activity.invalidateOptionsMenu();
         });
 
-        viewModel.getStarredResponse().observe(this, new Observer<Boolean>() {
-            @Override
-            public void onChanged(@Nullable Boolean isStarred) {
-                boolean starred = isStarred == null ? false : isStarred;
-                starImageView.setSelected(starred);
-                parentMessage.setStarred(starred);
+        viewModel.getStarredResponse().observe(this, isStarred -> {
+            boolean starred = isStarred == null ? false : isStarred;
+            starImageView.setSelected(starred);
+            parentMessage.setStarred(starred);
+        });
+        viewModel.getAddWhitelistStatus().observe(this, responseStatus -> {
+            if (responseStatus == ResponseStatus.RESPONSE_COMPLETE) {
+                Toast.makeText(getActivity(), getString(R.string.added_to_whitelist), Toast.LENGTH_SHORT).show();
+                getActivity().onBackPressed();
+            } else {
+                Toast.makeText(getActivity(), getString(R.string.adding_whitelist_contact_error), Toast.LENGTH_SHORT).show();
             }
         });
-        viewModel.getAddWhitelistStatus().observe(this, new Observer<ResponseStatus>() {
-            @Override
-            public void onChanged(@Nullable ResponseStatus responseStatus) {
-                if (responseStatus == ResponseStatus.RESPONSE_COMPLETE) {
-                    Toast.makeText(getActivity(), getString(R.string.added_to_whitelist), Toast.LENGTH_SHORT).show();
-                    getActivity().onBackPressed();
-                } else {
-                    Toast.makeText(getActivity(), getString(R.string.adding_whitelist_contact_error), Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-        mainModel.getToFolderStatus().observe(this, new Observer<ResponseStatus>() {
-            @Override
-            public void onChanged(@Nullable ResponseStatus responseStatus) {
-                Activity activity = getActivity();
-                if (activity != null) {
-                    activity.onBackPressed();
-                }
+        mainModel.getToFolderStatus().observe(this, responseStatus -> {
+            Activity activity1 = getActivity();
+            if (activity1 != null) {
+                activity1.onBackPressed();
             }
         });
 
@@ -391,12 +376,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
 
     private void snackbarDelete(final String folder, String message) {
         Snackbar snackbar = Snackbar.make(messageActionsLayout, message, Snackbar.LENGTH_SHORT);
-        snackbar.setAction(getString(R.string.action_undo), new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                blockUI();
-            }
-        });
+        snackbar.setAction(getString(R.string.action_undo), view -> blockUI());
         snackbar.addCallback(new BaseTransientBottomBar.BaseCallback<Snackbar>() {
             @Override
             public void onDismissed(Snackbar transientBottomBar, int event) {
@@ -420,12 +400,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
 
     private void snackbarMove(final String folder, String message) {
         Snackbar snackbar = Snackbar.make(messageActionsLayout, message, Snackbar.LENGTH_SHORT);
-        snackbar.setAction(getString(R.string.action_undo), new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                blockUI();
-            }
-        });
+        snackbar.setAction(getString(R.string.action_undo), view -> blockUI());
         snackbar.addCallback(new BaseTransientBottomBar.BaseCallback<Snackbar>() {
             @Override
             public void onDismissed(Snackbar transientBottomBar, int event) {
@@ -505,7 +480,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
         Bundle extras = new Bundle();
         AttachmentsEntity attachmentsEntity = withAttachments
                 ? new AttachmentsEntity(lastMessage.getAttachments())
-                : new AttachmentsEntity(Collections.<AttachmentProvider>emptyList());
+                : new AttachmentsEntity(Collections.emptyList());
         extras.putSerializable(ATTACHMENT_LIST, attachmentsEntity);
         intentForward.putExtras(extras);
 
@@ -589,19 +564,9 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
                 AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
                 alertDialog.setTitle(getString(R.string.forward_attachments));
                 alertDialog.setMessage(getString(R.string.forward_attachments_description));
-                alertDialog.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                forwardMessage(true);
-                            }
-                        }
+                alertDialog.setPositiveButton(getString(R.string.yes), (dialog, which) -> forwardMessage(true)
                 );
-                alertDialog.setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                forwardMessage(false);
-                            }
-                        }
+                alertDialog.setNegativeButton(getString(R.string.no), (dialog, which) -> forwardMessage(false)
                 );
                 alertDialog.show();
                 break;
@@ -657,5 +622,5 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
                 Timber.i(e);
             }
         }
-    };
+    }
 }

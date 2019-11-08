@@ -1,17 +1,14 @@
 package mobileapp.ctemplar.com.ctemplarapp.settings;
 
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.design.widget.TextInputLayout;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.AppCompatCheckBox;
-import android.support.v7.widget.Toolbar;
+import com.google.android.material.textfield.TextInputLayout;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.AppCompatCheckBox;
+import androidx.appcompat.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -85,19 +82,9 @@ public class ChangePasswordActivity extends BaseActivity {
         userCurrentPassword = CTemplarApp.getInstance()
                 .getSharedPreferences("pref_user", Context.MODE_PRIVATE).getString("key_password", null);
 
-        changePasswordModel.getResponseStatus().observe(this, new Observer<ResponseStatus>() {
-            @Override
-            public void onChanged(@Nullable ResponseStatus responseStatus) {
-                handleResponse(responseStatus);
-            }
-        });
+        changePasswordModel.getResponseStatus().observe(this, this::handleResponse);
 
-        changePasswordModel.getActionsStatus().observe(this, new Observer<MainActivityActions>() {
-            @Override
-            public void onChanged(@Nullable MainActivityActions mainActivityActions) {
-                handleMainActions(mainActivityActions);
-            }
-        });
+        changePasswordModel.getActionsStatus().observe(this, this::handleMainActions);
 
         setListeners();
     }
@@ -148,13 +135,10 @@ public class ChangePasswordActivity extends BaseActivity {
             new AlertDialog.Builder(this)
                     .setTitle(getResources().getString(R.string.dialog_change_password))
                     .setMessage(alertMessage)
-                    .setPositiveButton(getResources().getString(R.string.btn_change), new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    changePasswordModel.changePassword(currentPassword, newPassword, resetData);
-                                    dialogState(true);
-                                }
-                            }
+                    .setPositiveButton(getResources().getString(R.string.btn_change), (dialog, which) -> {
+                        changePasswordModel.changePassword(currentPassword, newPassword, resetData);
+                        dialogState(true);
+                    }
                     )
                     .setNeutralButton(getResources().getString(R.string.btn_cancel), null)
                     .show();

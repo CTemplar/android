@@ -2,22 +2,20 @@ package mobileapp.ctemplar.com.ctemplarapp.message;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
-import android.content.DialogInterface;
+import androidx.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.preference.PreferenceManager;
-import android.support.v7.widget.AppCompatMultiAutoCompleteTextView;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.appcompat.app.AlertDialog;
+import androidx.preference.PreferenceManager;
+import androidx.appcompat.widget.AppCompatMultiAutoCompleteTextView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.text.Editable;
 import android.text.Html;
 import android.text.Spanned;
@@ -54,12 +52,9 @@ import mobileapp.ctemplar.com.ctemplarapp.net.entity.AttachmentsEntity;
 import mobileapp.ctemplar.com.ctemplarapp.net.entity.PGPKeyEntity;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.PublicKeysRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SendMessageRequest;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.KeyResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.KeyResult;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.EncryptionMessage;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessageAttachment;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResult;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.MyselfResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.MyselfResult;
 import mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.AttachmentEntity;
@@ -531,200 +526,158 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         }
 
         // Load contacts for autocomplete
-        sendModel.getContactsResponse().observe(this, new Observer<List<Contact>>() {
-            @Override
-            public void onChanged(@Nullable List<Contact> contactList) {
-                if (contactList != null) {
-                    handleContactsList(contactList);
-                }
+        sendModel.getContactsResponse().observe(this, contactList -> {
+            if (contactList != null) {
+                handleContactsList(contactList);
             }
         });
         sendModel.getContacts(200, 0);
 
         // Load keys before sending message
-        sendModel.getKeyResponse().observe(this, new Observer<KeyResponse>() {
-            @Override
-            public void onChanged(@Nullable KeyResponse keyResponse) {
-                if (keyResponse != null && keyResponse.getKeyResult() != null && keyResponse.getKeyResult().length > 0) {
-                    publicKeyList = new ArrayList<>();
-                    for (KeyResult key : keyResponse.getKeyResult()) {
-                        String emailPublicKey = key.getPublicKey();
-                        publicKeyList.add(emailPublicKey);
-                    }
-                    sendMessage();
+        sendModel.getKeyResponse().observe(this, keyResponse -> {
+            if (keyResponse != null && keyResponse.getKeyResult() != null && keyResponse.getKeyResult().length > 0) {
+                publicKeyList = new ArrayList<>();
+                for (KeyResult key : keyResponse.getKeyResult()) {
+                    String emailPublicKey = key.getPublicKey();
+                    publicKeyList.add(emailPublicKey);
                 }
+                sendMessage();
             }
         });
 
         // checking for attachment updates when sending
-        sendModel.getUpdateAttachmentStatus().observe(this, new Observer<ResponseStatus>() {
-            @Override
-            public void onChanged(@Nullable ResponseStatus responseStatus) {
-                if (responseStatus == ResponseStatus.RESPONSE_COMPLETE) {
-                    List<MessageAttachment> attachmentList = messageSendAttachmentAdapter.getAttachmentList();
-                    int attachmentListSize = attachmentList.size();
-                    if (updateAttachmentPosition < attachmentListSize) {
-                        new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                updateAttachments();
-                                updateAttachmentPosition++;
-                            }
-                        }).start();
-                        return;
-                    } else {
-                        sendModel.updateMessage(currentMessageId, sendMessageRequest, publicKeyList);
-                    }
-                } else if (responseStatus == ResponseStatus.RESPONSE_ERROR_TOO_LARGE) {
-                    Toast.makeText(activity, getString(R.string.error_upload_attachment_too_large), Toast.LENGTH_SHORT).show();
-                } else if (responseStatus == ResponseStatus.RESPONSE_ERROR) {
-                    Toast.makeText(activity, getString(R.string.error_upload_attachment), Toast.LENGTH_SHORT).show();
+        sendModel.getUpdateAttachmentStatus().observe(this, responseStatus -> {
+            if (responseStatus == ResponseStatus.RESPONSE_COMPLETE) {
+                List<MessageAttachment> attachmentList = messageSendAttachmentAdapter.getAttachmentList();
+                int attachmentListSize = attachmentList.size();
+                if (updateAttachmentPosition < attachmentListSize) {
+                    new Thread(() -> {
+                        updateAttachments();
+                        updateAttachmentPosition++;
+                    }).start();
+                    return;
+                } else {
+                    sendModel.updateMessage(currentMessageId, sendMessageRequest, publicKeyList);
                 }
-
-                for (File cacheFile : cacheFileList) {
-                    cacheFile.delete();
-                }
-                if (sendingProgress != null) {
-                    sendingProgress.dismiss();
-                }
-
+            } else if (responseStatus == ResponseStatus.RESPONSE_ERROR_TOO_LARGE) {
+                Toast.makeText(activity, getString(R.string.error_upload_attachment_too_large), Toast.LENGTH_SHORT).show();
+            } else if (responseStatus == ResponseStatus.RESPONSE_ERROR) {
+                Toast.makeText(activity, getString(R.string.error_upload_attachment), Toast.LENGTH_SHORT).show();
             }
+
+            for (File cacheFile : cacheFileList) {
+                cacheFile.delete();
+            }
+            if (sendingProgress != null) {
+                sendingProgress.dismiss();
+            }
+
         });
 
-        sendModel.getGrabAttachmentStatus().observe(this, new Observer<Boolean>() {
-            @Override
-            public void onChanged(@Nullable Boolean aBoolean) {
-                messageAttachmentsProcessingTextView.setVisibility(View.GONE);
-                attachmentsProcessingEnabled = false;
-            }
+        sendModel.getGrabAttachmentStatus().observe(this, aBoolean -> {
+            messageAttachmentsProcessingTextView.setVisibility(View.GONE);
+            attachmentsProcessingEnabled = false;
         });
 
         sendModel.getMessagesResult()
-                .observe(this, new Observer<MessagesResult>() {
-                    @Override
-                    public void onChanged(@Nullable MessagesResult messagesResult) {
-                        if (sendingProgress != null && sendingProgress.isShowing()) {
-                            sendingProgress.dismiss();
-                        }
-                        if (messagesResult == null) {
-                            Toast.makeText(activity, getString(R.string.toast_message_not_sent), Toast.LENGTH_SHORT).show();
-                        } else {
-                            String folderName = messagesResult.getFolderName();
-                            if (!folderName.equals(MainFolderNames.DRAFT)) {
-                                finish();
-                            }
+                .observe(this, messagesResult -> {
+                    if (sendingProgress != null && sendingProgress.isShowing()) {
+                        sendingProgress.dismiss();
+                    }
+                    if (messagesResult == null) {
+                        Toast.makeText(activity, getString(R.string.toast_message_not_sent), Toast.LENGTH_SHORT).show();
+                    } else {
+                        String folderName = messagesResult.getFolderName();
+                        if (!folderName.equals(MainFolderNames.DRAFT)) {
+                            finish();
                         }
                     }
                 });
 
         sendModel.getCreateMessageStatus()
-                .observe(this, new Observer<ResponseStatus>() {
-                    @Override
-                    public void onChanged(@Nullable ResponseStatus responseStatus) {
-                        if (responseStatus == null || responseStatus == ResponseStatus.RESPONSE_ERROR) {
-                            Toast.makeText(activity, getResources().getString(R.string.toast_message_not_created), Toast.LENGTH_SHORT).show();
-                            finish();
-                        }
+                .observe(this, responseStatus -> {
+                    if (responseStatus == null || responseStatus == ResponseStatus.RESPONSE_ERROR) {
+                        Toast.makeText(activity, getResources().getString(R.string.toast_message_not_created), Toast.LENGTH_SHORT).show();
+                        finish();
                     }
                 });
 
         sendModel.getCreateMessageResponse()
-                .observe(this, new Observer<MessagesResult>() {
-                    @Override
-                    public void onChanged(@Nullable MessagesResult messagesResult) {
-                        if (messagesResult != null) {
-                            currentMessageId = messagesResult.getId();
-                            grabForwardedAttachments();
-                        } else {
-                            Toast.makeText(activity, getResources().getString(R.string.toast_message_not_created), Toast.LENGTH_SHORT).show();
-                            finish();
-                        }
+                .observe(this, messagesResult -> {
+                    if (messagesResult != null) {
+                        currentMessageId = messagesResult.getId();
+                        grabForwardedAttachments();
+                    } else {
+                        Toast.makeText(activity, getResources().getString(R.string.toast_message_not_created), Toast.LENGTH_SHORT).show();
+                        finish();
                     }
                 });
 
-        sendModel.getOpenMessageResponse().observe(this, new Observer<MessageEntity>() {
-            @Override
-            public void onChanged(@Nullable MessageEntity messageEntity) {
-                if (messageEntity != null) {
-                    loadMessageHandler(messageEntity);
-                } else {
-                    Toast.makeText(activity, getString(R.string.toast_message_not_loaded), Toast.LENGTH_SHORT).show();
-                    finish();
-                }
+        sendModel.getOpenMessageResponse().observe(this, messageEntity -> {
+            if (messageEntity != null) {
+                loadMessageHandler(messageEntity);
+            } else {
+                Toast.makeText(activity, getString(R.string.toast_message_not_loaded), Toast.LENGTH_SHORT).show();
+                finish();
             }
         });
 
         sendModel.getUploadAttachmentStatus()
-                .observe(this, new Observer<ResponseStatus>() {
-                    @Override
-                    public void onChanged(@Nullable ResponseStatus responseStatus) {
-                        if (responseStatus == ResponseStatus.RESPONSE_ERROR_TOO_LARGE) {
-                            Toast.makeText(activity, getString(R.string.error_upload_attachment_too_large), Toast.LENGTH_SHORT).show();
-                        } else if (responseStatus == ResponseStatus.RESPONSE_ERROR) {
-                            Toast.makeText(activity, getString(R.string.error_upload_attachment), Toast.LENGTH_SHORT).show();
-                        }
-                        if (uploadProgress != null) {
-                            uploadProgress.dismiss();
-                        }
+                .observe(this, responseStatus -> {
+                    if (responseStatus == ResponseStatus.RESPONSE_ERROR_TOO_LARGE) {
+                        Toast.makeText(activity, getString(R.string.error_upload_attachment_too_large), Toast.LENGTH_SHORT).show();
+                    } else if (responseStatus == ResponseStatus.RESPONSE_ERROR) {
+                        Toast.makeText(activity, getString(R.string.error_upload_attachment), Toast.LENGTH_SHORT).show();
+                    }
+                    if (uploadProgress != null) {
+                        uploadProgress.dismiss();
                     }
                 });
 
         sendModel.getUploadAttachmentResponse()
-                .observe(this, new Observer<MessageAttachment>() {
-                    @Override
-                    public void onChanged(@Nullable MessageAttachment messageAttachment) {
-                        if (messageAttachment != null) {
-                            messageSendAttachmentAdapter.addAttachment(messageAttachment);
-                            if (messageSendAttachmentAdapter.getItemCount() > 0) {
-                                sendMessageAttachmentIco.setSelected(true);
-                            }
+                .observe(this, messageAttachment -> {
+                    if (messageAttachment != null) {
+                        messageSendAttachmentAdapter.addAttachment(messageAttachment);
+                        if (messageSendAttachmentAdapter.getItemCount() > 0) {
+                            sendMessageAttachmentIco.setSelected(true);
                         }
-                        if (!cacheFileList.isEmpty()) {
-                            File cacheFile = cacheFileList.get(0);
-                            cacheFile.delete();
-                        }
+                    }
+                    if (!cacheFileList.isEmpty()) {
+                        File cacheFile = cacheFileList.get(0);
+                        cacheFile.delete();
                     }
                 });
 
         sendModel.getDeleteAttachmentStatus()
-                .observe(this, new Observer<ResponseStatus>() {
-                    @Override
-                    public void onChanged(@Nullable ResponseStatus responseStatus) {
-                        if (responseStatus == ResponseStatus.RESPONSE_COMPLETE) {
-                            int attachmentCount = messageSendAttachmentAdapter.getItemCount();
-                            if (attachmentCount < 1) {
-                                sendMessageAttachmentIco.setSelected(false);
-                            }
+                .observe(this, responseStatus -> {
+                    if (responseStatus == ResponseStatus.RESPONSE_COMPLETE) {
+                        int attachmentCount = messageSendAttachmentAdapter.getItemCount();
+                        if (attachmentCount < 1) {
+                            sendMessageAttachmentIco.setSelected(false);
                         }
                     }
                 });
 
         sendModel.getMessageEncryptionResult()
-                .observe(this, new Observer<MessagesResult>() {
-                    @Override
-                    public void onChanged(@Nullable MessagesResult messagesResult) {
-                        if (messagesResult != null) {
-                            messageEncryptionResult = messagesResult.getEncryption();
-                            if (messageEncryptionResult != null) {
-                                sendMessageEncryptIco.setSelected(true);
-                            }
+                .observe(this, messagesResult -> {
+                    if (messagesResult != null) {
+                        messageEncryptionResult = messagesResult.getEncryption();
+                        if (messageEncryptionResult != null) {
+                            sendMessageEncryptIco.setSelected(true);
                         }
                     }
                 });
 
         sendModel.getMySelfResponse()
-                .observe(this, new Observer<MyselfResponse>() {
-                    @Override
-                    public void onChanged(@Nullable MyselfResponse myselfResponse) {
-                        if (myselfResponse != null) {
-                            MyselfResult myself = myselfResponse.result[0];
-                            addSignature(myself.mailboxes[0].getSignature());
-                            isSubjectEncrypted = myself.settings.isSubjectEncrypted();
-                            String joinedDate = myself.joinedDate;
-                            boolean userTrial = AppUtils.twoWeeksTrial(joinedDate);
-                            boolean userPrime = myself.isPrime;
-                            userIsPrime = userPrime || userTrial;
-                        }
+                .observe(this, myselfResponse -> {
+                    if (myselfResponse != null) {
+                        MyselfResult myself = myselfResponse.result[0];
+                        addSignature(myself.mailboxes[0].getSignature());
+                        isSubjectEncrypted = myself.settings.isSubjectEncrypted();
+                        String joinedDate = myself.joinedDate;
+                        boolean userTrial = AppUtils.twoWeeksTrial(joinedDate);
+                        boolean userPrime = myself.isPrime;
+                        userIsPrime = userPrime || userTrial;
                     }
                 });
     }
@@ -888,41 +841,38 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
             sendMessageRequest.setAttachments(attachments);
         }
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                if (messageEncryptionResult != null) {
-                    String randomSecret = messageEncryptionResult.getRandomSecret();
-                    String password = messageEncryptionResult.getPassword();
+        new Thread(() -> {
+            if (messageEncryptionResult != null) {
+                String randomSecret = messageEncryptionResult.getRandomSecret();
+                String password = messageEncryptionResult.getPassword();
 
-                    PGPManager pgpManager = new PGPManager();
-                    PGPKeyEntity pgpKeyEntity = pgpManager.generateKeys(randomSecret, password);
-                    messageEncryptionResult.setPublicKey(pgpKeyEntity.getPublicKey());
-                    messageEncryptionResult.setPrivateKey(pgpKeyEntity.getPrivateKey());
+                PGPManager pgpManager = new PGPManager();
+                PGPKeyEntity pgpKeyEntity = pgpManager.generateKeys(randomSecret, password);
+                messageEncryptionResult.setPublicKey(pgpKeyEntity.getPublicKey());
+                messageEncryptionResult.setPrivateKey(pgpKeyEntity.getPrivateKey());
 
-                    publicKeyList.add(pgpKeyEntity.getPublicKey());
-                    sendMessageRequest.setEncryptionMessage(messageEncryptionResult);
-                }
-
-                MailboxEntity mailboxEntity = sendModel.getMailboxById(mailboxId);
-                String senderPublicKey = mailboxEntity.getPublicKey();
-                publicKeyList.add(senderPublicKey);
-
-                if (publicKeyList.contains(null) && messageEncryptionResult == null) {
-                    publicKeyList.clear();
-                } else if (publicKeyList.contains(null)) {
-                    publicKeyList.removeAll(Collections.singleton(null));
-                }
-
-                int attachmentCount = messageSendAttachmentAdapter.getItemCount();
-                if (attachmentCount > 0) {
-                    boolean needUpdate = updateAttachments();
-                    if (needUpdate) {
-                        return;
-                    }
-                }
-                sendModel.updateMessage(currentMessageId, sendMessageRequest, publicKeyList);
+                publicKeyList.add(pgpKeyEntity.getPublicKey());
+                sendMessageRequest.setEncryptionMessage(messageEncryptionResult);
             }
+
+            MailboxEntity mailboxEntity = sendModel.getMailboxById(mailboxId);
+            String senderPublicKey = mailboxEntity.getPublicKey();
+            publicKeyList.add(senderPublicKey);
+
+            if (publicKeyList.contains(null) && messageEncryptionResult == null) {
+                publicKeyList.clear();
+            } else if (publicKeyList.contains(null)) {
+                publicKeyList.removeAll(Collections.singleton(null));
+            }
+
+            int attachmentCount = messageSendAttachmentAdapter.getItemCount();
+            if (attachmentCount > 0) {
+                boolean needUpdate = updateAttachments();
+                if (needUpdate) {
+                    return;
+                }
+            }
+            sendModel.updateMessage(currentMessageId, sendMessageRequest, publicKeyList);
         }).start();
     }
 
@@ -1123,24 +1073,18 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         new AlertDialog.Builder(activity)
                 .setTitle(getResources().getString(R.string.dialog_discard_mail))
                 .setMessage(getResources().getString(R.string.dialog_discard_confirm))
-                .setPositiveButton(getResources().getString(R.string.dialog_save_in_drafts), new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                sendMessageToDraft();
-                                dialog.dismiss();
-                                finish();
-                            }
-                        }
+                .setPositiveButton(getResources().getString(R.string.dialog_save_in_drafts), (dialog, which) -> {
+                    sendMessageToDraft();
+                    dialog.dismiss();
+                    finish();
+                }
                 )
-                .setNegativeButton(getResources().getString(R.string.action_discard), new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                draftMessage = false;
-                                sendModel.deleteMessage(currentMessageId);
-                                dialog.dismiss();
-                                finish();
-                            }
-                        }
+                .setNegativeButton(getResources().getString(R.string.action_discard), (dialog, which) -> {
+                    draftMessage = false;
+                    sendModel.deleteMessage(currentMessageId);
+                    dialog.dismiss();
+                    finish();
+                }
                 )
                 .setNeutralButton(getResources().getString(R.string.action_cancel), null)
                 .show();

@@ -11,10 +11,9 @@ import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.content.FileProvider;
-import android.util.Log;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.content.FileProvider;
 import android.webkit.MimeTypeMap;
 
 import java.io.BufferedOutputStream;
@@ -29,6 +28,7 @@ import java.text.DecimalFormat;
 import java.util.Comparator;
 
 import okhttp3.ResponseBody;
+import timber.log.Timber;
 
 public class FileUtils {
     public static final String DOCUMENTS_DIR = "documents";
@@ -43,35 +43,26 @@ public class FileUtils {
     /**
      * File and folder comparator. TODO Expose sorting option method
      */
-    public static Comparator<File> sComparator = new Comparator<File>() {
-        @Override
-        public int compare(File f1, File f2) {
-            // Sort alphabetically by lower case, which is much cleaner
-            return f1.getName().toLowerCase().compareTo(
-                    f2.getName().toLowerCase());
-        }
+    public static Comparator<File> sComparator = (f1, f2) -> {
+        // Sort alphabetically by lower case, which is much cleaner
+        return f1.getName().toLowerCase().compareTo(
+                f2.getName().toLowerCase());
     };
     /**
      * File (not directories) filter.
      */
-    public static FileFilter sFileFilter = new FileFilter() {
-        @Override
-        public boolean accept(File file) {
-            final String fileName = file.getName();
-            // Return files only (not directories) and skip hidden files
-            return file.isFile() && !fileName.startsWith(HIDDEN_PREFIX);
-        }
+    public static FileFilter sFileFilter = file -> {
+        final String fileName = file.getName();
+        // Return files only (not directories) and skip hidden files
+        return file.isFile() && !fileName.startsWith(HIDDEN_PREFIX);
     };
     /**
      * Folder (directories) filter.
      */
-    public static FileFilter sDirFilter = new FileFilter() {
-        @Override
-        public boolean accept(File file) {
-            final String fileName = file.getName();
-            // Return directories only and skip hidden directories
-            return file.isDirectory() && !fileName.startsWith(HIDDEN_PREFIX);
-        }
+    public static FileFilter sDirFilter = file -> {
+        final String fileName = file.getName();
+        // Return directories only and skip hidden directories
+        return file.isDirectory() && !fileName.startsWith(HIDDEN_PREFIX);
     };
 
     private FileUtils() {
@@ -263,20 +254,16 @@ public class FileUtils {
     public static String getPath(final Context context, final Uri uri) {
 
         if (DEBUG)
-            Log.d(TAG + " File -",
-                    "Authority: " + uri.getAuthority() +
-                            ", Fragment: " + uri.getFragment() +
-                            ", Port: " + uri.getPort() +
-                            ", Query: " + uri.getQuery() +
-                            ", Scheme: " + uri.getScheme() +
-                            ", Host: " + uri.getHost() +
-                            ", Segments: " + uri.getPathSegments().toString()
-            );
-
-        final boolean isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
+            Timber.d("Authority: " + uri.getAuthority() +
+                    ", Fragment: " + uri.getFragment() +
+                    ", Port: " + uri.getPort() +
+                    ", Query: " + uri.getQuery() +
+                    ", Scheme: " + uri.getScheme() +
+                    ", Host: " + uri.getHost() +
+                    ", Segments: " + uri.getPathSegments().toString());
 
         // DocumentProvider
-        if (isKitKat && DocumentsContract.isDocumentUri(context, uri)) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT && DocumentsContract.isDocumentUri(context, uri)) {
             // LocalStorageProvider
             if (isLocalStorageDocument(uri)) {
                 // The path is the id
@@ -415,7 +402,7 @@ public class FileUtils {
                 }
             }
         }
-        return String.valueOf(dec.format(fileSize) + suffix);
+        return dec.format(fileSize) + suffix;
     }
 
     /**
@@ -506,10 +493,10 @@ public class FileUtils {
 
     private static void logDir(File dir) {
         if(!DEBUG) return;
-        Log.d(TAG, "Dir=" + dir);
+        Timber.d("Dir=%s", dir);
         File[] files = dir.listFiles();
         for (File file : files) {
-            Log.d(TAG, "File=" + file.getPath());
+            Timber.d("File=%s", file.getPath());
         }
     }
 
@@ -544,7 +531,7 @@ public class FileUtils {
                 return null;
             }
         } catch (IOException e) {
-            Log.w(TAG, e);
+            Timber.w(e);
             return null;
         }
 

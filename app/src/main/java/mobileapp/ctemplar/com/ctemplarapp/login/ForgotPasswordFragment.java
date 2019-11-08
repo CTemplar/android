@@ -1,15 +1,17 @@
 package mobileapp.ctemplar.com.ctemplarapp.login;
 
-import android.arch.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.design.widget.TextInputEditText;
-import android.support.design.widget.TextInputLayout;
+import androidx.annotation.Nullable;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
+
+import org.jetbrains.annotations.NotNull;
 
 import butterknife.BindInt;
 import butterknife.BindView;
@@ -47,7 +49,7 @@ public class ForgotPasswordFragment extends BaseFragment {
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NotNull Context context) {
         super.onAttach(context);
     }
 
@@ -58,7 +60,7 @@ public class ForgotPasswordFragment extends BaseFragment {
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NotNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         setListeners();
@@ -82,10 +84,10 @@ public class ForgotPasswordFragment extends BaseFragment {
     @OnClick(R.id.fragment_forgot_password_send_btn)
     public void onClickNext() {
         // handle error messages
-        handleClickError(editUsername.getText().toString(), editEmail.getText().toString());
+        handleClickError(EditTextUtils.getText(editUsername), EditTextUtils.getText(editEmail));
 
-        if(isValid(editUsername.getText().toString(), editEmail.getText().toString())) {
-            loginActivityModel.setRecoveryPassword(editUsername.getText().toString(), editEmail.getText().toString());
+        if(isValid(EditTextUtils.getText(editUsername), EditTextUtils.getText(editEmail))) {
+            loginActivityModel.setRecoveryPassword(EditTextUtils.getText(editUsername), EditTextUtils.getText(editEmail));
             loginActivityModel.changeAction(LoginActivityActions.CHANGE_FRAGMENT_CONFIRM_PASWORD);
         }
     }
@@ -132,12 +134,8 @@ public class ForgotPasswordFragment extends BaseFragment {
     }
 
     public boolean isValid(String username, String email) {
-        if(username.length() >= USERNAME_MIN && username.length() <= USERNAME_MAX && EditTextUtils.isTextValid(username)
-                && EditTextUtils.isEmailValid(email)) {
-            return true;
-        }
-
-        return false;
+        return username.length() >= USERNAME_MIN && username.length() <= USERNAME_MAX && EditTextUtils.isTextValid(username)
+                && EditTextUtils.isEmailValid(email);
     }
 
     private void handleClickError(String username, String email) {
@@ -163,7 +161,6 @@ public class ForgotPasswordFragment extends BaseFragment {
 
         if (!EditTextUtils.isTextValid(username)) {
             editUsernameLayout.setError(getResources().getString(R.string.error_username_incorrect));
-            return;
         }
     }
 

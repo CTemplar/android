@@ -1,8 +1,8 @@
 package mobileapp.ctemplar.com.ctemplarapp.folders;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.ViewModel;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
 
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
@@ -13,7 +13,6 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.Folders.FoldersResult;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.MyselfResponse;
 import mobileapp.ctemplar.com.ctemplarapp.repository.ManageFoldersRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
-import okhttp3.ResponseBody;
 import retrofit2.Response;
 import timber.log.Timber;
 
@@ -24,7 +23,7 @@ public class ManageFoldersViewModel extends ViewModel {
     private MutableLiveData<ResponseStatus> responseStatus = new MutableLiveData<>();
     private MutableLiveData<ResponseStatus> deletingStatus = new MutableLiveData<>();
     private MutableLiveData<FoldersResponse> foldersResponse = new MutableLiveData<>();
-    MutableLiveData<MyselfResponse> myselfResponse = new MutableLiveData<>();
+    private MutableLiveData<MyselfResponse> myselfResponse = new MutableLiveData<>();
 
     public MutableLiveData<FoldersResponse> getFoldersResponse() {
         return foldersResponse;

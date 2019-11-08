@@ -2,8 +2,8 @@ package mobileapp.ctemplar.com.ctemplarapp.utils;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.support.annotation.StringRes;
-import android.support.v7.app.AlertDialog;
+import androidx.annotation.StringRes;
+import androidx.appcompat.app.AlertDialog;
 
 public class DialogUtils {
     public static void showAlertDialog(Context context, @StringRes int titleResourceId, @StringRes int messageResourceId) {

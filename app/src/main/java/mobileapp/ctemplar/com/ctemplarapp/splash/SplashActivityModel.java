@@ -1,7 +1,7 @@
 package mobileapp.ctemplar.com.ctemplarapp.splash;
 
-import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.ViewModel;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
 
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
