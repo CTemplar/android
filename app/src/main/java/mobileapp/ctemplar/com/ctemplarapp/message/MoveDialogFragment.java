@@ -1,17 +1,16 @@
 package mobileapp.ctemplar.com.ctemplarapp.message;
 
 import android.app.Dialog;
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +22,7 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import java.util.List;
+import java.util.Objects;
 
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.folders.AddFolderActivity;
@@ -57,49 +57,33 @@ public class MoveDialogFragment extends DialogFragment {
         viewMessagesModel = ViewModelProviders.of(this).get(ViewMessagesViewModel.class);
         getCustomFolders();
 
-        viewMessagesModel.getFoldersResponse().observe(this, new Observer<FoldersResponse>() {
-            @Override
-            public void onChanged(@Nullable FoldersResponse foldersResponse) {
-                if (foldersResponse != null) {
-                    handleFoldersResponse(view, foldersResponse);
-                }
+        viewMessagesModel.getFoldersResponse().observe(this, foldersResponse -> {
+            if (foldersResponse != null) {
+                handleFoldersResponse(view, foldersResponse);
             }
         });
 
         ImageView closeDialog = view.findViewById(R.id.fragment_messages_move_dialog_close);
-        closeDialog.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dismiss();
-            }
-        });
+        closeDialog.setOnClickListener(v -> dismiss());
 
         Button buttonCancel = view.findViewById(R.id.fragment_messages_move_dialog_action_cancel);
-        buttonCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dismiss();
-            }
-        });
+        buttonCancel.setOnClickListener(v -> dismiss());
 
         Button buttonApply = view.findViewById(R.id.fragment_messages_move_dialog_action_apply);
-        buttonApply.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                RadioGroup foldersRadioGroup = view.findViewById(R.id.fragment_messages_move_dialog_group);
-                int checkedId = foldersRadioGroup.getCheckedRadioButtonId();
-                for (FoldersResult folderItem :
-                        customFoldersList) {
-                    if (checkedId == folderItem.getId()) {
-                        String folderName = folderItem.getName();
-                        viewMessagesModel.moveToFolder(parentMessageId, folderName);
-                        if (callback != null) {
-                            callback.onMove(folderName);
-                        }
-                        String toastMessage = getResources().getString(R.string.toast_message_moved_to, folderName);
-                        Toast.makeText(getActivity(), toastMessage, Toast.LENGTH_SHORT).show();
-                        dismiss();
+        buttonApply.setOnClickListener(v -> {
+            RadioGroup foldersRadioGroup = view.findViewById(R.id.fragment_messages_move_dialog_group);
+            int checkedId = foldersRadioGroup.getCheckedRadioButtonId();
+            for (FoldersResult folderItem :
+                    customFoldersList) {
+                if (checkedId == folderItem.getId()) {
+                    String folderName = folderItem.getName();
+                    viewMessagesModel.moveToFolder(parentMessageId, folderName);
+                    if (callback != null) {
+                        callback.onMove(folderName);
                     }
+                    String toastMessage = getResources().getString(R.string.toast_message_moved_to, folderName);
+                    Toast.makeText(getActivity(), toastMessage, Toast.LENGTH_SHORT).show();
+                    dismiss();
                 }
             }
         });
@@ -121,7 +105,7 @@ public class MoveDialogFragment extends DialogFragment {
             radioButton.setId((int) folderItem.getId());
             radioButton.setText(folderItem.getName());
 
-            Resources resources = getContext().getResources();
+            Resources resources = Objects.requireNonNull(getContext()).getResources();
             Drawable folderLeftDrawable = resources.getDrawable(R.drawable.ic_manage_folders);
             Drawable folderRightDrawable = resources.getDrawable(R.drawable.selector_check);
             folderLeftDrawable.mutate();
@@ -135,21 +119,15 @@ public class MoveDialogFragment extends DialogFragment {
 
         View addFolderLayout = inflater.inflate(R.layout.manage_folders_footer, foldersListLayout, false);
         Button addFolderButton = addFolderLayout.findViewById(R.id.manager_folders_footer_btn);
-        addFolderButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent addFolder = new Intent(getActivity(), AddFolderActivity.class);
-                startActivity(addFolder);
-            }
+        addFolderButton.setOnClickListener(v -> {
+            Intent addFolder = new Intent(getActivity(), AddFolderActivity.class);
+            startActivity(addFolder);
         });
         View manageFolderLayout = inflater.inflate(R.layout.item_manage_folders, foldersListLayout, false);
         Button manageFolderButton = manageFolderLayout.findViewById(R.id.manager_folders);
-        manageFolderButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent addFolder = new Intent(getActivity(), ManageFoldersActivity.class);
-                startActivity(addFolder);
-            }
+        manageFolderButton.setOnClickListener(v -> {
+            Intent addFolder = new Intent(getActivity(), ManageFoldersActivity.class);
+            startActivity(addFolder);
         });
 
         if (customFoldersList.isEmpty()) {

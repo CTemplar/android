@@ -2,9 +2,9 @@ package mobileapp.ctemplar.com.ctemplarapp.message;
 
 import android.app.Dialog;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.DialogFragment;
 import android.text.InputFilter;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -56,25 +56,19 @@ public class DeadMansDeliveryDialogFragment extends DialogFragment {
         });
 
         ImageView closeDialog = view.findViewById(R.id.fragment_dead_mans_dialog_close);
-        closeDialog.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onScheduleDeadMansDelivery.onSchedule(null);
-                dismiss();
-            }
+        closeDialog.setOnClickListener(v -> {
+            onScheduleDeadMansDelivery.onSchedule(null);
+            dismiss();
         });
 
         Button scheduleButton = view.findViewById(R.id.fragment_dead_mans_dialog_schedule);
-        scheduleButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String daysString = daysEditText.getText().toString();
-                String hoursString = hoursEditText.getText().toString();
-                long timer = getHours(daysString, hoursString);
+        scheduleButton.setOnClickListener(v -> {
+            String daysString = daysEditText.getText().toString();
+            String hoursString = hoursEditText.getText().toString();
+            long timer = getHours(daysString, hoursString);
 
-                onScheduleDeadMansDelivery.onSchedule(timer);
-                dismiss();
-            }
+            onScheduleDeadMansDelivery.onSchedule(timer);
+            dismiss();
         });
 
         return view;

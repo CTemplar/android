@@ -3,8 +3,8 @@ package mobileapp.ctemplar.com.ctemplarapp.folders;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,14 +36,11 @@ public class ManageFoldersAdapter extends RecyclerView.Adapter<ManageFoldersView
         holder.txtName.setText(folder.getName());
         final int folderColor = Color.parseColor(folder.getColor());
         holder.icoFolder.setColorFilter(folderColor, PorterDuff.Mode.SRC_IN);
-        holder.root.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent editFolder = new Intent(holder.root.getContext(), EditFolderActivity.class);
-                editFolder.putExtra(EditFolderActivity.ARG_ID, folder.getId());
-                editFolder.putExtra(EditFolderActivity.ARG_NAME, folder.getName());
-                holder.root.getContext().startActivity(editFolder);
-            }
+        holder.root.setOnClickListener(v -> {
+            Intent editFolder = new Intent(holder.root.getContext(), EditFolderActivity.class);
+            editFolder.putExtra(EditFolderActivity.ARG_ID, folder.getId());
+            editFolder.putExtra(EditFolderActivity.ARG_NAME, folder.getName());
+            holder.root.getContext().startActivity(editFolder);
         });
     }
 

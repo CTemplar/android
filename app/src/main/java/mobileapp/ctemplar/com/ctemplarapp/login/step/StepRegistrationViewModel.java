@@ -1,8 +1,8 @@
 package mobileapp.ctemplar.com.ctemplarapp.login.step;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.ViewModel;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
 
 import io.reactivex.Observable;
 import io.reactivex.Observer;
@@ -27,13 +27,13 @@ import timber.log.Timber;
 
 public class StepRegistrationViewModel extends ViewModel {
 
-    UserRepository userRepository = CTemplarApp.getUserRepository();
+    private UserRepository userRepository = CTemplarApp.getUserRepository();
 
-    SignUpRequest signUpRequest = new SignUpRequest();
-    MutableLiveData<StepRegistrationActions> actions = new SingleLiveEvent<>();
-    MutableLiveData<ResponseStatus> responseStatus = new MutableLiveData<>();
-    MutableLiveData<CaptchaResponse> captchaResponse = new MutableLiveData<>();
-    MutableLiveData<CaptchaVerifyResponse> captchaVerifyResponse = new MutableLiveData<>();
+    private SignUpRequest signUpRequest = new SignUpRequest();
+    private MutableLiveData<StepRegistrationActions> actions = new SingleLiveEvent<>();
+    private MutableLiveData<ResponseStatus> responseStatus = new MutableLiveData<>();
+    private MutableLiveData<CaptchaResponse> captchaResponse = new MutableLiveData<>();
+    private MutableLiveData<CaptchaVerifyResponse> captchaVerifyResponse = new MutableLiveData<>();
 
     public void changeAction(StepRegistrationActions action) {
         actions.postValue(action);
@@ -111,13 +111,10 @@ public class StepRegistrationViewModel extends ViewModel {
         EncodeUtils.getPGPKeyObservable(password)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .flatMap(new Function<PGPKeyEntity, Observable<SignUpResponse>>() {
-                    @Override
-                    public Observable<SignUpResponse> apply(PGPKeyEntity pgpKeyEntity) {
-                        generatePGPKeys(pgpKeyEntity);
-                        hashPassword();
-                        return userRepository.signUp(signUpRequest);
-                    }
+                .flatMap((Function<PGPKeyEntity, Observable<SignUpResponse>>) pgpKeyEntity -> {
+                    generatePGPKeys(pgpKeyEntity);
+                    hashPassword();
+                    return userRepository.signUp(signUpRequest);
                 }).subscribe(new Observer<SignUpResponse>() {
 
             @Override

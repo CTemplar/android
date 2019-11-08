@@ -2,12 +2,11 @@ package mobileapp.ctemplar.com.ctemplarapp;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.LayoutRes;
-import android.support.v4.app.Fragment;
+import androidx.annotation.LayoutRes;
+import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 
 import butterknife.ButterKnife;
 import butterknife.Unbinder;

@@ -1,20 +1,19 @@
 package mobileapp.ctemplar.com.ctemplarapp.login.step;
 
-import android.arch.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
-import android.support.design.widget.TextInputEditText;
-import android.support.design.widget.TextInputLayout;
-import android.support.v7.widget.AppCompatCheckBox;
+import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
+import androidx.appcompat.widget.AppCompatCheckBox;
 import android.text.Editable;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
-import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import org.jetbrains.annotations.NotNull;
@@ -59,7 +58,7 @@ public class StepPasswordFragment extends BaseFragment {
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NotNull Context context) {
         super.onAttach(context);
     }
 
@@ -95,20 +94,20 @@ public class StepPasswordFragment extends BaseFragment {
             editConfirmLayout.setError(getString(R.string.error_password_big));
             return;
         }
-        if(!TextUtils.equals(editConfirm.getText().toString(), editChoose.getText().toString())) {
+        if(!TextUtils.equals(EditTextUtils.getText(editConfirm), EditTextUtils.getText(editChoose))) {
             editConfirmLayout.setError(getString(R.string.error_password_not_match));
             return;
         }
         if (!recoveryEmailCheckBox.isChecked()) {
-            if (EditTextUtils.isEmailValid(editRecoveryEmail.getText().toString())) {
-                viewModel.setRecoveryEmail(editRecoveryEmail.getText().toString());
+            if (EditTextUtils.isEmailValid(EditTextUtils.getText(editRecoveryEmail))) {
+                viewModel.setRecoveryEmail(EditTextUtils.getText(editRecoveryEmail));
             } else {
                 editRecoveryEmailLayout.setError(getString(R.string.error_invalid_email));
                 return;
             }
         }
 
-        viewModel.setPassword(editChoose.getText().toString());
+        viewModel.setPassword(EditTextUtils.getText(editChoose));
         viewModel.changeAction(StepRegistrationActions.ACTION_NEXT);
     }
 
@@ -135,22 +134,14 @@ public class StepPasswordFragment extends BaseFragment {
         final Spanned shortHint = Html.fromHtml(getString(R.string.hint_step_email_recovery_short));
         final Spanned longHint = Html.fromHtml(getString(R.string.hint_step_email_recovery_long));
         recoveryEmailCheckText.setText(shortHint, TextView.BufferType.SPANNABLE);
-        recoveryEmailCheckText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                recoveryEmailCheckText.setText(
-                        v.isSelected() ? shortHint : longHint,
-                        TextView.BufferType.SPANNABLE
-                );
-                recoveryEmailCheckText.setSelected(!v.isSelected());
-            }
+        recoveryEmailCheckText.setOnClickListener(v -> {
+            recoveryEmailCheckText.setText(
+                    v.isSelected() ? shortHint : longHint,
+                    TextView.BufferType.SPANNABLE
+            );
+            recoveryEmailCheckText.setSelected(!v.isSelected());
         });
-        recoveryEmailCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                showRecoveryLayout(!isChecked);
-            }
-        });
+        recoveryEmailCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> showRecoveryLayout(!isChecked));
         editRecoveryEmail.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {

@@ -1,10 +1,10 @@
 package mobileapp.ctemplar.com.ctemplarapp.message;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.ViewModel;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -19,8 +19,6 @@ import java.util.List;
 
 import io.reactivex.Observer;
 import io.reactivex.Single;
-import io.reactivex.SingleEmitter;
-import io.reactivex.SingleOnSubscribe;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
@@ -320,17 +318,14 @@ public class SendMessageActivityViewModel extends ViewModel {
 
                     @Override
                     public void onNext(final ContactsResponse response) {
-                        new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                ContactData[] contacts = response.getResults();
-                                ContactData[] decryptedContacts = Contact.decryptContactData(contacts);
+                        new Thread(() -> {
+                            ContactData[] contacts = response.getResults();
+                            ContactData[] decryptedContacts = Contact.decryptContactData(contacts);
 
-                                contactsRepository.saveContacts(decryptedContacts);
-                                List<Contact> contactList = Contact.fromResponseResults(decryptedContacts);
+                            contactsRepository.saveContacts(decryptedContacts);
+                            List<Contact> contactList1 = Contact.fromResponseResults(decryptedContacts);
 
-                                contactsResponse.postValue(contactList);
-                            }
+                            contactsResponse.postValue(contactList1);
                         }).start();
                     }
 
@@ -495,20 +490,17 @@ public class SendMessageActivityViewModel extends ViewModel {
             @NonNull final List<AttachmentProvider> forwardedAttachments,
             final long messageId
     ) {
-        Single.create(new SingleOnSubscribe<Object>() {
-            @Override
-            public void subscribe(SingleEmitter<Object> emitter) throws Exception {
-                for (AttachmentProvider forwardedAttachment : forwardedAttachments) {
-                    MessageAttachment attachment = remakeAttachment(forwardedAttachment, messageId);
-                    if (attachment != null) {
-                        uploadAttachmentResponse.postValue(attachment);
-                    } else {
-                        Timber.e("grabForwardedAttachments uploaded attachment is null");
-                    }
+        Single.create(emitter -> {
+            for (AttachmentProvider forwardedAttachment : forwardedAttachments) {
+                MessageAttachment attachment = remakeAttachment(forwardedAttachment, messageId);
+                if (attachment != null) {
+                    uploadAttachmentResponse.postValue(attachment);
+                } else {
+                    Timber.e("grabForwardedAttachments uploaded attachment is null");
                 }
-                grabAttachmentStatus.postValue(true);
-                Timber.i("Grabbed all forwarded attachments");
             }
+            grabAttachmentStatus.postValue(true);
+            Timber.i("Grabbed all forwarded attachments");
         })
                 .subscribeOn(Schedulers.io())
                 .subscribe();

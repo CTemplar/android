@@ -1,9 +1,9 @@
 package mobileapp.ctemplar.com.ctemplarapp.message;
 
-import android.arch.lifecycle.ViewModelProviders;
-import android.support.annotation.NonNull;
-import android.support.v4.app.FragmentActivity;
-import android.support.v7.widget.RecyclerView;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentActivity;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,12 +43,7 @@ public class MessageSendAttachmentAdapter extends RecyclerView.Adapter<MessageSe
         final String fileName = AppUtils.getFileNameFromURL(documentLink);
 
         holder.txtName.setText(fileName);
-        holder.imgDelete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                deleteAttachment(messageAttachment);
-            }
-        });
+        holder.imgDelete.setOnClickListener(v -> deleteAttachment(messageAttachment));
     }
 
     @Override

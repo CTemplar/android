@@ -1,8 +1,8 @@
 package mobileapp.ctemplar.com.ctemplarapp;
 
 import android.app.Application;
-import android.arch.persistence.room.Room;
-import android.support.multidex.MultiDexApplication;
+import androidx.room.Room;
+import androidx.multidex.MultiDexApplication;
 
 import com.crashlytics.android.Crashlytics;
 

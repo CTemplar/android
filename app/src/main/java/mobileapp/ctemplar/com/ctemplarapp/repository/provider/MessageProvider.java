@@ -13,7 +13,6 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResult;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.UserDisplay;
 import mobileapp.ctemplar.com.ctemplarapp.repository.MailboxDao;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserStore;
-import mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.AttachmentEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MessageEntity;

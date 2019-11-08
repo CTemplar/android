@@ -1,8 +1,8 @@
 package mobileapp.ctemplar.com.ctemplarapp.main;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.ViewModel;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
 
 import java.util.List;
 
@@ -42,22 +42,22 @@ import timber.log.Timber;
 
 public class MainActivityViewModel extends ViewModel {
 
-    UserRepository userRepository;
-    ContactsRepository contactsRepository;
-    MessagesRepository messagesRepository;
-    ManageFoldersRepository manageFoldersRepository;
-    MutableLiveData<MainActivityActions> actions = new SingleLiveEvent<>();
-    MutableLiveData<DialogState> dialogState = new SingleLiveEvent<>();
-    MutableLiveData<ResponseStatus> responseStatus = new MutableLiveData<>();
-    MutableLiveData<ResponseMessagesData> messagesResponse = new MutableLiveData<>();
-    MutableLiveData<List<Contact>> contactsResponse = new MutableLiveData<>();
-    MutableLiveData<ResponseStatus> toFolderStatus = new MutableLiveData<>();
-    MutableLiveData<ResponseStatus> deleteSeveralMessagesStatus = new MutableLiveData<>();
+    private UserRepository userRepository;
+    private ContactsRepository contactsRepository;
+    private MessagesRepository messagesRepository;
+    private ManageFoldersRepository manageFoldersRepository;
+    private MutableLiveData<MainActivityActions> actions = new SingleLiveEvent<>();
+    private MutableLiveData<DialogState> dialogState = new SingleLiveEvent<>();
+    private MutableLiveData<ResponseStatus> responseStatus = new MutableLiveData<>();
+    private MutableLiveData<ResponseMessagesData> messagesResponse = new MutableLiveData<>();
+    private MutableLiveData<List<Contact>> contactsResponse = new MutableLiveData<>();
+    private MutableLiveData<ResponseStatus> toFolderStatus = new MutableLiveData<>();
+    private MutableLiveData<ResponseStatus> deleteSeveralMessagesStatus = new MutableLiveData<>();
+    private MutableLiveData<FoldersResponse> foldersResponse = new MutableLiveData<>();
+    private MutableLiveData<ResponseBody> unreadFoldersBody = new MutableLiveData<>();
+    private MutableLiveData<MyselfResponse> myselfResponse = new MutableLiveData<>();
     MutableLiveData<String> currentFolder = new MutableLiveData<>();
     MutableLiveData<SignInResponse> signResponse = new MutableLiveData<>();
-    MutableLiveData<FoldersResponse> foldersResponse = new MutableLiveData<>();
-    MutableLiveData<ResponseBody> unreadFoldersBody = new MutableLiveData<>();
-    private MutableLiveData<MyselfResponse> myselfResponse = new MutableLiveData<>();
 
     public MainActivityViewModel() {
         userRepository = CTemplarApp.getUserRepository();

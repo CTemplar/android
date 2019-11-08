@@ -1,16 +1,18 @@
 package mobileapp.ctemplar.com.ctemplarapp.login;
 
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
+
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
 
 import butterknife.BindView;
 import mobileapp.ctemplar.com.ctemplarapp.BaseFragment;
@@ -49,18 +51,8 @@ public class LoginActivity extends BaseFragmentActivity {
         super.onCreate(savedState);
 
         loginViewModel = ViewModelProviders.of(this).get(LoginActivityViewModel.class);
-        loginViewModel.getActionStatus().observe(this, new Observer<LoginActivityActions>() {
-            @Override
-            public void onChanged(@Nullable LoginActivityActions actions) {
-                handleActions(actions);
-            }
-        });
-        loginViewModel.getDialogState().observe(this, new Observer<DialogState>() {
-            @Override
-            public void onChanged(@Nullable DialogState dialogState) {
-                handleDialogState(dialogState);
-            }
-        });
+        loginViewModel.getActionStatus().observe(this, this::handleActions);
+        loginViewModel.getDialogState().observe(this, this::handleDialogState);
     }
 
     public void blockUI() {
@@ -127,7 +119,7 @@ public class LoginActivity extends BaseFragmentActivity {
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    protected void onSaveInstanceState(@NotNull Bundle outState) {
         if (isPortrait2Landscape()) {
             remove_fragments();
         }
@@ -135,7 +127,10 @@ public class LoginActivity extends BaseFragmentActivity {
     }
 
     private void remove_fragments() {
-        getSupportFragmentManager().beginTransaction().remove(getSupportFragmentManager().findFragmentById(mContentFrame.getId())).commit();
+        getSupportFragmentManager()
+                .beginTransaction()
+                .remove(Objects.requireNonNull(getSupportFragmentManager().findFragmentById(mContentFrame.getId())))
+                .commit();
     }
 
     private boolean isPortrait2Landscape() {

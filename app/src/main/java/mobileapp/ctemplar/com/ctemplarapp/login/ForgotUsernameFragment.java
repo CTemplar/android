@@ -2,8 +2,10 @@ package mobileapp.ctemplar.com.ctemplarapp.login;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.view.View;
+
+import org.jetbrains.annotations.NotNull;
 
 import butterknife.OnClick;
 import mobileapp.ctemplar.com.ctemplarapp.BaseFragment;
@@ -17,7 +19,7 @@ public class ForgotUsernameFragment extends BaseFragment {
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NotNull Context context) {
         super.onAttach(context);
     }
 
@@ -26,7 +28,7 @@ public class ForgotUsernameFragment extends BaseFragment {
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NotNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
     }
 

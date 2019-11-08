@@ -2,9 +2,9 @@ package mobileapp.ctemplar.com.ctemplarapp.message;
 
 import android.app.Dialog;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.DialogFragment;
 import android.text.InputFilter;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -62,42 +62,36 @@ public class EncryptMessageDialogFragment extends DialogFragment {
         });
 
         ImageView closeDialog = view.findViewById(R.id.fragment_encrypt_message_dialog_close);
-        closeDialog.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onSetEncryptMessagePassword.onSet(null, null, null);
-                dismiss();
-            }
+        closeDialog.setOnClickListener(v -> {
+            onSetEncryptMessagePassword.onSet(null, null, null);
+            dismiss();
         });
 
         Button encryptButton = view.findViewById(R.id.fragment_encrypt_message_dialog_encrypt);
-        encryptButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String messagePassword = messagePasswordEditText.getText().toString();
-                String messagePasswordConfirm = messagePasswordConfirmEditText.getText().toString();
-                String messagePasswordHint = messagePasswordHintEditText.getText().toString();
-                String messagePasswordExpireDays = messagePasswordExpireDaysEditText.getText().toString();
-                String messagePasswordExpireHours = messagePasswordExpireHoursEditText.getText().toString();
+        encryptButton.setOnClickListener(v -> {
+            String messagePassword = messagePasswordEditText.getText().toString();
+            String messagePasswordConfirm = messagePasswordConfirmEditText.getText().toString();
+            String messagePasswordHint = messagePasswordHintEditText.getText().toString();
+            String messagePasswordExpireDays = messagePasswordExpireDaysEditText.getText().toString();
+            String messagePasswordExpireHours = messagePasswordExpireHoursEditText.getText().toString();
 
-                int expire = getHours(messagePasswordExpireDays, messagePasswordExpireHours);
+            int expire = getHours(messagePasswordExpireDays, messagePasswordExpireHours);
 
-                if (!EditTextUtils.isTextLength(messagePassword, 10, 30)) {
-                    Toast.makeText(getActivity(), getString(R.string.error_password_message), Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                if (!TextUtils.equals(messagePassword, messagePasswordConfirm)) {
-                    Toast.makeText(getActivity(), getString(R.string.error_password_not_match), Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                onSetEncryptMessagePassword.onSet(
-                        messagePassword,
-                        messagePasswordHint,
-                        expire
-                );
-                dismiss();
+            if (!EditTextUtils.isTextLength(messagePassword, 10, 30)) {
+                Toast.makeText(getActivity(), getString(R.string.error_password_message), Toast.LENGTH_SHORT).show();
+                return;
             }
+            if (!TextUtils.equals(messagePassword, messagePasswordConfirm)) {
+                Toast.makeText(getActivity(), getString(R.string.error_password_not_match), Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            onSetEncryptMessagePassword.onSet(
+                    messagePassword,
+                    messagePasswordHint,
+                    expire
+            );
+            dismiss();
         });
 
         return view;

@@ -1,7 +1,8 @@
 package mobileapp.ctemplar.com.ctemplarapp.login.step;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
-import android.support.v4.view.ViewPager;
+import androidx.viewpager.widget.ViewPager;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
@@ -20,9 +21,15 @@ public class ViewPagerNoScroll extends ViewPager {
         return false;
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         // Never allow swiping to switch between pages
         return false;
+    }
+
+    @Override
+    public boolean performClick() {
+        return super.performClick();
     }
 }

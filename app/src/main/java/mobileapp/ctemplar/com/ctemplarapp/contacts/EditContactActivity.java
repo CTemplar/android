@@ -1,11 +1,9 @@
 package mobileapp.ctemplar.com.ctemplarapp.contacts;
 
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProviders;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.ActionBar;
-import android.support.v7.widget.Toolbar;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.Toolbar;
 import android.util.Patterns;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -67,19 +65,11 @@ public class EditContactActivity extends BaseActivity {
         }
 
         viewModel = ViewModelProviders.of(this).get(EditContactViewModel.class);
-        viewModel.getResponseStatus().observe(this, new Observer<ResponseStatus>() {
-            @Override
-            public void onChanged(@Nullable ResponseStatus responseStatus) {
-                handleResponse(responseStatus);
-            }
-        });
-        viewModel.getContactResponse().observe(this, new Observer<Contact>() {
-            @Override
-            public void onChanged(@Nullable Contact contact) {
-                if (contact != null) {
-                    fillFields(contact);
-                    progressBar.setVisibility(View.GONE);
-                }
+        viewModel.getResponseStatus().observe(this, this::handleResponse);
+        viewModel.getContactResponse().observe(this, contact -> {
+            if (contact != null) {
+                fillFields(contact);
+                progressBar.setVisibility(View.GONE);
             }
         });
 
@@ -170,5 +160,4 @@ public class EditContactActivity extends BaseActivity {
 
         viewModel.updateContact(contactData);
     }
-
 }

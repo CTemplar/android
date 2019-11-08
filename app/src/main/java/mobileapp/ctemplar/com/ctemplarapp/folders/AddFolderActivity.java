@@ -1,10 +1,8 @@
 package mobileapp.ctemplar.com.ctemplarapp.folders;
 
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProviders;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.Toolbar;
+import androidx.appcompat.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.MenuItem;
@@ -65,15 +63,12 @@ public class AddFolderActivity extends BaseActivity {
         }
 
         addFolderModel = ViewModelProviders.of(this).get(AddFolderViewModel.class);
-        addFolderModel.getResponseStatus().observe(this, new Observer<ResponseStatus>() {
-            @Override
-            public void onChanged(@Nullable ResponseStatus responseStatus) {
-                if (responseStatus == null || responseStatus == ResponseStatus.RESPONSE_ERROR) {
-                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.toast_folder_not_created), Toast.LENGTH_SHORT).show();
-                } else if (responseStatus == ResponseStatus.RESPONSE_COMPLETE) {
-                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.toast_folder_created), Toast.LENGTH_SHORT).show();
-                    onBackPressed();
-                }
+        addFolderModel.getResponseStatus().observe(this, responseStatus -> {
+            if (responseStatus == null || responseStatus == ResponseStatus.RESPONSE_ERROR) {
+                Toast.makeText(getApplicationContext(), getResources().getString(R.string.toast_folder_not_created), Toast.LENGTH_SHORT).show();
+            } else if (responseStatus == ResponseStatus.RESPONSE_COMPLETE) {
+                Toast.makeText(getApplicationContext(), getResources().getString(R.string.toast_folder_created), Toast.LENGTH_SHORT).show();
+                onBackPressed();
             }
         });
         editTextFolderName.addTextChangedListener(new TextWatcher() {

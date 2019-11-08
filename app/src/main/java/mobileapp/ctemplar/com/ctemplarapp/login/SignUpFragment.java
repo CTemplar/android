@@ -1,14 +1,16 @@
 package mobileapp.ctemplar.com.ctemplarapp.login;
 
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 import android.view.View;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
+import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -27,7 +29,7 @@ public class SignUpFragment extends BaseFragment{
     @BindView(R.id.fragment_sign_up_view_pager)
     ViewPagerNoScroll viewPager;
 
-    StepRegistrationViewModel stepModel;
+    private StepRegistrationViewModel stepModel;
 
     @Override
     protected int getLayoutId() {
@@ -35,7 +37,7 @@ public class SignUpFragment extends BaseFragment{
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NotNull Context context) {
         super.onAttach(context);
     }
 
@@ -44,7 +46,7 @@ public class SignUpFragment extends BaseFragment{
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NotNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         ArrayList<Fragment> list = new ArrayList<>();
@@ -56,12 +58,7 @@ public class SignUpFragment extends BaseFragment{
         viewPager.setOnTouchListener(null);
 
         stepModel = ViewModelProviders.of(getActivity()).get(StepRegistrationViewModel.class);
-        stepModel.getAction().observe(this, new Observer<StepRegistrationActions>() {
-            @Override
-            public void onChanged(@Nullable StepRegistrationActions stepRegistrationActions) {
-                handleRegistrationActions(stepRegistrationActions);
-            }
-        });
+        stepModel.getAction().observe(this, this::handleRegistrationActions);
     }
 
     @Override
@@ -89,7 +86,7 @@ public class SignUpFragment extends BaseFragment{
     }
 
     public void onNextPressed() {
-        if(viewPager.getCurrentItem() != viewPager.getAdapter().getCount() -1) {
+        if(viewPager.getCurrentItem() != Objects.requireNonNull(viewPager.getAdapter()).getCount() -1) {
             viewPager.setCurrentItem(viewPager.getCurrentItem() + 1);
         }
     }
