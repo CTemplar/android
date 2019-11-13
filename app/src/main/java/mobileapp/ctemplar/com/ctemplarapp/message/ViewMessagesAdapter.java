@@ -196,17 +196,19 @@ public class ViewMessagesAdapter extends BaseAdapter {
             collapsedReplyMessageImageView.setImageResource(R.drawable.ic_forward_message);
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            contentWebView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
-        } else {
-            contentWebView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-        }
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+//            contentWebView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+//        } else {
+//            contentWebView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+//        }
 
         // display message
         if (isHtml) {
-            String messageWithStyle = "<style type=\"text/css\">*{width:auto;}</style>" + message;
+            String messageWithStyle = "<style type=\"text/css\">*{max-width:100%;}</style>" + message;
             String encodedContent = Base64.encodeToString(messageWithStyle.getBytes(), Base64.NO_PADDING);
             contentWebView.getSettings().setLoadWithOverviewMode(true);
+            contentWebView.getSettings().setBuiltInZoomControls(true);
+            //contentWebView.getSettings().setDomStorageEnabled(true);
             contentWebView.loadData(encodedContent, "text/html", "base64");
         } else {
             contentText.setText(Html.fromHtml(message));
