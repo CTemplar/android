@@ -1,14 +1,14 @@
 package mobileapp.ctemplar.com.ctemplarapp.main;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -63,7 +63,7 @@ public class MainFragment extends Fragment {
         showFragment(inboxFragment);
     }
 
-    public void showFragment(Fragment fragment) {
+    private void showFragment(Fragment fragment) {
         FragmentManager fragmentManager = getFragmentManager();
         if (fragmentManager == null) {
             Timber.tag(TAG).e("FragmentManager is null");
@@ -83,25 +83,23 @@ public class MainFragment extends Fragment {
         return fragmentManager.findFragmentById(contentLayoutId);
     }
 
-    public void showFragmentByFolder(String folder) {
+    void showFragmentByFolder(String folder) {
         if (folder == null) {
             return;
         }
         Fragment currentFragment = getCurrentFragment();
-        switch (folder) {
-            case MainFolderNames.CONTACT:
-                if (!(currentFragment instanceof ContactFragment)) {
-                    showFragment(contactFragment);
-                }
-                break;
-            default:
-                if (!(currentFragment instanceof InboxFragment)) {
-                    showFragment(inboxFragment);
-                }
+        if (MainFolderNames.CONTACT.equals(folder)) {
+            if (!(currentFragment instanceof ContactFragment)) {
+                showFragment(contactFragment);
+            }
+        } else {
+            if (!(currentFragment instanceof InboxFragment)) {
+                showFragment(inboxFragment);
+            }
         }
     }
 
-    public void clearListAdapter() {
+    void clearListAdapter() {
         inboxFragment.clearListAdapter();
     }
 }

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/colorWhiteLight">
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/fragment_send_message_title_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -54,7 +54,7 @@
             android:layout_marginEnd="12dp"
             android:contentDescription="Send message" />
 
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <View
         android:id="@+id/spacerFieldFrom"
@@ -131,7 +131,7 @@
             android:layout_marginLeft="15dp"
             android:layout_marginStart="15dp" />
 
-        <android.support.v7.widget.AppCompatMultiAutoCompleteTextView
+        <androidx.appcompat.widget.AppCompatMultiAutoCompleteTextView
             android:id="@+id/fragment_send_message_to_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -192,7 +192,7 @@
             android:layout_marginLeft="15dp"
             android:layout_marginStart="15dp" />
 
-        <android.support.v7.widget.AppCompatMultiAutoCompleteTextView
+        <androidx.appcompat.widget.AppCompatMultiAutoCompleteTextView
             android:id="@+id/fragment_send_message_cc_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -240,7 +240,7 @@
             android:layout_marginLeft="15dp"
             android:layout_marginStart="15dp" />
 
-        <android.support.v7.widget.AppCompatMultiAutoCompleteTextView
+        <androidx.appcompat.widget.AppCompatMultiAutoCompleteTextView
             android:id="@+id/fragment_send_message_bcc_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -278,7 +278,7 @@
         app:layout_constraintTop_toBottomOf="@id/spacerFieldSubject"
         android:minHeight="44dp">
 
-        <android.support.design.widget.TextInputEditText
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/fragment_send_message_subject_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -415,7 +415,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <android.support.design.widget.TextInputLayout
+        <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/fragment_send_message_compose_email_input_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -427,7 +427,7 @@
             app:passwordToggleEnabled="true"
             app:passwordToggleTint="@color/colorDarkBlue">
 
-                <android.support.design.widget.TextInputEditText
+                <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/fragment_send_message_compose_email_input"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -441,7 +441,7 @@
                     android:background="@android:color/transparent"
                     android:gravity="top"/>
 
-        </android.support.design.widget.TextInputLayout>
+        </com.google.android.material.textfield.TextInputLayout>
 
         <TextView
             android:id="@+id/fragment_send_message_attachments_processing_text_view"
@@ -457,7 +457,7 @@
             android:textColor="@color/colorGrey"
             android:text="@string/txt_attachments_in_processing" />
 
-        <android.support.v7.widget.RecyclerView
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/fragment_send_message_attachments"
             android:paddingLeft="12dp"
             android:paddingRight="12dp"
@@ -468,12 +468,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             tools:listitem="@layout/item_message_attachment_send"
-            app:layoutManager="android.support.v7.widget.LinearLayoutManager">
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager">
 
-        </android.support.v7.widget.RecyclerView>
+        </androidx.recyclerview.widget.RecyclerView>
 
     </RelativeLayout>
 
     </ScrollView>
 
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

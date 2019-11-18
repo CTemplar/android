@@ -3,8 +3,8 @@ package mobileapp.ctemplar.com.ctemplarapp.main;
 import android.graphics.Typeface;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -83,12 +83,7 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesView
     public void onBindViewHolder(@NonNull final InboxMessagesViewHolder holder, int position) {
         if (position == getItemCount() - 1 && onReachedBottomCallback != null) {
             if (onReachedBottomCallbackHandler != null) {
-                onReachedBottomCallbackHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        onReachedBottomCallback.onReachedBottom();
-                    }
-                });
+                onReachedBottomCallbackHandler.post(() -> onReachedBottomCallback.onReachedBottom());
             } else {
                 onReachedBottomCallback.onReachedBottom();
             }
@@ -113,12 +108,7 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesView
             holder.txtUsername.setText(userDisplay.getEmail());
         }
 
-        holder.foreground.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onClickSubject.onNext(message.getId());
-            }
-        });
+        holder.foreground.setOnClickListener(v -> onClickSubject.onNext(message.getId()));
 
         // check for last action (reply, reply all, forward)
         String lastActionThread = message.getLastActionThread();
@@ -185,14 +175,11 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesView
             holder.txtDate.setText(creationDate);
         }
 
-        holder.imgStarredLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                boolean isStarred = !message.isStarred();
-                mainModel.markMessageIsStarred(message.getId(), isStarred);
-                message.setStarred(isStarred);
-                holder.imgStarred.setSelected(isStarred);
-            }
+        holder.imgStarredLayout.setOnClickListener(v -> {
+            boolean isStarred = !message.isStarred();
+            mainModel.markMessageIsStarred(message.getId(), isStarred);
+            message.setStarred(isStarred);
+            holder.imgStarred.setSelected(isStarred);
         });
 
         holder.imgStarred.setSelected(message.isStarred());

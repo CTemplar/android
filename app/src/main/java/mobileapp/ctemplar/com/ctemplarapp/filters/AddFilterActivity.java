@@ -1,12 +1,10 @@
 package mobileapp.ctemplar.com.ctemplarapp.filters;
 
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProviders;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.design.widget.TextInputEditText;
-import android.support.v7.app.ActionBar;
-import android.support.v7.widget.Toolbar;
+import com.google.android.material.textfield.TextInputEditText;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.MenuItem;
@@ -90,12 +88,9 @@ public class AddFilterActivity extends BaseActivity {
         );
         conditionSpinner.setAdapter(conditionsAdapter);
 
-        filtersModel.getFoldersResponse().observe(this, new Observer<FoldersResponse>() {
-            @Override
-            public void onChanged(@Nullable FoldersResponse foldersResponse) {
-                if (foldersResponse != null) {
-                    handleCustomFolders(foldersResponse);
-                }
+        filtersModel.getFoldersResponse().observe(this, foldersResponse -> {
+            if (foldersResponse != null) {
+                handleCustomFolders(foldersResponse);
             }
         });
         getCustomFolders();
@@ -121,12 +116,7 @@ public class AddFilterActivity extends BaseActivity {
         );
         filterFolderSpinner.setAdapter(foldersAdapter);
 
-        filtersModel.getAddFilterResponseStatus().observe(this, new Observer<ResponseStatus>() {
-            @Override
-            public void onChanged(@Nullable ResponseStatus responseStatus) {
-                handleAddFilterStatus(responseStatus);
-            }
-        });
+        filtersModel.getAddFilterResponseStatus().observe(this, this::handleAddFilterStatus);
     }
 
     private void handleAddFilterStatus(ResponseStatus responseStatus) {
@@ -144,8 +134,8 @@ public class AddFilterActivity extends BaseActivity {
 
     @OnClick(R.id.activity_add_filter_action_submit)
     public void onClickSubmit() {
-        String filterName = filterNameEditText.getText().toString();
-        String filterText = filterTextEditText.getText().toString();
+        String filterName = EditTextUtils.getText(filterNameEditText);
+        String filterText = EditTextUtils.getText(filterTextEditText);
         String selectedParameter = parameterSpinner.getSelectedItem().toString();
         String selectedCondition = conditionSpinner.getSelectedItem().toString();
         String selectedFolder = filterFolderSpinner.getSelectedItem().toString();

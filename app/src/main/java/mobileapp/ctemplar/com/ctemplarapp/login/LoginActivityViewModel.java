@@ -1,8 +1,8 @@
 package mobileapp.ctemplar.com.ctemplarapp.login;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.ViewModel;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
 
 import io.reactivex.Observable;
 import io.reactivex.Observer;
@@ -29,13 +29,13 @@ import timber.log.Timber;
 
 public class LoginActivityViewModel extends ViewModel {
 
-    UserRepository userRepository;
-    RecoverPasswordRequest recoverPasswordRequest;
+    private UserRepository userRepository;
+    private RecoverPasswordRequest recoverPasswordRequest;
 
-    MutableLiveData<LoginActivityActions> actions = new SingleLiveEvent<>();
-    MutableLiveData<DialogState> dialogState = new SingleLiveEvent<>();
-    MutableLiveData<ResponseStatus> responseStatus = new MutableLiveData<>();
-    MutableLiveData<ResponseStatus> addFirebaseTokenStatus = new MutableLiveData<>();
+    private MutableLiveData<LoginActivityActions> actions = new SingleLiveEvent<>();
+    private MutableLiveData<DialogState> dialogState = new SingleLiveEvent<>();
+    private MutableLiveData<ResponseStatus> responseStatus = new MutableLiveData<>();
+    private MutableLiveData<ResponseStatus> addFirebaseTokenStatus = new MutableLiveData<>();
 
     public LoginActivityViewModel() {
         userRepository = CTemplarApp.getUserRepository();
@@ -174,21 +174,18 @@ public class LoginActivityViewModel extends ViewModel {
         EncodeUtils.getPGPKeyObservable(recoverPasswordRequest.getPassword())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .flatMap(new Function<PGPKeyEntity, Observable<RecoverPasswordResponse>>() {
-                    @Override
-                    public Observable<RecoverPasswordResponse> apply(PGPKeyEntity pgpKeyEntity) throws Exception {
+                .flatMap((Function<PGPKeyEntity, Observable<RecoverPasswordResponse>>) pgpKeyEntity -> {
 
-                        recoverPasswordRequest.setPrivateKey(pgpKeyEntity.getPrivateKey());
-                        recoverPasswordRequest.setPublicKey(pgpKeyEntity.getPublicKey());
-                        recoverPasswordRequest.setPassword(
-                                EncodeUtils.generateHash(
-                                        recoverPasswordRequest.getUsername(),
-                                        recoverPasswordRequest.getPassword()
-                                )
-                        );
+                    recoverPasswordRequest.setPrivateKey(pgpKeyEntity.getPrivateKey());
+                    recoverPasswordRequest.setPublicKey(pgpKeyEntity.getPublicKey());
+                    recoverPasswordRequest.setPassword(
+                            EncodeUtils.generateHash(
+                                    recoverPasswordRequest.getUsername(),
+                                    recoverPasswordRequest.getPassword()
+                            )
+                    );
 
-                        return userRepository.resetPassword(recoverPasswordRequest);
-                    }
+                    return userRepository.resetPassword(recoverPasswordRequest);
                 }).subscribe(new Observer<RecoverPasswordResponse>() {
 
             @Override

@@ -1,7 +1,7 @@
 package mobileapp.ctemplar.com.ctemplarapp.filters;
 
-import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.ViewModel;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
 
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
@@ -26,23 +26,23 @@ public class FiltersViewModel extends ViewModel {
     private MutableLiveData<ResponseStatus> deleteFilterResponseStatus = new MutableLiveData<>();
     private MutableLiveData<ResponseStatus> editFilterResponseStatus = new MutableLiveData<>();
 
-    public MutableLiveData<FoldersResponse> getFoldersResponse() {
+    MutableLiveData<FoldersResponse> getFoldersResponse() {
         return foldersResponse;
     }
 
-    public MutableLiveData<FiltersResponse> getFiltersResponse() {
+    MutableLiveData<FiltersResponse> getFiltersResponse() {
         return filtersResponse;
     }
 
-    public MutableLiveData<ResponseStatus> getAddFilterResponseStatus() {
+    MutableLiveData<ResponseStatus> getAddFilterResponseStatus() {
         return addFilterResponseStatus;
     }
 
-    public MutableLiveData<ResponseStatus> getDeleteFilterResponseStatus() {
+    MutableLiveData<ResponseStatus> getDeleteFilterResponseStatus() {
         return deleteFilterResponseStatus;
     }
 
-    public MutableLiveData<ResponseStatus> getEditFilterResponseStatus() {
+    MutableLiveData<ResponseStatus> getEditFilterResponseStatus() {
         return editFilterResponseStatus;
     }
 
@@ -51,7 +51,7 @@ public class FiltersViewModel extends ViewModel {
         manageFoldersRepository = CTemplarApp.getManageFoldersRepository();
     }
 
-    public void getFilters() {
+    void getFilters() {
         userRepository.getFilterList()
                 .subscribe(new Observer<FiltersResponse>() {
                     @Override
@@ -76,7 +76,7 @@ public class FiltersViewModel extends ViewModel {
                 });
     }
 
-    public void addFilter(CustomFilterRequest customFilterRequest) {
+    void addFilter(CustomFilterRequest customFilterRequest) {
         userRepository.createFilter(customFilterRequest)
                 .subscribe(new Observer<FilterResult>() {
                     @Override
@@ -101,7 +101,7 @@ public class FiltersViewModel extends ViewModel {
                 });
     }
 
-    public void editFilter(long id, CustomFilterRequest customFilterRequest) {
+    void editFilter(long id, CustomFilterRequest customFilterRequest) {
         userRepository.updateFilter(id, customFilterRequest)
                 .subscribe(new Observer<FilterResult>() {
                     @Override
@@ -126,7 +126,7 @@ public class FiltersViewModel extends ViewModel {
                 });
     }
 
-    public void deleteFilter(long id) {
+    void deleteFilter(long id) {
         userRepository.deleteFilter(id)
                 .subscribe(new Observer<Response<Void>>() {
                     @Override

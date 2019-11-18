@@ -2,9 +2,9 @@ package mobileapp.ctemplar.com.ctemplarapp.main;
 
 import android.app.Dialog;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,42 +43,26 @@ public class FilterDialogFragment extends DialogFragment {
         final CheckBox checkBoxWithAttachment = view.findViewById(R.id.fragment_messages_filter_dialog_with_attachment);
 
         View buttonCancel = view.findViewById(R.id.fragment_messages_filter_dialog_action_cancel);
-        buttonCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dismiss();
-            }
-        });
+        buttonCancel.setOnClickListener(v -> dismiss());
 
         final ImageView closeDialog = view.findViewById(R.id.fragment_messages_filter_dialog_close);
-        closeDialog.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dismiss();
-            }
-        });
+        closeDialog.setOnClickListener(v -> dismiss());
 
         final TextView clearAllSelected = view.findViewById(R.id.fragment_messages_filter_dialog_clear_all);
-        clearAllSelected.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                checkBoxIsStarred.setChecked(false);
-                checkBoxIsUnread.setChecked(false);
-                checkBoxWithAttachment.setChecked(false);
-            }
+        clearAllSelected.setOnClickListener(v -> {
+            checkBoxIsStarred.setChecked(false);
+            checkBoxIsUnread.setChecked(false);
+            checkBoxWithAttachment.setChecked(false);
         });
 
         Button buttonApply = view.findViewById(R.id.fragment_messages_filter_dialog_action_apply);
-        buttonApply.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dismiss();
-                if (onApplyClickListener != null) {
-                    boolean isStarred = checkBoxIsStarred.isChecked();
-                    boolean isUnread = checkBoxIsUnread.isChecked();
-                    boolean withAttachment = checkBoxWithAttachment.isChecked();
-                    onApplyClickListener.onApply(isStarred, isUnread, withAttachment);
-                }
+        buttonApply.setOnClickListener(v -> {
+            dismiss();
+            if (onApplyClickListener != null) {
+                boolean isStarred = checkBoxIsStarred.isChecked();
+                boolean isUnread = checkBoxIsUnread.isChecked();
+                boolean withAttachment = checkBoxWithAttachment.isChecked();
+                onApplyClickListener.onApply(isStarred, isUnread, withAttachment);
             }
         });
 

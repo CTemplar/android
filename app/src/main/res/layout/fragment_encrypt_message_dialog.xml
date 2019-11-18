@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -82,7 +82,7 @@
                     android:textColor="@color/colorDarkBlue"
                     android:textSize="14sp" />
 
-                <android.support.design.widget.TextInputLayout
+                <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/fragment_encrypt_message_dialog_password_input_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -92,7 +92,7 @@
                     app:passwordToggleEnabled="true"
                     app:passwordToggleTint="@color/colorDarkBlue">
 
-                    <android.support.design.widget.TextInputEditText
+                    <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/fragment_encrypt_message_dialog_password_input"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -105,7 +105,7 @@
                         android:hint="@string/title_message_password"
                         android:background="@drawable/text_input_field" />
 
-                </android.support.design.widget.TextInputLayout>
+                </com.google.android.material.textfield.TextInputLayout>
 
             </LinearLayout>
 
@@ -124,7 +124,7 @@
                     android:textColor="@color/colorDarkBlue"
                     android:textSize="14sp" />
 
-                <android.support.design.widget.TextInputLayout
+                <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/fragment_encrypt_message_dialog_password_confirm_input_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -134,7 +134,7 @@
                     app:passwordToggleEnabled="true"
                     app:passwordToggleTint="@color/colorDarkBlue">
 
-                    <android.support.design.widget.TextInputEditText
+                    <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/fragment_encrypt_message_dialog_password_confirm_input"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -147,7 +147,7 @@
                         android:hint="@string/title_message_password_confirm"
                         android:background="@drawable/text_input_field" />
 
-                </android.support.design.widget.TextInputLayout>
+                </com.google.android.material.textfield.TextInputLayout>
 
             </LinearLayout>
 
@@ -166,7 +166,7 @@
                     android:textColor="@color/colorDarkBlue"
                     android:textSize="14sp" />
 
-                <android.support.design.widget.TextInputLayout
+                <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/fragment_encrypt_message_dialog_password_hint_input_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -176,7 +176,7 @@
                     app:passwordToggleEnabled="true"
                     app:passwordToggleTint="@color/colorDarkBlue">
 
-                    <android.support.design.widget.TextInputEditText
+                    <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/fragment_encrypt_message_dialog_password_hint_input"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -189,7 +189,7 @@
                         android:hint="@string/title_message_password_hint"
                         android:background="@drawable/text_input_field" />
 
-                </android.support.design.widget.TextInputLayout>
+                </com.google.android.material.textfield.TextInputLayout>
 
             </LinearLayout>
 
@@ -315,4 +315,4 @@
 
     </LinearLayout>
 
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -4,17 +4,15 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.TimePicker;
 import android.widget.Toast;
 
 import java.util.Calendar;
@@ -54,26 +52,20 @@ public class DestructTimerDialogFragment extends DialogFragment {
         final View view = inflater.inflate(R.layout.fragment_destruct_message_dialog, container, false);
 
         ImageView closeDialog = view.findViewById(R.id.fragment_destruct_message_dialog_close);
-        closeDialog.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-            onScheduleDestructTimerDelivery.onSchedule(null);
-            dismiss();
-            }
+        closeDialog.setOnClickListener(v -> {
+        onScheduleDestructTimerDelivery.onSchedule(null);
+        dismiss();
         });
 
         Button scheduleButton = view.findViewById(R.id.fragment_destruct_message_dialog_schedule);
-        scheduleButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (validate()) {
-                    Calendar timezoneCalendar = Calendar.getInstance();
-                    timezoneCalendar.setTimeInMillis(
-                            calendar.getTimeInMillis() - AppUtils.timezoneOffsetInMillis()
-                    );
-                    onScheduleDestructTimerDelivery.onSchedule(timezoneCalendar.getTimeInMillis());
-                    dismiss();
-                }
+        scheduleButton.setOnClickListener(v -> {
+            if (validate()) {
+                Calendar timezoneCalendar = Calendar.getInstance();
+                timezoneCalendar.setTimeInMillis(
+                        calendar.getTimeInMillis() - AppUtils.timezoneOffsetInMillis()
+                );
+                onScheduleDestructTimerDelivery.onSchedule(timezoneCalendar.getTimeInMillis());
+                dismiss();
             }
         });
 
@@ -89,38 +81,26 @@ public class DestructTimerDialogFragment extends DialogFragment {
         final int currentHoursOfDay = calendar.get(Calendar.HOUR_OF_DAY);
         final int currentMinute = calendar.get(Calendar.MINUTE);
 
-        dateTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final DatePickerDialog datePickerDialog = new DatePickerDialog(getActivity(), 0, new DatePickerDialog.OnDateSetListener() {
-                    @Override
-                    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                        calendar.set(year, month, dayOfMonth);
-                        dateTextView.setText(AppUtils.dateFormat(calendar.getTimeInMillis()));
-                        validate();
-                    }
-                }, currentYear, currentMonth, currentDayOfMonth);
-                datePickerDialog.show();
-            }
+        dateTextView.setOnClickListener(v -> {
+            final DatePickerDialog datePickerDialog = new DatePickerDialog(getActivity(), 0, (view12, year, month, dayOfMonth) -> {
+                calendar.set(year, month, dayOfMonth);
+                dateTextView.setText(AppUtils.dateFormat(calendar.getTimeInMillis()));
+                validate();
+            }, currentYear, currentMonth, currentDayOfMonth);
+            datePickerDialog.show();
         });
 
-        timeTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                TimePickerDialog timePickerDialog = new TimePickerDialog(getActivity(), new TimePickerDialog.OnTimeSetListener() {
-                    @Override
-                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                        int year = calendar.get(Calendar.YEAR);
-                        int month = calendar.get(Calendar.MONTH);
-                        int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+        timeTextView.setOnClickListener(v -> {
+            TimePickerDialog timePickerDialog = new TimePickerDialog(getActivity(), (view1, hourOfDay, minute) -> {
+                int year = calendar.get(Calendar.YEAR);
+                int month = calendar.get(Calendar.MONTH);
+                int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
 
-                        calendar.set(year, month, dayOfMonth, hourOfDay, minute);
-                        timeTextView.setText(AppUtils.timeFormat(calendar.getTimeInMillis()));
-                        validate();
-                    }
-                }, currentHoursOfDay, currentMinute, false);
-                timePickerDialog.show();
-            }
+                calendar.set(year, month, dayOfMonth, hourOfDay, minute);
+                timeTextView.setText(AppUtils.timeFormat(calendar.getTimeInMillis()));
+                validate();
+            }, currentHoursOfDay, currentMinute, false);
+            timePickerDialog.show();
         });
 
         return view;

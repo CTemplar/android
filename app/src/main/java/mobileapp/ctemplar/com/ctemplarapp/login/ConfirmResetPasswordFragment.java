@@ -1,16 +1,17 @@
 package mobileapp.ctemplar.com.ctemplarapp.login;
 
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import org.jetbrains.annotations.NotNull;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -32,7 +33,7 @@ public class ConfirmResetPasswordFragment extends BaseFragment {
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NotNull Context context) {
         super.onAttach(context);
     }
 
@@ -40,16 +41,11 @@ public class ConfirmResetPasswordFragment extends BaseFragment {
         super.onCreate(savedInstanceState);
 
         loginActivityModel = ViewModelProviders.of(getActivity()).get(LoginActivityViewModel.class);
-        loginActivityModel.getResponseStatus().observe(this, new Observer<ResponseStatus>() {
-            @Override
-            public void onChanged(@Nullable ResponseStatus status) {
-                handleResponseStatus(status);
-            }
-        });
+        loginActivityModel.getResponseStatus().observe(this, this::handleResponseStatus);
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NotNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         setListeners();

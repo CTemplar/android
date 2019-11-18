@@ -1,10 +1,8 @@
 package mobileapp.ctemplar.com.ctemplarapp.wbl;
 
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProviders;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.Toolbar;
+import androidx.appcompat.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -35,19 +33,18 @@ public class AddWhitelistContactActivity extends BaseActivity {
 
         Toolbar toolbar = findViewById(R.id.activity_add_whitelist_contact_toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setHomeButtonEnabled(true);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
         model = ViewModelProviders.of(this).get(AddWhitelistContactViewModel.class);
         model.getResponseStatus()
-                .observe(this, new Observer<ResponseStatus>() {
-                    @Override
-                    public void onChanged(@Nullable ResponseStatus responseStatus) {
-                        if (responseStatus == ResponseStatus.RESPONSE_COMPLETE) {
-                            onBackPressed();
-                        } else {
-                            Toast.makeText(AddWhitelistContactActivity.this, getString(R.string.adding_whitelist_contact_error), Toast.LENGTH_SHORT).show();
-                        }
+                .observe(this, responseStatus -> {
+                    if (responseStatus == ResponseStatus.RESPONSE_COMPLETE) {
+                        onBackPressed();
+                    } else {
+                        Toast.makeText(AddWhitelistContactActivity.this, getString(R.string.adding_whitelist_contact_error), Toast.LENGTH_SHORT).show();
                     }
                 });
     }

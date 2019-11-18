@@ -1,9 +1,8 @@
 package mobileapp.ctemplar.com.ctemplarapp;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.view.View;
 
 import butterknife.ButterKnife;
@@ -93,14 +92,11 @@ public abstract class BaseActivity extends AppCompatActivity {
         if (!mExpiredDialogShowing) {
             mExpiredDialogShowing = true;
             // Logout and show dialog
-            DialogUtils.showAlertDialog(this, R.string.token_expired_title, R.string.token_expired_message, false, new DialogInterface.OnDismissListener() {
-                @Override
-                public void onDismiss(DialogInterface dialog) {
-                    mExpiredDialogShowing = false;
-                    // go to LoginActivity for relogin
-                    // I.startLoginActivity(BaseActivity.this);
-                    finish();
-                }
+            DialogUtils.showAlertDialog(this, R.string.token_expired_title, R.string.token_expired_message, false, dialog -> {
+                mExpiredDialogShowing = false;
+                // go to LoginActivity for relogin
+                // I.startLoginActivity(BaseActivity.this);
+                finish();
             });
         }
     }

@@ -4,9 +4,9 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,29 +35,18 @@ public class UpgradeToPrimeFragment extends DialogFragment {
         final View view = inflater.inflate(R.layout.fragment_upgrade_to_prime_dialog, container, false);
 
         TextView closeDialog = view.findViewById(R.id.fragment_upgrade_to_prime_dialog_not_now);
-        closeDialog.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dismiss();
-            }
-        });
+        closeDialog.setOnClickListener(v -> dismiss());
 
         TextView moreInformation = view.findViewById(R.id.fragment_upgrade_to_prime_dialog_more);
-        moreInformation.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.url_prime_more)));
-                startActivity(browserIntent);
-            }
+        moreInformation.setOnClickListener(v -> {
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.url_prime_more)));
+            startActivity(browserIntent);
         });
 
         Button upgradeButton = view.findViewById(R.id.fragment_upgrade_to_prime_dialog_upgrade);
-        upgradeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.url_prime_upgrade)));
-                startActivity(browserIntent);
-            }
+        upgradeButton.setOnClickListener(v -> {
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.url_prime_upgrade)));
+            startActivity(browserIntent);
         });
 
         return view;

@@ -1,8 +1,8 @@
 package mobileapp.ctemplar.com.ctemplarapp.settings;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.ViewModel;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
 
 import java.util.List;
 
@@ -54,12 +54,9 @@ public class ChangePasswordViewModel extends ViewModel {
         EncodeUtils.generateMailboxKeys(username, oldPassword, password, resetKeys, mailboxEntities)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.computation())
-                .flatMap(new Function<List<MailboxKey>, Observable<ResponseBody>>() {
-                    @Override
-                    public Observable<ResponseBody> apply(List<MailboxKey> mailboxKeys) {
-                        changePasswordRequest.setMailboxesKeys(mailboxKeys);
-                        return userRepository.changePassword(changePasswordRequest);
-                    }
+                .flatMap((Function<List<MailboxKey>, Observable<ResponseBody>>) mailboxKeys -> {
+                    changePasswordRequest.setMailboxesKeys(mailboxKeys);
+                    return userRepository.changePassword(changePasswordRequest);
                 }).subscribe(new Observer<ResponseBody>() {
             @Override
             public void onSubscribe(Disposable d) {

@@ -1,11 +1,11 @@
 package mobileapp.ctemplar.com.ctemplarapp.login;
 
-import android.arch.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.design.widget.TextInputEditText;
-import android.support.design.widget.TextInputLayout;
+import androidx.annotation.Nullable;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 import android.text.Editable;
 import android.text.Html;
 import android.text.TextUtils;
@@ -16,11 +16,14 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import org.jetbrains.annotations.NotNull;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 import mobileapp.ctemplar.com.ctemplarapp.BaseFragment;
 import mobileapp.ctemplar.com.ctemplarapp.LoginActivityActions;
 import mobileapp.ctemplar.com.ctemplarapp.R;
+import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 
 public class ResetCodeFragment extends BaseFragment {
 
@@ -44,7 +47,7 @@ public class ResetCodeFragment extends BaseFragment {
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NotNull Context context) {
         super.onAttach(context);
     }
 
@@ -55,7 +58,7 @@ public class ResetCodeFragment extends BaseFragment {
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NotNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         setListeners();
@@ -73,8 +76,8 @@ public class ResetCodeFragment extends BaseFragment {
 
     @OnClick(R.id.fragment_reset_code_btn)
     public void onClickConfirmCode() {
-        if(!TextUtils.isEmpty(editCode.getText().toString())) {
-            loginActivityModel.getRecoverPasswordRequest().setCode(editCode.getText().toString());
+        if(!TextUtils.isEmpty(EditTextUtils.getText(editCode))) {
+            loginActivityModel.getRecoverPasswordRequest().setCode(EditTextUtils.getText(editCode));
             loginActivityModel.changeAction(LoginActivityActions.CHANGE_FRAGMENT_NEW_PASSWORD);
         }
     }

@@ -1,18 +1,16 @@
 package mobileapp.ctemplar.com.ctemplarapp.folders;
 
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
-import android.content.DialogInterface;
+import androidx.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
-import android.support.v7.widget.helper.ItemTouchHelper;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -32,7 +30,6 @@ import mobileapp.ctemplar.com.ctemplarapp.main.RecycleDeleteSwiper;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Folders.FoldersResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Folders.FoldersResult;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.MyselfResponse;
 
 public class ManageFoldersActivity extends BaseActivity {
 
@@ -81,29 +78,18 @@ public class ManageFoldersActivity extends BaseActivity {
 
         manageFoldersModel = ViewModelProviders.of(this).get(ManageFoldersViewModel.class);
         manageFoldersModel.getFoldersResponse()
-                .observe(this, new Observer<FoldersResponse>() {
-                    @Override
-                    public void onChanged(@Nullable FoldersResponse foldersResponse) {
-                        handleFoldersList(foldersResponse);
-                    }
-                });
+                .observe(this, foldersResponse -> handleFoldersList(foldersResponse));
         manageFoldersModel.getDeletingStatus()
-                .observe(this, new Observer<ResponseStatus>() {
-                    @Override
-                    public void onChanged(@Nullable ResponseStatus responseStatus) {
-                        if (responseStatus == null || responseStatus == ResponseStatus.RESPONSE_ERROR) {
-                            Toast.makeText(getApplicationContext(), getResources().getString(R.string.txt_folder_not_deleted), Toast.LENGTH_SHORT).show();
-                        } else if (responseStatus == ResponseStatus.RESPONSE_COMPLETE) {
-                            Toast.makeText(getApplicationContext(), getResources().getString(R.string.txt_folder_deleted), Toast.LENGTH_SHORT).show();
-                        }
+                .observe(this, responseStatus -> {
+                    if (responseStatus == null || responseStatus == ResponseStatus.RESPONSE_ERROR) {
+                        Toast.makeText(getApplicationContext(), getResources().getString(R.string.txt_folder_not_deleted), Toast.LENGTH_SHORT).show();
+                    } else if (responseStatus == ResponseStatus.RESPONSE_COMPLETE) {
+                        Toast.makeText(getApplicationContext(), getResources().getString(R.string.txt_folder_deleted), Toast.LENGTH_SHORT).show();
                     }
                 });
-        manageFoldersModel.getMySelfResponse().observe(this, new Observer<MyselfResponse>() {
-            @Override
-            public void onChanged(@Nullable MyselfResponse myselfResponse) {
-                if (myselfResponse != null) {
-                    planType = myselfResponse.result[0].settings.getPlanType();
-                }
+        manageFoldersModel.getMySelfResponse().observe(this, myselfResponse -> {
+            if (myselfResponse != null) {
+                planType = myselfResponse.result[0].settings.getPlanType();
             }
         });
         footerAddFolder.setVisibility(View.GONE);
@@ -152,19 +138,9 @@ public class ManageFoldersActivity extends BaseActivity {
                 new AlertDialog.Builder(ManageFoldersActivity.this)
                         .setTitle(getResources().getString(R.string.txt_delete_folder_quest_title))
                         .setMessage(getResources().getString(R.string.txt_delete_folder_quest_message))
-                        .setPositiveButton(getResources().getString(R.string.btn_contact_delete), new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        manageFoldersModel.deleteFolder(deletedFolder);
-                                    }
-                                }
+                        .setPositiveButton(getResources().getString(R.string.btn_contact_delete), (dialog, which) -> manageFoldersModel.deleteFolder(deletedFolder)
                         )
-                        .setNeutralButton(getResources().getString(R.string.btn_cancel), new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                adapter.restoreItem(deletedIndex, deletedFolder);
-                            }
-                        })
+                        .setNeutralButton(getResources().getString(R.string.btn_cancel), (dialog, which) -> adapter.restoreItem(deletedIndex, deletedFolder))
                         .show();
             }
         };

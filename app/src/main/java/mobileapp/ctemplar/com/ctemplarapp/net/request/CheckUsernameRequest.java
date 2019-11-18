@@ -1,6 +1,6 @@
 package mobileapp.ctemplar.com.ctemplarapp.net.request;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import com.google.gson.annotations.SerializedName;
 

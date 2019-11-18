@@ -1,8 +1,8 @@
 package mobileapp.ctemplar.com.ctemplarapp.message;
 
 import android.os.Build;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.text.Html;
 import android.text.TextUtils;
 import android.util.Base64;
@@ -56,20 +56,14 @@ public class ViewMessagesAdapter extends BaseAdapter {
         final View collapsedView = view.findViewById(R.id.collappsed);
         final View expandedView = view.findViewById(R.id.expanded);
 
-        collapsedView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                collapsedView.setVisibility(View.GONE);
-                expandedView.setVisibility(View.VISIBLE);
-            }
+        collapsedView.setOnClickListener(v -> {
+            collapsedView.setVisibility(View.GONE);
+            expandedView.setVisibility(View.VISIBLE);
         });
 
-        expandedView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                collapsedView.setVisibility(View.VISIBLE);
-                expandedView.setVisibility(View.GONE);
-            }
+        expandedView.setOnClickListener(v -> {
+            collapsedView.setVisibility(View.VISIBLE);
+            expandedView.setVisibility(View.GONE);
         });
 
         if (isLast) {
@@ -116,19 +110,16 @@ public class ViewMessagesAdapter extends BaseAdapter {
         final ViewGroup expandedCredentialsLayout = view.findViewById(R.id.item_message_view_expanded_credentials);
         final View credentialsDivider = view.findViewById(R.id.item_message_view_expanded_credentials_divider);
 
-        detailsTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int credentialsVisibility = expandedCredentialsLayout.getVisibility();
-                if (credentialsVisibility == View.VISIBLE) {
-                    expandedCredentialsLayout.setVisibility(View.GONE);
-                    credentialsDivider.setVisibility(View.GONE);
-                    detailsTextView.setText(view.getContext().getResources().getText(R.string.txt_hide_details));
-                } else {
-                    expandedCredentialsLayout.setVisibility(View.VISIBLE);
-                    credentialsDivider.setVisibility(View.VISIBLE);
-                    detailsTextView.setText(view.getContext().getResources().getText(R.string.txt_view_details));
-                }
+        detailsTextView.setOnClickListener(v -> {
+            int credentialsVisibility = expandedCredentialsLayout.getVisibility();
+            if (credentialsVisibility == View.VISIBLE) {
+                expandedCredentialsLayout.setVisibility(View.GONE);
+                credentialsDivider.setVisibility(View.GONE);
+                detailsTextView.setText(view.getContext().getResources().getText(R.string.txt_hide_details));
+            } else {
+                expandedCredentialsLayout.setVisibility(View.VISIBLE);
+                credentialsDivider.setVisibility(View.VISIBLE);
+                detailsTextView.setText(view.getContext().getResources().getText(R.string.txt_view_details));
             }
         });
 

@@ -1,10 +1,8 @@
 package mobileapp.ctemplar.com.ctemplarapp.contacts;
 
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProviders;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.Toolbar;
+import androidx.appcompat.widget.Toolbar;
 import android.util.Patterns;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -51,16 +49,13 @@ public class AddContactActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setHomeButtonEnabled(true);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
         viewModel = ViewModelProviders.of(this).get(AddContactViewModel.class);
-        viewModel.getResponseStatus().observe(this, new Observer<ResponseStatus>() {
-            @Override
-            public void onChanged(@Nullable ResponseStatus responseStatus) {
-                handleResponse(responseStatus);
-            }
-        });
+        viewModel.getResponseStatus().observe(this, this::handleResponse);
     }
 
     @Override
@@ -129,5 +124,4 @@ public class AddContactActivity extends BaseActivity {
 
         viewModel.saveContact(contactData);
     }
-
 }

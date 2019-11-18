@@ -1,8 +1,6 @@
 package mobileapp.ctemplar.com.ctemplarapp.main;
 
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
-import android.content.DialogInterface;
+import androidx.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Color;
@@ -10,18 +8,17 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.NavigationView;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import androidx.annotation.NonNull;
+import com.google.android.material.navigation.NavigationView;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -49,7 +46,6 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageProvider;
 import mobileapp.ctemplar.com.ctemplarapp.settings.SettingsActivity;
 import mobileapp.ctemplar.com.ctemplarapp.view.ResizeAnimation;
-import okhttp3.ResponseBody;
 import timber.log.Timber;
 
 public class MainActivity extends AppCompatActivity
@@ -98,76 +94,57 @@ public class MainActivity extends AppCompatActivity
 
         mainModel = ViewModelProviders.of(this).get(MainActivityViewModel.class);
 
-        mainModel.getActionsStatus().observe(this, new Observer<MainActivityActions>() {
-            @Override
-            public void onChanged(@Nullable MainActivityActions mainActivityActions) {
-                handleMainActions(mainActivityActions);
+        mainModel.getActionsStatus().observe(this, this::handleMainActions);
+
+        mainModel.getCurrentFolder().observe(this, folder -> {
+            showFragmentByFolder(folder);
+            loadFolders();
+        });
+
+        mainModel.getResponseStatus().observe(this, this::handleResponseStatus);
+
+        mainModel.getFoldersResponse().observe(this, foldersResponse -> {
+            if (foldersResponse != null) {
+                handleFoldersResponse(navigationView, foldersResponse);
             }
         });
 
-        mainModel.getCurrentFolder().observe(this, new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String folder) {
-                showFragmentByFolder(folder);
-                loadFolders();
-            }
-        });
+        mainModel.getUnreadFoldersBody().observe(this, unreadFoldersBody -> {
+            if (unreadFoldersBody != null) {
+                mainModel.getFolders(customFoldersShowCount, 0);
+                Menu navigationMenu = navigationView.getMenu();
+                TextView inboxCounter = (TextView) navigationMenu.findItem(R.id.nav_inbox).getActionView();
+                TextView outboxCounter = (TextView) navigationMenu.findItem(R.id.nav_outbox).getActionView();
+                TextView starredCounter = (TextView) navigationMenu.findItem(R.id.nav_starred).getActionView();
+                TextView archiveCounter = (TextView) navigationMenu.findItem(R.id.nav_archive).getActionView();
+                TextView spamCounter = (TextView) navigationMenu.findItem(R.id.nav_spam).getActionView();
 
-        mainModel.getResponseStatus().observe(this, new Observer<ResponseStatus>() {
-            @Override
-            public void onChanged(@Nullable ResponseStatus status) {
-                handleResponseStatus(status);
-            }
-        });
+                try {
+                    String unreadFoldersString = unreadFoldersBody.string();
+                    unreadFolders = new JSONObject(unreadFoldersString);
+                    int inbox = unreadFolders.getInt(MainFolderNames.INBOX);
+                    int starred = unreadFolders.getInt(MainFolderNames.STARRED);
+                    int archive = unreadFolders.getInt(MainFolderNames.ARCHIVE);
+                    int spam = unreadFolders.getInt(MainFolderNames.SPAM);
 
-        mainModel.getFoldersResponse().observe(this, new Observer<FoldersResponse>() {
-            @Override
-            public void onChanged(@Nullable FoldersResponse foldersResponse) {
-                if (foldersResponse != null) {
-                    handleFoldersResponse(navigationView, foldersResponse);
-                }
-            }
-        });
+                    int outboxDelayed = unreadFolders.getInt("outbox_delayed_delivery_counter");
+                    int outboxDead = unreadFolders.getInt("outbox_dead_man_counter");
+                    int outboxDestruct = unreadFolders.getInt("outbox_self_destruct_counter");
+                    int outbox = outboxDelayed + outboxDead + outboxDestruct;
 
-        mainModel.getUnreadFoldersBody().observe(this, new Observer<ResponseBody>() {
-            @Override
-            public void onChanged(@Nullable ResponseBody unreadFoldersBody) {
-                if (unreadFoldersBody != null) {
-                    mainModel.getFolders(customFoldersShowCount, 0);
-                    Menu navigationMenu = navigationView.getMenu();
-                    TextView inboxCounter = (TextView) navigationMenu.findItem(R.id.nav_inbox).getActionView();
-                    TextView outboxCounter = (TextView) navigationMenu.findItem(R.id.nav_outbox).getActionView();
-                    TextView starredCounter = (TextView) navigationMenu.findItem(R.id.nav_starred).getActionView();
-                    TextView archiveCounter = (TextView) navigationMenu.findItem(R.id.nav_archive).getActionView();
-                    TextView spamCounter = (TextView) navigationMenu.findItem(R.id.nav_spam).getActionView();
+                    String inboxString = inbox > 0 ? String.valueOf(inbox) : null;
+                    String starredString = starred > 0 ? String.valueOf(starred) : null;
+                    String archiveString = archive > 0 ? String.valueOf(archive) : null;
+                    String spamString = spam > 0 ? String.valueOf(spam) : null;
+                    String outboxString = outbox > 0 ? String.valueOf(outbox) : null;
 
-                    try {
-                        String unreadFoldersString = unreadFoldersBody.string();
-                        unreadFolders = new JSONObject(unreadFoldersString);
-                        int inbox = unreadFolders.getInt(MainFolderNames.INBOX);
-                        int starred = unreadFolders.getInt(MainFolderNames.STARRED);
-                        int archive = unreadFolders.getInt(MainFolderNames.ARCHIVE);
-                        int spam = unreadFolders.getInt(MainFolderNames.SPAM);
-
-                        int outboxDelayed = unreadFolders.getInt("outbox_delayed_delivery_counter");
-                        int outboxDead = unreadFolders.getInt("outbox_dead_man_counter");
-                        int outboxDestruct = unreadFolders.getInt("outbox_self_destruct_counter");
-                        int outbox = outboxDelayed + outboxDead + outboxDestruct;
-
-                        String inboxString = inbox > 0 ? String.valueOf(inbox) : null;
-                        String starredString = starred > 0 ? String.valueOf(starred) : null;
-                        String archiveString = archive > 0 ? String.valueOf(archive) : null;
-                        String spamString = spam > 0 ? String.valueOf(spam) : null;
-                        String outboxString = outbox > 0 ? String.valueOf(outbox) : null;
-
-                        inboxCounter.setText(inboxString);
-                        starredCounter.setText(starredString);
-                        archiveCounter.setText(archiveString);
-                        spamCounter.setText(spamString);
-                        outboxCounter.setText(outboxString);
-                    } catch (IOException | JSONException e) {
-                        Timber.e(e);
-                    }
+                    inboxCounter.setText(inboxString);
+                    starredCounter.setText(starredString);
+                    archiveCounter.setText(archiveString);
+                    spamCounter.setText(spamString);
+                    outboxCounter.setText(outboxString);
+                } catch (IOException | JSONException e) {
+                    Timber.e(e);
                 }
             }
         });
@@ -299,19 +276,18 @@ public class MainActivity extends AppCompatActivity
         }
 
         int id = item.getItemId();
-        switch (id) {
-            case android.R.id.home:
-                if (isTablet) {
-                    closeOpenNavigationView();
+        if (id == android.R.id.home) {
+            if (isTablet) {
+                closeOpenNavigationView();
+            } else {
+                DrawerLayout drawer = findViewById(R.id.drawer_layout);
+                if (drawer.isDrawerOpen(GravityCompat.START)) {
+                    drawer.closeDrawer(GravityCompat.START);
                 } else {
-                    DrawerLayout drawer = findViewById(R.id.drawer_layout);
-                    if (drawer.isDrawerOpen(GravityCompat.START)) {
-                        drawer.closeDrawer(GravityCompat.START);
-                    } else {
-                        drawer.openDrawer(GravityCompat.START);
-                    }
+                    drawer.openDrawer(GravityCompat.START);
                 }
-                return true;
+            }
+            return true;
         }
         return false;
     }
@@ -365,12 +341,7 @@ public class MainActivity extends AppCompatActivity
             new AlertDialog.Builder(this)
                     .setTitle(getResources().getString(R.string.dialog_log_out))
                     .setMessage(getResources().getString(R.string.dialog_log_out_confirm))
-                    .setPositiveButton(getResources().getString(R.string.btn_log_out), new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    mainModel.logout();
-                                }
-                            }
+                    .setPositiveButton(getResources().getString(R.string.btn_log_out), (dialog, which) -> mainModel.logout()
                     )
                     .setNeutralButton(R.string.btn_cancel, null)
                     .show();
@@ -396,12 +367,7 @@ public class MainActivity extends AppCompatActivity
             if (currentFragment instanceof MainFragment) {
                 ((MainFragment) currentFragment).clearListAdapter();
 
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        drawer.closeDrawer(GravityCompat.START);
-                    }
-                });
+                handler.post(() -> drawer.closeDrawer(GravityCompat.START));
             }
         } else if (isTablet) {
             if (currentFragment instanceof MainFragment) {
@@ -440,12 +406,7 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         };
-        drawerToggle.setToolbarNavigationClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(MainActivity.this, "Clicked", Toast.LENGTH_SHORT).show();
-            }
-        });
+        drawerToggle.setToolbarNavigationClickListener(v -> Toast.makeText(MainActivity.this, "Clicked", Toast.LENGTH_SHORT).show());
         drawer.addDrawerListener(drawerToggle);
         drawerToggle.syncState();
     }
@@ -485,11 +446,9 @@ public class MainActivity extends AppCompatActivity
         if (actions == null) {
             return;
         }
-        switch (actions) {
-            case ACTION_LOGOUT:
-                finish();
-                startSignInActivity();
-                break;
+        if (actions == MainActivityActions.ACTION_LOGOUT) {
+            finish();
+            startSignInActivity();
         }
     }
 
@@ -497,10 +456,8 @@ public class MainActivity extends AppCompatActivity
         if (status == null) {
             return;
         }
-        switch (status) {
-            case RESPONSE_NEXT_MAILBOXES:
-                showMailboxDetailsInNavigationDrawer();
-                break;
+        if (status == ResponseStatus.RESPONSE_NEXT_MAILBOXES) {
+            showMailboxDetailsInNavigationDrawer();
         }
     }
 

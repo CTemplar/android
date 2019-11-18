@@ -1,7 +1,9 @@
 package mobileapp.ctemplar.com.ctemplarapp.net;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.text.TextUtils;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 
@@ -15,6 +17,7 @@ public class HttpTokenInterceptor implements Interceptor {
     private static final String HEADER_ACCEPT = "Accept";
     private static final String HEADER_AUTHORIZATION = "Authorization";
 
+    @NotNull
     @Override
     public Response intercept(@NonNull Chain chain) throws IOException {
         Request request = chain.request();

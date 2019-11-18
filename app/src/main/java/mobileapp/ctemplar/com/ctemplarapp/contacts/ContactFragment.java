@@ -1,26 +1,27 @@
 package mobileapp.ctemplar.com.ctemplarapp.contacts;
 
 import android.app.Activity;
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
-import android.support.design.widget.BaseTransientBottomBar;
-import android.support.design.widget.Snackbar;
-import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
-import android.support.v7.widget.helper.ItemTouchHelper;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import com.google.android.material.snackbar.BaseTransientBottomBar;
+import com.google.android.material.snackbar.Snackbar;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.appcompat.widget.SearchView;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -61,11 +62,6 @@ public class ContactFragment extends BaseFragment {
         return R.layout.fragment_contact;
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        mainModel.getContacts(200, 0);
-    }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -99,12 +95,13 @@ public class ContactFragment extends BaseFragment {
 
         mainModel = ViewModelProviders.of(getActivity()).get(MainActivityViewModel.class);
         mainModel.getContactsResponse()
-                .observe(this, new Observer<List<Contact>>() {
-                    @Override
-                    public void onChanged(@Nullable List<Contact> contactsList) {
-                        handleContactsList(contactsList);
-                    }
-                });
+                .observe(this, this::handleContactsList);
+        mainModel.getContacts(200, 0);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
         mainModel.getContacts(200, 0);
     }
 
@@ -170,12 +167,7 @@ public class ContactFragment extends BaseFragment {
                 String removedTxt = getResources().getString(R.string.txt_name_removed, name);
                 Snackbar snackbar = Snackbar
                         .make(frameCompose, removedTxt, Snackbar.LENGTH_LONG);
-                snackbar.setAction(getString(R.string.action_undo), new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        adapter.restoreItem(deletedContact, deletedIndex);
-                    }
-                });
+                snackbar.setAction(getString(R.string.action_undo), view -> adapter.restoreItem(deletedContact, deletedIndex));
                 snackbar.addCallback(new BaseTransientBottomBar.BaseCallback<Snackbar>() {
                     @Override
                     public void onDismissed(Snackbar transientBottomBar, int event) {
@@ -193,7 +185,7 @@ public class ContactFragment extends BaseFragment {
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(@NotNull Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.contacts_list_menu, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
@@ -210,7 +202,7 @@ public class ContactFragment extends BaseFragment {
     }
 
     @OnClick(R.id.fragment_contact_add_layout)
-    public void onClickAdd() {
+    void onClickAdd() {
         startAddContactActivity();
     }
 

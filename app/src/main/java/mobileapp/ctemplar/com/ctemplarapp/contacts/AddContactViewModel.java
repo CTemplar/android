@@ -1,7 +1,7 @@
 package mobileapp.ctemplar.com.ctemplarapp.contacts;
 
-import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.ViewModel;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
 
 import com.google.gson.Gson;
 
@@ -32,7 +32,7 @@ public class AddContactViewModel extends ViewModel {
         return responseStatus;
     }
 
-    public void saveContact(ContactData contactData) {
+    void saveContact(ContactData contactData) {
         boolean contactsEncryption = userStore.getContactsEncryptionEnabled();
         if (contactsEncryption) {
             EncryptContact encryptContact = new EncryptContact();
