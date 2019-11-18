@@ -364,7 +364,7 @@ public class MessageProvider {
         return null;
     }
 
-    private static String decryptContent(String content, long mailboxId) {
+    private static String decryptContent(String content, long mailboxId, boolean imgDisabled) {
         if (content == null) {
             return "";
         }
@@ -384,12 +384,16 @@ public class MessageProvider {
             }
         }
 
-        return content.replaceAll("<img.+?>", "");
+        return imgDisabled ? content.replaceAll("<img.+?>", "") : content;
+    }
+
+    private static String decryptContent(String content, long mailboxId) {
+        return decryptContent(content, mailboxId, false);
     }
 
     private static String decryptSubject(String subject, long mailboxId, boolean isEncrypted) {
         if (isEncrypted) {
-            return decryptContent(subject, mailboxId);
+            return decryptContent(subject, mailboxId, true);
         } else {
             return subject;
         }
