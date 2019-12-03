@@ -20,9 +20,9 @@ import timber.log.Timber;
 public class PGPManager {
 
     private PGPLib pgpLib;
-    private final boolean asciiArmor = true;
+    private final boolean ASCII_ARMOR = true;
+    private final boolean INTEGRITY_CHECK = true;
     private final int KEY_SIZE = 4096;
-    private final boolean withIntegrityCheck = true;
 
     public PGPManager() {
         pgpLib = new PGPLib();
@@ -32,7 +32,11 @@ public class PGPManager {
         return new String(encryptBytes(message.getBytes(), publicKeys));
     }
 
-    public byte[] encryptBytes(byte[] bytes, String[] pubicKeys) {
+    byte[] encryptBytes(byte[] bytes, String[] publicKeys) {
+        return encryptBytes(bytes, publicKeys, true);
+    }
+
+    byte[] encryptBytes(byte[] bytes, String[] pubicKeys, boolean asciiArmor) {
 
         ByteArrayInputStream inputMessageStream = new ByteArrayInputStream(bytes);
         ByteArrayOutputStream outputMessageStream = new ByteArrayOutputStream();
@@ -48,7 +52,7 @@ public class PGPManager {
             }
 
             pgpLib.encryptStream(inputMessageStream, "input", keyStore, keyIds, outputMessageStream,
-                    asciiArmor, withIntegrityCheck);
+                    asciiArmor, INTEGRITY_CHECK);
 
         } catch (IOException | PGPException e) {
             Timber.e(e);
@@ -69,7 +73,7 @@ public class PGPManager {
         return new String(decryptBytes(message.getBytes(), privateKey, password));
     }
 
-    public byte[] decryptBytes(byte[] bytes, String privateKey, String password) throws Exception {
+    byte[] decryptBytes(byte[] bytes, String privateKey, String password) throws Exception {
 
         ByteArrayInputStream inputMessageStream = new ByteArrayInputStream(bytes);
         ByteArrayInputStream privateKeyStream = new ByteArrayInputStream(privateKey.getBytes());
@@ -128,8 +132,8 @@ public class PGPManager {
              );
 
             String fingerprint = keyPairInformation.getFingerprint();
-            keyStore.exportPublicKey(publicKeyStream, keyPairInformation.getKeyID(), asciiArmor);
-            keyStore.exportPrivateKey(privateKeyStream, keyPairInformation.getKeyID(), asciiArmor);
+            keyStore.exportPublicKey(publicKeyStream, keyPairInformation.getKeyID(), ASCII_ARMOR);
+            keyStore.exportPrivateKey(privateKeyStream, keyPairInformation.getKeyID(), ASCII_ARMOR);
 
             pgpKeyEntity.setFingerprint(fingerprint);
             pgpKeyEntity.setPublicKey(publicKeyStream.toString());
@@ -166,8 +170,8 @@ public class PGPManager {
             keyStore.changePrivateKeyPassword(keyId, oldPassword, password);
 
             String fingerprint = keyPairInformation[0].getFingerprint();
-            keyStore.exportPublicKey(publicKeyStream, keyId, asciiArmor);
-            keyStore.exportPrivateKey(privateKeyStream, keyId, asciiArmor);
+            keyStore.exportPublicKey(publicKeyStream, keyId, ASCII_ARMOR);
+            keyStore.exportPrivateKey(privateKeyStream, keyId, ASCII_ARMOR);
 
             pgpKeyEntity.setFingerprint(fingerprint);
             pgpKeyEntity.setPublicKey(publicKeyStream.toString());
