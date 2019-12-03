@@ -26,7 +26,9 @@ public class EncryptUtils {
         }
 
         PGPManager pgpManager = new PGPManager();
-        byte[] encryptedBytes = pgpManager.encryptBytes(fileBytes, publicKeyList.toArray(new String[0]));
+        byte[] encryptedBytes = pgpManager.encryptBytes(
+                fileBytes, publicKeyList.toArray(new String[0]), false
+        );
 
         try {
             BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(encryptedFile));
