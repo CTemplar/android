@@ -2,26 +2,33 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_marginTop="5dp"
     android:layout_marginBottom="5dp">
 
-    <RelativeLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/item_message_attachment_send_tile"
         android:layout_width="match_parent"
-        android:layout_height="44dp"
+        android:layout_height="wrap_content"
         android:padding="10dp"
-        android:background="@drawable/item_attachment_background">
+        android:background="@drawable/item_attachment_background"
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:id="@+id/item_message_attachment_send_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginRight="4dp"
+            android:layout_marginEnd="4dp"
             android:text="filename.doc"
+            android:textColor="@color/colorGrey3"
             android:fontFamily="@font/lato_regular"
             android:textSize="14sp"
             android:lines="1"
             android:ellipsize="end"
-            android:textColor="@color/colorGrey3" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toLeftOf="@id/item_message_attachment_delete" />
 
         <TextView
             android:id="@+id/item_message_attachment_send_size"
@@ -34,16 +41,19 @@
             android:lines="1"
             android:ellipsize="end"
             android:textColor="@color/colorGrey4"
-            android:layout_toRightOf="@id/item_message_attachment_send_name"
-            android:visibility="gone"/>
+            android:visibility="gone"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent" />
 
         <ImageView
             android:id="@+id/item_message_attachment_delete"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_close"
-            android:layout_alignParentRight="true"/>
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent" />
 
-    </RelativeLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
