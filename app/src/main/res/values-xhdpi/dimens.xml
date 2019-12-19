@@ -1,0 +1,3 @@
+<resources>
+    <dimen name="captcha_padding">72dp</dimen>
+</resources>
