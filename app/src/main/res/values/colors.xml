@@ -38,20 +38,5 @@
     <color name="colorGrayDark">#b9c2ca</color>
     <color name="colorLinkBlue">#4d92e2</color>
     <color name="colorWhiteLight">#ffffff</color>
-
-    <!-- COLOR PICKER -->
-    <color name="colorPicker1">#7272a8</color>
-    <color name="colorPicker2">#d05859</color>
-    <color name="colorPicker3">#c26cc7</color>
-    <color name="colorPicker4">#7568d1</color>
-    <color name="colorPicker5">#6aa9d2</color>
-    <color name="colorPicker6">#5fc7b8</color>
-    <color name="colorPicker7">#72bb74</color>
-    <color name="colorPicker8">#c4d261</color>
-    <color name="colorPicker9">#e6c14c</color>
-    <color name="colorPicker10">#e6994d</color>
-    <color name="colorPicker11">#cf7e7d</color>
-    <color name="colorPicker12">#c893cb</color>
-    <color name="colorPicker13">#9c94d0</color>
-    <color name="colorPicker14">#a9c4d5</color>
+    <color name="colorPicker">#ced4da</color>
 </resources>
