@@ -33,8 +33,7 @@ public class RadioButtonTableLayout extends TableLayout implements OnClickListen
         rb.setChecked(true);
         Drawable checkDrawable = getResources().getDrawable(R.drawable.color_radio_button);
         if (R.id.folder_color_3 == rb.getId()) {
-            checkDrawable.setColorFilter(
-                    getResources().getColor(R.color.colorWhiteLight), PorterDuff.Mode.SRC_IN);
+            checkDrawable.setColorFilter(getResources().getColor(R.color.colorWhiteLight), PorterDuff.Mode.SRC_IN);
         } else {
             checkDrawable.clearColorFilter();
         }
