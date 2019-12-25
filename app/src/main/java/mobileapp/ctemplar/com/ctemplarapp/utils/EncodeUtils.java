@@ -9,6 +9,7 @@ import io.reactivex.schedulers.Schedulers;
 import mobileapp.ctemplar.com.ctemplarapp.net.entity.PGPKeyEntity;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.MailboxKey;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
+import mobileapp.ctemplar.com.ctemplarapp.security.PGPManager;
 
 public class EncodeUtils {
 
@@ -33,10 +34,9 @@ public class EncodeUtils {
     }
 
     public static Observable<PGPKeyEntity> getPGPKeyObservable(final String password) {
-        return Observable.fromCallable(() -> {
-            PGPManager pgpManager = new PGPManager();
-            return pgpManager.generateKeys("name <name@domain.com>", password);
-        }).subscribeOn(io.reactivex.schedulers.Schedulers.computation())
+        return Observable.fromCallable(()
+                -> PGPManager.generateKeys("user@ctemplar.com", password))
+                .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
@@ -47,15 +47,17 @@ public class EncodeUtils {
                                                                    final List<MailboxEntity> mailboxEntities) {
 
         return Observable.fromCallable(() -> {
-            PGPManager pgpManager = new PGPManager();
             List<MailboxKey> mailboxKeys = new ArrayList<>();
 
             for (MailboxEntity mailboxEntity : mailboxEntities) {
                 PGPKeyEntity pgpKeyEntity;
                 if (resetKeys) {
-                    pgpKeyEntity = pgpManager.generateKeys(username, password);
+                    pgpKeyEntity = PGPManager.generateKeys(username, password);
                 } else {
-                    pgpKeyEntity = pgpManager.changePrivateKeyPassword(mailboxEntity.getPrivateKey(), oldPassword, password);
+                    PGPKeyEntity oldPgpKeyEntity = new PGPKeyEntity(
+                            mailboxEntity.getPublicKey(), mailboxEntity.getPrivateKey(), mailboxEntity.getFingerprint()
+                    );
+                    pgpKeyEntity = PGPManager.changePrivateKeyPassword(oldPgpKeyEntity, oldPassword, password);
                 }
 
                 MailboxKey mailboxKey = new MailboxKey();
@@ -72,10 +74,8 @@ public class EncodeUtils {
     }
 
     public static Observable<PGPKeyEntity> generateAdditionalMailbox(final String username, final String password) {
-        return Observable.fromCallable(() -> {
-            PGPManager pgpManager = new PGPManager();
-            return pgpManager.generateKeys(username, password);
-        }).subscribeOn(Schedulers.computation())
+        return Observable.fromCallable(() -> PGPManager.generateKeys(username, password))
+                .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 }

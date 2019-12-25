@@ -1,6 +1,5 @@
 package mobileapp.ctemplar.com.ctemplarapp.repository.entity;
 
-import com.didisoft.pgp.exceptions.NonPGPDataException;
 import com.google.gson.Gson;
 
 import java.util.LinkedList;
@@ -12,8 +11,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.EncryptContact;
 import mobileapp.ctemplar.com.ctemplarapp.repository.MailboxDao;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserStore;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageProvider;
-import mobileapp.ctemplar.com.ctemplarapp.utils.PGPManager;
-import timber.log.Timber;
+import mobileapp.ctemplar.com.ctemplarapp.security.PGPManager;
 
 public class Contact {
 
@@ -115,12 +113,10 @@ public class Contact {
         if (content == null || mailboxDao.getAll().isEmpty()) {
             return "";
         }
-
         MailboxEntity mailboxEntity = mailboxDao.getAll().get(0);
-        PGPManager pgpManager = new PGPManager();
         String publicKey = mailboxEntity.getPublicKey();
         String[] keys = { publicKey };
-        return pgpManager.encryptMessage(content, keys);
+        return PGPManager.encrypt(content, keys);
     }
 
     public static String decryptData(String content) {
@@ -129,17 +125,8 @@ public class Contact {
         if (content == null || mailboxEntity == null) {
             return "";
         }
-
-        PGPManager pgpManager = new PGPManager();
         String privateKey = mailboxEntity.getPrivateKey();
-        try {
-            return pgpManager.decryptMessage(content, privateKey, password);
-        } catch (NonPGPDataException e) {
-            //
-        } catch (Exception e) {
-            Timber.w(e);
-        }
-        return "";
+        return PGPManager.decrypt(content, privateKey, password);
     }
 
     public static ContactData[] decryptContactData(ContactData[] contacts) {
@@ -148,7 +135,7 @@ public class Contact {
                 Gson gson = new Gson();
                 String encryptedData = contactData.getEncryptedData();
                 String decryptedData = decryptData(encryptedData);
-                if (decryptedData == null || decryptedData.isEmpty()) {
+                if (decryptedData.isEmpty()) {
                     continue;
                 }
                 EncryptContact decryptedContact = gson.fromJson(decryptedData, EncryptContact.class);

@@ -2,20 +2,11 @@ package mobileapp.ctemplar.com.ctemplarapp.message;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import androidx.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.appcompat.app.AlertDialog;
-import androidx.preference.PreferenceManager;
-import androidx.appcompat.widget.AppCompatMultiAutoCompleteTextView;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.Editable;
 import android.text.Html;
 import android.text.Spannable;
@@ -33,6 +24,16 @@ import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.AppCompatMultiAutoCompleteTextView;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.preference.PreferenceManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -65,11 +66,11 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MessageEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.AttachmentProvider;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageProvider;
+import mobileapp.ctemplar.com.ctemplarapp.security.PGPManager;
 import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EncryptUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.FileUtils;
-import mobileapp.ctemplar.com.ctemplarapp.utils.PGPManager;
 import mobileapp.ctemplar.com.ctemplarapp.utils.PermissionCheck;
 import mobileapp.ctemplar.com.ctemplarapp.utils.SpaceTokenizer;
 import okhttp3.MediaType;
@@ -850,8 +851,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
                 String randomSecret = messageEncryptionResult.getRandomSecret();
                 String password = messageEncryptionResult.getPassword();
 
-                PGPManager pgpManager = new PGPManager();
-                PGPKeyEntity pgpKeyEntity = pgpManager.generateKeys(randomSecret, password);
+                PGPKeyEntity pgpKeyEntity = PGPManager.generateKeys(randomSecret, password);
                 messageEncryptionResult.setPublicKey(pgpKeyEntity.getPublicKey());
                 messageEncryptionResult.setPrivateKey(pgpKeyEntity.getPrivateKey());
 

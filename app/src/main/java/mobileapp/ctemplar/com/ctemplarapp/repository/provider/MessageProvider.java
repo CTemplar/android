@@ -1,7 +1,5 @@
 package mobileapp.ctemplar.com.ctemplarapp.repository.provider;
 
-import com.didisoft.pgp.exceptions.NonPGPDataException;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -17,7 +15,7 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.entity.AttachmentEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MessageEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.UserDisplayEntity;
-import mobileapp.ctemplar.com.ctemplarapp.utils.PGPManager;
+import mobileapp.ctemplar.com.ctemplarapp.security.PGPManager;
 import timber.log.Timber;
 
 public class MessageProvider {
@@ -368,22 +366,12 @@ public class MessageProvider {
         if (content == null) {
             return "";
         }
-
         MailboxEntity mailboxEntity = mailboxDao.getById(mailboxId);
         String password = userStore.getUserPassword();
-
-        PGPManager pgpManager = new PGPManager();
         if (mailboxEntity != null) {
             String privateKey = mailboxEntity.getPrivateKey();
-            try {
-                content = pgpManager.decryptMessage(content, privateKey, password);
-            } catch (NonPGPDataException e) {
-                //
-            } catch (Exception e) {
-                Timber.w(e);
-            }
+            content = PGPManager.decrypt(content, privateKey, password);
         }
-
         return imgDisabled ? content.replaceAll("<img.+?>", "") : content;
     }
 
