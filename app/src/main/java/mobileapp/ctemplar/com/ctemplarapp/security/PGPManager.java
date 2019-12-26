@@ -1,4 +1,4 @@
- package mobileapp.ctemplar.com.ctemplarapp.security;
+package mobileapp.ctemplar.com.ctemplarapp.security;
 
 import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPKeyRingGenerator;

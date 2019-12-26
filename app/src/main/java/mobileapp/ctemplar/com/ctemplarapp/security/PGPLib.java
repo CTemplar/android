@@ -150,8 +150,8 @@ class PGPLib {
         RSAKeyPairGenerator kpg = new RSAKeyPairGenerator();
         kpg.init(new RSAKeyGenerationParameters(BigInteger.valueOf(0x10001), new SecureRandom(), strength, 12));
 
-        PGPKeyPair rsakpSign = new BcPGPKeyPair(PGPPublicKey.RSA_SIGN, kpg.generateKeyPair(), new Date());
-        PGPKeyPair rsakpEnc = new BcPGPKeyPair(PGPPublicKey.RSA_ENCRYPT, kpg.generateKeyPair(), new Date());
+        PGPKeyPair rsakpSign = new BcPGPKeyPair(PGPPublicKey.RSA_GENERAL, kpg.generateKeyPair(), new Date());
+        PGPKeyPair rsakpEnc = new BcPGPKeyPair(PGPPublicKey.RSA_GENERAL, kpg.generateKeyPair(), new Date());
 
         PGPSignatureSubpacketGenerator signhashgen = new PGPSignatureSubpacketGenerator();
         signhashgen.setKeyFlags(false, KeyFlags.SIGN_DATA|KeyFlags.CERTIFY_OTHER|KeyFlags.SHARED);
