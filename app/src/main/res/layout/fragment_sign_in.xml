@@ -68,7 +68,9 @@
                     android:inputType="textEmailAddress"
                     android:letterSpacing="0.05"
                     android:textColor="@android:color/white"
-                    android:theme="@style/EditTextCredentialsThemeLight" />
+                    android:theme="@style/EditTextCredentialsThemeLight">
+                    <requestFocus />
+                </com.google.android.material.textfield.TextInputEditText>
 
             </com.google.android.material.textfield.TextInputLayout>
 

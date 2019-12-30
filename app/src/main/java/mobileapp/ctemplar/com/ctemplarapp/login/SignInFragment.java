@@ -96,12 +96,12 @@ public class SignInFragment extends BaseFragment {
         String otp = null;
 
         if (editTextUsername.getText() != null && editTextPassword.getText() != null) {
-            username = editTextUsername.getText().toString().trim()
-                    .toLowerCase().replaceAll("@.+", "");
-            password = editTextPassword.getText().toString().trim();
+            username = EditTextUtils.getText(editTextUsername).trim().toLowerCase()
+                    .replaceAll("@.+", "");
+            password = EditTextUtils.getText(editTextPassword).trim();
         }
         if (editTextOtpCode.getText() != null && !editTextOtpCode.getText().toString().isEmpty()) {
-            otp = editTextOtpCode.getText().toString().trim();
+            otp = EditTextUtils.getText(editTextOtpCode).trim();
         }
         if(isValid(username, password)) {
             loginActivityModel.showProgressDialog();
@@ -181,6 +181,7 @@ public class SignInFragment extends BaseFragment {
         editTextPasswordLayout.setVisibility(View.GONE);
         textViewOtpTitle.setVisibility(View.VISIBLE);
         editTextOtpLayout.setVisibility(View.VISIBLE);
+        editTextOtpLayout.requestFocus();
     }
 
     private void sendFirebaseToken() {
@@ -191,7 +192,7 @@ public class SignInFragment extends BaseFragment {
 
         FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(getActivity(), instanceIdResult -> {
             String token = instanceIdResult.getToken();
-            loginActivityModel.addFirebaseToken(token, "android");
+            loginActivityModel.addFirebaseToken(token, getString(R.string.platform));
         });
     }
 
