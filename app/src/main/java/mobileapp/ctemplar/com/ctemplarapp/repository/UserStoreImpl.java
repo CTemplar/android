@@ -3,6 +3,8 @@ package mobileapp.ctemplar.com.ctemplarapp.repository;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import androidx.preference.PreferenceManager;
+
 import mobileapp.ctemplar.com.ctemplarapp.net.entity.UserEntity;
 
 public class UserStoreImpl implements UserStore{
@@ -23,6 +25,7 @@ public class UserStoreImpl implements UserStore{
     private static final String KEY_CONTACTS_ENCRYPTION_ENABLED = "key_contacts_encryption_enabled";
 
     private SharedPreferences preferences;
+    private SharedPreferences globalPreferences;
 
     public static UserStoreImpl getInstance(Context context) {
         if(instance == null) {
@@ -33,11 +36,12 @@ public class UserStoreImpl implements UserStore{
 
     public UserStoreImpl(Context context) {
         preferences = context.getSharedPreferences(PREF_USER, Context.MODE_PRIVATE);
+        globalPreferences = PreferenceManager.getDefaultSharedPreferences(context);
     }
 
     @Override
     public void saveToken(String token) {
-        preferences.edit().putString(KEY_USER_TOKEN, token).commit();
+        preferences.edit().putString(KEY_USER_TOKEN, token).apply();
     }
 
     @Override
@@ -47,7 +51,7 @@ public class UserStoreImpl implements UserStore{
 
     @Override
     public void saveFirebaseToken(String token) {
-        preferences.edit().putString(KEY_FIREBASE_TOKEN, token).commit();
+        preferences.edit().putString(KEY_FIREBASE_TOKEN, token).apply();
     }
 
     @Override
@@ -63,7 +67,7 @@ public class UserStoreImpl implements UserStore{
                 .putString(KEY_PASSWORD_HASHED, passHashed)
                 .putString(KEY_PRIVATE_KEY, privateKey)
                 .putString(KEY_PUBLIC_KEY, publicKey)
-                .commit();
+                .apply();
     }
 
     @Override
@@ -80,17 +84,18 @@ public class UserStoreImpl implements UserStore{
 
     @Override
     public void clearToken() {
-        preferences.edit().remove(KEY_USER_TOKEN).commit();
+        preferences.edit().remove(KEY_USER_TOKEN).apply();
     }
 
     @Override
     public void logout() {
-        preferences.edit().clear().commit();
+        preferences.edit().clear().apply();
+        globalPreferences.edit().clear().apply();
     }
 
     @Override
     public void saveUsername(String username) {
-        preferences.edit().putString(KEY_USERNAME, username).commit();
+        preferences.edit().putString(KEY_USERNAME, username).apply();
     }
 
     @Override
@@ -100,7 +105,7 @@ public class UserStoreImpl implements UserStore{
 
     @Override
     public void savePassword(String password) {
-        preferences.edit().putString(KEY_PASSWORD, password).commit();
+        preferences.edit().putString(KEY_PASSWORD, password).apply();
     }
 
     @Override
@@ -110,7 +115,7 @@ public class UserStoreImpl implements UserStore{
 
     @Override
     public void saveTimeZone(String timezone) {
-        preferences.edit().putString(KEY_TIMEZONE, timezone).commit();
+        preferences.edit().putString(KEY_TIMEZONE, timezone).apply();
     }
 
     @Override
@@ -120,7 +125,7 @@ public class UserStoreImpl implements UserStore{
 
     @Override
     public void setNotificationsEnabled(boolean state) {
-        preferences.edit().putBoolean(KEY_NOTIFICATIONS_ENABLED, state).commit();
+        preferences.edit().putBoolean(KEY_NOTIFICATIONS_ENABLED, state).apply();
     }
 
     @Override
@@ -130,7 +135,7 @@ public class UserStoreImpl implements UserStore{
 
     @Override
     public void setAttachmentsEncryptionEnabled(boolean state) {
-        preferences.edit().putBoolean(KEY_ATTACHMENTS_ENCRYPTION_ENABLED, state).commit();
+        preferences.edit().putBoolean(KEY_ATTACHMENTS_ENCRYPTION_ENABLED, state).apply();
     }
 
     @Override
@@ -140,7 +145,7 @@ public class UserStoreImpl implements UserStore{
 
     @Override
     public void setContactsEncryptionEnabled(boolean state) {
-        preferences.edit().putBoolean(KEY_CONTACTS_ENCRYPTION_ENABLED, state).commit();
+        preferences.edit().putBoolean(KEY_CONTACTS_ENCRYPTION_ENABLED, state).apply();
     }
 
     @Override

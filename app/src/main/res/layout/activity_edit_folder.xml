@@ -95,8 +95,9 @@
 
             <RadioButton
                 android:id="@+id/folder_color_1"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="0dp"
+                android:layout_height="28dp"
+                android:layout_weight="2"
                 android:button="@drawable/color_radio_button"
                 android:background="@drawable/folder_picker_color" />
 
@@ -107,8 +108,9 @@
 
             <RadioButton
                 android:id="@+id/folder_color_2"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="0dp"
+                android:layout_height="28dp"
+                android:layout_weight="2"
                 android:button="@drawable/color_radio_button"
                 android:background="@drawable/folder_picker_color" />
 
@@ -119,8 +121,9 @@
 
             <RadioButton
                 android:id="@+id/folder_color_3"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="0dp"
+                android:layout_height="28dp"
+                android:layout_weight="2"
                 android:button="@drawable/color_radio_button"
                 android:background="@drawable/folder_picker_color" />
 
@@ -131,8 +134,9 @@
 
             <RadioButton
                 android:id="@+id/folder_color_4"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="0dp"
+                android:layout_height="28dp"
+                android:layout_weight="2"
                 android:button="@drawable/color_radio_button"
                 android:background="@drawable/folder_picker_color" />
 
@@ -143,8 +147,9 @@
 
             <RadioButton
                 android:id="@+id/folder_color_5"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="0dp"
+                android:layout_height="28dp"
+                android:layout_weight="2"
                 android:button="@drawable/color_radio_button"
                 android:background="@drawable/folder_picker_color" />
 
@@ -155,8 +160,9 @@
 
             <RadioButton
                 android:id="@+id/folder_color_6"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="0dp"
+                android:layout_height="28dp"
+                android:layout_weight="2"
                 android:button="@drawable/color_radio_button"
                 android:background="@drawable/folder_picker_color" />
 
@@ -167,8 +173,9 @@
 
             <RadioButton
                 android:id="@+id/folder_color_7"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="0dp"
+                android:layout_height="28dp"
+                android:layout_weight="2"
                 android:button="@drawable/color_radio_button"
                 android:background="@drawable/folder_picker_color" />
 
@@ -179,8 +186,9 @@
 
             <RadioButton
                 android:id="@+id/folder_color_8"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="0dp"
+                android:layout_height="28dp"
+                android:layout_weight="2"
                 android:button="@drawable/color_radio_button"
                 android:background="@drawable/folder_picker_color" />
 
@@ -191,20 +199,22 @@
 
             <RadioButton
                 android:id="@+id/folder_color_9"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="0dp"
+                android:layout_height="28dp"
+                android:layout_weight="2"
                 android:button="@drawable/color_radio_button"
                 android:background="@drawable/folder_picker_color" />
 
         </TableRow>
 
         <TableRow
-            android:layout_marginTop="6dp">
+            android:layout_marginTop="10dp">
 
             <RadioButton
                 android:id="@+id/folder_color_10"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="0dp"
+                android:layout_height="28dp"
+                android:layout_weight="2"
                 android:button="@drawable/color_radio_button"
                 android:background="@drawable/folder_picker_color" />
 
@@ -215,8 +225,9 @@
 
             <RadioButton
                 android:id="@+id/folder_color_11"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="0dp"
+                android:layout_height="28dp"
+                android:layout_weight="2"
                 android:button="@drawable/color_radio_button"
                 android:background="@drawable/folder_picker_color" />
 
@@ -227,8 +238,9 @@
 
             <RadioButton
                 android:id="@+id/folder_color_12"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="0dp"
+                android:layout_height="28dp"
+                android:layout_weight="2"
                 android:button="@drawable/color_radio_button"
                 android:background="@drawable/folder_picker_color" />
 
@@ -239,8 +251,9 @@
 
             <RadioButton
                 android:id="@+id/folder_color_13"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="0dp"
+                android:layout_height="28dp"
+                android:layout_weight="2"
                 android:button="@drawable/color_radio_button"
                 android:background="@drawable/folder_picker_color" />
 
@@ -251,8 +264,9 @@
 
             <RadioButton
                 android:id="@+id/folder_color_14"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="0dp"
+                android:layout_height="28dp"
+                android:layout_weight="2"
                 android:button="@drawable/color_radio_button"
                 android:background="@drawable/folder_picker_color" />
 
@@ -263,8 +277,9 @@
 
             <RadioButton
                 android:id="@+id/folder_color_15"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="0dp"
+                android:layout_height="28dp"
+                android:layout_weight="2"
                 android:button="@drawable/color_radio_button"
                 android:background="@drawable/folder_picker_color" />
 
@@ -275,8 +290,9 @@
 
             <RadioButton
                 android:id="@+id/folder_color_16"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="0dp"
+                android:layout_height="28dp"
+                android:layout_weight="2"
                 android:button="@drawable/color_radio_button"
                 android:background="@drawable/folder_picker_color" />
 
@@ -287,8 +303,9 @@
 
             <RadioButton
                 android:id="@+id/folder_color_17"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="0dp"
+                android:layout_height="28dp"
+                android:layout_weight="2"
                 android:button="@drawable/color_radio_button"
                 android:background="@drawable/folder_picker_color" />
 
@@ -299,20 +316,22 @@
 
             <RadioButton
                 android:id="@+id/folder_color_18"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="0dp"
+                android:layout_height="28dp"
+                android:layout_weight="2"
                 android:button="@drawable/color_radio_button"
                 android:background="@drawable/folder_picker_color" />
 
         </TableRow>
 
         <TableRow
-            android:layout_marginTop="6dp">
+            android:layout_marginTop="10dp">
 
             <RadioButton
                 android:id="@+id/folder_color_19"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="0dp"
+                android:layout_height="28dp"
+                android:layout_weight="2"
                 android:button="@drawable/color_radio_button"
                 android:background="@drawable/folder_picker_color" />
 
@@ -323,8 +342,9 @@
 
             <RadioButton
                 android:id="@+id/folder_color_20"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="0dp"
+                android:layout_height="28dp"
+                android:layout_weight="2"
                 android:button="@drawable/color_radio_button"
                 android:background="@drawable/folder_picker_color" />
 
@@ -335,8 +355,9 @@
 
             <RadioButton
                 android:id="@+id/folder_color_21"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="0dp"
+                android:layout_height="28dp"
+                android:layout_weight="2"
                 android:button="@drawable/color_radio_button"
                 android:background="@drawable/folder_picker_color" />
 
@@ -347,8 +368,9 @@
 
             <RadioButton
                 android:id="@+id/folder_color_22"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="0dp"
+                android:layout_height="28dp"
+                android:layout_weight="2"
                 android:button="@drawable/color_radio_button"
                 android:background="@drawable/folder_picker_color" />
 
@@ -359,8 +381,9 @@
 
             <RadioButton
                 android:id="@+id/folder_color_23"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="0dp"
+                android:layout_height="28dp"
+                android:layout_weight="2"
                 android:button="@drawable/color_radio_button"
                 android:background="@drawable/folder_picker_color" />
 
@@ -371,8 +394,9 @@
 
             <RadioButton
                 android:id="@+id/folder_color_24"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="0dp"
+                android:layout_height="28dp"
+                android:layout_weight="2"
                 android:button="@drawable/color_radio_button"
                 android:background="@drawable/folder_picker_color" />
 
@@ -383,8 +407,9 @@
 
             <RadioButton
                 android:id="@+id/folder_color_25"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="0dp"
+                android:layout_height="28dp"
+                android:layout_weight="2"
                 android:button="@drawable/color_radio_button"
                 android:background="@drawable/folder_picker_color" />
 
@@ -395,8 +420,9 @@
 
             <RadioButton
                 android:id="@+id/folder_color_26"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="0dp"
+                android:layout_height="28dp"
+                android:layout_weight="2"
                 android:button="@drawable/color_radio_button"
                 android:background="@drawable/folder_picker_color" />
 
@@ -407,20 +433,22 @@
 
             <RadioButton
                 android:id="@+id/folder_color_27"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="0dp"
+                android:layout_height="28dp"
+                android:layout_weight="2"
                 android:button="@drawable/color_radio_button"
                 android:background="@drawable/folder_picker_color" />
 
         </TableRow>
 
         <TableRow
-            android:layout_marginTop="6dp">
+            android:layout_marginTop="10dp">
 
             <RadioButton
                 android:id="@+id/folder_color_28"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="0dp"
+                android:layout_height="28dp"
+                android:layout_weight="2"
                 android:button="@drawable/color_radio_button"
                 android:background="@drawable/folder_picker_color" />
 
@@ -431,8 +459,9 @@
 
             <RadioButton
                 android:id="@+id/folder_color_29"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="0dp"
+                android:layout_height="28dp"
+                android:layout_weight="2"
                 android:button="@drawable/color_radio_button"
                 android:background="@drawable/folder_picker_color" />
 
@@ -443,8 +472,9 @@
 
             <RadioButton
                 android:id="@+id/folder_color_30"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="0dp"
+                android:layout_height="28dp"
+                android:layout_weight="2"
                 android:button="@drawable/color_radio_button"
                 android:background="@drawable/folder_picker_color" />
 
@@ -455,8 +485,9 @@
 
             <RadioButton
                 android:id="@+id/folder_color_31"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="0dp"
+                android:layout_height="28dp"
+                android:layout_weight="2"
                 android:button="@drawable/color_radio_button"
                 android:background="@drawable/folder_picker_color" />
 
@@ -467,8 +498,9 @@
 
             <RadioButton
                 android:id="@+id/folder_color_32"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="0dp"
+                android:layout_height="28dp"
+                android:layout_weight="2"
                 android:button="@drawable/color_radio_button"
                 android:background="@drawable/folder_picker_color" />
 
@@ -479,8 +511,9 @@
 
             <RadioButton
                 android:id="@+id/folder_color_33"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="0dp"
+                android:layout_height="28dp"
+                android:layout_weight="2"
                 android:button="@drawable/color_radio_button"
                 android:background="@drawable/folder_picker_color" />
 
@@ -491,8 +524,9 @@
 
             <RadioButton
                 android:id="@+id/folder_color_34"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="0dp"
+                android:layout_height="28dp"
+                android:layout_weight="2"
                 android:button="@drawable/color_radio_button"
                 android:background="@drawable/folder_picker_color" />
 
@@ -503,8 +537,9 @@
 
             <RadioButton
                 android:id="@+id/folder_color_35"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="0dp"
+                android:layout_height="28dp"
+                android:layout_weight="2"
                 android:button="@drawable/color_radio_button"
                 android:background="@drawable/folder_picker_color" />
 
@@ -515,8 +550,9 @@
 
             <RadioButton
                 android:id="@+id/folder_color_36"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="0dp"
+                android:layout_height="28dp"
+                android:layout_weight="2"
                 android:button="@drawable/color_radio_button"
                 android:background="@drawable/folder_picker_color" />
 
