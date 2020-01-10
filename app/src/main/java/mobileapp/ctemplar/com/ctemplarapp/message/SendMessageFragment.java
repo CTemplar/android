@@ -677,10 +677,11 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
                         MyselfResult myself = myselfResponse.result[0];
                         addSignature(myself.mailboxes[0].getSignature());
                         isSubjectEncrypted = myself.settings.isSubjectEncrypted();
-                        String joinedDate = myself.joinedDate;
-                        boolean userTrial = AppUtils.twoWeeksTrial(joinedDate);
-                        boolean userPrime = myself.isPrime;
-                        userIsPrime = userPrime || userTrial;
+                        userIsPrime = myself.isPrime;
+//                        String joinedDate = myself.joinedDate;
+//                        boolean userTrial = AppUtils.twoWeeksTrial(joinedDate);
+//                        boolean userPrime = myself.isPrime;
+//                        userIsPrime = userPrime || userTrial;
                     }
                 });
     }
