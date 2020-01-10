@@ -321,6 +321,7 @@ Your password is connected to your encryption key, if you change your password t
     <string name="settings_wb_list">Whitelist/Blacklist</string>
     <string name="settings_folders">Folders</string>
     <string name="settings_manage_folders">Manage folders</string>
+    <string name="settings_security">Security</string>
     <string name="settings_mail">Mail</string>
     <string name="settings_addresses">Addresses</string>
     <string name="settings_signature">Signature</string>
@@ -345,8 +346,8 @@ Your password is connected to your encryption key, if you change your password t
     <string name="change_password_reset_data">Delete data</string>
     <string name="toast_email_not_valid">Email is not valid</string>
     <string name="filters" translatable="false">filters</string>
-    <string name="white_black_list">white_black_list</string>
-    <string name="manage_folders">manage_folders</string>
+    <string name="white_black_list" translatable="false">white_black_list</string>
+    <string name="manage_folders" translatable="false">manage_folders</string>
     <string name="push_notifications_enabled" translatable="false">push_notifications_enabled</string>
     <string name="recovery_email_enabled" translatable="false">recovery_email_enabled</string>
     <string name="recovery_email" translatable="false">recovery_email</string>
@@ -394,26 +395,17 @@ Your password is connected to your encryption key, if you change your password t
     <string name="url_prime_upgrade" translatable="false">https://ctemplar.com/mail/settings/dashboard-and-plans</string>
     <string name="url_prime_more" translatable="false">https://ctemplar.com/pricing</string>
 
-    <string-array name="languages">
-        <item>Dutch</item>
-        <item>English</item>
-        <item>French</item>
-        <item>German</item>
-        <item>Italian</item>
-        <item>Polish</item>
-    </string-array>
-
     <!-- ERRORS -->
     <string name="error_invalid_email">Please, select a valid email or select unrecoverable account</string>
     <string name="error_username_small">Minimum 4 symbols</string>
     <string name="error_username_small_two">Minimum 2 symbols</string>
     <string name="error_username_big">Maximum 64 symbols</string>
-    <string name="error_password_small">Minimum 10 symbols</string>
+    <string name="error_password_small">Minimum 8 symbols</string>
     <string name="error_password_big">Maximum 64 symbols</string>
     <string name="error_username_incorrect">Enter a valid username</string>
     <string name="error_username_exists">Email already exists!</string>
     <string name="error_password_not_match">Passwords do not match</string>
-    <string name="error_password_message">Password must be between 10 and 30 characters</string>
+    <string name="error_password_message">Password must be between 8 and 30 characters</string>
     <string name="error_current_password_not_match">Old password is not correct!</string>
     <string name="error_empty_email">Empty email</string>
     <string name="error_empty_password">Empty password</string>
