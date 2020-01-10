@@ -89,7 +89,7 @@ public class MessagingService extends FirebaseMessagingService {
         long id = (parentId == -1) ? messageId : parentId;
         String content = (isSubjectEncrypted) ? getString(R.string.txt_encrypted_subject) : subject;
 
-        Bitmap icon = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
+        Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
         String channelId = "ctemplar";
         String channelName = "messages";
 
@@ -106,24 +106,24 @@ public class MessagingService extends FirebaseMessagingService {
                 .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
                 .setContentIntent(pendingIntent)
                 .setContentInfo(sender)
-                .setLargeIcon(icon)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setDefaults(NotificationCompat.DEFAULT_VIBRATE)
-                .setSmallIcon(R.mipmap.ic_launcher);
+                .setLargeIcon(largeIcon)
+                .setSmallIcon(R.mipmap.ic_launcher_small);
 
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel(
+            NotificationChannel notificationChannel = new NotificationChannel(
                     channelId, channelName, NotificationManager.IMPORTANCE_HIGH
             );
-            channel.setDescription(getString(R.string.app_name));
-            channel.setShowBadge(true);
-            channel.canShowBadge();
-            channel.enableLights(true);
-            channel.setLightColor(Color.RED);
-            channel.enableVibration(true);
-            notificationManager.createNotificationChannel(channel);
+            notificationChannel.setDescription(getString(R.string.app_name));
+            notificationChannel.setShowBadge(true);
+            notificationChannel.canShowBadge();
+            notificationChannel.enableLights(true);
+            notificationChannel.setLightColor(Color.RED);
+            notificationChannel.enableVibration(true);
+            notificationManager.createNotificationChannel(notificationChannel);
         }
 
         int randomId = random.nextInt(1000);
