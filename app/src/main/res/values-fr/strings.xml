@@ -396,6 +396,7 @@ Your password is connected to your encryption key, if you change your password t
     <string name="error_reset_password">Erreur de réinitialisation du mot de passe</string>
     <string name="error_recover_password">Le nom utilisateur ou l\'email de récupération est incorrect</string>
     <string name="error_upload_attachment">Echec de téléchargement</string>
+    <string name="error_attachment_url">L\'URL de la pièce jointe est vide</string>
     <string name="error_upload_attachment_too_large">La pièce-jointe dépasse la limite autorisée</string>
     <string name="title_activity_white_black_list">WhiteBlackList</string>
     <string name="section_format">Hello World from section: %1$d</string>

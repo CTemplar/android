@@ -15,14 +15,22 @@ import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
 
 public class MessageAttachmentAdapter extends RecyclerView.Adapter<MessageAttachmentHolder> {
 
-    final private static String PDF = "PDF";
-    final private static String DOC = "DOC";
-    final private static String PNG = "PNG";
-    final private static String JPG = "JPG";
-    final private static String JPEG = "JPEG";
+    private static final String PDF = "PDF";
+    private static final String DOC = "DOC";
+    private static final String PNG = "PNG";
+    private static final String JPG = "JPG";
+    private static final String JPEG = "JPEG";
 
     private List<AttachmentProvider> attachmentList;
     private final PublishSubject<Integer> onClickAttachmentLink = PublishSubject.create();
+
+    public MessageAttachmentAdapter() {
+
+    }
+
+    public MessageAttachmentAdapter(List<AttachmentProvider> attachmentList) {
+        this.attachmentList = attachmentList;
+    }
 
     public void setAttachmentList(List<AttachmentProvider> attachmentList) {
         this.attachmentList = attachmentList;
@@ -40,7 +48,6 @@ public class MessageAttachmentAdapter extends RecyclerView.Adapter<MessageAttach
     @Override
     public MessageAttachmentHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_message_attachment, viewGroup, false);
-
         return new MessageAttachmentHolder(view);
     }
 

@@ -1,5 +1,9 @@
 package mobileapp.ctemplar.com.ctemplarapp.message;
 
+import android.app.Activity;
+import android.app.DownloadManager;
+import android.net.Uri;
+import android.os.Environment;
 import android.text.Html;
 import android.text.TextUtils;
 import android.util.Base64;
@@ -10,6 +14,7 @@ import android.webkit.WebView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -18,36 +23,47 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.repository.constant.MessageActions;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.AttachmentProvider;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageProvider;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.UserDisplayProvider;
 import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
+import mobileapp.ctemplar.com.ctemplarapp.utils.PermissionCheck;
+import timber.log.Timber;
+
+import static android.content.Context.DOWNLOAD_SERVICE;
 
 public class ViewMessagesAdapter extends BaseAdapter {
 
-    private List<MessageProvider> data;
-    private MessageAttachmentAdapter messageAttachmentAdapter;
+    private List<MessageProvider> messageProviderList;
+    private OnAttachmentDownloading onAttachmentDownloading;
+    private Activity activity;
 
-    ViewMessagesAdapter(List<MessageProvider> data, MessageAttachmentAdapter messageAttachmentAdapter) {
-        this.data = data;
-        this.messageAttachmentAdapter = messageAttachmentAdapter;
+    ViewMessagesAdapter(List<MessageProvider> messageProviderList,
+                        OnAttachmentDownloading onAttachmentDownloading,
+                        Activity activity) {
+
+        this.messageProviderList = messageProviderList;
+        this.onAttachmentDownloading = onAttachmentDownloading;
+        this.activity = activity;
     }
 
     @Override
     public int getCount() {
-        return data.size();
+        return messageProviderList.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return data.get(position);
+        return messageProviderList.get(position);
     }
 
     @Override
     public long getItemId(int position) {
-        return data.get(position).getId();
+        return messageProviderList.get(position).getId();
     }
 
     private View getViewByFlag(LayoutInflater inflater, ViewGroup parent, MessageProvider messageData, boolean isLast) {
@@ -223,8 +239,49 @@ public class ViewMessagesAdapter extends BaseAdapter {
         );
         attachmentsRecyclerView.setLayoutManager(mLayoutManager);
 
-        messageAttachmentAdapter.setAttachmentList(attachmentList);
+        MessageAttachmentAdapter messageAttachmentAdapter = new MessageAttachmentAdapter(attachmentList);
         attachmentsRecyclerView.setAdapter(messageAttachmentAdapter);
+        messageAttachmentAdapter.getOnClickAttachmentLink().subscribe(new Observer<Integer>() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onNext(Integer position) {
+                AttachmentProvider attachmentProvider = messageAttachmentAdapter.getAttachment(position);
+                String documentLink = attachmentProvider.getDocumentLink();
+                if (documentLink == null) {
+                    Toast.makeText(activity, activity.getString(R.string.error_attachment_url), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                Uri documentUri = Uri.parse(documentLink);
+                String fileName = AppUtils.getFileNameFromURL(documentLink);
+                if (attachmentProvider.isEncrypted()) {
+                    fileName += "-encrypted";
+                }
+
+                DownloadManager.Request documentRequest = new DownloadManager.Request(documentUri);
+                documentRequest.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName);
+                documentRequest.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+                if (activity != null && PermissionCheck.readAndWriteExternalStorage(activity)) {
+                    DownloadManager downloadManager = (DownloadManager) activity.getApplicationContext().getSystemService(DOWNLOAD_SERVICE);
+                    downloadManager.enqueue(documentRequest);
+                    Toast.makeText(activity, activity.getString(R.string.toast_download_started), Toast.LENGTH_SHORT).show();
+                    onAttachmentDownloading.onStart(attachmentProvider);
+                }
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Timber.e(e);
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
+        });
 
         return view;
     }
@@ -232,7 +289,7 @@ public class ViewMessagesAdapter extends BaseAdapter {
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        MessageProvider messageData = data.get(position);
+        MessageProvider messageData = messageProviderList.get(position);
         return getViewByFlag(inflater, parent, messageData, position + 1 == getCount());
     }
 
