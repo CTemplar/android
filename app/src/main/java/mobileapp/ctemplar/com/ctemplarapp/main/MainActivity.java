@@ -171,7 +171,7 @@ public class MainActivity extends AppCompatActivity
 
         List<FoldersResult> foldersListForDeleting = customFoldersListAll;
         for (FoldersResult folderItem : customFoldersListAll) {
-            navigationMenu.removeItem((int) folderItem.getId());
+            navigationMenu.removeItem(folderItem.getId());
         }
         customFoldersListAll.removeAll(foldersListForDeleting);
 
@@ -181,12 +181,13 @@ public class MainActivity extends AppCompatActivity
 
         for (FoldersResult folderItem : customFoldersList) {
             customFoldersListAll.add(folderItem);
-            int folderId = (int) folderItem.getId();
+            int folderId = folderItem.getId();
+            int order = folderItem.getSortOrder();
             String folderName = folderItem.getName();
             MenuItem menuItem = navigationMenu.add(
                     R.id.activity_main_drawer_folders,
                     folderId,
-                    folderId,
+                    order,
                     folderName
             );
             menuItem.setCheckable(true);
@@ -201,8 +202,7 @@ public class MainActivity extends AppCompatActivity
             TextView actionView = (TextView) menuItem.getActionView();
             try {
                 int unreadMessages = unreadFolders.getInt(folderName);
-                String unreadString = unreadMessages > 0
-                        ? String.valueOf(unreadMessages) : null;
+                String unreadString = unreadMessages > 0 ? String.valueOf(unreadMessages) : null;
                 actionView.setText(unreadString);
             } catch (Exception e) {
                 Timber.e(e);
