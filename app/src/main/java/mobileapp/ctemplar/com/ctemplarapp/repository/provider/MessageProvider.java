@@ -346,26 +346,12 @@ public class MessageProvider {
     }
 //    private MessagesResult[] children;
 
-    private static UserStore userStore = CTemplarApp.getUserStore();
-    private static MailboxDao mailboxDao = CTemplarApp.getAppDatabase().mailboxDao();
-
-    public static MailboxEntity getDefaultMailbox() {
-        if (mailboxDao.getDefault() != null) {
-            return mailboxDao.getDefault();
-        } else {
-            if (!mailboxDao.getAll().isEmpty()) {
-                return mailboxDao.getAll().get(0);
-            } else {
-                Timber.e("Mailbox not found");
-            }
-        }
-        return null;
-    }
-
     private static String decryptContent(String content, long mailboxId, boolean imgDisabled) {
         if (content == null) {
             return "";
         }
+        UserStore userStore = CTemplarApp.getUserStore();
+        MailboxDao mailboxDao = CTemplarApp.getAppDatabase().mailboxDao();
         MailboxEntity mailboxEntity = mailboxDao.getById(mailboxId);
         String password = userStore.getUserPassword();
         if (mailboxEntity != null) {

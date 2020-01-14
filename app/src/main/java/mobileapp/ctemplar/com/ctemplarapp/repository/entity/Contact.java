@@ -10,8 +10,8 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.ContactData;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.EncryptContact;
 import mobileapp.ctemplar.com.ctemplarapp.repository.MailboxDao;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserStore;
-import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageProvider;
 import mobileapp.ctemplar.com.ctemplarapp.security.PGPManager;
+import mobileapp.ctemplar.com.ctemplarapp.utils.EncryptUtils;
 
 public class Contact {
 
@@ -120,7 +120,7 @@ public class Contact {
     }
 
     public static String decryptData(String content) {
-        MailboxEntity mailboxEntity = MessageProvider.getDefaultMailbox();
+        MailboxEntity mailboxEntity = EncryptUtils.getDefaultMailbox();
         String password = userStore.getUserPassword();
         if (content == null || mailboxEntity == null) {
             return "";

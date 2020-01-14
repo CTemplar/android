@@ -547,15 +547,17 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
                 boolean isEncrypted = attachmentProvider.isEncrypted();
 
                 File externalStorageFile = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-
                 if (isEncrypted) {
                     File downloadedFile = new File(externalStorageFile, fileName + "-encrypted");
                     File decryptedFile = new File(externalStorageFile, fileName);
 
-                    MailboxEntity mailboxEntity = viewModel.getMailboxes().get(0);
+                    long mailboxId = parentMessage.getMailboxId();
+                    MailboxEntity mailboxEntity = viewModel.getMailboxById(mailboxId);
                     String password = viewModel.getUserPassword();
                     String privateKey = mailboxEntity.getPrivateKey();
-                    boolean attachmentDecrypted = EncryptUtils.decryptAttachment(downloadedFile, decryptedFile, password, privateKey);
+                    boolean attachmentDecrypted = EncryptUtils.decryptAttachment(
+                            downloadedFile, decryptedFile, password, privateKey
+                    );
                     downloadedFile.delete();
 
                     Uri decryptedUri = FileProvider.getUriForFile(
@@ -571,7 +573,6 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
                     );
                     openFile(fileUri);
                 }
-
             } catch (Exception e) {
                 Timber.i(e);
             }
