@@ -25,8 +25,10 @@ public class EditFolderActivity extends BaseActivity {
 
     @BindView(R.id.activity_edit_folder_input)
     EditText editTextNameFolder;
+
     @BindView(R.id.activity_edit_folder_colors_layout)
     RadioButtonTableLayout radioGroupColor;
+
     @BindView(R.id.folder_color_1)
     RadioButton firstRadioButton;
 
