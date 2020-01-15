@@ -107,6 +107,7 @@ Your password is connected to your encryption key, if you change your password t
     <string name="btn_login">Log in</string>
     <string name="btn_compose">Compose</string>
     <string name="btn_add_folder">Add folder</string>
+    <string name="hint_captcha">Write text from image / Time display in clock (hh:mm) e.g.: 04:23</string>
     <string name="txt_forgot_pass">Forgot Password?</string>
     <string name="txt_create_acc"><u>Create account</u></string>
     <string name="txt_loading">Loading...</string>
