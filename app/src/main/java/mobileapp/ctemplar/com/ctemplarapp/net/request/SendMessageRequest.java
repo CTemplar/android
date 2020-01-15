@@ -49,6 +49,9 @@ public class SendMessageRequest {
     @SerializedName("is_encrypted")
     private boolean isEncrypted;
 
+    @SerializedName("is_html")
+    private boolean isHtml;
+
     @SerializedName("is_subject_encrypted")
     private boolean isSubjectEncrypted;
 
@@ -127,6 +130,14 @@ public class SendMessageRequest {
 
     public void setIsEncrypted(boolean isEncrypted) {
         this.isEncrypted = isEncrypted;
+    }
+
+    public boolean isHtml() {
+        return isHtml;
+    }
+
+    public void setHtml(boolean html) {
+        isHtml = html;
     }
 
     public boolean isSubjectEncrypted() {

@@ -27,7 +27,7 @@ public class EditFolderActivity extends BaseActivity {
     EditText editTextNameFolder;
 
     @BindView(R.id.activity_edit_folder_colors_layout)
-    RadioButtonTableLayout radioGroupColor;
+    RadioButtonTableLayout radioGroupLayout;
 
     @BindView(R.id.folder_color_1)
     RadioButton firstRadioButton;
@@ -73,15 +73,16 @@ public class EditFolderActivity extends BaseActivity {
                         Toast.makeText(getApplicationContext(), getResources().getString(R.string.txt_folder_edited), Toast.LENGTH_SHORT).show();
                     }
                 });
-        radioGroupColor.setActive(firstRadioButton);
+        AddFolderActivity.fillPalette(this, radioGroupLayout);
+        radioGroupLayout.setActive(firstRadioButton);
     }
 
     private void editFolder() {
         String folderName = editTextNameFolder.getText().toString();
         String folderColor = "";
 
-        if (radioGroupColor.getCheckedRadioButtonId() != -1) {
-            int selectedColor = radioGroupColor.getCheckedRadioButtonId();
+        if (radioGroupLayout.getCheckedRadioButtonId() != -1) {
+            int selectedColor = radioGroupLayout.getCheckedRadioButtonId();
             folderColor = AddFolderActivity.getPickerColor(selectedColor);
         }
 
@@ -112,15 +113,12 @@ public class EditFolderActivity extends BaseActivity {
             case R.id.action_edit_folder:
                 editFolder();
                 break;
-
             case android.R.id.home:
                 onBackPressed();
                 break;
-
             default:
                 return super.onOptionsItemSelected(item);
         }
-
         return true;
     }
 }

@@ -1,5 +1,6 @@
 package mobileapp.ctemplar.com.ctemplarapp.folders;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
@@ -15,8 +16,6 @@ import android.widget.Toast;
 
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProviders;
-
-import com.google.android.material.tabs.TabLayout;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -93,20 +92,9 @@ public class AddFolderActivity extends BaseActivity {
 
             }
         });
+        fillPalette(this, radioGroupLayout);
         buttonAddFolder.setBackgroundResource(R.color.colorGreyLight3);
         radioGroupLayout.setActive(firstRadioButton);
-
-        int backgroundColorNum = 0;
-        for (int radioTableCount = 0; radioTableCount < radioGroupLayout.getChildCount(); ++radioTableCount) {
-            TableRow tableRow = (TableRow) radioGroupLayout.getChildAt(radioTableCount);
-            for (int radioButtonCount = 0; radioButtonCount < tableRow.getChildCount(); radioButtonCount += 2) {
-                RadioButton radioButton = (RadioButton) tableRow.getChildAt(radioButtonCount);
-                int radioButtonColor = Color.parseColor(PICK_COLORS[backgroundColorNum++]);
-                Drawable radioBackground = getResources().getDrawable(R.drawable.folder_picker_color);
-                radioBackground.setColorFilter(radioButtonColor, PorterDuff.Mode.SRC_IN);
-                radioButton.setBackground(radioBackground);
-            }
-        }
     }
 
     @OnClick(R.id.activity_add_folder_action_add)
@@ -239,6 +227,20 @@ public class AddFolderActivity extends BaseActivity {
         }
 
         return folderColor;
+    }
+
+    public static void fillPalette(Context ctx, RadioButtonTableLayout radioButtonTableLayout) {
+        int backgroundColorNum = 0;
+        for (int radioTableCount = 0; radioTableCount < radioButtonTableLayout.getChildCount(); ++radioTableCount) {
+            TableRow tableRow = (TableRow) radioButtonTableLayout.getChildAt(radioTableCount);
+            for (int radioButtonCount = 0; radioButtonCount < tableRow.getChildCount(); radioButtonCount += 2) {
+                RadioButton radioButton = (RadioButton) tableRow.getChildAt(radioButtonCount);
+                int radioButtonColor = Color.parseColor(PICK_COLORS[backgroundColorNum++]);
+                Drawable radioBackground = ctx.getResources().getDrawable(R.drawable.folder_picker_color);
+                radioBackground.setColorFilter(radioButtonColor, PorterDuff.Mode.SRC_IN);
+                radioButton.setBackground(radioBackground);
+            }
+        }
     }
 
     @OnClick(R.id.activity_add_folder_action_cancel)

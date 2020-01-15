@@ -18,6 +18,8 @@ import androidx.appcompat.widget.AppCompatMultiAutoCompleteTextView;
 import androidx.recyclerview.widget.RecyclerView;
 import android.text.Editable;
 import android.text.Html;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -786,11 +788,13 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
 
         String subject = subjectEditText.getText().toString();
         String compose = composeEditText.getText().toString();
+        Spannable composeSpannable = new SpannableString(compose);
 
         sendMessageRequest = new SendMessageRequest();
         sendMessageRequest.setSender(mailboxEmail);
         sendMessageRequest.setSubject(subject);
-        sendMessageRequest.setContent(compose);
+        sendMessageRequest.setHtml(true);
+        sendMessageRequest.setContent(Html.toHtml(composeSpannable));
         sendMessageRequest.setMailbox(mailboxId);
         sendMessageRequest.setParent(parentId);
         sendMessageRequest.setSubjectEncrypted(isSubjectEncrypted);
@@ -885,14 +889,16 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         String toEmail = toEmailTextView.getText().toString().trim();
         String subject = subjectEditText.getText().toString();
         String compose = composeEditText.getText().toString();
+        Spannable composeSpannable = new SpannableString(compose);
 
         updateAttachmentPosition = 0;
         final SendMessageRequest messageRequestToDraft = new SendMessageRequest();
         messageRequestToDraft.setSubject(subject);
         messageRequestToDraft.setSender(mailboxEmail);
-        messageRequestToDraft.setContent(compose);
+        messageRequestToDraft.setContent(Html.toHtml(composeSpannable));
         messageRequestToDraft.setFolder(MainFolderNames.DRAFT);
         messageRequestToDraft.setIsEncrypted(true);
+        messageRequestToDraft.setHtml(true);
         messageRequestToDraft.setSend(false);
         messageRequestToDraft.setMailbox(mailboxId);
         messageRequestToDraft.setSubjectEncrypted(isSubjectEncrypted);

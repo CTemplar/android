@@ -204,7 +204,7 @@ public class ViewMessagesAdapter extends BaseAdapter {
 
         // display message
         if (isHtml) {
-            String messageWithStyle = "<style type=\"text/css\">*{max-width:100%;}</style>" + message;
+            String messageWithStyle = "<style type=\"text/css\">*{width:auto;max-width:100%;}</style>" + message;
             String encodedContent = Base64.encodeToString(messageWithStyle.getBytes(), Base64.NO_PADDING);
             contentWebView.getSettings().setLoadWithOverviewMode(true);
             contentWebView.getSettings().setBuiltInZoomControls(true);
