@@ -327,6 +327,7 @@ Your password is connected to your encryption key, if you change your password t
     <string name="settings_enable_signature">Activer signature</string>
     <string name="settings_type_signature">Saisir votre signature</string>
     <string name="settings_mobile_signature">Signature mobile</string>
+    <string name="settings_keys">Clés</string>
     <string name="settings_enable_mobile_signature">Enable mobile signature</string>
     <string name="settings_type_mobile_signature">Saisir votre signature mobile</string>
     <string name="settings_about">A propos</string>
@@ -360,6 +361,13 @@ Your password is connected to your encryption key, if you change your password t
     <string name="mailbox_alias_creation_paid">Changer de forfait pour ajouter plus d\'alias.</string>
     <string name="mailbox_alias_creation_failed">Echec lors de la création de l\'alias</string>
     <string name="mailbox_alias_creation_progress">Alias en cours de création</string>
+
+    <!-- KEYS -->
+    <string name="email_address">Adresse électronique</string>
+    <string name="fingerprint">Empreinte digitale</string>
+    <string name="public_key">Clé Publique</string>
+    <string name="download_public_key">Télécharger la clé publique (4096 Bit)</string>
+    <string name="your_key_saved">Votre clé publique PGP enregistrée dans les téléchargements</string>
 
     <!-- UPGRADE TO PRIME -->
     <string name="title_upgrade_to_prime">Upgrade to Prime</string>

@@ -328,6 +328,7 @@ Your password is connected to your encryption key, if you change your password t
     <string name="settings_enable_signature">Enable signature</string>
     <string name="settings_type_signature">Type your signature</string>
     <string name="settings_mobile_signature">Mobile signature</string>
+    <string name="settings_keys">Keys</string>
     <string name="settings_enable_mobile_signature">Enable mobile signature</string>
     <string name="settings_type_mobile_signature">Type your mobile signature</string>
     <string name="settings_about">About</string>
@@ -355,6 +356,7 @@ Your password is connected to your encryption key, if you change your password t
     <string name="signature" translatable="false">signature</string>
     <string name="mobile_signature_enabled" translatable="false">mobile_signature_enabled</string>
     <string name="mobile_signature" translatable="false">mobile_signature</string>
+    <string name="setting_keys" translatable="false">setting_keys</string>
     <string name="email_addresses" translatable="false">email_addresses</string>
     <string name="local_storage_limit" translatable="false">local_storage_limit</string>
     <string name="recovery_email_holder" translatable="false">recovery_email_holder</string>
@@ -380,6 +382,13 @@ Your password is connected to your encryption key, if you change your password t
     <string name="mailbox_alias_creation_paid">Please buy more email addresses to create more!</string>
     <string name="mailbox_alias_creation_failed">Could not create email alias</string>
     <string name="mailbox_alias_creation_progress">The e-mail alias is being created</string>
+
+    <!-- KEYS -->
+    <string name="email_address">E-mail address</string>
+    <string name="fingerprint">Fingerprint</string>
+    <string name="public_key">Public Key</string>
+    <string name="download_public_key">Download public key (4096 Bit)</string>
+    <string name="your_key_saved">Your PGP Public Key saved to Downloads</string>
 
     <!-- UPGRADE TO PRIME -->
     <string name="title_upgrade_to_prime">Upgrade to Prime</string>

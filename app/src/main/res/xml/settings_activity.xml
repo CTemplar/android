@@ -65,6 +65,10 @@
             android:title="@string/settings_mobile_signature"
             android:fragment="mobileapp.ctemplar.com.ctemplarapp.settings.SettingsActivity$MobileSignatureFragment" />
 
+        <PreferenceScreen
+            android:title="@string/settings_keys"
+            android:key="@string/setting_keys" />
+
     </PreferenceCategory>
 
     <PreferenceCategory

@@ -119,6 +119,13 @@ public class SettingsActivity extends AppCompatActivity {
                 return false;
             });
 
+            Preference keys = findPreference(getString(R.string.setting_keys));
+            keys.setOnPreferenceClickListener(preference -> {
+                Intent keysIntent = new Intent(getActivity(), KeysActivity.class);
+                startActivity(keysIntent);
+                return false;
+            });
+
             Preference filters = findPreference(getString(R.string.filters));
             filters.setOnPreferenceClickListener(preference -> {
                 Intent filtersIntent = new Intent(getActivity(), FiltersActivity.class);
@@ -140,7 +147,7 @@ public class SettingsActivity extends AppCompatActivity {
                 return true;
             });
 
-            final Preference mailboxes = findPreference(getString(R.string.email_addresses));
+            Preference mailboxes = findPreference(getString(R.string.email_addresses));
             mailboxes.setOnPreferenceClickListener(preference -> {
                 Intent mailboxesIntent = new Intent(getActivity(), MailboxesActivity.class);
                 mailboxesIntent.putExtra(USER_IS_PRIME, isPrimeUser);
@@ -170,13 +177,13 @@ public class SettingsActivity extends AppCompatActivity {
         public void onCreatePreferences(Bundle bundle, String rootKey) {
             setPreferencesFromResource(R.xml.recovery_email_settings, rootKey);
 
-            final EditTextPreference preferenceRecoveryEmail = findPreference(getString(R.string.recovery_email));
+            EditTextPreference preferenceRecoveryEmail = findPreference(getString(R.string.recovery_email));
             String recoveryEmail = sharedPreferences.getString(getString(R.string.recovery_email), null);
             if (recoveryEmail != null && !recoveryEmail.isEmpty()) {
                 preferenceRecoveryEmail.setTitle(recoveryEmail);
             }
 
-            final CheckBoxPreference checkBoxRecoveryEmailEnabled = findPreference(getString(R.string.recovery_email_enabled));
+            CheckBoxPreference checkBoxRecoveryEmailEnabled = findPreference(getString(R.string.recovery_email_enabled));
             checkBoxRecoveryEmailEnabled.setOnPreferenceChangeListener((preference, newValue) -> {
                 Boolean value = (Boolean) newValue;
                 if (!value) {
