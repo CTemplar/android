@@ -80,7 +80,7 @@
 
         <Preference
             android:title="@string/settings_app_version"
-            android:summary="1.1.19" />
+            android:summary="1.2.0" />
 
     </PreferenceCategory>
 

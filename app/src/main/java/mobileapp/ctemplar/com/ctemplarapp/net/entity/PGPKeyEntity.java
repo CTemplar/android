@@ -6,7 +6,9 @@ public class PGPKeyEntity {
     private String privateKey;
     private String fingerprint;
 
-    public  PGPKeyEntity() { }
+    public PGPKeyEntity() {
+
+    }
 
     public PGPKeyEntity(String publicKey, String privateKey, String fingerprint) {
         this.privateKey = privateKey;

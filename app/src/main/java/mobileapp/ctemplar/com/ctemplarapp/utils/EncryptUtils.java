@@ -8,6 +8,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 
+import mobileapp.ctemplar.com.ctemplarapp.security.PGPManager;
 import timber.log.Timber;
 
 public class EncryptUtils {
@@ -15,7 +16,6 @@ public class EncryptUtils {
     public static boolean encryptAttachment(File originalFile, File encryptedFile, List<String> publicKeyList) {
         int fileSize = (int) originalFile.length();
         byte[] fileBytes = new byte[fileSize];
-
         try {
             BufferedInputStream bufferedInputStream = new BufferedInputStream(new FileInputStream(originalFile));
             bufferedInputStream.read(fileBytes, 0, fileBytes.length);
@@ -25,9 +25,10 @@ public class EncryptUtils {
             return false;
         }
 
-        PGPManager pgpManager = new PGPManager();
-        byte[] encryptedBytes = pgpManager.encryptBytes(
-                fileBytes, publicKeyList.toArray(new String[0]), false
+        byte[] encryptedBytes = PGPManager.encrypt(
+                fileBytes,
+                publicKeyList.toArray(new String[0]),
+                false
         );
 
         try {
@@ -35,12 +36,10 @@ public class EncryptUtils {
             bufferedOutputStream.write(encryptedBytes);
             bufferedOutputStream.flush();
             bufferedOutputStream.close();
-
         } catch (IOException e) {
             Timber.e(e);
             return false;
         }
-
         return true;
     }
 
@@ -51,25 +50,21 @@ public class EncryptUtils {
             BufferedInputStream bufferedInputStream = new BufferedInputStream(new FileInputStream(encryptedFile));
             bufferedInputStream.read(fileBytes, 0, fileBytes.length);
             bufferedInputStream.close();
-
         } catch (IOException e) {
             Timber.e(e);
             return false;
         }
 
-        PGPManager pgpManager = new PGPManager();
         try {
-            byte[] encryptedBytes = pgpManager.decryptBytes(fileBytes, privateKey, password);
+            byte[] encryptedBytes = PGPManager.decrypt(fileBytes, privateKey, password);
             BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(decryptedFile));
             bufferedOutputStream.write(encryptedBytes);
             bufferedOutputStream.flush();
             bufferedOutputStream.close();
-
         } catch (Exception e) {
             Timber.e(e);
             return false;
         }
-
         return true;
     }
 }

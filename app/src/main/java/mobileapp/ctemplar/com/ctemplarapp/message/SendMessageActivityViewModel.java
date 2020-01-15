@@ -1,10 +1,10 @@
 package mobileapp.ctemplar.com.ctemplarapp.message;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -39,9 +39,9 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.entity.ContactEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MessageEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.AttachmentProvider;
+import mobileapp.ctemplar.com.ctemplarapp.security.PGPManager;
 import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.FileUtils;
-import mobileapp.ctemplar.com.ctemplarapp.utils.PGPManager;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -186,11 +186,10 @@ public class SendMessageActivityViewModel extends ViewModel {
         boolean isSubjectEncrypted = request.isSubjectEncrypted();
 
         if (!receiverPublicKeys.isEmpty()) {
-            PGPManager pgpManager = new PGPManager();
             String[] publicKeys = receiverPublicKeys.toArray(new String[0]);
-            content = pgpManager.encryptMessage(content, publicKeys);
+            content = PGPManager.encrypt(content, publicKeys);
             if (isSubjectEncrypted && !subject.isEmpty()) {
-                subject = pgpManager.encryptMessage(subject, publicKeys);
+                subject = PGPManager.encrypt(subject, publicKeys);
             }
             request.setContent(content);
             request.setSubject(subject);
