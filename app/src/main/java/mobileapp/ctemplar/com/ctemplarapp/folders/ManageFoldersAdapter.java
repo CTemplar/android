@@ -60,4 +60,3 @@ public class ManageFoldersAdapter extends RecyclerView.Adapter<ManageFoldersView
         notifyItemInserted(position);
     }
 }
-

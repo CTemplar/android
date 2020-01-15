@@ -44,8 +44,8 @@ public class ViewMessagesViewModel extends ViewModel {
         manageFoldersRepository = CTemplarApp.getManageFoldersRepository();
     }
 
-    List<MailboxEntity> getMailboxes() {
-        return CTemplarApp.getAppDatabase().mailboxDao().getAll();
+    MailboxEntity getMailboxById(long mailboxId) {
+        return CTemplarApp.getAppDatabase().mailboxDao().getById(mailboxId);
     }
 
     String getUserPassword() {

@@ -77,7 +77,7 @@ public class EncryptMessageDialogFragment extends DialogFragment {
 
             int expire = getHours(messagePasswordExpireDays, messagePasswordExpireHours);
 
-            if (!EditTextUtils.isTextLength(messagePassword, 10, 30)) {
+            if (!EditTextUtils.isTextLength(messagePassword, 8, 30)) {
                 Toast.makeText(getActivity(), getString(R.string.error_password_message), Toast.LENGTH_SHORT).show();
                 return;
             }

@@ -65,7 +65,6 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.entity.Contact;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MessageEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.AttachmentProvider;
-import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageProvider;
 import mobileapp.ctemplar.com.ctemplarapp.security.PGPManager;
 import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
@@ -209,7 +208,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
             encryptionMessage.setPasswordHint(passwordHint);
             encryptionMessage.setExpireHours(expireHours);
 
-            MailboxEntity defaultMailbox = MessageProvider.getDefaultMailbox();
+            MailboxEntity defaultMailbox = EncryptUtils.getDefaultMailbox();
             if (defaultMailbox == null) {
                 return;
             }
@@ -643,6 +642,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
                         messageSendAttachmentAdapter.addAttachment(messageAttachment);
                         if (messageSendAttachmentAdapter.getItemCount() > 0) {
                             sendMessageAttachmentIco.setSelected(true);
+                            sendMessage.setEnabled(true);
                         }
                     }
                     if (!cacheFileList.isEmpty()) {
@@ -677,16 +677,17 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
                         MyselfResult myself = myselfResponse.result[0];
                         addSignature(myself.mailboxes[0].getSignature());
                         isSubjectEncrypted = myself.settings.isSubjectEncrypted();
-                        String joinedDate = myself.joinedDate;
-                        boolean userTrial = AppUtils.twoWeeksTrial(joinedDate);
-                        boolean userPrime = myself.isPrime;
-                        userIsPrime = userPrime || userTrial;
+                        userIsPrime = myself.isPrime;
+//                        String joinedDate = myself.joinedDate;
+//                        boolean userTrial = AppUtils.twoWeeksTrial(joinedDate);
+//                        boolean userPrime = myself.isPrime;
+//                        userIsPrime = userPrime || userTrial;
                     }
                 });
     }
 
     private void createMessage() {
-        MailboxEntity defaultMailbox = MessageProvider.getDefaultMailbox();
+        MailboxEntity defaultMailbox = EncryptUtils.getDefaultMailbox();
         if (defaultMailbox == null) {
             return;
         }

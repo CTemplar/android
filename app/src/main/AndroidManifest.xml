@@ -82,6 +82,7 @@
         <activity android:name=".wbl.AddWhitelistContactActivity" />
         <activity android:name=".wbl.WhiteBlackListActivity" />
         <activity android:name=".settings.ChangePasswordActivity" />
+        <activity android:name=".settings.KeysActivity" />
         <activity android:name=".mailboxes.MailboxesActivity" />
         <activity android:name=".mailboxes.AddMailboxActivity" />
 

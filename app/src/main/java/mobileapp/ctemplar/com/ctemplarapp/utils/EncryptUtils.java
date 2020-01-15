@@ -8,10 +8,16 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 
+import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
+import mobileapp.ctemplar.com.ctemplarapp.repository.MailboxDao;
+import mobileapp.ctemplar.com.ctemplarapp.repository.UserStore;
+import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import mobileapp.ctemplar.com.ctemplarapp.security.PGPManager;
 import timber.log.Timber;
 
 public class EncryptUtils {
+
+    private static MailboxDao mailboxDao = CTemplarApp.getAppDatabase().mailboxDao();
 
     public static boolean encryptAttachment(File originalFile, File encryptedFile, List<String> publicKeyList) {
         int fileSize = (int) originalFile.length();
@@ -66,5 +72,18 @@ public class EncryptUtils {
             return false;
         }
         return true;
+    }
+
+    public static MailboxEntity getDefaultMailbox() {
+        if (mailboxDao.getDefault() != null) {
+            return mailboxDao.getDefault();
+        } else {
+            if (!mailboxDao.getAll().isEmpty()) {
+                return mailboxDao.getAll().get(0);
+            } else {
+                Timber.e("Mailbox not found");
+            }
+        }
+        return null;
     }
 }

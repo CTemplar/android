@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName;
 public class FoldersResult {
 
     @SerializedName("id")
-    private long id;
+    private int id;
 
     @SerializedName("name")
     private String name;
@@ -13,7 +13,10 @@ public class FoldersResult {
     @SerializedName("color")
     private String color;
 
-    public long getId() {
+    @SerializedName("sort_order")
+    private int sortOrder;
+
+    public int getId() {
         return id;
     }
 
@@ -23,5 +26,9 @@ public class FoldersResult {
 
     public String getColor() {
         return color;
+    }
+
+    public int getSortOrder() {
+        return sortOrder;
     }
 }

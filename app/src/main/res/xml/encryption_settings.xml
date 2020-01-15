@@ -3,7 +3,8 @@
 
     <SwitchPreference
         android:title="@string/settings_enable_subject_encryption"
-        android:key="@string/subject_encryption_enabled" />
+        android:key="@string/subject_encryption_enabled"
+        android:enabled="false" />
 
     <SwitchPreference
         android:title="@string/settings_attachments_encryption"

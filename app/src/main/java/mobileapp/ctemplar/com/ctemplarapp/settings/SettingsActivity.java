@@ -56,7 +56,7 @@ public class SettingsActivity extends AppCompatActivity {
     private static Preference storageLimitPreference;
     private static SharedPreferences sharedPreferences;
 
-    private static boolean userIsPrime;
+    private static boolean isPrimeUser;
     private static long defaultMailboxId = -1;
     private static long settingId = -1;
 
@@ -119,6 +119,13 @@ public class SettingsActivity extends AppCompatActivity {
                 return false;
             });
 
+            Preference keys = findPreference(getString(R.string.setting_keys));
+            keys.setOnPreferenceClickListener(preference -> {
+                Intent keysIntent = new Intent(getActivity(), KeysActivity.class);
+                startActivity(keysIntent);
+                return false;
+            });
+
             Preference filters = findPreference(getString(R.string.filters));
             filters.setOnPreferenceClickListener(preference -> {
                 Intent filtersIntent = new Intent(getActivity(), FiltersActivity.class);
@@ -140,10 +147,10 @@ public class SettingsActivity extends AppCompatActivity {
                 return true;
             });
 
-            final Preference mailboxes = findPreference(getString(R.string.email_addresses));
+            Preference mailboxes = findPreference(getString(R.string.email_addresses));
             mailboxes.setOnPreferenceClickListener(preference -> {
                 Intent mailboxesIntent = new Intent(getActivity(), MailboxesActivity.class);
-                mailboxesIntent.putExtra(USER_IS_PRIME, userIsPrime);
+                mailboxesIntent.putExtra(USER_IS_PRIME, isPrimeUser);
                 startActivity(mailboxesIntent);
                 return true;
             });
@@ -170,13 +177,13 @@ public class SettingsActivity extends AppCompatActivity {
         public void onCreatePreferences(Bundle bundle, String rootKey) {
             setPreferencesFromResource(R.xml.recovery_email_settings, rootKey);
 
-            final EditTextPreference preferenceRecoveryEmail = findPreference(getString(R.string.recovery_email));
+            EditTextPreference preferenceRecoveryEmail = findPreference(getString(R.string.recovery_email));
             String recoveryEmail = sharedPreferences.getString(getString(R.string.recovery_email), null);
             if (recoveryEmail != null && !recoveryEmail.isEmpty()) {
                 preferenceRecoveryEmail.setTitle(recoveryEmail);
             }
 
-            final CheckBoxPreference checkBoxRecoveryEmailEnabled = findPreference(getString(R.string.recovery_email_enabled));
+            CheckBoxPreference checkBoxRecoveryEmailEnabled = findPreference(getString(R.string.recovery_email_enabled));
             checkBoxRecoveryEmailEnabled.setOnPreferenceChangeListener((preference, newValue) -> {
                 Boolean value = (Boolean) newValue;
                 if (!value) {
@@ -237,6 +244,7 @@ public class SettingsActivity extends AppCompatActivity {
                 settingsModel.updateSubjectEncryption(settingId, value);
                 return true;
             });
+            subjectEncryptionSwitchPreference.setEnabled(isPrimeUser);
 
             SwitchPreference attachmentsEncryptionSwitchPreference = findPreference(getString(R.string.attachments_encryption_enabled));
             attachmentsEncryptionSwitchPreference.setOnPreferenceChangeListener((preference, newValue) -> {
@@ -379,12 +387,7 @@ public class SettingsActivity extends AppCompatActivity {
                     public void onNext(MyselfResponse myselfResponse) {
                         if (myselfResponse != null && myselfResponse.result != null) {
                             MyselfResult myselfResult = myselfResponse.result[0];
-                            userIsPrime = myselfResult.isPrime;
                             saveData(myselfResult);
-
-                            SettingsEntity settingsEntity = myselfResult.settings;
-                            setSettingId(settingsEntity.getId());
-                            settingId = settingsEntity.getId();
                         }
                     }
 
@@ -403,7 +406,10 @@ public class SettingsActivity extends AppCompatActivity {
     private void saveData(MyselfResult myselfResult) {
         SettingsEntity settingsEntity = myselfResult.settings;
         MailboxesResult mailboxesResult = myselfResult.mailboxes[0];
+        settingId = settingsEntity.getId();
         defaultMailboxId = mailboxesResult.getId();
+        isPrimeUser = myselfResult.isPrime();
+        setSettingId(settingId);
 
         String usedStorage = AppUtils.usedStorage(settingsEntity.getUsedStorage());
         String allocatedStorage = AppUtils.usedStorage(settingsEntity.getAllocatedStorage());

@@ -112,6 +112,13 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
     private ConstraintLayout messageActionsLayout;
     private AttachmentProvider attachmentProvider;
 
+    private OnAttachmentDownloading onAttachmentDownloading = new OnAttachmentDownloading() {
+        @Override
+        public void onStart(AttachmentProvider attachment) {
+            attachmentProvider = attachment;
+        }
+    };
+
     @Nullable
     @Override
     public View onCreateView(@NonNull final LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -180,50 +187,9 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
             encryptedImageView.setSelected(parentMessage.isProtected());
             starImageView.setSelected(parentMessage.isStarred());
 
-            final MessageAttachmentAdapter messageAttachmentAdapter = new MessageAttachmentAdapter();
-            ViewMessagesAdapter adapter = new ViewMessagesAdapter(messagesList, messageAttachmentAdapter);
-            messageAttachmentAdapter.getOnClickAttachmentLink().subscribe(new io.reactivex.Observer<Integer>() {
-                @Override
-                public void onSubscribe(Disposable d) {
-
-                }
-
-                @Override
-                public void onNext(Integer position) {
-                    attachmentProvider = messageAttachmentAdapter.getAttachment(position);
-                    String documentLink = attachmentProvider.getDocumentLink();
-                    if (documentLink == null) {
-                        Toast.makeText(getActivity(), "AttachmentUrl is empty", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-
-                    Uri documentUri = Uri.parse(documentLink);
-                    String fileName = AppUtils.getFileNameFromURL(documentLink);
-                    if (attachmentProvider.isEncrypted()) {
-                        fileName += "-encrypted";
-                    }
-
-                    DownloadManager.Request documentRequest = new DownloadManager.Request(documentUri);
-                    documentRequest.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName);
-                    documentRequest.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-
-                    if (getActivity() != null && PermissionCheck.readAndWriteExternalStorage(getActivity())) {
-                        DownloadManager downloadManager = (DownloadManager) getActivity().getApplicationContext().getSystemService(DOWNLOAD_SERVICE);
-                        downloadManager.enqueue(documentRequest);
-                        Toast.makeText(getActivity(), getString(R.string.toast_download_started), Toast.LENGTH_SHORT).show();
-                    }
-                }
-
-                @Override
-                public void onError(Throwable e) {
-                    Timber.e(e);
-                }
-
-                @Override
-                public void onComplete() {
-
-                }
-            });
+            ViewMessagesAdapter adapter = new ViewMessagesAdapter(
+                    messagesList, onAttachmentDownloading, getActivity()
+            );
             messagesListView.setAdapter(adapter);
 
             if (!parentMessage.isRead()) {
@@ -274,18 +240,6 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
         FragmentActivity activity = getActivity();
         if (activity != null) {
             activity.unregisterReceiver(downloadReceiver);
-        }
-    }
-
-    private void openFile(Uri fileUri) {
-        try {
-            Intent openIntent = new Intent(Intent.ACTION_VIEW);
-            String fileType = getActivity().getContentResolver().getType(fileUri);
-            openIntent.setDataAndType(fileUri, fileType);
-            openIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            getActivity().startActivity(openIntent);
-        } catch (ActivityNotFoundException e) {
-            Timber.i(e);
         }
     }
 
@@ -593,15 +547,17 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
                 boolean isEncrypted = attachmentProvider.isEncrypted();
 
                 File externalStorageFile = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-
                 if (isEncrypted) {
                     File downloadedFile = new File(externalStorageFile, fileName + "-encrypted");
                     File decryptedFile = new File(externalStorageFile, fileName);
 
-                    MailboxEntity mailboxEntity = viewModel.getMailboxes().get(0);
+                    long mailboxId = parentMessage.getMailboxId();
+                    MailboxEntity mailboxEntity = viewModel.getMailboxById(mailboxId);
                     String password = viewModel.getUserPassword();
                     String privateKey = mailboxEntity.getPrivateKey();
-                    boolean attachmentDecrypted = EncryptUtils.decryptAttachment(downloadedFile, decryptedFile, password, privateKey);
+                    boolean attachmentDecrypted = EncryptUtils.decryptAttachment(
+                            downloadedFile, decryptedFile, password, privateKey
+                    );
                     downloadedFile.delete();
 
                     Uri decryptedUri = FileProvider.getUriForFile(
@@ -617,10 +573,21 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
                     );
                     openFile(fileUri);
                 }
-
             } catch (Exception e) {
                 Timber.i(e);
             }
+        }
+    }
+
+    private void openFile(Uri fileUri) {
+        try {
+            Intent openIntent = new Intent(Intent.ACTION_VIEW);
+            String fileType = getActivity().getContentResolver().getType(fileUri);
+            openIntent.setDataAndType(fileUri, fileType);
+            openIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            getActivity().startActivity(openIntent);
+        } catch (ActivityNotFoundException e) {
+            Timber.i(e);
         }
     }
 }

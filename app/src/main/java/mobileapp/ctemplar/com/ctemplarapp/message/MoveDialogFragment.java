@@ -102,7 +102,7 @@ public class MoveDialogFragment extends DialogFragment {
                 customFoldersList) {
             View folderItemButton = inflater.inflate(R.layout.item_move_folder_radiobutton, foldersListLayout, false);
             RadioButton radioButton = folderItemButton.findViewById(R.id.radio_button);
-            radioButton.setId((int) folderItem.getId());
+            radioButton.setId(folderItem.getId());
             radioButton.setText(folderItem.getName());
 
             Resources resources = Objects.requireNonNull(getContext()).getResources();

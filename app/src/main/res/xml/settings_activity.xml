@@ -10,29 +10,8 @@
             android:fragment="mobileapp.ctemplar.com.ctemplarapp.settings.SettingsActivity$NotificationsFragment" />
 
         <PreferenceScreen
-            android:title="@string/settings_recovery_email"
-            android:key="@string/recovery_email_holder"
-            android:fragment="mobileapp.ctemplar.com.ctemplarapp.settings.SettingsActivity$RecoveryEmailFragment" />
-
-        <PreferenceScreen
             android:title="@string/settings_saving_contacts"
             android:fragment="mobileapp.ctemplar.com.ctemplarapp.settings.SettingsActivity$SavingContactsFragment" />
-
-        <PreferenceScreen
-            android:title="@string/settings_encryption"
-            android:fragment="mobileapp.ctemplar.com.ctemplarapp.settings.SettingsActivity$EncryptionFragment" />
-
-        <Preference
-            android:title="@string/settings_password"
-            android:key="@string/password_key" />
-
-        <ListPreference
-            android:title="@string/settings_language"
-            android:key="language"
-            android:defaultValue="English"
-            android:summary="%s"
-            android:entries="@array/languages"
-            android:entryValues="@array/languages" />
 
         <Preference
             android:title="@string/settings_filters"
@@ -54,6 +33,24 @@
     </PreferenceCategory>
 
     <PreferenceCategory
+        android:title="@string/settings_security">
+
+        <Preference
+            android:title="@string/settings_password"
+            android:key="@string/password_key" />
+
+        <PreferenceScreen
+            android:title="@string/settings_recovery_email"
+            android:key="@string/recovery_email_holder"
+            android:fragment="mobileapp.ctemplar.com.ctemplarapp.settings.SettingsActivity$RecoveryEmailFragment" />
+
+        <PreferenceScreen
+            android:title="@string/settings_encryption"
+            android:fragment="mobileapp.ctemplar.com.ctemplarapp.settings.SettingsActivity$EncryptionFragment" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
         android:title="@string/settings_mail">
 
         <Preference
@@ -67,6 +64,10 @@
         <PreferenceScreen
             android:title="@string/settings_mobile_signature"
             android:fragment="mobileapp.ctemplar.com.ctemplarapp.settings.SettingsActivity$MobileSignatureFragment" />
+
+        <PreferenceScreen
+            android:title="@string/settings_keys"
+            android:key="@string/setting_keys" />
 
     </PreferenceCategory>
 

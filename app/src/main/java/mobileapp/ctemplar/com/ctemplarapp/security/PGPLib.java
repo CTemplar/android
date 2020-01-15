@@ -81,13 +81,16 @@ class PGPLib {
 
         PGPPrivateKey sKey = null;
         PGPPublicKeyEncryptedData pbe = null;
+        if (enc == null) {
+            return new byte[0];
+        }
         int encryptedDataObjectSize = enc.size();
         for (int i = 0; sKey == null && i < encryptedDataObjectSize; i++) {
             pbe = (PGPPublicKeyEncryptedData)enc.get(i);
             sKey = getPrivateKey(pgpSecretKeyRing, pbe.getKeyID(), passwordCharArray);
         }
 
-        if (pbe != null) {
+        if (pbe != null && sKey != null) {
             InputStream clear = pbe.getDataStream(new BcPublicKeyDataDecryptorFactory(sKey));
             JcaPGPObjectFactory pgpFact = new JcaPGPObjectFactory(clear);
             Object oData = pgpFact.nextObject();

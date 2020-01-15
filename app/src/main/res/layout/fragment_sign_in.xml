@@ -68,7 +68,9 @@
                     android:inputType="textEmailAddress"
                     android:letterSpacing="0.05"
                     android:textColor="@android:color/white"
-                    android:theme="@style/EditTextCredentialsThemeLight" />
+                    android:theme="@style/EditTextCredentialsThemeLight">
+                    <requestFocus />
+                </com.google.android.material.textfield.TextInputEditText>
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -143,6 +145,8 @@
                     android:hint="@string/title_2fa_code"
                     android:inputType="text"
                     android:letterSpacing="0.05"
+                    android:textIsSelectable="true"
+                    android:cursorVisible="true"
                     android:textColor="@android:color/white"
                     android:theme="@style/EditTextCredentialsThemeLight" />
 

@@ -3,8 +3,10 @@ package mobileapp.ctemplar.com.ctemplarapp.utils;
 import android.text.TextUtils;
 import android.webkit.MimeTypeMap;
 
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -210,24 +212,29 @@ public class AppUtils {
                 return "";
             }
         }  catch(MalformedURLException e) {
+            Timber.e(e);
             return "";
         }
 
         int startIndex = url.lastIndexOf('/') + 1;
         int length = url.length();
-
         int lastQMPos = url.lastIndexOf('?');
+        int lastHashPos = url.lastIndexOf('#');
+
         if (lastQMPos == -1) {
             lastQMPos = length;
         }
-
-        int lastHashPos = url.lastIndexOf('#');
         if (lastHashPos == -1) {
             lastHashPos = length;
         }
 
         int endIndex = Math.min(lastQMPos, lastHashPos);
-        return url.substring(startIndex, endIndex);
+        try {
+            return URLDecoder.decode(url.substring(startIndex, endIndex), "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            return "";
+        }
     }
 
     public static String getMimeType(String url) {

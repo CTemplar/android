@@ -32,6 +32,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessageAttachmen
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResult;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.MyselfResponse;
 import mobileapp.ctemplar.com.ctemplarapp.repository.ContactsRepository;
+import mobileapp.ctemplar.com.ctemplarapp.repository.MailboxDao;
 import mobileapp.ctemplar.com.ctemplarapp.repository.MessagesRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.Contact;
@@ -52,9 +53,10 @@ import timber.log.Timber;
 
 public class SendMessageActivityViewModel extends ViewModel {
 
-    private UserRepository userRepository;
     private MessagesRepository messagesRepository;
+    private UserRepository userRepository;
     private ContactsRepository contactsRepository;
+    private MailboxDao mailboxDao;
 
     private MutableLiveData<ResponseStatus> responseStatus = new MutableLiveData<>();
     private MutableLiveData<ResponseStatus> uploadAttachmentStatus = new MutableLiveData<>();
@@ -72,17 +74,18 @@ public class SendMessageActivityViewModel extends ViewModel {
     private MutableLiveData<MessageEntity> openMessageResponse = new MutableLiveData<>();
 
     public SendMessageActivityViewModel() {
-        userRepository = CTemplarApp.getUserRepository();
         messagesRepository = MessagesRepository.getInstance();
+        userRepository = CTemplarApp.getUserRepository();
         contactsRepository = CTemplarApp.getContactsRepository();
+        mailboxDao = CTemplarApp.getAppDatabase().mailboxDao();
     }
 
     public List<MailboxEntity> getMailboxes() {
-        return CTemplarApp.getAppDatabase().mailboxDao().getAll();
+        return mailboxDao.getAll();
     }
 
     public MailboxEntity getMailboxById(long id) {
-        return CTemplarApp.getAppDatabase().mailboxDao().getById(id);
+        return mailboxDao.getById(id);
     }
 
     public String getUserPassword() {
