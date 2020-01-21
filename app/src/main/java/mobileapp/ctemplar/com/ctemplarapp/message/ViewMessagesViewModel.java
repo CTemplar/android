@@ -100,7 +100,10 @@ public class ViewMessagesViewModel extends ViewModel {
                             return;
                         }
                         MessagesResult parentMessageResult = messagesResults.get(0);
-                        MessageEntity parentEntity = MessageProvider.fromMessagesResultToEntity(parentMessageResult);
+                        MessageEntity parentLocalMessage = messagesRepository.getLocalMessage(id);
+                        MessageEntity parentEntity = MessageProvider.fromMessagesResultToEntity(
+                                parentMessageResult, parentLocalMessage.getRequestFolder()
+                        );
                         MessageProvider parentMessage = MessageProvider.fromMessageEntity(parentEntity);
 
                         MessagesResult[] childrenResult = parentMessageResult.getChildren();
@@ -129,8 +132,8 @@ public class ViewMessagesViewModel extends ViewModel {
                 });
     }
 
-    public void markMessageIsStarred(final long id, final boolean starred) {
-        userRepository.markMessageIsStarred(id, starred)
+    public void markMessageIsStarred(long id, final boolean isStarred) {
+        userRepository.markMessageIsStarred(id, isStarred)
                 .subscribe(new Observer<Response<Void>>() {
                     @Override
                     public void onSubscribe(Disposable d) {
@@ -141,8 +144,8 @@ public class ViewMessagesViewModel extends ViewModel {
                     public void onNext(Response<Void> messageResponse) {
                         int resultCode = messageResponse.code();
                         if (resultCode == 204) {
-                            CTemplarApp.getAppDatabase().messageDao().updateIsStarred(id, starred);
-                            starredResponse.postValue(starred);
+                            messagesRepository.markMessageIsStarred(id, isStarred);
+                            starredResponse.postValue(isStarred);
                         } else {
                             Timber.e("Update starred response is not success: code = %s", resultCode);
                         }
@@ -160,7 +163,7 @@ public class ViewMessagesViewModel extends ViewModel {
                 });
     }
 
-    public void markMessageAsRead(final long id, final boolean isRead) {
+    public void markMessageAsRead(long id, boolean isRead) {
         MarkMessageAsReadRequest request = new MarkMessageAsReadRequest(isRead);
         userRepository.markMessageAsRead(id, request)
                 .subscribe(new Observer<Response<Void>>() {
@@ -173,7 +176,7 @@ public class ViewMessagesViewModel extends ViewModel {
                     public void onNext(Response<Void> messageResponse) {
                         int resultCode = messageResponse.code();
                         if (resultCode == 204) {
-                            CTemplarApp.getAppDatabase().messageDao().updateIsRead(id, isRead);
+                            messagesRepository.markMessageAsRead(id, isRead);
                         } else {
                             Timber.e("Update isRead response is not success: code = %s", resultCode);
                         }

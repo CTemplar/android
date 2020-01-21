@@ -32,16 +32,16 @@ public interface MessageDao {
     @Query("DELETE FROM messages")
     void deleteAll();
 
-    @Query("SELECT * FROM messages WHERE id= :id")
+    @Query("SELECT * FROM messages WHERE id=:id")
     MessageEntity getById(long id);
 
-    @Query("UPDATE messages SET isStarred = :isStarred WHERE id = :id")
+    @Query("UPDATE messages SET isStarred=:isStarred WHERE id=:id")
     void updateIsStarred(long id, boolean isStarred);
 
-    @Query("UPDATE messages SET isRead = :isRead WHERE id = :id")
+    @Query("UPDATE messages SET isRead=:isRead WHERE id=:id")
     void updateIsRead(long id, boolean isRead);
 
-    @Query("DELETE FROM messages WHERE folderName=:folderName")
+    @Query("DELETE FROM messages WHERE requestFolder=:folderName")
     void deleteAllByFolder(String folderName);
 
     @Query("DELETE FROM messages WHERE parent=:id")
