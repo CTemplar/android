@@ -627,10 +627,6 @@ public class MessageProvider {
         return userDisplayEntityList;
     }
 
-    public static MessageEntity fromMessagesResultToEntity(MessagesResult message) {
-        return fromMessagesResultToEntity(message, "");
-    }
-
     public static MessageEntity fromMessagesResultToEntity(MessagesResult message, String requestFolder) {
         MessageEntity result = new MessageEntity();
 

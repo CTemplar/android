@@ -44,6 +44,14 @@ public class MessagesRepository {
         CTemplarApp.getAppDatabase().messageDao().updateFolderName(messageId, newFolderName);
     }
 
+    public void markMessageIsStarred(long id, boolean isStarred) {
+        CTemplarApp.getAppDatabase().messageDao().updateIsStarred(id, isStarred);
+    }
+
+    public void markMessageAsRead(long id, boolean isRead) {
+        CTemplarApp.getAppDatabase().messageDao().updateIsRead(id, isRead);
+    }
+
     public void deleteMessagesByParentId(long id) {
         CTemplarApp.getAppDatabase().messageDao().deleteAllByParentId(((Object)id).toString());
     }
