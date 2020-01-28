@@ -47,6 +47,9 @@ public interface MessageDao {
     @Query("DELETE FROM messages WHERE parent=:id")
     void deleteAllByParentId(String id);
 
+    @Query("DELETE FROM messages WHERE id=:id")
+    void deleteById(long id);
+
     @Query("SELECT * FROM messages WHERE parent=:id")
     List<MessageEntity> getByParentId(String id);
 

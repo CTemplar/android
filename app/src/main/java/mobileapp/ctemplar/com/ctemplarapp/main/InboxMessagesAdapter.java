@@ -228,6 +228,13 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesView
         return filteredList;
     }
 
+    public Long[] getAllIds() {
+        Long[] messageIds = new Long[filteredList.size()];
+        for (int messageIt = 0; messageIt < messageIds.length; messageIt++) {
+            messageIds[messageIt] = filteredList.get(messageIt).getId();
+        }
+        return messageIds;
+    }
 
     private boolean isStarred = false, isUnread = false, withAttachment = false;
     private String filterText = "";

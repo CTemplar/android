@@ -215,9 +215,16 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
             }
         });
         mainModel.getToFolderStatus().observe(this, responseStatus -> {
-            Activity activity1 = getActivity();
-            if (activity1 != null) {
-                activity1.onBackPressed();
+            if (responseStatus == ResponseStatus.RESPONSE_ERROR) {
+                Toast.makeText(getActivity(), getString(R.string.error_connection), Toast.LENGTH_SHORT).show();
+            } else {
+                Activity viewActivity = getActivity();
+                viewActivity.onBackPressed();
+            }
+        });
+        mainModel.getDeleteMessagesStatus().observe(this, responseStatus -> {
+            if (responseStatus == ResponseStatus.RESPONSE_ERROR) {
+                Toast.makeText(getActivity(), getString(R.string.error_connection), Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -328,7 +335,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
         }
     }
 
-    private void snackbarDelete(final String folder, String message) {
+    private void snackbarDelete(String folder, String message) {
         Snackbar snackbar = Snackbar.make(messageActionsLayout, message, Snackbar.LENGTH_SHORT);
         snackbar.setAction(getString(R.string.action_undo), view -> blockUI());
         snackbar.addCallback(new BaseTransientBottomBar.BaseCallback<Snackbar>() {
@@ -336,7 +343,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
             public void onDismissed(Snackbar transientBottomBar, int event) {
                 if (event != DISMISS_EVENT_ACTION) {
                     if (currentFolder.equals(TRASH)) {
-                        mainModel.deleteMessage(parentMessage.getId());
+                        mainModel.deleteMessages(new Long[]{parentMessage.getId()});
                     } else {
                         mainModel.toFolder(parentMessage.getId(), folder);
                     }

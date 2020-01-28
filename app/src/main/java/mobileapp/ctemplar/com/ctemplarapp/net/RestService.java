@@ -123,11 +123,8 @@ public interface RestService {
     @GET("/emails/messages/")
     Observable<MessagesResponse> getMessage(@Query("id") long id);
 
-    @DELETE("/emails/messages/{id}/")
-    Observable<ResponseBody> deleteMessage(@Path("id") long id);
-
     @DELETE("/emails/messages/")
-    Observable<Response<Void>> deleteSeveralMessages(@Query("id__in") String messagesId);
+    Observable<Response<Void>> deleteMessages(@Query("id__in") String messageIds);
 
     @PATCH("/emails/messages/")
     Observable<Response<Void>> toFolder(@Query("id__in") long id, @Body MoveToFolderRequest request);

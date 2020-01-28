@@ -1,5 +1,7 @@
 package mobileapp.ctemplar.com.ctemplarapp.main;
 
+import android.text.TextUtils;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -52,7 +54,7 @@ public class MainActivityViewModel extends ViewModel {
     private MutableLiveData<ResponseMessagesData> messagesResponse = new MutableLiveData<>();
     private MutableLiveData<List<Contact>> contactsResponse = new MutableLiveData<>();
     private MutableLiveData<ResponseStatus> toFolderStatus = new MutableLiveData<>();
-    private MutableLiveData<ResponseStatus> deleteSeveralMessagesStatus = new MutableLiveData<>();
+    private MutableLiveData<ResponseStatus> deleteMessagesStatus = new MutableLiveData<>();
     private MutableLiveData<FoldersResponse> foldersResponse = new MutableLiveData<>();
     private MutableLiveData<ResponseBody> unreadFoldersBody = new MutableLiveData<>();
     private MutableLiveData<MyselfResponse> myselfResponse = new MutableLiveData<>();
@@ -86,8 +88,8 @@ public class MainActivityViewModel extends ViewModel {
         dialogState.postValue(DialogState.HIDE_PROGRESS_DIALOG);
     }
 
-    public LiveData<ResponseStatus> getDeleteSeveralMessagesStatus() {
-        return deleteSeveralMessagesStatus;
+    public LiveData<ResponseStatus> getDeleteMessagesStatus() {
+        return deleteMessagesStatus;
     }
 
     public LiveData<ResponseStatus> getResponseStatus() {
@@ -339,33 +341,9 @@ public class MainActivityViewModel extends ViewModel {
                 });
     }
 
-    public void deleteMessage(final long messageId) {
-        userRepository.deleteMessage(messageId)
-                .subscribe(new Observer<ResponseBody>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(ResponseBody responseBody) {
-                        messagesRepository.deleteMessagesByParentId(messageId);
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Timber.e(e);
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
-    }
-
-    public void deleteSeveralMessages(String messagesId) {
-        userRepository.deleteSeveralMessages(messagesId)
+    public void deleteMessages(Long[] messageIds) {
+        String messageIdsString = TextUtils.join(",", messageIds);
+        userRepository.deleteMessages(messageIdsString)
                 .subscribe(new Observer<Response<Void>>() {
                     @Override
                     public void onSubscribe(Disposable d) {
@@ -374,11 +352,15 @@ public class MainActivityViewModel extends ViewModel {
 
                     @Override
                     public void onNext(Response<Void> response) {
-                        deleteSeveralMessagesStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
+                        for (long messageId : messageIds) {
+                            messagesRepository.deleteMessageById(messageId);
+                        }
+                        deleteMessagesStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
                     }
 
                     @Override
                     public void onError(Throwable e) {
+                        deleteMessagesStatus.postValue(ResponseStatus.RESPONSE_ERROR);
                         Timber.e(e);
                     }
 
@@ -405,6 +387,7 @@ public class MainActivityViewModel extends ViewModel {
 
                     @Override
                     public void onError(Throwable e) {
+                        toFolderStatus.postValue(ResponseStatus.RESPONSE_ERROR);
                         Timber.e(e);
                     }
 

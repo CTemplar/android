@@ -251,15 +251,15 @@ public class SendMessageActivityViewModel extends ViewModel {
     }
 
     public void deleteMessage(long messageId) {
-        userRepository.deleteMessage(messageId)
-                .subscribe(new Observer<ResponseBody>() {
+        userRepository.deleteMessages(String.valueOf(messageId))
+                .subscribe(new Observer<Response<Void>>() {
                     @Override
                     public void onSubscribe(Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(ResponseBody responseBody) {
+                    public void onNext(Response<Void> voidResponse) {
 
                     }
 
