@@ -1,15 +1,8 @@
 package mobileapp.ctemplar.com.ctemplarapp.login.step;
 
-import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import com.google.android.material.textfield.TextInputEditText;
-import com.google.android.material.textfield.TextInputLayout;
-import androidx.appcompat.widget.AppCompatCheckBox;
 import android.text.Editable;
-import android.text.Html;
 import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
 import android.view.View;
@@ -18,6 +11,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatCheckBox;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.lifecycle.ViewModelProviders;
+
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 import com.squareup.picasso.Picasso;
 
 import org.jetbrains.annotations.NotNull;
@@ -31,6 +31,7 @@ import mobileapp.ctemplar.com.ctemplarapp.login.LoginActivityViewModel;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.CaptchaResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.CaptchaVerifyResponse;
+import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 
 public class StepSecurityFragment extends BaseFragment {
 
@@ -159,7 +160,7 @@ public class StepSecurityFragment extends BaseFragment {
     }
 
     private void setListeners() {
-        txtCheckHint.setText(Html.fromHtml(getResources().getString(R.string.title_step_email_check_hint)));
+        txtCheckHint.setText(EditTextUtils.fromHtml(getResources().getString(R.string.title_step_email_check_hint)));
         txtCheckHint.setMovementMethod(LinkMovementMethod.getInstance());
         txtCheckHint.setLinkTextColor(getResources().getColor(R.color.colorLinkBlue));
 

@@ -1,15 +1,15 @@
 package mobileapp.ctemplar.com.ctemplarapp.login;
 
-import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.Nullable;
+import androidx.lifecycle.ViewModelProviders;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -19,6 +19,7 @@ import mobileapp.ctemplar.com.ctemplarapp.BaseFragment;
 import mobileapp.ctemplar.com.ctemplarapp.LoginActivityActions;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
+import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 
 public class ConfirmResetPasswordFragment extends BaseFragment {
 
@@ -76,7 +77,7 @@ public class ConfirmResetPasswordFragment extends BaseFragment {
     }
 
     private void setListeners() {
-        txtHint.setText(Html.fromHtml(getResources().getString(R.string.title_confirm_reset_password_hint)));
+        txtHint.setText(EditTextUtils.fromHtml(getResources().getString(R.string.title_confirm_reset_password_hint)));
         txtHint.setLinkTextColor(getResources().getColor(R.color.colorLinkBlue));
         txtHint.setMovementMethod(LinkMovementMethod.getInstance());
         txtHint.setAutoLinkMask(Linkify.EMAIL_ADDRESSES);

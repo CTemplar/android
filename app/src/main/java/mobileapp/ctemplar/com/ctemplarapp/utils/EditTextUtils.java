@@ -1,6 +1,10 @@
 package mobileapp.ctemplar.com.ctemplarapp.utils;
 
+import android.os.Build;
 import android.text.Editable;
+import android.text.Html;
+import android.text.Spannable;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.util.Patterns;
 import android.widget.EditText;
@@ -58,5 +62,26 @@ public class EditTextUtils {
 
     public static String getStringFromList(String[] stringArray) {
         return TextUtils.join(",", stringArray);
+    }
+
+    public static String toHtml(Spannable text) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            return Html.toHtml(text, Html.TO_HTML_PARAGRAPH_LINES_CONSECUTIVE);
+        } else {
+            return Html.toHtml(text);
+        }
+    }
+
+    public static Spanned fromHtml(String text) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            return Html.fromHtml(text, Html.FROM_HTML_MODE_COMPACT);
+        } else {
+            return Html.fromHtml(text);
+        }
+    }
+
+    public static boolean isHtml(String text) {
+        String fromHtml = fromHtml(text).toString();
+        return !text.equals(fromHtml);
     }
 }

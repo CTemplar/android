@@ -146,7 +146,6 @@ Your password is connected to your encryption key, if you change your password t
     <string name="toast_download_started">Téléchargement débuté</string>
     <string name="toast_download_complete">Téléchargement terminé</string>
     <string name="txt_user_wrote">\n\n-----------------------------------------------------------------------------------------------\nOn %1$s %2$s wrote:\n\n</string>
-    <string name="txt_user_signature">\n\n--------\n%1$s\n%2$s</string>
     <string name="txt_forwarded_message">Message transféré</string>
     <string name="txt_from">De :&#160;</string>
     <string name="txt_date">Date</string>

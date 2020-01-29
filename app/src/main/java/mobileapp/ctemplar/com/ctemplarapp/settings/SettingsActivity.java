@@ -1,17 +1,22 @@
 package mobileapp.ctemplar.com.ctemplarapp.settings;
 
 import android.app.ProgressDialog;
-import androidx.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.preference.SwitchPreference;
-import androidx.fragment.app.Fragment;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.preference.CheckBoxPreference;
 import androidx.preference.EditTextPreference;
 import androidx.preference.Preference;
@@ -19,10 +24,7 @@ import androidx.preference.PreferenceCategory;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
 import androidx.preference.PreferenceScreen;
-import androidx.appcompat.widget.Toolbar;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.Toast;
+import androidx.preference.SwitchPreference;
 
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
@@ -311,16 +313,20 @@ public class SettingsActivity extends AppCompatActivity {
         public void onCreatePreferences(Bundle bundle, String rootKey) {
             setPreferencesFromResource(R.xml.signature_settings, rootKey);
 
-            final EditTextPreference preferenceSignature = findPreference(getString(R.string.signature));
-            final String signatureText = preferenceSignature.getText();
+            EditTextPreference preferenceSignature = findPreference(getString(R.string.signature));
+            String signatureText = preferenceSignature.getText();
             if (signatureText != null && !signatureText.isEmpty()) {
-                preferenceSignature.setTitle(signatureText);
+                preferenceSignature.setTitle(EditTextUtils.fromHtml(signatureText));
+                preferenceSignature.setText(EditTextUtils.fromHtml(signatureText).toString());
             }
 
             preferenceSignature.setOnPreferenceChangeListener((preference, newValue) -> {
-                String newSignatureText = newValue.toString();
-                if (!newSignatureText.isEmpty()) {
-                    preferenceSignature.setTitle(newSignatureText);
+                String newSignatureText = EditTextUtils.isHtml(signatureText)
+                        ? EditTextUtils.toHtml(new SpannableString((CharSequence) newValue))
+                        : newValue.toString();
+                preferenceSignature.setText(newSignatureText);
+                if (!newValue.toString().isEmpty()) {
+                    preferenceSignature.setTitle(EditTextUtils.fromHtml(newSignatureText));
                     settingsModel.updateSignature(settingId, defaultMailboxId, newSignatureText);
                 } else {
                     preferenceSignature.setTitle(getString(R.string.txt_type_signature));
