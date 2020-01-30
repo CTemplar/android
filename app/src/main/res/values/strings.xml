@@ -147,7 +147,6 @@ Your password is connected to your encryption key, if you change your password t
     <string name="toast_download_started">Download started</string>
     <string name="toast_download_complete">Download complete</string>
     <string name="txt_user_wrote">\n\n-----------------------------------------------------------------------------------------------\nOn %1$s %2$s wrote:\n\n</string>
-    <string name="txt_user_signature">\n\n--------\n%1$s\n%2$s</string>
     <string name="txt_forwarded_message">Forwarded message</string>
     <string name="txt_from">From:&#160;</string>
     <string name="txt_date">Date</string>
@@ -421,6 +420,7 @@ Your password is connected to your encryption key, if you change your password t
     <string name="error_enter_old_password">Please enter your old password</string>
     <string name="error_authentication_failed">Unable to log in with provided credentials.</string>
     <string name="error_server">Server error</string>
+    <string name="error_connection">Connection error</string>
     <string name="error_messages">Error receiving messages</string>
     <string name="error_sign_in">Sign in error</string>
     <string name="error_change_password">Password change error</string>

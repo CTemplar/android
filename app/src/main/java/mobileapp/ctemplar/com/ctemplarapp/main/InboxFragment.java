@@ -212,7 +212,12 @@ public class InboxFragment extends BaseFragment
             updateTouchListenerSwipeOptions(currentFolder);
             swipeRefreshLayout.setRefreshing(false);
         });
-        mainModel.getDeleteSeveralMessagesStatus().observe(this, responseStatus -> requestNewMessages());
+        mainModel.getDeleteMessagesStatus().observe(this, responseStatus -> {
+            if (responseStatus == ResponseStatus.RESPONSE_ERROR) {
+                Toast.makeText(getActivity(), getString(R.string.error_connection), Toast.LENGTH_LONG).show();
+            }
+            requestNewMessages();
+        });
 
         swipeRefreshLayout.setOnRefreshListener(this::requestNewMessages);
 
@@ -284,21 +289,12 @@ public class InboxFragment extends BaseFragment
             case R.id.action_search:
                 return true;
             case R.id.action_empty_folder:
-                List<MessageProvider> messages = adapter.getAll();
-                final StringBuilder messagesIds = new StringBuilder();
-                for (MessageProvider messagesResult : messages) {
-                    messagesIds.append(messagesResult.getId());
-                    messagesIds.append(',');
-                }
-                if (!messages.isEmpty()) {
-                    messagesIds.deleteCharAt(messagesIds.length() - 1);
-                }
-
                 if (getActivity() != null) {
                     new AlertDialog.Builder(getActivity())
                             .setTitle(getString(R.string.title_clear_folder))
                             .setMessage(getString(R.string.txt_clear_folder))
-                            .setPositiveButton(getString(R.string.btn_confirm), (dialog, which) -> mainModel.deleteSeveralMessages(messagesIds.toString())
+                            .setPositiveButton(getString(R.string.btn_confirm), (dialog, which)
+                                    -> mainModel.deleteMessages(adapter.getAllIds())
                             )
                             .setNeutralButton(getString(R.string.btn_cancel), null)
                             .show();
@@ -377,14 +373,16 @@ public class InboxFragment extends BaseFragment
                             if (!currentFolderFinal.equals(MainFolderNames.TRASH)
                                     && !currentFolderFinal.equals(SPAM)) {
                                 mainModel.toFolder(deletedMessage.getId(), MainFolderNames.TRASH);
-                                showRestoreSnackBar(getResources().getString(R.string.txt_name_removed, name), () -> {
+                                showRestoreSnackBar(getString(R.string.txt_name_removed, name), () -> {
                                     mainModel.toFolder(deletedMessage.getId(), currentFolderFinal);
                                     if (currentFolder.equals(currentFolderFinal)) {
                                         adapter.restoreMessage(deletedMessage, position);
                                     }
                                 });
                             } else {
-                                mainModel.deleteMessage(deletedMessage.getId());
+                                showDeleteSnackBar(getString(R.string.txt_name_removed, name), () -> {
+                                    mainModel.deleteMessages(new Long[]{deletedMessage.getId()});
+                                });
                             }
                             break;
 
@@ -392,7 +390,7 @@ public class InboxFragment extends BaseFragment
                             if (!currentFolder.equals(MainFolderNames.SPAM)) {
                                 final MessageProvider spamMessage = adapter.removeAt(position);
                                 mainModel.toFolder(spamMessage.getId(), MainFolderNames.SPAM);
-                                showRestoreSnackBar(getResources().getString(R.string.action_spam), () -> {
+                                showRestoreSnackBar(getString(R.string.action_spam), () -> {
                                     mainModel.toFolder(spamMessage.getId(), currentFolderFinal);
                                     if (currentFolder.equals(currentFolderFinal)) {
                                         adapter.restoreMessage(spamMessage, position);
@@ -405,7 +403,7 @@ public class InboxFragment extends BaseFragment
                             if (currentFolder.equals(MainFolderNames.SPAM)) {
                                 final MessageProvider notSpamMessage = adapter.removeAt(position);
                                 mainModel.toFolder(notSpamMessage.getId(), MainFolderNames.INBOX);
-                                showRestoreSnackBar(getResources().getString(R.string.action_moved_to_inbox), () -> {
+                                showRestoreSnackBar(getString(R.string.action_moved_to_inbox), () -> {
                                     mainModel.toFolder(notSpamMessage.getId(), currentFolderFinal);
                                     if (currentFolder.equals(currentFolderFinal)) {
                                         adapter.restoreMessage(notSpamMessage, position);
@@ -430,11 +428,25 @@ public class InboxFragment extends BaseFragment
         recyclerView.addOnItemTouchListener(touchListener);
     }
 
-    private void showRestoreSnackBar(String message, final Runnable onUndoClick) {
+    private void showRestoreSnackBar(String message, Runnable onUndoClick) {
         Snackbar.make(frameCompose, message, Snackbar.LENGTH_LONG)
-                .setAction(getResources().getString(R.string.action_undo), view -> onUndoClick.run())
+                .setAction(getString(R.string.action_undo), view -> onUndoClick.run())
                 .setActionTextColor(Color.YELLOW)
                 .show();
+    }
+
+    private void showDeleteSnackBar(String message, Runnable onDismissed) {
+        Snackbar.make(frameCompose, message, Snackbar.LENGTH_LONG)
+                .setAction(getString(R.string.action_undo), v -> {})
+                .setActionTextColor(Color.YELLOW)
+                .addCallback(new Snackbar.Callback() {
+                    @Override
+                    public void onDismissed(Snackbar transientBottomBar, int event) {
+                        if (event != DISMISS_EVENT_ACTION) {
+                            onDismissed.run();
+                        }
+                    }
+                }).show();
     }
 
     private void startSendMessageActivity() {

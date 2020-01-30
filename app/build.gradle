@@ -7,13 +7,19 @@ repositories {
     maven { url 'https://maven.fabric.io/public' }
 }
 
+ext {
+    versionMajor = 1
+    versionMinor = 2
+    versionBuild = 0
+}
+
 android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "mobileapp.ctemplar.com.ctemplarapp"
         minSdkVersion 16
         versionCode 30
-        versionName "1.2.0"
+        versionName "${versionMajor}.${versionMinor}.${versionBuild}"
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
@@ -25,16 +31,18 @@ android {
         }
     }
 
+    applicationVariants.all { variant ->
+        variant.resValue "string", "versionName", variant.versionName
+    }
     flavorDimensions "version"
     productFlavors {
         staging {
             applicationIdSuffix ".staging"
-            buildConfigField("String", "BASE_URL", "\"https://api.ctemplar.com\"")
+            buildConfigField("String", "BASE_URL", "\"https://dev.ctemplar.com/api/\"")
         }
-
         production {
             applicationIdSuffix ".production"
-            buildConfigField("String", "BASE_URL", "\"https://api.ctemplar.com\"")
+            buildConfigField("String", "BASE_URL", "\"https://mail.ctemplar.com/api/\"")
         }
     }
 
@@ -60,8 +68,8 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'androidx.legacy:legacy-support-core-ui:1.0.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
-    implementation 'androidx.lifecycle:lifecycle-viewmodel:2.1.0'
-    implementation 'androidx.lifecycle:lifecycle-extensions:2.1.0'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel:2.2.0'
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     implementation 'androidx.multidex:multidex:2.0.1'
     implementation 'com.romandanylyk:pageindicatorview:1.0.2'
 

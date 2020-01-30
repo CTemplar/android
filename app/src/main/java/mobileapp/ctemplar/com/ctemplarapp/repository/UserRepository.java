@@ -225,14 +225,8 @@ public class UserRepository {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<ResponseBody> deleteMessage(long id) {
-        return service.deleteMessage(id)
-                .subscribeOn(io.reactivex.schedulers.Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread());
-    }
-
-    public Observable<Response<Void>> deleteSeveralMessages(String messagesId) {
-        return service.deleteSeveralMessages(messagesId)
+    public Observable<Response<Void>> deleteMessages(String messageIds) {
+        return service.deleteMessages(messageIds)
                 .subscribeOn(io.reactivex.schedulers.Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }

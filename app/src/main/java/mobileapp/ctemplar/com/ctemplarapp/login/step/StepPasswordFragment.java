@@ -1,20 +1,21 @@
 package mobileapp.ctemplar.com.ctemplarapp.login.step;
 
-import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import com.google.android.material.textfield.TextInputEditText;
-import com.google.android.material.textfield.TextInputLayout;
-import androidx.appcompat.widget.AppCompatCheckBox;
 import android.text.Editable;
-import android.text.Html;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatCheckBox;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.lifecycle.ViewModelProviders;
+
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -131,8 +132,8 @@ public class StepPasswordFragment extends BaseFragment {
         editConfirm.addTextChangedListener(watcher);
         editChoose.addTextChangedListener(watcher);
 
-        final Spanned shortHint = Html.fromHtml(getString(R.string.hint_step_email_recovery_short));
-        final Spanned longHint = Html.fromHtml(getString(R.string.hint_step_email_recovery_long));
+        final Spanned shortHint = EditTextUtils.fromHtml(getString(R.string.hint_step_email_recovery_short));
+        final Spanned longHint = EditTextUtils.fromHtml(getString(R.string.hint_step_email_recovery_long));
         recoveryEmailCheckText.setText(shortHint, TextView.BufferType.SPANNABLE);
         recoveryEmailCheckText.setOnClickListener(v -> {
             recoveryEmailCheckText.setText(

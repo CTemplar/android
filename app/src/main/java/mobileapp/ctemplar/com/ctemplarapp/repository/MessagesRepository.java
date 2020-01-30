@@ -52,11 +52,15 @@ public class MessagesRepository {
         CTemplarApp.getAppDatabase().messageDao().updateIsRead(id, isRead);
     }
 
+    public void deleteMessageById(long id) {
+        CTemplarApp.getAppDatabase().messageDao().deleteById(id);
+    }
+
     public void deleteMessagesByParentId(long id) {
-        CTemplarApp.getAppDatabase().messageDao().deleteAllByParentId(((Object)id).toString());
+        CTemplarApp.getAppDatabase().messageDao().deleteAllByParentId(String.valueOf(id));
     }
 
     public List<MessageEntity> getChildMessages(MessageEntity parentMessage) {
-        return CTemplarApp.getAppDatabase().messageDao().getByParentId(((Object)parentMessage.getId()).toString());
+        return CTemplarApp.getAppDatabase().messageDao().getByParentId(String.valueOf(parentMessage.getId()));
     }
 }

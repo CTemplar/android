@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.DownloadManager;
 import android.net.Uri;
 import android.os.Environment;
-import android.text.Html;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.view.LayoutInflater;
@@ -31,6 +30,7 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.provider.AttachmentProvider
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageProvider;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.UserDisplayProvider;
 import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
+import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.PermissionCheck;
 import timber.log.Timber;
 
@@ -104,7 +104,7 @@ public class ViewMessagesAdapter extends BaseAdapter {
         ImageView collapsedReplyMessageImageView = view.findViewById(R.id.item_message_view_holder_reply_image_view);
 
         senderTextView.setText(senderDisplay.getName());
-        contentTextView.setText(Html.fromHtml(message));
+        contentTextView.setText(EditTextUtils.fromHtml(message));
 
         // VIEW EXPANDED
         senderTextView = view.findViewById(R.id.item_message_view_expanded_sender_name);
@@ -227,7 +227,7 @@ public class ViewMessagesAdapter extends BaseAdapter {
             //contentWebView.getSettings().setDomStorageEnabled(true);
             contentWebView.loadData(encodedContent, "text/html", "base64");
         } else {
-            contentText.setText(Html.fromHtml(message));
+            contentText.setText(EditTextUtils.fromHtml(message));
         }
 
         List<AttachmentProvider> attachmentList = messageData.getAttachments();

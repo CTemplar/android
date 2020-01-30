@@ -8,10 +8,10 @@ import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
-import android.text.Html;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -319,9 +319,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         boolean mobileSignatureEnabled = sharedPreferences.getBoolean(getString(R.string.mobile_signature_enabled), false);
         String mobileSignature = sharedPreferences.getString(getString(R.string.mobile_signature), "");
         if (mobileSignatureEnabled) {
-            String compose = composeEditText.getText().toString();
-            String text = getString(R.string.txt_user_signature, mobileSignature, compose);
-            composeEditText.setText(text);
+            addSignature(mobileSignature);
         }
 
         String toEmail = toEmailTextView.getText().toString();
@@ -675,13 +673,17 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
                 .observe(this, myselfResponse -> {
                     if (myselfResponse != null) {
                         MyselfResult myself = myselfResponse.result[0];
-                        addSignature(myself.mailboxes[0].getSignature());
                         isSubjectEncrypted = myself.settings.isSubjectEncrypted();
-                        userIsPrime = myself.isPrime;
+                        userIsPrime = myself.isPrime();
 //                        String joinedDate = myself.joinedDate;
 //                        boolean userTrial = AppUtils.twoWeeksTrial(joinedDate);
 //                        boolean userPrime = myself.isPrime;
 //                        userIsPrime = userPrime || userTrial;
+                        boolean signatureEnabled = sharedPreferences
+                                .getBoolean(getString(R.string.signature_enabled), false);
+                        if (signatureEnabled) {
+                            addSignature(myself.mailboxes[0].getSignature());
+                        }
                     }
                 });
     }
@@ -739,7 +741,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
             subjectEditText.setText(messageSubject);
         }
         if (messageContent != null && !messageContent.isEmpty()) {
-            Spanned messageSpanned = Html.fromHtml(messageContent);
+            Spanned messageSpanned = EditTextUtils.fromHtml(messageContent);
             composeEditText.setText(messageSpanned);
         }
         if (messageDestruct != null && !messageDestruct.isEmpty()) {
@@ -796,7 +798,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         sendMessageRequest.setSender(mailboxEmail);
         sendMessageRequest.setSubject(subject);
         sendMessageRequest.setHtml(true);
-        sendMessageRequest.setContent(Html.toHtml(composeSpannable));
+        sendMessageRequest.setContent(EditTextUtils.toHtml(composeSpannable));
         sendMessageRequest.setMailbox(mailboxId);
         sendMessageRequest.setParent(parentId);
         sendMessageRequest.setSubjectEncrypted(isSubjectEncrypted);
@@ -896,7 +898,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         final SendMessageRequest messageRequestToDraft = new SendMessageRequest();
         messageRequestToDraft.setSubject(subject);
         messageRequestToDraft.setSender(mailboxEmail);
-        messageRequestToDraft.setContent(Html.toHtml(composeSpannable));
+        messageRequestToDraft.setContent(EditTextUtils.toHtml(composeSpannable));
         messageRequestToDraft.setFolder(MainFolderNames.DRAFT);
         messageRequestToDraft.setIsEncrypted(true);
         messageRequestToDraft.setHtml(true);
@@ -1100,12 +1102,11 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
     }
 
     private void addSignature(String signatureText) {
-        boolean signatureEnabled = sharedPreferences.getBoolean(getString(R.string.signature_enabled), false);
-        if (signatureEnabled) {
-            String compose = composeEditText.getText().toString();
-            String text = getString(R.string.txt_user_signature, signatureText, compose);
-            composeEditText.setText(text);
-        }
+        Spanned signatureSpanned = EditTextUtils.fromHtml(signatureText);
+        Editable compose = composeEditText.getText();
+        CharSequence signatureWithCompose =
+                TextUtils.concat("\n\n--------\n", signatureSpanned, "\n", compose);
+        composeEditText.setText(signatureWithCompose);
     }
 
     private boolean inputFieldsNotEmpty() {

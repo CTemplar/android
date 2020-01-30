@@ -2,7 +2,6 @@ package mobileapp.ctemplar.com.ctemplarapp.message;
 
 import android.app.Activity;
 import android.app.DownloadManager;
-import androidx.lifecycle.ViewModelProviders;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -12,19 +11,6 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import com.google.android.material.snackbar.BaseTransientBottomBar;
-import com.google.android.material.snackbar.Snackbar;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.core.content.FileProvider;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import android.text.Html;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -38,10 +24,24 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.FileProvider;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.ViewModelProviders;
+
+import com.google.android.material.snackbar.BaseTransientBottomBar;
+import com.google.android.material.snackbar.Snackbar;
+
 import java.io.File;
 import java.util.Collections;
 
-import io.reactivex.disposables.Disposable;
 import mobileapp.ctemplar.com.ctemplarapp.ActivityInterface;
 import mobileapp.ctemplar.com.ctemplarapp.BuildConfig;
 import mobileapp.ctemplar.com.ctemplarapp.R;
@@ -54,11 +54,10 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.provider.AttachmentProvider
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageProvider;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.UserDisplayProvider;
 import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
+import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EncryptUtils;
-import mobileapp.ctemplar.com.ctemplarapp.utils.PermissionCheck;
 import timber.log.Timber;
 
-import static android.content.Context.DOWNLOAD_SERVICE;
 import static mobileapp.ctemplar.com.ctemplarapp.message.SendMessageActivity.ATTACHMENT_LIST;
 import static mobileapp.ctemplar.com.ctemplarapp.message.ViewMessagesActivity.PARENT_ID;
 import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.ARCHIVE;
@@ -215,9 +214,16 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
             }
         });
         mainModel.getToFolderStatus().observe(this, responseStatus -> {
-            Activity activity1 = getActivity();
-            if (activity1 != null) {
-                activity1.onBackPressed();
+            if (responseStatus == ResponseStatus.RESPONSE_ERROR) {
+                Toast.makeText(getActivity(), getString(R.string.error_connection), Toast.LENGTH_SHORT).show();
+            } else {
+                Activity viewActivity = getActivity();
+                viewActivity.onBackPressed();
+            }
+        });
+        mainModel.getDeleteMessagesStatus().observe(this, responseStatus -> {
+            if (responseStatus == ResponseStatus.RESPONSE_ERROR) {
+                Toast.makeText(getActivity(), getString(R.string.error_connection), Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -328,7 +334,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
         }
     }
 
-    private void snackbarDelete(final String folder, String message) {
+    private void snackbarDelete(String folder, String message) {
         Snackbar snackbar = Snackbar.make(messageActionsLayout, message, Snackbar.LENGTH_SHORT);
         snackbar.setAction(getString(R.string.action_undo), view -> blockUI());
         snackbar.addCallback(new BaseTransientBottomBar.BaseCallback<Snackbar>() {
@@ -336,7 +342,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
             public void onDismissed(Snackbar transientBottomBar, int event) {
                 if (event != DISMISS_EVENT_ACTION) {
                     if (currentFolder.equals(TRASH)) {
-                        mainModel.deleteMessage(parentMessage.getId());
+                        mainModel.deleteMessages(new Long[]{parentMessage.getId()});
                     } else {
                         mainModel.toFolder(parentMessage.getId(), folder);
                     }
@@ -429,7 +435,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
     private void forwardMessage(boolean withAttachments) {
         Intent intentForward = new Intent(getActivity(), SendMessageActivity.class);
         intentForward.putExtra(Intent.EXTRA_SUBJECT, lastMessage.getSubject());
-        intentForward.putExtra(Intent.EXTRA_TEXT, forwardHead() + Html.fromHtml(decryptedLastMessage));
+        intentForward.putExtra(Intent.EXTRA_TEXT, forwardHead() + EditTextUtils.fromHtml(decryptedLastMessage));
 
         Bundle extras = new Bundle();
         AttachmentsEntity attachmentsEntity = withAttachments
@@ -440,7 +446,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
 
         Fragment fragmentForward = SendMessageFragment.newInstance(
                 lastMessage.getSubject(),
-                forwardHead() + Html.fromHtml(decryptedLastMessage),
+                forwardHead() + EditTextUtils.fromHtml(decryptedLastMessage),
                 new String[] {},
                 new String[] {},
                 new String[] {},
@@ -466,12 +472,12 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
                 Intent intentReply = new Intent(getActivity(), SendMessageActivity.class);
                 intentReply.putExtra(Intent.EXTRA_EMAIL, new String[] { lastMessage.getSender() });
                 intentReply.putExtra(Intent.EXTRA_SUBJECT, lastMessage.getSubject());
-                intentReply.putExtra(Intent.EXTRA_TEXT, replyHead() + Html.fromHtml(decryptedLastMessage));
+                intentReply.putExtra(Intent.EXTRA_TEXT, replyHead() + EditTextUtils.fromHtml(decryptedLastMessage));
                 intentReply.putExtra(SendMessageActivity.PARENT_ID, parentMessage.getId());
 
                 Fragment fragmentReply = SendMessageFragment.newInstance(
                         lastMessage.getSubject(),
-                        replyHead() + Html.fromHtml(decryptedLastMessage),
+                        replyHead() + EditTextUtils.fromHtml(decryptedLastMessage),
                         new String[] { lastMessage.getSender() },
                         new String[] {},
                         new String[] {},
@@ -489,14 +495,14 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
                 Intent intentReplyAll = new Intent(getActivity(), SendMessageActivity.class);
                 intentReplyAll.putExtra(Intent.EXTRA_EMAIL, new String[] { lastMessage.getSender() });
                 intentReplyAll.putExtra(Intent.EXTRA_SUBJECT, lastMessage.getSubject());
-                intentReplyAll.putExtra(Intent.EXTRA_TEXT, replyHead() + Html.fromHtml(decryptedLastMessage));
+                intentReplyAll.putExtra(Intent.EXTRA_TEXT, replyHead() + EditTextUtils.fromHtml(decryptedLastMessage));
                 intentReplyAll.putExtra(Intent.EXTRA_CC, lastMessage.getCc());
                 intentReplyAll.putExtra(Intent.EXTRA_BCC, lastMessage.getBcc());
                 intentReplyAll.putExtra(SendMessageActivity.PARENT_ID, parentMessage.getId());
 
                 Fragment fragmentReplyAll = SendMessageFragment.newInstance(
                         lastMessage.getSubject(),
-                        replyHead() + Html.fromHtml(decryptedLastMessage),
+                        replyHead() + EditTextUtils.fromHtml(decryptedLastMessage),
                         new String[] { lastMessage.getSender() },
                         lastMessage.getCc(),
                         lastMessage.getBcc(),
