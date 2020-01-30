@@ -1,5 +1,6 @@
 package mobileapp.ctemplar.com.ctemplarapp.login;
 
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
@@ -54,11 +55,11 @@ public class SignUpFragment extends BaseFragment{
         list.add(new StepPasswordFragment());
         list.add(new StepSecurityFragment());
 
-        viewPager.setAdapter(new SignUpFragmentsAdapter(getFragmentManager(), list));
+        viewPager.setAdapter(new SignUpFragmentsAdapter(getParentFragmentManager(), list));
         viewPager.setOnTouchListener(null);
 
-        stepModel = ViewModelProviders.of(getActivity()).get(StepRegistrationViewModel.class);
-        stepModel.getAction().observe(this, this::handleRegistrationActions);
+        stepModel = new ViewModelProvider(this).get(StepRegistrationViewModel.class);
+        stepModel.getAction().observe(getViewLifecycleOwner(), this::handleRegistrationActions);
     }
 
     @Override

@@ -1,6 +1,8 @@
 package mobileapp.ctemplar.com.ctemplarapp.contacts;
 
 import android.app.Activity;
+
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.graphics.Color;
@@ -93,9 +95,10 @@ public class ContactFragment extends BaseFragment {
             }
         });
 
-        mainModel = ViewModelProviders.of(getActivity()).get(MainActivityViewModel.class);
+
+        mainModel = new ViewModelProvider(this).get(MainActivityViewModel.class);//ViewModelProviders.of(this).get(MainActivityViewModel.class);
         mainModel.getContactsResponse()
-                .observe(this, this::handleContactsList);
+                .observe(getViewLifecycleOwner(), this::handleContactsList);
         mainModel.getContacts(200, 0);
     }
 

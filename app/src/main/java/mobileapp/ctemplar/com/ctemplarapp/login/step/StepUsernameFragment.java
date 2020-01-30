@@ -1,5 +1,6 @@
 package mobileapp.ctemplar.com.ctemplarapp.login.step;
 
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
@@ -61,9 +62,9 @@ public class StepUsernameFragment extends BaseFragment {
     public void onViewCreated(@NotNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        loginActivityModel = ViewModelProviders.of(getActivity()).get(LoginActivityViewModel.class);
-        viewModel = ViewModelProviders.of(getActivity()).get(StepRegistrationViewModel.class);
-        viewModel.getResponseStatus().observe(this, this::handleResponseStatus);
+        loginActivityModel = new ViewModelProvider(this).get(LoginActivityViewModel.class);
+        viewModel = new ViewModelProvider(this).get(StepRegistrationViewModel.class);
+        viewModel.getResponseStatus().observe(getViewLifecycleOwner(), this::handleResponseStatus);
 
         setListeners();
     }

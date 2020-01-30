@@ -140,7 +140,7 @@ public class WhiteBlackListActivity extends BaseActivity {
             }
 
             model = ((WhiteBlackListActivity) activity).getModel();
-            model.getWhitelistResponse().observe(this, whiteListContacts -> {
+            model.getWhitelistResponse().observe(getViewLifecycleOwner(), whiteListContacts -> {
                 if (whiteListContacts != null) {
                     WhitelistAdapter adapter1 = new WhitelistAdapter(whiteListContacts);
                     recyclerView.setAdapter(adapter1);
@@ -237,7 +237,7 @@ public class WhiteBlackListActivity extends BaseActivity {
             }
 
             model = ((WhiteBlackListActivity) activity).getModel();
-            model.getBlacklistResponse().observe(this, blackListContacts -> {
+            model.getBlacklistResponse().observe(getViewLifecycleOwner(), blackListContacts -> {
                 if (blackListContacts != null) {
                     BlacklistAdapter adapter1 = new BlacklistAdapter(blackListContacts);
                     recyclerView.setAdapter(adapter1);

@@ -190,18 +190,18 @@ public class InboxFragment extends BaseFragment
             return;
         }
 
-        mainModel.getResponseStatus().observe(this, status -> {
+        mainModel.getResponseStatus().observe(getViewLifecycleOwner(), status -> {
             handleResponseStatus(status);
             swipeRefreshLayout.setRefreshing(false);
         });
-        mainModel.getMessagesResponse().observe(this, messagesResponse -> {
+        mainModel.getMessagesResponse().observe(getViewLifecycleOwner(), messagesResponse -> {
             if (messagesResponse != null) {
                 handleMessagesList(messagesResponse.messages,
                         messagesResponse.folderName, messagesResponse.offset);
                 swipeRefreshLayout.setRefreshing(false);
             }
         });
-        mainModel.getCurrentFolder().observe(this, folderName -> {
+        mainModel.getCurrentFolder().observe(getViewLifecycleOwner(), folderName -> {
             currentFolder = folderName;
             requestNewMessages();
             restartOptionsMenu();
@@ -212,7 +212,7 @@ public class InboxFragment extends BaseFragment
             updateTouchListenerSwipeOptions(currentFolder);
             swipeRefreshLayout.setRefreshing(false);
         });
-        mainModel.getDeleteMessagesStatus().observe(this, responseStatus -> {
+        mainModel.getDeleteMessagesStatus().observe(getViewLifecycleOwner(), responseStatus -> {
             if (responseStatus == ResponseStatus.RESPONSE_ERROR) {
                 Toast.makeText(getActivity(), getString(R.string.error_connection), Toast.LENGTH_LONG).show();
             }

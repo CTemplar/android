@@ -526,7 +526,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         }
 
         // Load contacts for autocomplete
-        sendModel.getContactsResponse().observe(this, contactList -> {
+        sendModel.getContactsResponse().observe(getViewLifecycleOwner(), contactList -> {
             if (contactList != null) {
                 handleContactsList(contactList);
             }
@@ -534,7 +534,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         sendModel.getContacts(200, 0);
 
         // Load keys before sending message
-        sendModel.getKeyResponse().observe(this, keyResponse -> {
+        sendModel.getKeyResponse().observe(getViewLifecycleOwner(), keyResponse -> {
             if (keyResponse != null && keyResponse.getKeyResult() != null && keyResponse.getKeyResult().length > 0) {
                 publicKeyList = new ArrayList<>();
                 for (KeyResult key : keyResponse.getKeyResult()) {
@@ -546,7 +546,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         });
 
         // checking for attachment updates when sending
-        sendModel.getUpdateAttachmentStatus().observe(this, responseStatus -> {
+        sendModel.getUpdateAttachmentStatus().observe(getViewLifecycleOwner(), responseStatus -> {
             if (responseStatus == ResponseStatus.RESPONSE_COMPLETE) {
                 List<MessageAttachment> attachmentList = messageSendAttachmentAdapter.getAttachmentList();
                 int attachmentListSize = attachmentList.size();
@@ -574,13 +574,13 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
 
         });
 
-        sendModel.getGrabAttachmentStatus().observe(this, aBoolean -> {
+        sendModel.getGrabAttachmentStatus().observe(getViewLifecycleOwner(), aBoolean -> {
             messageAttachmentsProcessingTextView.setVisibility(View.GONE);
             attachmentsProcessingEnabled = false;
         });
 
         sendModel.getMessagesResult()
-                .observe(this, messagesResult -> {
+                .observe(getViewLifecycleOwner(), messagesResult -> {
                     if (sendingProgress != null && sendingProgress.isShowing()) {
                         sendingProgress.dismiss();
                     }
@@ -595,7 +595,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
                 });
 
         sendModel.getCreateMessageStatus()
-                .observe(this, responseStatus -> {
+                .observe(getViewLifecycleOwner(), responseStatus -> {
                     if (responseStatus == null || responseStatus == ResponseStatus.RESPONSE_ERROR) {
                         Toast.makeText(activity, getResources().getString(R.string.toast_message_not_created), Toast.LENGTH_SHORT).show();
                         finish();
@@ -603,7 +603,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
                 });
 
         sendModel.getCreateMessageResponse()
-                .observe(this, messagesResult -> {
+                .observe(getViewLifecycleOwner(), messagesResult -> {
                     if (messagesResult != null) {
                         currentMessageId = messagesResult.getId();
                         grabForwardedAttachments();
@@ -613,7 +613,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
                     }
                 });
 
-        sendModel.getOpenMessageResponse().observe(this, messageEntity -> {
+        sendModel.getOpenMessageResponse().observe(getViewLifecycleOwner(), messageEntity -> {
             if (messageEntity != null) {
                 loadMessageHandler(messageEntity);
             } else {
@@ -623,7 +623,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         });
 
         sendModel.getUploadAttachmentStatus()
-                .observe(this, responseStatus -> {
+                .observe(getViewLifecycleOwner(), responseStatus -> {
                     if (responseStatus == ResponseStatus.RESPONSE_ERROR_TOO_LARGE) {
                         Toast.makeText(activity, getString(R.string.error_upload_attachment_too_large), Toast.LENGTH_SHORT).show();
                     } else if (responseStatus == ResponseStatus.RESPONSE_ERROR) {
@@ -635,7 +635,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
                 });
 
         sendModel.getUploadAttachmentResponse()
-                .observe(this, messageAttachment -> {
+                .observe(getViewLifecycleOwner(), messageAttachment -> {
                     if (messageAttachment != null) {
                         messageSendAttachmentAdapter.addAttachment(messageAttachment);
                         if (messageSendAttachmentAdapter.getItemCount() > 0) {
@@ -650,7 +650,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
                 });
 
         sendModel.getDeleteAttachmentStatus()
-                .observe(this, responseStatus -> {
+                .observe(getViewLifecycleOwner(), responseStatus -> {
                     if (responseStatus == ResponseStatus.RESPONSE_COMPLETE) {
                         int attachmentCount = messageSendAttachmentAdapter.getItemCount();
                         if (attachmentCount < 1) {
@@ -660,7 +660,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
                 });
 
         sendModel.getMessageEncryptionResult()
-                .observe(this, messagesResult -> {
+                .observe(getViewLifecycleOwner(), messagesResult -> {
                     if (messagesResult != null) {
                         messageEncryptionResult = messagesResult.getEncryption();
                         if (messageEncryptionResult != null) {
@@ -670,7 +670,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
                 });
 
         sendModel.getMySelfResponse()
-                .observe(this, myselfResponse -> {
+                .observe(getViewLifecycleOwner(), myselfResponse -> {
                     if (myselfResponse != null) {
                         MyselfResult myself = myselfResponse.result[0];
                         isSubjectEncrypted = myself.settings.isSubjectEncrypted();

@@ -1,6 +1,8 @@
 package mobileapp.ctemplar.com.ctemplarapp.message;
 
 import android.app.Dialog;
+
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -54,10 +56,10 @@ public class MoveDialogFragment extends DialogFragment {
         }
         final long parentMessageId = bundleArguments.getLong(ViewMessagesActivity.PARENT_ID, -1);
 
-        viewMessagesModel = ViewModelProviders.of(this).get(ViewMessagesViewModel.class);
+        viewMessagesModel = new ViewModelProvider(this).get(ViewMessagesViewModel.class);
         getCustomFolders();
 
-        viewMessagesModel.getFoldersResponse().observe(this, foldersResponse -> {
+        viewMessagesModel.getFoldersResponse().observe(getViewLifecycleOwner(), foldersResponse -> {
             if (foldersResponse != null) {
                 handleFoldersResponse(view, foldersResponse);
             }

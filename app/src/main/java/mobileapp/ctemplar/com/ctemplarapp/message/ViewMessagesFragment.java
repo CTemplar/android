@@ -168,7 +168,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
 
         attachmentProvider = new AttachmentProvider();
         viewModel.getChainMessages(parentId);
-        viewModel.getMessagesResponse().observe(this, messagesList -> {
+        viewModel.getMessagesResponse().observe(getViewLifecycleOwner(), messagesList -> {
             if (messagesList == null || messagesList.isEmpty()) {
                 Timber.e("Messages doesn't exists");
                 Toast.makeText(activity.getApplicationContext(), getResources().getString(R.string.toast_messages_doesnt_exist), Toast.LENGTH_SHORT).show();
@@ -200,12 +200,12 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
             activity.invalidateOptionsMenu();
         });
 
-        viewModel.getStarredResponse().observe(this, isStarred -> {
+        viewModel.getStarredResponse().observe(getViewLifecycleOwner(), isStarred -> {
             boolean starred = isStarred == null ? false : isStarred;
             starImageView.setSelected(starred);
             parentMessage.setStarred(starred);
         });
-        viewModel.getAddWhitelistStatus().observe(this, responseStatus -> {
+        viewModel.getAddWhitelistStatus().observe(getViewLifecycleOwner(), responseStatus -> {
             if (responseStatus == ResponseStatus.RESPONSE_COMPLETE) {
                 Toast.makeText(getActivity(), getString(R.string.added_to_whitelist), Toast.LENGTH_SHORT).show();
                 getActivity().onBackPressed();
@@ -213,7 +213,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
                 Toast.makeText(getActivity(), getString(R.string.adding_whitelist_contact_error), Toast.LENGTH_SHORT).show();
             }
         });
-        mainModel.getToFolderStatus().observe(this, responseStatus -> {
+        mainModel.getToFolderStatus().observe(getViewLifecycleOwner(), responseStatus -> {
             if (responseStatus == ResponseStatus.RESPONSE_ERROR) {
                 Toast.makeText(getActivity(), getString(R.string.error_connection), Toast.LENGTH_SHORT).show();
             } else {
@@ -221,7 +221,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
                 viewActivity.onBackPressed();
             }
         });
-        mainModel.getDeleteMessagesStatus().observe(this, responseStatus -> {
+        mainModel.getDeleteMessagesStatus().observe(getViewLifecycleOwner(), responseStatus -> {
             if (responseStatus == ResponseStatus.RESPONSE_ERROR) {
                 Toast.makeText(getActivity(), getString(R.string.error_connection), Toast.LENGTH_SHORT).show();
             }
