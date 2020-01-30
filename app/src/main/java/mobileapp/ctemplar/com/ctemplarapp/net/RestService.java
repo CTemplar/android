@@ -70,32 +70,32 @@ import retrofit2.http.Query;
 @Singleton
 public interface RestService {
 
-    @POST("/auth/sign-in/")
+    @POST("auth/sign-in/")
     Observable<SignInResponse> signIn(@Body SignInRequest request);
 
-    @POST("/auth/sign-up/")
+    @POST("auth/sign-up/")
     Observable<SignUpResponse> signUp(@Body SignUpRequest request);
 
-    @POST("/auth/check-username/")
+    @POST("auth/check-username/")
     Observable<CheckUsernameResponse> checkUsername(@Body CheckUsernameRequest request);
 
-    @POST("/auth/recover/")
+    @POST("auth/recover/")
     Observable<RecoverPasswordResponse> recoverPassword(@Body RecoverPasswordRequest request);
 
-    @POST("/auth/reset/")
+    @POST("auth/reset/")
     Observable<RecoverPasswordResponse> resetPassword(@Body RecoverPasswordRequest request);
 
-    @POST("/auth/change-password/")
+    @POST("auth/change-password/")
     Observable<ResponseBody> changePassword(@Body ChangePasswordRequest request);
 
-    @GET("/auth/captcha/")
+    @GET("auth/captcha/")
     Observable<CaptchaResponse> getCaptcha();
 
-    @POST("/auth/captcha-verify/")
+    @POST("auth/captcha-verify/")
     Observable<CaptchaVerifyResponse> captchaVerify(@Body CaptchaVerifyRequest request);
 
     @Multipart
-    @POST("/emails/attachments/create/")
+    @POST("emails/attachments/create/")
     Observable<MessageAttachment> uploadAttachment(
             @Part MultipartBody.Part document,
             @Part("message") long message,
@@ -103,7 +103,7 @@ public interface RestService {
     );
 
     @Multipart
-    @PATCH("/emails/attachments/update/{id}/")
+    @PATCH("emails/attachments/update/{id}/")
     Observable<MessageAttachment> updateAttachment(
             @Path("id") long id,
             @Part MultipartBody.Part document,
@@ -111,148 +111,147 @@ public interface RestService {
             @Part("is_encrypted") boolean isEncrypted
     );
 
-    @DELETE("/emails/attachments/{id}/")
+    @DELETE("emails/attachments/{id}/")
     Observable<Response<Void>> deleteAttachment(@Path("id") long id);
 
-    @GET("/emails/messages/")
+    @GET("emails/messages/")
     Observable<MessagesResponse> getMessages(@Query("limit") int limit, @Query("offset") int offset, @Query("folder") String folder);
 
-    @GET("/emails/messages/")
+    @GET("emails/messages/")
     Observable<MessagesResponse> getStarredMessages(@Query("limit") int limit, @Query("offset") int offset, @Query("starred") int starred);
 
-    @GET("/emails/messages/")
+    @GET("emails/messages/")
     Observable<MessagesResponse> getMessage(@Query("id") long id);
 
-    @DELETE("/emails/messages/")
+    @DELETE("emails/messages/")
     Observable<Response<Void>> deleteMessages(@Query("id__in") String messageIds);
 
-    @PATCH("/emails/messages/")
+    @PATCH("emails/messages/")
     Observable<Response<Void>> toFolder(@Query("id__in") long id, @Body MoveToFolderRequest request);
 
-    @GET("/emails/messages/")
+    @GET("emails/messages/")
     Observable<MessagesResponse> getChainMessages(@Query("id__in") long id);
 
-    @PATCH("/emails/messages/")
+    @PATCH("emails/messages/")
     Observable<Response<Void>> markMessageAsRead(@Query("id__in") long id, @Body MarkMessageAsReadRequest request);
 
-    @PATCH("/emails/messages/")
+    @PATCH("emails/messages/")
     Observable<Response<Void>> markMessageIsStarred(@Query("id__in") long id, @Body MarkMessageIsStarredRequest request);
 
-    @GET("/emails/custom-folder/")
+    @GET("emails/custom-folder/")
     Observable<FoldersResponse> getFolders(@Query("limit") int limit, @Query("offset") int offset);
 
-    @GET("/emails/unread/")
+    @GET("emails/unread/")
     Observable<ResponseBody> getUnreadFolders();
 
-    @POST("/emails/custom-folder/")
+    @POST("emails/custom-folder/")
     Observable<ResponseBody> addFolder(@Body AddFolderRequest request);
 
-    @DELETE("/emails/custom-folder/{id}/")
+    @DELETE("emails/custom-folder/{id}/")
     Observable<Response<Void>> deleteFolder(@Path("id") long id);
 
-    @PATCH("/emails/custom-folder/{id}/")
+    @PATCH("emails/custom-folder/{id}/")
     Observable<FoldersResult> editFolder(@Path("id") long id, @Body EditFolderRequest request);
 
-    @GET("/emails/mailboxes/")
+    @GET("emails/mailboxes/")
     Observable<MailboxesResponse> getMailboxes(@Query("limit") int limit, @Query("offset") int offset);
 
-    @POST("/emails/mailboxes/")
+    @POST("emails/mailboxes/")
     Observable<Response<MailboxesResult>> createMailbox(@Body CreateMailboxRequest request);
 
-    @POST("/emails/keys/")
+    @POST("emails/keys/")
     Observable<KeyResponse> getKeys(@Body PublicKeysRequest request);
 
-    @POST("/emails/messages/")
+    @POST("emails/messages/")
     Observable<MessagesResult> sendMessage(@Body SendMessageRequest request);
 
-    @PATCH("/emails/messages/{id}/")
+    @PATCH("emails/messages/{id}/")
     Observable<MessagesResult> updateMessage(@Path("id") long id, @Body SendMessageRequest request);
 
-    @PATCH("/emails/mailboxes/{id}/")
+    @PATCH("emails/mailboxes/{id}/")
     Observable<MailboxesResult> updateDefaultMailbox(@Path("id") long mailboxId, @Body DefaultMailboxRequest body);
 
-    @PATCH("/emails/mailboxes/{id}/")
+    @PATCH("emails/mailboxes/{id}/")
     Observable<MailboxesResult> updateEnabledMailbox(@Path("id") long mailboxId, @Body EnabledMailboxRequest body);
 
-    @PATCH("/emails/mailboxes/{id}/")
+    @PATCH("emails/mailboxes/{id}/")
     Observable<SettingsEntity> updateSignature(@Path("id") long mailboxId, @Body SignatureRequest body);
 
-    @GET("/emails/domains/")
+    @GET("emails/domains/")
     Observable<DomainsResponse> getDomains();
 
-    @GET("/users/myself/")
+    @GET("users/myself/")
     Observable<MyselfResponse> getMyself();
 
-    @PATCH("/users/settings/{id}/")
+    @PATCH("users/settings/{id}/")
     Observable<ResponseBody> updateSettings(@Path("id") long id, @Body SettingsRequest request);
 
-    @GET("/users/contacts/")
+    @GET("users/contacts/")
     Observable<ContactsResponse> getContacts(@Query("limit") int limit, @Query("offset") int offset, @Query("id__in") String id__in);
 
-    @GET("/users/contacts/")
+    @GET("users/contacts/")
     Observable<ContactsResponse> getContacts(@Query("limit") int limit, @Query("offset") int offset);
 
-    @GET("/users/contacts/")
+    @GET("users/contacts/")
     Observable<ContactsResponse> getContact(@Query("id") long id);
 
-    @POST("/users/contacts/")
+    @POST("users/contacts/")
     Observable<ContactData> createContact(@Body ContactData contactData);
 
-    @PATCH("/users/contacts/{id}/")
+    @PATCH("users/contacts/{id}/")
     Observable<ContactData> updateContact(@Path("id") long id, @Body ContactData contactData);
 
-    // Good if response code is 204 (no content)
-    @DELETE("/users/contacts/{id}/")
+    @DELETE("users/contacts/{id}/")
     Observable<ResponseBody> deleteContact(@Path("id") long id);
 
-    @GET("/users/filters/")
+    @GET("users/filters/")
     Observable<FiltersResponse> getFilterList();
 
-    @POST("/users/filters/")
+    @POST("users/filters/")
     Observable<FilterResult> createFilter(@Body CustomFilterRequest customFilterRequest);
 
-    @PATCH("/users/filters/{id}/")
+    @PATCH("users/filters/{id}/")
     Observable<FilterResult> updateFilter(@Path("id") long id, @Body CustomFilterRequest customFilterRequest);
 
-    @DELETE("/users/filters/{id}/")
+    @DELETE("users/filters/{id}/")
     Observable<Response<Void>> deleteFilter(@Path("id") long id);
 
-    @DELETE("/users/blacklist/{id}/")
+    @DELETE("users/blacklist/{id}/")
     Observable<ResponseBody> deleteBlacklistContact(@Path("id") long id);
 
-    @DELETE("/users/whitelist/{id}/")
+    @DELETE("users/whitelist/{id}/")
     Observable<ResponseBody> deleteWhitelistContact(@Path("id") long id);
 
-    @GET("/users/blacklist/")
+    @GET("users/blacklist/")
     Observable<BlackListResponse> getBlackListContacts();
 
-    @POST("/users/blacklist/")
+    @POST("users/blacklist/")
     Observable<BlackListContact> addBlacklistContact(@Body BlackListContact contact);
 
-    @GET("/users/whitelist/")
+    @GET("users/whitelist/")
     Observable<WhiteListResponse> getWhiteListContacts();
 
-    @POST("/users/whitelist/")
+    @POST("users/whitelist/")
     Observable<WhiteListContact> addWhitelistContact(@Body WhiteListContact contact);
 
-    @PATCH("/users/settings/{id}/")
+    @PATCH("users/settings/{id}/")
     Observable<SettingsEntity> updateRecoveryEmail(@Path("id") long settingId, @Body RecoveryEmailRequest body);
 
-    @PATCH("/users/settings/{id}/")
+    @PATCH("users/settings/{id}/")
     Observable<SettingsEntity> updateSubjectEncrypted(@Path("id") long settingId, @Body SubjectEncryptedRequest body);
 
-    @PATCH("/users/settings/{id}/")
+    @PATCH("users/settings/{id}/")
     Observable<SettingsEntity> updateAttachmentsEncrypted(@Path("id") long settingId, @Body AttachmentsEncryptedRequest body);
 
-    @PATCH("/users/settings/{id}/")
+    @PATCH("users/settings/{id}/")
     Observable<SettingsEntity> updateContactsEncryption(@Path("id") long settingId, @Body ContactsEncryptionRequest body);
 
-    @PATCH("/users/settings/{id}/")
+    @PATCH("users/settings/{id}/")
     Observable<SettingsEntity> updateAutoSaveEnabled(@Path("id") long settingId, @Body AutoSaveContactEnabledRequest request);
 
-    @POST("/users/app-token/")
+    @POST("users/app-token/")
     Observable<AddFirebaseTokenResponse> addFirebaseToken(@Body AddFirebaseTokenRequest request);
 
-    @DELETE("/users/app-token/{token}/")
+    @DELETE("users/app-token/{token}/")
     Observable<Response<Void>> deleteFirebaseToken(@Path("token") String token);
 }
