@@ -63,7 +63,7 @@
     <string name="token_expired_message">Votre session a expiré, merci de bien vouloir vous reconnecter.</string>
     <string name="title_email">Email</string>
     <string name="title_next">Suivant</string>
-    <string name="title_next_no_email">Suivant (Aucun Email)</string>
+    <string name="title_next_no_email">Suivant (Aucun email)</string>
     <string name="title_password">Mot de passe</string>
     <string name="title_username">Nom utilisateur</string>
     <string name="title_2fa">Double authentification</string>
@@ -82,26 +82,26 @@
     <string name="title_reset_code">Code</string>
     <string name="title_confirm">Confirmer</string>
     <string name="title_confirm_reset_password">Confirmer la réinitialisation du mot de passe</string>
-    <string name="title_confirm_reset_password_hint">Votre clé de cryptage est connectée à votre mot de passe. Pour cette raison <![CDATA[<font color="#e74c3c"> il n\'est pas possible de décrypter les précédents messages, les pièce-jointes et vos contacts </font>]]> si vous réinitialiser votre mot de passe.
+    <string name="title_confirm_reset_password_hint">Votre clé de cryptage est connectée à votre mot de passe. Pour cette raison <![CDATA[<font color="#e74c3c"> il n\'est pas possible de décrypter les précédents messages, les pièces jointes et vos contacts </font>]]> si vous réinitialiser votre mot de passe.
 Pour toute question, merci de nous contacter <![CDATA[<u><a href="mailto:support@ctemplar.com">support@ctemplar.com</a></u>]]>.</string>
     <string name="title_confirm_reset_password_hint2">Êtes vous certain de vouloir réinitialiser votre mot de passe ?</string>
-    <string name="title_reset_code_hint">We have sent a reset code to your <![CDATA[<u><a href="mailto:%1$s">recovery email</a></u>]]> to reset your password. \n\n Enter it below for confirmation.</string>
+    <string name="title_reset_code_hint">Un email a été envoyé à votre <![CDATA[<u><a href="mailto:%1$s">adresse de récupération</a></u>]]> pour réinitialiser votre mot de passe. \n\n Indiquer ci-dessous pour confirmation.</string>
     <string name="title_new_pasword_hint">N\'oubliez pas votre mot de passe, il ne pourra pas être restauré.</string>
     <string name="title_forgot_username_underlined"><u>Nom d\'utilisateur oublié ?</u></string>
-    <string name="title_forgot_username">Nom d\'utilisateur oublié?</string>
+    <string name="title_forgot_username">Nom d\'utilisateur oublié ?</string>
     <string name="title_forgot_username_hint">Enter your email address and we will send you your username</string>
     <string name="title_email_my_username">Email me my username</string>
-    <string name="title_username_and_domain">Username and domain</string>
-    <string name="title_step_username_hint">This will be your new CTemplar email address.</string>
+    <string name="title_username_and_domain">Nom utilisateur et domaine</string>
+    <string name="title_step_username_hint">Votre nouvelle adresse email CTemplar.</string>
     <string name="title_step_password_hint">Votre mot de passe doit contenir au moins 10 caractères. Password can contain only latin letters and cannot contain symbols such «-+!@. etc.</string>
-    <string name="hint_step_email_recovery_long">By checking this box you understand that If you lose your password and do not set a recovery email your account will not be recoverable.
-Your password is connected to your encryption key, if you change your password then you will be issued a new encryption key and ALL contents of your account will be lost except for your email address. <![CDATA[<u><font color="blue">Less</font></u>]]></string>
-    <string name="hint_step_email_recovery_short">By checking this box you understand that If you lose your password and do not set a recovery email your account will not be recoverable. <![CDATA[<u><font color="blue">More info</font></u>]]></string>
-    <string name="title_step_email_hint">This is used to recover your account if you forget your password</string>
-    <string name="title_step_email_check_hint">Please check this box if you agree to abide by our <![CDATA[<u><a href="https://ctemplar.com/terms">Terms and Conditions</a></u>]]></string>
+    <string name="hint_step_email_recovery_long">En cochant cette case, vous comprenez que si vous perdez votre mot de passe et ne définissez pas d\'e-mail de récupération, votre compte ne sera pas récupérable.
+Votre mot de passe est connecté à votre clé de cryptage, si vous changez votre mot de passe, vous recevrez une nouvelle clé de cryptage et TOUS les contenus de votre compte seront perdus à l\'exception de votre adresse e-mail. <![CDATA[<u><font color="blue">Réduire</font></u>]]></string>
+    <string name="hint_step_email_recovery_short">En cochant cette case, vous comprenez que si vous perdez votre mot de passe et ne définissez pas d\'e-mail de récupération, votre compte ne sera pas récupérable. <![CDATA[<u><font color="blue">Plus d\'info</font></u>]]></string>
+    <string name="title_step_email_hint">Cet email sera utilisé pour récupérer votre compte si vous oubliez votre mot de passe.</string>
+    <string name="title_step_email_check_hint">Veuillez cocher cette case si vous acceptez de vous conformer à nos <![CDATA[<u><a href="https://ctemplar.com/terms">Termes et Conditions</a></u>]]></string>
     <string name="title_more_info_link"><u>Détail</u>></string>
     <string name="title_empty_inbox">Aucun message</string>
-    <string name="title_empty_messages">You have no %1$s messages</string>
+    <string name="title_empty_messages">Aucun email Dans %1$s</string>
     <string name="title_empty_contacts">Aucun contact</string>
     <string name="title_empty_folders">Aucun dossier</string>
     <string name="btn_login">Se connecter</string>
@@ -110,7 +110,7 @@ Your password is connected to your encryption key, if you change your password t
     <string name="hint_captcha">Écrire le texte de l\'image / affichage de l\'heure dans l\'horloge (hh: mm) par exemple: 04:23</string>
     <string name="txt_forgot_pass">Mot de passe oublié ?</string>
     <string name="txt_create_acc"><u>Créer un compte</u></string>
-    <string name="txt_loading">Chargement...</string>
+    <string name="txt_loading">Chargement…</string>
     <string name="txt_add_contact">Ajouter un contact</string>
     <string name="txt_edit_contact">Modifier contact</string>
     <string name="txt_enter_valid_captcha">Saisir un captcha valide</string>
@@ -120,22 +120,22 @@ Your password is connected to your encryption key, if you change your password t
     <string name="txt_encrypted_subject">Objet crypté</string>
 
     <!-- COMPOSE OPTIONS -->
-    <string name="txt_left_time_destruct">Supprimer dans %1$s</string>
-    <string name="txt_left_time_delay_delivery">Envoyé dans %1$s</string>
-    <string name="txt_left_time_dead_mans_timer">Dead mans in %1$s</string>
+    <string name="txt_left_time_destruct">Suppression dans %1$s</string>
+    <string name="txt_left_time_delay_delivery">Envoi dans %1$s</string>
+    <string name="txt_left_time_dead_mans_timer">Dead mans dans %1$s</string>
     <string name="txt_encrypt_message_title">Mot de passe</string>
-    <string name="txt_destruct_message_title">Self-destructing Timer</string>
+    <string name="txt_destruct_message_title">Auto destruction</string>
     <string name="txt_dead_mans_title">Dead Man\'s Timer</string>
-    <string name="txt_delayed_message_title">Planifier l\'envoi</string>
-    <string name="txt_encrypt_message_summary">Email crypté pour les utilisateurs non CTemplar</string>
-    <string name="txt_delayed_message_summary">L\'email sera automatiquement envoyé à l\'heure programmée</string>
-    <string name="txt_destruct_message_summary">Cet email sera automatiquement supprimé de la boîte email du destinataire.</string>
+    <string name="txt_delayed_message_title">Programmer l\'envoi</string>
+    <string name="txt_encrypt_message_summary">Email crypté pour les contacts non CTemplar</string>
+    <string name="txt_delayed_message_summary">L\'email sera automatiquement envoyé à l\'heure programmée.</string>
+    <string name="txt_destruct_message_summary">Cet email sera automatiquement supprimé de la boîte email du destinataire à la date programmée.</string>
     <string name="txt_dead_mans_summary">Si vous ne vous connectez pas à votre compte avant le délai paramétré, l\'email sera automatiquement envoyé.</string>
-    <string name="txt_schedule">Planifier</string>
-    <string name="txt_encrypt">Crypté</string>
+    <string name="txt_schedule">Enregistrer</string>
+    <string name="txt_encrypt">Enregistrer</string>
     <string name="txt_selected_datetime_is_past">La date sélectionnée est une date passée</string>
     <string name="txt_yesterday">Hier</string>
-    <string name="txt_attachments_in_processing">En cours...</string>
+    <string name="txt_attachments_in_processing">En cours…</string>
 
     <!-- VIEW MESSAGES -->
     <string name="txt_hide_details">Voir détails </string>
@@ -176,9 +176,9 @@ Your password is connected to your encryption key, if you change your password t
     <string name="txt_enter_name">Indiquer un nom</string>
     <string name="txt_enter_valid_email">Indiquer une adresse email valide</string>
     <string name="txt_name_removed">%1$s supprimé</string>
-    <string name="txt_contact_loading_error">Contact loading error</string>
+    <string name="txt_contact_loading_error">Erreur lors du chargement des contacts</string>
     <string name="txt_delete_folder_quest_title">Supprimer le dossier ?</string>
-    <string name="txt_delete_folder_quest_message">"Êtes-vous certain de vouloir supprimer le dossier ?</string>
+    <string name="txt_delete_folder_quest_message">Êtes-vous certain de vouloir supprimer le dossier ?</string>
     <string name="btn_contact_delete">SUPPRIMER</string>
     <string name="btn_cancel">ANNULER</string>
     <string name="title_email_address">Email</string>
@@ -195,7 +195,7 @@ Your password is connected to your encryption key, if you change your password t
     <string name="txt_folder_not_deleted">Dossier non supprimé</string>
     <string name="txt_folder_edited">Dossier modifié</string>
     <string name="txt_folder_not_edited">Dossier non modifié</string>
-    <string name="txt_folder_name_hint">Folder name must be between 4 and 30 letters and digits</string>
+    <string name="txt_folder_name_hint">Le nom de dossier doit contenir entre 4 et 30 caractères. Il peut être constitué de chiffres et de lettres.</string>
     <string name="title_folder_name">Nom dossier</string>
     <string name="title_choose_color">Couleur</string>
     <string name="txt_edit_folder">Modifier dossier</string>
@@ -203,7 +203,7 @@ Your password is connected to your encryption key, if you change your password t
     <string name="txt_manage_folders">Gérer les dossiers</string>
     <string name="txt_folders_empty">Dossier vide</string>
     <string name="txt_create_folder_free_error">Seulement 5 dossiers sont autorisés avec un compte gratuit.</string>
-    <string name="txt_create_folder_prime_error">Prime users can only create a maximum of 500 folders. </string>
+    <string name="txt_create_folder_prime_error">Vous pouvez créer maximum 500 dossiers. </string>
 
     <!-- SEND MESSAGE -->
     <string name="toast_message_not_sent">Message non envoyé</string>
@@ -212,8 +212,8 @@ Your password is connected to your encryption key, if you change your password t
     <string name="toast_message_not_loaded">Message non chargé</string>
     <string name="toast_attachment_unable_read_file">Impossible de lire le fichier</string>
     <string name="toast_attachment_unable_read_path">"Unable to read selected path"</string>
-    <string name="txt_sending_mail">Envoi du message en cours..</string>
-    <string name="txt_uploading">Téléchargement..</string>
+    <string name="txt_sending_mail">Envoi en cours…</string>
+    <string name="txt_uploading">Téléchargement…</string>
     <string name="dialog_discard_mail">Supprimer email</string>
     <string name="dialog_discard_confirm">Êtes-vous certain de vouloir supprimer cet email ?</string>
     <string name="dialog_save_in_drafts">Enregistrer comme brouillon</string>
@@ -221,14 +221,13 @@ Your password is connected to your encryption key, if you change your password t
     <string name="action_cancel">Annuler</string>
     <string name="btn_add">Ajouter</string>
     <string name="txt_new_message">Nouveau message</string>
-    <string name="txt_cc">Cc:&#160;</string>g>
-    <string name="txt_bcc">Bcc:&#160;</string>
+    <string name="txt_cc">Cc :&#160;</string>g>
+    <string name="txt_bcc">Bcc :&#160;</string>
     <string name="hint_compose">Nouveau message</string>
 
     <!-- MESSAGING SERVICE -->
     <string name="channel_name">CTemplar</string>
     <string name="channel_description">Nouveau email</string>
-    <string name="channel_id">ctemplar</string>
 
     <!-- CUSTOM FILTERS -->
     <string name="txt_filters_title">Filtres</string>
@@ -245,13 +244,13 @@ Your password is connected to your encryption key, if you change your password t
     <string name="toast_filter_not_created">Un filtre avec le même nom existe déjà.</string>
     <string name="toast_filter_created">Filtre créé</string>
     <string name="txt_filter_name_hint">Le nom de filtre doit contenir entre 4 et 30 caractères.</string>
-    <string name="txt_filter_text_hint">Filtre text must be between 1 and 30 letters</string>
-    <string name="txt_filter_not_deleted">Filtre not supprimerd</string>
-    <string name="txt_filter_deleted">Filtre supprimer</string>
+    <string name="txt_filter_text_hint">Le texte doit contenir entre 1 et 30 caractères.</string>
+    <string name="txt_filter_not_deleted">Filtre non supprimé</string>
+    <string name="txt_filter_deleted">Filtre supprimé</string>
     <string name="txt_filter_not_edited">Filtre non modifié</string>
     <string name="txt_filter_edited">Filtre modifié</string>
     <string name="txt_delete_filter_quest_title">Supprimer filtre ?</string>
-    <string name="txt_delete_filter_quest_message">"Êtes-vous certain de vouloir supprimer le filtre?</string>
+    <string name="txt_delete_filter_quest_message">"Êtes-vous certain de vouloir supprimer le filtre ?</string>
     <string name="txt_delete_filter">Supprimer filtre</string>
 
     <string-array name="filter_parameter_list">
@@ -265,16 +264,16 @@ Your password is connected to your encryption key, if you change your password t
     </string-array>
 
     <!-- WHITE-BLACK LIST -->
-    <string name="adding_blacklist_contact_error">Error adding contact to blacklist</string>
-    <string name="adding_whitelist_contact_error">Error adding contact to whitelist</string>
-    <string name="added_to_whitelist">Email added to whitelist</string>
-    <string name="title_contact_name">Contact name</string>
-    <string name="title_contact_email">Contact email</string>
-    <string name="title_add_to_blacklist">Add to blacklist</string>
-    <string name="title_add_to_whitelist">Add to whitelist</string>
-    <string name="title_white_black_list">Whitelist / Blacklist</string>
-    <string name="txt_add_blacklist_contact">Add blacklist contact</string>
-    <string name="txt_add_whitelist_contact">Add whitelist contact</string>
+    <string name="adding_blacklist_contact_error">Une erreur est survenue lors de l\'ajout à la liste noire.</string>
+    <string name="adding_whitelist_contact_error">Une erreur est survenue lors de l\'ajout à la liste blanche.</string>
+    <string name="added_to_whitelist">Contact ajouté à la liste blanche</string>
+    <string name="title_contact_name">Nom contact</string>
+    <string name="title_contact_email">Email contact</string>
+    <string name="title_add_to_blacklist">Ajouter à la liste noire</string>
+    <string name="title_add_to_whitelist">Ajouter à la liste blanche</string>
+    <string name="title_white_black_list">Liste blanche / Liste noire</string>
+    <string name="txt_add_blacklist_contact">Ajouter le contact à la liste noire</string>
+    <string name="txt_add_whitelist_contact">Ajouter le contact à la liste blanche</string>
 
     <!-- FILTER DIALOG -->
     <string name="txt_filters">Filtres</string>
@@ -282,14 +281,14 @@ Your password is connected to your encryption key, if you change your password t
     <string name="txt_select_filters">Sélectionner les filtres</string>
     <string name="txt_starred">Favoris</string>
     <string name="txt_unread">Non lu</string>
-    <string name="txt_with_attachments">Avec pièce-jointes</string>
+    <string name="txt_with_attachments">Avec pièces jointes</string>
     <string name="btn_apply">Appliquer</string>
 
     <!-- MOVE TO -->
-    <string name="txt_move_to">Déplacer vers...</string>
+    <string name="txt_move_to">Déplacer vers…</string>
     <string name="txt_select_folder">Sélectionner un dossier</string>
     <string name="forward_attachments">Confirmer</string>
-    <string name="forward_attachments_description">Souhaitez-vous transférer les pièce-jointes ?</string>
+    <string name="forward_attachments_description">Souhaitez-vous transférer les pièces jointes ?</string>
     <string name="yes">Oui</string>
     <string name="no">Non</string>
 
@@ -304,19 +303,19 @@ Your password is connected to your encryption key, if you change your password t
     <string name="settings_recovery_email">Email de récupération</string>
     <string name="settings_enable_recovery_email">Activer email de récupération</string>
     <string name="settings_type_recovery_email">Saisir votre email de récupération</string>
-    <string name="settings_subject_encryption">Objet cryptés</string>
+    <string name="settings_subject_encryption">Objet chiffré</string>
     <string name="settings_password">Mot de passe</string>
     <string name="settings_language">Langue</string>
     <string name="settings_notifications">Notifications</string>
     <string name="settings_enable_notifications">Activer les notifications</string>
-    <string name="settings_enable_subject_encryption">Objets cryptés</string>
-    <string name="settings_contacts_encryption">Contacts cryptés</string>
-    <string name="settings_attachments_encryption">Attachments encryption</string>
-    <string name="settings_encryption">Encryption</string>
+    <string name="settings_enable_subject_encryption">Objets chiffrés</string>
+    <string name="settings_contacts_encryption">Contacts chiffrés</string>
+    <string name="settings_attachments_encryption">Pièces jointes chiffrées</string>
+    <string name="settings_encryption">Chiffrement des données</string>
     <string name="settings_saving_contacts">Sauvegarde des contacts</string>
     <string name="settings_auto_save_contacts">Contacts automatiquement sauvegardés</string>
     <string name="settings_filters">Filtres</string>
-    <string name="settings_wb_list">Liste blanche/ Liste noire</string>
+    <string name="settings_wb_list">Liste blanche / Liste noire</string>
     <string name="settings_folders">Dossier</string>
     <string name="settings_manage_folders">Gérer les dossiers</string>
     <string name="settings_mail">Mail</string>
@@ -327,16 +326,16 @@ Your password is connected to your encryption key, if you change your password t
     <string name="settings_type_signature">Saisir votre signature</string>
     <string name="settings_mobile_signature">Signature mobile</string>
     <string name="settings_keys">Clés</string>
-    <string name="settings_enable_mobile_signature">Enable mobile signature</string>
+    <string name="settings_enable_mobile_signature">Activer la signature mobile</string>
     <string name="settings_type_mobile_signature">Saisir votre signature mobile</string>
     <string name="settings_about">A propos</string>
-    <string name="settings_local_storage_limit">Local storage limit</string>
+    <string name="settings_local_storage_limit">Espace de stockage utilisé :</string>
     <string name="settings_app_version">Version de l\'application</string>
-    <string name="settings_disable_contacts_encryption">Are you sure you want to disable contacts encryption?</string>
-    <string name="settings_disable_contacts_encryption_note">Disabling contacts encryption can take several minutes depending upon the number of contacts you have. After you confirm, all your contacts will be decrypted on your device and saved on the server.</string>
-    <string name="txt_contact_decryption">Contact decryption..</string>
+    <string name="settings_disable_contacts_encryption">Êtes-vous certain de vouloir désactiver le chiffrement de vos contacts ?</string>
+    <string name="settings_disable_contacts_encryption_note">Le décryptage de vos contacts peut prendre quelques minutes. Vos contacts ne seront plus chiffrés sur votre mobile et seront sauvegardés sur nos serveurs. </string>
+    <string name="txt_contact_decryption">Décryptage de vos contacts en cours…</string>
     <string name="toast_saved">Sauvegardé</string>
-    <string name="toast_contacts_encrypted">Contacts cryptés</string>
+    <string name="toast_contacts_encrypted">Contacts chiffrés</string>
     <string name="toast_contacts_decrypted">Contacts décryptés</string>
     <string name="toast_decryption_error">Une erreur est survenue lors du décryptage. Merci de bien vouloir essayer à nouveau.</string>
 
@@ -344,7 +343,7 @@ Your password is connected to your encryption key, if you change your password t
     <string name="password_key">Mot de passe</string>
     <string name="change_password_reset_data">Supprimer les données</string>
     <string name="toast_email_not_valid">Email invalide</string>
-    <string name="storage_limit_info">%1$s of %2$s</string>
+    <string name="storage_limit_info">%1$s de %2$s</string>
 
     <!-- MAILBOXES -->
     <string name="addresses">Adresses</string>
@@ -381,7 +380,7 @@ Your password is connected to your encryption key, if you change your password t
     <string name="txt_not_now">Plus tard</string>
 
     <!-- ERRORS -->
-    <string name="error_invalid_email">Please, select a valid email or select unrecoverable account</string>
+    <string name="error_invalid_email">Veuillez sélectionner une adresse email valide ou sélectionner un email de récupération.</string>
     <string name="error_username_small">Minimum 4 symboles</string>
     <string name="error_username_small_two">Minimum 2 symboles</string>
     <string name="error_username_big">Maximum 64 symboles</string>
@@ -394,8 +393,8 @@ Your password is connected to your encryption key, if you change your password t
     <string name="error_current_password_not_match">Ancien mot de passe incorrect</string>
     <string name="error_empty_email">Email vide</string>
     <string name="error_empty_password">Mot de passe vide</string>
-    <string name="error_enter_old_password">Please enter your old password</string>
-    <string name="error_authentication_failed">Identifiant ou mot de passe incorrect.</string>
+    <string name="error_enter_old_password">Indiquer votre ancien mot de passe</string>
+    <string name="error_authentication_failed">Identifiant ou mot de passe incorrect</string>
     <string name="error_server">Erreur serveur</string>
     <string name="error_connection">Erreur de connexion</string>
     <string name="error_messages">Erreur lors de la réception des messages</string>
