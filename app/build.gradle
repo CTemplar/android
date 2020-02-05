@@ -10,7 +10,7 @@ repositories {
 ext {
     versionMajor = 1
     versionMinor = 2
-    versionBuild = 0
+    versionBuild = 1
 }
 
 android {
@@ -18,7 +18,7 @@ android {
     defaultConfig {
         applicationId "mobileapp.ctemplar.com.ctemplarapp"
         minSdkVersion 16
-        versionCode 30
+        versionCode 31
         versionName "${versionMajor}.${versionMinor}.${versionBuild}"
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"

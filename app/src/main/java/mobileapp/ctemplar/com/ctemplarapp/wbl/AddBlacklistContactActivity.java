@@ -1,11 +1,12 @@
 package mobileapp.ctemplar.com.ctemplarapp.wbl;
 
-import androidx.lifecycle.ViewModelProviders;
 import android.os.Bundle;
-import androidx.appcompat.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.ViewModelProvider;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -38,7 +39,7 @@ public class AddBlacklistContactActivity extends BaseActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        model = ViewModelProviders.of(this).get(AddBlacklistContactViewModel.class);
+        model = new ViewModelProvider(this).get(AddBlacklistContactViewModel.class);
         model.getResponseStatus()
                 .observe(this, responseStatus -> {
                     if (responseStatus == ResponseStatus.RESPONSE_COMPLETE) {

@@ -1,14 +1,8 @@
 package mobileapp.ctemplar.com.ctemplarapp.settings;
 
-import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import com.google.android.material.textfield.TextInputLayout;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.AppCompatCheckBox;
-import androidx.appcompat.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -18,6 +12,14 @@ import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
+
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.AppCompatCheckBox;
+import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.ViewModelProvider;
+
+import com.google.android.material.textfield.TextInputLayout;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -78,7 +80,7 @@ public class ChangePasswordActivity extends BaseActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        changePasswordModel = ViewModelProviders.of(this).get(ChangePasswordViewModel.class);
+        changePasswordModel = new ViewModelProvider(this).get(ChangePasswordViewModel.class);
         userCurrentPassword = CTemplarApp.getInstance()
                 .getSharedPreferences("pref_user", Context.MODE_PRIVATE).getString("key_password", null);
 

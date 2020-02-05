@@ -1,21 +1,8 @@
 package mobileapp.ctemplar.com.ctemplarapp.main;
 
-import androidx.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import androidx.appcompat.app.AlertDialog;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -24,6 +11,21 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.SearchView;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -58,7 +60,7 @@ public class InboxFragment extends BaseFragment
         implements InboxMessagesAdapter.OnReachedBottomCallback {
     private static final int SWIPABLE_FOREGROUND_RESOURCE_ID = R.id.item_message_view_holder_foreground;
     private static final int SWIPABLE_BACKGROUND_RESOURCE_ID = R.id.item_message_view_holder_background_layout;
-    private static final int REQUEST_MESSAGES_COUNT = 20;
+    private static final int REQUEST_MESSAGES_COUNT = 10;
     public static WeakReference<InboxFragment> instanceReference = null;
 
     private InboxMessagesAdapter adapter;
@@ -149,7 +151,7 @@ public class InboxFragment extends BaseFragment
         if (activity == null) {
             return;
         }
-        mainModel = ViewModelProviders.of(activity).get(MainActivityViewModel.class);
+        mainModel = new ViewModelProvider(activity).get(MainActivityViewModel.class);
         currentFolder = mainModel.currentFolder.getValue();
         if (currentFolder == null) {
             currentFolder = MainFolderNames.INBOX;

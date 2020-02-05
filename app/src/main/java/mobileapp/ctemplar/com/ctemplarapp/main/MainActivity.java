@@ -25,7 +25,7 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.navigation.NavigationView;
 
@@ -94,7 +94,7 @@ public class MainActivity extends AppCompatActivity
         showFragment(mainFragment);
 
 
-        mainModel = ViewModelProviders.of(this).get(MainActivityViewModel.class);
+        mainModel = new ViewModelProvider(this).get(MainActivityViewModel.class);
 
         mainModel.getActionsStatus().observe(this, this::handleMainActions);
 

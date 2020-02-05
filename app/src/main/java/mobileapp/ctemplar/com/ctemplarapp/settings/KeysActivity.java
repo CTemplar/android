@@ -15,7 +15,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -59,7 +59,7 @@ public class KeysActivity extends BaseActivity {
             actionBar.setHomeButtonEnabled(true);
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-        keysModel = ViewModelProviders.of(this).get(KeysViewModel.class);
+        keysModel = new ViewModelProvider(this).get(KeysViewModel.class);
         mailboxEntityList = keysModel.getMailboxEntityList();
         String[] addresses = new String[mailboxEntityList.size()];
         for (int addressIterator = 0; addressIterator < addresses.length; addressIterator++) {

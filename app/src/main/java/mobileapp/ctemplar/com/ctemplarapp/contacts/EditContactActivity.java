@@ -1,15 +1,16 @@
 package mobileapp.ctemplar.com.ctemplarapp.contacts;
 
-import androidx.lifecycle.ViewModelProviders;
 import android.os.Bundle;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.widget.Toolbar;
 import android.util.Patterns;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.ViewModelProvider;
 
 import butterknife.BindView;
 import mobileapp.ctemplar.com.ctemplarapp.BaseActivity;
@@ -64,7 +65,7 @@ public class EditContactActivity extends BaseActivity {
             supportActionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        viewModel = ViewModelProviders.of(this).get(EditContactViewModel.class);
+        viewModel = new ViewModelProvider(this).get(EditContactViewModel.class);
         viewModel.getResponseStatus().observe(this, this::handleResponse);
         viewModel.getContactResponse().observe(this, contact -> {
             if (contact != null) {

@@ -1,16 +1,18 @@
 package mobileapp.ctemplar.com.ctemplarapp.login;
 
-import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import com.google.android.material.textfield.TextInputEditText;
-import com.google.android.material.textfield.TextInputLayout;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Toast;
+
+import androidx.annotation.Nullable;
+import androidx.lifecycle.ViewModelProvider;
+
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -53,7 +55,7 @@ public class NewPasswordFragment extends BaseFragment {
     public void onViewCreated(@NotNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        viewModel = ViewModelProviders.of(getActivity()).get(LoginActivityViewModel.class);
+        viewModel = new ViewModelProvider(this).get(LoginActivityViewModel.class);
         viewModel.getResponseStatus().observe(getActivity(), this::handleStatus);
 
         setListeners();

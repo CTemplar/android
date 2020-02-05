@@ -1,13 +1,14 @@
 package mobileapp.ctemplar.com.ctemplarapp.folders;
 
-import androidx.lifecycle.ViewModelProviders;
 import android.os.Bundle;
-import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Toast;
+
+import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.ViewModelProvider;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -56,7 +57,7 @@ public class EditFolderActivity extends BaseActivity {
         if (folderName != null) {
             editTextNameFolder.setText(folderName);
         }
-        editFolderModel = ViewModelProviders.of(this).get(EditFolderViewModel.class);
+        editFolderModel = new ViewModelProvider(this).get(EditFolderViewModel.class);
         editFolderModel.getDeletingStatus()
                 .observe(this, responseStatus -> {
                     if (responseStatus == null || responseStatus == ResponseStatus.RESPONSE_ERROR) {

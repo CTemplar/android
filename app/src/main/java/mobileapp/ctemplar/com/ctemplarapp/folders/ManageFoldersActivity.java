@@ -1,16 +1,7 @@
 package mobileapp.ctemplar.com.ctemplarapp.folders;
 
-import androidx.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.ItemTouchHelper;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -18,6 +9,16 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,7 +77,7 @@ public class ManageFoldersActivity extends BaseActivity {
                 mLayoutManager.getOrientation());
         recyclerView.addItemDecoration(dividerItemDecoration);
 
-        manageFoldersModel = ViewModelProviders.of(this).get(ManageFoldersViewModel.class);
+        manageFoldersModel = new ViewModelProvider(this).get(ManageFoldersViewModel.class);
         manageFoldersModel.getFoldersResponse()
                 .observe(this, foldersResponse -> handleFoldersList(foldersResponse));
         manageFoldersModel.getDeletingStatus()

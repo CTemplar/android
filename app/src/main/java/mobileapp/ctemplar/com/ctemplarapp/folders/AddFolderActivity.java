@@ -15,7 +15,7 @@ import android.widget.TableRow;
 import android.widget.Toast;
 
 import androidx.appcompat.widget.Toolbar;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -63,7 +63,7 @@ public class AddFolderActivity extends BaseActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        addFolderModel = ViewModelProviders.of(this).get(AddFolderViewModel.class);
+        addFolderModel = new ViewModelProvider(this).get(AddFolderViewModel.class);
         addFolderModel.getResponseStatus().observe(this, responseStatus -> {
             if (responseStatus == null || responseStatus == ResponseStatus.RESPONSE_ERROR) {
                 Toast.makeText(getApplicationContext(), getResources().getString(R.string.toast_folder_not_created), Toast.LENGTH_SHORT).show();
