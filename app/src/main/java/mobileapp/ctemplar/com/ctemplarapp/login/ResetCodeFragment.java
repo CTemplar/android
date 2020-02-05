@@ -12,7 +12,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
@@ -55,7 +55,7 @@ public class ResetCodeFragment extends BaseFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        loginActivityModel = ViewModelProviders.of(getActivity()).get(LoginActivityViewModel.class);
+        loginActivityModel = new ViewModelProvider(this).get(LoginActivityViewModel.class);
     }
 
     @Override

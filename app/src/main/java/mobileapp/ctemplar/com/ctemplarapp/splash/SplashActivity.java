@@ -1,10 +1,11 @@
 package mobileapp.ctemplar.com.ctemplarapp.splash;
 
-import androidx.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
+
+import androidx.lifecycle.ViewModelProvider;
 
 import com.google.firebase.iid.FirebaseInstanceId;
 
@@ -38,7 +39,7 @@ public class SplashActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        viewModel = ViewModelProviders.of(this).get(SplashActivityModel.class);
+        viewModel = new ViewModelProvider(this).get(SplashActivityModel.class);
         if (!TextUtils.isEmpty(viewModel.getToken())) {
             viewModel.getRefreshTokenResponse()
                     .observe(this, s -> {

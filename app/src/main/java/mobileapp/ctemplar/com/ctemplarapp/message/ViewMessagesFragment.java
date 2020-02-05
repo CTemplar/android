@@ -34,7 +34,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
@@ -153,8 +153,8 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
         root.findViewById(R.id.activity_view_messages_forward).setOnClickListener(this);
         root.findViewById(R.id.activity_view_messages_subject_star_image_layout).setOnClickListener(this);
 
-        mainModel = ViewModelProviders.of(this).get(MainActivityViewModel.class);
-        viewModel = ViewModelProviders.of(this).get(ViewMessagesViewModel.class);
+        mainModel = new ViewModelProvider(this).get(MainActivityViewModel.class);
+        viewModel = new ViewModelProvider(this).get(ViewMessagesViewModel.class);
 
         Bundle args = getArguments();
         long parentId = -1;

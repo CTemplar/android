@@ -31,7 +31,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatMultiAutoCompleteTextView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -331,7 +331,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         }
 
 
-        sendModel = ViewModelProviders.of(this).get(SendMessageActivityViewModel.class);
+        sendModel = new ViewModelProvider(this).get(SendMessageActivityViewModel.class);
         if (currentMessageId == -1) {
             createMessage();
         } else {
