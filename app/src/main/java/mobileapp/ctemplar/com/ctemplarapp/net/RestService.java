@@ -76,6 +76,9 @@ public interface RestService {
     @POST("auth/sign-up/")
     Observable<SignUpResponse> signUp(@Body SignUpRequest request);
 
+    @GET("auth/sign-out/")
+    Observable<Response<Void>> signOut(@Query("platform") String platform, @Query("device_token") String deviceToken);
+
     @POST("auth/check-username/")
     Observable<CheckUsernameResponse> checkUsername(@Body CheckUsernameRequest request);
 

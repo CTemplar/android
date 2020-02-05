@@ -43,6 +43,7 @@ import retrofit2.Response;
 import timber.log.Timber;
 
 public class MainActivityViewModel extends ViewModel {
+    private static final String ANDROID = "android";
 
     private UserRepository userRepository;
     private ContactsRepository contactsRepository;
@@ -130,13 +131,40 @@ public class MainActivityViewModel extends ViewModel {
 
     public void logout() {
         if (userRepository != null) {
-            deleteFirebaseToken();
+            signOut();
         }
     }
 
-    public void exit() {
+    public void exit(){
         userRepository.logout();
         actions.postValue(MainActivityActions.ACTION_LOGOUT);
+    }
+
+    public void signOut() {
+        String token = userRepository.getFirebaseToken();
+        userRepository.signOut(ANDROID, token)
+                .subscribe(new Observer<Response<Void>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(Response<Void> voidResponse) {
+                        exit();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        exit();
+                        Timber.e(e);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
     }
 
     public void getMessages(int limit, final int offset, final String folder) {
@@ -501,32 +529,6 @@ public class MainActivityViewModel extends ViewModel {
                             userRepository.setContactsEncryptionEnabled(isContactsEncrypted);
                             userRepository.setNotificationsEnabled(true);
                         }
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Timber.e(e);
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
-    }
-
-    public void deleteFirebaseToken() {
-        String token = userRepository.getFirebaseToken();
-        userRepository.deleteFirebaseToken(token)
-                .subscribe(new Observer<Response<Void>>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(Response<Void> voidResponse) {
-                        exit();
                     }
 
                     @Override

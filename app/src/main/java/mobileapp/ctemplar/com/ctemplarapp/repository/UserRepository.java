@@ -1,5 +1,8 @@
 package mobileapp.ctemplar.com.ctemplarapp.repository;
 
+import com.google.firebase.iid.FirebaseInstanceId;
+
+import java.io.IOException;
 import java.util.List;
 
 import javax.inject.Singleton;
@@ -56,6 +59,7 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
 import retrofit2.Response;
+import timber.log.Timber;
 
 @Singleton
 public class UserRepository {
@@ -147,6 +151,11 @@ public class UserRepository {
     public void logout() {
         userStore.logout();
         CTemplarApp.getAppDatabase().clearAllTables();
+        try {
+            FirebaseInstanceId.getInstance().deleteInstanceId();
+        } catch (IOException e) {
+            Timber.e(e);
+        }
     }
 
     public void saveMailboxes(List<MailboxesResult> mailboxes) {
@@ -179,6 +188,12 @@ public class UserRepository {
 
     public Observable<SignUpResponse> signUp(SignUpRequest request) {
         return service.signUp(request)
+                .subscribeOn(io.reactivex.schedulers.Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public Observable<Response<Void>> signOut(String platform, String deviceToken) {
+        return service.signOut(platform, deviceToken)
                 .subscribeOn(io.reactivex.schedulers.Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
