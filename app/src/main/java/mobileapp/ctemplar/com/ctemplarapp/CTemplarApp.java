@@ -42,7 +42,6 @@ public class CTemplarApp extends MultiDexApplication {
         super.onCreate();
         instance = this;
         Timber.plant(new Timber.DebugTree());
-        Security.addProvider(new BouncyCastleProvider());
         installProviders(this);
         final Fabric fabric = new Fabric.Builder(this)
                 .kits(new Crashlytics())

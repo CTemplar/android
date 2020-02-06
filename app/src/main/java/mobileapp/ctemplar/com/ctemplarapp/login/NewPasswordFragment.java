@@ -55,7 +55,7 @@ public class NewPasswordFragment extends BaseFragment {
     public void onViewCreated(@NotNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        viewModel = new ViewModelProvider(this).get(LoginActivityViewModel.class);
+        viewModel = new ViewModelProvider(getActivity()).get(LoginActivityViewModel.class);
         viewModel.getResponseStatus().observe(getActivity(), this::handleStatus);
 
         setListeners();

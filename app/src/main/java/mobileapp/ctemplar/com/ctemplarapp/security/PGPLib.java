@@ -51,9 +51,9 @@ import java.security.SecureRandom;
 import java.util.Date;
 import java.util.Iterator;
 
+import mobileapp.ctemplar.com.ctemplarapp.utils.EncodeUtils;
+
 class PGPLib {
-    private static final char[] HEX_ARRAY = "0123456789abcdef".toCharArray();
-    private static final String PROVIDER = "BC";
     private static final int[] symmetricAlgorithms = new int[] {
             SymmetricKeyAlgorithmTags.AES_256,
             SymmetricKeyAlgorithmTags.AES_192,
@@ -130,14 +130,13 @@ class PGPLib {
                 new JcePGPDataEncryptorBuilder(PGPEncryptedData.AES_256)
                         .setWithIntegrityPacket(true)
                         .setSecureRandom(new SecureRandom())
-                        .setProvider(PROVIDER)
         );
 
         if (pgpPublicKeyRings.length > 0) {
             for (PGPPublicKeyRing pgpPublicKeyRing : pgpPublicKeyRings) {
                 PGPPublicKey encKey = getPublicKey(pgpPublicKeyRing);
                 if (encKey != null) {
-                    encGen.addMethod(new JcePublicKeyKeyEncryptionMethodGenerator(encKey).setProvider(PROVIDER));
+                    encGen.addMethod(new JcePublicKeyKeyEncryptionMethodGenerator(encKey));
                 }
             }
             byte[] encryptedBytes = bOut.toByteArray();
@@ -237,7 +236,7 @@ class PGPLib {
 
     static String getPGPKeyFingerprint(PGPSecretKeyRing pgpSecretKeyRing) {
         byte[] fingerprintBytes = pgpSecretKeyRing.getPublicKey().getFingerprint();
-        return new String(bytesToHex(fingerprintBytes));
+        return new String(EncodeUtils.bytesToHex(fingerprintBytes));
     }
 
     private static PGPPublicKey getPublicKey(PGPPublicKeyRing publicKeyRing) {
@@ -258,15 +257,5 @@ class PGPLib {
         }
         PBESecretKeyDecryptor decryptor = new BcPBESecretKeyDecryptorBuilder(new BcPGPDigestCalculatorProvider()).build(pass);
         return secretKey.extractPrivateKey(decryptor);
-    }
-
-    private static char[] bytesToHex(byte[] bytes) {
-        char[] hexChars = new char[bytes.length * 2];
-        for (int j = 0; j < bytes.length; j++) {
-            int v = bytes[j] & 0xFF;
-            hexChars[j * 2] = HEX_ARRAY[v >>> 4];
-            hexChars[j * 2 + 1] = HEX_ARRAY[v & 0x0F];
-        }
-        return hexChars;
     }
 }

@@ -331,7 +331,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         }
 
 
-        sendModel = new ViewModelProvider(this).get(SendMessageActivityViewModel.class);
+        sendModel = new ViewModelProvider(getActivity()).get(SendMessageActivityViewModel.class);
         if (currentMessageId == -1) {
             createMessage();
         } else {
