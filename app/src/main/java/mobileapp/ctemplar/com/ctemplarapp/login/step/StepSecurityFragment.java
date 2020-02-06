@@ -15,7 +15,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatCheckBox;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
@@ -88,8 +87,8 @@ public class StepSecurityFragment extends BaseFragment {
 
         captchaImageView = view.findViewById(R.id.fragment_step_email_captcha_img);
 
-        loginActivityModel = new ViewModelProvider(this).get(LoginActivityViewModel.class);
-        viewModel = new ViewModelProvider(this).get(StepRegistrationViewModel.class);
+        loginActivityModel = new ViewModelProvider(getActivity()).get(LoginActivityViewModel.class);
+        viewModel = new ViewModelProvider(getActivity()).get(StepRegistrationViewModel.class);
         viewModel.getResponseStatus().observe(getViewLifecycleOwner(), this::handleResponseStatus);
 
         viewModel.getCaptcha();

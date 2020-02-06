@@ -71,7 +71,7 @@ public class StepPasswordFragment extends BaseFragment {
     public void onViewCreated(@NotNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        viewModel = new ViewModelProvider(this).get(StepRegistrationViewModel.class);
+        viewModel = new ViewModelProvider(getActivity()).get(StepRegistrationViewModel.class);
         setListeners();
     }
 

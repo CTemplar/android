@@ -8,7 +8,10 @@ import java.util.List;
 import javax.inject.Singleton;
 
 import io.reactivex.Observable;
+import io.reactivex.Single;
+import io.reactivex.SingleOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.net.RestService;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.AddFirebaseTokenRequest;
@@ -151,11 +154,15 @@ public class UserRepository {
     public void logout() {
         userStore.logout();
         CTemplarApp.getAppDatabase().clearAllTables();
-        try {
-            FirebaseInstanceId.getInstance().deleteInstanceId();
-        } catch (IOException e) {
-            Timber.e(e);
-        }
+        Single<String> firebaseClearInstance = Single.create((SingleOnSubscribe<String>) emitter -> {
+            try {
+                FirebaseInstanceId.getInstance().deleteInstanceId();
+            } catch (IOException e) {
+                Timber.e(e);
+            }
+        })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
     }
 
     public void saveMailboxes(List<MailboxesResult> mailboxes) {

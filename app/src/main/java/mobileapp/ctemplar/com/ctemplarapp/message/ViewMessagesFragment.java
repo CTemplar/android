@@ -153,8 +153,8 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
         root.findViewById(R.id.activity_view_messages_forward).setOnClickListener(this);
         root.findViewById(R.id.activity_view_messages_subject_star_image_layout).setOnClickListener(this);
 
-        mainModel = new ViewModelProvider(this).get(MainActivityViewModel.class);
-        viewModel = new ViewModelProvider(this).get(ViewMessagesViewModel.class);
+        mainModel = new ViewModelProvider(getActivity()).get(MainActivityViewModel.class);
+        viewModel = new ViewModelProvider(getActivity()).get(ViewMessagesViewModel.class);
 
         Bundle args = getArguments();
         long parentId = -1;

@@ -1,5 +1,7 @@
 package mobileapp.ctemplar.com.ctemplarapp.security;
 
+import com.crashlytics.android.Crashlytics;
+
 import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPKeyRingGenerator;
 import org.bouncycastle.openpgp.PGPPublicKeyRing;
@@ -53,7 +55,7 @@ import timber.log.Timber;
         try {
             PGPPublicKeyRing[] pgpPublicKeyRings = PGPLib.getPGPPublicKeyRings(pubKeys);
             return PGPLib.encrypt(inputBytes, pgpPublicKeyRings, asciiArmor);
-        } catch (IOException | PGPException e) {
+        } catch (Exception e) {
             Timber.e(e);
         }
         return new byte[0];

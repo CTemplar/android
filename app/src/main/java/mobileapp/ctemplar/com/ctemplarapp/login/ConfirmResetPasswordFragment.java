@@ -41,8 +41,8 @@ public class ConfirmResetPasswordFragment extends BaseFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        loginActivityModel = new ViewModelProvider(this).get(LoginActivityViewModel.class);
-        loginActivityModel.getResponseStatus().observe(this, this::handleResponseStatus);
+        loginActivityModel = new ViewModelProvider(getActivity()).get(LoginActivityViewModel.class);
+        loginActivityModel.getResponseStatus().observe(getViewLifecycleOwner(), this::handleResponseStatus);
     }
 
     @Override

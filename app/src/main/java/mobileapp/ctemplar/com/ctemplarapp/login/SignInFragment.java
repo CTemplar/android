@@ -70,7 +70,7 @@ public class SignInFragment extends BaseFragment {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        loginActivityModel = new ViewModelProvider(this).get(LoginActivityViewModel.class);
+        loginActivityModel = new ViewModelProvider(getActivity()).get(LoginActivityViewModel.class);
         loginActivityModel.getResponseStatus().observe(getActivity(), this::handleStatus);
     }
 

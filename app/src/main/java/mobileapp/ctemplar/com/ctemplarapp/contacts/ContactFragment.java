@@ -96,7 +96,7 @@ public class ContactFragment extends BaseFragment {
         });
 
 
-        mainModel = new ViewModelProvider(this).get(MainActivityViewModel.class);
+        mainModel = new ViewModelProvider(getActivity()).get(MainActivityViewModel.class);
         mainModel.getContactsResponse()
                 .observe(getViewLifecycleOwner(), this::handleContactsList);
         mainModel.getContacts(200, 0);
