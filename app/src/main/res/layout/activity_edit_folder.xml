@@ -79,7 +79,7 @@
 
     </LinearLayout>
 
-    <mobileapp.ctemplar.com.ctemplarapp.folders.RadioButtonTableLayout
+    <com.ctemplar.app.fdroid.folders.RadioButtonTableLayout
         android:id="@+id/activity_edit_folder_colors_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -558,7 +558,7 @@
 
         </TableRow>
 
-    </mobileapp.ctemplar.com.ctemplarapp.folders.RadioButtonTableLayout>
+    </com.ctemplar.app.fdroid.folders.RadioButtonTableLayout>
 
     <LinearLayout
         android:id="@+id/activity_edit_folder_actions_layout"

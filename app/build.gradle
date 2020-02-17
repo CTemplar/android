@@ -1,25 +1,12 @@
 apply plugin: 'com.android.application'
-apply plugin: 'com.google.gms.google-services'
-apply plugin: 'io.fabric'
-
-repositories {
-    maven { url "https://jitpack.io" }
-    maven { url 'https://maven.fabric.io/public' }
-}
-
-ext {
-    versionMajor = 1
-    versionMinor = 2
-    versionBuild = 1
-}
 
 android {
     compileSdkVersion 28
     defaultConfig {
-        applicationId "mobileapp.ctemplar.com.ctemplarapp"
+        applicationId "com.ctemplar.app.fdroid"
         minSdkVersion 16
-        versionCode 31
-        versionName "${versionMajor}.${versionMinor}.${versionBuild}"
+        versionCode 1
+        versionName "1.0.0"
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
@@ -32,18 +19,8 @@ android {
     }
 
     applicationVariants.all { variant ->
+        buildConfigField("String", "BASE_URL", "\"https://mail.ctemplar.com/api/\"")
         variant.resValue "string", "versionName", variant.versionName
-    }
-    flavorDimensions "version"
-    productFlavors {
-        staging {
-            applicationIdSuffix ".staging"
-            buildConfigField("String", "BASE_URL", "\"https://dev.ctemplar.com/api/\"")
-        }
-        production {
-            applicationIdSuffix ".production"
-            buildConfigField("String", "BASE_URL", "\"https://mail.ctemplar.com/api/\"")
-        }
     }
 
     compileOptions {
@@ -53,25 +30,22 @@ android {
 }
 
 dependencies {
-    // room
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'androidx.room:room-runtime:2.2.3'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'androidx.legacy:legacy-support-core-ui:1.0.0'
     implementation 'androidx.vectordrawable:vectordrawable:1.1.0'
-    implementation 'androidx.preference:preference:1.1.0'
-
-    implementation 'org.bouncycastle:bcpg-jdk15on:1.64'
-    implementation 'org.bouncycastle:bcprov-jdk15on:1.64'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    implementation 'androidx.recyclerview:recyclerview:1.1.0'
 
     implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'com.google.android.material:material:1.0.0'
-    implementation 'androidx.recyclerview:recyclerview:1.1.0'
-    implementation 'androidx.legacy:legacy-support-core-ui:1.0.0'
-    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    implementation 'androidx.preference:preference:1.1.0'
     implementation 'androidx.lifecycle:lifecycle-viewmodel:2.2.0'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     implementation 'androidx.multidex:multidex:2.0.1'
-    implementation 'com.romandanylyk:pageindicatorview:1.0.2'
+    implementation 'com.google.android.material:material:1.1.0'
+
+    implementation 'org.bouncycastle:bcpg-jdk15on:1.64'
 
     implementation 'com.squareup.okhttp3:okhttp:3.11.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.11.0'
@@ -79,30 +53,20 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.6.2'
     implementation 'com.squareup.retrofit2:adapter-rxjava2:2.6.2'
     implementation 'com.squareup.picasso:picasso:2.71828'
-    //implementation 'io.reactivex.rxjava2:rxjava:2.2.2'
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
-    implementation 'uk.co.chrisjenx:calligraphy:2.3.0'
-
-    implementation 'com.google.firebase:firebase-messaging:20.1.0'
-    implementation 'com.google.firebase:firebase-core:17.2.2'
 
     implementation 'com.google.dagger:dagger:2.24'
-
-    compileOnly 'com.jakewharton.auto.value:auto-value-annotations:1.4'
-    annotationProcessor 'com.google.dagger:dagger-compiler:2.17'
-    annotationProcessor 'com.google.auto.value:auto-value:1.5.2'
-    annotationProcessor 'androidx.room:room-compiler:2.2.3'
-    annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.0'
-
     implementation 'com.jakewharton.timber:timber:4.7.1'
     implementation 'com.jakewharton:butterknife:10.2.0'
 
-    implementation ('com.crashlytics.sdk.android:crashlytics:2.10.1@aar') {
-        transitive = true
-    }
+    annotationProcessor 'androidx.room:room-compiler:2.2.3'
+    annotationProcessor 'com.google.dagger:dagger-compiler:2.17'
+    annotationProcessor 'com.google.auto.value:auto-value:1.5.2'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.0'
+    compileOnly 'com.jakewharton.auto.value:auto-value-annotations:1.4'
 
     testImplementation 'junit:junit:4.12'
-    testImplementation 'org.mockito:mockito-core:3.1.0'
+    testImplementation 'org.mockito:mockito-core:3.2.0'
 
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'

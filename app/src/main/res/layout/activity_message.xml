@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="mobileapp.ctemplar.com.ctemplarapp.message.SendMessageActivity">
+    tools:context="com.ctemplar.app.fdroid.message.SendMessageActivity">
 
     <FrameLayout
         android:id="@+id/content_frame"

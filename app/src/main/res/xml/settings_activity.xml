@@ -7,11 +7,11 @@
 
         <PreferenceScreen
             android:title="@string/settings_notifications"
-            android:fragment="mobileapp.ctemplar.com.ctemplarapp.settings.SettingsActivity$NotificationsFragment" />
+            android:fragment="com.ctemplar.app.fdroid.settings.SettingsActivity$NotificationsFragment" />
 
         <PreferenceScreen
             android:title="@string/settings_saving_contacts"
-            android:fragment="mobileapp.ctemplar.com.ctemplarapp.settings.SettingsActivity$SavingContactsFragment" />
+            android:fragment="com.ctemplar.app.fdroid.settings.SettingsActivity$SavingContactsFragment" />
 
         <Preference
             android:title="@string/settings_filters"
@@ -42,11 +42,11 @@
         <PreferenceScreen
             android:title="@string/settings_recovery_email"
             android:key="@string/recovery_email_holder"
-            android:fragment="mobileapp.ctemplar.com.ctemplarapp.settings.SettingsActivity$RecoveryEmailFragment" />
+            android:fragment="com.ctemplar.app.fdroid.settings.SettingsActivity$RecoveryEmailFragment" />
 
         <PreferenceScreen
             android:title="@string/settings_encryption"
-            android:fragment="mobileapp.ctemplar.com.ctemplarapp.settings.SettingsActivity$EncryptionFragment" />
+            android:fragment="com.ctemplar.app.fdroid.settings.SettingsActivity$EncryptionFragment" />
 
     </PreferenceCategory>
 
@@ -59,11 +59,11 @@
 
         <PreferenceScreen
             android:title="@string/settings_signature"
-            android:fragment="mobileapp.ctemplar.com.ctemplarapp.settings.SettingsActivity$SignatureFragment" />
+            android:fragment="com.ctemplar.app.fdroid.settings.SettingsActivity$SignatureFragment" />
 
         <PreferenceScreen
             android:title="@string/settings_mobile_signature"
-            android:fragment="mobileapp.ctemplar.com.ctemplarapp.settings.SettingsActivity$MobileSignatureFragment" />
+            android:fragment="com.ctemplar.app.fdroid.settings.SettingsActivity$MobileSignatureFragment" />
 
         <PreferenceScreen
             android:title="@string/settings_keys"

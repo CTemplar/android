@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="mobileapp.ctemplar.com.ctemplarapp">
+    package="com.ctemplar.app.fdroid">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -27,13 +27,6 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths"/>
         </provider>
-
-        <service
-            android:name=".services.MessagingService">
-            <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT" />
-            </intent-filter>
-        </service>
 
         <activity
             android:name=".splash.SplashActivity"
@@ -85,10 +78,6 @@
 
         <activity android:name=".settings.SettingsActivity"
             android:theme="@style/PreferenceScreen" />
-
-        <meta-data
-            android:name="io.fabric.ApiKey"
-            android:resource="@string/fabric_api_key" />
 
     </application>
 
