@@ -1,0 +1,11 @@
+CTemplar provides a safe and secure platform for sending emails and sharing files by using 4096-bit end-to-end encryption.
+
+Our service guarantee:
+
+* End-to-End Encryption using Open Source Cryptography (Contents, subjects, attachments and contacts)
+
+* Benefit from the World’s Strictest Data Protection Laws: Iceland. It has zero sharing agreements and maintains the strictest data privacy laws in the world, so your data stays encrypted on our servers and nowhere else.
+
+* Anonymity and Zero Access to Your Data. Our industry leading “Hash & Salt” technique guarantee even we do not know your login information. We do not store your IP logs, which can be traced to your anonymous email account. Your privacy is guaranteed with CTemplar.
+
+* Simple-to-use Interface: Simply send and receive your emails, just like a regular email account, and rest assured knowing your privacy is 100% secure.
