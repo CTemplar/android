@@ -7,10 +7,6 @@ import androidx.room.Room;
 
 import com.crashlytics.android.Crashlytics;
 
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-
-import java.security.Security;
-
 import io.fabric.sdk.android.Fabric;
 import mobileapp.ctemplar.com.ctemplarapp.net.RestClient;
 import mobileapp.ctemplar.com.ctemplarapp.repository.AppDatabase;
