@@ -205,8 +205,8 @@ public class InboxFragment extends BaseFragment
         });
         mainModel.getCurrentFolder().observe(getViewLifecycleOwner(), folderName -> {
             currentFolder = folderName;
-            requestNewMessages();
             restartOptionsMenu();
+            requestNewMessages();
             String emptyFolderString = getResources().getString(R.string.title_empty_messages, folderName);
             txtEmpty.setText(emptyFolderString);
             loadMessagesList();
@@ -214,12 +214,8 @@ public class InboxFragment extends BaseFragment
             updateTouchListenerSwipeOptions(currentFolder);
             swipeRefreshLayout.setRefreshing(false);
         });
-        mainModel.getDeleteMessagesStatus().observe(getViewLifecycleOwner(), responseStatus -> {
-            if (responseStatus == ResponseStatus.RESPONSE_ERROR) {
-                Toast.makeText(getActivity(), getString(R.string.error_connection), Toast.LENGTH_LONG).show();
-            }
-            requestNewMessages();
-        });
+        mainModel.getDeleteMessagesStatus().observe(getViewLifecycleOwner(), this::updateMessagesResponse);
+        mainModel.getEmptyFolderStatus().observe(getViewLifecycleOwner(), this::updateMessagesResponse);
 
         swipeRefreshLayout.setOnRefreshListener(this::requestNewMessages);
 
@@ -284,9 +280,7 @@ public class InboxFragment extends BaseFragment
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_filter:
-                if (getFragmentManager() != null) {
-                    dialogFragment.show(getFragmentManager(), null);
-                }
+                dialogFragment.show(getParentFragmentManager(), null);
                 return true;
             case R.id.action_search:
                 return true;
@@ -296,7 +290,7 @@ public class InboxFragment extends BaseFragment
                             .setTitle(getString(R.string.title_clear_folder))
                             .setMessage(getString(R.string.txt_clear_folder))
                             .setPositiveButton(getString(R.string.btn_confirm), (dialog, which)
-                                    -> mainModel.deleteMessages(adapter.getAllIds())
+                                    -> mainModel.emptyFolder(currentFolder)
                             )
                             .setNeutralButton(getString(R.string.btn_cancel), null)
                             .show();
@@ -342,6 +336,13 @@ public class InboxFragment extends BaseFragment
     private void restartOptionsMenu() {
         setHasOptionsMenu(false);
         setHasOptionsMenu(true);
+    }
+
+    private void updateMessagesResponse(ResponseStatus responseStatus) {
+        if (responseStatus == ResponseStatus.RESPONSE_ERROR) {
+            Toast.makeText(getActivity(), getString(R.string.error_connection), Toast.LENGTH_LONG).show();
+        }
+        requestNewMessages();
     }
 
     private void updateTouchListenerSwipeOptions(String folder) {
