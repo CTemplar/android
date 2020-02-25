@@ -672,7 +672,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         sendModel.getMySelfResponse()
                 .observe(getViewLifecycleOwner(), myselfResponse -> {
                     if (myselfResponse != null) {
-                        MyselfResult myself = myselfResponse.result[0];
+                        MyselfResult myself = myselfResponse.getResult()[0];
                         isSubjectEncrypted = myself.settings.isSubjectEncrypted();
                         userIsPrime = myself.isPrime();
 //                        String joinedDate = myself.joinedDate;
