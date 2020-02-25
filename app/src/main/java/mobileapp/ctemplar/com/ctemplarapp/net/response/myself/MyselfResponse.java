@@ -5,12 +5,35 @@ import com.google.gson.annotations.SerializedName;
 public class MyselfResponse {
 
     @SerializedName("total_count")
-    public int totalCount;
+    private int totalCount;
 
     @SerializedName("page_count")
-    public int pageCount;
+    private int pageCount;
 
     @SerializedName("results")
-    public MyselfResult[] result;
+    private MyselfResult[] result;
 
+    public int getTotalCount() {
+        return totalCount;
+    }
+
+    public void setTotalCount(int totalCount) {
+        this.totalCount = totalCount;
+    }
+
+    public int getPageCount() {
+        return pageCount;
+    }
+
+    public void setPageCount(int pageCount) {
+        this.pageCount = pageCount;
+    }
+
+    public MyselfResult[] getResult() {
+        return result;
+    }
+
+    public void setResult(MyselfResult[] result) {
+        this.result = result;
+    }
 }

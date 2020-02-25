@@ -22,7 +22,7 @@ public class EditFolderActivity extends BaseActivity {
     private EditFolderViewModel editFolderModel;
     public static final String ARG_ID = "id";
     public static final String ARG_NAME = "name";
-    private Long folderId;
+    private int folderId = -1;
 
     @BindView(R.id.activity_edit_folder_input)
     EditText editTextNameFolder;
@@ -49,7 +49,7 @@ public class EditFolderActivity extends BaseActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        folderId = getIntent().getLongExtra(ARG_ID, -1);
+        folderId = getIntent().getIntExtra(ARG_ID, -1);
         if (folderId == -1) {
             return;
         }
@@ -58,22 +58,20 @@ public class EditFolderActivity extends BaseActivity {
             editTextNameFolder.setText(folderName);
         }
         editFolderModel = new ViewModelProvider(this).get(EditFolderViewModel.class);
-        editFolderModel.getDeletingStatus()
-                .observe(this, responseStatus -> {
-                    if (responseStatus == null || responseStatus == ResponseStatus.RESPONSE_ERROR) {
-                        Toast.makeText(getApplicationContext(), getResources().getString(R.string.txt_folder_not_deleted), Toast.LENGTH_SHORT).show();
-                    } else if (responseStatus == ResponseStatus.RESPONSE_COMPLETE) {
-                        Toast.makeText(getApplicationContext(), getResources().getString(R.string.txt_folder_deleted), Toast.LENGTH_SHORT).show();
-                    }
-                });
-        editFolderModel.getResponseStatus()
-                .observe(this, responseStatus -> {
-                    if (responseStatus == null || responseStatus == ResponseStatus.RESPONSE_ERROR) {
-                        Toast.makeText(getApplicationContext(), getResources().getString(R.string.txt_folder_not_edited), Toast.LENGTH_SHORT).show();
-                    } else if (responseStatus == ResponseStatus.RESPONSE_COMPLETE) {
-                        Toast.makeText(getApplicationContext(), getResources().getString(R.string.txt_folder_edited), Toast.LENGTH_SHORT).show();
-                    }
-                });
+        editFolderModel.getDeletingStatus().observe(this, responseStatus -> {
+            if (responseStatus == null || responseStatus == ResponseStatus.RESPONSE_ERROR) {
+                Toast.makeText(getApplicationContext(), getResources().getString(R.string.txt_folder_not_deleted), Toast.LENGTH_SHORT).show();
+            } else if (responseStatus == ResponseStatus.RESPONSE_COMPLETE) {
+                Toast.makeText(getApplicationContext(), getResources().getString(R.string.txt_folder_deleted), Toast.LENGTH_SHORT).show();
+            }
+        });
+        editFolderModel.getResponseStatus().observe(this, responseStatus -> {
+            if (responseStatus == null || responseStatus == ResponseStatus.RESPONSE_ERROR) {
+                Toast.makeText(getApplicationContext(), getResources().getString(R.string.txt_folder_not_edited), Toast.LENGTH_SHORT).show();
+            } else if (responseStatus == ResponseStatus.RESPONSE_COMPLETE) {
+                Toast.makeText(getApplicationContext(), getResources().getString(R.string.txt_folder_edited), Toast.LENGTH_SHORT).show();
+            }
+        });
         AddFolderActivity.fillPalette(this, radioGroupLayout);
         radioGroupLayout.setActive(firstRadioButton);
     }

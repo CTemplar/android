@@ -2,6 +2,7 @@ package mobileapp.ctemplar.com.ctemplarapp.utils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -25,6 +26,18 @@ public class EncodeUtils {
             hexChars[j * 2 + 1] = HEX_ARRAY[v & 0x0F];
         }
         return hexChars;
+    }
+
+    public static String randomString(int length) {
+        Random generator = new Random();
+        StringBuilder randomStringBuilder = new StringBuilder();
+        int randomLength = generator.nextInt(length);
+        char tempChar;
+        for (int i = 0; i < randomLength; i++){
+            tempChar = (char) (generator.nextInt(96) + 32);
+            randomStringBuilder.append(tempChar);
+        }
+        return randomStringBuilder.toString();
     }
 
     private static String generateSaltWithUsername(String username, String salt) {
