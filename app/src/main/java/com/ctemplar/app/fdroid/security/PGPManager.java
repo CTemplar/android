@@ -64,7 +64,9 @@ import timber.log.Timber;
             PGPSecretKeyRing pgpSecretKeyRing = PGPLib.getPGPSecretKeyRing(privateKey);
             return PGPLib.decrypt(encryptedBytes, pgpSecretKeyRing, password.toCharArray());
         } catch (PGPException e) {
-            Timber.e(e);
+            Timber.i(e);
+        } catch (IOException e) {
+            Timber.w(e);
         } catch (Exception e) {
             Timber.e(e);
             return encryptedBytes;

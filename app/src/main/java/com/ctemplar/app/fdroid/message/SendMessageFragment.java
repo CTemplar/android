@@ -669,23 +669,22 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
                     }
                 });
 
-        sendModel.getMySelfResponse()
-                .observe(getViewLifecycleOwner(), myselfResponse -> {
-                    if (myselfResponse != null) {
-                        MyselfResult myself = myselfResponse.result[0];
-                        isSubjectEncrypted = myself.settings.isSubjectEncrypted();
-                        userIsPrime = myself.isPrime();
+        sendModel.getMySelfResponse().observe(getViewLifecycleOwner(), myselfResponse -> {
+            if (myselfResponse != null) {
+                MyselfResult myself = myselfResponse.getResult()[0];
+                isSubjectEncrypted = myself.settings.isSubjectEncrypted();
+                userIsPrime = myself.isPrime();
 //                        String joinedDate = myself.joinedDate;
 //                        boolean userTrial = AppUtils.twoWeeksTrial(joinedDate);
 //                        boolean userPrime = myself.isPrime;
 //                        userIsPrime = userPrime || userTrial;
-                        boolean signatureEnabled = sharedPreferences
-                                .getBoolean(getString(R.string.signature_enabled), false);
-                        if (signatureEnabled) {
-                            addSignature(myself.mailboxes[0].getSignature());
-                        }
-                    }
-                });
+                boolean signatureEnabled = sharedPreferences
+                        .getBoolean(getString(R.string.signature_enabled), false);
+                if (signatureEnabled) {
+                    addSignature(myself.mailboxes[0].getSignature());
+                }
+            }
+        });
     }
 
     private void createMessage() {

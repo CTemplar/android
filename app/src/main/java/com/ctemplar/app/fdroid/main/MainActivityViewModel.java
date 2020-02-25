@@ -517,7 +517,7 @@ public class MainActivityViewModel extends ViewModel {
                     @Override
                     public void onNext(MyselfResponse myselfResponse) {
                         if (myselfResponse != null) {
-                            MyselfResult myselfResult = myselfResponse.result[0];
+                            MyselfResult myselfResult = myselfResponse.getResult()[0];
                             SettingsEntity settingsEntity = myselfResult.settings;
 
                             String timezone = settingsEntity.getTimezone();

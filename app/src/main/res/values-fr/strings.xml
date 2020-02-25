@@ -202,7 +202,6 @@ Votre mot de passe est connecté à votre clé de cryptage, si vous changez votr
     <string name="txt_manage_folders">Gérer les dossiers</string>
     <string name="txt_folders_empty">Dossier vide</string>
     <string name="txt_create_folder_free_error">Seulement 5 dossiers sont autorisés avec un compte gratuit.</string>
-    <string name="txt_create_folder_prime_error">Vous pouvez créer maximum 500 dossiers. </string>
 
     <!-- SEND MESSAGE -->
     <string name="toast_message_not_sent">Message non envoyé</string>

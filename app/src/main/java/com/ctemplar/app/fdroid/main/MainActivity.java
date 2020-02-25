@@ -118,7 +118,6 @@ public class MainActivity extends AppCompatActivity
                 TextView inboxCounter = (TextView) navigationMenu.findItem(R.id.nav_inbox).getActionView();
                 TextView outboxCounter = (TextView) navigationMenu.findItem(R.id.nav_outbox).getActionView();
                 TextView starredCounter = (TextView) navigationMenu.findItem(R.id.nav_starred).getActionView();
-                TextView archiveCounter = (TextView) navigationMenu.findItem(R.id.nav_archive).getActionView();
                 TextView spamCounter = (TextView) navigationMenu.findItem(R.id.nav_spam).getActionView();
 
                 try {
@@ -126,7 +125,6 @@ public class MainActivity extends AppCompatActivity
                     unreadFolders = new JSONObject(unreadFoldersString);
                     int inbox = unreadFolders.getInt(MainFolderNames.INBOX);
                     int starred = unreadFolders.getInt(MainFolderNames.STARRED);
-                    int archive = unreadFolders.getInt(MainFolderNames.ARCHIVE);
                     int spam = unreadFolders.getInt(MainFolderNames.SPAM);
 
                     int outboxDelayed = unreadFolders.getInt("outbox_delayed_delivery_counter");
@@ -136,13 +134,11 @@ public class MainActivity extends AppCompatActivity
 
                     String inboxString = inbox > 0 ? String.valueOf(inbox) : null;
                     String starredString = starred > 0 ? String.valueOf(starred) : null;
-                    String archiveString = archive > 0 ? String.valueOf(archive) : null;
                     String spamString = spam > 0 ? String.valueOf(spam) : null;
                     String outboxString = outbox > 0 ? String.valueOf(outbox) : null;
 
                     inboxCounter.setText(inboxString);
                     starredCounter.setText(starredString);
-                    archiveCounter.setText(archiveString);
                     spamCounter.setText(spamString);
                     outboxCounter.setText(outboxString);
                 } catch (IOException | JSONException e) {
