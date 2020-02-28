@@ -251,9 +251,6 @@ public class InboxFragment extends BaseFragment
             boolean inDraft = currentFolder.equals(DRAFT);
             emptyFolder.setVisible((inTrash || inSpam || inDraft) && messagesNotEmpty);
         }
-        if (getActivity() == null) {
-            return;
-        }
 
         MenuItem searchItem = menu.findItem(R.id.action_search);
         SearchView searchView = (SearchView) searchItem.getActionView();
