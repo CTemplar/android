@@ -5,6 +5,6 @@
     android:layout_height="40dp"
     android:text="ctemplar.com"
     android:textColor="@color/colorDarkBlue2"
-    android:textSize="16sp"
+    android:textSize="15sp"
     android:singleLine="true"
     android:ellipsize="marquee" />
