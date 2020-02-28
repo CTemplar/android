@@ -403,6 +403,7 @@ Votre mot de passe est connecté à votre clé de cryptage, si vous changez votr
     <string name="error_upload_attachment">Echec de téléchargement</string>
     <string name="error_attachment_url">L\'URL de la pièce jointe est vide</string>
     <string name="error_upload_attachment_too_large">La pièce-jointe dépasse la limite autorisée</string>
+    <string name="error_too_many_requests">Trop de demandes. S\'il vous plaît, attendez</string>
     <string name="title_activity_white_black_list">WhiteBlackList</string>
     <string name="section_format">Hello World from section: %1$d</string>
     <string name="toast_undefined_error">Erreur non déterminée</string>
