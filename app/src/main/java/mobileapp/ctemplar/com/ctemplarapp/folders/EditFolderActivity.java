@@ -60,16 +60,16 @@ public class EditFolderActivity extends BaseActivity {
         editFolderModel = new ViewModelProvider(this).get(EditFolderViewModel.class);
         editFolderModel.getDeletingStatus().observe(this, responseStatus -> {
             if (responseStatus == null || responseStatus == ResponseStatus.RESPONSE_ERROR) {
-                Toast.makeText(getApplicationContext(), getResources().getString(R.string.txt_folder_not_deleted), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), getString(R.string.txt_folder_not_deleted), Toast.LENGTH_SHORT).show();
             } else if (responseStatus == ResponseStatus.RESPONSE_COMPLETE) {
-                Toast.makeText(getApplicationContext(), getResources().getString(R.string.txt_folder_deleted), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), getString(R.string.txt_folder_deleted), Toast.LENGTH_SHORT).show();
             }
         });
         editFolderModel.getResponseStatus().observe(this, responseStatus -> {
             if (responseStatus == null || responseStatus == ResponseStatus.RESPONSE_ERROR) {
-                Toast.makeText(getApplicationContext(), getResources().getString(R.string.txt_folder_not_edited), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), getString(R.string.txt_folder_not_edited), Toast.LENGTH_SHORT).show();
             } else if (responseStatus == ResponseStatus.RESPONSE_COMPLETE) {
-                Toast.makeText(getApplicationContext(), getResources().getString(R.string.txt_folder_edited), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), getString(R.string.txt_folder_edited), Toast.LENGTH_SHORT).show();
             }
         });
         AddFolderActivity.fillPalette(this, radioGroupLayout);
