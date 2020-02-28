@@ -27,6 +27,17 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.ctemplar.app.fdroid.ActivityInterface;
+import com.ctemplar.app.fdroid.R;
+import com.ctemplar.app.fdroid.folders.ManageFoldersActivity;
+import com.ctemplar.app.fdroid.login.LoginActivity;
+import com.ctemplar.app.fdroid.net.ResponseStatus;
+import com.ctemplar.app.fdroid.net.response.Folders.FoldersResponse;
+import com.ctemplar.app.fdroid.net.response.Folders.FoldersResult;
+import com.ctemplar.app.fdroid.repository.entity.MailboxEntity;
+import com.ctemplar.app.fdroid.settings.SettingsActivity;
+import com.ctemplar.app.fdroid.utils.EncryptUtils;
+import com.ctemplar.app.fdroid.view.ResizeAnimation;
 import com.google.android.material.navigation.NavigationView;
 
 import org.json.JSONException;
@@ -36,19 +47,20 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.ctemplar.app.fdroid.ActivityInterface;
-import com.ctemplar.app.fdroid.R;
-import com.ctemplar.app.fdroid.folders.ManageFoldersActivity;
-import com.ctemplar.app.fdroid.login.LoginActivity;
-import com.ctemplar.app.fdroid.net.ResponseStatus;
-import com.ctemplar.app.fdroid.net.response.Folders.FoldersResponse;
-import com.ctemplar.app.fdroid.net.response.Folders.FoldersResult;
-import com.ctemplar.app.fdroid.repository.constant.MainFolderNames;
-import com.ctemplar.app.fdroid.repository.entity.MailboxEntity;
-import com.ctemplar.app.fdroid.settings.SettingsActivity;
-import com.ctemplar.app.fdroid.utils.EncryptUtils;
-import com.ctemplar.app.fdroid.view.ResizeAnimation;
 import timber.log.Timber;
+
+import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.ARCHIVE;
+import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.CONTACT;
+import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.DRAFT;
+import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.INBOX;
+import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.OUTBOX;
+import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.OUTBOX_DEAD_MAN;
+import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.OUTBOX_DELAYED_DELIVERY;
+import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.OUTBOX_SELF_DESTRUCT;
+import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.SENT;
+import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.SPAM;
+import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.STARRED;
+import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.TRASH;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -116,6 +128,7 @@ public class MainActivity extends AppCompatActivity
                 mainModel.getFolders(customFoldersShowCount, 0);
                 Menu navigationMenu = navigationView.getMenu();
                 TextView inboxCounter = (TextView) navigationMenu.findItem(R.id.nav_inbox).getActionView();
+                TextView draftCounter = (TextView) navigationMenu.findItem(R.id.nav_draft).getActionView();
                 TextView outboxCounter = (TextView) navigationMenu.findItem(R.id.nav_outbox).getActionView();
                 TextView starredCounter = (TextView) navigationMenu.findItem(R.id.nav_starred).getActionView();
                 TextView spamCounter = (TextView) navigationMenu.findItem(R.id.nav_spam).getActionView();
@@ -123,21 +136,24 @@ public class MainActivity extends AppCompatActivity
                 try {
                     String unreadFoldersString = unreadFoldersBody.string();
                     unreadFolders = new JSONObject(unreadFoldersString);
-                    int inbox = unreadFolders.getInt(MainFolderNames.INBOX);
-                    int starred = unreadFolders.getInt(MainFolderNames.STARRED);
-                    int spam = unreadFolders.getInt(MainFolderNames.SPAM);
+                    int draft = unreadFolders.getInt(DRAFT);
+                    int inbox = unreadFolders.getInt(INBOX);
+                    int starred = unreadFolders.getInt(STARRED);
+                    int spam = unreadFolders.getInt(SPAM);
 
-                    int outboxDelayed = unreadFolders.getInt("outbox_delayed_delivery_counter");
-                    int outboxDead = unreadFolders.getInt("outbox_dead_man_counter");
-                    int outboxDestruct = unreadFolders.getInt("outbox_self_destruct_counter");
+                    int outboxDead = unreadFolders.getInt(OUTBOX_DEAD_MAN);
+                    int outboxDelayed = unreadFolders.getInt(OUTBOX_DELAYED_DELIVERY);
+                    int outboxDestruct = unreadFolders.getInt(OUTBOX_SELF_DESTRUCT);
                     int outbox = outboxDelayed + outboxDead + outboxDestruct;
 
-                    String inboxString = inbox > 0 ? String.valueOf(inbox) : null;
-                    String starredString = starred > 0 ? String.valueOf(starred) : null;
-                    String spamString = spam > 0 ? String.valueOf(spam) : null;
-                    String outboxString = outbox > 0 ? String.valueOf(outbox) : null;
+                    String inboxString = inbox > 0 ? String.valueOf(inbox) : "";
+                    String draftString = draft > 0 ? String.valueOf(draft) : "";
+                    String starredString = starred > 0 ? String.valueOf(starred) : "";
+                    String spamString = spam > 0 ? String.valueOf(spam) : "";
+                    String outboxString = outbox > 0 ? String.valueOf(outbox) : "";
 
                     inboxCounter.setText(inboxString);
+                    draftCounter.setText(draftString);
                     starredCounter.setText(starredString);
                     spamCounter.setText(spamString);
                     outboxCounter.setText(outboxString);
@@ -152,7 +168,7 @@ public class MainActivity extends AppCompatActivity
 
         // default folder
         setTitle(R.string.nav_drawer_inbox);
-        mainModel.setCurrentFolder(MainFolderNames.INBOX);
+        mainModel.setCurrentFolder(INBOX);
     }
 
     public void showFragment(Fragment fragment) {
@@ -307,31 +323,31 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.nav_inbox) {
             setTitle(R.string.nav_drawer_inbox);
-            toggleFolder = MainFolderNames.INBOX;
+            toggleFolder = INBOX;
         } else if (id == R.id.nav_draft) {
             setTitle(R.string.nav_drawer_draft);
-            toggleFolder = MainFolderNames.DRAFT;
+            toggleFolder = DRAFT;
         } else if (id == R.id.nav_sent) {
             setTitle(R.string.nav_drawer_sent);
-            toggleFolder = MainFolderNames.SENT;
+            toggleFolder = SENT;
         } else if (id == R.id.nav_outbox) {
             setTitle(R.string.nav_drawer_outbox);
-            toggleFolder = MainFolderNames.OUTBOX;
+            toggleFolder = OUTBOX;
         } else if (id == R.id.nav_starred) {
             setTitle(R.string.nav_drawer_starred);
-            toggleFolder = MainFolderNames.STARRED;
+            toggleFolder = STARRED;
         } else if (id == R.id.nav_archive) {
             setTitle(R.string.nav_drawer_archive);
-            toggleFolder = MainFolderNames.ARCHIVE;
+            toggleFolder = ARCHIVE;
         } else if (id == R.id.nav_spam) {
             setTitle(R.string.nav_drawer_spam);
-            toggleFolder = MainFolderNames.SPAM;
+            toggleFolder = SPAM;
         } else if (id == R.id.nav_trash) {
             setTitle(R.string.nav_drawer_trash);
-            toggleFolder = MainFolderNames.TRASH;
+            toggleFolder = TRASH;
         } else if (id == R.id.nav_contact) {
             setTitle(R.string.nav_drawer_contact);
-            toggleFolder = MainFolderNames.CONTACT;
+            toggleFolder = CONTACT;
         } else if (id == R.id.nav_settings) {
             Intent settingsScreen = new Intent(this, SettingsActivity.class);
             startActivity(settingsScreen);
