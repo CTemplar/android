@@ -10,4 +10,7 @@ public class MainFolderNames {
     public static final String TRASH = "trash";
     public static final String STARRED = "starred";
     public static final String CONTACT = "contact";
+    public static final String OUTBOX_DEAD_MAN = "outbox_dead_man_counter";
+    public static final String OUTBOX_DELAYED_DELIVERY = "outbox_delayed_delivery_counter";
+    public static final String OUTBOX_SELF_DESTRUCT = "outbox_self_destruct_counter";
 }
