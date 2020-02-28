@@ -82,9 +82,9 @@ public class ManageFoldersActivity extends BaseActivity {
         manageFoldersModel.getFoldersResponse().observe(this, this::handleFoldersList);
         manageFoldersModel.getDeletingStatus().observe(this, responseStatus -> {
             if (responseStatus == null || responseStatus == ResponseStatus.RESPONSE_ERROR) {
-                Toast.makeText(getApplicationContext(), getResources().getString(R.string.txt_folder_not_deleted), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), getString(R.string.txt_folder_not_deleted), Toast.LENGTH_SHORT).show();
             } else if (responseStatus == ResponseStatus.RESPONSE_COMPLETE) {
-                Toast.makeText(getApplicationContext(), getResources().getString(R.string.txt_folder_deleted), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), getString(R.string.txt_folder_deleted), Toast.LENGTH_SHORT).show();
             }
         });
         manageFoldersModel.getMySelfResponse().observe(this, myselfResponse -> {

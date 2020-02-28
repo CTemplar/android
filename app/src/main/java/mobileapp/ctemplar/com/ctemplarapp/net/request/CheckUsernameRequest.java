@@ -7,7 +7,7 @@ import com.google.gson.annotations.SerializedName;
 public class CheckUsernameRequest {
 
     @SerializedName("username")
-    String username;
+    private String username;
 
     public CheckUsernameRequest(String username) {
         this.username = username;

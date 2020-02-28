@@ -28,6 +28,7 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.MailboxDao;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EncodeUtils;
+import retrofit2.HttpException;
 import retrofit2.Response;
 import timber.log.Timber;
 
@@ -39,6 +40,7 @@ public class MailboxesViewModel extends ViewModel {
     private MutableLiveData<DomainsResponse> domainsResponse = new MutableLiveData<>();
     private MutableLiveData<CheckUsernameResponse> checkUsernameResponse = new MutableLiveData<>();
     private MutableLiveData<ResponseStatus> createMailboxResponseStatus = new MutableLiveData<>();
+    private MutableLiveData<ResponseStatus> checkUsernameStatus = new MutableLiveData<>();
 
     public MailboxesViewModel() {
         userRepository = CTemplarApp.getUserRepository();
@@ -61,12 +63,16 @@ public class MailboxesViewModel extends ViewModel {
         return createMailboxResponseStatus;
     }
 
-    MutableLiveData<DomainsResponse> getDomainsResponse() {
-        return domainsResponse;
+    public MutableLiveData<CheckUsernameResponse> getCheckUsernameResponse() {
+        return checkUsernameResponse;
     }
 
-    MutableLiveData<CheckUsernameResponse> getCheckUsernameResponse() {
-        return checkUsernameResponse;
+    public LiveData<ResponseStatus> getCheckUsernameStatus() {
+        return checkUsernameStatus;
+    }
+
+    MutableLiveData<DomainsResponse> getDomainsResponse() {
+        return domainsResponse;
     }
 
     void updateDefaultMailbox(final long lastSelectedMailboxId, final long mailboxId) {
@@ -162,7 +168,17 @@ public class MailboxesViewModel extends ViewModel {
 
                     @Override
                     public void onError(Throwable e) {
-                        Timber.e(e);
+                        if (e instanceof HttpException) {
+                            HttpException exception = (HttpException) e;
+                            if (exception.code() == 429) {
+                                checkUsernameStatus.postValue(ResponseStatus.RESPONSE_ERROR_TOO_MANY_REQUESTS);
+                            } else {
+                                checkUsernameStatus.postValue(ResponseStatus.RESPONSE_ERROR);
+                            }
+                        } else {
+                            checkUsernameStatus.postValue(ResponseStatus.RESPONSE_ERROR);
+                        }
+                        Timber.w(e);
                     }
 
                     @Override

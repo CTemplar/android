@@ -55,7 +55,7 @@ android {
 dependencies {
     // room
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'androidx.room:room-runtime:2.2.3'
+    implementation 'androidx.room:room-runtime:2.2.4'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.legacy:legacy-support-core-ui:1.0.0'
     implementation 'androidx.vectordrawable:vectordrawable:1.1.0'

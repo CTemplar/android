@@ -428,6 +428,7 @@ Your password is connected to your encryption key, if you change your password t
     <string name="error_upload_attachment">Failed to upload attachment</string>
     <string name="error_attachment_url">Attachment url is empty</string>
     <string name="error_upload_attachment_too_large">File too large</string>
+    <string name="error_too_many_requests">Too many requests. Please wait</string>
     <string name="title_activity_white_black_list">WhiteBlackList</string>
     <string name="section_format">Hello World from section: %1$d</string>
     <string name="toast_undefined_error">Undefined error</string>
