@@ -180,12 +180,10 @@
 
         <ImageView
             android:id="@+id/message_holder_attachment"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
             android:layout_marginStart="16dp"
             android:layout_marginLeft="16dp"
-            android:layout_marginEnd="3dp"
-            android:layout_marginRight="3dp"
             android:src="@drawable/ic_attachment_small"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintTop_toTopOf="@+id/message_holder_subject"
