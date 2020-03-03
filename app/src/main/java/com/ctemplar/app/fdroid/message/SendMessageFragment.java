@@ -85,7 +85,6 @@ import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.OUTBOX
 import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.SENT;
 
 public class SendMessageFragment extends Fragment implements View.OnClickListener, ActivityInterface {
-    private final static String TAG = SendMessageFragment.class.getSimpleName();
     private final static int PICK_FILE_FROM_STORAGE = 1;
 
     private boolean finished;
@@ -247,7 +246,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final FragmentActivity activity = getActivity();
         if (activity == null) {
-            Timber.tag(TAG).wtf("Activity is null");
+            Timber.wtf("Activity is null");
             return null;
         }
 
@@ -417,32 +416,28 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
                 }
                 break;
             case R.id.fragment_send_message_delayed_layout:
-                if (getFragmentManager() != null && userIsPrime) {
-                    delayedDeliveryDialogFragment.show(getFragmentManager(), "DelayedDeliveryDialogFragment");
+                if (userIsPrime) {
+                    delayedDeliveryDialogFragment.show(getParentFragmentManager(), "DelayedDeliveryDialogFragment");
                     delayedDeliveryDialogFragment.setOnScheduleDelayedDelivery(onScheduleDelayedDelivery);
                 } else {
                     upgradeToPrimeDialog();
                 }
                 break;
             case R.id.fragment_send_message_destruct_layout:
-                if (getFragmentManager() != null) {
-                    destructTimerDialogFragment.show(getFragmentManager(), "DestructTimerDialogFragment");
-                    destructTimerDialogFragment.setOnScheduleDestructTimerDelivery(onScheduleDestructTimerDelivery);
-                }
+                destructTimerDialogFragment.show(getParentFragmentManager(), "DestructTimerDialogFragment");
+                destructTimerDialogFragment.setOnScheduleDestructTimerDelivery(onScheduleDestructTimerDelivery);
                 break;
             case R.id.fragment_send_message_dead_layout:
-                if (getFragmentManager() != null && userIsPrime) {
-                    deadMansDeliveryDialogFragment.show(getFragmentManager(), "DeadMansDialogFragment");
+                if (userIsPrime) {
+                    deadMansDeliveryDialogFragment.show(getParentFragmentManager(), "DeadMansDialogFragment");
                     deadMansDeliveryDialogFragment.setOnScheduleDeadMansDelivery(onScheduleDeadMansDelivery);
                 } else {
                     upgradeToPrimeDialog();
                 }
                 break;
             case R.id.fragment_send_message_encrypt_layout:
-                if (getFragmentManager() != null) {
-                    encryptMessageDialogFragment.show(getFragmentManager(), "EncryptMessageDialogFragment");
-                    encryptMessageDialogFragment.setEncryptMessagePassword(onSetEncryptMessagePassword);
-                }
+                encryptMessageDialogFragment.show(getParentFragmentManager(), "EncryptMessageDialogFragment");
+                encryptMessageDialogFragment.setEncryptMessagePassword(onSetEncryptMessagePassword);
         }
     }
 
@@ -458,21 +453,18 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
             toEmailTextView.setError(getString(R.string.txt_enter_valid_email));
             return;
         }
-
         if (ccEmail.isEmpty() || EditTextUtils.isEmailListValid(ccEmail)) {
             ccTextView.setError(null);
         } else {
             ccTextView.setError(getString(R.string.txt_enter_valid_email));
             return;
         }
-
         if (bccEmail.isEmpty() || EditTextUtils.isEmailListValid(bccEmail)) {
             bccTextView.setError(null);
         } else {
             bccTextView.setError(getString(R.string.txt_enter_valid_email));
             return;
         }
-
         if (attachmentsProcessingEnabled) {
             Toast.makeText(getActivity(), getString(R.string.txt_attachments_in_processing), Toast.LENGTH_SHORT).show();
             return;
@@ -589,6 +581,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
                     } else {
                         String folderName = messagesResult.getFolderName();
                         if (!folderName.equals(MainFolderNames.DRAFT)) {
+                            Toast.makeText(activity, getString(R.string.toast_message_sent), Toast.LENGTH_LONG).show();
                             finish();
                         }
                     }
@@ -698,9 +691,9 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         SendMessageRequest createMessageRequest = new SendMessageRequest(
                 mailboxEmail,
                 "content",
-                new ArrayList<String>(),
-                new ArrayList<String>(),
-                new ArrayList<String>(),
+                new ArrayList<>(),
+                new ArrayList<>(),
+                new ArrayList<>(),
                 MainFolderNames.DRAFT,
                 mailboxId
         );
@@ -1121,10 +1114,8 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
     }
 
     private void upgradeToPrimeDialog() {
-        if (getFragmentManager() != null) {
-            UpgradeToPrimeFragment upgradeToPrimeFragment = new UpgradeToPrimeFragment();
-            upgradeToPrimeFragment.show(getFragmentManager(), "UpgradeToPrimeFragment");
-        }
+        UpgradeToPrimeFragment upgradeToPrimeFragment = new UpgradeToPrimeFragment();
+        upgradeToPrimeFragment.show(getParentFragmentManager(), "UpgradeToPrimeFragment");
     }
 
     private void addListeners() {

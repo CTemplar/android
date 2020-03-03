@@ -206,7 +206,8 @@ Your password is connected to your encryption key, if you change your password t
     <string name="txt_create_folder_free_error">Free users can only create a maximum of 5 folders.</string>
 
     <!-- SEND MESSAGE -->
-    <string name="toast_message_not_sent">Message not sent</string>
+    <string name="toast_message_sent">Email sent</string>
+    <string name="toast_message_not_sent">Email not sent</string>
     <string name="toast_message_saved_as_draft">Message saved as draft</string>
     <string name="toast_message_not_created">Message not created</string>
     <string name="toast_message_not_loaded">Message not loaded</string>
