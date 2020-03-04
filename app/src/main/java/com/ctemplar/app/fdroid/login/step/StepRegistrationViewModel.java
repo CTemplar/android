@@ -206,5 +206,4 @@ public class StepRegistrationViewModel extends ViewModel {
     private void hashPassword() {
         signUpRequest.setPasswordHashed(EncodeUtils.generateHash(signUpRequest.getUsername(), signUpRequest.getPassword()));
     }
-
 }

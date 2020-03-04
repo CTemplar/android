@@ -1,0 +1,6 @@
+* Sign up new invitation code screen
+* Recovery email on a separate screen
+* Unlimited folders for a paid account
+* Reworked add alias logic
+* Resource files size reduced
+* Stability and UI improvements
