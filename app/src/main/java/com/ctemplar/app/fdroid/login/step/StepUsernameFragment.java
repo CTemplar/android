@@ -1,6 +1,5 @@
 package com.ctemplar.app.fdroid.login.step;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -11,6 +10,11 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.ctemplar.app.fdroid.BaseFragment;
+import com.ctemplar.app.fdroid.R;
+import com.ctemplar.app.fdroid.login.LoginActivityViewModel;
+import com.ctemplar.app.fdroid.net.ResponseStatus;
+import com.ctemplar.app.fdroid.utils.EditTextUtils;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -19,11 +23,6 @@ import org.jetbrains.annotations.NotNull;
 import butterknife.BindInt;
 import butterknife.BindView;
 import butterknife.OnClick;
-import com.ctemplar.app.fdroid.BaseFragment;
-import com.ctemplar.app.fdroid.R;
-import com.ctemplar.app.fdroid.login.LoginActivityViewModel;
-import com.ctemplar.app.fdroid.net.ResponseStatus;
-import com.ctemplar.app.fdroid.utils.EditTextUtils;
 
 public class StepUsernameFragment extends BaseFragment {
 
@@ -51,11 +50,7 @@ public class StepUsernameFragment extends BaseFragment {
     }
 
     @Override
-    public void onAttach(@NotNull Context context) {
-        super.onAttach(context);
-    }
-
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
 

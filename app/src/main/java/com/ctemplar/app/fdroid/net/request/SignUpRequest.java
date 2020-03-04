@@ -23,9 +23,6 @@ public class SignUpRequest {
     @SerializedName("fingerprint")
     private String fingerprint;
 
-    @SerializedName("recaptcha")
-    private String recaptcha = "text_recaptcha";
-
     @SerializedName("recovery_email")
     private String recovery_email;
 
@@ -52,6 +49,9 @@ public class SignUpRequest {
 
     @SerializedName("captcha_value")
     private String captcha_value;
+
+    @SerializedName("invite_code")
+    private String inviteCode;
 
     public void SignUpRequest(String password, String username) {
         this.password = password;
@@ -116,5 +116,13 @@ public class SignUpRequest {
 
     public void setCaptchaValue(String captcha_value) {
         this.captcha_value = captcha_value;
+    }
+
+    public String getInviteCode() {
+        return inviteCode;
+    }
+
+    public void setInviteCode(String inviteCode) {
+        this.inviteCode = inviteCode;
     }
 }

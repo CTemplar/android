@@ -18,7 +18,9 @@ import butterknife.OnClick;
 import com.ctemplar.app.fdroid.BaseFragment;
 import com.ctemplar.app.fdroid.R;
 import com.ctemplar.app.fdroid.login.step.SignUpFragmentsAdapter;
+import com.ctemplar.app.fdroid.login.step.StepInvitationFragment;
 import com.ctemplar.app.fdroid.login.step.StepPasswordFragment;
+import com.ctemplar.app.fdroid.login.step.StepRecoveryFragment;
 import com.ctemplar.app.fdroid.login.step.StepRegistrationActions;
 import com.ctemplar.app.fdroid.login.step.StepRegistrationViewModel;
 import com.ctemplar.app.fdroid.login.step.StepSecurityFragment;
@@ -57,6 +59,8 @@ public class SignUpFragment extends BaseFragment{
         ArrayList<Fragment> list = new ArrayList<>();
         list.add(new StepUsernameFragment());
         list.add(new StepPasswordFragment());
+        list.add(new StepRecoveryFragment());
+        list.add(new StepInvitationFragment());
         list.add(new StepSecurityFragment());
 
         pageIndicatorTabLayout.setupWithViewPager(viewPager, true);
