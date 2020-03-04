@@ -12,6 +12,7 @@ import com.ctemplar.app.fdroid.net.request.ContactsEncryptionRequest;
 import com.ctemplar.app.fdroid.net.request.CreateMailboxRequest;
 import com.ctemplar.app.fdroid.net.request.CustomFilterRequest;
 import com.ctemplar.app.fdroid.net.request.DefaultMailboxRequest;
+import com.ctemplar.app.fdroid.net.request.EmptyFolderRequest;
 import com.ctemplar.app.fdroid.net.request.EnabledMailboxRequest;
 import com.ctemplar.app.fdroid.net.request.MarkMessageAsReadRequest;
 import com.ctemplar.app.fdroid.net.request.MarkMessageIsStarredRequest;
@@ -34,6 +35,7 @@ import com.ctemplar.app.fdroid.net.response.Filters.FiltersResponse;
 import com.ctemplar.app.fdroid.net.response.KeyResponse;
 import com.ctemplar.app.fdroid.net.response.Mailboxes.MailboxesResponse;
 import com.ctemplar.app.fdroid.net.response.Mailboxes.MailboxesResult;
+import com.ctemplar.app.fdroid.net.response.Messages.EmptyFolderResponse;
 import com.ctemplar.app.fdroid.net.response.Messages.MessageAttachment;
 import com.ctemplar.app.fdroid.net.response.Messages.MessagesResponse;
 import com.ctemplar.app.fdroid.net.response.Messages.MessagesResult;
@@ -234,6 +236,12 @@ public class UserRepository {
 
     public Observable<Response<Void>> deleteMessages(String messageIds) {
         return service.deleteMessages(messageIds)
+                .subscribeOn(io.reactivex.schedulers.Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public Observable<EmptyFolderResponse> emptyFolder(EmptyFolderRequest request) {
+        return service.emptyFolder(request)
                 .subscribeOn(io.reactivex.schedulers.Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }

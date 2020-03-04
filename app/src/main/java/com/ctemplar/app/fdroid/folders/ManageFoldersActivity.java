@@ -31,12 +31,13 @@ import com.ctemplar.app.fdroid.main.RecycleDeleteSwiper;
 import com.ctemplar.app.fdroid.net.ResponseStatus;
 import com.ctemplar.app.fdroid.net.response.Folders.FoldersResponse;
 import com.ctemplar.app.fdroid.net.response.Folders.FoldersResult;
+import com.ctemplar.app.fdroid.utils.AccountTypeManager;
 
 public class ManageFoldersActivity extends BaseActivity {
 
     private ManageFoldersViewModel manageFoldersModel;
     private ManageFoldersAdapter manageFoldersAdapter;
-    private String planType;
+    private boolean isPrime = false;
 
     @BindView(R.id.activity_manage_folders_recycler_view)
     RecyclerView recyclerView;
@@ -78,19 +79,17 @@ public class ManageFoldersActivity extends BaseActivity {
         recyclerView.addItemDecoration(dividerItemDecoration);
 
         manageFoldersModel = new ViewModelProvider(this).get(ManageFoldersViewModel.class);
-        manageFoldersModel.getFoldersResponse()
-                .observe(this, foldersResponse -> handleFoldersList(foldersResponse));
-        manageFoldersModel.getDeletingStatus()
-                .observe(this, responseStatus -> {
-                    if (responseStatus == null || responseStatus == ResponseStatus.RESPONSE_ERROR) {
-                        Toast.makeText(getApplicationContext(), getResources().getString(R.string.txt_folder_not_deleted), Toast.LENGTH_SHORT).show();
-                    } else if (responseStatus == ResponseStatus.RESPONSE_COMPLETE) {
-                        Toast.makeText(getApplicationContext(), getResources().getString(R.string.txt_folder_deleted), Toast.LENGTH_SHORT).show();
-                    }
-                });
+        manageFoldersModel.getFoldersResponse().observe(this, this::handleFoldersList);
+        manageFoldersModel.getDeletingStatus().observe(this, responseStatus -> {
+            if (responseStatus == null || responseStatus == ResponseStatus.RESPONSE_ERROR) {
+                Toast.makeText(getApplicationContext(), getString(R.string.txt_folder_not_deleted), Toast.LENGTH_SHORT).show();
+            } else if (responseStatus == ResponseStatus.RESPONSE_COMPLETE) {
+                Toast.makeText(getApplicationContext(), getString(R.string.txt_folder_deleted), Toast.LENGTH_SHORT).show();
+            }
+        });
         manageFoldersModel.getMySelfResponse().observe(this, myselfResponse -> {
             if (myselfResponse != null) {
-                planType = myselfResponse.result[0].settings.getPlanType();
+                isPrime = myselfResponse.getResult()[0].isPrime();
             }
         });
         footerAddFolder.setVisibility(View.GONE);
@@ -151,26 +150,12 @@ public class ManageFoldersActivity extends BaseActivity {
     }
 
     private void addFolder() {
-        int folderCount = manageFoldersAdapter.getItemCount();
-        if (planType == null) {
-            if (folderCount >= 5) {
-                Toast.makeText(getApplicationContext(), getString(R.string.txt_create_folder_free_error), Toast.LENGTH_SHORT).show();
-                return;
-            }
-        } else if (planType.equals("PRIME")) {
-            if (folderCount >= 500) {
-                Toast.makeText(getApplicationContext(), getString(R.string.txt_create_folder_prime_error), Toast.LENGTH_SHORT).show();
-                return;
-            }
-        } else if (!planType.equals("CHAMPION")) {
-            if (folderCount >= 5) {
-                Toast.makeText(getApplicationContext(), getString(R.string.txt_create_folder_free_error), Toast.LENGTH_SHORT).show();
-                return;
-            }
+        int foldersCount = manageFoldersAdapter.getItemCount();
+        boolean canCreate = AccountTypeManager.createFolder(getBaseContext(), foldersCount, isPrime);
+        if (canCreate) {
+            Intent addFolder = new Intent(this, AddFolderActivity.class);
+            startActivity(addFolder);
         }
-
-        Intent addFolder = new Intent(this, AddFolderActivity.class);
-        startActivity(addFolder);
     }
 
     @Override
@@ -178,7 +163,6 @@ public class ManageFoldersActivity extends BaseActivity {
         if (item.getItemId() == android.R.id.home) {
             onBackPressed();
         }
-
         return super.onOptionsItemSelected(item);
     }
 

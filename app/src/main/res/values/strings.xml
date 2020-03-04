@@ -2,8 +2,6 @@
     <string name="app_name" translatable="false">CTemplar</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="nav_header_title">Android Studio</string>
-    <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
     <string name="action_undo">UNDO</string>
@@ -83,6 +81,7 @@
     <string name="title_reset_code">Reset code</string>
     <string name="title_confirm">Confirm</string>
     <string name="title_confirm_reset_password">Confirm Reset Password</string>
+    <string name="title_invitation_code">Invitation code</string>
     <string name="title_confirm_reset_password_hint">Your encryption key is connected to your password. Because of this <![CDATA[<font color="#e74c3c">you will not be able to decrypt old messages, attachments and contacts</font>]]> if you reset your password.
 If you have further questions please email <![CDATA[<u><a href="mailto:support@ctemplar.com">support@ctemplar.com</a></u>]]>.</string>
     <string name="title_confirm_reset_password_hint2">Are you sure you want to reset your password?</string>
@@ -100,6 +99,7 @@ Your password is connected to your encryption key, if you change your password t
     <string name="hint_step_email_recovery_short">By checking this box you understand that If you lose your password and do not set a recovery email your account will not be recoverable. <![CDATA[<u><font color="blue">More info</font></u>]]></string>
     <string name="title_step_email_hint">This is used to recover your account if you forget your password</string>
     <string name="title_step_email_check_hint">Please check this box if you agree to abide by our <![CDATA[<u><a href="https://ctemplar.com/terms">Terms and Conditions</a></u>]]></string>
+    <string name="title_step_invitation_code_hint">You can get invitation code from any existing paid customer or you can request from us. How to get invitation code? <![CDATA[<u><a href="https://ctemplar.com/faq/get-an-invitation-code/">Learn more</a></u>]]></string>
     <string name="title_more_info_link"><u>More Info</u>></string>
     <string name="title_empty_inbox">You have no inbox messages</string>
     <string name="title_empty_messages">You have no %1$s messages</string>
@@ -204,10 +204,10 @@ Your password is connected to your encryption key, if you change your password t
     <string name="txt_manage_folders">Manage folders</string>
     <string name="txt_folders_empty">Folders empty</string>
     <string name="txt_create_folder_free_error">Free users can only create a maximum of 5 folders.</string>
-    <string name="txt_create_folder_prime_error">Prime users can only create a maximum of 500 folders. </string>
 
     <!-- SEND MESSAGE -->
-    <string name="toast_message_not_sent">Message not sent</string>
+    <string name="toast_message_sent">Email sent</string>
+    <string name="toast_message_not_sent">Email not sent</string>
     <string name="toast_message_saved_as_draft">Message saved as draft</string>
     <string name="toast_message_not_created">Message not created</string>
     <string name="toast_message_not_loaded">Message not loaded</string>
@@ -404,6 +404,7 @@ Your password is connected to your encryption key, if you change your password t
     <string name="url_prime_more" translatable="false">https://ctemplar.com/pricing</string>
 
     <!-- ERRORS -->
+    <string name="error_field_cannot_be_empty">This field cannot be empty</string>
     <string name="error_invalid_email">Please, select a valid email or select unrecoverable account</string>
     <string name="error_username_small">Minimum 4 symbols</string>
     <string name="error_username_small_two">Minimum 2 symbols</string>
@@ -429,6 +430,7 @@ Your password is connected to your encryption key, if you change your password t
     <string name="error_upload_attachment">Failed to upload attachment</string>
     <string name="error_attachment_url">Attachment url is empty</string>
     <string name="error_upload_attachment_too_large">File too large</string>
+    <string name="error_too_many_requests">Too many requests. Please wait</string>
     <string name="title_activity_white_black_list">WhiteBlackList</string>
     <string name="section_format">Hello World from section: %1$d</string>
     <string name="toast_undefined_error">Undefined error</string>

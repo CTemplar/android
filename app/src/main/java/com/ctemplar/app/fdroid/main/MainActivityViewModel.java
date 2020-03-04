@@ -16,11 +16,13 @@ import com.ctemplar.app.fdroid.CTemplarApp;
 import com.ctemplar.app.fdroid.DialogState;
 import com.ctemplar.app.fdroid.SingleLiveEvent;
 import com.ctemplar.app.fdroid.net.ResponseStatus;
+import com.ctemplar.app.fdroid.net.request.EmptyFolderRequest;
 import com.ctemplar.app.fdroid.net.request.SignInRequest;
 import com.ctemplar.app.fdroid.net.response.Contacts.ContactData;
 import com.ctemplar.app.fdroid.net.response.Contacts.ContactsResponse;
 import com.ctemplar.app.fdroid.net.response.Folders.FoldersResponse;
 import com.ctemplar.app.fdroid.net.response.Mailboxes.MailboxesResponse;
+import com.ctemplar.app.fdroid.net.response.Messages.EmptyFolderResponse;
 import com.ctemplar.app.fdroid.net.response.Messages.MessagesResponse;
 import com.ctemplar.app.fdroid.net.response.Messages.MessagesResult;
 import com.ctemplar.app.fdroid.net.response.Myself.MyselfResponse;
@@ -56,6 +58,7 @@ public class MainActivityViewModel extends ViewModel {
     private MutableLiveData<List<Contact>> contactsResponse = new MutableLiveData<>();
     private MutableLiveData<ResponseStatus> toFolderStatus = new MutableLiveData<>();
     private MutableLiveData<ResponseStatus> deleteMessagesStatus = new MutableLiveData<>();
+    private MutableLiveData<ResponseStatus> emptyFolderStatus = new MutableLiveData<>();
     private MutableLiveData<FoldersResponse> foldersResponse = new MutableLiveData<>();
     private MutableLiveData<ResponseBody> unreadFoldersBody = new MutableLiveData<>();
     private MutableLiveData<MyselfResponse> myselfResponse = new MutableLiveData<>();
@@ -91,6 +94,10 @@ public class MainActivityViewModel extends ViewModel {
 
     public LiveData<ResponseStatus> getDeleteMessagesStatus() {
         return deleteMessagesStatus;
+    }
+
+    public LiveData<ResponseStatus> getEmptyFolderStatus() {
+        return emptyFolderStatus;
     }
 
     public LiveData<ResponseStatus> getResponseStatus() {
@@ -203,7 +210,7 @@ public class MainActivityViewModel extends ViewModel {
                         if (offset > 0 || folder.equals(MainFolderNames.STARRED)) {
                             messageProviders = MessageProvider.fromMessageEntities(messageEntities);
                         } else {
-                            messagesRepository.deleteLocalMessagesByFolderName(folder);
+                            messagesRepository.deleteMessagesByFolderName(folder);
                             messagesRepository.addMessagesToDatabase(messageEntities);
 
                             List<MessageEntity> localEntities = messagesRepository.getLocalMessagesByFolder(folder);
@@ -399,6 +406,33 @@ public class MainActivityViewModel extends ViewModel {
                 });
     }
 
+    public void emptyFolder(String folder) {
+        userRepository.emptyFolder(new EmptyFolderRequest(folder))
+                .subscribe(new Observer<EmptyFolderResponse>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(EmptyFolderResponse emptyFolderResponse) {
+                        messagesRepository.deleteMessagesByFolderName(folder);
+                        emptyFolderStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        emptyFolderStatus.postValue(ResponseStatus.RESPONSE_ERROR);
+                        Timber.e(e);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
     public void toFolder(final long messageId, final String folder) {
         userRepository.toFolder(messageId, folder)
                 .subscribe(new Observer<Response<Void>>() {
@@ -517,7 +551,7 @@ public class MainActivityViewModel extends ViewModel {
                     @Override
                     public void onNext(MyselfResponse myselfResponse) {
                         if (myselfResponse != null) {
-                            MyselfResult myselfResult = myselfResponse.result[0];
+                            MyselfResult myselfResult = myselfResponse.getResult()[0];
                             SettingsEntity settingsEntity = myselfResult.settings;
 
                             String timezone = settingsEntity.getTimezone();

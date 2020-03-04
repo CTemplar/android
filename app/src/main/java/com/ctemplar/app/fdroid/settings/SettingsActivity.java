@@ -391,8 +391,8 @@ public class SettingsActivity extends AppCompatActivity {
 
                     @Override
                     public void onNext(MyselfResponse myselfResponse) {
-                        if (myselfResponse != null && myselfResponse.result != null) {
-                            MyselfResult myselfResult = myselfResponse.result[0];
+                        if (myselfResponse != null && myselfResponse.getResult() != null) {
+                            MyselfResult myselfResult = myselfResponse.getResult()[0];
                             saveData(myselfResult);
                         }
                     }

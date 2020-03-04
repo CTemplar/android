@@ -81,6 +81,9 @@ public class EditTextUtils {
     }
 
     public static boolean isHtml(String text) {
+        if (text == null) {
+            return false;
+        }
         String fromHtml = fromHtml(text).toString();
         return !text.equals(fromHtml);
     }

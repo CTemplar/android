@@ -15,6 +15,7 @@ import com.ctemplar.app.fdroid.net.request.CreateMailboxRequest;
 import com.ctemplar.app.fdroid.net.request.CustomFilterRequest;
 import com.ctemplar.app.fdroid.net.request.DefaultMailboxRequest;
 import com.ctemplar.app.fdroid.net.request.EditFolderRequest;
+import com.ctemplar.app.fdroid.net.request.EmptyFolderRequest;
 import com.ctemplar.app.fdroid.net.request.EnabledMailboxRequest;
 import com.ctemplar.app.fdroid.net.request.MarkMessageAsReadRequest;
 import com.ctemplar.app.fdroid.net.request.MarkMessageIsStarredRequest;
@@ -42,6 +43,7 @@ import com.ctemplar.app.fdroid.net.response.Folders.FoldersResult;
 import com.ctemplar.app.fdroid.net.response.KeyResponse;
 import com.ctemplar.app.fdroid.net.response.Mailboxes.MailboxesResponse;
 import com.ctemplar.app.fdroid.net.response.Mailboxes.MailboxesResult;
+import com.ctemplar.app.fdroid.net.response.Messages.EmptyFolderResponse;
 import com.ctemplar.app.fdroid.net.response.Messages.MessageAttachment;
 import com.ctemplar.app.fdroid.net.response.Messages.MessagesResponse;
 import com.ctemplar.app.fdroid.net.response.Messages.MessagesResult;
@@ -128,6 +130,9 @@ public interface RestService {
 
     @DELETE("emails/messages/")
     Observable<Response<Void>> deleteMessages(@Query("id__in") String messageIds);
+
+    @POST("emails/empty-folder/")
+    Observable<EmptyFolderResponse> emptyFolder(@Body EmptyFolderRequest request);
 
     @PATCH("emails/messages/")
     Observable<Response<Void>> toFolder(@Query("id__in") long id, @Body MoveToFolderRequest request);
