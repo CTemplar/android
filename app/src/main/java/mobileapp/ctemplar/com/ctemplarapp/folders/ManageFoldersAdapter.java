@@ -37,10 +37,10 @@ public class ManageFoldersAdapter extends RecyclerView.Adapter<ManageFoldersView
         final int folderColor = Color.parseColor(folder.getColor());
         holder.icoFolder.setColorFilter(folderColor, PorterDuff.Mode.SRC_IN);
         holder.root.setOnClickListener(v -> {
-            Intent editFolder = new Intent(holder.root.getContext(), EditFolderActivity.class);
-            editFolder.putExtra(EditFolderActivity.ARG_ID, folder.getId());
-            editFolder.putExtra(EditFolderActivity.ARG_NAME, folder.getName());
-            holder.root.getContext().startActivity(editFolder);
+            Intent editFolderIntent = new Intent(holder.root.getContext(), EditFolderActivity.class);
+            editFolderIntent.putExtra(EditFolderActivity.ARG_ID, folder.getId());
+            editFolderIntent.putExtra(EditFolderActivity.ARG_NAME, folder.getName());
+            holder.root.getContext().startActivity(editFolderIntent);
         });
     }
 

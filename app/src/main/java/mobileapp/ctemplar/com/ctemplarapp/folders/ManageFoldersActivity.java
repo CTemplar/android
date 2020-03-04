@@ -1,16 +1,7 @@
 package mobileapp.ctemplar.com.ctemplarapp.folders;
 
-import androidx.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.ItemTouchHelper;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -18,6 +9,16 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,12 +31,13 @@ import mobileapp.ctemplar.com.ctemplarapp.main.RecycleDeleteSwiper;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Folders.FoldersResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Folders.FoldersResult;
+import mobileapp.ctemplar.com.ctemplarapp.utils.AccountTypeManager;
 
 public class ManageFoldersActivity extends BaseActivity {
 
     private ManageFoldersViewModel manageFoldersModel;
     private ManageFoldersAdapter manageFoldersAdapter;
-    private String planType;
+    private boolean isPrime = false;
 
     @BindView(R.id.activity_manage_folders_recycler_view)
     RecyclerView recyclerView;
@@ -76,20 +78,18 @@ public class ManageFoldersActivity extends BaseActivity {
                 mLayoutManager.getOrientation());
         recyclerView.addItemDecoration(dividerItemDecoration);
 
-        manageFoldersModel = ViewModelProviders.of(this).get(ManageFoldersViewModel.class);
-        manageFoldersModel.getFoldersResponse()
-                .observe(this, foldersResponse -> handleFoldersList(foldersResponse));
-        manageFoldersModel.getDeletingStatus()
-                .observe(this, responseStatus -> {
-                    if (responseStatus == null || responseStatus == ResponseStatus.RESPONSE_ERROR) {
-                        Toast.makeText(getApplicationContext(), getResources().getString(R.string.txt_folder_not_deleted), Toast.LENGTH_SHORT).show();
-                    } else if (responseStatus == ResponseStatus.RESPONSE_COMPLETE) {
-                        Toast.makeText(getApplicationContext(), getResources().getString(R.string.txt_folder_deleted), Toast.LENGTH_SHORT).show();
-                    }
-                });
+        manageFoldersModel = new ViewModelProvider(this).get(ManageFoldersViewModel.class);
+        manageFoldersModel.getFoldersResponse().observe(this, this::handleFoldersList);
+        manageFoldersModel.getDeletingStatus().observe(this, responseStatus -> {
+            if (responseStatus == null || responseStatus == ResponseStatus.RESPONSE_ERROR) {
+                Toast.makeText(getApplicationContext(), getString(R.string.txt_folder_not_deleted), Toast.LENGTH_SHORT).show();
+            } else if (responseStatus == ResponseStatus.RESPONSE_COMPLETE) {
+                Toast.makeText(getApplicationContext(), getString(R.string.txt_folder_deleted), Toast.LENGTH_SHORT).show();
+            }
+        });
         manageFoldersModel.getMySelfResponse().observe(this, myselfResponse -> {
             if (myselfResponse != null) {
-                planType = myselfResponse.result[0].settings.getPlanType();
+                isPrime = myselfResponse.getResult()[0].isPrime();
             }
         });
         footerAddFolder.setVisibility(View.GONE);
@@ -150,26 +150,12 @@ public class ManageFoldersActivity extends BaseActivity {
     }
 
     private void addFolder() {
-        int folderCount = manageFoldersAdapter.getItemCount();
-        if (planType == null) {
-            if (folderCount >= 5) {
-                Toast.makeText(getApplicationContext(), getString(R.string.txt_create_folder_free_error), Toast.LENGTH_SHORT).show();
-                return;
-            }
-        } else if (planType.equals("PRIME")) {
-            if (folderCount >= 500) {
-                Toast.makeText(getApplicationContext(), getString(R.string.txt_create_folder_prime_error), Toast.LENGTH_SHORT).show();
-                return;
-            }
-        } else if (!planType.equals("CHAMPION")) {
-            if (folderCount >= 5) {
-                Toast.makeText(getApplicationContext(), getString(R.string.txt_create_folder_free_error), Toast.LENGTH_SHORT).show();
-                return;
-            }
+        int foldersCount = manageFoldersAdapter.getItemCount();
+        boolean canCreate = AccountTypeManager.createFolder(getBaseContext(), foldersCount, isPrime);
+        if (canCreate) {
+            Intent addFolder = new Intent(this, AddFolderActivity.class);
+            startActivity(addFolder);
         }
-
-        Intent addFolder = new Intent(this, AddFolderActivity.class);
-        startActivity(addFolder);
     }
 
     @Override
@@ -177,7 +163,6 @@ public class ManageFoldersActivity extends BaseActivity {
         if (item.getItemId() == android.R.id.home) {
             onBackPressed();
         }
-
         return super.onOptionsItemSelected(item);
     }
 

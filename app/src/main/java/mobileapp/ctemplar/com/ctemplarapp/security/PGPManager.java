@@ -45,15 +45,11 @@ import timber.log.Timber;
         return new String(encrypt(inputText.getBytes(), pubKeys, true));
     }
 
-    public static String encrypt(String inputText, String[] pubKeys, boolean asciiArmor) {
-        return new String(encrypt(inputText.getBytes(), pubKeys, asciiArmor));
-    }
-
     public static byte[] encrypt(byte[] inputBytes, String[] pubKeys, boolean asciiArmor) {
         try {
             PGPPublicKeyRing[] pgpPublicKeyRings = PGPLib.getPGPPublicKeyRings(pubKeys);
             return PGPLib.encrypt(inputBytes, pgpPublicKeyRings, asciiArmor);
-        } catch (IOException | PGPException e) {
+        } catch (Exception e) {
             Timber.e(e);
         }
         return new byte[0];
@@ -68,7 +64,9 @@ import timber.log.Timber;
             PGPSecretKeyRing pgpSecretKeyRing = PGPLib.getPGPSecretKeyRing(privateKey);
             return PGPLib.decrypt(encryptedBytes, pgpSecretKeyRing, password.toCharArray());
         } catch (PGPException e) {
-            Timber.e(e);
+            Timber.i(e);
+        }  catch (IOException e) {
+            Timber.w(e);
         } catch (Exception e) {
             Timber.e(e);
             return encryptedBytes;

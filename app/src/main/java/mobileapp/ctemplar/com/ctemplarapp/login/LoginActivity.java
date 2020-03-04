@@ -1,14 +1,15 @@
 package mobileapp.ctemplar.com.ctemplarapp.login;
 
-import androidx.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
+
+import androidx.annotation.NonNull;
+import androidx.lifecycle.ViewModelProvider;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -50,7 +51,7 @@ public class LoginActivity extends BaseFragmentActivity {
     protected void onCreate(Bundle savedState) {
         super.onCreate(savedState);
 
-        loginViewModel = ViewModelProviders.of(this).get(LoginActivityViewModel.class);
+        loginViewModel = new ViewModelProvider(this).get(LoginActivityViewModel.class);
         loginViewModel.getActionStatus().observe(this, this::handleActions);
         loginViewModel.getDialogState().observe(this, this::handleDialogState);
     }

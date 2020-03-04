@@ -16,11 +16,13 @@ import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.DialogState;
 import mobileapp.ctemplar.com.ctemplarapp.SingleLiveEvent;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.EmptyFolderRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SignInRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.ContactData;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.ContactsResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Folders.FoldersResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Mailboxes.MailboxesResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.EmptyFolderResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResult;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.MyselfResponse;
@@ -43,6 +45,7 @@ import retrofit2.Response;
 import timber.log.Timber;
 
 public class MainActivityViewModel extends ViewModel {
+    private static final String ANDROID = "android";
 
     private UserRepository userRepository;
     private ContactsRepository contactsRepository;
@@ -55,6 +58,7 @@ public class MainActivityViewModel extends ViewModel {
     private MutableLiveData<List<Contact>> contactsResponse = new MutableLiveData<>();
     private MutableLiveData<ResponseStatus> toFolderStatus = new MutableLiveData<>();
     private MutableLiveData<ResponseStatus> deleteMessagesStatus = new MutableLiveData<>();
+    private MutableLiveData<ResponseStatus> emptyFolderStatus = new MutableLiveData<>();
     private MutableLiveData<FoldersResponse> foldersResponse = new MutableLiveData<>();
     private MutableLiveData<ResponseBody> unreadFoldersBody = new MutableLiveData<>();
     private MutableLiveData<MyselfResponse> myselfResponse = new MutableLiveData<>();
@@ -90,6 +94,10 @@ public class MainActivityViewModel extends ViewModel {
 
     public LiveData<ResponseStatus> getDeleteMessagesStatus() {
         return deleteMessagesStatus;
+    }
+
+    public LiveData<ResponseStatus> getEmptyFolderStatus() {
+        return emptyFolderStatus;
     }
 
     public LiveData<ResponseStatus> getResponseStatus() {
@@ -130,13 +138,40 @@ public class MainActivityViewModel extends ViewModel {
 
     public void logout() {
         if (userRepository != null) {
-            deleteFirebaseToken();
+            signOut();
         }
     }
 
-    public void exit() {
+    public void exit(){
         userRepository.logout();
         actions.postValue(MainActivityActions.ACTION_LOGOUT);
+    }
+
+    public void signOut() {
+        String token = userRepository.getFirebaseToken();
+        userRepository.signOut(ANDROID, token)
+                .subscribe(new Observer<Response<Void>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(Response<Void> voidResponse) {
+                        exit();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        exit();
+                        Timber.e(e);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
     }
 
     public void getMessages(int limit, final int offset, final String folder) {
@@ -175,7 +210,7 @@ public class MainActivityViewModel extends ViewModel {
                         if (offset > 0 || folder.equals(MainFolderNames.STARRED)) {
                             messageProviders = MessageProvider.fromMessageEntities(messageEntities);
                         } else {
-                            messagesRepository.deleteLocalMessagesByFolderName(folder);
+                            messagesRepository.deleteMessagesByFolderName(folder);
                             messagesRepository.addMessagesToDatabase(messageEntities);
 
                             List<MessageEntity> localEntities = messagesRepository.getLocalMessagesByFolder(folder);
@@ -371,6 +406,33 @@ public class MainActivityViewModel extends ViewModel {
                 });
     }
 
+    public void emptyFolder(String folder) {
+        userRepository.emptyFolder(new EmptyFolderRequest(folder))
+                .subscribe(new Observer<EmptyFolderResponse>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(EmptyFolderResponse emptyFolderResponse) {
+                        messagesRepository.deleteMessagesByFolderName(folder);
+                        emptyFolderStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        emptyFolderStatus.postValue(ResponseStatus.RESPONSE_ERROR);
+                        Timber.e(e);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
     public void toFolder(final long messageId, final String folder) {
         userRepository.toFolder(messageId, folder)
                 .subscribe(new Observer<Response<Void>>() {
@@ -489,7 +551,7 @@ public class MainActivityViewModel extends ViewModel {
                     @Override
                     public void onNext(MyselfResponse myselfResponse) {
                         if (myselfResponse != null) {
-                            MyselfResult myselfResult = myselfResponse.result[0];
+                            MyselfResult myselfResult = myselfResponse.getResult()[0];
                             SettingsEntity settingsEntity = myselfResult.settings;
 
                             String timezone = settingsEntity.getTimezone();
@@ -501,32 +563,6 @@ public class MainActivityViewModel extends ViewModel {
                             userRepository.setContactsEncryptionEnabled(isContactsEncrypted);
                             userRepository.setNotificationsEnabled(true);
                         }
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Timber.e(e);
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
-    }
-
-    public void deleteFirebaseToken() {
-        String token = userRepository.getFirebaseToken();
-        userRepository.deleteFirebaseToken(token)
-                .subscribe(new Observer<Response<Void>>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(Response<Void> voidResponse) {
-                        exit();
                     }
 
                     @Override

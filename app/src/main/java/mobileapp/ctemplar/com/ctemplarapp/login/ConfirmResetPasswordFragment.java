@@ -9,7 +9,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -41,8 +41,8 @@ public class ConfirmResetPasswordFragment extends BaseFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        loginActivityModel = ViewModelProviders.of(getActivity()).get(LoginActivityViewModel.class);
-        loginActivityModel.getResponseStatus().observe(this, this::handleResponseStatus);
+        loginActivityModel = new ViewModelProvider(getActivity()).get(LoginActivityViewModel.class);
+        loginActivityModel.getResponseStatus().observe(getViewLifecycleOwner(), this::handleResponseStatus);
     }
 
     @Override
@@ -77,7 +77,7 @@ public class ConfirmResetPasswordFragment extends BaseFragment {
     }
 
     private void setListeners() {
-        txtHint.setText(EditTextUtils.fromHtml(getResources().getString(R.string.title_confirm_reset_password_hint)));
+        txtHint.setText(EditTextUtils.fromHtml(getString(R.string.title_confirm_reset_password_hint)));
         txtHint.setLinkTextColor(getResources().getColor(R.color.colorLinkBlue));
         txtHint.setMovementMethod(LinkMovementMethod.getInstance());
         txtHint.setAutoLinkMask(Linkify.EMAIL_ADDRESSES);

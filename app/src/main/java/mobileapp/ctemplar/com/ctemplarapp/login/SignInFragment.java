@@ -1,11 +1,7 @@
 package mobileapp.ctemplar.com.ctemplarapp.login;
 
-import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import com.google.android.material.textfield.TextInputEditText;
-import com.google.android.material.textfield.TextInputLayout;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -13,6 +9,11 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
+import androidx.lifecycle.ViewModelProvider;
+
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.iid.FirebaseInstanceId;
 
 import org.jetbrains.annotations.NotNull;
@@ -69,7 +70,7 @@ public class SignInFragment extends BaseFragment {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        loginActivityModel = ViewModelProviders.of(getActivity()).get(LoginActivityViewModel.class);
+        loginActivityModel = new ViewModelProvider(getActivity()).get(LoginActivityViewModel.class);
         loginActivityModel.getResponseStatus().observe(getActivity(), this::handleStatus);
     }
 

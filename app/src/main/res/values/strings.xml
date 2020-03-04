@@ -111,7 +111,7 @@ Your password is connected to your encryption key, if you change your password t
     <string name="hint_captcha">Write text from image / Time display in clock (hh:mm) e.g.: 04:23</string>
     <string name="txt_forgot_pass">Forgot Password?</string>
     <string name="txt_create_acc"><u>Create account</u></string>
-    <string name="txt_loading">Loading...</string>
+    <string name="txt_loading">Loading…</string>
     <string name="txt_add_contact">Add contact</string>
     <string name="txt_edit_contact">Edit contact</string>
     <string name="txt_enter_valid_captcha">Enter valid captcha</string>
@@ -136,7 +136,7 @@ Your password is connected to your encryption key, if you change your password t
     <string name="txt_encrypt">Encrypt</string>
     <string name="txt_selected_datetime_is_past">Selected datetime is in past</string>
     <string name="txt_yesterday">Yesterday</string>
-    <string name="txt_attachments_in_processing">Attachments in processing...</string>
+    <string name="txt_attachments_in_processing">Attachments in processing…</string>
 
     <!-- VIEW MESSAGES -->
     <string name="txt_hide_details">View details</string>
@@ -204,10 +204,10 @@ Your password is connected to your encryption key, if you change your password t
     <string name="txt_manage_folders">Manage folders</string>
     <string name="txt_folders_empty">Folders empty</string>
     <string name="txt_create_folder_free_error">Free users can only create a maximum of 5 folders.</string>
-    <string name="txt_create_folder_prime_error">Prime users can only create a maximum of 500 folders. </string>
 
     <!-- SEND MESSAGE -->
-    <string name="toast_message_not_sent">Message not sent</string>
+    <string name="toast_message_sent">Email sent</string>
+    <string name="toast_message_not_sent">Email not sent</string>
     <string name="toast_message_saved_as_draft">Message saved as draft</string>
     <string name="toast_message_not_created">Message not created</string>
     <string name="toast_message_not_loaded">Message not loaded</string>
@@ -222,14 +222,14 @@ Your password is connected to your encryption key, if you change your password t
     <string name="action_cancel">Cancel</string>
     <string name="btn_add">Add</string>
     <string name="txt_new_message">New message</string>
-    <string name="txt_cc">Cc:&#160;</string>g>
-    <string name="txt_bcc">Bcc:&#160;</string>
+    <string name="txt_cc">Cc: &#160;</string>g>
+    <string name="txt_bcc">Bcc: &#160;</string>
     <string name="hint_compose">Compose email</string>
 
     <!-- MESSAGING SERVICE -->
     <string name="channel_name">CTemplar</string>
     <string name="channel_description">New email</string>
-    <string name="channel_id">ctemplar</string>
+    <string name="channel_id" translatable="false">ctemplar</string>
 
     <!-- CUSTOM FILTERS -->
     <string name="txt_filters_title">Filters</string>
@@ -429,6 +429,7 @@ Your password is connected to your encryption key, if you change your password t
     <string name="error_upload_attachment">Failed to upload attachment</string>
     <string name="error_attachment_url">Attachment url is empty</string>
     <string name="error_upload_attachment_too_large">File too large</string>
+    <string name="error_too_many_requests">Too many requests. Please wait</string>
     <string name="title_activity_white_black_list">WhiteBlackList</string>
     <string name="section_format">Hello World from section: %1$d</string>
     <string name="toast_undefined_error">Undefined error</string>

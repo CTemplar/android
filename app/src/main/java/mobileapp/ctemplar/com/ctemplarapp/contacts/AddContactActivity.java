@@ -1,13 +1,14 @@
 package mobileapp.ctemplar.com.ctemplarapp.contacts;
 
-import androidx.lifecycle.ViewModelProviders;
 import android.os.Bundle;
-import androidx.appcompat.widget.Toolbar;
 import android.util.Patterns;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.ViewModelProvider;
 
 import butterknife.BindView;
 import mobileapp.ctemplar.com.ctemplarapp.BaseActivity;
@@ -54,7 +55,7 @@ public class AddContactActivity extends BaseActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        viewModel = ViewModelProviders.of(this).get(AddContactViewModel.class);
+        viewModel = new ViewModelProvider(this).get(AddContactViewModel.class);
         viewModel.getResponseStatus().observe(this, this::handleResponse);
     }
 

@@ -31,7 +31,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatMultiAutoCompleteTextView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -85,7 +85,6 @@ import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderN
 import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.SENT;
 
 public class SendMessageFragment extends Fragment implements View.OnClickListener, ActivityInterface {
-    private final static String TAG = SendMessageFragment.class.getSimpleName();
     private final static int PICK_FILE_FROM_STORAGE = 1;
 
     private boolean finished;
@@ -247,7 +246,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final FragmentActivity activity = getActivity();
         if (activity == null) {
-            Timber.tag(TAG).wtf("Activity is null");
+            Timber.wtf("Activity is null");
             return null;
         }
 
@@ -331,7 +330,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         }
 
 
-        sendModel = ViewModelProviders.of(this).get(SendMessageActivityViewModel.class);
+        sendModel = new ViewModelProvider(getActivity()).get(SendMessageActivityViewModel.class);
         if (currentMessageId == -1) {
             createMessage();
         } else {
@@ -371,7 +370,8 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == PICK_FILE_FROM_STORAGE && resultCode == RESULT_OK && data != null && data.getData() != null) {
+        if (requestCode == PICK_FILE_FROM_STORAGE && resultCode == RESULT_OK
+                && data != null && data.getData() != null) {
             Uri attachmentUri = data.getData();
             if (attachmentUri != null) {
                 uploadAttachment(attachmentUri);
@@ -417,32 +417,28 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
                 }
                 break;
             case R.id.fragment_send_message_delayed_layout:
-                if (getFragmentManager() != null && userIsPrime) {
-                    delayedDeliveryDialogFragment.show(getFragmentManager(), "DelayedDeliveryDialogFragment");
+                if (userIsPrime) {
+                    delayedDeliveryDialogFragment.show(getParentFragmentManager(), "DelayedDeliveryDialogFragment");
                     delayedDeliveryDialogFragment.setOnScheduleDelayedDelivery(onScheduleDelayedDelivery);
                 } else {
                     upgradeToPrimeDialog();
                 }
                 break;
             case R.id.fragment_send_message_destruct_layout:
-                if (getFragmentManager() != null) {
-                    destructTimerDialogFragment.show(getFragmentManager(), "DestructTimerDialogFragment");
-                    destructTimerDialogFragment.setOnScheduleDestructTimerDelivery(onScheduleDestructTimerDelivery);
-                }
+                destructTimerDialogFragment.show(getParentFragmentManager(), "DestructTimerDialogFragment");
+                destructTimerDialogFragment.setOnScheduleDestructTimerDelivery(onScheduleDestructTimerDelivery);
                 break;
             case R.id.fragment_send_message_dead_layout:
-                if (getFragmentManager() != null && userIsPrime) {
-                    deadMansDeliveryDialogFragment.show(getFragmentManager(), "DeadMansDialogFragment");
+                if (userIsPrime) {
+                    deadMansDeliveryDialogFragment.show(getParentFragmentManager(), "DeadMansDialogFragment");
                     deadMansDeliveryDialogFragment.setOnScheduleDeadMansDelivery(onScheduleDeadMansDelivery);
                 } else {
                     upgradeToPrimeDialog();
                 }
                 break;
             case R.id.fragment_send_message_encrypt_layout:
-                if (getFragmentManager() != null) {
-                    encryptMessageDialogFragment.show(getFragmentManager(), "EncryptMessageDialogFragment");
-                    encryptMessageDialogFragment.setEncryptMessagePassword(onSetEncryptMessagePassword);
-                }
+                encryptMessageDialogFragment.show(getParentFragmentManager(), "EncryptMessageDialogFragment");
+                encryptMessageDialogFragment.setEncryptMessagePassword(onSetEncryptMessagePassword);
         }
     }
 
@@ -458,21 +454,18 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
             toEmailTextView.setError(getString(R.string.txt_enter_valid_email));
             return;
         }
-
         if (ccEmail.isEmpty() || EditTextUtils.isEmailListValid(ccEmail)) {
             ccTextView.setError(null);
         } else {
             ccTextView.setError(getString(R.string.txt_enter_valid_email));
             return;
         }
-
         if (bccEmail.isEmpty() || EditTextUtils.isEmailListValid(bccEmail)) {
             bccTextView.setError(null);
         } else {
             bccTextView.setError(getString(R.string.txt_enter_valid_email));
             return;
         }
-
         if (attachmentsProcessingEnabled) {
             Toast.makeText(getActivity(), getString(R.string.txt_attachments_in_processing), Toast.LENGTH_SHORT).show();
             return;
@@ -526,7 +519,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         }
 
         // Load contacts for autocomplete
-        sendModel.getContactsResponse().observe(this, contactList -> {
+        sendModel.getContactsResponse().observe(getViewLifecycleOwner(), contactList -> {
             if (contactList != null) {
                 handleContactsList(contactList);
             }
@@ -534,7 +527,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         sendModel.getContacts(200, 0);
 
         // Load keys before sending message
-        sendModel.getKeyResponse().observe(this, keyResponse -> {
+        sendModel.getKeyResponse().observe(getViewLifecycleOwner(), keyResponse -> {
             if (keyResponse != null && keyResponse.getKeyResult() != null && keyResponse.getKeyResult().length > 0) {
                 publicKeyList = new ArrayList<>();
                 for (KeyResult key : keyResponse.getKeyResult()) {
@@ -546,7 +539,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         });
 
         // checking for attachment updates when sending
-        sendModel.getUpdateAttachmentStatus().observe(this, responseStatus -> {
+        sendModel.getUpdateAttachmentStatus().observe(getViewLifecycleOwner(), responseStatus -> {
             if (responseStatus == ResponseStatus.RESPONSE_COMPLETE) {
                 List<MessageAttachment> attachmentList = messageSendAttachmentAdapter.getAttachmentList();
                 int attachmentListSize = attachmentList.size();
@@ -574,13 +567,13 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
 
         });
 
-        sendModel.getGrabAttachmentStatus().observe(this, aBoolean -> {
+        sendModel.getGrabAttachmentStatus().observe(getViewLifecycleOwner(), aBoolean -> {
             messageAttachmentsProcessingTextView.setVisibility(View.GONE);
             attachmentsProcessingEnabled = false;
         });
 
         sendModel.getMessagesResult()
-                .observe(this, messagesResult -> {
+                .observe(getViewLifecycleOwner(), messagesResult -> {
                     if (sendingProgress != null && sendingProgress.isShowing()) {
                         sendingProgress.dismiss();
                     }
@@ -589,13 +582,14 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
                     } else {
                         String folderName = messagesResult.getFolderName();
                         if (!folderName.equals(MainFolderNames.DRAFT)) {
+                            Toast.makeText(activity, getString(R.string.toast_message_sent), Toast.LENGTH_LONG).show();
                             finish();
                         }
                     }
                 });
 
         sendModel.getCreateMessageStatus()
-                .observe(this, responseStatus -> {
+                .observe(getViewLifecycleOwner(), responseStatus -> {
                     if (responseStatus == null || responseStatus == ResponseStatus.RESPONSE_ERROR) {
                         Toast.makeText(activity, getResources().getString(R.string.toast_message_not_created), Toast.LENGTH_SHORT).show();
                         finish();
@@ -603,7 +597,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
                 });
 
         sendModel.getCreateMessageResponse()
-                .observe(this, messagesResult -> {
+                .observe(getViewLifecycleOwner(), messagesResult -> {
                     if (messagesResult != null) {
                         currentMessageId = messagesResult.getId();
                         grabForwardedAttachments();
@@ -613,7 +607,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
                     }
                 });
 
-        sendModel.getOpenMessageResponse().observe(this, messageEntity -> {
+        sendModel.getOpenMessageResponse().observe(getViewLifecycleOwner(), messageEntity -> {
             if (messageEntity != null) {
                 loadMessageHandler(messageEntity);
             } else {
@@ -623,7 +617,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         });
 
         sendModel.getUploadAttachmentStatus()
-                .observe(this, responseStatus -> {
+                .observe(getViewLifecycleOwner(), responseStatus -> {
                     if (responseStatus == ResponseStatus.RESPONSE_ERROR_TOO_LARGE) {
                         Toast.makeText(activity, getString(R.string.error_upload_attachment_too_large), Toast.LENGTH_SHORT).show();
                     } else if (responseStatus == ResponseStatus.RESPONSE_ERROR) {
@@ -635,7 +629,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
                 });
 
         sendModel.getUploadAttachmentResponse()
-                .observe(this, messageAttachment -> {
+                .observe(getViewLifecycleOwner(), messageAttachment -> {
                     if (messageAttachment != null) {
                         messageSendAttachmentAdapter.addAttachment(messageAttachment);
                         if (messageSendAttachmentAdapter.getItemCount() > 0) {
@@ -650,7 +644,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
                 });
 
         sendModel.getDeleteAttachmentStatus()
-                .observe(this, responseStatus -> {
+                .observe(getViewLifecycleOwner(), responseStatus -> {
                     if (responseStatus == ResponseStatus.RESPONSE_COMPLETE) {
                         int attachmentCount = messageSendAttachmentAdapter.getItemCount();
                         if (attachmentCount < 1) {
@@ -660,7 +654,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
                 });
 
         sendModel.getMessageEncryptionResult()
-                .observe(this, messagesResult -> {
+                .observe(getViewLifecycleOwner(), messagesResult -> {
                     if (messagesResult != null) {
                         messageEncryptionResult = messagesResult.getEncryption();
                         if (messageEncryptionResult != null) {
@@ -669,23 +663,22 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
                     }
                 });
 
-        sendModel.getMySelfResponse()
-                .observe(this, myselfResponse -> {
-                    if (myselfResponse != null) {
-                        MyselfResult myself = myselfResponse.result[0];
-                        isSubjectEncrypted = myself.settings.isSubjectEncrypted();
-                        userIsPrime = myself.isPrime();
+        sendModel.getMySelfResponse().observe(getViewLifecycleOwner(), myselfResponse -> {
+            if (myselfResponse != null) {
+                MyselfResult myself = myselfResponse.getResult()[0];
+                isSubjectEncrypted = myself.settings.isSubjectEncrypted();
+                userIsPrime = myself.isPrime();
 //                        String joinedDate = myself.joinedDate;
 //                        boolean userTrial = AppUtils.twoWeeksTrial(joinedDate);
 //                        boolean userPrime = myself.isPrime;
 //                        userIsPrime = userPrime || userTrial;
-                        boolean signatureEnabled = sharedPreferences
-                                .getBoolean(getString(R.string.signature_enabled), false);
-                        if (signatureEnabled) {
-                            addSignature(myself.mailboxes[0].getSignature());
-                        }
-                    }
-                });
+                boolean signatureEnabled = sharedPreferences
+                        .getBoolean(getString(R.string.signature_enabled), false);
+                if (signatureEnabled) {
+                    addSignature(myself.mailboxes[0].getSignature());
+                }
+            }
+        });
     }
 
     private void createMessage() {
@@ -699,9 +692,9 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         SendMessageRequest createMessageRequest = new SendMessageRequest(
                 mailboxEmail,
                 "content",
-                new ArrayList<String>(),
-                new ArrayList<String>(),
-                new ArrayList<String>(),
+                new ArrayList<>(),
+                new ArrayList<>(),
+                new ArrayList<>(),
                 MainFolderNames.DRAFT,
                 mailboxId
         );
@@ -1122,10 +1115,8 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
     }
 
     private void upgradeToPrimeDialog() {
-        if (getFragmentManager() != null) {
-            UpgradeToPrimeFragment upgradeToPrimeFragment = new UpgradeToPrimeFragment();
-            upgradeToPrimeFragment.show(getFragmentManager(), "UpgradeToPrimeFragment");
-        }
+        UpgradeToPrimeFragment upgradeToPrimeFragment = new UpgradeToPrimeFragment();
+        upgradeToPrimeFragment.show(getParentFragmentManager(), "UpgradeToPrimeFragment");
     }
 
     private void addListeners() {

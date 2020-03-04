@@ -1,10 +1,6 @@
 package mobileapp.ctemplar.com.ctemplarapp.filters;
 
-import androidx.lifecycle.ViewModelProviders;
 import android.os.Bundle;
-import com.google.android.material.textfield.TextInputEditText;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Menu;
@@ -13,6 +9,12 @@ import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.Spinner;
 import android.widget.Toast;
+
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.ViewModelProvider;
+
+import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -77,7 +79,7 @@ public class EditFilterActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        filtersModel = ViewModelProviders.of(this).get(FiltersViewModel.class);
+        filtersModel = new ViewModelProvider(this).get(FiltersViewModel.class);
 
         Toolbar toolbar = findViewById(R.id.activity_edit_filter_toolbar);
         setSupportActionBar(toolbar);

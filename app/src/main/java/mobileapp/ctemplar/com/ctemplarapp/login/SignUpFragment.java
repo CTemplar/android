@@ -1,11 +1,12 @@
 package mobileapp.ctemplar.com.ctemplarapp.login;
 
-import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
+import android.view.View;
+
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import android.view.View;
+import androidx.lifecycle.ViewModelProvider;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -17,10 +18,10 @@ import butterknife.OnClick;
 import mobileapp.ctemplar.com.ctemplarapp.BaseFragment;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.login.step.SignUpFragmentsAdapter;
-import mobileapp.ctemplar.com.ctemplarapp.login.step.StepSecurityFragment;
 import mobileapp.ctemplar.com.ctemplarapp.login.step.StepPasswordFragment;
 import mobileapp.ctemplar.com.ctemplarapp.login.step.StepRegistrationActions;
 import mobileapp.ctemplar.com.ctemplarapp.login.step.StepRegistrationViewModel;
+import mobileapp.ctemplar.com.ctemplarapp.login.step.StepSecurityFragment;
 import mobileapp.ctemplar.com.ctemplarapp.login.step.StepUsernameFragment;
 import mobileapp.ctemplar.com.ctemplarapp.login.step.ViewPagerNoScroll;
 
@@ -54,11 +55,11 @@ public class SignUpFragment extends BaseFragment{
         list.add(new StepPasswordFragment());
         list.add(new StepSecurityFragment());
 
-        viewPager.setAdapter(new SignUpFragmentsAdapter(getFragmentManager(), list));
+        viewPager.setAdapter(new SignUpFragmentsAdapter(getParentFragmentManager(), list));
         viewPager.setOnTouchListener(null);
 
-        stepModel = ViewModelProviders.of(getActivity()).get(StepRegistrationViewModel.class);
-        stepModel.getAction().observe(this, this::handleRegistrationActions);
+        stepModel = new ViewModelProvider(getActivity()).get(StepRegistrationViewModel.class);
+        stepModel.getAction().observe(getViewLifecycleOwner(), this::handleRegistrationActions);
     }
 
     @Override

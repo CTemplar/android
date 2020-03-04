@@ -1,29 +1,31 @@
 package mobileapp.ctemplar.com.ctemplarapp.wbl;
 
 import android.app.Activity;
-import androidx.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import com.google.android.material.snackbar.BaseTransientBottomBar;
-import com.google.android.material.snackbar.Snackbar;
-import com.google.android.material.tabs.TabLayout;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentStatePagerAdapter;
-import androidx.viewpager.widget.ViewPager;
-import androidx.appcompat.app.ActionBar;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.SearchView;
-import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentStatePagerAdapter;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
+
+import com.google.android.material.snackbar.BaseTransientBottomBar;
+import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.tabs.TabLayout;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -54,7 +56,7 @@ public class WhiteBlackListActivity extends BaseActivity {
             actionBar.setDisplayShowHomeEnabled(true);
         }
 
-        model = ViewModelProviders.of(this).get(WhiteBlackListViewModel.class);
+        model = new ViewModelProvider(this).get(WhiteBlackListViewModel.class);
 
         TabLayout tabs = findViewById(R.id.tabs);
         ViewPager pagesContainer = findViewById(R.id.view_pager);
@@ -140,7 +142,7 @@ public class WhiteBlackListActivity extends BaseActivity {
             }
 
             model = ((WhiteBlackListActivity) activity).getModel();
-            model.getWhitelistResponse().observe(this, whiteListContacts -> {
+            model.getWhitelistResponse().observe(getViewLifecycleOwner(), whiteListContacts -> {
                 if (whiteListContacts != null) {
                     WhitelistAdapter adapter1 = new WhitelistAdapter(whiteListContacts);
                     recyclerView.setAdapter(adapter1);
@@ -237,7 +239,7 @@ public class WhiteBlackListActivity extends BaseActivity {
             }
 
             model = ((WhiteBlackListActivity) activity).getModel();
-            model.getBlacklistResponse().observe(this, blackListContacts -> {
+            model.getBlacklistResponse().observe(getViewLifecycleOwner(), blackListContacts -> {
                 if (blackListContacts != null) {
                     BlacklistAdapter adapter1 = new BlacklistAdapter(blackListContacts);
                     recyclerView.setAdapter(adapter1);

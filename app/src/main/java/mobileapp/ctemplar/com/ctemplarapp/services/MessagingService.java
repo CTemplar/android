@@ -90,7 +90,7 @@ public class MessagingService extends FirebaseMessagingService {
         String content = (isSubjectEncrypted) ? getString(R.string.txt_encrypted_subject) : subject;
 
         Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
-        String channelId = "ctemplar";
+        String channelId = getString(R.string.channel_id);
         String channelName = "messages";
 
         Intent intent = new Intent(this, ViewMessagesActivity.class);

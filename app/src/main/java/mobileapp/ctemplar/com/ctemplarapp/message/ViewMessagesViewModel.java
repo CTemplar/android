@@ -73,7 +73,6 @@ public class ViewMessagesViewModel extends ViewModel {
     }
 
     public void getChainMessages(long id) {
-
         final MessageEntity parentMessage = messagesRepository.getLocalMessage(id);
         if (parentMessage != null) {
             final List<MessageEntity> childrenEntities = messagesRepository.getChildMessages(parentMessage);
@@ -101,9 +100,10 @@ public class ViewMessagesViewModel extends ViewModel {
                         }
                         MessagesResult parentMessageResult = messagesResults.get(0);
                         MessageEntity parentLocalMessage = messagesRepository.getLocalMessage(id);
+                        String requestFolder = parentLocalMessage != null
+                                ? parentLocalMessage.getRequestFolder() : "";
                         MessageEntity parentEntity = MessageProvider.fromMessagesResultToEntity(
-                                parentMessageResult, parentLocalMessage.getRequestFolder()
-                        );
+                                parentMessageResult, requestFolder);
                         MessageProvider parentMessage = MessageProvider.fromMessageEntity(parentEntity);
 
                         MessagesResult[] childrenResult = parentMessageResult.getChildren();

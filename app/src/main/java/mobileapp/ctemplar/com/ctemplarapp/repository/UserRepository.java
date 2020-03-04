@@ -1,11 +1,17 @@
 package mobileapp.ctemplar.com.ctemplarapp.repository;
 
+import com.google.firebase.iid.FirebaseInstanceId;
+
+import java.io.IOException;
 import java.util.List;
 
 import javax.inject.Singleton;
 
 import io.reactivex.Observable;
+import io.reactivex.Single;
+import io.reactivex.SingleOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.net.RestService;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.AddFirebaseTokenRequest;
@@ -18,6 +24,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.request.ContactsEncryptionRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.CreateMailboxRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.CustomFilterRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.DefaultMailboxRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.EmptyFolderRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.EnabledMailboxRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.MarkMessageAsReadRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.MarkMessageIsStarredRequest;
@@ -40,6 +47,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.Filters.FiltersResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.KeyResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Mailboxes.MailboxesResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Mailboxes.MailboxesResult;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.EmptyFolderResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessageAttachment;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResult;
@@ -56,6 +64,7 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
 import retrofit2.Response;
+import timber.log.Timber;
 
 @Singleton
 public class UserRepository {
@@ -147,6 +156,15 @@ public class UserRepository {
     public void logout() {
         userStore.logout();
         CTemplarApp.getAppDatabase().clearAllTables();
+        Single<String> firebaseClearInstance = Single.create((SingleOnSubscribe<String>) emitter -> {
+            try {
+                FirebaseInstanceId.getInstance().deleteInstanceId();
+            } catch (IOException e) {
+                Timber.e(e);
+            }
+        })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
     }
 
     public void saveMailboxes(List<MailboxesResult> mailboxes) {
@@ -179,6 +197,12 @@ public class UserRepository {
 
     public Observable<SignUpResponse> signUp(SignUpRequest request) {
         return service.signUp(request)
+                .subscribeOn(io.reactivex.schedulers.Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public Observable<Response<Void>> signOut(String platform, String deviceToken) {
+        return service.signOut(platform, deviceToken)
                 .subscribeOn(io.reactivex.schedulers.Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
@@ -227,6 +251,12 @@ public class UserRepository {
 
     public Observable<Response<Void>> deleteMessages(String messageIds) {
         return service.deleteMessages(messageIds)
+                .subscribeOn(io.reactivex.schedulers.Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public Observable<EmptyFolderResponse> emptyFolder(EmptyFolderRequest request) {
+        return service.emptyFolder(request)
                 .subscribeOn(io.reactivex.schedulers.Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }

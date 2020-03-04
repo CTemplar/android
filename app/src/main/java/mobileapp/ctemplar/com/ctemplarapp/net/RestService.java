@@ -15,6 +15,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.request.CreateMailboxRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.CustomFilterRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.DefaultMailboxRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.EditFolderRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.EmptyFolderRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.EnabledMailboxRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.MarkMessageAsReadRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.MarkMessageIsStarredRequest;
@@ -42,6 +43,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.Folders.FoldersResult;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.KeyResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Mailboxes.MailboxesResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Mailboxes.MailboxesResult;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.EmptyFolderResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessageAttachment;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResult;
@@ -75,6 +77,9 @@ public interface RestService {
 
     @POST("auth/sign-up/")
     Observable<SignUpResponse> signUp(@Body SignUpRequest request);
+
+    @GET("auth/sign-out/")
+    Observable<Response<Void>> signOut(@Query("platform") String platform, @Query("device_token") String deviceToken);
 
     @POST("auth/check-username/")
     Observable<CheckUsernameResponse> checkUsername(@Body CheckUsernameRequest request);
@@ -125,6 +130,9 @@ public interface RestService {
 
     @DELETE("emails/messages/")
     Observable<Response<Void>> deleteMessages(@Query("id__in") String messageIds);
+
+    @POST("emails/empty-folder/")
+    Observable<EmptyFolderResponse> emptyFolder(@Body EmptyFolderRequest request);
 
     @PATCH("emails/messages/")
     Observable<Response<Void>> toFolder(@Query("id__in") long id, @Body MoveToFolderRequest request);

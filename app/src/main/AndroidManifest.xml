@@ -58,9 +58,6 @@
             android:theme="@style/ActionBarLight">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
-            </intent-filter>
-
-            <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
             </intent-filter>
             <meta-data

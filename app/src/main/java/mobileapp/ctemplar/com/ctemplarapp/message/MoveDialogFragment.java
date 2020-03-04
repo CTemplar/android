@@ -1,16 +1,12 @@
 package mobileapp.ctemplar.com.ctemplarapp.message;
 
 import android.app.Dialog;
-import androidx.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +16,11 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.DialogFragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import java.util.List;
 import java.util.Objects;
@@ -54,10 +55,10 @@ public class MoveDialogFragment extends DialogFragment {
         }
         final long parentMessageId = bundleArguments.getLong(ViewMessagesActivity.PARENT_ID, -1);
 
-        viewMessagesModel = ViewModelProviders.of(this).get(ViewMessagesViewModel.class);
+        viewMessagesModel = new ViewModelProvider(getActivity()).get(ViewMessagesViewModel.class);
         getCustomFolders();
 
-        viewMessagesModel.getFoldersResponse().observe(this, foldersResponse -> {
+        viewMessagesModel.getFoldersResponse().observe(getViewLifecycleOwner(), foldersResponse -> {
             if (foldersResponse != null) {
                 handleFoldersResponse(view, foldersResponse);
             }

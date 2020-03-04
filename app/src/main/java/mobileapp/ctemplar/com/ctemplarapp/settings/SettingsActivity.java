@@ -16,7 +16,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.CheckBoxPreference;
 import androidx.preference.EditTextPreference;
 import androidx.preference.Preference;
@@ -66,7 +66,7 @@ public class SettingsActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.settings_activity);
-        settingsModel = ViewModelProviders.of(this).get(SettingsActivityViewModel.class);
+        settingsModel = new ViewModelProvider(this).get(SettingsActivityViewModel.class);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         requestMySelfData();
 
@@ -391,8 +391,8 @@ public class SettingsActivity extends AppCompatActivity {
 
                     @Override
                     public void onNext(MyselfResponse myselfResponse) {
-                        if (myselfResponse != null && myselfResponse.result != null) {
-                            MyselfResult myselfResult = myselfResponse.result[0];
+                        if (myselfResponse != null && myselfResponse.getResult() != null) {
+                            MyselfResult myselfResult = myselfResponse.getResult()[0];
                             saveData(myselfResult);
                         }
                     }
