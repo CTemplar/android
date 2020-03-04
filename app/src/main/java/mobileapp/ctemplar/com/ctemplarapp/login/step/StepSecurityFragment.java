@@ -1,6 +1,5 @@
 package mobileapp.ctemplar.com.ctemplarapp.login.step;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -38,43 +37,39 @@ public class StepSecurityFragment extends BaseFragment {
     private StepRegistrationViewModel viewModel;
     private LoginActivityViewModel loginActivityModel;
 
+    @BindView(R.id.fragment_step_security_next_btn)
+    Button btnNext;
+
+    @BindView(R.id.fragment_step_security_check)
+    AppCompatCheckBox checkBox;
+
+    @BindView(R.id.fragment_step_security_check_text)
+    TextView txtCheckHint;
+
+    @BindView(R.id.fragment_step_security_captcha_input)
+    TextInputEditText captchaEditText;
+
+    @BindView(R.id.fragment_step_security_captcha_input_layout)
+    TextInputLayout captchaInputLayout;
+
+    @BindView(R.id.fragment_step_security_captcha_layout)
+    ConstraintLayout captchaLayout;
+
+    @BindView(R.id.fragment_step_security_captcha_checked)
+    ImageView captchaChecked;
+
     private ImageView captchaImageView;
     private boolean captchaState;
     private String captchaKey;
     private String captchaValue;
 
-    @BindView(R.id.fragment_step_email_next_btn)
-    Button btnNext;
-
-    @BindView(R.id.fragment_step_email_check)
-    AppCompatCheckBox checkBox;
-
-    @BindView(R.id.fragment_step_email_check_text)
-    TextView txtCheckHint;
-
-    @BindView(R.id.fragment_step_email_captcha_input)
-    TextInputEditText captchaEditText;
-
-    @BindView(R.id.fragment_step_email_captcha_input_layout)
-    TextInputLayout captchaInputLayout;
-
-    @BindView(R.id.fragment_step_email_captcha_layout)
-    ConstraintLayout captchaLayout;
-
-    @BindView(R.id.fragment_step_email_captcha_checked)
-    ImageView captchaChecked;
-
     @Override
     protected int getLayoutId() {
-        return R.layout.fragment_step_email;
+        return R.layout.fragment_step_security;
     }
 
     @Override
-    public void onAttach(@NotNull Context context) {
-        super.onAttach(context);
-    }
-
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
 
@@ -85,7 +80,7 @@ public class StepSecurityFragment extends BaseFragment {
             return;
         }
 
-        captchaImageView = view.findViewById(R.id.fragment_step_email_captcha_img);
+        captchaImageView = view.findViewById(R.id.fragment_step_security_captcha_img);
 
         loginActivityModel = new ViewModelProvider(getActivity()).get(LoginActivityViewModel.class);
         viewModel = new ViewModelProvider(getActivity()).get(StepRegistrationViewModel.class);
@@ -127,17 +122,7 @@ public class StepSecurityFragment extends BaseFragment {
                 .into(captchaImageView);
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-    }
-
-    @OnClick(R.id.fragment_step_email_next_btn)
+    @OnClick(R.id.fragment_step_security_next_btn)
     public void onClickNext() {
         if (captchaState) {
             loginActivityModel.showProgressDialog();
@@ -148,12 +133,12 @@ public class StepSecurityFragment extends BaseFragment {
         }
     }
 
-    @OnClick(R.id.fragment_step_email_captcha_refresh_img)
+    @OnClick(R.id.fragment_step_security_captcha_refresh_img)
     public void onClickCaptchaRefresh() {
         viewModel.getCaptcha();
     }
 
-    @OnClick(R.id.fragment_step_email_captcha_confirm)
+    @OnClick(R.id.fragment_step_security_captcha_confirm)
     public void onClickCaptchaConfirm() {
         captchaValue = captchaEditText.getText().toString();
         viewModel.captchaVerify(captchaKey, captchaValue);
@@ -197,5 +182,4 @@ public class StepSecurityFragment extends BaseFragment {
             }
         }
     }
-
 }

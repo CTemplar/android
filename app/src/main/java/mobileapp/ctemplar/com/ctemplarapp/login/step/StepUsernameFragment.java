@@ -1,6 +1,5 @@
 package mobileapp.ctemplar.com.ctemplarapp.login.step;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -51,11 +50,7 @@ public class StepUsernameFragment extends BaseFragment {
     }
 
     @Override
-    public void onAttach(@NotNull Context context) {
-        super.onAttach(context);
-    }
-
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
 

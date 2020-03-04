@@ -59,6 +59,10 @@ public class StepRegistrationViewModel extends ViewModel {
         signUpRequest.setRecoveryEmail(email);
     }
 
+    public void setInviteCode(String inviteCode) {
+        signUpRequest.setInviteCode(inviteCode);
+    }
+
     public void setCaptcha(String captchaKey, String captchaValue) {
         signUpRequest.setCaptchaKey(captchaKey);
         signUpRequest.setCaptchaValue(captchaValue);
@@ -132,8 +136,8 @@ public class StepRegistrationViewModel extends ViewModel {
 
             @Override
             public void onError(Throwable e) {
-                e.printStackTrace();
                 responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
+                Timber.e(e);
             }
 
             @Override
@@ -202,5 +206,4 @@ public class StepRegistrationViewModel extends ViewModel {
     private void hashPassword() {
         signUpRequest.setPasswordHashed(EncodeUtils.generateHash(signUpRequest.getUsername(), signUpRequest.getPassword()));
     }
-
 }
