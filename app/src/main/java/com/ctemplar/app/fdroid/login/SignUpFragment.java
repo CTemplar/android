@@ -8,17 +8,9 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
-import java.util.Objects;
-
-import butterknife.BindView;
-import butterknife.OnClick;
 import com.ctemplar.app.fdroid.BaseFragment;
 import com.ctemplar.app.fdroid.R;
 import com.ctemplar.app.fdroid.login.step.SignUpFragmentsAdapter;
-import com.ctemplar.app.fdroid.login.step.StepInvitationFragment;
 import com.ctemplar.app.fdroid.login.step.StepPasswordFragment;
 import com.ctemplar.app.fdroid.login.step.StepRecoveryFragment;
 import com.ctemplar.app.fdroid.login.step.StepRegistrationActions;
@@ -27,6 +19,14 @@ import com.ctemplar.app.fdroid.login.step.StepSecurityFragment;
 import com.ctemplar.app.fdroid.login.step.StepUsernameFragment;
 import com.ctemplar.app.fdroid.login.step.ViewPagerNoScroll;
 import com.google.android.material.tabs.TabLayout;
+
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.Objects;
+
+import butterknife.BindView;
+import butterknife.OnClick;
 
 public class SignUpFragment extends BaseFragment{
 
@@ -60,7 +60,6 @@ public class SignUpFragment extends BaseFragment{
         list.add(new StepUsernameFragment());
         list.add(new StepPasswordFragment());
         list.add(new StepRecoveryFragment());
-        list.add(new StepInvitationFragment());
         list.add(new StepSecurityFragment());
 
         pageIndicatorTabLayout.setupWithViewPager(viewPager, true);

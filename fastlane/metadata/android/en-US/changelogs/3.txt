@@ -1,0 +1,1 @@
+* Invitation code field moved to the first sign up step
