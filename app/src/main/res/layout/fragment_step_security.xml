@@ -87,7 +87,7 @@
                 android:id="@+id/fragment_step_security_captcha_input_layout"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="10dp"
                 android:minWidth="150dp"
                 android:textColorHint="@color/colorDarkBlue2"
                 app:hintEnabled="true"
@@ -107,7 +107,7 @@
                     android:textColor="@color/colorDarkBlue2"
                     android:textSize="16sp"
                     android:theme="@style/EditTextCredentialsThemeDark" />
-
+                <requestFocus />
             </com.google.android.material.textfield.TextInputLayout>
 
             <ImageView
@@ -129,7 +129,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="24dp"
             android:layout_marginStart="24dp"
-            android:layout_marginTop="14dp"
+            android:layout_marginTop="7dp"
             android:button="@drawable/selector_check"
             android:drawablePadding="16dp"
             app:layout_constraintEnd_toStartOf="@+id/fragment_step_security_check_text"

@@ -51,7 +51,8 @@
             app:hintTextAppearance="@style/TextHintAppearanceDark"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/fragment_step_username_hint">
+            app:layout_constraintTop_toBottomOf="@id/fragment_step_username_hint"
+            app:layout_constraintBottom_toTopOf="@id/fragment_step_username_invite_code_input_layout">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/fragment_step_username_input"
@@ -71,6 +72,55 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/fragment_step_username_invite_code_input_layout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="24dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="24dp"
+            android:textColorHint="@color/colorDarkBlue2"
+            app:hintEnabled="true"
+            app:hintTextAppearance="@style/TextHintAppearanceDark"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/fragment_step_username_input_layout"
+            app:layout_constraintBottom_toTopOf="@id/fragment_step_username_invite_code_hint">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/fragment_step_username_invite_code_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/lato_regular"
+                android:hint="@string/title_invitation_code"
+                android:inputType="text"
+                android:letterSpacing="0.05"
+                android:textColor="@color/colorDarkBlue2"
+                android:textSize="16sp"
+                android:theme="@style/EditTextCredentialsThemeDark" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:id="@+id/fragment_step_username_invite_code_hint"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="24dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginRight="24dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:linksClickable="true"
+            android:textColorLink="@color/colorLinkBlue"
+            android:textColor="@color/colorBlack50"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintTop_toBottomOf="@id/fragment_step_username_invite_code_input_layout"
+            app:layout_constraintBottom_toTopOf="@id/fragment_step_username_next_btn" />
+
         <Button
             android:id="@+id/fragment_step_username_next_btn"
             android:layout_width="match_parent"
@@ -82,7 +132,7 @@
             android:fontFamily="@font/lato_regular"
             android:text="@string/title_next"
             android:textColor="@android:color/white"
-            app:layout_constraintTop_toBottomOf="@+id/fragment_step_username_input_layout" />
+            app:layout_constraintTop_toBottomOf="@id/fragment_step_username_invite_code_hint" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
