@@ -17,6 +17,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.Picasso;
 
 import org.jetbrains.annotations.NotNull;
@@ -37,11 +38,8 @@ public class StepSecurityFragment extends BaseFragment {
     private StepRegistrationViewModel viewModel;
     private LoginActivityViewModel loginActivityModel;
 
-    @BindView(R.id.fragment_step_security_next_btn)
-    Button nextButton;
-
-    @BindView(R.id.fragment_step_security_check)
-    AppCompatCheckBox termsCheckBox;
+    @BindView(R.id.fragment_step_security_captcha_img)
+    ImageView captchaImageView;
 
     @BindView(R.id.fragment_step_security_check_text)
     TextView txtCheckHint;
@@ -58,7 +56,12 @@ public class StepSecurityFragment extends BaseFragment {
     @BindView(R.id.fragment_step_security_captcha_checked)
     ImageView captchaChecked;
 
-    private ImageView captchaImageView;
+    @BindView(R.id.fragment_step_security_check)
+    AppCompatCheckBox termsCheckBox;
+
+    @BindView(R.id.fragment_step_security_next_btn)
+    Button nextButton;
+
     private boolean captchaState;
     private String captchaKey;
     private String captchaValue;
@@ -80,15 +83,13 @@ public class StepSecurityFragment extends BaseFragment {
             return;
         }
 
-        captchaImageView = view.findViewById(R.id.fragment_step_security_captcha_img);
-
         loginActivityModel = new ViewModelProvider(getActivity()).get(LoginActivityViewModel.class);
         viewModel = new ViewModelProvider(getActivity()).get(StepRegistrationViewModel.class);
         viewModel.getResponseStatus().observe(getViewLifecycleOwner(), this::handleResponseStatus);
-
-        refreshCaptcha();
         viewModel.getCaptchaResponse().observe(getViewLifecycleOwner(), this::handleCaptchaResponse);
         viewModel.getCaptchaVerifyResponse().observe(getViewLifecycleOwner(), this::handleCaptchaVerifyResponse);
+
+        refreshCaptcha();
         setListeners();
     }
 
@@ -133,7 +134,10 @@ public class StepSecurityFragment extends BaseFragment {
         if (response != null) {
             captchaKey = response.getCaptchaKey();
             String captchaImageUrl = response.getCaptchaImageUrl();
-            Picasso.get().load(captchaImageUrl).into(captchaImageView);
+            Picasso.get()
+                    .load(captchaImageUrl)
+                    .memoryPolicy(MemoryPolicy.NO_STORE)
+                    .into(captchaImageView);
         }
     }
 
