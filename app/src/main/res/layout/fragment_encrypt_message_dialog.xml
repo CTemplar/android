@@ -104,7 +104,7 @@
                         android:inputType="textPassword"
                         android:hint="@string/title_message_password"
                         android:background="@drawable/text_input_field" />
-
+                    <requestFocus />
                 </com.google.android.material.textfield.TextInputLayout>
 
             </LinearLayout>
