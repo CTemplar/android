@@ -384,12 +384,11 @@ Votre mot de passe est connecté à votre clé de cryptage, si vous changez votr
     <string name="error_username_small">Minimum 4 symboles</string>
     <string name="error_username_small_two">Minimum 2 symboles</string>
     <string name="error_username_big">Maximum 64 symboles</string>
-    <string name="error_password_small">Minimum 8 symboles</string>
-    <string name="error_password_big">Maximum 64 symboles</string>
+    <string name="error_password_small">Minimum 1 symbole</string>
+    <string name="error_password_big">Maximum 255 symboles</string>
     <string name="error_username_incorrect">Saisir un nom utilisateur valide</string>
     <string name="error_username_exists">L\'email existe déjà.</string>
     <string name="error_password_not_match">Les mots de passe doivent être identiques</string>
-    <string name="error_password_message">Le mot de passe doit contenir entre 8 et 30 caractères</string>
     <string name="error_current_password_not_match">Ancien mot de passe incorrect</string>
     <string name="error_empty_email">Email vide</string>
     <string name="error_empty_password">Mot de passe vide</string>

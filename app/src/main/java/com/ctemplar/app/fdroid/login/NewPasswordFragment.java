@@ -16,6 +16,7 @@ import com.google.android.material.textfield.TextInputLayout;
 
 import org.jetbrains.annotations.NotNull;
 
+import butterknife.BindInt;
 import butterknife.BindView;
 import butterknife.OnClick;
 import com.ctemplar.app.fdroid.BaseFragment;
@@ -27,6 +28,12 @@ import com.ctemplar.app.fdroid.utils.EditTextUtils;
 public class NewPasswordFragment extends BaseFragment {
 
     private LoginActivityViewModel viewModel;
+
+    @BindInt(R.integer.restriction_password_min)
+    int PASSWORD_MIN;
+
+    @BindInt(R.integer.restriction_password_max)
+    int PASSWORD_MAX;
 
     @BindView(R.id.fragment_new_password_input)
     TextInputEditText editChoose;
@@ -78,12 +85,11 @@ public class NewPasswordFragment extends BaseFragment {
 
     @OnClick(R.id.fragment_new_password_next_btn)
     public void onNextClick() {
-
-        if (editChoose.length() < 10) {
+        if (editChoose.length() < PASSWORD_MIN) {
             editConfirmLayout.setError(getString(R.string.error_password_small));
             return;
         }
-        if (editChoose.length() > 64) {
+        if (editChoose.length() > PASSWORD_MAX) {
             editConfirmLayout.setError(getString(R.string.error_password_big));
             return;
         }

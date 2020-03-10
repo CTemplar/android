@@ -9,20 +9,27 @@ import android.view.View;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.ctemplar.app.fdroid.BaseFragment;
-import com.ctemplar.app.fdroid.R;
-import com.ctemplar.app.fdroid.utils.EditTextUtils;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
 import org.jetbrains.annotations.NotNull;
 
+import butterknife.BindInt;
 import butterknife.BindView;
 import butterknife.OnClick;
+import com.ctemplar.app.fdroid.BaseFragment;
+import com.ctemplar.app.fdroid.R;
+import com.ctemplar.app.fdroid.utils.EditTextUtils;
 
 public class StepPasswordFragment extends BaseFragment {
 
     private StepRegistrationViewModel viewModel;
+
+    @BindInt(R.integer.restriction_password_min)
+    int PASSWORD_MIN;
+
+    @BindInt(R.integer.restriction_password_max)
+    int PASSWORD_MAX;
 
     @BindView(R.id.fragment_step_password_choose_input)
     TextInputEditText passwordEditText;
@@ -66,11 +73,11 @@ public class StepPasswordFragment extends BaseFragment {
 
     @OnClick({R.id.fragment_step_password_next_btn})
     public void onClickNext() {
-        if (passwordEditText.length() < 7) {
+        if (passwordEditText.length() < PASSWORD_MIN) {
             passwordInputLayout.setError(getString(R.string.error_password_small));
             return;
         }
-        if (passwordEditText.length() > 64) {
+        if (passwordEditText.length() > PASSWORD_MAX) {
             passwordInputLayout.setError(getString(R.string.error_password_big));
             return;
         }

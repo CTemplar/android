@@ -21,6 +21,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.textfield.TextInputLayout;
 
+import butterknife.BindInt;
 import butterknife.BindView;
 import butterknife.OnClick;
 import com.ctemplar.app.fdroid.BaseActivity;
@@ -29,12 +30,17 @@ import com.ctemplar.app.fdroid.R;
 import com.ctemplar.app.fdroid.login.LoginActivity;
 import com.ctemplar.app.fdroid.main.MainActivityActions;
 import com.ctemplar.app.fdroid.net.ResponseStatus;
-import com.ctemplar.app.fdroid.utils.EditTextUtils;
 
 public class ChangePasswordActivity extends BaseActivity {
 
     private String userCurrentPassword;
     private ChangePasswordViewModel changePasswordModel;
+
+    @BindInt(R.integer.restriction_password_min)
+    int PASSWORD_MIN;
+
+    @BindInt(R.integer.restriction_password_max)
+    int PASSWORD_MAX;
 
     @BindView(R.id.activity_change_password_current_input_layout)
     TextInputLayout editTextCurrentPasswordLayout;
@@ -122,35 +128,40 @@ public class ChangePasswordActivity extends BaseActivity {
         final boolean resetData = checkBoxResetData.isChecked();
 
         if(!TextUtils.equals(userCurrentPassword, currentPassword)) {
-            Toast.makeText(this, getResources().getString(R.string.error_current_password_not_match),
-                    Toast.LENGTH_SHORT).show();
+            editTextCurrentPasswordLayout.setError(getString(R.string.error_current_password_not_match));
+            return;
+        }
+        if (newPassword.length() < PASSWORD_MIN) {
+            editTextNewPasswordLayout.setError(getString(R.string.error_password_small));
+            return;
+        }
+        if (newPassword.length() > PASSWORD_MAX) {
+            editTextNewPasswordLayout.setError(getString(R.string.error_password_big));
+            return;
+        }
+        if(!TextUtils.equals(newPassword, passwordConfirmation)) {
+            editTextPasswordConfirmationLayout.setError(getString(R.string.error_password_not_match));
             return;
         }
 
-        if (TextUtils.equals(newPassword, passwordConfirmation)
-                && EditTextUtils.isTextLength(newPassword, 8, 64)) {
-
-            String alertMessage = getResources().getString(R.string.dialog_change_password_confirm);
-            if (resetData) {
-                alertMessage = getResources().getString(R.string.dialog_change_password_confirm_reset);
-            }
-            new AlertDialog.Builder(this)
-                    .setTitle(getResources().getString(R.string.dialog_change_password))
-                    .setMessage(alertMessage)
-                    .setPositiveButton(getResources().getString(R.string.btn_change), (dialog, which) -> {
-                        changePasswordModel.changePassword(currentPassword, newPassword, resetData);
-                        dialogState(true);
-                    }
-                    )
-                    .setNeutralButton(getResources().getString(R.string.btn_cancel), null)
-                    .show();
-        } else {
-            Toast.makeText(this, getString(R.string.error_password_small), Toast.LENGTH_SHORT).show();
+        String alertMessage = getString(R.string.dialog_change_password_confirm);
+        if (resetData) {
+            alertMessage = getString(R.string.dialog_change_password_confirm_reset);
         }
+        new AlertDialog.Builder(this)
+                .setTitle(getString(R.string.dialog_change_password))
+                .setMessage(alertMessage)
+                .setPositiveButton(getString(R.string.btn_change), (dialog, which) -> {
+                            changePasswordModel.changePassword(currentPassword, newPassword, resetData);
+                            dialogState(true);
+                        }
+                )
+                .setNeutralButton(getString(R.string.btn_cancel), null)
+                .show();
     }
 
     public void setListeners() {
-        editTextCurrentPassword.addTextChangedListener(new TextWatcher() {
+        TextWatcher textWatcher = new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -158,83 +169,19 @@ public class ChangePasswordActivity extends BaseActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (TextUtils.isEmpty(s)) {
-                    editTextPasswordConfirmationLayout.setError(getString(R.string.error_enter_old_password));
-                } else {
-                    editTextPasswordConfirmationLayout.setError(null);
-                }
-
-                String oldPassword = editTextCurrentPassword.getText().toString();
-                if (TextUtils.isEmpty(oldPassword)) {
-                    editTextCurrentPasswordLayout.setError(getString(R.string.error_enter_old_password));
-                } else {
-                    editTextCurrentPasswordLayout.setError(null);
-                }
+                editTextCurrentPasswordLayout.setError(null);
+                editTextNewPasswordLayout.setError(null);
+                editTextPasswordConfirmationLayout.setError(null);
             }
 
             @Override
             public void afterTextChanged(Editable s) {
 
             }
-        });
-
-        editTextNewPassword.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                String passwordConfirmation = editTextPasswordConfirmation.getText().toString();
-                if (TextUtils.equals(s, passwordConfirmation)) {
-                    editTextPasswordConfirmationLayout.setError(null);
-                } else {
-                    editTextPasswordConfirmationLayout.setError(getString(R.string.error_password_not_match));
-                }
-
-                String oldPassword = editTextCurrentPassword.getText().toString();
-                if (TextUtils.isEmpty(oldPassword)) {
-                    editTextCurrentPasswordLayout.setError(getString(R.string.error_enter_old_password));
-                } else {
-                    editTextCurrentPasswordLayout.setError(null);
-                }
-            }
-        });
-
-        editTextPasswordConfirmation.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                String password = editTextNewPassword.getText().toString();
-                if (TextUtils.equals(s, password)) {
-                    editTextPasswordConfirmationLayout.setError(null);
-                } else {
-                    editTextPasswordConfirmationLayout.setError(getString(R.string.error_password_not_match));
-                }
-
-                String oldPassword = editTextCurrentPassword.getText().toString();
-                if (TextUtils.isEmpty(oldPassword)) {
-                    editTextCurrentPasswordLayout.setError(getString(R.string.error_enter_old_password));
-                } else {
-                    editTextCurrentPasswordLayout.setError(null);
-                }
-            }
-        });
+        };
+        editTextCurrentPassword.addTextChangedListener(textWatcher);
+        editTextNewPassword.addTextChangedListener(textWatcher);
+        editTextPasswordConfirmation.addTextChangedListener(textWatcher);
     }
 
     private void dialogState(boolean state) {
