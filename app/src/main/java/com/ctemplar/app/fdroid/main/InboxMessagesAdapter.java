@@ -134,7 +134,7 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesView
             holder.imgUnread.setVisibility(View.GONE);
             holder.txtUsername.setTypeface(null, Typeface.NORMAL);
             int backgroundColor = holder.foreground.getContext()
-                    .getResources().getColor(R.color.colorGreyLight);
+                    .getResources().getColor(R.color.colorGrey5);
             holder.foreground.setBackgroundColor(backgroundColor);
         } else {
             holder.imgUnread.setVisibility(View.VISIBLE);
