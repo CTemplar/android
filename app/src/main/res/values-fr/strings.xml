@@ -1,9 +1,6 @@
 <resources>
-    <string name="app_name">CTemplarApp</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="nav_header_title">Android Studio</string>
-    <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Paramètres</string>
     <string name="action_undo">ANNULER</string>
@@ -82,6 +79,7 @@
     <string name="title_reset_code">Code</string>
     <string name="title_confirm">Confirmer</string>
     <string name="title_confirm_reset_password">Confirmer la réinitialisation du mot de passe</string>
+    <string name="title_invitation_code">Code d\'invitation</string>
     <string name="title_confirm_reset_password_hint">Votre clé de cryptage est connectée à votre mot de passe. Pour cette raison <![CDATA[<font color="#e74c3c"> il n\'est pas possible de décrypter les précédents messages, les pièces jointes et vos contacts </font>]]> si vous réinitialiser votre mot de passe.
 Pour toute question, merci de nous contacter <![CDATA[<u><a href="mailto:support@ctemplar.com">support@ctemplar.com</a></u>]]>.</string>
     <string name="title_confirm_reset_password_hint2">Êtes vous certain de vouloir réinitialiser votre mot de passe ?</string>
@@ -99,6 +97,7 @@ Votre mot de passe est connecté à votre clé de cryptage, si vous changez votr
     <string name="hint_step_email_recovery_short">En cochant cette case, vous comprenez que si vous perdez votre mot de passe et ne définissez pas d\'e-mail de récupération, votre compte ne sera pas récupérable. <![CDATA[<u><font color="blue">Plus d\'info</font></u>]]></string>
     <string name="title_step_email_hint">Cet email sera utilisé pour récupérer votre compte si vous oubliez votre mot de passe.</string>
     <string name="title_step_email_check_hint">Veuillez cocher cette case si vous acceptez de vous conformer à nos <![CDATA[<u><a href="https://ctemplar.com/terms">Termes et Conditions</a></u>]]></string>
+    <string name="title_step_invitation_code_hint">Vous pouvez obtenir le code d\'invitation de tout client payant existant ou vous pouvez le demander auprès de nous. Comment obtenir le code d\'invitation? <![CDATA[<u><a href="https://ctemplar.com/faq/get-an-invitation-code/">Apprendre encore plus</a></u>]]></string>
     <string name="title_more_info_link"><u>Détail</u>></string>
     <string name="title_empty_inbox">Aucun message</string>
     <string name="title_empty_messages">Aucun email Dans %1$s</string>
@@ -380,16 +379,16 @@ Votre mot de passe est connecté à votre clé de cryptage, si vous changez votr
     <string name="txt_not_now">Plus tard</string>
 
     <!-- ERRORS -->
+    <string name="error_field_cannot_be_empty">Ce champ ne peut pas être vide</string>
     <string name="error_invalid_email">Veuillez sélectionner une adresse email valide ou sélectionner un email de récupération.</string>
     <string name="error_username_small">Minimum 4 symboles</string>
     <string name="error_username_small_two">Minimum 2 symboles</string>
     <string name="error_username_big">Maximum 64 symboles</string>
-    <string name="error_password_small">Minimum 8 symboles</string>
-    <string name="error_password_big">Maximum 64 symboles</string>
+    <string name="error_password_small">Minimum 1 symbole</string>
+    <string name="error_password_big">Maximum 255 symboles</string>
     <string name="error_username_incorrect">Saisir un nom utilisateur valide</string>
     <string name="error_username_exists">L\'email existe déjà.</string>
     <string name="error_password_not_match">Les mots de passe doivent être identiques</string>
-    <string name="error_password_message">Le mot de passe doit contenir entre 8 et 30 caractères</string>
     <string name="error_current_password_not_match">Ancien mot de passe incorrect</string>
     <string name="error_empty_email">Email vide</string>
     <string name="error_empty_password">Mot de passe vide</string>

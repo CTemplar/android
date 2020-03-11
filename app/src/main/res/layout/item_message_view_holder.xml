@@ -23,7 +23,7 @@
         android:id="@+id/item_message_view_holder_foreground"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorGreyLight6"
+        android:background="@color/colorWhiteLight"
         app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout

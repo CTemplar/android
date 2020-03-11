@@ -1,6 +1,5 @@
 package mobileapp.ctemplar.com.ctemplarapp.login.step;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -18,6 +17,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.Picasso;
 
 import org.jetbrains.annotations.NotNull;
@@ -38,43 +38,41 @@ public class StepSecurityFragment extends BaseFragment {
     private StepRegistrationViewModel viewModel;
     private LoginActivityViewModel loginActivityModel;
 
-    private ImageView captchaImageView;
+    @BindView(R.id.fragment_step_security_captcha_img)
+    ImageView captchaImageView;
+
+    @BindView(R.id.fragment_step_security_check_text)
+    TextView txtCheckHint;
+
+    @BindView(R.id.fragment_step_security_captcha_input)
+    TextInputEditText captchaEditText;
+
+    @BindView(R.id.fragment_step_security_captcha_input_layout)
+    TextInputLayout captchaInputLayout;
+
+    @BindView(R.id.fragment_step_security_captcha_layout)
+    ConstraintLayout captchaLayout;
+
+    @BindView(R.id.fragment_step_security_captcha_checked)
+    ImageView captchaChecked;
+
+    @BindView(R.id.fragment_step_security_check)
+    AppCompatCheckBox termsCheckBox;
+
+    @BindView(R.id.fragment_step_security_next_btn)
+    Button nextButton;
+
     private boolean captchaState;
     private String captchaKey;
     private String captchaValue;
 
-    @BindView(R.id.fragment_step_email_next_btn)
-    Button btnNext;
-
-    @BindView(R.id.fragment_step_email_check)
-    AppCompatCheckBox checkBox;
-
-    @BindView(R.id.fragment_step_email_check_text)
-    TextView txtCheckHint;
-
-    @BindView(R.id.fragment_step_email_captcha_input)
-    TextInputEditText captchaEditText;
-
-    @BindView(R.id.fragment_step_email_captcha_input_layout)
-    TextInputLayout captchaInputLayout;
-
-    @BindView(R.id.fragment_step_email_captcha_layout)
-    ConstraintLayout captchaLayout;
-
-    @BindView(R.id.fragment_step_email_captcha_checked)
-    ImageView captchaChecked;
-
     @Override
     protected int getLayoutId() {
-        return R.layout.fragment_step_email;
+        return R.layout.fragment_step_security;
     }
 
     @Override
-    public void onAttach(@NotNull Context context) {
-        super.onAttach(context);
-    }
-
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
 
@@ -85,59 +83,17 @@ public class StepSecurityFragment extends BaseFragment {
             return;
         }
 
-        captchaImageView = view.findViewById(R.id.fragment_step_email_captcha_img);
-
         loginActivityModel = new ViewModelProvider(getActivity()).get(LoginActivityViewModel.class);
         viewModel = new ViewModelProvider(getActivity()).get(StepRegistrationViewModel.class);
         viewModel.getResponseStatus().observe(getViewLifecycleOwner(), this::handleResponseStatus);
+        viewModel.getCaptchaResponse().observe(getViewLifecycleOwner(), this::handleCaptchaResponse);
+        viewModel.getCaptchaVerifyResponse().observe(getViewLifecycleOwner(), this::handleCaptchaVerifyResponse);
 
-        viewModel.getCaptcha();
-        viewModel.getCaptchaResponse().observe(getViewLifecycleOwner(), response -> {
-            if (response != null) {
-                handleCaptchaResponse(response);
-            }
-        });
-
-        viewModel.getCaptchaVerifyResponse().observe(getViewLifecycleOwner(), response -> {
-            if (response != null) {
-                handleCaptchaVerifyResponse(response);
-            }
-        });
-
+        refreshCaptcha();
         setListeners();
     }
 
-    private void handleCaptchaVerifyResponse(CaptchaVerifyResponse response) {
-        captchaState = response.getStatus();
-        if (captchaState) {
-            btnNext.setEnabled(checkBox.isChecked());
-            captchaLayout.setVisibility(View.GONE);
-            captchaChecked.setVisibility(View.VISIBLE);
-        } else {
-            captchaInputLayout.setError(getResources().getString(R.string.txt_enter_valid_captcha));
-        }
-    }
-
-    private void handleCaptchaResponse(CaptchaResponse response) {
-        captchaKey = response.getCaptchaKey();
-        String captchaImageUrl = response.getCaptchaImageUrl();
-
-        Picasso.get()
-                .load(captchaImageUrl)
-                .into(captchaImageView);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-    }
-
-    @OnClick(R.id.fragment_step_email_next_btn)
+    @OnClick(R.id.fragment_step_security_next_btn)
     public void onClickNext() {
         if (captchaState) {
             loginActivityModel.showProgressDialog();
@@ -148,23 +104,56 @@ public class StepSecurityFragment extends BaseFragment {
         }
     }
 
-    @OnClick(R.id.fragment_step_email_captcha_refresh_img)
+    @OnClick(R.id.fragment_step_security_captcha_refresh_img)
     public void onClickCaptchaRefresh() {
+        refreshCaptcha();
+    }
+
+    @OnClick(R.id.fragment_step_security_captcha_confirm)
+    public void onClickCaptchaConfirm() {
+        captchaValue = EditTextUtils.getText(captchaEditText);
+        viewModel.captchaVerify(captchaKey, captchaValue);
+    }
+
+    private void refreshCaptcha() {
         viewModel.getCaptcha();
     }
 
-    @OnClick(R.id.fragment_step_email_captcha_confirm)
-    public void onClickCaptchaConfirm() {
-        captchaValue = captchaEditText.getText().toString();
-        viewModel.captchaVerify(captchaKey, captchaValue);
+    private void handleCaptchaVerifyResponse(CaptchaVerifyResponse response) {
+        if (response != null) {
+            captchaState = response.getStatus();
+            changeCaptchaState(captchaState);
+            nextButton.setEnabled(captchaState && termsCheckBox.isChecked());
+            if (!captchaState) {
+                captchaInputLayout.setError(getString(R.string.txt_enter_valid_captcha));
+            }
+        }
+    }
+
+    private void handleCaptchaResponse(CaptchaResponse response) {
+        if (response != null) {
+            captchaKey = response.getCaptchaKey();
+            String captchaImageUrl = response.getCaptchaImageUrl();
+            Picasso.get()
+                    .load(captchaImageUrl)
+                    .memoryPolicy(MemoryPolicy.NO_STORE)
+                    .into(captchaImageView);
+        }
+    }
+
+    private void changeCaptchaState(boolean state) {
+        captchaChecked.setVisibility(state ? View.VISIBLE : View.GONE);
+        captchaLayout.setVisibility(state ? View.GONE : View.VISIBLE);
+        if (!state) {
+            refreshCaptcha();
+            captchaEditText.setText("");
+        }
     }
 
     private void setListeners() {
         txtCheckHint.setText(EditTextUtils.fromHtml(getResources().getString(R.string.title_step_email_check_hint)));
         txtCheckHint.setMovementMethod(LinkMovementMethod.getInstance());
         txtCheckHint.setLinkTextColor(getResources().getColor(R.color.colorLinkBlue));
-
-        checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> btnNext.setEnabled(isChecked && captchaState));
 
         captchaEditText.addTextChangedListener(new TextWatcher() {
             @Override
@@ -182,6 +171,8 @@ public class StepSecurityFragment extends BaseFragment {
 
             }
         });
+        termsCheckBox.setOnCheckedChangeListener((buttonView, isChecked)
+                -> nextButton.setEnabled(isChecked && captchaState));
     }
 
     private void handleResponseStatus(ResponseStatus status) {
@@ -190,6 +181,7 @@ public class StepSecurityFragment extends BaseFragment {
             switch (status) {
                 case RESPONSE_ERROR:
                     Toast.makeText(getActivity(), getString(R.string.error_server), Toast.LENGTH_LONG).show();
+                    changeCaptchaState(false);
                     break;
                 case RESPONSE_NEXT_STEP_EMAIL:
                     loginActivityModel.changeAction(LoginActivityActions.CHANGE_ACTIVITY_MAIN);
@@ -197,5 +189,4 @@ public class StepSecurityFragment extends BaseFragment {
             }
         }
     }
-
 }

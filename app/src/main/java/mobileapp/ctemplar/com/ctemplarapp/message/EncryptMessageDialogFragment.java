@@ -2,9 +2,6 @@ package mobileapp.ctemplar.com.ctemplarapp.message;
 
 import android.app.Dialog;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.DialogFragment;
 import android.text.InputFilter;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -13,7 +10,13 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.DialogFragment;
+
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
@@ -48,16 +51,22 @@ public class EncryptMessageDialogFragment extends DialogFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_encrypt_message_dialog, container, false);
 
-        final EditText messagePasswordEditText = view.findViewById(R.id.fragment_encrypt_message_dialog_password_input);
-        final EditText messagePasswordConfirmEditText = view.findViewById(R.id.fragment_encrypt_message_dialog_password_confirm_input);
-        final EditText messagePasswordHintEditText = view.findViewById(R.id.fragment_encrypt_message_dialog_password_hint_input);
-        final EditText messagePasswordExpireDaysEditText = view.findViewById(R.id.fragment_encrypt_message_dialog_expire_days_edit_text);
-        final EditText messagePasswordExpireHoursEditText = view.findViewById(R.id.fragment_encrypt_message_dialog_expire_hours_edit_text);
+        final TextInputLayout passwordInputLayout = view.findViewById(R.id.fragment_encrypt_message_dialog_password_input_layout);
+        final TextInputEditText passwordEditText = view.findViewById(R.id.fragment_encrypt_message_dialog_password_input);
+        final TextInputLayout passwordConfirmInputLayout = view.findViewById(R.id.fragment_encrypt_message_dialog_password_confirm_input_layout);
+        final TextInputEditText passwordConfirmEditText = view.findViewById(R.id.fragment_encrypt_message_dialog_password_confirm_input);
+        final TextInputEditText passwordHintEditText = view.findViewById(R.id.fragment_encrypt_message_dialog_password_hint_input);
+        final EditText passwordExpireDaysEditText = view.findViewById(R.id.fragment_encrypt_message_dialog_expire_days_edit_text);
+        final EditText passwordExpireHoursEditText = view.findViewById(R.id.fragment_encrypt_message_dialog_expire_hours_edit_text);
+        final Button encryptButton = view.findViewById(R.id.fragment_encrypt_message_dialog_encrypt);
 
-        messagePasswordExpireDaysEditText.setFilters(new InputFilter[] {
+        final int minPassword = getResources().getInteger(R.integer.restriction_password_min);
+        final int maxPassword = getResources().getInteger(R.integer.restriction_password_max);
+
+        passwordExpireDaysEditText.setFilters(new InputFilter[] {
                 new InputFilterMinMax(0, 5), new InputFilter.LengthFilter(1)
         });
-        messagePasswordExpireHoursEditText.setFilters(new InputFilter[] {
+        passwordExpireHoursEditText.setFilters(new InputFilter[] {
                 new InputFilterMinMax(0, 24), new InputFilter.LengthFilter(2)
         });
 
@@ -67,22 +76,24 @@ public class EncryptMessageDialogFragment extends DialogFragment {
             dismiss();
         });
 
-        Button encryptButton = view.findViewById(R.id.fragment_encrypt_message_dialog_encrypt);
         encryptButton.setOnClickListener(v -> {
-            String messagePassword = messagePasswordEditText.getText().toString();
-            String messagePasswordConfirm = messagePasswordConfirmEditText.getText().toString();
-            String messagePasswordHint = messagePasswordHintEditText.getText().toString();
-            String messagePasswordExpireDays = messagePasswordExpireDaysEditText.getText().toString();
-            String messagePasswordExpireHours = messagePasswordExpireHoursEditText.getText().toString();
+            String messagePassword = EditTextUtils.getText(passwordEditText);
+            String messagePasswordConfirm = EditTextUtils.getText(passwordConfirmEditText);
+            String messagePasswordHint = EditTextUtils.getText(passwordHintEditText);
+            String messagePasswordExpireDays = EditTextUtils.getText(passwordExpireDaysEditText);
+            String messagePasswordExpireHours = EditTextUtils.getText(passwordExpireHoursEditText);
 
             int expire = getHours(messagePasswordExpireDays, messagePasswordExpireHours);
-
-            if (!EditTextUtils.isTextLength(messagePassword, 8, 30)) {
-                Toast.makeText(getActivity(), getString(R.string.error_password_message), Toast.LENGTH_SHORT).show();
+            if (messagePassword.length() < minPassword) {
+                passwordInputLayout.setError(getString(R.string.error_password_small));
                 return;
             }
-            if (!TextUtils.equals(messagePassword, messagePasswordConfirm)) {
-                Toast.makeText(getActivity(), getString(R.string.error_password_not_match), Toast.LENGTH_SHORT).show();
+            if (messagePassword.length() > maxPassword) {
+                passwordInputLayout.setError(getString(R.string.error_password_big));
+                return;
+            }
+            if(!TextUtils.equals(messagePassword, messagePasswordConfirm)) {
+                passwordConfirmInputLayout.setError(getString(R.string.error_password_not_match));
                 return;
             }
 
@@ -102,10 +113,10 @@ public class EncryptMessageDialogFragment extends DialogFragment {
         int hours = 0;
         try {
             if (!daysString.isEmpty()) {
-                days = Integer.valueOf(daysString);
+                days = Integer.parseInt(daysString);
             }
             if (!hoursString.isEmpty()) {
-                hours = Integer.valueOf(hoursString);
+                hours = Integer.parseInt(hoursString);
             }
         } catch (NumberFormatException e) {
             Timber.e(e);

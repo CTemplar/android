@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_weight="1"
+    android:fillViewport="true">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/fragment_step_security_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:fontFamily="@font/lato_regular"
+            android:letterSpacing="-0.02"
+            android:text="@string/title_security_check"
+            android:textColor="@color/colorDarkBlue"
+            android:textSize="22sp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/fragment_step_security_captcha_checked"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:src="@drawable/ic_captcha_checked"
+            android:visibility="gone"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/fragment_step_security_title" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/fragment_step_security_captcha_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:layout_marginLeft="@dimen/captcha_padding"
+            android:layout_marginRight="@dimen/captcha_padding"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/fragment_step_security_captcha_checked">
+
+            <ImageView
+                android:id="@+id/fragment_step_security_captcha_img"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:minWidth="120dp"
+                android:minHeight="32dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toLeftOf="@id/fragment_step_security_captcha_refresh_img" />
+
+            <ImageView
+                android:id="@+id/fragment_step_security_captcha_refresh_img"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_refresh"
+                android:layout_marginLeft="5dp"
+                android:layout_marginStart="5dp"
+                app:layout_constraintTop_toTopOf="@id/fragment_step_security_captcha_img"
+                app:layout_constraintBottom_toBottomOf="@id/fragment_step_security_captcha_img"
+                app:layout_constraintLeft_toRightOf="@id/fragment_step_security_captcha_img"
+                app:layout_constraintRight_toRightOf="parent" />
+
+            <TextView
+                android:id="@+id/fragment_step_security_captcha_hint_text_view"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:gravity="center"
+                android:text="@string/hint_captcha"
+                android:textColor="@color/colorBlack50"
+                android:textSize="12sp"
+                app:layout_constraintTop_toBottomOf="@id/fragment_step_security_captcha_img"
+                app:layout_constraintLeft_toLeftOf="@id/fragment_step_security_captcha_img"
+                app:layout_constraintRight_toRightOf="@id/fragment_step_security_captcha_img" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/fragment_step_security_captcha_input_layout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:minWidth="150dp"
+                android:textColorHint="@color/colorDarkBlue2"
+                app:hintEnabled="true"
+                app:hintTextAppearance="@style/TextHintAppearanceDark"
+                app:layout_constraintTop_toBottomOf="@id/fragment_step_security_captcha_hint_text_view"
+                app:layout_constraintLeft_toLeftOf="@id/fragment_step_security_captcha_img"
+                app:layout_constraintRight_toRightOf="@id/fragment_step_security_captcha_img">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/fragment_step_security_captcha_input"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/lato_regular"
+                    android:hint="@string/title_captcha"
+                    android:inputType="textEmailAddress"
+                    android:letterSpacing="0.05"
+                    android:textColor="@color/colorDarkBlue2"
+                    android:textSize="16sp"
+                    android:theme="@style/EditTextCredentialsThemeDark" />
+                <requestFocus />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <ImageView
+                android:id="@+id/fragment_step_security_captcha_confirm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_captcha_confirm"
+                android:layout_marginLeft="5dp"
+                android:layout_marginStart="5dp"
+                app:layout_constraintTop_toTopOf="@id/fragment_step_security_captcha_input_layout"
+                app:layout_constraintBottom_toBottomOf="@id/fragment_step_security_captcha_input_layout"
+                app:layout_constraintLeft_toRightOf="@id/fragment_step_security_captcha_input_layout" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.appcompat.widget.AppCompatCheckBox
+            android:id="@+id/fragment_step_security_check"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="24dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="7dp"
+            android:button="@drawable/selector_check"
+            android:drawablePadding="16dp"
+            app:layout_constraintEnd_toStartOf="@+id/fragment_step_security_check_text"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/fragment_step_security_captcha_layout" />
+
+        <TextView
+            android:id="@+id/fragment_step_security_check_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="24dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:linksClickable="true"
+            android:textColorLink="@color/colorLinkBlue"
+            android:textColor="@color/colorBlack50"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="@+id/fragment_step_security_check"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/fragment_step_security_check"
+            app:layout_constraintTop_toTopOf="@+id/fragment_step_security_check" />
+
+        <Button
+            android:id="@+id/fragment_step_security_next_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="24dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginRight="24dp"
+            android:background="@drawable/selector_button_orange"
+            android:enabled="false"
+            android:fontFamily="@font/lato_regular"
+            android:text="@string/title_next"
+            android:textColor="@android:color/white"
+            app:layout_constraintTop_toBottomOf="@id/fragment_step_security_check" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</ScrollView>

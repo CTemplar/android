@@ -134,7 +134,7 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesView
             holder.imgUnread.setVisibility(View.GONE);
             holder.txtUsername.setTypeface(null, Typeface.NORMAL);
             int backgroundColor = holder.foreground.getContext()
-                    .getResources().getColor(R.color.colorGreyLight);
+                    .getResources().getColor(R.color.colorGrey5);
             holder.foreground.setBackgroundColor(backgroundColor);
         } else {
             holder.imgUnread.setVisibility(View.VISIBLE);
@@ -161,7 +161,7 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesView
                 holder.txtStatus.setVisibility(View.GONE);
             }
         } else if (!TextUtils.isEmpty(message.getDeadManDuration())) {
-            String leftTime = AppUtils.deadMansTime(Long.valueOf(message.getDeadManDuration()));
+            String leftTime = AppUtils.deadMansTime(Long.parseLong(message.getDeadManDuration()));
             if (leftTime != null) {
                 holder.txtStatus.setText(holder.root.getResources().getString(R.string.txt_left_time_dead_mans_timer, leftTime));
                 holder.txtStatus.setBackgroundColor(holder.root.getResources().getColor(R.color.colorRed0));
