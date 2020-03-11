@@ -364,7 +364,9 @@ Votre mot de passe est connecté à votre clé de cryptage, si vous changez votr
     <string name="fingerprint">Empreinte digitale</string>
     <string name="public_key">Clé Publique</string>
     <string name="download_public_key">Télécharger la clé publique (4096 Bit)</string>
-    <string name="your_key_saved">Votre clé publique PGP enregistrée dans les téléchargements</string>
+    <string name="download_private_key">Télécharger la clé privée (4096 Bit)</string>
+    <string name="your_public_key_saved">Votre clé publique PGP enregistrée dans les téléchargements</string>
+    <string name="your_private_key_saved">Votre clé privée PGP enregistrée dans les téléchargements</string>
 
     <!-- UPGRADE TO PRIME -->
     <string name="title_upgrade_to_prime">Upgrade to Prime</string>
