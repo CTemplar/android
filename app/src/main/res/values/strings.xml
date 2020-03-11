@@ -387,7 +387,9 @@ Your password is connected to your encryption key, if you change your password t
     <string name="fingerprint">Fingerprint</string>
     <string name="public_key">Public Key</string>
     <string name="download_public_key">Download public key (4096 Bit)</string>
-    <string name="your_key_saved">Your PGP Public Key saved to Downloads</string>
+    <string name="download_private_key">Download private key (4096 Bit)</string>
+    <string name="your_public_key_saved">Your PGP Public Key saved to Downloads</string>
+    <string name="your_private_key_saved">Your PGP Private Key saved to Downloads</string>
 
     <!-- UPGRADE TO PRIME -->
     <string name="title_upgrade_to_prime">Upgrade to Prime</string>
