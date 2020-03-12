@@ -55,7 +55,7 @@ public class SignUpFragment extends BaseFragment{
         list.add(new StepUsernameFragment());
         list.add(new StepPasswordFragment());
         list.add(new StepRecoveryFragment());
-        list.add(new StepSecurityFragment());
+        //list.add(new StepSecurityFragment());
 
         viewPager.setAdapter(new SignUpFragmentsAdapter(getParentFragmentManager(), list));
         viewPager.setOnTouchListener(null);

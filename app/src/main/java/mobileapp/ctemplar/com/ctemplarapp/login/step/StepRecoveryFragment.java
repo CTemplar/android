@@ -6,6 +6,7 @@ import android.text.Spanned;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatCheckBox;
@@ -19,12 +20,16 @@ import org.jetbrains.annotations.NotNull;
 import butterknife.BindView;
 import butterknife.OnClick;
 import mobileapp.ctemplar.com.ctemplarapp.BaseFragment;
+import mobileapp.ctemplar.com.ctemplarapp.LoginActivityActions;
 import mobileapp.ctemplar.com.ctemplarapp.R;
+import mobileapp.ctemplar.com.ctemplarapp.login.LoginActivityViewModel;
+import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 
 public class StepRecoveryFragment extends BaseFragment {
 
     private StepRegistrationViewModel viewModel;
+    private LoginActivityViewModel loginActivityModel;
 
     @BindView(R.id.fragment_step_recovery_email_input)
     TextInputEditText recoveryEmailEditText;
@@ -51,8 +56,13 @@ public class StepRecoveryFragment extends BaseFragment {
     @Override
     public void onViewCreated(@NotNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        if (getActivity() == null) {
+            return;
+        }
 
+        loginActivityModel = new ViewModelProvider(getActivity()).get(LoginActivityViewModel.class);
         viewModel = new ViewModelProvider(getActivity()).get(StepRegistrationViewModel.class);
+        viewModel.getResponseStatus().observe(getViewLifecycleOwner(), this::handleResponseStatus);
         setListeners();
     }
 
@@ -67,6 +77,8 @@ public class StepRecoveryFragment extends BaseFragment {
             }
         }
 
+        viewModel.signUp();
+        loginActivityModel.showProgressDialog();
         viewModel.changeAction(StepRegistrationActions.ACTION_NEXT);
     }
 
@@ -103,5 +115,19 @@ public class StepRecoveryFragment extends BaseFragment {
 
     private void showRecoveryLayout(boolean state) {
         recoveryEmailInputLayout.setVisibility(state ? View.VISIBLE : View.GONE);
+    }
+
+    private void handleResponseStatus(ResponseStatus status) {
+        if(status != null) {
+            loginActivityModel.hideProgressDialog();
+            switch (status) {
+                case RESPONSE_ERROR:
+                    Toast.makeText(getActivity(), getString(R.string.error_server), Toast.LENGTH_LONG).show();
+                    break;
+                case RESPONSE_NEXT_STEP_EMAIL:
+                    loginActivityModel.changeAction(LoginActivityActions.CHANGE_ACTIVITY_MAIN);
+                    break;
+            }
+        }
     }
 }
