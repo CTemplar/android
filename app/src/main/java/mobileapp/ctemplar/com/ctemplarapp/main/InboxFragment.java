@@ -197,12 +197,12 @@ public class InboxFragment extends BaseFragment
         mainModel.getResponseStatus().observe(getViewLifecycleOwner(), status -> {
             handleResponseStatus(status);
             swipeRefreshLayout.setRefreshing(false);
+            progressLayout.setVisibility(View.GONE);
         });
         mainModel.getMessagesResponse().observe(getViewLifecycleOwner(), messagesResponse -> {
             if (messagesResponse != null) {
                 handleMessagesList(messagesResponse.messages,
                         messagesResponse.folderName, messagesResponse.offset);
-                swipeRefreshLayout.setRefreshing(false);
             }
         });
         mainModel.getCurrentFolder().observe(getViewLifecycleOwner(), folderName -> {
@@ -215,6 +215,7 @@ public class InboxFragment extends BaseFragment
             recyclerView.setAdapter(adapter);
             updateTouchListenerSwipeOptions(currentFolder);
             swipeRefreshLayout.setRefreshing(false);
+            progressLayout.setVisibility(View.GONE);
         });
         mainModel.getDeleteMessagesStatus().observe(getViewLifecycleOwner(), this::updateMessagesResponse);
         mainModel.getEmptyFolderStatus().observe(getViewLifecycleOwner(), this::updateMessagesResponse);
@@ -332,6 +333,7 @@ public class InboxFragment extends BaseFragment
     public void onReachedBottom() {
         Timber.i("onReachedBottom");
         requestNextMessages();
+        progressLayout.setVisibility(View.VISIBLE);
     }
 
 
