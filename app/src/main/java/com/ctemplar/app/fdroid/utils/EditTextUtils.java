@@ -43,6 +43,12 @@ public class EditTextUtils {
         return matcher.matches();
     }
 
+    public static boolean isUsernameValid(String text) {
+        Pattern pattern = Pattern.compile("^[a-zA-Z0-9-_.@]+$");
+        Matcher matcher = pattern.matcher(text);
+        return matcher.matches();
+    }
+
     public static String getText(EditText editText) {
         Editable editable = editText.getText();
         return editable == null ? "" : editable.toString();
