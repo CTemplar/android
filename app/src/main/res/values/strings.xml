@@ -118,7 +118,7 @@ Your password is connected to your encryption key, if you change your password t
     <string name="btn_confirm">CONFIRM</string>
     <string name="title_clear_folder">Clear folder</string>
     <string name="txt_clear_folder">Are you sure to want to delete all messages from the folder?</string>
-    <string name="txt_encrypted_subject">Encrypted subject</string>
+    <string name="txt_encrypted_subject" translatable="false">...</string>
 
     <!-- COMPOSE OPTIONS -->
     <string name="txt_left_time_destruct">Delete in %1$s</string>
