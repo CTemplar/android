@@ -25,15 +25,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.ctemplar.app.fdroid.BaseFragment;
-import com.ctemplar.app.fdroid.R;
-import com.ctemplar.app.fdroid.message.MoveDialogFragment;
-import com.ctemplar.app.fdroid.message.SendMessageActivity;
-import com.ctemplar.app.fdroid.message.SendMessageFragment;
-import com.ctemplar.app.fdroid.message.ViewMessagesActivity;
-import com.ctemplar.app.fdroid.message.ViewMessagesFragment;
-import com.ctemplar.app.fdroid.net.ResponseStatus;
-import com.ctemplar.app.fdroid.repository.provider.MessageProvider;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -48,6 +39,15 @@ import butterknife.OnClick;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+import com.ctemplar.app.fdroid.BaseFragment;
+import com.ctemplar.app.fdroid.R;
+import com.ctemplar.app.fdroid.message.MoveDialogFragment;
+import com.ctemplar.app.fdroid.message.SendMessageActivity;
+import com.ctemplar.app.fdroid.message.SendMessageFragment;
+import com.ctemplar.app.fdroid.message.ViewMessagesActivity;
+import com.ctemplar.app.fdroid.message.ViewMessagesFragment;
+import com.ctemplar.app.fdroid.net.ResponseStatus;
+import com.ctemplar.app.fdroid.repository.provider.MessageProvider;
 import timber.log.Timber;
 
 import static com.ctemplar.app.fdroid.message.SendMessageActivity.MESSAGE_ID;
@@ -197,12 +197,12 @@ public class InboxFragment extends BaseFragment
         mainModel.getResponseStatus().observe(getViewLifecycleOwner(), status -> {
             handleResponseStatus(status);
             swipeRefreshLayout.setRefreshing(false);
+            progressLayout.setVisibility(View.GONE);
         });
         mainModel.getMessagesResponse().observe(getViewLifecycleOwner(), messagesResponse -> {
             if (messagesResponse != null) {
                 handleMessagesList(messagesResponse.messages,
                         messagesResponse.folderName, messagesResponse.offset);
-                swipeRefreshLayout.setRefreshing(false);
             }
         });
         mainModel.getCurrentFolder().observe(getViewLifecycleOwner(), folderName -> {
@@ -215,6 +215,7 @@ public class InboxFragment extends BaseFragment
             recyclerView.setAdapter(adapter);
             updateTouchListenerSwipeOptions(currentFolder);
             swipeRefreshLayout.setRefreshing(false);
+            progressLayout.setVisibility(View.GONE);
         });
         mainModel.getDeleteMessagesStatus().observe(getViewLifecycleOwner(), this::updateMessagesResponse);
         mainModel.getEmptyFolderStatus().observe(getViewLifecycleOwner(), this::updateMessagesResponse);
@@ -332,6 +333,7 @@ public class InboxFragment extends BaseFragment
     public void onReachedBottom() {
         Timber.i("onReachedBottom");
         requestNextMessages();
+        progressLayout.setVisibility(View.VISIBLE);
     }
 
 
