@@ -207,7 +207,6 @@ public class InboxFragment extends BaseFragment
         });
         mainModel.getCurrentFolder().observe(getViewLifecycleOwner(), folderName -> {
             currentFolder = folderName;
-            invalidateOptionsMenu();
             requestNewMessages();
             String emptyFolderString = getResources().getString(R.string.title_empty_messages, folderName);
             txtEmpty.setText(emptyFolderString);
@@ -538,6 +537,7 @@ public class InboxFragment extends BaseFragment
     private void handleMessagesList(List<MessageProvider> messages, String folderName, int offset) {
         currentFolder = mainModel.getCurrentFolder().getValue();
         messagesNotEmpty = messages != null && !messages.isEmpty();
+        invalidateOptionsMenu();
 
         if (messagesNotEmpty && currentFolder != null && !currentFolder.equals(folderName)) {
             return;

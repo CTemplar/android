@@ -19,7 +19,6 @@ android {
         applicationId "mobileapp.ctemplar.com.ctemplarapp"
         minSdkVersion 16
         versionCode 34
-        versionName "${versionMajor}.${versionMinor}.${versionBuild}"
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
@@ -38,11 +37,13 @@ android {
     flavorDimensions "version"
     productFlavors {
         development {
+            versionName "${versionMajor}.${versionMinor}.${versionBuild}-${new Date().format('M.d.yyyy')}-dev"
             applicationIdSuffix '.development'
             buildConfigField("String", "DOMAIN", "\"dev.ctemplar.com\"")
             buildConfigField("String", "BASE_URL", "\"https://dev.ctemplar.com/api/\"")
         }
         production {
+            versionName "${versionMajor}.${versionMinor}.${versionBuild}"
             applicationIdSuffix ".production"
             buildConfigField("String", "DOMAIN", "\"ctemplar.com\"")
             buildConfigField("String", "BASE_URL", "\"https://mail.ctemplar.com/api/\"")
