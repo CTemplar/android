@@ -116,7 +116,6 @@ Votre mot de passe est connecté à votre clé de cryptage, si vous changez votr
     <string name="btn_confirm">CONFIRMER</string>
     <string name="title_clear_folder">Vider dossier</string>
     <string name="txt_clear_folder">Êtes-vous certain de vouloir supprimer tous les messages du dossier ?</string>
-    <string name="txt_encrypted_subject">Objet crypté</string>
 
     <!-- COMPOSE OPTIONS -->
     <string name="txt_left_time_destruct">Suppression dans %1$s</string>
