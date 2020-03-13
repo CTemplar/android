@@ -34,14 +34,17 @@ android {
     applicationVariants.all { variant ->
         variant.resValue "string", "versionName", variant.versionName
     }
+
     flavorDimensions "version"
     productFlavors {
-        staging {
-            applicationIdSuffix ".staging"
+        development {
+            applicationIdSuffix '.development'
+            buildConfigField("String", "DOMAIN", "\"dev.ctemplar.com\"")
             buildConfigField("String", "BASE_URL", "\"https://dev.ctemplar.com/api/\"")
         }
         production {
             applicationIdSuffix ".production"
+            buildConfigField("String", "DOMAIN", "\"ctemplar.com\"")
             buildConfigField("String", "BASE_URL", "\"https://mail.ctemplar.com/api/\"")
         }
     }

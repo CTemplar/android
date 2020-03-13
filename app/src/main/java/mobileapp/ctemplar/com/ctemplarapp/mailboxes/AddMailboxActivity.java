@@ -24,6 +24,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
 import mobileapp.ctemplar.com.ctemplarapp.BaseActivity;
+import mobileapp.ctemplar.com.ctemplarapp.BuildConfig;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Domains.DomainsResults;
@@ -70,7 +71,7 @@ public class AddMailboxActivity extends BaseActivity {
         progressDialog.setMessage(getString(R.string.mailbox_alias_creation_progress));
 
         final List<String> domainsList = new ArrayList<>();
-        domainsList.add("ctemplar.com");
+        domainsList.add(BuildConfig.DOMAIN);
         setDomains(domainsList);
 
         mailboxesModel.getDomains();
