@@ -22,6 +22,7 @@ import butterknife.BindInt;
 import butterknife.BindView;
 import butterknife.OnClick;
 import mobileapp.ctemplar.com.ctemplarapp.BaseFragment;
+import mobileapp.ctemplar.com.ctemplarapp.BuildConfig;
 import mobileapp.ctemplar.com.ctemplarapp.LoginActivityActions;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
@@ -97,8 +98,7 @@ public class SignInFragment extends BaseFragment {
         String otp = null;
 
         if (editTextUsername.getText() != null && editTextPassword.getText() != null) {
-            username = EditTextUtils.getText(editTextUsername).trim().toLowerCase()
-                    .replaceAll("@.+", "");
+            username = trimUsername(EditTextUtils.getText(editTextUsername).trim());
             password = EditTextUtils.getText(editTextPassword).trim();
         }
         if (editTextOtpCode.getText() != null && !editTextOtpCode.getText().toString().isEmpty()) {
@@ -197,32 +197,31 @@ public class SignInFragment extends BaseFragment {
         });
     }
 
+    private String trimUsername(String username) {
+        return username.toLowerCase().replace("@" + BuildConfig.DOMAIN, "");
+    }
+
     private boolean isValid(String email, String password) {
         if(TextUtils.isEmpty(email)) {
             editTextUsernameLayout.setError(getResources().getString(R.string.error_empty_email));
             return false;
         }
-
         if(TextUtils.isEmpty(password)) {
             editTextPasswordLayout.setError(getResources().getString(R.string.error_empty_password));
             return false;
         }
-
         if(email.length() < USERNAME_MIN) {
             editTextUsernameLayout.setError(getResources().getString(R.string.error_username_small));
             return false;
         }
-
         if(email.length() > USERNAME_MAX) {
             editTextUsernameLayout.setError(getResources().getString(R.string.error_username_big));
             return false;
         }
-
-        if(!EditTextUtils.isTextValid(email)) {
+        if(!EditTextUtils.isUsernameValid(email)) {
             editTextUsernameLayout.setError(getResources().getString(R.string.error_username_incorrect));
             return false;
         }
-
-        return !TextUtils.isEmpty(email) && !TextUtils.isEmpty(password) && EditTextUtils.isTextValid(email);
+        return true;
     }
 }
