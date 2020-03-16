@@ -58,8 +58,8 @@ public class RestClient {
         client.addInterceptor(interceptor)
                 .addInterceptor(new HttpTokenInterceptor())
                 .authenticator(new TokenAuthenticator())
-                .readTimeout(60, TimeUnit.SECONDS)
-                .connectTimeout(60, TimeUnit.SECONDS)
+                .readTimeout(30, TimeUnit.SECONDS)
+                .connectTimeout(30, TimeUnit.SECONDS)
                 .build();
 
         return client.build();
