@@ -3,6 +3,7 @@ package com.ctemplar.app.fdroid.settings;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.SpannableString;
 import android.view.MenuItem;
@@ -28,6 +29,7 @@ import androidx.preference.SwitchPreference;
 
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
+import com.ctemplar.app.fdroid.BuildConfig;
 import com.ctemplar.app.fdroid.CTemplarApp;
 import com.ctemplar.app.fdroid.R;
 import com.ctemplar.app.fdroid.filters.FiltersActivity;
@@ -42,6 +44,7 @@ import com.ctemplar.app.fdroid.repository.UserRepository;
 import com.ctemplar.app.fdroid.repository.UserStore;
 import com.ctemplar.app.fdroid.utils.AppUtils;
 import com.ctemplar.app.fdroid.utils.EditTextUtils;
+import com.ctemplar.app.fdroid.utils.EncodeUtils;
 import com.ctemplar.app.fdroid.wbl.WhiteBlackListActivity;
 import timber.log.Timber;
 
@@ -204,9 +207,9 @@ public class SettingsActivity extends AppCompatActivity {
                         preferenceRecoveryEmail.setTitle(getString(R.string.settings_type_recovery_email));
                         checkBoxRecoveryEmailEnabled.setChecked(false);
                     } else {
-                        preferenceRecoveryEmail.setTitle((String) newValue);
+                        preferenceRecoveryEmail.setTitle(value);
                     }
-                    recoveryEmailPreferenceScreen.setSummary((String) newValue);
+                    recoveryEmailPreferenceScreen.setSummary(value);
                     settingsModel.updateRecoveryEmail(settingId, value);
                     Toast.makeText(getActivity(), getString(R.string.toast_saved), Toast.LENGTH_SHORT).show();
                     return true;
@@ -299,12 +302,65 @@ public class SettingsActivity extends AppCompatActivity {
                     .setTitle(getActivity().getString(R.string.settings_disable_contacts_encryption))
                     .setMessage(getActivity().getString(R.string.settings_disable_contacts_encryption_note))
                     .setPositiveButton(getActivity().getString(R.string.btn_confirm), (dialog, which) -> {
-                        progressDialog.show();
-                        settingsModel.decryptContacts(listOffset[0]);
-                    }
+                                progressDialog.show();
+                                settingsModel.decryptContacts(listOffset[0]);
+                            }
                     )
                     .setNeutralButton(getActivity().getString(R.string.btn_cancel), null)
                     .show();
+        }
+    }
+
+    public static class PhishingProtectionFragment extends BasePreferenceFragment {
+        @Override
+        public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+            setPreferencesFromResource(R.xml.phishing_protection_settings, rootKey);
+
+            EditTextPreference phishingProtectionEditText = findPreference(getString(R.string.anti_phishing_key));
+            String phishingProtection = sharedPreferences.getString(getString(R.string.anti_phishing_key), null);
+            if (phishingProtection != null && !phishingProtection.isEmpty()) {
+                phishingProtectionEditText.setTitle(phishingProtection);
+            }
+
+            CheckBoxPreference phishingProtectionCheckBox = findPreference(getString(R.string.anti_phishing_enabled));
+            phishingProtectionCheckBox.setOnPreferenceChangeListener((preference, newValue) -> {
+                boolean value = (boolean) newValue;
+                if (value) {
+                    String randomPass = EncodeUtils.randomPass(6);
+                    phishingProtectionEditText.setTitle(randomPass);
+                    phishingProtectionEditText.setText(randomPass);
+                    settingsModel.updateAntiPhishingPhrase(settingId, true, randomPass);
+                } else {
+                    phishingProtectionEditText.setTitle(getString(R.string.settings_type_anti_phishing_phrase));
+                    phishingProtectionEditText.setText("");
+                    settingsModel.updateAntiPhishingPhrase(settingId, false, "");
+                }
+                Toast.makeText(getActivity(), getString(R.string.toast_saved), Toast.LENGTH_SHORT).show();
+                return true;
+            });
+
+            phishingProtectionEditText.setOnPreferenceChangeListener((preference, newValue) -> {
+                String value = (String) newValue;
+                if (value.isEmpty()) {
+                    phishingProtectionEditText.setTitle(getString(R.string.settings_type_anti_phishing_phrase));
+                    phishingProtectionCheckBox.setChecked(false);
+                } else {
+                    phishingProtectionEditText.setTitle(value);
+                }
+                settingsModel.updateAntiPhishingPhrase(settingId, !value.isEmpty(), value);
+                Toast.makeText(getActivity(), getString(R.string.toast_saved), Toast.LENGTH_SHORT).show();
+                return true;
+            });
+
+            Preference descriptionPreference = findPreference(getString(R.string.anti_phishing_description_key));
+            descriptionPreference.setSummary(EditTextUtils.fromHtml(
+                    getString(R.string.settings_phishing_protection_description))
+            );
+            descriptionPreference.setOnPreferenceClickListener(preference -> {
+                Intent ctemplarIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://" + BuildConfig.DOMAIN));
+                startActivity(ctemplarIntent);
+                return true;
+            });
         }
     }
 
@@ -410,8 +466,8 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     private void saveData(MyselfResult myselfResult) {
-        SettingsEntity settingsEntity = myselfResult.settings;
-        MailboxesResult mailboxesResult = myselfResult.mailboxes[0];
+        SettingsEntity settingsEntity = myselfResult.getSettings();
+        MailboxesResult mailboxesResult = myselfResult.getMailboxes()[0];
         settingId = settingsEntity.getId();
         defaultMailboxId = mailboxesResult.getId();
         isPrimeUser = myselfResult.isPrime();
@@ -432,11 +488,13 @@ public class SettingsActivity extends AppCompatActivity {
         sharedPreferences.edit()
                 .putString(getString(R.string.recovery_email), recoveryEmail)
                 .putString(getString(R.string.signature), mailboxesResult.getSignature())
+                .putString(getString(R.string.anti_phishing_key), settingsEntity.getAntiPhishingPhrase())
                 .putBoolean(getString(R.string.recovery_email_enabled), !recoveryEmail.isEmpty())
                 .putBoolean(getString(R.string.auto_save_contacts_enabled), settingsEntity.isSaveContacts())
                 .putBoolean(getString(R.string.subject_encryption_enabled), settingsEntity.isSubjectEncrypted())
                 .putBoolean(getString(R.string.attachments_encryption_enabled), settingsEntity.isAttachmentsEncrypted())
                 .putBoolean(getString(R.string.contacts_encryption_enabled), settingsEntity.isContactsEncrypted())
+                .putBoolean(getString(R.string.anti_phishing_enabled), settingsEntity.isAntiPhishingEnabled())
                 .putBoolean(getString(R.string.push_notifications_enabled), isNotificationsEnabled)
                 .apply();
     }

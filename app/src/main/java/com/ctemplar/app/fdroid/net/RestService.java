@@ -5,6 +5,7 @@ import javax.inject.Singleton;
 import io.reactivex.Observable;
 import com.ctemplar.app.fdroid.net.request.AddAppTokenRequest;
 import com.ctemplar.app.fdroid.net.request.AddFolderRequest;
+import com.ctemplar.app.fdroid.net.request.AntiPhishingPhraseRequest;
 import com.ctemplar.app.fdroid.net.request.AttachmentsEncryptedRequest;
 import com.ctemplar.app.fdroid.net.request.AutoSaveContactEnabledRequest;
 import com.ctemplar.app.fdroid.net.request.CaptchaVerifyRequest;
@@ -256,6 +257,9 @@ public interface RestService {
 
     @PATCH("users/settings/{id}/")
     Observable<SettingsEntity> updateAutoSaveEnabled(@Path("id") long settingId, @Body AutoSaveContactEnabledRequest request);
+
+    @PATCH("users/settings/{id}/")
+    Observable<SettingsEntity> updateAntiPhishingPhrase(@Path("id") long settingId, @Body AntiPhishingPhraseRequest request);
 
     @POST("users/app-token/")
     Observable<AddAppTokenResponse> addAppToken(@Body AddAppTokenRequest request);

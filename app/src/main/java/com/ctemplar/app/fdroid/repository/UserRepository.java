@@ -3,6 +3,7 @@ package com.ctemplar.app.fdroid.repository;
 import com.ctemplar.app.fdroid.CTemplarApp;
 import com.ctemplar.app.fdroid.net.RestService;
 import com.ctemplar.app.fdroid.net.request.AddAppTokenRequest;
+import com.ctemplar.app.fdroid.net.request.AntiPhishingPhraseRequest;
 import com.ctemplar.app.fdroid.net.request.AttachmentsEncryptedRequest;
 import com.ctemplar.app.fdroid.net.request.AutoSaveContactEnabledRequest;
 import com.ctemplar.app.fdroid.net.request.CaptchaVerifyRequest;
@@ -427,6 +428,12 @@ public class UserRepository {
 
     public Observable<SettingsEntity> updateAutoSaveEnabled(long settingId, AutoSaveContactEnabledRequest request) {
         return service.updateAutoSaveEnabled(settingId, request)
+                .subscribeOn(io.reactivex.schedulers.Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public Observable<SettingsEntity> updateAntiPhishingPhrase(long settingId, AntiPhishingPhraseRequest request) {
+        return service.updateAntiPhishingPhrase(settingId, request)
                 .subscribeOn(io.reactivex.schedulers.Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
