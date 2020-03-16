@@ -5,6 +5,7 @@ import javax.inject.Singleton;
 import io.reactivex.Observable;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.AddFirebaseTokenRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.AddFolderRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.AntiPhishingPhraseRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.AttachmentsEncryptedRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.AutoSaveContactEnabledRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.CaptchaVerifyRequest;
@@ -256,6 +257,9 @@ public interface RestService {
 
     @PATCH("users/settings/{id}/")
     Observable<SettingsEntity> updateAutoSaveEnabled(@Path("id") long settingId, @Body AutoSaveContactEnabledRequest request);
+
+    @PATCH("users/settings/{id}/")
+    Observable<SettingsEntity> updateAntiPhishingPhrase(@Path("id") long settingId, @Body AntiPhishingPhraseRequest request);
 
     @POST("users/app-token/")
     Observable<AddFirebaseTokenResponse> addFirebaseToken(@Body AddFirebaseTokenRequest request);

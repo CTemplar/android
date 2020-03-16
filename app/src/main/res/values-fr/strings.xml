@@ -52,9 +52,6 @@
     <string name="menu_move_to_archive">Archiver</string>
     <string name="menu_mark_as_unread">Marquer comme non lu</string>
 
-    <!-- FONTS -->
-    <string name="FONT_LATO_REGULAR">fonts/Lato-Regular.ttf</string>
-
     <!-- STRINGS -->
     <string name="token_expired_title">Session expirée</string>
     <string name="token_expired_message">Votre session a expiré, merci de bien vouloir vous reconnecter.</string>
@@ -301,6 +298,8 @@ Votre mot de passe est connecté à votre clé de cryptage, si vous changez votr
     <string name="settings_recovery_email">Email de récupération</string>
     <string name="settings_enable_recovery_email">Activer email de récupération</string>
     <string name="settings_type_recovery_email">Saisir votre email de récupération</string>
+    <string name="settings_enabled_anti_phishing">Anti hameçonnage</string>
+    <string name="settings_type_anti_phishing_phrase">Tapez votre phrase anti-phishing</string>
     <string name="settings_subject_encryption">Objet chiffré</string>
     <string name="settings_password">Mot de passe</string>
     <string name="settings_language">Langue</string>
@@ -310,6 +309,8 @@ Votre mot de passe est connecté à votre clé de cryptage, si vous changez votr
     <string name="settings_contacts_encryption">Contacts chiffrés</string>
     <string name="settings_attachments_encryption">Pièces jointes chiffrées</string>
     <string name="settings_encryption">Chiffrement des données</string>
+    <string name="settings_phishing_protection">Protection contre le phishing</string>
+    <string name="settings_phishing_protection_description">La phrase Anti-Phishing permet aux utilisateurs de lier un mot ou une phrase personnalisée de votre choix à votre compte CTemplar. Une fois défini, si vous vous connectez à votre messagerie Web et que votre phrase Anti-Phishing est manquante ou incorrecte, vous pouvez être victime de Hameçonnage. Vous devez immédiatement confirmer que vous visitez <![CDATA[<u><a href="https://ctemplar.com">https://ctemplar.com</a></u>]]>. Si vous ne l\'êtes pas, un site malveillant pourrait avoir vos informations de connexion pour votre compte CTemplar. Pour éviter d\'endommager votre compte, vous devez immédiatement visiter <![CDATA[<u><a href="https://ctemplar.com">https://ctemplar.com</a></u>]]> et changez votre mot de passe.</string>
     <string name="settings_saving_contacts">Sauvegarde des contacts</string>
     <string name="settings_auto_save_contacts">Contacts automatiquement sauvegardés</string>
     <string name="settings_filters">Filtres</string>

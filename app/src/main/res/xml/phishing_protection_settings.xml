@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <CheckBoxPreference
+        android:title="@string/settings_enabled_anti_phishing"
+        android:key="@string/anti_phishing_enabled" />
+
+    <EditTextPreference
+        android:title="@string/settings_type_anti_phishing_phrase"
+        android:key="@string/anti_phishing_key"
+        app:dependency="@string/anti_phishing_enabled" />
+
+    <Preference
+        android:summary="@string/settings_phishing_protection_description"
+        android:key="@string/anti_phishing_description_key" />
+
+</PreferenceScreen>

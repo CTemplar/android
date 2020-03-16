@@ -54,9 +54,6 @@
     <string name="menu_move_to_archive">Move to archive</string>
     <string name="menu_mark_as_unread">Mark as unread</string>
 
-    <!-- FONTS -->
-    <string name="FONT_LATO_REGULAR">fonts/Lato-Regular.ttf</string>
-
     <!-- STRINGS -->
     <string name="token_expired_title">Session expired</string>
     <string name="token_expired_message">Your session has expired, please log in to CTemplar again</string>
@@ -305,6 +302,8 @@ Your password is connected to your encryption key, if you change your password t
     <string name="settings_recovery_email">Recovery email</string>
     <string name="settings_enable_recovery_email">Enable recovery email</string>
     <string name="settings_type_recovery_email">Type your recovery email</string>
+    <string name="settings_enabled_anti_phishing">Anti Phishing</string>
+    <string name="settings_type_anti_phishing_phrase">Type your anti phishing phrase</string>
     <string name="settings_subject_encryption">Subject encryption</string>
     <string name="settings_password">Password</string>
     <string name="settings_language">Language</string>
@@ -314,6 +313,8 @@ Your password is connected to your encryption key, if you change your password t
     <string name="settings_contacts_encryption">Contacts encryption</string>
     <string name="settings_attachments_encryption">Attachments encryption</string>
     <string name="settings_encryption">Encryption</string>
+    <string name="settings_phishing_protection">Phishing Protection</string>
+    <string name="settings_phishing_protection_description">The Anti-Phishing phrase allows users to link a custom word or phrase of your choice to your CTemplar account.Once set, if you ever log into your webmail and your Anti-Phishing phrase is either missing or incorrect, you may be the victim of phishing. You should immediately confirm that you are visiting <![CDATA[<u><a href="https://ctemplar.com">https://ctemplar.com</a></u>]]>. If you are not, then a malicious site might have your login credentials for your CTemplar account. To prevent harm to your account, you should immediately visit <![CDATA[<u><a href="https://ctemplar.com">https://ctemplar.com</a></u>]]> and change your password.</string>
     <string name="settings_saving_contacts">Saving contacts</string>
     <string name="settings_auto_save_contacts">Automatically save contacts</string>
     <string name="settings_filters">Filters</string>
@@ -351,6 +352,9 @@ Your password is connected to your encryption key, if you change your password t
     <string name="push_notifications_enabled" translatable="false">push_notifications_enabled</string>
     <string name="recovery_email_enabled" translatable="false">recovery_email_enabled</string>
     <string name="recovery_email" translatable="false">recovery_email</string>
+    <string name="anti_phishing_enabled" translatable="false">anti_phishing_enabled</string>
+    <string name="anti_phishing_key" translatable="false">anti_phishing_key</string>
+    <string name="anti_phishing_description_key" translatable="false">anti_phishing_description_key</string>
     <string name="signature_enabled" translatable="false">signature_enabled</string>
     <string name="signature" translatable="false">signature</string>
     <string name="mobile_signature_enabled" translatable="false">mobile_signature_enabled</string>
