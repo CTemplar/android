@@ -13,10 +13,10 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import mobileapp.ctemplar.com.ctemplarapp.security.PGPManager;
 
 public class EncodeUtils {
-
     private static final int MAX_SYMBOLS = 29;
     private static final String ENCODE_SCHEME = "$2a$10$";
     private static final char[] HEX_ARRAY = "0123456789abcdef".toCharArray();
+    private static final char[] ALPHABET = "abcdefghijklmnopqrstuvwxyz0123456789".toCharArray();
 
     public static char[] bytesToHex(byte[] bytes) {
         char[] hexChars = new char[bytes.length * 2];
@@ -33,8 +33,19 @@ public class EncodeUtils {
         StringBuilder randomStringBuilder = new StringBuilder();
         int randomLength = generator.nextInt(length);
         char tempChar;
-        for (int i = 0; i < randomLength; i++){
+        for (int i = 0; i < randomLength; i++) {
             tempChar = (char) (generator.nextInt(96) + 32);
+            randomStringBuilder.append(tempChar);
+        }
+        return randomStringBuilder.toString();
+    }
+
+    public static String randomPass(int length) {
+        Random generator = new Random();
+        StringBuilder randomStringBuilder = new StringBuilder();
+        char tempChar;
+        for (int i = 0; i <= length; i++) {
+            tempChar = ALPHABET[generator.nextInt(ALPHABET.length)];
             randomStringBuilder.append(tempChar);
         }
         return randomStringBuilder.toString();

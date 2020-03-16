@@ -9,6 +9,7 @@ import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.AntiPhishingPhraseRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.AttachmentsEncryptedRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.AutoSaveContactEnabledRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.ContactsEncryptionRequest;
@@ -72,7 +73,6 @@ public class SettingsActivityViewModel extends ViewModel {
         if (settingId == -1 && mailboxId != -1) {
             return;
         }
-
         userRepository.updateSignature(mailboxId, new SignatureRequest(signatureText))
                 .subscribe(new Observer<SettingsEntity>() {
                     @Override
@@ -286,6 +286,35 @@ public class SettingsActivityViewModel extends ViewModel {
                     public void onError(Throwable e) {
                         decryptionStatus.postValue(ResponseStatus.RESPONSE_ERROR);
                         Timber.e(e);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    void updateAntiPhishingPhrase(long settingId, boolean antiPhishingEnabled, String antiPhishingPhrase) {
+        if (settingId == -1) {
+            return;
+        }
+        userRepository.updateAntiPhishingPhrase(settingId,
+                new AntiPhishingPhraseRequest(antiPhishingEnabled, antiPhishingPhrase))
+                .subscribe(new Observer<SettingsEntity>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(SettingsEntity settingsEntity) {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Timber.w(e);
                     }
 
                     @Override
