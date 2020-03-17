@@ -82,7 +82,7 @@ public class ChangePasswordViewModel extends ViewModel {
 
     void logout() {
         if (userRepository != null) {
-            userRepository.logout();
+            userRepository.clearData();
         }
         actions.postValue(MainActivityActions.ACTION_LOGOUT);
     }

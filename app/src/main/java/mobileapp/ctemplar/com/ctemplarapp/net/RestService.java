@@ -60,6 +60,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.WhiteBlackLists.BlackList
 import mobileapp.ctemplar.com.ctemplarapp.net.response.WhiteBlackLists.WhiteListResponse;
 import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
+import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
@@ -84,7 +85,7 @@ public interface RestService {
     Observable<Response<Void>> signOut(@Query("platform") String platform, @Query("device_token") String deviceToken);
 
     @POST("auth/refresh/")
-    Observable<SignInResponse> refreshToken(@Body TokenRefreshRequest request);
+    Call<SignInResponse> refreshToken(@Body TokenRefreshRequest request);
 
     @POST("auth/check-username/")
     Observable<CheckUsernameResponse> checkUsername(@Body CheckUsernameRequest request);

@@ -1,7 +1,11 @@
 package mobileapp.ctemplar.com.ctemplarapp.net;
 
+import android.text.TextUtils;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import java.io.IOException;
 
 import mobileapp.ctemplar.com.ctemplarapp.net.request.TokenRefreshRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.SignInResponse;
@@ -18,12 +22,23 @@ public class TokenAuthenticator implements Authenticator {
 
     @Nullable
     @Override
-    public Request authenticate(@Nullable Route route, @NonNull Response response) {
-        String newToken = refreshToken();
-        if (newToken == null) {
-            Timber.d("Token is null");
+    public Request authenticate(@Nullable Route route, @NonNull Response response) throws IOException {
+        UserRepository userRepository = UserRepository.getInstance();
+        boolean keepMeLoggedIn = userRepository.getKeepMeLoggedIn();
+        String userToken = userRepository.getUserToken();
+        if (!TextUtils.isEmpty(userToken) && !keepMeLoggedIn) {
+            Timber.d("Auto logout");
+            userRepository.clearData();
             return response.request();
         }
+
+        String newToken = refreshToken(userToken);
+        if (TextUtils.isEmpty(newToken)) {
+            Timber.d("Token is null");
+            userRepository.clearData();
+            return response.request();
+        }
+        userRepository.saveUserToken(newToken);
 
         Timber.d("Token is refreshed: %s", newToken);
         return response.request().newBuilder()
@@ -31,19 +46,16 @@ public class TokenAuthenticator implements Authenticator {
                 .build();
     }
 
-    private String refreshToken() {
+    private String refreshToken(String userToken) throws IOException {
         Timber.d("Refreshing token...");
-        UserRepository userRepository = UserRepository.getInstance();
-        String oldToken = userRepository.getUserToken();
-        SignInResponse signInResponse = new RestClient()
+        retrofit2.Response<SignInResponse> refreshResponse = new RestClient()
                 .getRestService()
-                .refreshToken(new TokenRefreshRequest(oldToken))
-                .blockingSingle();
+                .refreshToken(new TokenRefreshRequest(userToken)).execute();
+
+        SignInResponse signInResponse = refreshResponse.body();
         if (signInResponse == null) {
             return null;
         }
-        String token = signInResponse.getToken();
-        userRepository.saveUserToken(token);
-        return token;
+        return signInResponse.getToken();
     }
 }

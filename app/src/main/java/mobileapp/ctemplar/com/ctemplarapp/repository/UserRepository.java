@@ -114,6 +114,14 @@ public class UserRepository {
         return userStore.getUserPassword();
     }
 
+    public void saveKeepMeLoggedIn(boolean keepMeLoggedIn) {
+        userStore.saveKeepMeLoggedIn(keepMeLoggedIn);
+    }
+
+    public boolean getKeepMeLoggedIn() {
+        return userStore.getKeepMeLoggedIn();
+    }
+
     public void saveUsername(String username) {
         userStore.saveUsername(username);
     }
@@ -154,7 +162,7 @@ public class UserRepository {
         return userStore.getContactsEncryptionEnabled();
     }
 
-    public void logout() {
+    public void clearData() {
         userStore.logout();
         CTemplarApp.getAppDatabase().clearAllTables();
         Single<String> firebaseClearInstance = Single.create((SingleOnSubscribe<String>) emitter -> {
