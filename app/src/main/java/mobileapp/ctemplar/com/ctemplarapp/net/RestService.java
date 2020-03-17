@@ -30,6 +30,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.request.SignInRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SignUpRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SignatureRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SubjectEncryptedRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.TokenRefreshRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.AddFirebaseTokenResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.CaptchaResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.CaptchaVerifyResponse;
@@ -81,6 +82,9 @@ public interface RestService {
 
     @GET("auth/sign-out/")
     Observable<Response<Void>> signOut(@Query("platform") String platform, @Query("device_token") String deviceToken);
+
+    @POST("auth/refresh/")
+    Observable<SignInResponse> refreshToken(@Body TokenRefreshRequest request);
 
     @POST("auth/check-username/")
     Observable<CheckUsernameResponse> checkUsername(@Body CheckUsernameRequest request);
