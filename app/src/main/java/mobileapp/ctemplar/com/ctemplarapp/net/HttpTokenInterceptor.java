@@ -13,7 +13,6 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 public class HttpTokenInterceptor implements Interceptor {
-
     private static final String HEADER_ACCEPT = "Accept";
     private static final String HEADER_AUTHORIZATION = "Authorization";
 

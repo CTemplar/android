@@ -32,10 +32,6 @@ public class SplashActivityModel extends ViewModel {
         return userRepository.getUserToken();
     }
 
-    public MutableLiveData<String> getRefreshTokenResponse() {
-        return refreshTokenResponse;
-    }
-
     public void saveFirebaseToken(String token) {
         userRepository.saveFirebaseToken(token);
     }
@@ -50,38 +46,6 @@ public class SplashActivityModel extends ViewModel {
 
     public MutableLiveData<ResponseStatus> getDeleteFirebaseTokenStatus() {
         return deleteFirebaseTokenStatus;
-    }
-
-    public void refreshToken() {
-        String username = userRepository.getUsername();
-        String password = userRepository.getUserPassword();
-        SignInRequest signInRequest = new SignInRequest(
-                username, EncodeUtils.generateHash(username, password)
-        );
-        userRepository.signIn(signInRequest)
-                .subscribe(new Observer<SignInResponse>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(SignInResponse signInResponse) {
-                        String token = signInResponse.getToken();
-                        userRepository.saveUserToken(token);
-                        refreshTokenResponse.postValue(token);
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
     }
 
     public void addFirebaseToken(String token, String platform) {

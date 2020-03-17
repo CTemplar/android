@@ -15,6 +15,7 @@ import mobileapp.ctemplar.com.ctemplarapp.login.LoginActivity;
 import mobileapp.ctemplar.com.ctemplarapp.main.MainActivity;
 
 public class SplashActivity extends BaseActivity {
+    private static final String ANDROID = "android";
 
     private SplashActivityModel viewModel;
     private Handler handler = new Handler();
@@ -40,47 +41,43 @@ public class SplashActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
 
         viewModel = new ViewModelProvider(this).get(SplashActivityModel.class);
-        if (!TextUtils.isEmpty(viewModel.getToken())) {
-            viewModel.getRefreshTokenResponse()
-                    .observe(this, s -> {
-                        if (checkFirebaseToken()) {
-                            handler.removeCallbacks(run);
-                            run.run();
-                        }
-                    });
-            viewModel.refreshToken();
-        }
+
+        checkFirebaseToken();
         loadData();
     }
 
-    private boolean checkFirebaseToken() {
+    private void checkFirebaseToken() {
         viewModel.getAddFirebaseTokenResponse().observe(this, response -> {
             if (response != null) {
                 String newToken = response.getToken();
                 viewModel.saveFirebaseToken(newToken);
-                handler.removeCallbacks(run);
-                run.run();
+                skipDelay();
             }
         });
 
-        final boolean[] skipUpdate = {true};
         FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(this, instanceIdResult -> {
-            String token = instanceIdResult.getToken();
+            String instanceToken = instanceIdResult.getToken();
             String storedToken = viewModel.getFirebaseToken();
-            if (!token.equals(storedToken)) {
-                if (!storedToken.isEmpty()) {
+            String userToken = viewModel.getToken();
+            if (TextUtils.isEmpty(userToken) && TextUtils.isEmpty(storedToken) || instanceToken.equals(storedToken)) {
+                skipDelay();
+            } else {
+                if (!TextUtils.isEmpty(storedToken)) {
                     viewModel.deleteFirebaseToken(storedToken);
                 }
-                viewModel.addFirebaseToken(token, "android");
-                skipUpdate[0] = false;
+                viewModel.addFirebaseToken(instanceToken, ANDROID);
             }
         });
-        return skipUpdate[0];
     }
 
     private void loadData() {
         // data will be loaded here before starting new activity
         handler.postDelayed(run, 2000);
+    }
+
+    private void skipDelay() {
+        handler.removeCallbacks(run);
+        handler.postDelayed(run, 300);
     }
 
     private void startSignInActivity() {
