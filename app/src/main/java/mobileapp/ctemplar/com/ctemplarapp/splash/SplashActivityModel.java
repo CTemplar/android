@@ -20,7 +20,6 @@ public class SplashActivityModel extends ViewModel {
 
     private UserRepository userRepository;
 
-    private MutableLiveData<String> refreshTokenResponse = new MutableLiveData<>();
     private MutableLiveData<AddFirebaseTokenResponse> addFirebaseTokenResponse = new MutableLiveData<>();
     private MutableLiveData<ResponseStatus> deleteFirebaseTokenStatus = new MutableLiveData<>();
 

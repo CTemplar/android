@@ -13,6 +13,9 @@ public class SignInRequest {
     @SerializedName("otp")
     private String otp;
 
+    @SerializedName("rememberMe")
+    private boolean rememberMe;
+
     public SignInRequest(String username, String password) {
         this.password = password;
         this.username = username;
@@ -40,5 +43,13 @@ public class SignInRequest {
 
     public void setOtp(String otp) {
         this.otp = otp;
+    }
+
+    public boolean isRememberMe() {
+        return rememberMe;
+    }
+
+    public void setRememberMe(boolean rememberMe) {
+        this.rememberMe = rememberMe;
     }
 }

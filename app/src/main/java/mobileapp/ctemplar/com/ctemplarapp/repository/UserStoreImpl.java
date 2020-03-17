@@ -17,6 +17,7 @@ public class UserStoreImpl implements UserStore{
     private static final String KEY_USERNAME = "key_username";
     private static final String KEY_PASSWORD = "key_password";
     private static final String KEY_PASSWORD_HASHED = "key_password_hashed";
+    private static final String KEY_KEEP_ME_LOGGED_IN = "key_keep_me_logged_in";
     private static final String KEY_PUBLIC_KEY = "key_public_key";
     private static final String KEY_PRIVATE_KEY = "key_private_key";
     private static final String KEY_TIMEZONE = "key_timezone";
@@ -111,6 +112,16 @@ public class UserStoreImpl implements UserStore{
     @Override
     public String getUserPassword() {
         return preferences.getString(KEY_PASSWORD, "");
+    }
+
+    @Override
+    public void saveKeepMeLoggedIn(boolean state) {
+        preferences.edit().putBoolean(KEY_KEEP_ME_LOGGED_IN, state).apply();
+    }
+
+    @Override
+    public boolean getKeepMeLoggedIn() {
+        return preferences.getBoolean(KEY_KEEP_ME_LOGGED_IN, false);
     }
 
     @Override

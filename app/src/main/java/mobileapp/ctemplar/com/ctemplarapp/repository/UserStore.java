@@ -22,6 +22,9 @@ public interface UserStore {
     void savePassword(String password);
     String getUserPassword();
 
+    void saveKeepMeLoggedIn(boolean state);
+    boolean getKeepMeLoggedIn();
+
     void saveTimeZone(String timezone);
     String getTimeZone();
 

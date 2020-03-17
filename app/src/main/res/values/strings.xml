@@ -1,11 +1,11 @@
 <resources>
     <string name="app_name" translatable="false">CTemplar</string>
+    <string name="platform" translatable="false">android</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
     <string name="action_undo">UNDO</string>
-    <string name="platform" translatable="false">android</string>
 
     <!-- MAIN -->
     <string name="dialog_log_out">Log out</string>
@@ -83,8 +83,9 @@
 If you have further questions please email <![CDATA[<u><a href="mailto:support@ctemplar.com">support@ctemplar.com</a></u>]]>.</string>
     <string name="title_confirm_reset_password_hint2">Are you sure you want to reset your password?</string>
     <string name="title_reset_code_hint">We have sent a reset code to your <![CDATA[<u><a href="mailto:%1$s">recovery email</a></u>]]> to reset your password. \n\n Enter it below for confirmation.</string>
-    <string name="title_new_pasword_hint">Don’t forget this password, it can’t be restored.</string>
+    <string name="title_new_password_hint">Don’t forget this password, it can’t be restored.</string>
     <string name="title_forgot_username_underlined"><u>Forgot Your Username?</u></string>
+    <string name="title_keep_me_logged_in">Keep me logged in</string>
     <string name="title_forgot_username">Forgot your username?</string>
     <string name="title_forgot_username_hint">Enter your email address and we will send you your username</string>
     <string name="title_email_my_username">Email me my username</string>

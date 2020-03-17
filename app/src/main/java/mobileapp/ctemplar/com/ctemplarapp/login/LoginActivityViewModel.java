@@ -81,11 +81,13 @@ public class LoginActivityViewModel extends ViewModel {
         CTemplarApp.getAppDatabase().clearAllTables();
     }
 
-    public void signIn(String username, String password, String otp) {
+    public void signIn(String username, String password, String otp, boolean keepMeLoggedIn) {
         userRepository.saveUsername(username);
         userRepository.saveUserPassword(password);
+        userRepository.saveKeepMeLoggedIn(keepMeLoggedIn);
         final SignInRequest signInRequest = new SignInRequest(username, EncodeUtils.generateHash(username, password));
         signInRequest.setOtp(otp);
+        signInRequest.setRememberMe(keepMeLoggedIn);
 
         userRepository.signIn(signInRequest)
                 .subscribe(new Observer<SignInResponse>() {

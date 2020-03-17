@@ -6,6 +6,7 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,6 +48,9 @@ public class SignInFragment extends BaseFragment {
 
     @BindView(R.id.fragment_sign_in_password_input_layout)
     TextInputLayout editTextPasswordLayout;
+
+    @BindView(R.id.fragment_sign_in_keep_me_logged_in_checkbox)
+    CheckBox keepMeLoggedInCheckBox;
 
     @BindView(R.id.fragment_sign_in_otp_code_input)
     TextInputEditText editTextOtpCode;
@@ -106,7 +110,7 @@ public class SignInFragment extends BaseFragment {
         }
         if(isValid(username, password)) {
             loginActivityModel.showProgressDialog();
-            loginActivityModel.signIn(username, password, otp);
+            loginActivityModel.signIn(username, password, otp, keepMeLoggedInCheckBox.isChecked());
         }
     }
 
@@ -180,6 +184,7 @@ public class SignInFragment extends BaseFragment {
     private void show2FA() {
         editTextUsernameLayout.setVisibility(View.GONE);
         editTextPasswordLayout.setVisibility(View.GONE);
+        keepMeLoggedInCheckBox.setVisibility(View.GONE);
         textViewOtpTitle.setVisibility(View.VISIBLE);
         editTextOtpLayout.setVisibility(View.VISIBLE);
         editTextOtpLayout.requestFocus();
