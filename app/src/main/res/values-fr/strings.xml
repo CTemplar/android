@@ -81,8 +81,9 @@
 Pour toute question, merci de nous contacter <![CDATA[<u><a href="mailto:support@ctemplar.com">support@ctemplar.com</a></u>]]>.</string>
     <string name="title_confirm_reset_password_hint2">Êtes vous certain de vouloir réinitialiser votre mot de passe ?</string>
     <string name="title_reset_code_hint">Un email a été envoyé à votre <![CDATA[<u><a href="mailto:%1$s">adresse de récupération</a></u>]]> pour réinitialiser votre mot de passe. \n\n Indiquer ci-dessous pour confirmation.</string>
-    <string name="title_new_pasword_hint">N\'oubliez pas votre mot de passe, il ne pourra pas être restauré.</string>
+    <string name="title_new_password_hint">N\'oubliez pas votre mot de passe, il ne pourra pas être restauré.</string>
     <string name="title_forgot_username_underlined"><u>Nom d\'utilisateur oublié ?</u></string>
+    <string name="title_keep_me_logged_in">Rester connecté</string>
     <string name="title_forgot_username">Nom d\'utilisateur oublié ?</string>
     <string name="title_forgot_username_hint">Enter your email address and we will send you your username</string>
     <string name="title_email_my_username">Email me my username</string>

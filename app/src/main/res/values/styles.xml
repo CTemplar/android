@@ -85,4 +85,9 @@
         <item name="colorAccent">@color/colorBlue</item>
     </style>
 
+    <style name="CheckBoxLight" parent="Base.Theme.AppCompat">
+        <item name="android:textColorSecondary">@color/colorWhiteLight</item>
+        <item name="colorAccent">@color/colorWhiteLight</item>
+    </style>
+
 </resources>

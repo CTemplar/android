@@ -24,10 +24,18 @@ public class TokenAuthenticator implements Authenticator {
     @Override
     public Request authenticate(@Nullable Route route, @NonNull Response response) throws IOException {
         UserRepository userRepository = UserRepository.getInstance();
+        boolean keepMeLoggedIn = userRepository.getKeepMeLoggedIn();
         String userToken = userRepository.getUserToken();
+        if (!TextUtils.isEmpty(userToken) && !keepMeLoggedIn) {
+            Timber.d("Auto logout");
+            userRepository.clearData();
+            return response.request();
+        }
+
         String newToken = refreshToken(userToken);
         if (TextUtils.isEmpty(newToken)) {
             Timber.d("Token is null");
+            userRepository.clearData();
             return response.request();
         }
         userRepository.saveUserToken(newToken);

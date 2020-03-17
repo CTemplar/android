@@ -63,7 +63,6 @@ public class MainActivityViewModel extends ViewModel {
     private MutableLiveData<ResponseBody> unreadFoldersBody = new MutableLiveData<>();
     private MutableLiveData<MyselfResponse> myselfResponse = new MutableLiveData<>();
     MutableLiveData<String> currentFolder = new MutableLiveData<>();
-    MutableLiveData<SignInResponse> signResponse = new MutableLiveData<>();
 
     public MainActivityViewModel() {
         userRepository = CTemplarApp.getUserRepository();
@@ -138,40 +137,19 @@ public class MainActivityViewModel extends ViewModel {
 
     public void logout() {
         if (userRepository != null) {
-            signOut();
+            exit();
         }
     }
 
-    public void exit(){
-        userRepository.logout();
+    public void exit() {
+        userRepository.clearData();
         actions.postValue(MainActivityActions.ACTION_LOGOUT);
     }
 
-    public void signOut() {
-        String token = userRepository.getAppToken();
-        userRepository.signOut(ANDROID, token)
-                .subscribe(new Observer<Response<Void>>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(Response<Void> voidResponse) {
-                        exit();
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        exit();
-                        Timber.e(e);
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
+    public void checkUserToken() {
+        if (TextUtils.isEmpty(userRepository.getUserToken())) {
+            exit();
+        }
     }
 
     public void getMessages(int limit, final int offset, final String folder) {
