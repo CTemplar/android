@@ -14,7 +14,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import timber.log.Timber;
 
 public class RestClient {
-
     private static final RestClient instance = new RestClient();
     private final RestService services;
 

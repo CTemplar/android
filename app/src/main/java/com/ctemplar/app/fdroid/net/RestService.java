@@ -30,6 +30,7 @@ import com.ctemplar.app.fdroid.net.request.SignInRequest;
 import com.ctemplar.app.fdroid.net.request.SignUpRequest;
 import com.ctemplar.app.fdroid.net.request.SignatureRequest;
 import com.ctemplar.app.fdroid.net.request.SubjectEncryptedRequest;
+import com.ctemplar.app.fdroid.net.request.TokenRefreshRequest;
 import com.ctemplar.app.fdroid.net.response.AddAppTokenResponse;
 import com.ctemplar.app.fdroid.net.response.CaptchaResponse;
 import com.ctemplar.app.fdroid.net.response.CaptchaVerifyResponse;
@@ -59,6 +60,7 @@ import com.ctemplar.app.fdroid.net.response.WhiteBlackLists.BlackListResponse;
 import com.ctemplar.app.fdroid.net.response.WhiteBlackLists.WhiteListResponse;
 import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
+import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
@@ -81,6 +83,9 @@ public interface RestService {
 
     @GET("auth/sign-out/")
     Observable<Response<Void>> signOut(@Query("platform") String platform, @Query("device_token") String deviceToken);
+
+    @POST("auth/refresh/")
+    Call<SignInResponse> refreshToken(@Body TokenRefreshRequest request);
 
     @POST("auth/check-username/")
     Observable<CheckUsernameResponse> checkUsername(@Body CheckUsernameRequest request);
