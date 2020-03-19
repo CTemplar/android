@@ -49,7 +49,7 @@ import mobileapp.ctemplar.com.ctemplarapp.wbl.WhiteBlackListActivity;
 import timber.log.Timber;
 
 public class SettingsActivity extends AppCompatActivity {
-
+    private static final String WEB_MAIL = "https://mail.ctemplar.com";
     public static final String USER_IS_PRIME = "user_is_prime";
     public static final String SETTING_ID = "setting_id";
 
@@ -353,11 +353,11 @@ public class SettingsActivity extends AppCompatActivity {
             });
 
             Preference descriptionPreference = findPreference(getString(R.string.anti_phishing_description_key));
-            descriptionPreference.setSummary(EditTextUtils.fromHtml(
+            descriptionPreference.setTitle(EditTextUtils.fromHtml(
                     getString(R.string.settings_phishing_protection_description))
             );
             descriptionPreference.setOnPreferenceClickListener(preference -> {
-                Intent ctemplarIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://" + BuildConfig.DOMAIN));
+                Intent ctemplarIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(WEB_MAIL));
                 startActivity(ctemplarIntent);
                 return true;
             });
