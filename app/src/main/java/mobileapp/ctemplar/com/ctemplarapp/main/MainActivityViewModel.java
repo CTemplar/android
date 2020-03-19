@@ -168,7 +168,7 @@ public class MainActivityViewModel extends ViewModel {
                 });
     }
 
-    public void exit(){
+    public void exit() {
         userRepository.clearData();
         actions.postValue(MainActivityActions.ACTION_LOGOUT);
     }

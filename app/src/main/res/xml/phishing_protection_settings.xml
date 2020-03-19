@@ -12,7 +12,7 @@
         app:dependency="@string/anti_phishing_enabled" />
 
     <Preference
-        android:summary="@string/settings_phishing_protection_description"
+        android:title="@string/settings_phishing_protection_description"
         android:key="@string/anti_phishing_description_key" />
 
 </PreferenceScreen>
