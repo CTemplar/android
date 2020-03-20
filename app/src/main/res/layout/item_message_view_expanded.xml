@@ -367,6 +367,15 @@
 
     </RelativeLayout>
 
+    <ProgressBar
+        android:id="@+id/item_message_view_expanded_progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="@id/item_message_view_expanded_content_layout"
+        app:layout_constraintRight_toRightOf="@id/item_message_view_expanded_content_layout"
+        app:layout_constraintTop_toTopOf="@id/item_message_view_expanded_content_layout"
+        app:layout_constraintBottom_toBottomOf="@id/item_message_view_expanded_content_layout" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/item_message_view_expanded_attachment"
         android:orientation="horizontal"
