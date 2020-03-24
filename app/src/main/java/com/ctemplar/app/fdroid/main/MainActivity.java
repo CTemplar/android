@@ -7,6 +7,7 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -27,6 +28,15 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.google.android.material.navigation.NavigationView;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.ctemplar.app.fdroid.ActivityInterface;
 import com.ctemplar.app.fdroid.R;
 import com.ctemplar.app.fdroid.folders.ManageFoldersActivity;
@@ -38,15 +48,6 @@ import com.ctemplar.app.fdroid.repository.entity.MailboxEntity;
 import com.ctemplar.app.fdroid.settings.SettingsActivity;
 import com.ctemplar.app.fdroid.utils.EncryptUtils;
 import com.ctemplar.app.fdroid.view.ResizeAnimation;
-import com.google.android.material.navigation.NavigationView;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 import timber.log.Timber;
 
 import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.ARCHIVE;
@@ -65,9 +66,6 @@ import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.TRASH;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     private static final int CUSTOM_FOLDER_STEP = 10;
-    private static final int DRAWER_MAX_WIDTH = 640;
-    private static final int DRAWER_MIN_WIDTH = 110;
-
 
     private FrameLayout contentContainer;
     private NavigationView navigationView;
@@ -80,6 +78,9 @@ public class MainActivity extends AppCompatActivity
     private boolean isTablet;
     private JSONObject unreadFolders;
 
+    private int drawerMaxWidth = 400;
+    private int drawerMinWidth = 100;
+
     private MainFragment mainFragment;
     private Handler handler = new Handler();
 
@@ -90,6 +91,9 @@ public class MainActivity extends AppCompatActivity
 
         contentContainer = findViewById(R.id.content_container);
         navigationView = findViewById(R.id.nav_view);
+        Menu navigationMenu = navigationView.getMenu();
+        Drawable navInboxIcon = navigationMenu.findItem(R.id.nav_inbox).getIcon();
+        drawerMinWidth = navInboxIcon.getMinimumWidth() * 3;
 
         navigationView.setNavigationItemSelectedListener(this);
 
@@ -126,7 +130,6 @@ public class MainActivity extends AppCompatActivity
         mainModel.getUnreadFoldersBody().observe(this, unreadFoldersBody -> {
             if (unreadFoldersBody != null) {
                 mainModel.getFolders(customFoldersShowCount, 0);
-                Menu navigationMenu = navigationView.getMenu();
                 TextView inboxCounter = (TextView) navigationMenu.findItem(R.id.nav_inbox).getActionView();
                 TextView draftCounter = (TextView) navigationMenu.findItem(R.id.nav_draft).getActionView();
                 TextView outboxCounter = (TextView) navigationMenu.findItem(R.id.nav_outbox).getActionView();
@@ -136,8 +139,8 @@ public class MainActivity extends AppCompatActivity
                 try {
                     String unreadFoldersString = unreadFoldersBody.string();
                     unreadFolders = new JSONObject(unreadFoldersString);
-                    int draft = unreadFolders.getInt(DRAFT);
                     int inbox = unreadFolders.getInt(INBOX);
+                    int draft = unreadFolders.getInt(DRAFT);
                     int starred = unreadFolders.getInt(STARRED);
                     int spam = unreadFolders.getInt(SPAM);
 
@@ -426,16 +429,26 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void setupTabletDrawer() {
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        drawerMaxWidth = (int) (displayMetrics.widthPixels * 0.3);
+
+        ViewGroup.LayoutParams layoutParams = navigationView.getLayoutParams();
         if (isPortrait()) {
-            navigationView.setTag(DRAWER_MAX_WIDTH);
-            ViewGroup.LayoutParams layoutParams = navigationView.getLayoutParams();
-            layoutParams.width = DRAWER_MIN_WIDTH;
-            navigationView.requestLayout();
+            navigationView.setTag(drawerMaxWidth);
+            layoutParams.width = drawerMinWidth;
+        } else {
+            navigationView.setTag(drawerMinWidth);
+            layoutParams.width = drawerMaxWidth;
         }
+        navigationView.requestLayout();
     }
 
     private void closeOpenNavigationView() {
-        int toWidth = DRAWER_MIN_WIDTH;
+        if (!isPortrait()) {
+            return;
+        }
+        int toWidth = drawerMinWidth;
         Integer viewTag = (Integer) navigationView.getTag();
         if (viewTag != null) {
             toWidth = viewTag;
@@ -449,6 +462,12 @@ public class MainActivity extends AppCompatActivity
                 navigationView.getHeight()
         );
         navigationView.startAnimation(resizeAnimation);
+    }
+
+    @Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        setupTabletDrawer();
     }
 
     private void loadUserInfo() {

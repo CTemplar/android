@@ -234,6 +234,9 @@ public class InboxFragment extends BaseFragment
     @Override
     public void onPrepareOptionsMenu(@NonNull Menu menu) {
         MenuItem filterIcon = menu.findItem(R.id.action_filter);
+        if (filterIcon == null) {
+            return;
+        }
         if (filterIsStarred || filterIsUnread || filterWithAttachment) {
             filterIcon.setIcon(R.drawable.ic_action_filter_on);
         } else {
@@ -499,7 +502,7 @@ public class InboxFragment extends BaseFragment
             switch(status) {
                 case RESPONSE_ERROR:
                     mainModel.checkUserToken();
-                    //Toast.makeText(getActivity(), getString(R.string.error_messages), Toast.LENGTH_SHORT).show();
+                    // Toast.makeText(getActivity(), getString(R.string.error_messages), Toast.LENGTH_SHORT).show();
                     Timber.e("Response error");
                     break;
                 case RESPONSE_NEXT_MESSAGES:
