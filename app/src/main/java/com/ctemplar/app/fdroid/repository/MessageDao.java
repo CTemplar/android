@@ -9,6 +9,7 @@ import java.util.List;
 
 import com.ctemplar.app.fdroid.repository.entity.MessageEntity;
 
+import static androidx.room.OnConflictStrategy.IGNORE;
 import static androidx.room.OnConflictStrategy.REPLACE;
 
 @Dao
@@ -20,11 +21,17 @@ public interface MessageDao {
     @Query("SELECT * FROM messages WHERE requestFolder=:folderName ORDER BY updated DESC")
     List<MessageEntity> getAllByFolder(String folderName);
 
+    @Query("SELECT * FROM messages WHERE isStarred=1 ORDER BY updated DESC")
+    List<MessageEntity> getAllStarred();
+
     @Insert(onConflict = REPLACE)
     void save(MessageEntity messageEntity);
 
     @Insert(onConflict = REPLACE)
-    void saveAll(List<MessageEntity> mailboxes);
+    void saveAll(List<MessageEntity> messages);
+
+    @Insert(onConflict = IGNORE)
+    void saveAllStarred(List<MessageEntity> messages);
 
     @Delete
     void delete(MessageEntity mailbox);
@@ -43,6 +50,9 @@ public interface MessageDao {
 
     @Query("DELETE FROM messages WHERE requestFolder=:folderName")
     void deleteAllByFolder(String folderName);
+
+    @Query("DELETE FROM messages WHERE isStarred=1 AND requestFolder=null")
+    void deleteStarred();
 
     @Query("DELETE FROM messages WHERE parent=:id")
     void deleteAllByParentId(String id);

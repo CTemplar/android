@@ -11,12 +11,12 @@ import com.ctemplar.app.fdroid.net.response.Messages.MessagesResult;
 import com.ctemplar.app.fdroid.net.response.Messages.UserDisplay;
 import com.ctemplar.app.fdroid.repository.MailboxDao;
 import com.ctemplar.app.fdroid.repository.UserStore;
+import com.ctemplar.app.fdroid.repository.constant.MainFolderNames;
 import com.ctemplar.app.fdroid.repository.entity.AttachmentEntity;
 import com.ctemplar.app.fdroid.repository.entity.MailboxEntity;
 import com.ctemplar.app.fdroid.repository.entity.MessageEntity;
 import com.ctemplar.app.fdroid.repository.entity.UserDisplayEntity;
 import com.ctemplar.app.fdroid.security.PGPManager;
-import timber.log.Timber;
 
 public class MessageProvider {
 
@@ -648,7 +648,6 @@ public class MessageProvider {
         result.setCc(arrayToList(message.getCc()));
         result.setBcc(arrayToList(message.getBcc()));
         result.setFolderName(message.getFolderName());
-        result.setRequestFolder(requestFolder);
         result.setUpdated(message.getUpdated());
         result.setDestructDate(message.getDestructDate());
         result.setDelayedDelivery(message.getDelayedDelivery());
@@ -668,9 +667,9 @@ public class MessageProvider {
         result.setMailboxId(message.getMailboxId());
         result.setParent(message.getParent());
 
-//        if (requestFolder.equals(MainFolderNames.INBOX) && message.getFolderName().equals(MainFolderNames.SENT)) {
-//            result.setShowInInbox(true);
-//        }
+        if (!requestFolder.equals(MainFolderNames.STARRED)) {
+            result.setRequestFolder(requestFolder);
+        }
 
         return result;
     }
