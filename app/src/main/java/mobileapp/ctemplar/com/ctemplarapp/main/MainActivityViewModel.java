@@ -179,24 +179,28 @@ public class MainActivityViewModel extends ViewModel {
         }
     }
 
-    public void getMessages(int limit, final int offset, final String folder) {
+    public void getMessages(int limit, int offset, String folder) {
         if (folder == null) {
             return;
         }
-        List<MessageEntity> messageEntities = messagesRepository.getLocalMessagesByFolder(folder);
-        List<MessageProvider> messageProviders = MessageProvider.fromMessageEntities(messageEntities);
+        List<MessageEntity> messageEntities = folder.equals(MainFolderNames.STARRED)
+                ? messagesRepository.getLocalStarredMessages()
+                : messagesRepository.getLocalMessagesByFolder(folder);
+        List<MessageProvider> messageProviders
+                = MessageProvider.fromMessageEntities(messageEntities);
 
-        if (offset == 0 && !folder.equals(MainFolderNames.STARRED)) {
-            ResponseMessagesData localMessagesData = new ResponseMessagesData(messageProviders, folder, offset);
+        if (offset == 0) {
+            ResponseMessagesData localMessagesData = new ResponseMessagesData(messageProviders,
+                    folder, offset);
             if (!localMessagesData.messages.isEmpty()) {
                 messagesResponse.postValue(localMessagesData);
             }
         }
 
         Observable<MessagesResponse> messagesResponseObservable
-                = folder.equals(MainFolderNames.STARRED) ?
-                userRepository.getStarredMessagesList(limit, offset, 1) :
-                userRepository.getMessagesList(limit, offset, folder);
+                = folder.equals(MainFolderNames.STARRED)
+                ? userRepository.getStarredMessagesList(limit, offset)
+                : userRepository.getMessagesList(limit, offset, folder);
 
         messagesResponseObservable.observeOn(Schedulers.computation())
                 .subscribe(new Observer<MessagesResponse>() {
@@ -206,23 +210,30 @@ public class MainActivityViewModel extends ViewModel {
                     }
 
                     @Override
-                    public void onNext(final MessagesResponse response) {
+                    public void onNext(MessagesResponse response) {
                         List<MessagesResult> messages = response.getMessagesList();
-                        List<MessageEntity> messageEntities = MessageProvider
-                                .fromMessagesResultsToEntities(messages, folder);
+                        List<MessageEntity> messageEntities
+                                = MessageProvider.fromMessagesResultsToEntities(messages, folder);
 
                         List<MessageProvider> messageProviders;
-                        if (offset > 0 || folder.equals(MainFolderNames.STARRED)) {
-                            messageProviders = MessageProvider.fromMessageEntities(messageEntities);
-                        } else {
-                            messagesRepository.deleteMessagesByFolderName(folder);
-                            messagesRepository.addMessagesToDatabase(messageEntities);
-
-                            List<MessageEntity> localEntities = messagesRepository.getLocalMessagesByFolder(folder);
+                        if (offset == 0) {
+                            List<MessageEntity> localEntities;
+                            if (folder.equals(MainFolderNames.STARRED)) {
+                                messagesRepository.deleteStarredMessages();
+                                messagesRepository.addStarredMessagesToDatabase(messageEntities);
+                                localEntities = messagesRepository.getLocalStarredMessages();
+                            } else {
+                                messagesRepository.deleteMessagesByFolderName(folder);
+                                messagesRepository.addMessagesToDatabase(messageEntities);
+                                localEntities = messagesRepository.getLocalMessagesByFolder(folder);
+                            }
                             messageProviders = MessageProvider.fromMessageEntities(localEntities);
+                        } else {
+                            messageProviders = MessageProvider.fromMessageEntities(messageEntities);
                         }
 
-                        messagesResponse.postValue(new ResponseMessagesData(messageProviders, folder, offset));
+                        messagesResponse.postValue(new ResponseMessagesData(messageProviders,
+                                folder, offset));
                         responseStatus.postValue(ResponseStatus.RESPONSE_NEXT_MESSAGES);
                     }
 

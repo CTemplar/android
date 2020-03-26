@@ -11,12 +11,12 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResult;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.UserDisplay;
 import mobileapp.ctemplar.com.ctemplarapp.repository.MailboxDao;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserStore;
+import mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.AttachmentEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MessageEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.UserDisplayEntity;
 import mobileapp.ctemplar.com.ctemplarapp.security.PGPManager;
-import timber.log.Timber;
 
 public class MessageProvider {
 
@@ -648,7 +648,6 @@ public class MessageProvider {
         result.setCc(arrayToList(message.getCc()));
         result.setBcc(arrayToList(message.getBcc()));
         result.setFolderName(message.getFolderName());
-        result.setRequestFolder(requestFolder);
         result.setUpdated(message.getUpdated());
         result.setDestructDate(message.getDestructDate());
         result.setDelayedDelivery(message.getDelayedDelivery());
@@ -668,9 +667,9 @@ public class MessageProvider {
         result.setMailboxId(message.getMailboxId());
         result.setParent(message.getParent());
 
-//        if (requestFolder.equals(MainFolderNames.INBOX) && message.getFolderName().equals(MainFolderNames.SENT)) {
-//            result.setShowInInbox(true);
-//        }
+        if (!requestFolder.equals(MainFolderNames.STARRED)) {
+            result.setRequestFolder(requestFolder);
+        }
 
         return result;
     }
