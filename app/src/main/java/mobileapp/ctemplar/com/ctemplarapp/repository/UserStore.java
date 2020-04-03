@@ -25,8 +25,17 @@ public interface UserStore {
     void saveKeepMeLoggedIn(boolean state);
     boolean getKeepMeLoggedIn();
 
+    void saveMobileSignature(String signature);
+    String getMobileSignature();
+
     void saveTimeZone(String timezone);
     String getTimeZone();
+
+    void setSignatureEnabled(boolean state);
+    boolean getSignatureEnabled();
+
+    void setMobileSignatureEnabled(boolean state);
+    boolean getMobileSignatureEnabled();
 
     void setNotificationsEnabled(boolean state);
     boolean getNotificationsEnabled();
