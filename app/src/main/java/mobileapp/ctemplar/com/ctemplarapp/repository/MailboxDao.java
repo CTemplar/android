@@ -26,6 +26,9 @@ public interface MailboxDao {
     @Query("UPDATE mailboxes SET isEnabled = :isEnabled WHERE id = :mailboxId")
     void setEnabled(long mailboxId, boolean isEnabled);
 
+    @Query("UPDATE mailboxes SET displayName = :displayName, signature = :signature WHERE id = :mailboxId")
+    void updateSignature(long mailboxId, String displayName, String signature);
+
     @Insert(onConflict = REPLACE)
     void save(MailboxEntity mailboxEntity);
 

@@ -68,7 +68,12 @@ public abstract class BaseFragmentActivity extends BaseActivity {
     protected void pushFragment(BaseFragment fragment) {
         FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction ft = manager.beginTransaction();
-        ft.setCustomAnimations(R.anim.fragment_enter_from_right, R.anim.fragment_exit_to_left, R.anim.fragment_enter_from_left, R.anim.fragment_exit_to_right);
+        ft.setCustomAnimations(
+                R.anim.fragment_enter_from_right,
+                R.anim.fragment_exit_to_left,
+                R.anim.fragment_enter_from_left,
+                R.anim.fragment_exit_to_right
+        );
         ft.replace(mContentFrame.getId(), fragment);
         ft.addToBackStack(null);
         ft.commit();

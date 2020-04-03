@@ -298,7 +298,6 @@ public class MainActivityViewModel extends ViewModel {
 
                     @Override
                     public void onNext(MailboxesResponse mailboxesResponse) {
-
                         if (mailboxesResponse.getTotalCount() > 0) {
                             userRepository.saveMailboxes(mailboxesResponse.getMailboxesList());
                         }
@@ -568,7 +567,7 @@ public class MainActivityViewModel extends ViewModel {
                     public void onNext(MyselfResponse myselfResponse) {
                         if (myselfResponse != null) {
                             MyselfResult myselfResult = myselfResponse.getResult()[0];
-                            SettingsEntity settingsEntity = myselfResult.settings;
+                            SettingsEntity settingsEntity = myselfResult.getSettings();
 
                             String timezone = settingsEntity.getTimezone();
                             boolean isAttachmentsEncrypted = settingsEntity.isAttachmentsEncrypted();

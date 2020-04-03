@@ -79,13 +79,14 @@
         <activity android:name=".wbl.AddBlacklistContactActivity" />
         <activity android:name=".wbl.AddWhitelistContactActivity" />
         <activity android:name=".wbl.WhiteBlackListActivity" />
-        <activity android:name=".settings.ChangePasswordActivity" />
-        <activity android:name=".settings.KeysActivity" />
-        <activity android:name=".mailboxes.MailboxesActivity" />
-        <activity android:name=".mailboxes.AddMailboxActivity" />
-
         <activity android:name=".settings.SettingsActivity"
             android:theme="@style/PreferenceScreen" />
+        <activity android:name=".settings.ChangePasswordActivity" />
+        <activity android:name=".settings.KeysActivity" />
+        <activity android:name=".settings.SignatureActivity"
+            android:theme="@style/PreferenceScreen" />
+        <activity android:name=".mailboxes.MailboxesActivity" />
+        <activity android:name=".mailboxes.AddMailboxActivity" />
 
         <meta-data
             android:name="io.fabric.ApiKey"
