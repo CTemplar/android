@@ -6,6 +6,7 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -13,6 +14,7 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.ctemplar.app.fdroid.BaseFragment;
+import com.ctemplar.app.fdroid.BuildConfig;
 import com.ctemplar.app.fdroid.LoginActivityActions;
 import com.ctemplar.app.fdroid.R;
 import com.ctemplar.app.fdroid.net.ResponseStatus;
@@ -45,6 +47,9 @@ public class SignInFragment extends BaseFragment {
 
     @BindView(R.id.fragment_sign_in_password_input_layout)
     TextInputLayout editTextPasswordLayout;
+
+    @BindView(R.id.fragment_sign_in_keep_me_logged_in_checkbox)
+    CheckBox keepMeLoggedInCheckBox;
 
     @BindView(R.id.fragment_sign_in_otp_code_input)
     TextInputEditText editTextOtpCode;
@@ -96,8 +101,7 @@ public class SignInFragment extends BaseFragment {
         String otp = null;
 
         if (editTextUsername.getText() != null && editTextPassword.getText() != null) {
-            username = EditTextUtils.getText(editTextUsername).trim().toLowerCase()
-                    .replaceAll("@.+", "");
+            username = trimUsername(EditTextUtils.getText(editTextUsername).trim());
             password = EditTextUtils.getText(editTextPassword).trim();
         }
         if (editTextOtpCode.getText() != null && !editTextOtpCode.getText().toString().isEmpty()) {
@@ -105,7 +109,7 @@ public class SignInFragment extends BaseFragment {
         }
         if(isValid(username, password)) {
             loginActivityModel.showProgressDialog();
-            loginActivityModel.signIn(username, password, otp);
+            loginActivityModel.signIn(username, password, otp, keepMeLoggedInCheckBox.isChecked());
         }
     }
 
@@ -172,7 +176,6 @@ public class SignInFragment extends BaseFragment {
                 case RESPONSE_NEXT:
                     loginActivityModel.clearDB();
                     loginActivityModel.changeAction(LoginActivityActions.CHANGE_ACTIVITY_MAIN);
-//                    sendAppToken();
                     break;
             }
         }
@@ -181,14 +184,14 @@ public class SignInFragment extends BaseFragment {
     private void show2FA() {
         editTextUsernameLayout.setVisibility(View.GONE);
         editTextPasswordLayout.setVisibility(View.GONE);
+        keepMeLoggedInCheckBox.setVisibility(View.GONE);
         textViewOtpTitle.setVisibility(View.VISIBLE);
         editTextOtpLayout.setVisibility(View.VISIBLE);
         editTextOtpLayout.requestFocus();
     }
-    // TODO
-    private void sendAppToken() {
-//        loginActivityModel.getAddAppTokenStatus().observe(this, responseStatus -> {});
-//        loginActivityModel.addAppToken(token, getString(R.string.platform));
+
+    private String trimUsername(String username) {
+        return username.toLowerCase().replace("@" + BuildConfig.DOMAIN, "");
     }
 
     private boolean isValid(String email, String password) {
@@ -196,27 +199,22 @@ public class SignInFragment extends BaseFragment {
             editTextUsernameLayout.setError(getResources().getString(R.string.error_empty_email));
             return false;
         }
-
         if(TextUtils.isEmpty(password)) {
             editTextPasswordLayout.setError(getResources().getString(R.string.error_empty_password));
             return false;
         }
-
         if(email.length() < USERNAME_MIN) {
             editTextUsernameLayout.setError(getResources().getString(R.string.error_username_small));
             return false;
         }
-
         if(email.length() > USERNAME_MAX) {
             editTextUsernameLayout.setError(getResources().getString(R.string.error_username_big));
             return false;
         }
-
-        if(!EditTextUtils.isTextValid(email)) {
+        if(!EditTextUtils.isUsernameValid(email)) {
             editTextUsernameLayout.setError(getResources().getString(R.string.error_username_incorrect));
             return false;
         }
-
-        return !TextUtils.isEmpty(email) && !TextUtils.isEmpty(password) && EditTextUtils.isTextValid(email);
+        return true;
     }
 }

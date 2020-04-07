@@ -76,6 +76,9 @@ public class SettingsEntity {
     @SerializedName("recurrence_billing")
     private boolean recurrenceBilling;
 
+    @SerializedName("is_anti_phishing_enabled")
+    private boolean antiPhishingEnabled;
+
     @SerializedName("anti_phishing_phrase")
     private String antiPhishingPhrase;
 
@@ -99,9 +102,6 @@ public class SettingsEntity {
 
     @SerializedName("forwarding_address")
     private String forwardingAddress;
-
-    @SerializedName("is_anti_phishing_enabled")
-    private Boolean isAntiPhishingEnabled;
 
     @SerializedName("is_html_disabled")
     private Boolean isHtmlDisabled;
@@ -301,6 +301,14 @@ public class SettingsEntity {
         this.recurrenceBilling = recurrenceBilling;
     }
 
+    public boolean isAntiPhishingEnabled() {
+        return antiPhishingEnabled;
+    }
+
+    public void setAntiPhishingEnabled(boolean antiPhishingEnabled) {
+        this.antiPhishingEnabled = antiPhishingEnabled;
+    }
+
     public String getAntiPhishingPhrase() {
         return antiPhishingPhrase;
     }
@@ -363,14 +371,6 @@ public class SettingsEntity {
 
     public void setForwardingAddress(String forwardingAddress) {
         this.forwardingAddress = forwardingAddress;
-    }
-
-    public Boolean getAntiPhishingEnabled() {
-        return isAntiPhishingEnabled;
-    }
-
-    public void setAntiPhishingEnabled(Boolean antiPhishingEnabled) {
-        isAntiPhishingEnabled = antiPhishingEnabled;
     }
 
     public Boolean getHtmlDisabled() {

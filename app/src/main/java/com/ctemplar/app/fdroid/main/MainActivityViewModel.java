@@ -63,7 +63,6 @@ public class MainActivityViewModel extends ViewModel {
     private MutableLiveData<ResponseBody> unreadFoldersBody = new MutableLiveData<>();
     private MutableLiveData<MyselfResponse> myselfResponse = new MutableLiveData<>();
     MutableLiveData<String> currentFolder = new MutableLiveData<>();
-    MutableLiveData<SignInResponse> signResponse = new MutableLiveData<>();
 
     public MainActivityViewModel() {
         userRepository = CTemplarApp.getUserRepository();
@@ -138,60 +137,43 @@ public class MainActivityViewModel extends ViewModel {
 
     public void logout() {
         if (userRepository != null) {
-            signOut();
+            exit();
         }
     }
 
-    public void exit(){
-        userRepository.logout();
+    public void exit() {
+        userRepository.clearData();
         actions.postValue(MainActivityActions.ACTION_LOGOUT);
     }
 
-    public void signOut() {
-        String token = userRepository.getAppToken();
-        userRepository.signOut(ANDROID, token)
-                .subscribe(new Observer<Response<Void>>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(Response<Void> voidResponse) {
-                        exit();
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        exit();
-                        Timber.e(e);
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
+    public void checkUserToken() {
+        if (TextUtils.isEmpty(userRepository.getUserToken())) {
+            exit();
+        }
     }
 
-    public void getMessages(int limit, final int offset, final String folder) {
+    public void getMessages(int limit, int offset, String folder) {
         if (folder == null) {
             return;
         }
-        List<MessageEntity> messageEntities = messagesRepository.getLocalMessagesByFolder(folder);
-        List<MessageProvider> messageProviders = MessageProvider.fromMessageEntities(messageEntities);
+        List<MessageEntity> messageEntities = folder.equals(MainFolderNames.STARRED)
+                ? messagesRepository.getLocalStarredMessages()
+                : messagesRepository.getLocalMessagesByFolder(folder);
+        List<MessageProvider> messageProviders
+                = MessageProvider.fromMessageEntities(messageEntities);
 
-        if (offset == 0 && !folder.equals(MainFolderNames.STARRED)) {
-            ResponseMessagesData localMessagesData = new ResponseMessagesData(messageProviders, folder, offset);
+        if (offset == 0) {
+            ResponseMessagesData localMessagesData = new ResponseMessagesData(messageProviders,
+                    folder, offset);
             if (!localMessagesData.messages.isEmpty()) {
                 messagesResponse.postValue(localMessagesData);
             }
         }
 
         Observable<MessagesResponse> messagesResponseObservable
-                = folder.equals(MainFolderNames.STARRED) ?
-                userRepository.getStarredMessagesList(limit, offset, 1) :
-                userRepository.getMessagesList(limit, offset, folder);
+                = folder.equals(MainFolderNames.STARRED)
+                ? userRepository.getStarredMessagesList(limit, offset)
+                : userRepository.getMessagesList(limit, offset, folder);
 
         messagesResponseObservable.observeOn(Schedulers.computation())
                 .subscribe(new Observer<MessagesResponse>() {
@@ -201,23 +183,30 @@ public class MainActivityViewModel extends ViewModel {
                     }
 
                     @Override
-                    public void onNext(final MessagesResponse response) {
+                    public void onNext(MessagesResponse response) {
                         List<MessagesResult> messages = response.getMessagesList();
-                        List<MessageEntity> messageEntities = MessageProvider
-                                .fromMessagesResultsToEntities(messages, folder);
+                        List<MessageEntity> messageEntities
+                                = MessageProvider.fromMessagesResultsToEntities(messages, folder);
 
                         List<MessageProvider> messageProviders;
-                        if (offset > 0 || folder.equals(MainFolderNames.STARRED)) {
-                            messageProviders = MessageProvider.fromMessageEntities(messageEntities);
-                        } else {
-                            messagesRepository.deleteMessagesByFolderName(folder);
-                            messagesRepository.addMessagesToDatabase(messageEntities);
-
-                            List<MessageEntity> localEntities = messagesRepository.getLocalMessagesByFolder(folder);
+                        if (offset == 0) {
+                            List<MessageEntity> localEntities;
+                            if (folder.equals(MainFolderNames.STARRED)) {
+                                messagesRepository.deleteStarredMessages();
+                                messagesRepository.addStarredMessagesToDatabase(messageEntities);
+                                localEntities = messagesRepository.getLocalStarredMessages();
+                            } else {
+                                messagesRepository.deleteMessagesByFolderName(folder);
+                                messagesRepository.addMessagesToDatabase(messageEntities);
+                                localEntities = messagesRepository.getLocalMessagesByFolder(folder);
+                            }
                             messageProviders = MessageProvider.fromMessageEntities(localEntities);
+                        } else {
+                            messageProviders = MessageProvider.fromMessageEntities(messageEntities);
                         }
 
-                        messagesResponse.postValue(new ResponseMessagesData(messageProviders, folder, offset));
+                        messagesResponse.postValue(new ResponseMessagesData(messageProviders,
+                                folder, offset));
                         responseStatus.postValue(ResponseStatus.RESPONSE_NEXT_MESSAGES);
                     }
 

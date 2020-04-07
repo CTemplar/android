@@ -3,6 +3,7 @@ package com.ctemplar.app.fdroid.repository;
 import com.ctemplar.app.fdroid.CTemplarApp;
 import com.ctemplar.app.fdroid.net.RestService;
 import com.ctemplar.app.fdroid.net.request.AddAppTokenRequest;
+import com.ctemplar.app.fdroid.net.request.AntiPhishingPhraseRequest;
 import com.ctemplar.app.fdroid.net.request.AttachmentsEncryptedRequest;
 import com.ctemplar.app.fdroid.net.request.AutoSaveContactEnabledRequest;
 import com.ctemplar.app.fdroid.net.request.CaptchaVerifyRequest;
@@ -107,6 +108,14 @@ public class UserRepository {
         return userStore.getUserPassword();
     }
 
+    public void saveKeepMeLoggedIn(boolean keepMeLoggedIn) {
+        userStore.saveKeepMeLoggedIn(keepMeLoggedIn);
+    }
+
+    public boolean getKeepMeLoggedIn() {
+        return userStore.getKeepMeLoggedIn();
+    }
+
     public void saveUsername(String username) {
         userStore.saveUsername(username);
     }
@@ -147,7 +156,7 @@ public class UserRepository {
         return userStore.getContactsEncryptionEnabled();
     }
 
-    public void logout() {
+    public void clearData() {
         userStore.logout();
         CTemplarApp.getAppDatabase().clearAllTables();
     }
@@ -222,8 +231,8 @@ public class UserRepository {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<MessagesResponse> getStarredMessagesList(int limit, int offset, int starred) {
-        return service.getStarredMessages(limit, offset, starred)
+    public Observable<MessagesResponse> getStarredMessagesList(int limit, int offset) {
+        return service.getStarredMessages(limit, offset, true)
                 .subscribeOn(io.reactivex.schedulers.Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
@@ -293,13 +302,15 @@ public class UserRepository {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<MessageAttachment> uploadAttachment(MultipartBody.Part attachment, long message, boolean isEncrypted) {
+    public Observable<MessageAttachment> uploadAttachment(MultipartBody.Part attachment,
+                                                          long message, boolean isEncrypted) {
         return service.uploadAttachment(attachment, message, isEncrypted)
                 .subscribeOn(io.reactivex.schedulers.Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<MessageAttachment> updateAttachment(long id, MultipartBody.Part attachment, long message, boolean isEncrypted) {
+    public Observable<MessageAttachment> updateAttachment(long id, MultipartBody.Part attachment,
+                                                          long message, boolean isEncrypted) {
         return service.updateAttachment(id, attachment, message, isEncrypted)
                 .subscribeOn(io.reactivex.schedulers.Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
@@ -377,13 +388,15 @@ public class UserRepository {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<MailboxesResult> updateDefaultMailbox(long mailboxId, DefaultMailboxRequest request) {
+    public Observable<MailboxesResult> updateDefaultMailbox(long mailboxId,
+                                                            DefaultMailboxRequest request) {
         return service.updateDefaultMailbox(mailboxId, request)
                 .subscribeOn(io.reactivex.schedulers.Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<MailboxesResult> updateEnabledMailbox(long mailboxId, EnabledMailboxRequest request) {
+    public Observable<MailboxesResult> updateEnabledMailbox(long mailboxId,
+                                                            EnabledMailboxRequest request) {
         return service.updateEnabledMailbox(mailboxId, request)
                 .subscribeOn(io.reactivex.schedulers.Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
@@ -401,32 +414,44 @@ public class UserRepository {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<SettingsEntity> updateRecoveryEmail(long settingId, RecoveryEmailRequest request) {
+    public Observable<SettingsEntity> updateRecoveryEmail(long settingId,
+                                                          RecoveryEmailRequest request) {
         return service.updateRecoveryEmail(settingId, request)
                 .subscribeOn(io.reactivex.schedulers.Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<SettingsEntity> updateSubjectEncrypted(long settingId, SubjectEncryptedRequest request) {
+    public Observable<SettingsEntity> updateSubjectEncrypted(long settingId,
+                                                             SubjectEncryptedRequest request) {
         return service.updateSubjectEncrypted(settingId, request)
                 .subscribeOn(io.reactivex.schedulers.Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<SettingsEntity> updateAttachmentsEncrypted(long settingId, AttachmentsEncryptedRequest request) {
+    public Observable<SettingsEntity> updateAttachmentsEncrypted(
+            long settingId, AttachmentsEncryptedRequest request) {
         return service.updateAttachmentsEncrypted(settingId, request)
                 .subscribeOn(io.reactivex.schedulers.Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<SettingsEntity> updateContactsEncryption(long settingId, ContactsEncryptionRequest request) {
+    public Observable<SettingsEntity> updateContactsEncryption(long settingId,
+                                                               ContactsEncryptionRequest request) {
         return service.updateContactsEncryption(settingId, request)
                 .subscribeOn(io.reactivex.schedulers.Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<SettingsEntity> updateAutoSaveEnabled(long settingId, AutoSaveContactEnabledRequest request) {
+    public Observable<SettingsEntity> updateAutoSaveEnabled(long settingId,
+                                                            AutoSaveContactEnabledRequest request) {
         return service.updateAutoSaveEnabled(settingId, request)
+                .subscribeOn(io.reactivex.schedulers.Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public Observable<SettingsEntity> updateAntiPhishingPhrase(long settingId,
+                                                               AntiPhishingPhraseRequest request) {
+        return service.updateAntiPhishingPhrase(settingId, request)
                 .subscribeOn(io.reactivex.schedulers.Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }

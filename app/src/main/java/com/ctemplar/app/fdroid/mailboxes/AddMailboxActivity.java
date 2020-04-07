@@ -17,6 +17,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.ctemplar.app.fdroid.BaseActivity;
+import com.ctemplar.app.fdroid.BuildConfig;
 import com.ctemplar.app.fdroid.R;
 import com.ctemplar.app.fdroid.net.ResponseStatus;
 import com.ctemplar.app.fdroid.net.response.Domains.DomainsResults;
@@ -70,7 +71,7 @@ public class AddMailboxActivity extends BaseActivity {
         progressDialog.setMessage(getString(R.string.mailbox_alias_creation_progress));
 
         final List<String> domainsList = new ArrayList<>();
-        domainsList.add("ctemplar.com");
+        domainsList.add(BuildConfig.DOMAIN);
         setDomains(domainsList);
 
         mailboxesModel.getDomains();

@@ -52,9 +52,6 @@
     <string name="menu_move_to_archive">Archiver</string>
     <string name="menu_mark_as_unread">Marquer comme non lu</string>
 
-    <!-- FONTS -->
-    <string name="FONT_LATO_REGULAR">fonts/Lato-Regular.ttf</string>
-
     <!-- STRINGS -->
     <string name="token_expired_title">Session expirée</string>
     <string name="token_expired_message">Votre session a expiré, merci de bien vouloir vous reconnecter.</string>
@@ -84,8 +81,9 @@
 Pour toute question, merci de nous contacter <![CDATA[<u><a href="mailto:support@ctemplar.com">support@ctemplar.com</a></u>]]>.</string>
     <string name="title_confirm_reset_password_hint2">Êtes vous certain de vouloir réinitialiser votre mot de passe ?</string>
     <string name="title_reset_code_hint">Un email a été envoyé à votre <![CDATA[<u><a href="mailto:%1$s">adresse de récupération</a></u>]]> pour réinitialiser votre mot de passe. \n\n Indiquer ci-dessous pour confirmation.</string>
-    <string name="title_new_pasword_hint">N\'oubliez pas votre mot de passe, il ne pourra pas être restauré.</string>
+    <string name="title_new_password_hint">N\'oubliez pas votre mot de passe, il ne pourra pas être restauré.</string>
     <string name="title_forgot_username_underlined"><u>Nom d\'utilisateur oublié ?</u></string>
+    <string name="title_keep_me_logged_in">Rester connecté</string>
     <string name="title_forgot_username">Nom d\'utilisateur oublié ?</string>
     <string name="title_forgot_username_hint">Enter your email address and we will send you your username</string>
     <string name="title_email_my_username">Email me my username</string>
@@ -116,7 +114,6 @@ Votre mot de passe est connecté à votre clé de cryptage, si vous changez votr
     <string name="btn_confirm">CONFIRMER</string>
     <string name="title_clear_folder">Vider dossier</string>
     <string name="txt_clear_folder">Êtes-vous certain de vouloir supprimer tous les messages du dossier ?</string>
-    <string name="txt_encrypted_subject">Objet crypté</string>
 
     <!-- COMPOSE OPTIONS -->
     <string name="txt_left_time_destruct">Suppression dans %1$s</string>
@@ -302,6 +299,8 @@ Votre mot de passe est connecté à votre clé de cryptage, si vous changez votr
     <string name="settings_recovery_email">Email de récupération</string>
     <string name="settings_enable_recovery_email">Activer email de récupération</string>
     <string name="settings_type_recovery_email">Saisir votre email de récupération</string>
+    <string name="settings_enabled_anti_phishing">Anti hameçonnage</string>
+    <string name="settings_type_anti_phishing_phrase">Tapez votre phrase anti-phishing</string>
     <string name="settings_subject_encryption">Objet chiffré</string>
     <string name="settings_password">Mot de passe</string>
     <string name="settings_language">Langue</string>
@@ -311,6 +310,8 @@ Votre mot de passe est connecté à votre clé de cryptage, si vous changez votr
     <string name="settings_contacts_encryption">Contacts chiffrés</string>
     <string name="settings_attachments_encryption">Pièces jointes chiffrées</string>
     <string name="settings_encryption">Chiffrement des données</string>
+    <string name="settings_phishing_protection">Protection contre le phishing</string>
+    <string name="settings_phishing_protection_description"><![CDATA[<font color="#939191">La phrase Anti-Phishing permet aux utilisateurs de lier un mot ou une phrase personnalisée de votre choix à votre compte CTemplar. Une fois défini, si vous vous connectez à votre messagerie Web et que votre expression anti-hameçonnage est manquante ou incorrecte, vous pouvez être victime d\'hameçonnage. Vous devez immédiatement confirmer que vous visitez</font> <font color="#4d92e2"><u>https://mail.ctemplar.com</u></font> <font color="#939191">Si vous ne l\'êtes pas, un site malveillant pourrait avoir vos informations de connexion pour votre compte CTemplar. Pour éviter d\'endommager votre compte, vous devez immédiatement visiter</font> <font color="#4d92e2"><u>https://mail.ctemplar.com</u></font> <font color="#939191">changer votre mot de passe.<br><br>Notez que la phrase Anti-Phishing sera affichée lorsque vous vous connectez sur le Web uniquement.</font>]]></string>
     <string name="settings_saving_contacts">Sauvegarde des contacts</string>
     <string name="settings_auto_save_contacts">Contacts automatiquement sauvegardés</string>
     <string name="settings_filters">Filtres</string>
@@ -362,9 +363,11 @@ Votre mot de passe est connecté à votre clé de cryptage, si vous changez votr
     <!-- KEYS -->
     <string name="email_address">Adresse électronique</string>
     <string name="fingerprint">Empreinte digitale</string>
-    <string name="public_key">Clé Publique</string>
+    <string name="keys">Clés</string>
     <string name="download_public_key">Télécharger la clé publique (4096 Bit)</string>
-    <string name="your_key_saved">Votre clé publique PGP enregistrée dans les téléchargements</string>
+    <string name="download_private_key">Télécharger la clé privée (4096 Bit)</string>
+    <string name="your_public_key_saved">Votre clé publique PGP enregistrée dans les téléchargements</string>
+    <string name="your_private_key_saved">Votre clé privée PGP enregistrée dans les téléchargements</string>
 
     <!-- UPGRADE TO PRIME -->
     <string name="title_upgrade_to_prime">Upgrade to Prime</string>
@@ -384,12 +387,11 @@ Votre mot de passe est connecté à votre clé de cryptage, si vous changez votr
     <string name="error_username_small">Minimum 4 symboles</string>
     <string name="error_username_small_two">Minimum 2 symboles</string>
     <string name="error_username_big">Maximum 64 symboles</string>
-    <string name="error_password_small">Minimum 8 symboles</string>
-    <string name="error_password_big">Maximum 64 symboles</string>
+    <string name="error_password_small">Minimum 1 symbole</string>
+    <string name="error_password_big">Maximum 255 symboles</string>
     <string name="error_username_incorrect">Saisir un nom utilisateur valide</string>
     <string name="error_username_exists">L\'email existe déjà.</string>
     <string name="error_password_not_match">Les mots de passe doivent être identiques</string>
-    <string name="error_password_message">Le mot de passe doit contenir entre 8 et 30 caractères</string>
     <string name="error_current_password_not_match">Ancien mot de passe incorrect</string>
     <string name="error_empty_email">Email vide</string>
     <string name="error_empty_password">Mot de passe vide</string>

@@ -23,7 +23,7 @@
         android:id="@+id/item_message_view_holder_foreground"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorGreyLight6"
+        android:background="@color/colorWhiteLight"
         app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
@@ -146,11 +146,11 @@
             android:text="@string/txt_encrypted_subject"
             android:ellipsize="end"
             android:gravity="center"
-            android:background="@drawable/ic_message_status_yellow"
+            android:textSize="22sp"
             android:fontFamily="@font/lato_regular"
+            android:textStyle="bold"
+            android:textColor="@color/colorDarkBlue3"
             android:maxLines="1"
-            android:textColor="@android:color/white"
-            android:textSize="12sp"
             app:layout_constraintEnd_toStartOf="@+id/message_holder_subject"
             app:layout_constraintStart_toStartOf="@+id/message_top_layout"
             app:layout_constraintTop_toBottomOf="@+id/message_top_layout"

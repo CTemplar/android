@@ -1,11 +1,15 @@
 package com.ctemplar.app.fdroid.net;
 
-import androidx.annotation.NonNull;
+import android.text.TextUtils;
 
-import com.ctemplar.app.fdroid.net.request.SignInRequest;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+import java.io.IOException;
+
+import com.ctemplar.app.fdroid.net.request.TokenRefreshRequest;
 import com.ctemplar.app.fdroid.net.response.SignInResponse;
 import com.ctemplar.app.fdroid.repository.UserRepository;
-import com.ctemplar.app.fdroid.utils.EncodeUtils;
 import okhttp3.Authenticator;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -14,39 +18,44 @@ import timber.log.Timber;
 
 public class TokenAuthenticator implements Authenticator {
     private static final String HEADER_AUTHORIZATION = "Authorization";
-    private static final String TAG = TokenAuthenticator.class.getSimpleName();
+    private final static String TOKEN_TYPE = "JWT";
+
+    @Nullable
     @Override
-    public Request authenticate(@NonNull Route route, @NonNull Response response) {
-        // Synchronous call necessarily!
-        String newToken = refreshToken();
-        if (newToken == null) {
-            Timber.d(TAG, "Token is null");
+    public Request authenticate(@Nullable Route route, @NonNull Response response) throws IOException {
+        UserRepository userRepository = UserRepository.getInstance();
+        boolean keepMeLoggedIn = userRepository.getKeepMeLoggedIn();
+        String userToken = userRepository.getUserToken();
+        if (!TextUtils.isEmpty(userToken) && !keepMeLoggedIn) {
+            Timber.d("Auto logout");
+            userRepository.clearData();
             return response.request();
         }
 
-        Timber.d(TAG, "Token is refreshed: %s", newToken);
+        String newToken = refreshToken(userToken);
+        if (TextUtils.isEmpty(newToken)) {
+            Timber.d("Token is null");
+            userRepository.clearData();
+            return response.request();
+        }
+        userRepository.saveUserToken(newToken);
+
+        Timber.d("Token is refreshed: %s", newToken);
         return response.request().newBuilder()
-                .header(HEADER_AUTHORIZATION, String.format("JWT %s", newToken))
+                .header(HEADER_AUTHORIZATION, TOKEN_TYPE + " " + newToken)
                 .build();
     }
 
-    private String refreshToken() {
-        Timber.d(TAG, "Refreshing token...");
-        UserRepository userRepository = UserRepository.getInstance();
-        String username = userRepository.getUsername();
-        String password = userRepository.getUserPassword();
-        SignInRequest signInRequest = new SignInRequest(
-                username, EncodeUtils.generateHash(username, password)
-        );
-        SignInResponse signInResponse = new RestClient()
+    private String refreshToken(String userToken) throws IOException {
+        Timber.d("Refreshing token...");
+        retrofit2.Response<SignInResponse> refreshResponse = new RestClient()
                 .getRestService()
-                .signIn(signInRequest)
-                .blockingSingle();
+                .refreshToken(new TokenRefreshRequest(userToken)).execute();
+
+        SignInResponse signInResponse = refreshResponse.body();
         if (signInResponse == null) {
             return null;
         }
-        String token = signInResponse.getToken();
-        userRepository.saveUserToken(token);
-        return token;
+        return signInResponse.getToken();
     }
 }

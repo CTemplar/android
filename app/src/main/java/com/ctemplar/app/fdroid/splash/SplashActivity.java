@@ -13,6 +13,7 @@ import com.ctemplar.app.fdroid.login.LoginActivity;
 import com.ctemplar.app.fdroid.main.MainActivity;
 
 public class SplashActivity extends BaseActivity {
+    private static final String ANDROID = "android";
 
     private SplashActivityModel viewModel;
     private Handler handler = new Handler();
@@ -38,46 +39,18 @@ public class SplashActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
 
         viewModel = new ViewModelProvider(this).get(SplashActivityModel.class);
-        if (!TextUtils.isEmpty(viewModel.getToken())) {
-            viewModel.getRefreshTokenResponse()
-                    .observe(this, s -> {
-                        // TODO
-//                        if (checkAppToken()) {
-                            handler.removeCallbacks(run);
-                            run.run();
-//                        }
-                    });
-            viewModel.refreshToken();
-        }
-        loadData();
-    }
 
-    private boolean checkAppToken() {
-        viewModel.getAddAppTokenResponse().observe(this, response -> {
-            if (response != null) {
-                String newToken = response.getToken();
-                viewModel.saveAppToken(newToken);
-                handler.removeCallbacks(run);
-                run.run();
-            }
-        });
-
-        final boolean[] skipUpdate = {true};
-//        String token = getCurrentAppToken();
-//        String storedToken = viewModel.getAppToken();
-//        if (!token.equals(storedToken)) {
-//            if (!storedToken.isEmpty()) {
-//                viewModel.deleteAppToken(storedToken);
-//            }
-//            viewModel.addAppToken(token, "android");
-//            skipUpdate[0] = false;
-//        }
-        return skipUpdate[0];
+        skipDelay();
     }
 
     private void loadData() {
         // data will be loaded here before starting new activity
         handler.postDelayed(run, 2000);
+    }
+
+    private void skipDelay() {
+        handler.removeCallbacks(run);
+        handler.postDelayed(run, 300);
     }
 
     private void startSignInActivity() {

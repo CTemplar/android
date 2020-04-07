@@ -1,11 +1,11 @@
 <resources>
     <string name="app_name" translatable="false">CTemplar</string>
+    <string name="platform" translatable="false">android</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
     <string name="action_undo">UNDO</string>
-    <string name="platform" translatable="false">android</string>
 
     <!-- MAIN -->
     <string name="dialog_log_out">Log out</string>
@@ -54,9 +54,6 @@
     <string name="menu_move_to_archive">Move to archive</string>
     <string name="menu_mark_as_unread">Mark as unread</string>
 
-    <!-- FONTS -->
-    <string name="FONT_LATO_REGULAR">fonts/Lato-Regular.ttf</string>
-
     <!-- STRINGS -->
     <string name="token_expired_title">Session expired</string>
     <string name="token_expired_message">Your session has expired, please log in to CTemplar again</string>
@@ -86,8 +83,9 @@
 If you have further questions please email <![CDATA[<u><a href="mailto:support@ctemplar.com">support@ctemplar.com</a></u>]]>.</string>
     <string name="title_confirm_reset_password_hint2">Are you sure you want to reset your password?</string>
     <string name="title_reset_code_hint">We have sent a reset code to your <![CDATA[<u><a href="mailto:%1$s">recovery email</a></u>]]> to reset your password. \n\n Enter it below for confirmation.</string>
-    <string name="title_new_pasword_hint">Don’t forget this password, it can’t be restored.</string>
+    <string name="title_new_password_hint">Don\'t forget this password, it can\'t be restored.</string>
     <string name="title_forgot_username_underlined"><u>Forgot Your Username?</u></string>
+    <string name="title_keep_me_logged_in">Keep me logged in</string>
     <string name="title_forgot_username">Forgot your username?</string>
     <string name="title_forgot_username_hint">Enter your email address and we will send you your username</string>
     <string name="title_email_my_username">Email me my username</string>
@@ -118,7 +116,7 @@ Your password is connected to your encryption key, if you change your password t
     <string name="btn_confirm">CONFIRM</string>
     <string name="title_clear_folder">Clear folder</string>
     <string name="txt_clear_folder">Are you sure to want to delete all messages from the folder?</string>
-    <string name="txt_encrypted_subject">Encrypted subject</string>
+    <string name="txt_encrypted_subject" translatable="false">...</string>
 
     <!-- COMPOSE OPTIONS -->
     <string name="txt_left_time_destruct">Delete in %1$s</string>
@@ -305,6 +303,8 @@ Your password is connected to your encryption key, if you change your password t
     <string name="settings_recovery_email">Recovery email</string>
     <string name="settings_enable_recovery_email">Enable recovery email</string>
     <string name="settings_type_recovery_email">Type your recovery email</string>
+    <string name="settings_enabled_anti_phishing">Anti Phishing</string>
+    <string name="settings_type_anti_phishing_phrase">Type your anti phishing phrase</string>
     <string name="settings_subject_encryption">Subject encryption</string>
     <string name="settings_password">Password</string>
     <string name="settings_language">Language</string>
@@ -314,6 +314,8 @@ Your password is connected to your encryption key, if you change your password t
     <string name="settings_contacts_encryption">Contacts encryption</string>
     <string name="settings_attachments_encryption">Attachments encryption</string>
     <string name="settings_encryption">Encryption</string>
+    <string name="settings_phishing_protection">Phishing Protection</string>
+    <string name="settings_phishing_protection_description"><![CDATA[<font color="#939191">The Anti-Phishing phrase allows users to link a custom word or phrase of your choice to your CTemplar account. Once set, if you ever log into your webmail and your Anti-Phishing phrase is either missing or incorrect, you may be the victim of phishing. You should immediately confirm that you are visiting</font> <font color="#4d92e2"><u>https://mail.ctemplar.com</u></font> <font color="#939191">If you are not, then a malicious site might have your login credentials for your CTemplar account. To prevent harm to your account, you should immediately visit</font> <font color="#4d92e2"><u>https://mail.ctemplar.com"></u></font> <font color="#939191">change your password.<br><br>Note that the Anti-Phishing phrase will be displayed when you log on web only.</font>]]></string>
     <string name="settings_saving_contacts">Saving contacts</string>
     <string name="settings_auto_save_contacts">Automatically save contacts</string>
     <string name="settings_filters">Filters</string>
@@ -351,6 +353,9 @@ Your password is connected to your encryption key, if you change your password t
     <string name="push_notifications_enabled" translatable="false">push_notifications_enabled</string>
     <string name="recovery_email_enabled" translatable="false">recovery_email_enabled</string>
     <string name="recovery_email" translatable="false">recovery_email</string>
+    <string name="anti_phishing_enabled" translatable="false">anti_phishing_enabled</string>
+    <string name="anti_phishing_key" translatable="false">anti_phishing_key</string>
+    <string name="anti_phishing_description_key" translatable="false">anti_phishing_description_key</string>
     <string name="signature_enabled" translatable="false">signature_enabled</string>
     <string name="signature" translatable="false">signature</string>
     <string name="mobile_signature_enabled" translatable="false">mobile_signature_enabled</string>
@@ -385,9 +390,11 @@ Your password is connected to your encryption key, if you change your password t
     <!-- KEYS -->
     <string name="email_address">E-mail address</string>
     <string name="fingerprint">Fingerprint</string>
-    <string name="public_key">Public Key</string>
+    <string name="keys">Keys</string>
     <string name="download_public_key">Download public key (4096 Bit)</string>
-    <string name="your_key_saved">Your PGP Public Key saved to Downloads</string>
+    <string name="download_private_key">Download private key (4096 Bit)</string>
+    <string name="your_public_key_saved">Your PGP Public Key saved to Downloads</string>
+    <string name="your_private_key_saved">Your PGP Private Key saved to Downloads</string>
 
     <!-- UPGRADE TO PRIME -->
     <string name="title_upgrade_to_prime">Upgrade to Prime</string>
@@ -409,12 +416,11 @@ Your password is connected to your encryption key, if you change your password t
     <string name="error_username_small">Minimum 4 symbols</string>
     <string name="error_username_small_two">Minimum 2 symbols</string>
     <string name="error_username_big">Maximum 64 symbols</string>
-    <string name="error_password_small">Minimum 8 symbols</string>
-    <string name="error_password_big">Maximum 64 symbols</string>
+    <string name="error_password_small">Minimum 1 symbol</string>
+    <string name="error_password_big">Maximum 255 symbols</string>
     <string name="error_username_incorrect">Enter a valid username</string>
     <string name="error_username_exists">Email already exists!</string>
     <string name="error_password_not_match">Passwords do not match</string>
-    <string name="error_password_message">Password must be between 8 and 30 characters</string>
     <string name="error_current_password_not_match">Old password is not correct!</string>
     <string name="error_empty_email">Empty email</string>
     <string name="error_empty_password">Empty password</string>

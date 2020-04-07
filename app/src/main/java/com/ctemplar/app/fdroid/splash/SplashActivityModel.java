@@ -20,7 +20,6 @@ public class SplashActivityModel extends ViewModel {
 
     private UserRepository userRepository;
 
-    private MutableLiveData<String> refreshTokenResponse = new MutableLiveData<>();
     private MutableLiveData<AddAppTokenResponse> addAppTokenResponse = new MutableLiveData<>();
     private MutableLiveData<ResponseStatus> deleteAppTokenStatus = new MutableLiveData<>();
 
@@ -30,10 +29,6 @@ public class SplashActivityModel extends ViewModel {
 
     public String getToken() {
         return userRepository.getUserToken();
-    }
-
-    public MutableLiveData<String> getRefreshTokenResponse() {
-        return refreshTokenResponse;
     }
 
     public void saveAppToken(String token) {
@@ -50,38 +45,6 @@ public class SplashActivityModel extends ViewModel {
 
     public MutableLiveData<ResponseStatus> getDeleteAppTokenStatus() {
         return deleteAppTokenStatus;
-    }
-
-    public void refreshToken() {
-        String username = userRepository.getUsername();
-        String password = userRepository.getUserPassword();
-        SignInRequest signInRequest = new SignInRequest(
-                username, EncodeUtils.generateHash(username, password)
-        );
-        userRepository.signIn(signInRequest)
-                .subscribe(new Observer<SignInResponse>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(SignInResponse signInResponse) {
-                        String token = signInResponse.getToken();
-                        userRepository.saveUserToken(token);
-                        refreshTokenResponse.postValue(token);
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
     }
 
     public void addAppToken(String token, String platform) {

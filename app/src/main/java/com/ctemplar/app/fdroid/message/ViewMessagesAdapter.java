@@ -10,8 +10,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -69,7 +71,7 @@ public class ViewMessagesAdapter extends BaseAdapter {
     private View getViewByFlag(LayoutInflater inflater, ViewGroup parent, MessageProvider messageData, boolean isLast) {
         final View view = inflater.inflate(R.layout.item_message_view_selector, parent, false);
 
-        final View collapsedView = view.findViewById(R.id.collappsed);
+        final View collapsedView = view.findViewById(R.id.collapsed);
         final View expandedView = view.findViewById(R.id.expanded);
 
         collapsedView.setOnClickListener(v -> {
@@ -122,6 +124,7 @@ public class ViewMessagesAdapter extends BaseAdapter {
         TextView bccEmailTextView = view.findViewById(R.id.item_message_view_BCC_email);
         WebView contentWebView = view.findViewById(R.id.item_message_view_expanded_content);
         TextView contentText = view.findViewById(R.id.item_message_text_view_expanded_content);
+        ProgressBar progressBar = view.findViewById(R.id.item_message_view_expanded_progress_bar);
         RecyclerView attachmentsRecyclerView = view.findViewById(R.id.item_message_view_expanded_attachment);
         final ViewGroup expandedCredentialsLayout = view.findViewById(R.id.item_message_view_expanded_credentials);
         final View credentialsDivider = view.findViewById(R.id.item_message_view_expanded_credentials_divider);
@@ -226,7 +229,15 @@ public class ViewMessagesAdapter extends BaseAdapter {
             contentWebView.getSettings().setBuiltInZoomControls(true);
             //contentWebView.getSettings().setDomStorageEnabled(true);
             contentWebView.loadData(encodedContent, "text/html", "base64");
+            contentWebView.setWebViewClient(new WebViewClient() {
+                @Override
+                public void onPageFinished(WebView view, String url) {
+                    super.onPageFinished(view, url);
+                    progressBar.setVisibility(View.GONE);
+                }
+            });
         } else {
+            progressBar.setVisibility(View.GONE);
             contentText.setText(EditTextUtils.fromHtml(message));
         }
 
