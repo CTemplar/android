@@ -1,0 +1,10 @@
+* Decrease password limits
+* Improve password validation
+* Private key download link
+* Remove captcha step from the signup
+* Display loader for scroll messages
+* Phishing protection setup
+* Keep me logged in
+* Fixed tablet navigation menu
+* Caching for starred messages
+* Sync version name
