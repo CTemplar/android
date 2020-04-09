@@ -88,10 +88,6 @@
         <activity android:name=".mailboxes.MailboxesActivity" />
         <activity android:name=".mailboxes.AddMailboxActivity" />
 
-        <meta-data
-            android:name="io.fabric.ApiKey"
-            android:resource="@string/fabric_api_key" />
-
     </application>
 
 </manifest>
