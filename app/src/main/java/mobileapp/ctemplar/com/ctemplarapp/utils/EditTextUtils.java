@@ -4,6 +4,7 @@ import android.os.Build;
 import android.text.Editable;
 import android.text.Html;
 import android.text.Spannable;
+import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.util.Patterns;
@@ -79,6 +80,9 @@ public class EditTextUtils {
     }
 
     public static Spanned fromHtml(String text) {
+        if (TextUtils.isEmpty(text)) {
+            return new SpannableString("");
+        }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             return Html.fromHtml(text, Html.FROM_HTML_MODE_COMPACT);
         } else {
@@ -87,7 +91,7 @@ public class EditTextUtils {
     }
 
     public static boolean isHtml(String text) {
-        if (text == null) {
+        if (TextUtils.isEmpty(text)) {
             return false;
         }
         String fromHtml = fromHtml(text).toString();
