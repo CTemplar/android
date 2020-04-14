@@ -667,7 +667,7 @@ public class MessageProvider {
         result.setMailboxId(message.getMailboxId());
         result.setParent(message.getParent());
 
-        if (!requestFolder.equals(MainFolderNames.STARRED)) {
+        if (!MainFolderNames.STARRED.equals(requestFolder)) {
             result.setRequestFolder(requestFolder);
         }
 
