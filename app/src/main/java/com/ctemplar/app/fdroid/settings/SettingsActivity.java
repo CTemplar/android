@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.text.SpannableString;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
@@ -14,7 +13,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -29,7 +27,7 @@ import androidx.preference.SwitchPreference;
 
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
-import com.ctemplar.app.fdroid.BuildConfig;
+import com.ctemplar.app.fdroid.BaseActivity;
 import com.ctemplar.app.fdroid.CTemplarApp;
 import com.ctemplar.app.fdroid.R;
 import com.ctemplar.app.fdroid.filters.FiltersActivity;
@@ -48,7 +46,7 @@ import com.ctemplar.app.fdroid.utils.EncodeUtils;
 import com.ctemplar.app.fdroid.wbl.WhiteBlackListActivity;
 import timber.log.Timber;
 
-public class SettingsActivity extends AppCompatActivity {
+public class SettingsActivity extends BaseActivity {
     private static final String WEB_MAIL = "https://mail.ctemplar.com";
     public static final String USER_IS_PRIME = "user_is_prime";
     public static final String SETTING_ID = "setting_id";
@@ -66,9 +64,13 @@ public class SettingsActivity extends AppCompatActivity {
     private static long settingId = -1;
 
     @Override
+    protected int getLayoutId() {
+        return R.layout.settings_activity;
+    }
+
+    @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.settings_activity);
         settingsModel = new ViewModelProvider(this).get(SettingsActivityViewModel.class);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         requestMySelfData();
@@ -121,6 +123,21 @@ public class SettingsActivity extends AppCompatActivity {
             passwordKey.setOnPreferenceClickListener(preference -> {
                 Intent changePassword = new Intent(getActivity(), ChangePasswordActivity.class);
                 startActivity(changePassword);
+                return false;
+            });
+
+            Preference signatureKey = findPreference(getString(R.string.signature_key));
+            signatureKey.setOnPreferenceClickListener(preference -> {
+                Intent signatureActivity = new Intent(getActivity(), SignatureActivity.class);
+                startActivity(signatureActivity);
+                return false;
+            });
+
+            Preference mobileSignatureKey = findPreference(getString(R.string.mobile_signature_key));
+            mobileSignatureKey.setOnPreferenceClickListener(preference -> {
+                Intent signatureActivity = new Intent(getActivity(), SignatureActivity.class);
+                signatureActivity.putExtra(SignatureActivity.IS_MOBILE, true);
+                startActivity(signatureActivity);
                 return false;
             });
 
@@ -364,79 +381,6 @@ public class SettingsActivity extends AppCompatActivity {
         }
     }
 
-    public static class SignatureFragment extends BasePreferenceFragment {
-        @Override
-        public void onCreatePreferences(Bundle bundle, String rootKey) {
-            setPreferencesFromResource(R.xml.signature_settings, rootKey);
-
-            EditTextPreference preferenceSignature = findPreference(getString(R.string.signature));
-            String signatureText = preferenceSignature.getText();
-            if (signatureText != null && !signatureText.isEmpty()) {
-                preferenceSignature.setTitle(EditTextUtils.fromHtml(signatureText));
-                preferenceSignature.setText(EditTextUtils.fromHtml(signatureText).toString());
-            }
-
-            preferenceSignature.setOnPreferenceChangeListener((preference, newValue) -> {
-                String newSignatureText = EditTextUtils.isHtml(signatureText)
-                        ? EditTextUtils.toHtml(new SpannableString((CharSequence) newValue))
-                        : newValue.toString();
-                preferenceSignature.setText(newSignatureText);
-                if (!newValue.toString().isEmpty()) {
-                    preferenceSignature.setTitle(EditTextUtils.fromHtml(newSignatureText));
-                    settingsModel.updateSignature(settingId, defaultMailboxId, newSignatureText);
-                } else {
-                    preferenceSignature.setTitle(getString(R.string.txt_type_signature));
-                }
-                return true;
-            });
-
-            CheckBoxPreference checkBoxSignatureEnabled = findPreference(getString(R.string.signature_enabled));
-            checkBoxSignatureEnabled.setOnPreferenceChangeListener((preference, newValue) -> {
-                boolean signatureEnabled = (boolean) newValue;
-                if (signatureEnabled) {
-                    Toast.makeText(getActivity(), getString(R.string.txt_signature_enabled), Toast.LENGTH_SHORT).show();
-                    sharedPreferences.edit()
-                            .putBoolean(getString(R.string.mobile_signature_enabled), false)
-                            .apply();
-                }
-                return true;
-            });
-        }
-    }
-
-    public static class MobileSignatureFragment extends BasePreferenceFragment {
-        @Override
-        public void onCreatePreferences(Bundle bundle, String rootKey) {
-            setPreferencesFromResource(R.xml.mobile_signature_settings, rootKey);
-
-            final EditTextPreference preferenceMobileSignature = findPreference(getString(R.string.mobile_signature));
-            if (preferenceMobileSignature.getText() != null && !preferenceMobileSignature.getText().isEmpty()) {
-                preferenceMobileSignature.setTitle(preferenceMobileSignature.getText());
-            }
-
-            preferenceMobileSignature.setOnPreferenceChangeListener((preference, newValue) -> {
-                if (!newValue.toString().isEmpty()) {
-                    preferenceMobileSignature.setTitle((String) newValue);
-                } else {
-                    preferenceMobileSignature.setTitle(getResources().getString(R.string.txt_type_mobile_signature));
-                }
-                return true;
-            });
-
-            CheckBoxPreference checkBoxMobileSignatureEnabled = findPreference(getString(R.string.mobile_signature_enabled));
-            checkBoxMobileSignatureEnabled.setOnPreferenceChangeListener((preference, newValue) -> {
-                boolean mobileSignatureEnabled = (boolean) newValue;
-                if (mobileSignatureEnabled) {
-                    Toast.makeText(getActivity(), getString(R.string.txt_mobile_signature_enabled), Toast.LENGTH_SHORT).show();
-                    sharedPreferences.edit()
-                            .putBoolean(getString(R.string.signature_enabled), false)
-                            .apply();
-                }
-                return true;
-            });
-        }
-    }
-
     private void requestMySelfData() {
         userRepository.getMyselfInfo()
                 .subscribe(new Observer<MyselfResponse>() {
@@ -487,7 +431,6 @@ public class SettingsActivity extends AppCompatActivity {
         recoveryEmailPreferenceScreen.setSummary(settingsEntity.getRecoveryEmail());
         sharedPreferences.edit()
                 .putString(getString(R.string.recovery_email), recoveryEmail)
-                .putString(getString(R.string.signature), mailboxesResult.getSignature())
                 .putString(getString(R.string.anti_phishing_key), settingsEntity.getAntiPhishingPhrase())
                 .putBoolean(getString(R.string.recovery_email_enabled), !recoveryEmail.isEmpty())
                 .putBoolean(getString(R.string.auto_save_contacts_enabled), settingsEntity.isSaveContacts())

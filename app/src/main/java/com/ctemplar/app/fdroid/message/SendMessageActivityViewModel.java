@@ -88,6 +88,26 @@ public class SendMessageActivityViewModel extends ViewModel {
         return mailboxDao.getById(id);
     }
 
+    public MailboxEntity getMailboxByEmail(String email) {
+        return mailboxDao.getByEmail(email);
+    }
+
+    public MailboxEntity getDefaultMailbox() {
+        return userRepository.getDefaultMailbox();
+    }
+
+    public boolean isSignatureEnabled() {
+        return userRepository.isSignatureEnabled();
+    }
+
+    public boolean isMobileSignatureEnabled() {
+        return userRepository.isMobileSignatureEnabled();
+    }
+
+    public String getMobileSignature() {
+        return userRepository.getMobileSignature();
+    }
+
     public String getUserPassword() {
         return userRepository.getUserPassword();
     }

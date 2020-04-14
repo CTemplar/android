@@ -60,6 +60,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
 import retrofit2.Response;
+import timber.log.Timber;
 
 @Singleton
 public class UserRepository {
@@ -130,6 +131,44 @@ public class UserRepository {
 
     public String getTimeZone() {
         return userStore.getTimeZone();
+    }
+
+    public void setSignatureEnabled(boolean isEnabled) {
+        userStore.setSignatureEnabled(isEnabled);
+    }
+
+    public boolean isSignatureEnabled() {
+        return userStore.getSignatureEnabled();
+    }
+
+    public void setMobileSignatureEnabled(boolean isEnabled) {
+        userStore.setMobileSignatureEnabled(isEnabled);
+    }
+
+    public boolean isMobileSignatureEnabled() {
+        return userStore.getMobileSignatureEnabled();
+    }
+
+    public void setMobileSignature(String signatureText) {
+        userStore.saveMobileSignature(signatureText);
+    }
+
+    public String getMobileSignature() {
+        return userStore.getMobileSignature();
+    }
+
+    public MailboxEntity getDefaultMailbox() {
+        MailboxDao mailboxDao = CTemplarApp.getAppDatabase().mailboxDao();
+        if (mailboxDao.getDefault() == null) {
+            if (!mailboxDao.getAll().isEmpty()) {
+                return mailboxDao.getAll().get(0);
+            } else {
+                Timber.e("Mailbox not found");
+            }
+        } else {
+            return mailboxDao.getDefault();
+        }
+        return new MailboxEntity();
     }
 
     public void setNotificationsEnabled(boolean isEnabled) {
@@ -456,7 +495,7 @@ public class UserRepository {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<SettingsEntity> updateSignature(long mailboxId, SignatureRequest request) {
+    public Observable<MailboxesResult> updateSignature(long mailboxId, SignatureRequest request) {
         return service.updateSignature(mailboxId, request)
                 .subscribeOn(io.reactivex.schedulers.Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());

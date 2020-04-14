@@ -219,7 +219,7 @@ public interface RestService {
     );
 
     @PATCH("emails/mailboxes/{id}/")
-    Observable<SettingsEntity> updateSignature(
+    Observable<MailboxesResult> updateSignature(
             @Path("id") long mailboxId,
             @Body SignatureRequest body
     );

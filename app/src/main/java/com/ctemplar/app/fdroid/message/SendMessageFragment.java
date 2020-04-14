@@ -3,7 +3,6 @@ package com.ctemplar.app.fdroid.message;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
@@ -32,7 +31,6 @@ import androidx.appcompat.widget.AppCompatMultiAutoCompleteTextView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.io.BufferedInputStream;
@@ -110,7 +108,6 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
     private ImageView sendMessageAttachmentIco;
     private ImageView sendMessageEncryptIco;
 
-    private SharedPreferences sharedPreferences;
     private SendMessageActivityViewModel sendModel;
     private ProgressDialog sendingProgress;
     private ProgressDialog uploadProgress;
@@ -313,14 +310,6 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
             }
         }
 
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity);
-
-        boolean mobileSignatureEnabled = sharedPreferences.getBoolean(getString(R.string.mobile_signature_enabled), false);
-        String mobileSignature = sharedPreferences.getString(getString(R.string.mobile_signature), "");
-        if (mobileSignatureEnabled) {
-            addSignature(mobileSignature);
-        }
-
         String toEmail = toEmailTextView.getText().toString();
         if (toEmail.isEmpty()) {
             toEmailTextView.requestFocus();
@@ -328,7 +317,6 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
             composeEditText.requestFocus();
             composeEditText.setSelection(0);
         }
-
 
         sendModel = new ViewModelProvider(getActivity()).get(SendMessageActivityViewModel.class);
         if (currentMessageId == -1) {
@@ -341,12 +329,24 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         List<MailboxEntity> mailboxEntities = sendModel.getMailboxes();
         for (int position = 0; position < mailboxEntities.size(); position++) {
             MailboxEntity mailboxEntity = mailboxEntities.get(position);
-            if (mailboxEntity.isEnabled) {
-                mailboxAddresses.add(mailboxEntity.email);
-                if (mailboxEntity.isDefault) {
+            if (mailboxEntity.isEnabled()) {
+                mailboxAddresses.add(mailboxEntity.getEmail());
+                if (mailboxEntity.isDefault()) {
                     selectedAddress = position;
                 }
             }
+        }
+
+        boolean isSignatureEnabled = sendModel.isSignatureEnabled();
+        if (isSignatureEnabled) {
+            MailboxEntity defaultMailbox = sendModel.getDefaultMailbox();
+            String signatureText = defaultMailbox.getSignature();
+            addSignature(signatureText);
+        }
+        boolean isMobileSignatureEnabled = sendModel.isMobileSignatureEnabled();
+        if (isMobileSignatureEnabled) {
+            String mobileSignatureText = sendModel.getMobileSignature();
+            addSignature(mobileSignatureText);
         }
 
         SpinnerAdapter adapter = new ArrayAdapter<>(
@@ -370,7 +370,8 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == PICK_FILE_FROM_STORAGE && resultCode == RESULT_OK && data != null && data.getData() != null) {
+        if (requestCode == PICK_FILE_FROM_STORAGE && resultCode == RESULT_OK
+                && data != null && data.getData() != null) {
             Uri attachmentUri = data.getData();
             if (attachmentUri != null) {
                 uploadAttachment(attachmentUri);
@@ -671,11 +672,6 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
 //                        boolean userTrial = AppUtils.twoWeeksTrial(joinedDate);
 //                        boolean userPrime = myself.isPrime;
 //                        userIsPrime = userPrime || userTrial;
-                boolean signatureEnabled = sharedPreferences
-                        .getBoolean(getString(R.string.signature_enabled), false);
-                if (signatureEnabled) {
-                    addSignature(myself.mailboxes[0].getSignature());
-                }
             }
         });
     }
@@ -685,8 +681,8 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         if (defaultMailbox == null) {
             return;
         }
-        long mailboxId = defaultMailbox.id;
-        String mailboxEmail = defaultMailbox.email;
+        long mailboxId = defaultMailbox.getId();
+        String mailboxEmail = defaultMailbox.getEmail();
 
         SendMessageRequest createMessageRequest = new SendMessageRequest(
                 mailboxEmail,
@@ -778,9 +774,9 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
 
     private void sendMessage() {
         String fromEmail = spinnerFrom.getSelectedItem().toString();
-        MailboxEntity fromMailbox = CTemplarApp.getAppDatabase().mailboxDao().getByEmail(fromEmail);
-        final long mailboxId = fromMailbox.id;
-        String mailboxEmail = fromMailbox.email;
+        MailboxEntity fromMailbox = sendModel.getMailboxByEmail(fromEmail);
+        final long mailboxId = fromMailbox.getId();
+        String mailboxEmail = fromMailbox.getEmail();
 
         String subject = subjectEditText.getText().toString();
         String compose = composeEditText.getText().toString();
@@ -1075,17 +1071,17 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
                 .setTitle(getResources().getString(R.string.dialog_discard_mail))
                 .setMessage(getResources().getString(R.string.dialog_discard_confirm))
                 .setPositiveButton(getResources().getString(R.string.dialog_save_in_drafts), (dialog, which) -> {
-                    sendMessageToDraft();
-                    dialog.dismiss();
-                    finish();
-                }
+                            sendMessageToDraft();
+                            dialog.dismiss();
+                            finish();
+                        }
                 )
                 .setNegativeButton(getResources().getString(R.string.action_discard), (dialog, which) -> {
-                    draftMessage = false;
-                    sendModel.deleteMessage(currentMessageId);
-                    dialog.dismiss();
-                    finish();
-                }
+                            draftMessage = false;
+                            sendModel.deleteMessage(currentMessageId);
+                            dialog.dismiss();
+                            finish();
+                        }
                 )
                 .setNeutralButton(getResources().getString(R.string.action_cancel), null)
                 .show();
@@ -1210,5 +1206,4 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         fragment.setArguments(args);
         return fragment;
     }
-
 }
