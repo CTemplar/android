@@ -342,6 +342,9 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
             @Override
             public void onDismissed(Snackbar transientBottomBar, int event) {
                 if (event != DISMISS_EVENT_ACTION) {
+                    if (parentMessage == null) {
+                        return;
+                    }
                     if (currentFolder.equals(TRASH)) {
                         mainModel.deleteMessages(new Long[]{parentMessage.getId()});
                     } else {
