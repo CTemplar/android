@@ -778,8 +778,8 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         final long mailboxId = fromMailbox.getId();
         String mailboxEmail = fromMailbox.getEmail();
 
-        String subject = subjectEditText.getText().toString();
-        String compose = composeEditText.getText().toString();
+        String subject = EditTextUtils.getText(subjectEditText);
+        String compose = EditTextUtils.getText(composeEditText);
         Spannable composeSpannable = new SpannableString(compose);
 
         sendMessageRequest = new SendMessageRequest();
@@ -1071,17 +1071,17 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
                 .setTitle(getResources().getString(R.string.dialog_discard_mail))
                 .setMessage(getResources().getString(R.string.dialog_discard_confirm))
                 .setPositiveButton(getResources().getString(R.string.dialog_save_in_drafts), (dialog, which) -> {
-                    sendMessageToDraft();
-                    dialog.dismiss();
-                    finish();
-                }
+                            sendMessageToDraft();
+                            dialog.dismiss();
+                            finish();
+                        }
                 )
                 .setNegativeButton(getResources().getString(R.string.action_discard), (dialog, which) -> {
-                    draftMessage = false;
-                    sendModel.deleteMessage(currentMessageId);
-                    dialog.dismiss();
-                    finish();
-                }
+                            draftMessage = false;
+                            sendModel.deleteMessage(currentMessageId);
+                            dialog.dismiss();
+                            finish();
+                        }
                 )
                 .setNeutralButton(getResources().getString(R.string.action_cancel), null)
                 .show();
