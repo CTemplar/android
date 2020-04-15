@@ -778,8 +778,8 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         final long mailboxId = fromMailbox.getId();
         String mailboxEmail = fromMailbox.getEmail();
 
-        String subject = subjectEditText.getText().toString();
-        String compose = composeEditText.getText().toString();
+        String subject = EditTextUtils.getText(subjectEditText);
+        String compose = EditTextUtils.getText(composeEditText);
         Spannable composeSpannable = new SpannableString(compose);
 
         sendMessageRequest = new SendMessageRequest();

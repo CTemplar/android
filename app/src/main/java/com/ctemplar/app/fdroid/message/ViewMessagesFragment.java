@@ -171,7 +171,8 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
         viewModel.getMessagesResponse().observe(getViewLifecycleOwner(), messagesList -> {
             if (messagesList == null || messagesList.isEmpty()) {
                 Timber.e("Messages doesn't exists");
-                Toast.makeText(activity.getApplicationContext(), getResources().getString(R.string.toast_messages_doesnt_exist), Toast.LENGTH_SHORT).show();
+                Toast.makeText(activity.getApplicationContext(),
+                        getString(R.string.toast_messages_doesnt_exist), Toast.LENGTH_SHORT).show();
                 activity.onBackPressed();
                 return;
             }
@@ -341,6 +342,9 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
             @Override
             public void onDismissed(Snackbar transientBottomBar, int event) {
                 if (event != DISMISS_EVENT_ACTION) {
+                    if (parentMessage == null) {
+                        return;
+                    }
                     if (currentFolder.equals(TRASH)) {
                         mainModel.deleteMessages(new Long[]{parentMessage.getId()});
                     } else {
