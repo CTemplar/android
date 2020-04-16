@@ -319,9 +319,9 @@ public class SettingsActivity extends BaseActivity {
                     .setTitle(getActivity().getString(R.string.settings_disable_contacts_encryption))
                     .setMessage(getActivity().getString(R.string.settings_disable_contacts_encryption_note))
                     .setPositiveButton(getActivity().getString(R.string.btn_confirm), (dialog, which) -> {
-                        progressDialog.show();
-                        settingsModel.decryptContacts(listOffset[0]);
-                    }
+                                progressDialog.show();
+                                settingsModel.decryptContacts(listOffset[0]);
+                            }
                     )
                     .setNeutralButton(getActivity().getString(R.string.btn_cancel), null)
                     .show();
@@ -421,6 +421,7 @@ public class SettingsActivity extends BaseActivity {
         String allocatedStorage = AppUtils.usedStorage(settingsEntity.getAllocatedStorage());
 
         String recoveryEmail = settingsEntity.getRecoveryEmail();
+        boolean isRecoveryEmailEnabled = recoveryEmail != null && !recoveryEmail.isEmpty();
         boolean isNotificationsEnabled = userStore.getNotificationsEnabled();
 
         storageLimitPreference.setSummary(getString(
@@ -432,7 +433,7 @@ public class SettingsActivity extends BaseActivity {
         sharedPreferences.edit()
                 .putString(getString(R.string.recovery_email), recoveryEmail)
                 .putString(getString(R.string.anti_phishing_key), settingsEntity.getAntiPhishingPhrase())
-                .putBoolean(getString(R.string.recovery_email_enabled), !recoveryEmail.isEmpty())
+                .putBoolean(getString(R.string.recovery_email_enabled), isRecoveryEmailEnabled)
                 .putBoolean(getString(R.string.auto_save_contacts_enabled), settingsEntity.isSaveContacts())
                 .putBoolean(getString(R.string.subject_encryption_enabled), settingsEntity.isSubjectEncrypted())
                 .putBoolean(getString(R.string.attachments_encryption_enabled), settingsEntity.isAttachmentsEncrypted())
