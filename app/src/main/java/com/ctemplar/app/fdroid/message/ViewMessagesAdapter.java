@@ -2,6 +2,7 @@ package com.ctemplar.app.fdroid.message;
 
 import android.app.Activity;
 import android.app.DownloadManager;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
 import android.text.TextUtils;
@@ -227,13 +228,18 @@ public class ViewMessagesAdapter extends BaseAdapter {
             String encodedContent = Base64.encodeToString(messageWithStyle.getBytes(), Base64.NO_PADDING);
             contentWebView.getSettings().setLoadWithOverviewMode(true);
             contentWebView.getSettings().setBuiltInZoomControls(true);
-            //contentWebView.getSettings().setDomStorageEnabled(true);
             contentWebView.loadData(encodedContent, "text/html", "base64");
             contentWebView.setWebViewClient(new WebViewClient() {
                 @Override
                 public void onPageFinished(WebView view, String url) {
                     super.onPageFinished(view, url);
                     progressBar.setVisibility(View.GONE);
+                }
+                @Override
+                public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                    Intent urlIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                    activity.startActivity(urlIntent);
+                    return true;
                 }
             });
         } else {
