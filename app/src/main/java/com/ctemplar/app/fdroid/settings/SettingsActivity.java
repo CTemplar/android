@@ -421,6 +421,7 @@ public class SettingsActivity extends BaseActivity {
         String allocatedStorage = AppUtils.usedStorage(settingsEntity.getAllocatedStorage());
 
         String recoveryEmail = settingsEntity.getRecoveryEmail();
+        boolean isRecoveryEmailEnabled = recoveryEmail != null && !recoveryEmail.isEmpty();
         boolean isNotificationsEnabled = userStore.getNotificationsEnabled();
 
         storageLimitPreference.setSummary(getString(
@@ -432,7 +433,7 @@ public class SettingsActivity extends BaseActivity {
         sharedPreferences.edit()
                 .putString(getString(R.string.recovery_email), recoveryEmail)
                 .putString(getString(R.string.anti_phishing_key), settingsEntity.getAntiPhishingPhrase())
-                .putBoolean(getString(R.string.recovery_email_enabled), !recoveryEmail.isEmpty())
+                .putBoolean(getString(R.string.recovery_email_enabled), isRecoveryEmailEnabled)
                 .putBoolean(getString(R.string.auto_save_contacts_enabled), settingsEntity.isSaveContacts())
                 .putBoolean(getString(R.string.subject_encryption_enabled), settingsEntity.isSubjectEncrypted())
                 .putBoolean(getString(R.string.attachments_encryption_enabled), settingsEntity.isAttachmentsEncrypted())
