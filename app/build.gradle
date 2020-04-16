@@ -38,7 +38,7 @@ android {
             versionName "${versionMajor}.${versionMinor}.${versionBuild}-${new Date().format('M.d.yyyy')}-dev"
             applicationIdSuffix '.development'
             buildConfigField("String", "DOMAIN", "\"dev.ctemplar.com\"")
-            buildConfigField("String", "BASE_URL", "\"https://dev.ctemplar.com/api/\"")
+            buildConfigField("String", "BASE_URL", "\"https://dev.ctemplar.net/api/\"")
         }
         production {
             versionName "${versionMajor}.${versionMinor}.${versionBuild}"
