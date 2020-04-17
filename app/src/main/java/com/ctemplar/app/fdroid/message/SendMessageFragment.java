@@ -399,7 +399,6 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
     @Override
     public void onClick(View v) {
         int id = v.getId();
-
         switch (id) {
             case R.id.fragment_send_message_send:
                 onClickSend();
@@ -417,6 +416,9 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
                 }
                 break;
             case R.id.fragment_send_message_delayed_layout:
+                if (delayedDeliveryDialogFragment.isAdded()) {
+                    return;
+                }
                 if (userIsPrime) {
                     delayedDeliveryDialogFragment.show(getParentFragmentManager(), "DelayedDeliveryDialogFragment");
                     delayedDeliveryDialogFragment.setOnScheduleDelayedDelivery(onScheduleDelayedDelivery);
@@ -425,10 +427,16 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
                 }
                 break;
             case R.id.fragment_send_message_destruct_layout:
+                if (destructTimerDialogFragment.isAdded()) {
+                    return;
+                }
                 destructTimerDialogFragment.show(getParentFragmentManager(), "DestructTimerDialogFragment");
                 destructTimerDialogFragment.setOnScheduleDestructTimerDelivery(onScheduleDestructTimerDelivery);
                 break;
             case R.id.fragment_send_message_dead_layout:
+                if (deadMansDeliveryDialogFragment.isAdded()) {
+                    return;
+                }
                 if (userIsPrime) {
                     deadMansDeliveryDialogFragment.show(getParentFragmentManager(), "DeadMansDialogFragment");
                     deadMansDeliveryDialogFragment.setOnScheduleDeadMansDelivery(onScheduleDeadMansDelivery);
@@ -437,8 +445,12 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
                 }
                 break;
             case R.id.fragment_send_message_encrypt_layout:
+                if (encryptMessageDialogFragment.isAdded()) {
+                    return;
+                }
                 encryptMessageDialogFragment.show(getParentFragmentManager(), "EncryptMessageDialogFragment");
                 encryptMessageDialogFragment.setEncryptMessagePassword(onSetEncryptMessagePassword);
+                break;
         }
     }
 
