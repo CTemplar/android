@@ -11,10 +11,11 @@ import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
+import android.webkit.MimeTypeMap;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
-import android.webkit.MimeTypeMap;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -527,7 +528,9 @@ public class FileUtils {
         }
 
         try {
-            if (!file.createNewFile()) {
+            if (file.createNewFile()) {
+                file.delete();
+            } else {
                 return null;
             }
         } catch (IOException e) {
