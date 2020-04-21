@@ -68,8 +68,9 @@ import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.SPAM;
 import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.TRASH;
 
 public class ViewMessagesFragment extends Fragment implements View.OnClickListener, ActivityInterface {
-
     public static final String FOLDER_NAME = "folder_name";
+    public static final String ENCRYPTED_EXT = ".encrypted";
+
     private MainActivityViewModel mainModel;
     private ViewMessagesViewModel viewModel;
     private MessageProvider parentMessage;
@@ -552,13 +553,12 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
         public void onReceive(Context ctx, Intent intent) {
             Toast.makeText(ctx, ctx.getString(R.string.toast_download_complete), Toast.LENGTH_SHORT).show();
             try {
-                String documentLink = attachmentProvider.getDocumentLink();
-                String fileName = AppUtils.getFileNameFromURL(documentLink);
+                String fileName = attachmentProvider.getFileName();
                 boolean isEncrypted = attachmentProvider.isEncrypted();
 
                 File externalStorageFile = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
                 if (isEncrypted) {
-                    File downloadedFile = new File(externalStorageFile, fileName + "-encrypted");
+                    File downloadedFile = new File(externalStorageFile, fileName + ENCRYPTED_EXT);
                     File decryptedFile = new File(externalStorageFile, fileName);
 
                     long mailboxId = parentMessage.getMailboxId();
