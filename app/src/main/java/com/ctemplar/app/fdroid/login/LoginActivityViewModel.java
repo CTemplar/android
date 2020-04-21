@@ -173,7 +173,11 @@ public class LoginActivityViewModel extends ViewModel {
         if(recoverPasswordRequest == null) {
             return;
         }
-        EncodeUtils.getPGPKeyObservable(recoverPasswordRequest.getPassword())
+        String username = recoverPasswordRequest.getUsername();
+        String password = recoverPasswordRequest.getPassword();
+        userRepository.saveUsername(username);
+        userRepository.saveUserPassword(password);
+        EncodeUtils.getPGPKeyObservable(password)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .flatMap((Function<PGPKeyEntity, Observable<RecoverPasswordResponse>>) pgpKeyEntity -> {
@@ -181,10 +185,7 @@ public class LoginActivityViewModel extends ViewModel {
                     recoverPasswordRequest.setPrivateKey(pgpKeyEntity.getPrivateKey());
                     recoverPasswordRequest.setPublicKey(pgpKeyEntity.getPublicKey());
                     recoverPasswordRequest.setPassword(
-                            EncodeUtils.generateHash(
-                                    recoverPasswordRequest.getUsername(),
-                                    recoverPasswordRequest.getPassword()
-                            )
+                            EncodeUtils.generateHash(username, password)
                     );
 
                     return userRepository.resetPassword(recoverPasswordRequest);
