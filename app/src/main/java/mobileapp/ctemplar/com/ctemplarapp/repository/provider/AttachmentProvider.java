@@ -10,9 +10,20 @@ public class AttachmentProvider implements Serializable {
     private String contentId;
     private boolean isEncrypted;
     private long message;
+    private String fileName;
 
     public AttachmentProvider() {
 
+    }
+
+    public AttachmentProvider(long id, String documentLink, boolean isInline, String contentId, boolean isEncrypted, long message, String fileName) {
+        this.id = id;
+        this.documentLink = documentLink;
+        this.isInline = isInline;
+        this.contentId = contentId;
+        this.isEncrypted = isEncrypted;
+        this.message = message;
+        this.fileName = fileName;
     }
 
     public long getId() {
@@ -61,5 +72,13 @@ public class AttachmentProvider implements Serializable {
 
     public void setMessage(long message) {
         this.message = message;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
     }
 }

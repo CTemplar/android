@@ -21,6 +21,7 @@ import android.widget.Toast;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -34,10 +35,12 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageProvider;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.UserDisplayProvider;
 import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
+import mobileapp.ctemplar.com.ctemplarapp.utils.FileUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.PermissionCheck;
 import timber.log.Timber;
 
 import static android.content.Context.DOWNLOAD_SERVICE;
+import static mobileapp.ctemplar.com.ctemplarapp.message.ViewMessagesFragment.ENCRYPTED_EXT;
 
 public class ViewMessagesAdapter extends BaseAdapter {
 
@@ -266,6 +269,7 @@ public class ViewMessagesAdapter extends BaseAdapter {
 
             @Override
             public void onNext(Integer position) {
+                File externalStorageFile = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
                 AttachmentProvider attachmentProvider = messageAttachmentAdapter.getAttachment(position);
                 String documentLink = attachmentProvider.getDocumentLink();
                 if (documentLink == null) {
@@ -273,18 +277,18 @@ public class ViewMessagesAdapter extends BaseAdapter {
                     return;
                 }
                 Uri documentUri = Uri.parse(documentLink);
-                String fileName = AppUtils.getFileNameFromURL(documentLink);
-                if (attachmentProvider.isEncrypted()) {
-                    fileName += "-encrypted";
-                }
+                File file = FileUtils.generateFileName(AppUtils.getFileNameFromURL(documentLink), externalStorageFile);
+                String fileName = file == null ? "" : file.getName();
+                String localFileName = attachmentProvider.isEncrypted() ? fileName + ENCRYPTED_EXT : fileName;
 
                 DownloadManager.Request documentRequest = new DownloadManager.Request(documentUri);
-                documentRequest.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName);
+                documentRequest.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, localFileName);
                 documentRequest.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
                 if (activity != null && PermissionCheck.readAndWriteExternalStorage(activity)) {
                     DownloadManager downloadManager = (DownloadManager) activity.getApplicationContext().getSystemService(DOWNLOAD_SERVICE);
                     downloadManager.enqueue(documentRequest);
                     Toast.makeText(activity, activity.getString(R.string.toast_download_started), Toast.LENGTH_SHORT).show();
+                    attachmentProvider.setFileName(fileName);
                     onAttachmentDownloading.onStart(attachmentProvider);
                 }
             }
