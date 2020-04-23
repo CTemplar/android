@@ -3,9 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingStart="16dp"
-    android:paddingLeft="16dp"
-    android:paddingEnd="26dp"
-    android:paddingRight="26dp"
+    android:paddingEnd="16dp"
     android:paddingTop="16dp"
     android:paddingBottom="16dp"
     xmlns:app="http://schemas.android.com/apk/res-auto">
@@ -27,33 +25,73 @@
         app:layout_constraintHorizontal_chainStyle="spread" />
 
     <ImageView
-        android:id="@+id/item_message_view_holder_reply_image_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:src="@drawable/ic_reply_message"
+        android:id="@+id/item_message_view_holder_attachment_image_view"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:src="@drawable/ic_attachment_small"
         app:layout_constraintTop_toTopOf="@id/item_message_view_collapsed_sender"
         app:layout_constraintBottom_toBottomOf="@id/item_message_view_collapsed_sender"
         app:layout_constraintLeft_toRightOf="@id/item_message_view_collapsed_sender" />
+
+    <ImageView
+        android:id="@+id/item_message_view_holder_reply_image_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_reply_message"
+        app:layout_constraintTop_toTopOf="@id/item_message_view_holder_attachment_image_view"
+        app:layout_constraintBottom_toBottomOf="@id/item_message_view_holder_attachment_image_view"
+        app:layout_constraintLeft_toRightOf="@id/item_message_view_holder_attachment_image_view" />
+
+    <TextView
+        android:id="@+id/item_message_view_short_date_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="10dp"
+        android:layout_marginEnd="10dp"
+        android:ellipsize="end"
+        android:fontFamily="@font/lato_regular"
+        android:gravity="start"
+        android:lines="1"
+        android:text="Apr 6"
+        android:textColor="@color/colorGrey"
+        android:textSize="14sp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/item_message_view_collapsed_folder_text_view" />
+
+    <TextView
+        android:id="@+id/item_message_view_collapsed_folder_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="4dp"
+        android:layout_marginEnd="4dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:gravity="center"
+        android:text="inbox"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:background="@drawable/ic_message_status_blue"
+        android:fontFamily="@font/lato_regular"
+        android:textColor="@color/colorWhiteLight"
+        android:textSize="14sp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
 
     <TextView
         android:id="@+id/item_message_view_collapsed_content"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:ellipsize="end"
         android:fontFamily="@font/lato_regular"
-        android:gravity="left"
+        android:gravity="start"
         android:lines="1"
+        android:ellipsize="end"
         android:text="You now have an inbox that is protected by strong encryption"
         android:textColor="@color/colorGrey"
         android:textSize="14sp"
         app:layout_constraintTop_toBottomOf="@id/item_message_view_collapsed_sender"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintHorizontal_chainStyle="spread" />
 
