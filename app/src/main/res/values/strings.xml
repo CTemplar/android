@@ -137,8 +137,8 @@ Your password is connected to your encryption key, if you change your password t
     <string name="txt_attachments_in_processing">Attachments in processing…</string>
 
     <!-- VIEW MESSAGES -->
-    <string name="txt_hide_details">View details</string>
-    <string name="txt_view_details">Hide details</string>
+    <string name="txt_more_details">More details</string>
+    <string name="txt_less_details">Less details</string>
     <string name="toast_message_marked_unread">Message marked as unread</string>
     <string name="toast_message_moved_to">Message moved to %1$s</string>
     <string name="toast_messages_doesnt_exist">Messages doesn\'t exists</string>
@@ -222,6 +222,7 @@ Your password is connected to your encryption key, if you change your password t
     <string name="txt_new_message">New message</string>
     <string name="txt_cc">Cc: &#160;</string>g>
     <string name="txt_bcc">Bcc: &#160;</string>
+    <string name="txt_date_format">Date: %1$s</string>
     <string name="hint_compose">Compose email</string>
 
     <!-- MESSAGING SERVICE -->

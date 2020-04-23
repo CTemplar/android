@@ -99,7 +99,7 @@ public class AppUtils {
         return null;
     }
 
-    public static String messageViewDate(String stringDate) {
+    public static String messageFullDate(String stringDate) {
         if (TextUtils.isEmpty(stringDate)) {
             return "";
         }
