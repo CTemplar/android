@@ -139,15 +139,15 @@ public class ViewMessagesAdapter extends BaseAdapter {
         View credentialsDivider = view.findViewById(R.id.item_message_view_expanded_credentials_divider);
 
         detailsTextView.setOnClickListener(v -> {
-            int credentialsVisibility = expandedCredentialsLayout.getVisibility();
-            if (credentialsVisibility == View.VISIBLE) {
+            int detailsVisibility = expandedCredentialsLayout.getVisibility();
+            if (detailsVisibility == View.VISIBLE) {
                 expandedCredentialsLayout.setVisibility(View.GONE);
                 credentialsDivider.setVisibility(View.GONE);
-                detailsTextView.setText(view.getContext().getResources().getText(R.string.txt_less_details));
+                detailsTextView.setText(view.getResources().getText(R.string.txt_more_details));
             } else {
                 expandedCredentialsLayout.setVisibility(View.VISIBLE);
                 credentialsDivider.setVisibility(View.VISIBLE);
-                detailsTextView.setText(view.getContext().getResources().getText(R.string.txt_more_details));
+                detailsTextView.setText(view.getResources().getText(R.string.txt_less_details));
             }
         });
 
@@ -161,30 +161,30 @@ public class ViewMessagesAdapter extends BaseAdapter {
         fullDateEmailTextView.setText(view.getResources().getString(R.string.txt_date_format, messageFullDate));
 
         // check for folder
-        if (!TextUtils.isEmpty(folderName)) {
+        if (EditTextUtils.isNotEmpty(folderName)) {
             folderNameTextView.setText(folderName);
             collapsedFolderNameTextView.setText(folderName);
         }
 
         // check for status (time delete, delayed delivery)
-        if (!TextUtils.isEmpty(messageData.getDelayedDelivery())) {
+        if (EditTextUtils.isNotEmpty(messageData.getDelayedDelivery())) {
             String leftTime = AppUtils.elapsedTime(messageData.getDelayedDelivery());
-            if (!TextUtils.isEmpty(leftTime)) {
+            if (EditTextUtils.isNotEmpty(leftTime)) {
                 statusTextView.setText(view.getResources().getString(R.string.txt_left_time_delay_delivery, leftTime));
                 statusTextView.setBackgroundColor(view.getResources().getColor(R.color.colorDarkGreen));
             } else {
                 statusTextView.setVisibility(View.GONE);
             }
-        } else if (!TextUtils.isEmpty(messageData.getDestructDate())) {
+        } else if (EditTextUtils.isNotEmpty(messageData.getDestructDate())) {
             String leftTime = AppUtils.elapsedTime(messageData.getDestructDate());
-            if (!TextUtils.isEmpty(leftTime)) {
+            if (EditTextUtils.isNotEmpty(leftTime)) {
                 statusTextView.setText(view.getResources().getString(R.string.txt_left_time_destruct, leftTime));
             } else {
                 statusTextView.setVisibility(View.GONE);
             }
-        } else if (!TextUtils.isEmpty(messageData.getDeadManDuration())) {
+        } else if (EditTextUtils.isNotEmpty(messageData.getDeadManDuration())) {
             String leftTime = AppUtils.deadMansTime(Long.parseLong(messageData.getDeadManDuration()));
-            if (!TextUtils.isEmpty(leftTime)) {
+            if (EditTextUtils.isNotEmpty(leftTime)) {
                 statusTextView.setText(view.getResources().getString(R.string.txt_left_time_dead_mans_timer, leftTime));
                 statusTextView.setBackgroundColor(view.getResources().getColor(R.color.colorRed0));
             } else {

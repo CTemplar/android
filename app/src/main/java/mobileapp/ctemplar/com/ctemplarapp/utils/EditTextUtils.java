@@ -10,6 +10,8 @@ import android.text.TextUtils;
 import android.util.Patterns;
 import android.widget.EditText;
 
+import androidx.annotation.Nullable;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -72,6 +74,9 @@ public class EditTextUtils {
     }
 
     public static String toHtml(Spannable text) {
+        if (TextUtils.isEmpty(text)) {
+            return "";
+        }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             return Html.toHtml(text, Html.TO_HTML_PARAGRAPH_LINES_CONSECUTIVE);
         } else {
@@ -96,5 +101,9 @@ public class EditTextUtils {
         }
         String fromHtml = fromHtml(text).toString();
         return !text.equals(fromHtml);
+    }
+
+    public static boolean isNotEmpty(@Nullable CharSequence str) {
+        return str != null && str.length() > 0;
     }
 }
