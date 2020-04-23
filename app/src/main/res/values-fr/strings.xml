@@ -134,8 +134,8 @@ Votre mot de passe est connecté à votre clé de cryptage, si vous changez votr
     <string name="txt_attachments_in_processing">En cours…</string>
 
     <!-- VIEW MESSAGES -->
-    <string name="txt_hide_details">Voir détails </string>
-    <string name="txt_view_details">Masquer détails</string>
+    <string name="txt_more_details">Plus de détails</string>
+    <string name="txt_less_details">Moins de détails</string>
     <string name="toast_message_marked_unread">Message marqué comme non lu</string>
     <string name="toast_message_moved_to">Message déplacé vers %1$s</string>
     <string name="toast_messages_doesnt_exist">Ce message n\'existe pas</string>
@@ -144,9 +144,10 @@ Votre mot de passe est connecté à votre clé de cryptage, si vous changez votr
     <string name="txt_user_wrote">\n\n-----------------------------------------------------------------------------------------------\nOn %1$s %2$s wrote:\n\n</string>
     <string name="txt_forwarded_message">Message transféré</string>
     <string name="txt_from">De :&#160;</string>
-    <string name="txt_date">Date</string>
     <string name="txt_subject">Objet</string>
     <string name="txt_to">À :&#160;</string>
+    <string name="txt_date">Date</string>
+    <string name="txt_date_format">Date: %1$s</string>
     <string name="txt_reply_all">Répondre à tous</string>
 
     <!-- CHANGE PASSWORD -->

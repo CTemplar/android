@@ -98,67 +98,78 @@ public class ViewMessagesAdapter extends BaseAdapter {
         List<UserDisplayProvider> receiverDisplayList = messageData.getReceiverDisplayList();
         List<UserDisplayProvider> ccDisplayList = messageData.getCcDisplayList();
         List<UserDisplayProvider> bccDisplayList = messageData.getBccDisplayList();
-        String lastAction = messageData.getLastAction();
 
+        String lastAction = messageData.getLastAction();
         String folderName = messageData.getFolderName();
         String message = messageData.getContent();
+        String messageFullDate = AppUtils.messageFullDate(messageData.getCreatedAt());
+
         boolean isHtml = messageData.isHtml();
+        boolean isHasAttachment = messageData.isHasAttachments();
 
         // VIEW COLLAPSED
-        TextView senderTextView = view.findViewById(R.id.item_message_view_collapsed_sender);
-        TextView contentTextView = view.findViewById(R.id.item_message_view_collapsed_content);
+        TextView collapsedSenderTextView = view.findViewById(R.id.item_message_view_collapsed_sender);
+        TextView collapsedContentTextView = view.findViewById(R.id.item_message_view_collapsed_content);
+        TextView collapsedShortDateTextView = view.findViewById(R.id.item_message_view_short_date_text_view);
+        TextView collapsedFolderNameTextView = view.findViewById(R.id.item_message_view_collapsed_folder_text_view);
+        ImageView collapsedHasAttachmentMessageImageView = view.findViewById(R.id.item_message_view_holder_attachment_image_view);
         ImageView collapsedReplyMessageImageView = view.findViewById(R.id.item_message_view_holder_reply_image_view);
 
-        senderTextView.setText(senderDisplay.getName());
-        contentTextView.setText(EditTextUtils.fromHtml(message));
-
         // VIEW EXPANDED
-        senderTextView = view.findViewById(R.id.item_message_view_expanded_sender_name);
+        TextView senderTextView = view.findViewById(R.id.item_message_view_expanded_sender_name);
         TextView receiverTextView = view.findViewById(R.id.item_message_view_expanded_receiver_name);
-        TextView dateTextView = view.findViewById(R.id.item_message_view_expanded_date);
+        TextView shortDateTextView = view.findViewById(R.id.item_message_view_expanded_short_date_text_view);
         TextView statusTextView = view.findViewById(R.id.item_message_view_expanded_status);
-        TextView folderTextView = view.findViewById(R.id.item_message_view_expanded_folder);
-        final TextView detailsTextView = view.findViewById(R.id.item_message_view_expanded_details);
+        TextView folderNameTextView = view.findViewById(R.id.item_message_view_expanded_folder_name_text_view);
+        TextView detailsTextView = view.findViewById(R.id.item_message_view_expanded_details);
         TextView senderEmailTextView = view.findViewById(R.id.item_message_view_from_email);
         TextView receiverEmailTextView = view.findViewById(R.id.item_message_view_to_email);
         View ccLayout = view.findViewById(R.id.item_message_view_CC_layout);
         TextView ccEmailTextView = view.findViewById(R.id.item_message_view_CC_email);
         View bccLayout = view.findViewById(R.id.item_message_view_BCC_layout);
+        ImageView hasAttachmentMessageImageView = view.findViewById(R.id.item_message_view_expanded_attachment_image_view);
         ImageView replyMessageImageView = view.findViewById(R.id.item_message_view_expanded_reply_image_view);
         TextView bccEmailTextView = view.findViewById(R.id.item_message_view_BCC_email);
+        TextView fullDateEmailTextView = view.findViewById(R.id.item_message_view_date_text_view);
         WebView contentWebView = view.findViewById(R.id.item_message_view_expanded_content);
         TextView contentText = view.findViewById(R.id.item_message_text_view_expanded_content);
         ProgressBar progressBar = view.findViewById(R.id.item_message_view_expanded_progress_bar);
         RecyclerView attachmentsRecyclerView = view.findViewById(R.id.item_message_view_expanded_attachment);
-        final ViewGroup expandedCredentialsLayout = view.findViewById(R.id.item_message_view_expanded_credentials);
-        final View credentialsDivider = view.findViewById(R.id.item_message_view_expanded_credentials_divider);
+        ViewGroup expandedCredentialsLayout = view.findViewById(R.id.item_message_view_expanded_credentials);
+        View credentialsDivider = view.findViewById(R.id.item_message_view_expanded_credentials_divider);
 
         detailsTextView.setOnClickListener(v -> {
             int credentialsVisibility = expandedCredentialsLayout.getVisibility();
             if (credentialsVisibility == View.VISIBLE) {
                 expandedCredentialsLayout.setVisibility(View.GONE);
                 credentialsDivider.setVisibility(View.GONE);
-                detailsTextView.setText(view.getContext().getResources().getText(R.string.txt_hide_details));
+                detailsTextView.setText(view.getContext().getResources().getText(R.string.txt_less_details));
             } else {
                 expandedCredentialsLayout.setVisibility(View.VISIBLE);
                 credentialsDivider.setVisibility(View.VISIBLE);
-                detailsTextView.setText(view.getContext().getResources().getText(R.string.txt_view_details));
+                detailsTextView.setText(view.getContext().getResources().getText(R.string.txt_more_details));
             }
         });
 
+        collapsedSenderTextView.setText(senderDisplay.getName());
+        collapsedContentTextView.setText(EditTextUtils.fromHtml(message));
+        collapsedShortDateTextView.setText(AppUtils.messageDate(messageData.getCreatedAt()));
+
         senderTextView.setText(senderDisplay.getName());
         receiverTextView.setText(userDisplayListToNamesString(receiverDisplayList));
-        dateTextView.setText(AppUtils.messageViewDate(messageData.getCreatedAt()));
+        shortDateTextView.setText(AppUtils.messageDate(messageData.getCreatedAt()));
+        fullDateEmailTextView.setText(view.getResources().getString(R.string.txt_date_format, messageFullDate));
 
         // check for folder
-        if (folderName != null) {
-            folderTextView.setText(folderName);
+        if (!TextUtils.isEmpty(folderName)) {
+            folderNameTextView.setText(folderName);
+            collapsedFolderNameTextView.setText(folderName);
         }
 
         // check for status (time delete, delayed delivery)
         if (!TextUtils.isEmpty(messageData.getDelayedDelivery())) {
             String leftTime = AppUtils.elapsedTime(messageData.getDelayedDelivery());
-            if (leftTime != null) {
+            if (!TextUtils.isEmpty(leftTime)) {
                 statusTextView.setText(view.getResources().getString(R.string.txt_left_time_delay_delivery, leftTime));
                 statusTextView.setBackgroundColor(view.getResources().getColor(R.color.colorDarkGreen));
             } else {
@@ -166,14 +177,14 @@ public class ViewMessagesAdapter extends BaseAdapter {
             }
         } else if (!TextUtils.isEmpty(messageData.getDestructDate())) {
             String leftTime = AppUtils.elapsedTime(messageData.getDestructDate());
-            if (leftTime != null) {
+            if (!TextUtils.isEmpty(leftTime)) {
                 statusTextView.setText(view.getResources().getString(R.string.txt_left_time_destruct, leftTime));
             } else {
                 statusTextView.setVisibility(View.GONE);
             }
         } else if (!TextUtils.isEmpty(messageData.getDeadManDuration())) {
-            String leftTime = AppUtils.deadMansTime(Long.valueOf(messageData.getDeadManDuration()));
-            if (leftTime != null) {
+            String leftTime = AppUtils.deadMansTime(Long.parseLong(messageData.getDeadManDuration()));
+            if (!TextUtils.isEmpty(leftTime)) {
                 statusTextView.setText(view.getResources().getString(R.string.txt_left_time_dead_mans_timer, leftTime));
                 statusTextView.setBackgroundColor(view.getResources().getColor(R.color.colorRed0));
             } else {
@@ -206,6 +217,10 @@ public class ViewMessagesAdapter extends BaseAdapter {
         } else {
             bccLayout.setVisibility(View.GONE);
         }
+
+        // attachment
+        collapsedHasAttachmentMessageImageView.setVisibility(isHasAttachment ? View.VISIBLE : View.GONE);
+        hasAttachmentMessageImageView.setVisibility(isHasAttachment ? View.VISIBLE : View.GONE);
 
         // check for last action (reply, reply all, forward)
         if (lastAction == null) {
