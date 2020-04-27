@@ -1,16 +1,15 @@
 package mobileapp.ctemplar.com.ctemplarapp;
 
-import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
-import androidx.appcompat.app.AppCompatActivity;
 import android.view.View;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import io.reactivex.disposables.CompositeDisposable;
 import mobileapp.ctemplar.com.ctemplarapp.utils.DialogUtils;
-import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public abstract class BaseActivity extends AppCompatActivity {
 
@@ -36,11 +35,6 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void onDestroy() {
         mUnbinder.unbind();
         super.onDestroy();
-    }
-
-    @Override
-    protected void attachBaseContext(Context newBase) {
-        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
     }
 
     @Override
