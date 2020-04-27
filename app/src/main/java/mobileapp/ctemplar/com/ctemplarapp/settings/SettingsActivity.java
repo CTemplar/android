@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
@@ -34,7 +35,6 @@ import mobileapp.ctemplar.com.ctemplarapp.filters.FiltersActivity;
 import mobileapp.ctemplar.com.ctemplarapp.folders.ManageFoldersActivity;
 import mobileapp.ctemplar.com.ctemplarapp.mailboxes.MailboxesActivity;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Mailboxes.MailboxesResult;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.MyselfResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.MyselfResult;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.SettingsEntity;
@@ -60,7 +60,6 @@ public class SettingsActivity extends BaseActivity {
     private static SharedPreferences sharedPreferences;
 
     private static boolean isPrimeUser;
-    private static long defaultMailboxId = -1;
     private static long settingId = -1;
 
     @Override
@@ -99,10 +98,6 @@ public class SettingsActivity extends BaseActivity {
                 .commit();
     }
 
-    private static long getSettingId() {
-        return sharedPreferences.getLong(SETTING_ID, -1);
-    }
-
     private static void setSettingId(long id) {
         sharedPreferences.edit().putLong(SETTING_ID, id).apply();
     }
@@ -114,68 +109,77 @@ public class SettingsActivity extends BaseActivity {
 
             storageLimitPreference = findPreference(getString(R.string.local_storage_limit));
             recoveryEmailPreferenceScreen = findPreference(getString(R.string.recovery_email_holder));
+
             String recoveryEmail = sharedPreferences.getString(getString(R.string.recovery_email), null);
             if (recoveryEmail != null && !recoveryEmail.isEmpty()) {
                 recoveryEmailPreferenceScreen.setSummary(recoveryEmail);
             }
-
             Preference passwordKey = findPreference(getString(R.string.password_key));
-            passwordKey.setOnPreferenceClickListener(preference -> {
-                Intent changePassword = new Intent(getActivity(), ChangePasswordActivity.class);
-                startActivity(changePassword);
-                return false;
-            });
-
+            if (passwordKey != null) {
+                passwordKey.setOnPreferenceClickListener(preference -> {
+                    Intent changePassword = new Intent(getActivity(), ChangePasswordActivity.class);
+                    startActivity(changePassword);
+                    return false;
+                });
+            }
             Preference signatureKey = findPreference(getString(R.string.signature_key));
-            signatureKey.setOnPreferenceClickListener(preference -> {
-                Intent signatureActivity = new Intent(getActivity(), SignatureActivity.class);
-                startActivity(signatureActivity);
-                return false;
-            });
-
+            if (signatureKey != null) {
+                signatureKey.setOnPreferenceClickListener(preference -> {
+                    Intent signatureActivity = new Intent(getActivity(), SignatureActivity.class);
+                    startActivity(signatureActivity);
+                    return false;
+                });
+            }
             Preference mobileSignatureKey = findPreference(getString(R.string.mobile_signature_key));
-            mobileSignatureKey.setOnPreferenceClickListener(preference -> {
-                Intent signatureActivity = new Intent(getActivity(), SignatureActivity.class);
-                signatureActivity.putExtra(SignatureActivity.IS_MOBILE, true);
-                startActivity(signatureActivity);
-                return false;
-            });
-
-            Preference keys = findPreference(getString(R.string.setting_keys));
-            keys.setOnPreferenceClickListener(preference -> {
-                Intent keysIntent = new Intent(getActivity(), KeysActivity.class);
-                startActivity(keysIntent);
-                return false;
-            });
-
+            if (mobileSignatureKey != null) {
+                mobileSignatureKey.setOnPreferenceClickListener(preference -> {
+                    Intent signatureActivity = new Intent(getActivity(), SignatureActivity.class);
+                    signatureActivity.putExtra(SignatureActivity.IS_MOBILE, true);
+                    startActivity(signatureActivity);
+                    return false;
+                });
+            }
+            Preference mailboxKeys = findPreference(getString(R.string.setting_keys));
+            if (mailboxKeys != null) {
+                mailboxKeys.setOnPreferenceClickListener(preference -> {
+                    Intent keysIntent = new Intent(getActivity(), KeysActivity.class);
+                    startActivity(keysIntent);
+                    return false;
+                });
+            }
             Preference filters = findPreference(getString(R.string.filters));
-            filters.setOnPreferenceClickListener(preference -> {
-                Intent filtersIntent = new Intent(getActivity(), FiltersActivity.class);
-                startActivity(filtersIntent);
-                return false;
-            });
-
+            if (filters != null) {
+                filters.setOnPreferenceClickListener(preference -> {
+                    Intent filtersIntent = new Intent(getActivity(), FiltersActivity.class);
+                    startActivity(filtersIntent);
+                    return false;
+                });
+            }
             Preference whiteBlackList = findPreference(getString(R.string.white_black_list));
-            whiteBlackList.setOnPreferenceClickListener(preference -> {
-                Intent whiteBlackList1 = new Intent(getActivity(), WhiteBlackListActivity.class);
-                startActivity(whiteBlackList1);
-                return true;
-            });
-
+            if (whiteBlackList != null) {
+                whiteBlackList.setOnPreferenceClickListener(preference -> {
+                    Intent whiteBlackList1 = new Intent(getActivity(), WhiteBlackListActivity.class);
+                    startActivity(whiteBlackList1);
+                    return true;
+                });
+            }
             Preference manageFolders = findPreference(getString(R.string.manage_folders));
-            manageFolders.setOnPreferenceClickListener(preference -> {
-                Intent manageFolders1 = new Intent(getActivity(), ManageFoldersActivity.class);
-                startActivity(manageFolders1);
-                return true;
-            });
-
+            if (manageFolders != null) {
+                manageFolders.setOnPreferenceClickListener(preference -> {
+                    Intent manageFolders1 = new Intent(getActivity(), ManageFoldersActivity.class);
+                    startActivity(manageFolders1);
+                    return true;
+                });
+            }
             Preference mailboxes = findPreference(getString(R.string.email_addresses));
-            mailboxes.setOnPreferenceClickListener(preference -> {
-                Intent mailboxesIntent = new Intent(getActivity(), MailboxesActivity.class);
-                mailboxesIntent.putExtra(USER_IS_PRIME, isPrimeUser);
-                startActivity(mailboxesIntent);
-                return true;
-            });
+            if (mailboxes != null) {
+                mailboxes.setOnPreferenceClickListener(preference -> {
+                    Intent mailboxesIntent = new Intent(getActivity(), MailboxesActivity.class);
+                    mailboxesIntent.putExtra(USER_IS_PRIME, isPrimeUser);
+                    startActivity(mailboxesIntent);
+                    return true;
+                });
+            }
         }
     }
 
@@ -185,12 +189,13 @@ public class SettingsActivity extends BaseActivity {
             setPreferencesFromResource(R.xml.notifications_settings, rootKey);
 
             SwitchPreference switchPreferenceNotificationsEnabled = findPreference(getString(R.string.push_notifications_enabled));
-            switchPreferenceNotificationsEnabled.setOnPreferenceChangeListener((preference, newValue) -> {
-                boolean isEnabled = (boolean) newValue;
-                userStore.setNotificationsEnabled(isEnabled);
-                return true;
-            });
-
+            if (switchPreferenceNotificationsEnabled != null) {
+                switchPreferenceNotificationsEnabled.setOnPreferenceChangeListener((preference, newValue) -> {
+                    boolean isEnabled = (boolean) newValue;
+                    userStore.setNotificationsEnabled(isEnabled);
+                    return true;
+                });
+            }
         }
     }
 
@@ -200,12 +205,17 @@ public class SettingsActivity extends BaseActivity {
             setPreferencesFromResource(R.xml.recovery_email_settings, rootKey);
 
             EditTextPreference preferenceRecoveryEmail = findPreference(getString(R.string.recovery_email));
+            CheckBoxPreference checkBoxRecoveryEmailEnabled = findPreference(getString(R.string.recovery_email_enabled));
             String recoveryEmail = sharedPreferences.getString(getString(R.string.recovery_email), null);
+
+            if (preferenceRecoveryEmail == null || checkBoxRecoveryEmailEnabled == null
+                    || TextUtils.isEmpty(recoveryEmail)) {
+                return;
+            }
+
             if (recoveryEmail != null && !recoveryEmail.isEmpty()) {
                 preferenceRecoveryEmail.setTitle(recoveryEmail);
             }
-
-            CheckBoxPreference checkBoxRecoveryEmailEnabled = findPreference(getString(R.string.recovery_email_enabled));
             checkBoxRecoveryEmailEnabled.setOnPreferenceChangeListener((preference, newValue) -> {
                 Boolean value = (Boolean) newValue;
                 if (!value) {
@@ -216,7 +226,6 @@ public class SettingsActivity extends BaseActivity {
                 Toast.makeText(getActivity(), getString(R.string.toast_saved), Toast.LENGTH_SHORT).show();
                 return true;
             });
-
             preferenceRecoveryEmail.setOnPreferenceChangeListener((preference, newValue) -> {
                 String value = (String) newValue;
                 if (EditTextUtils.isEmailValid(value) || value.isEmpty()) {
@@ -244,11 +253,13 @@ public class SettingsActivity extends BaseActivity {
             setPreferencesFromResource(R.xml.saving_contacts_settings, rootKey);
 
             SwitchPreference autoSaveContactsPreference = findPreference(getString(R.string.auto_save_contacts_enabled));
-            autoSaveContactsPreference.setOnPreferenceChangeListener((preference, newValue) -> {
-                boolean isEnabled = (boolean) newValue;
-                settingsModel.updateAutoSaveEnabled(settingId, isEnabled);
-                return true;
-            });
+            if (autoSaveContactsPreference != null) {
+                autoSaveContactsPreference.setOnPreferenceChangeListener((preference, newValue) -> {
+                    boolean isEnabled = (boolean) newValue;
+                    settingsModel.updateAutoSaveEnabled(settingId, isEnabled);
+                    return true;
+                });
+            }
         }
     }
 
@@ -259,37 +270,44 @@ public class SettingsActivity extends BaseActivity {
         @Override
         public void onCreatePreferences(Bundle bundle, String rootKey) {
             setPreferencesFromResource(R.xml.encryption_settings, rootKey);
+
             SwitchPreference subjectEncryptionSwitchPreference = findPreference(getString(R.string.subject_encryption_enabled));
-            subjectEncryptionSwitchPreference.setOnPreferenceChangeListener((preference, newValue) -> {
-                Toast.makeText(getActivity(), getString(R.string.toast_saved), Toast.LENGTH_SHORT).show();
-                boolean value = (boolean) newValue;
-                settingsModel.updateSubjectEncryption(settingId, value);
-                return true;
-            });
-            subjectEncryptionSwitchPreference.setEnabled(isPrimeUser);
+            if (subjectEncryptionSwitchPreference != null) {
+                subjectEncryptionSwitchPreference.setOnPreferenceChangeListener((preference, newValue) -> {
+                    Toast.makeText(getActivity(), getString(R.string.toast_saved), Toast.LENGTH_SHORT).show();
+                    boolean value = (boolean) newValue;
+                    settingsModel.updateSubjectEncryption(settingId, value);
+                    return true;
+                });
+                subjectEncryptionSwitchPreference.setEnabled(isPrimeUser);
+            }
 
             SwitchPreference attachmentsEncryptionSwitchPreference = findPreference(getString(R.string.attachments_encryption_enabled));
-            attachmentsEncryptionSwitchPreference.setOnPreferenceChangeListener((preference, newValue) -> {
-                Toast.makeText(getActivity(), getString(R.string.toast_saved), Toast.LENGTH_SHORT).show();
-                boolean value = (boolean) newValue;
-                userStore.setAttachmentsEncryptionEnabled(value);
-                settingsModel.updateAttachmentsEncryption(settingId, value);
-                return true;
-            });
+            if (attachmentsEncryptionSwitchPreference != null) {
+                attachmentsEncryptionSwitchPreference.setOnPreferenceChangeListener((preference, newValue) -> {
+                    Toast.makeText(getActivity(), getString(R.string.toast_saved), Toast.LENGTH_SHORT).show();
+                    boolean value = (boolean) newValue;
+                    userStore.setAttachmentsEncryptionEnabled(value);
+                    settingsModel.updateAttachmentsEncryption(settingId, value);
+                    return true;
+                });
+            }
 
             contactsEncryptionSwitchPreference = findPreference(getString(R.string.contacts_encryption_enabled));
-            contactsEncryptionSwitchPreference.setOnPreferenceChangeListener((preference, newValue) -> {
-                boolean value = (boolean) newValue;
-                if (value) {
-                    userStore.setContactsEncryptionEnabled(true);
-                    settingsModel.updateContactsEncryption(settingId, true);
-                    Toast.makeText(getActivity(), getString(R.string.toast_contacts_encrypted), Toast.LENGTH_SHORT).show();
-                } else {
-                    disableContactsEncryption();
-                    return false;
-                }
-                return true;
-            });
+            if (contactsEncryptionSwitchPreference != null) {
+                contactsEncryptionSwitchPreference.setOnPreferenceChangeListener((preference, newValue) -> {
+                    boolean value = (boolean) newValue;
+                    if (value) {
+                        userStore.setContactsEncryptionEnabled(true);
+                        settingsModel.updateContactsEncryption(settingId, true);
+                        Toast.makeText(getActivity(), getString(R.string.toast_contacts_encrypted), Toast.LENGTH_SHORT).show();
+                    } else {
+                        disableContactsEncryption();
+                        return false;
+                    }
+                    return true;
+                });
+            }
         }
 
         private void disableContactsEncryption() {
@@ -334,12 +352,18 @@ public class SettingsActivity extends BaseActivity {
             setPreferencesFromResource(R.xml.phishing_protection_settings, rootKey);
 
             EditTextPreference phishingProtectionEditText = findPreference(getString(R.string.anti_phishing_key));
+            CheckBoxPreference phishingProtectionCheckBox = findPreference(getString(R.string.anti_phishing_enabled));
+            Preference descriptionPreference = findPreference(getString(R.string.anti_phishing_description_key));
             String phishingProtection = sharedPreferences.getString(getString(R.string.anti_phishing_key), null);
+
+            if (phishingProtectionEditText == null || phishingProtectionCheckBox == null
+                    || descriptionPreference == null || TextUtils.isEmpty(phishingProtection)) {
+                return;
+            }
+
             if (phishingProtection != null && !phishingProtection.isEmpty()) {
                 phishingProtectionEditText.setTitle(phishingProtection);
             }
-
-            CheckBoxPreference phishingProtectionCheckBox = findPreference(getString(R.string.anti_phishing_enabled));
             phishingProtectionCheckBox.setOnPreferenceChangeListener((preference, newValue) -> {
                 boolean value = (boolean) newValue;
                 if (value) {
@@ -369,7 +393,6 @@ public class SettingsActivity extends BaseActivity {
                 return true;
             });
 
-            Preference descriptionPreference = findPreference(getString(R.string.anti_phishing_description_key));
             descriptionPreference.setTitle(EditTextUtils.fromHtml(
                     getString(R.string.settings_phishing_protection_description))
             );
@@ -411,9 +434,7 @@ public class SettingsActivity extends BaseActivity {
 
     private void saveData(MyselfResult myselfResult) {
         SettingsEntity settingsEntity = myselfResult.getSettings();
-        MailboxesResult mailboxesResult = myselfResult.getMailboxes()[0];
         settingId = settingsEntity.getId();
-        defaultMailboxId = mailboxesResult.getId();
         isPrimeUser = myselfResult.isPrime();
         setSettingId(settingId);
 
@@ -424,12 +445,16 @@ public class SettingsActivity extends BaseActivity {
         boolean isRecoveryEmailEnabled = recoveryEmail != null && !recoveryEmail.isEmpty();
         boolean isNotificationsEnabled = userStore.getNotificationsEnabled();
 
-        storageLimitPreference.setSummary(getString(
-                R.string.storage_limit_info,
-                usedStorage,
-                allocatedStorage
-        ));
-        recoveryEmailPreferenceScreen.setSummary(settingsEntity.getRecoveryEmail());
+        if (storageLimitPreference != null) {
+            storageLimitPreference.setSummary(getString(
+                    R.string.storage_limit_info,
+                    usedStorage,
+                    allocatedStorage
+            ));
+        }
+        if (recoveryEmailPreferenceScreen != null) {
+            recoveryEmailPreferenceScreen.setSummary(settingsEntity.getRecoveryEmail());
+        }
         sharedPreferences.edit()
                 .putString(getString(R.string.recovery_email), recoveryEmail)
                 .putString(getString(R.string.anti_phishing_key), settingsEntity.getAntiPhishingPhrase())
