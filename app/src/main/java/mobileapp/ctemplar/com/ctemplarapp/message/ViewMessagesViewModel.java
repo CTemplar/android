@@ -48,6 +48,10 @@ public class ViewMessagesViewModel extends ViewModel {
         return CTemplarApp.getAppDatabase().mailboxDao().getById(mailboxId);
     }
 
+    MailboxEntity getDefaultMailbox() {
+        return CTemplarApp.getAppDatabase().mailboxDao().getDefault();
+    }
+
     String getUserPassword() {
         return userRepository.getUserPassword();
     }

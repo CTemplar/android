@@ -185,15 +185,17 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
 
             lastMessage = messagesList.get(messagesList.size() - 1);
             decryptedLastMessage = lastMessage.getContent();
-            encryptedImageView.setSelected(parentMessage.isProtected());
-            starImageView.setSelected(parentMessage.isStarred());
+            if (parentMessage != null) {
+                encryptedImageView.setSelected(parentMessage.isProtected());
+                starImageView.setSelected(parentMessage.isStarred());
+            }
 
             ViewMessagesAdapter adapter = new ViewMessagesAdapter(
                     messagesList, onAttachmentDownloading, getActivity()
             );
             messagesListView.setAdapter(adapter);
 
-            if (!parentMessage.isRead()) {
+            if (parentMessage != null && !parentMessage.isRead()) {
                 long parentMessageId = parentMessage.getId();
                 viewModel.markMessageAsRead(parentMessageId, true);
             }
@@ -205,7 +207,9 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
         viewModel.getStarredResponse().observe(getViewLifecycleOwner(), isStarred -> {
             boolean starred = isStarred == null ? false : isStarred;
             starImageView.setSelected(starred);
-            parentMessage.setStarred(starred);
+            if (parentMessage != null) {
+                parentMessage.setStarred(starred);
+            }
         });
         viewModel.getAddWhitelistStatus().observe(getViewLifecycleOwner(), responseStatus -> {
             if (responseStatus == ResponseStatus.RESPONSE_COMPLETE) {
@@ -319,8 +323,10 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
                 snackbarDelete(TRASH, getResources().getString(R.string.action_message_removed));
                 return true;
             case R.id.menu_view_unread:
-                viewModel.markMessageAsRead(parentMessage.getId(), false);
-                Toast.makeText(getActivity(), getResources().getString(R.string.toast_message_marked_unread), Toast.LENGTH_SHORT).show();
+                if (parentMessage != null) {
+                    viewModel.markMessageAsRead(parentMessage.getId(), false);
+                    Toast.makeText(getActivity(), getResources().getString(R.string.toast_message_marked_unread), Toast.LENGTH_SHORT).show();
+                }
                 return true;
             case R.id.menu_view_move:
                 showMoveDialog();
@@ -342,10 +348,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
         snackbar.addCallback(new BaseTransientBottomBar.BaseCallback<Snackbar>() {
             @Override
             public void onDismissed(Snackbar transientBottomBar, int event) {
-                if (event != DISMISS_EVENT_ACTION) {
-                    if (parentMessage == null) {
-                        return;
-                    }
+                if (event != DISMISS_EVENT_ACTION && parentMessage != null) {
                     if (currentFolder.equals(TRASH)) {
                         mainModel.deleteMessages(new Long[]{parentMessage.getId()});
                     } else {
@@ -369,7 +372,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
         snackbar.addCallback(new BaseTransientBottomBar.BaseCallback<Snackbar>() {
             @Override
             public void onDismissed(Snackbar transientBottomBar, int event) {
-                if (event != DISMISS_EVENT_ACTION) {
+                if (event != DISMISS_EVENT_ACTION && parentMessage != null) {
                     mainModel.toFolder(parentMessage.getId(), folder);
                 }
                 unlockUI();
@@ -380,18 +383,22 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
     }
 
     private void markNotSpam() {
-        UserDisplayProvider senderDisplay = parentMessage.getSenderDisplay();
-        String senderName = senderDisplay.getName();
-        String senderEmail = senderDisplay.getEmail();
-        viewModel.addWhitelistContact(senderName, senderEmail);
+        if (parentMessage != null) {
+            UserDisplayProvider senderDisplay = parentMessage.getSenderDisplay();
+            String senderName = senderDisplay.getName();
+            String senderEmail = senderDisplay.getEmail();
+            viewModel.addWhitelistContact(senderName, senderEmail);
+        }
     }
 
     private void showMoveDialog() {
-        MoveDialogFragment moveDialogFragment = new MoveDialogFragment();
-        Bundle moveFragmentBundle = new Bundle();
-        moveFragmentBundle.putLong(PARENT_ID, parentMessage.getId());
-        moveDialogFragment.setArguments(moveFragmentBundle);
-        moveDialogFragment.show(getActivity().getSupportFragmentManager(), "MoveDialogFragment");
+        if (parentMessage != null) {
+            MoveDialogFragment moveDialogFragment = new MoveDialogFragment();
+            Bundle moveFragmentBundle = new Bundle();
+            moveFragmentBundle.putLong(PARENT_ID, parentMessage.getId());
+            moveDialogFragment.setArguments(moveFragmentBundle);
+            moveDialogFragment.show(getActivity().getSupportFragmentManager(), "MoveDialogFragment");
+        }
     }
 
     private void blockUI() {
@@ -471,7 +478,9 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
     public void onClick(View v) {
         int id = v.getId();
         FragmentActivity activity = getActivity();
-
+        if (activity == null || parentMessage == null) {
+            return;
+        }
         switch (id) {
             case R.id.activity_view_messages_reply:
                 Intent intentReply = new Intent(getActivity(), SendMessageActivity.class);
@@ -536,10 +545,8 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
                 alertDialog.show();
                 break;
             case R.id.activity_view_messages_subject_star_image_layout:
-                if (parentMessage != null) {
-                    boolean isStarred = !parentMessage.isStarred();
-                    viewModel.markMessageIsStarred(parentMessage.getId(), isStarred);
-                }
+                boolean isStarred = !parentMessage.isStarred();
+                viewModel.markMessageIsStarred(parentMessage.getId(), isStarred);
         }
     }
 
@@ -560,8 +567,10 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
                 if (isEncrypted) {
                     File downloadedFile = new File(externalStorageFile, fileName + ENCRYPTED_EXT);
                     File decryptedFile = new File(externalStorageFile, fileName);
+                    long mailboxId = parentMessage == null
+                            ? viewModel.getDefaultMailbox().getId()
+                            : parentMessage.getMailboxId();
 
-                    long mailboxId = parentMessage.getMailboxId();
                     MailboxEntity mailboxEntity = viewModel.getMailboxById(mailboxId);
                     String password = viewModel.getUserPassword();
                     String privateKey = mailboxEntity.getPrivateKey();
