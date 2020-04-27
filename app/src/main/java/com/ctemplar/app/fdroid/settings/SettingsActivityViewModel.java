@@ -302,7 +302,9 @@ public class SettingsActivityViewModel extends ViewModel {
         String encryptedData = contactData.getEncryptedData();
         String decryptedData = Contact.decryptData(encryptedData);
         EncryptContact decryptedContact = gson.fromJson(decryptedData, EncryptContact.class);
-
+        if (decryptedContact == null) {
+            return;
+        }
         contactData.setEmail(decryptedContact.getEmail());
         contactData.setName(decryptedContact.getName());
         contactData.setAddress(decryptedContact.getAddress());
