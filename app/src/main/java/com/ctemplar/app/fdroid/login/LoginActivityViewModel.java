@@ -1,8 +1,24 @@
 package com.ctemplar.app.fdroid.login;
 
+import android.app.Application;
+
+import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
+
+import com.ctemplar.app.fdroid.CTemplarApp;
+import com.ctemplar.app.fdroid.DialogState;
+import com.ctemplar.app.fdroid.LoginActivityActions;
+import com.ctemplar.app.fdroid.SingleLiveEvent;
+import com.ctemplar.app.fdroid.net.ResponseStatus;
+import com.ctemplar.app.fdroid.net.entity.PGPKeyEntity;
+import com.ctemplar.app.fdroid.net.request.RecoverPasswordRequest;
+import com.ctemplar.app.fdroid.net.request.SignInRequest;
+import com.ctemplar.app.fdroid.net.response.RecoverPasswordResponse;
+import com.ctemplar.app.fdroid.net.response.SignInResponse;
+import com.ctemplar.app.fdroid.notification.NotificationService;
+import com.ctemplar.app.fdroid.repository.UserRepository;
+import com.ctemplar.app.fdroid.utils.EncodeUtils;
 
 import io.reactivex.Observable;
 import io.reactivex.Observer;
@@ -10,24 +26,9 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
-import com.ctemplar.app.fdroid.CTemplarApp;
-import com.ctemplar.app.fdroid.DialogState;
-import com.ctemplar.app.fdroid.LoginActivityActions;
-import com.ctemplar.app.fdroid.SingleLiveEvent;
-import com.ctemplar.app.fdroid.net.ResponseStatus;
-import com.ctemplar.app.fdroid.net.entity.PGPKeyEntity;
-import com.ctemplar.app.fdroid.net.request.AddAppTokenRequest;
-import com.ctemplar.app.fdroid.net.request.RecoverPasswordRequest;
-import com.ctemplar.app.fdroid.net.request.SignInRequest;
-import com.ctemplar.app.fdroid.net.response.AddAppTokenResponse;
-import com.ctemplar.app.fdroid.net.response.RecoverPasswordResponse;
-import com.ctemplar.app.fdroid.net.response.SignInResponse;
-import com.ctemplar.app.fdroid.repository.UserRepository;
-import com.ctemplar.app.fdroid.utils.EncodeUtils;
 import retrofit2.HttpException;
-import timber.log.Timber;
 
-public class LoginActivityViewModel extends ViewModel {
+public class LoginActivityViewModel extends AndroidViewModel {
 
     private UserRepository userRepository;
     private RecoverPasswordRequest recoverPasswordRequest;
@@ -37,7 +38,8 @@ public class LoginActivityViewModel extends ViewModel {
     private MutableLiveData<ResponseStatus> responseStatus = new MutableLiveData<>();
     private MutableLiveData<ResponseStatus> addAppTokenStatus = new MutableLiveData<>();
 
-    public LoginActivityViewModel() {
+    public LoginActivityViewModel(Application application) {
+        super(application);
         userRepository = CTemplarApp.getUserRepository();
     }
 
@@ -71,10 +73,6 @@ public class LoginActivityViewModel extends ViewModel {
 
     public RecoverPasswordRequest getRecoverPasswordRequest() {
         return recoverPasswordRequest;
-    }
-
-    public LiveData<ResponseStatus> getAddAppTokenStatus() {
-        return addAppTokenStatus;
     }
 
     public void clearDB() {
@@ -123,6 +121,7 @@ public class LoginActivityViewModel extends ViewModel {
                             responseStatus.postValue(ResponseStatus.RESPONSE_WAIT_OTP);
                         } else {
                             userRepository.saveUserToken(signInResponse.getToken());
+                            NotificationService.updateState(getApplication());
                             responseStatus.postValue(ResponseStatus.RESPONSE_NEXT);
                         }
                     }
@@ -221,32 +220,5 @@ public class LoginActivityViewModel extends ViewModel {
 
             }
         });
-    }
-
-    public void addAppToken(String token, String platform) {
-        userRepository.addAppToken(new AddAppTokenRequest(token, platform))
-                .subscribe(new Observer<AddAppTokenResponse>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(AddAppTokenResponse response) {
-                        userRepository.saveAppToken(response.getToken());
-                        addAppTokenStatus.postValue(ResponseStatus.RESPONSE_NEXT);
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        addAppTokenStatus.postValue(ResponseStatus.RESPONSE_NEXT);
-                        Timber.e(e);
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
     }
 }

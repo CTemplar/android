@@ -38,6 +38,7 @@ import com.ctemplar.app.fdroid.net.ResponseStatus;
 import com.ctemplar.app.fdroid.net.response.Myself.MyselfResponse;
 import com.ctemplar.app.fdroid.net.response.Myself.MyselfResult;
 import com.ctemplar.app.fdroid.net.response.Myself.SettingsEntity;
+import com.ctemplar.app.fdroid.notification.NotificationService;
 import com.ctemplar.app.fdroid.repository.UserRepository;
 import com.ctemplar.app.fdroid.repository.UserStore;
 import com.ctemplar.app.fdroid.utils.AppUtils;
@@ -192,6 +193,7 @@ public class SettingsActivity extends BaseActivity {
             if (switchPreferenceNotificationsEnabled != null) {
                 switchPreferenceNotificationsEnabled.setOnPreferenceChangeListener((preference, newValue) -> {
                     boolean isEnabled = (boolean) newValue;
+                    NotificationService.updateState(getContext(), isEnabled);
                     userStore.setNotificationsEnabled(isEnabled);
                     return true;
                 });

@@ -1,17 +1,12 @@
 package com.ctemplar.app.fdroid.main;
 
+import android.app.Application;
 import android.text.TextUtils;
 
+import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
 
-import java.util.List;
-
-import io.reactivex.Observable;
-import io.reactivex.Observer;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
 import com.ctemplar.app.fdroid.CTemplarApp;
 import com.ctemplar.app.fdroid.DialogState;
 import com.ctemplar.app.fdroid.SingleLiveEvent;
@@ -29,6 +24,8 @@ import com.ctemplar.app.fdroid.net.response.Myself.MyselfResponse;
 import com.ctemplar.app.fdroid.net.response.Myself.MyselfResult;
 import com.ctemplar.app.fdroid.net.response.Myself.SettingsEntity;
 import com.ctemplar.app.fdroid.net.response.SignInResponse;
+import com.ctemplar.app.fdroid.notification.NotificationService;
+import com.ctemplar.app.fdroid.notification.NotificationServiceListener;
 import com.ctemplar.app.fdroid.repository.ContactsRepository;
 import com.ctemplar.app.fdroid.repository.ManageFoldersRepository;
 import com.ctemplar.app.fdroid.repository.MessagesRepository;
@@ -39,14 +36,19 @@ import com.ctemplar.app.fdroid.repository.entity.ContactEntity;
 import com.ctemplar.app.fdroid.repository.entity.MessageEntity;
 import com.ctemplar.app.fdroid.repository.provider.MessageProvider;
 import com.ctemplar.app.fdroid.utils.EncodeUtils;
+
+import java.util.List;
+
+import io.reactivex.Observable;
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 import okhttp3.ResponseBody;
 import retrofit2.HttpException;
 import retrofit2.Response;
 import timber.log.Timber;
 
-public class MainActivityViewModel extends ViewModel {
-    private static final String ANDROID = "android";
-
+public class MainActivityViewModel extends AndroidViewModel {
     private UserRepository userRepository;
     private ContactsRepository contactsRepository;
     private MessagesRepository messagesRepository;
@@ -64,11 +66,25 @@ public class MainActivityViewModel extends ViewModel {
     private MutableLiveData<MyselfResponse> myselfResponse = new MutableLiveData<>();
     MutableLiveData<String> currentFolder = new MutableLiveData<>();
 
-    public MainActivityViewModel() {
+    private final NotificationServiceListener notificationServiceListener = new NotificationServiceListener() {
+        @Override
+        public void onNewMessage(MessageProvider message) {
+            getMessages(10, 0, currentFolder.getValue());
+        }
+    };
+
+    public MainActivityViewModel(Application application) {
+        super(application);
         userRepository = CTemplarApp.getUserRepository();
         contactsRepository = CTemplarApp.getContactsRepository();
         messagesRepository = CTemplarApp.getMessagesRepository();
         manageFoldersRepository = CTemplarApp.getManageFoldersRepository();
+        NotificationService.bind(application, notificationServiceListener);
+    }
+
+    @Override
+    protected void onCleared() {
+        NotificationService.unbind(getApplication(), notificationServiceListener);
     }
 
     public LiveData<MainActivityActions> getActionsStatus() {
@@ -138,6 +154,7 @@ public class MainActivityViewModel extends ViewModel {
     public void logout() {
         if (userRepository != null) {
             exit();
+            NotificationService.updateState(getApplication());
         }
     }
 

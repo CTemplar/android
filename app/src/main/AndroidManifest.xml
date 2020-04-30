@@ -81,6 +81,7 @@
         <activity android:name=".mailboxes.MailboxesActivity" />
         <activity android:name=".mailboxes.AddMailboxActivity" />
 
+        <service android:name=".notification.NotificationService" />
     </application>
 
 </manifest>

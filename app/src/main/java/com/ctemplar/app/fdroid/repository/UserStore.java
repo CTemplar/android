@@ -13,9 +13,6 @@ public interface UserStore {
     void saveToken(String token);
     String getToken();
 
-    void saveAppToken(String token);
-    String getAppToken();
-
     void saveUsername(String username);
     String getUsername();
 

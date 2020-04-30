@@ -25,6 +25,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.ctemplar.app.fdroid.notification.NotificationService;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -63,7 +64,6 @@ public class InboxFragment extends BaseFragment
     private static final int SWIPABLE_FOREGROUND_RESOURCE_ID = R.id.item_message_view_holder_foreground;
     private static final int SWIPABLE_BACKGROUND_RESOURCE_ID = R.id.item_message_view_holder_background_layout;
     private static final int REQUEST_MESSAGES_COUNT = 10;
-    public static WeakReference<InboxFragment> instanceReference = null;
 
     private InboxMessagesAdapter adapter;
     private MainActivityViewModel mainModel;
@@ -184,7 +184,6 @@ public class InboxFragment extends BaseFragment
 
                     }
                 });
-        instanceReference = new WeakReference<>(this);
     }
 
     @Override

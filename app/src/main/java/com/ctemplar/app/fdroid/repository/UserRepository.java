@@ -93,14 +93,6 @@ public class UserRepository {
         return userStore.getToken();
     }
 
-    public void saveAppToken(String token) {
-        userStore.saveAppToken(token);
-    }
-
-    public String getAppToken() {
-        return userStore.getAppToken();
-    }
-
     public void saveUserPassword(String password) {
         userStore.savePassword(password);
     }
