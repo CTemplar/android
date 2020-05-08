@@ -9,6 +9,7 @@ import androidx.room.Room;
 
 import com.ctemplar.app.fdroid.net.RestClient;
 import com.ctemplar.app.fdroid.notification.NotificationService;
+import com.ctemplar.app.fdroid.notification.NotificationServiceBroadcastReceiver;
 import com.ctemplar.app.fdroid.repository.AppDatabase;
 import com.ctemplar.app.fdroid.repository.ContactsRepository;
 import com.ctemplar.app.fdroid.repository.ManageFoldersRepository;
@@ -16,6 +17,7 @@ import com.ctemplar.app.fdroid.repository.MessagesRepository;
 import com.ctemplar.app.fdroid.repository.UserRepository;
 import com.ctemplar.app.fdroid.repository.UserStore;
 import com.ctemplar.app.fdroid.repository.UserStoreImpl;
+import com.ctemplar.app.fdroid.utils.EditTextUtils;
 
 import java.lang.ref.WeakReference;
 
@@ -31,8 +33,8 @@ public class CTemplarApp extends MultiDexApplication {
     private static ContactsRepository contactsRepository;
     private static ManageFoldersRepository manageFoldersRepository;
     private static AppDatabase appDatabase;
-
     private static WeakReference<Activity> currentActivityReference;
+    private static NotificationServiceBroadcastReceiver notificationServiceBroadcastReceiver;
     private static final ActivityLifecycleCallbacks activityLifecycleCallbacks = new ActivityLifecycleCallbacks() {
         @Override
         public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
@@ -81,12 +83,14 @@ public class CTemplarApp extends MultiDexApplication {
         Timber.plant(new Timber.DebugTree());
         installProviders(this);
         registerActivityLifecycleCallbacks(activityLifecycleCallbacks);
+        notificationServiceBroadcastReceiver = new NotificationServiceBroadcastReceiver();
+        notificationServiceBroadcastReceiver.register(this);
         NotificationService.updateState(this);
     }
 
     public static boolean isAuthorized() {
         String token = userRepository.getUserToken();
-        return token != null && !token.isEmpty();
+        return EditTextUtils.isNotEmpty(token);
     }
 
     public static CTemplarApp getInstance() {

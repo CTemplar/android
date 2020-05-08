@@ -223,8 +223,8 @@ Votre mot de passe est connecté à votre clé de cryptage, si vous changez votr
     <string name="hint_compose">Nouveau message</string>
 
     <!-- MESSAGING SERVICE -->
-    <string name="channel_name">CTemplar</string>
-    <string name="channel_description">Nouveau email</string>
+    <string name="title_notification_service">Service de notification</string>
+    <string name="title_service_running">Le service est en cours d\'exécutiong</string>
 
     <!-- CUSTOM FILTERS -->
     <string name="txt_filters_title">Filtres</string>

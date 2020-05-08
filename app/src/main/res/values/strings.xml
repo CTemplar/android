@@ -225,10 +225,9 @@ Your password is connected to your encryption key, if you change your password t
     <string name="txt_date_format">Date: %1$s</string>
     <string name="hint_compose">Compose email</string>
 
-    <!-- MESSAGING SERVICE -->
-    <string name="channel_name">CTemplar</string>
-    <string name="channel_description">New email</string>
-    <string name="channel_id" translatable="false">ctemplar</string>
+    <!-- NOTIFICATION SERVICE -->
+    <string name="title_notification_service">Notification Service</string>
+    <string name="title_service_running">Service is running</string>
 
     <!-- CUSTOM FILTERS -->
     <string name="txt_filters_title">Filters</string>

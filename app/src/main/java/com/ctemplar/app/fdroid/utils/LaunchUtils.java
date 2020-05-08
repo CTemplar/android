@@ -1,5 +1,6 @@
 package com.ctemplar.app.fdroid.utils;
 
+import android.app.ActivityManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -8,7 +9,6 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
@@ -97,6 +97,13 @@ public class LaunchUtils {
         return launchActivity(context, new Intent(action));
     }
 
+    public static boolean launchSingleService(Context context, Class<?> cls) {
+        if (isMyServiceRunning(context, cls)) {
+            return false;
+        }
+        return launchService(context, cls);
+    }
+
     public static boolean launchService(Context context, Class<?> cls) {
         return launchService(context, new Intent(context, cls));
     }
@@ -119,16 +126,6 @@ public class LaunchUtils {
     }
 
     public static boolean launchService(Context context, Intent intent) {
-        try {
-            context.startService(intent);
-            return true;
-        } catch (Throwable e) {
-            Timber.e(e, "launchService");
-            return false;
-        }
-    }
-
-    public static boolean launchServiceAsForegroundIfNeedIt(Context context, Intent intent) {
         try {
             context.startService(intent);
         } catch (Throwable e) {
@@ -158,9 +155,18 @@ public class LaunchUtils {
         return launchService(context, intent);
     }
 
-
     public static boolean launchForegroundService(Context context, Class<?> serviceClass) {
         return launchForegroundService(context, new Intent(context, serviceClass));
+    }
+
+    private static boolean isMyServiceRunning(Context context, Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static boolean launchForegroundService(Context context, Intent intent) {

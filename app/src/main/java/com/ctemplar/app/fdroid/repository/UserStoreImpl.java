@@ -13,7 +13,6 @@ public class UserStoreImpl implements UserStore{
 
     private static final String PREF_USER = "pref_user";
     private static final String KEY_USER_TOKEN = "key_user_token";
-    private static final String KEY_APP_TOKEN = "key_app_token";
     private static final String KEY_USERNAME = "key_username";
     private static final String KEY_PASSWORD = "key_password";
     private static final String KEY_PASSWORD_HASHED = "key_password_hashed";
@@ -51,16 +50,6 @@ public class UserStoreImpl implements UserStore{
     @Override
     public String getToken() {
         return preferences.getString(KEY_USER_TOKEN, "");
-    }
-
-    @Override
-    public void saveAppToken(String token) {
-        preferences.edit().putString(KEY_APP_TOKEN, token).apply();
-    }
-
-    @Override
-    public String getAppToken() {
-        return preferences.getString(KEY_APP_TOKEN, "");
     }
 
     @Override
@@ -174,7 +163,7 @@ public class UserStoreImpl implements UserStore{
 
     @Override
     public boolean getNotificationsEnabled() {
-        return preferences.getBoolean(KEY_NOTIFICATIONS_ENABLED, false);
+        return preferences.getBoolean(KEY_NOTIFICATIONS_ENABLED, true);
     }
 
     @Override

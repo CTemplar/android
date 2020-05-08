@@ -18,4 +18,3 @@ public class NotificationServiceBinder extends Binder {
         listenerList.remove(listener);
     }
 }
-

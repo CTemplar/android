@@ -66,12 +66,8 @@ public class MainActivityViewModel extends AndroidViewModel {
     private MutableLiveData<MyselfResponse> myselfResponse = new MutableLiveData<>();
     MutableLiveData<String> currentFolder = new MutableLiveData<>();
 
-    private final NotificationServiceListener notificationServiceListener = new NotificationServiceListener() {
-        @Override
-        public void onNewMessage(MessageProvider message) {
-            getMessages(10, 0, currentFolder.getValue());
-        }
-    };
+    private final NotificationServiceListener notificationServiceListener = message
+            -> getMessages(10, 0, currentFolder.getValue());
 
     public MainActivityViewModel(Application application) {
         super(application);
@@ -566,7 +562,6 @@ public class MainActivityViewModel extends AndroidViewModel {
                             userRepository.saveTimeZone(timezone);
                             userRepository.setAttachmentsEncryptionEnabled(isAttachmentsEncrypted);
                             userRepository.setContactsEncryptionEnabled(isContactsEncrypted);
-                            userRepository.setNotificationsEnabled(true);
                         }
                     }
 

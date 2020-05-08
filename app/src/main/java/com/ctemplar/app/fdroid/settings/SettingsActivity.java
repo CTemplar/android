@@ -192,9 +192,8 @@ public class SettingsActivity extends BaseActivity {
             SwitchPreference switchPreferenceNotificationsEnabled = findPreference(getString(R.string.push_notifications_enabled));
             if (switchPreferenceNotificationsEnabled != null) {
                 switchPreferenceNotificationsEnabled.setOnPreferenceChangeListener((preference, newValue) -> {
-                    boolean isEnabled = (boolean) newValue;
-                    NotificationService.updateState(getContext(), isEnabled);
-                    userStore.setNotificationsEnabled(isEnabled);
+                    userStore.setNotificationsEnabled((boolean) newValue);
+                    NotificationService.updateState(getContext());
                     return true;
                 });
             }
@@ -411,14 +410,14 @@ public class SettingsActivity extends BaseActivity {
                 .subscribe(new Observer<MyselfResponse>() {
                     @Override
                     public void onSubscribe(Disposable d) {
-                        Timber.i("Request myself info");
+                        Timber.d("Request myself info");
                     }
 
                     @Override
                     public void onNext(MyselfResponse myselfResponse) {
                         if (myselfResponse != null && myselfResponse.getResult() != null) {
                             MyselfResult myselfResult = myselfResponse.getResult()[0];
-                            saveData(myselfResult);
+                            saveReceivedData(myselfResult);
                         }
                     }
 
@@ -434,7 +433,7 @@ public class SettingsActivity extends BaseActivity {
                 });
     }
 
-    private void saveData(MyselfResult myselfResult) {
+    private void saveReceivedData(MyselfResult myselfResult) {
         SettingsEntity settingsEntity = myselfResult.getSettings();
         settingId = settingsEntity.getId();
         isPrimeUser = myselfResult.isPrime();
@@ -444,7 +443,6 @@ public class SettingsActivity extends BaseActivity {
         String allocatedStorage = AppUtils.usedStorage(settingsEntity.getAllocatedStorage());
 
         String recoveryEmail = settingsEntity.getRecoveryEmail();
-        boolean isRecoveryEmailEnabled = recoveryEmail != null && !recoveryEmail.isEmpty();
         boolean isNotificationsEnabled = userStore.getNotificationsEnabled();
 
         if (storageLimitPreference != null) {
@@ -460,7 +458,7 @@ public class SettingsActivity extends BaseActivity {
         sharedPreferences.edit()
                 .putString(getString(R.string.recovery_email), recoveryEmail)
                 .putString(getString(R.string.anti_phishing_key), settingsEntity.getAntiPhishingPhrase())
-                .putBoolean(getString(R.string.recovery_email_enabled), isRecoveryEmailEnabled)
+                .putBoolean(getString(R.string.recovery_email_enabled), EditTextUtils.isNotEmpty(recoveryEmail))
                 .putBoolean(getString(R.string.auto_save_contacts_enabled), settingsEntity.isSaveContacts())
                 .putBoolean(getString(R.string.subject_encryption_enabled), settingsEntity.isSubjectEncrypted())
                 .putBoolean(getString(R.string.attachments_encryption_enabled), settingsEntity.isAttachmentsEncrypted())

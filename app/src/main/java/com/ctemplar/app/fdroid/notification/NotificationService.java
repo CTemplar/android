@@ -1,5 +1,6 @@
 package com.ctemplar.app.fdroid.notification;
 
+import android.app.AlarmManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -14,13 +15,14 @@ import android.graphics.Color;
 import android.media.RingtoneManager;
 import android.os.Build;
 import android.os.IBinder;
+import android.os.SystemClock;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
-import androidx.preference.PreferenceManager;
 
 import com.ctemplar.app.fdroid.CTemplarApp;
 import com.ctemplar.app.fdroid.R;
+import com.ctemplar.app.fdroid.main.MainActivity;
 import com.ctemplar.app.fdroid.message.ViewMessagesActivity;
 import com.ctemplar.app.fdroid.message.ViewMessagesFragment;
 import com.ctemplar.app.fdroid.net.socket.NotificationServiceWebSocket;
@@ -35,17 +37,28 @@ import java.util.Random;
 import timber.log.Timber;
 
 public class NotificationService extends Service {
+    private static final String NOTIFICATION_CHANNEL_ID = "com.ctemplar.emails";
+    private static final String NOTIFICATION_CHANNEL_NAME = "CTemplar Emails";
+    private static final String NOTIFICATION_CHANNEL_DESCRIPTION = "New email";
+
+    private static final String FOREGROUND_NOTIFICATION_CHANNEL_ID = "com.ctemplar.notification.foreground";
+    private static final String FOREGROUND_NOTIFICATION_CHANNEL_NAME = "Notification Service";
+    private static final String FOREGROUND_NOTIFICATION_CHANNEL_DESCRIPTION = "Notification Service for emails";
+    private static final int FOREGROUND_NOTIFICATION_ID = 101;
+
+    private static final String ACTION_STOP = "com.ctemplar.service.notification.STOP";
+    private static final String ACTION_START = "com.ctemplar.service.notification.START";
+
     private static Map<NotificationServiceListener, NotificationServiceConnection> listenerServiceConnectionMap;
 
     private final NotificationServiceBinder binder = new NotificationServiceBinder();
     private final NotificationServiceWebSocketCallback notificationServiceWebSocketCallback = messageProvider -> {
         if (CTemplarApp.isInForeground()) {
             for (NotificationServiceListener notificationServiceListener : binder.listenerList) {
-                notificationServiceListener.onNewMessage(messageProvider);
+                notificationServiceListener.onNewEmail(messageProvider);
             }
-        } else {
-            showMessageNotification(messageProvider);
         }
+        showEmailNotification(messageProvider);
     };
 
     @Nullable
@@ -57,7 +70,7 @@ public class NotificationService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        Timber.i("onCreate");
+        Timber.d("onCreate");
         NotificationServiceWebSocket notificationServiceWebSocket = NotificationServiceWebSocket.getInstance();
         notificationServiceWebSocket.start(notificationServiceWebSocketCallback);
     }
@@ -68,19 +81,81 @@ public class NotificationService extends Service {
             onRestarted();
             return START_STICKY;
         }
+        String action = intent.getAction();
+        if (ACTION_STOP.equals(action)) {
+            Timber.d("onStartCommand action STOP");
+            stopForeground(true);
+            stopSelf();
+            LaunchUtils.shutdownService(this, getClass());
+            return START_NOT_STICKY;
+        } else if (ACTION_START.equals(action)) {
+            Timber.d("onStartCommand action START");
+            startForegroundPriority();
+        } else {
+            if (LaunchUtils.needForeground(intent)) {
+                startForegroundPriority();
+            }
+        }
         return START_STICKY;
     }
 
     @Override
     public void onDestroy() {
+        Timber.d("onDestroy");
         NotificationServiceWebSocket.getInstance().shutdown();
+        NotificationServiceBroadcastReceiver.sendStartNotificationService(this);
+    }
+
+    @Override
+    public void onTaskRemoved(Intent rootIntent) {
+        Timber.d("onTaskRemoved");
+        Intent restartServiceIntent = new Intent(getApplicationContext(), this.getClass());
+        restartServiceIntent.setPackage(getPackageName());
+
+        PendingIntent restartServicePendingIntent = PendingIntent.getService(getApplicationContext(), 1, restartServiceIntent, PendingIntent.FLAG_ONE_SHOT);
+        AlarmManager alarmService = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
+        alarmService.set(
+                AlarmManager.ELAPSED_REALTIME,
+                SystemClock.elapsedRealtime() + 1000,
+                restartServicePendingIntent);
     }
 
     private void onRestarted() {
-
+        Timber.d("onRestarted");
     }
 
-    private void showMessageNotification(MessageProvider messageProvider) {
+    private void startForegroundPriority() {
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.O) {
+            return;
+        }
+        createForegroundNotificationChannel();
+        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this,
+                FOREGROUND_NOTIFICATION_CHANNEL_ID)
+                .setPriority(NotificationCompat.PRIORITY_MIN)
+                .setOngoing(true)
+                .setWhen(0)
+                .setContentTitle(getString(R.string.title_notification_service))
+                .setContentText(getString(R.string.title_service_running))
+                .setSmallIcon(R.mipmap.ic_launcher_small)
+                .setContentIntent(PendingIntent.getActivity(getApplicationContext(),
+                        0, intent, PendingIntent.FLAG_CANCEL_CURRENT));
+        startForeground(FOREGROUND_NOTIFICATION_ID, builder.build());
+    }
+
+    private void createForegroundNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            int importance = NotificationManager.IMPORTANCE_MIN;
+            NotificationChannel channel = new NotificationChannel(
+                    FOREGROUND_NOTIFICATION_CHANNEL_ID,
+                    FOREGROUND_NOTIFICATION_CHANNEL_NAME, importance);
+            channel.setDescription(FOREGROUND_NOTIFICATION_CHANNEL_DESCRIPTION);
+            ((NotificationManager) getSystemService(NOTIFICATION_SERVICE))
+                    .createNotificationChannel(channel);
+        }
+    }
+
+    private void showEmailNotification(MessageProvider messageProvider) {
         String parent = messageProvider.getParent();
         long parentId = -1;
         if (parent != null && !parent.isEmpty()) {
@@ -90,24 +165,30 @@ public class NotificationService extends Service {
                 Timber.e(e);
             }
         }
-        sendNotification(messageProvider.getSender(), messageProvider.getSubject(), messageProvider.getFolderName(), messageProvider.getId(), parentId, messageProvider.isSubjectEncrypted());
+        sendNotification(
+                messageProvider.getSender(),
+                messageProvider.getSubject(),
+                messageProvider.getFolderName(),
+                messageProvider.getId(), parentId,
+                messageProvider.isSubjectEncrypted()
+        );
     }
 
-    private void sendNotification(String sender, String subject, String folder, long messageId, long parentId, boolean isSubjectEncrypted) {
+    private void sendNotification(String sender, String subject, String folder, long messageId,
+                                  long parentId, boolean isSubjectEncrypted) {
         long id = (parentId == -1) ? messageId : parentId;
         String content = (isSubjectEncrypted) ? getString(R.string.txt_encrypted_subject) : subject;
 
         Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
-        String channelId = getString(R.string.channel_id);
-        String channelName = "messages";
-
         Intent intent = new Intent(this, ViewMessagesActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.putExtra(ViewMessagesActivity.PARENT_ID, id);
         intent.putExtra(ViewMessagesFragment.FOLDER_NAME, folder);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent,
+                PendingIntent.FLAG_ONE_SHOT);
 
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, channelId)
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat
+                .Builder(this, NOTIFICATION_CHANNEL_ID)
                 .setContentTitle(sender)
                 .setContentText(content)
                 .setAutoCancel(true)
@@ -119,14 +200,15 @@ public class NotificationService extends Service {
                 .setLargeIcon(largeIcon)
                 .setSmallIcon(R.mipmap.ic_launcher_small);
 
-        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
+        NotificationManager notificationManager = (NotificationManager)
+                getSystemService(Context.NOTIFICATION_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel notificationChannel = new NotificationChannel(
-                    channelId, channelName, NotificationManager.IMPORTANCE_HIGH
+                    NOTIFICATION_CHANNEL_ID, NOTIFICATION_CHANNEL_NAME,
+                    NotificationManager.IMPORTANCE_HIGH
             );
-            notificationChannel.setDescription(getString(R.string.app_name));
-            notificationChannel.setShowBadge(true);
+            notificationChannel.setDescription(NOTIFICATION_CHANNEL_DESCRIPTION);
+//            notificationChannel.setShowBadge(true);
             notificationChannel.canShowBadge();
             notificationChannel.enableLights(true);
             notificationChannel.setLightColor(Color.RED);
@@ -140,11 +222,15 @@ public class NotificationService extends Service {
 
 
     private static void start(Context context) {
-        LaunchUtils.launchService(context.getApplicationContext(), NotificationService.class);
+        Intent intent = new Intent(context, NotificationService.class);
+        intent.setAction(ACTION_START);
+        LaunchUtils.launchService(context, intent);
     }
 
     private static void stop(Context context) {
-        LaunchUtils.shutdownService(context.getApplicationContext(), NotificationService.class);
+        Intent intent = new Intent(context, NotificationService.class);
+        intent.setAction(ACTION_STOP);
+        LaunchUtils.launchService(context, intent);
     }
 
     public static void bind(Context context, NotificationServiceListener listener) {
@@ -154,14 +240,14 @@ public class NotificationService extends Service {
         }
         listenerServiceConnectionMap.put(listener, serviceConnection);
         Intent intent = new Intent(context, NotificationService.class);
-        boolean bindedSuccess;
+        boolean boundSuccess;
         try {
-            bindedSuccess = context.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+            boundSuccess = context.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
         } catch (Throwable e) {
             Timber.e(e, "bind bindService failed");
             return;
         }
-        if (!bindedSuccess) {
+        if (!boundSuccess) {
             Timber.e("bind bind failed");
         }
     }
@@ -190,14 +276,7 @@ public class NotificationService extends Service {
     }
 
     public static void updateState(Context context) {
-        String preferenceName = context.getResources()
-                .getString(R.string.push_notifications_enabled);
-        boolean active = PreferenceManager.getDefaultSharedPreferences(context)
-                .getBoolean(preferenceName, false);
-        updateState(context, active);
-    }
-
-    public static void updateState(Context context, boolean active) {
+        boolean active = CTemplarApp.getUserStore().getNotificationsEnabled();
         if (active && CTemplarApp.isAuthorized()) {
             start(context);
         } else {

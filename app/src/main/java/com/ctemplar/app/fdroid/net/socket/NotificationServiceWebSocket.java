@@ -92,10 +92,9 @@ public class NotificationServiceWebSocket extends WebSocketListener {
                 .readTimeout(0,  TimeUnit.MILLISECONDS)
                 .build();
 
-        String USERID = "1588165265240";
         String token = CTemplarApp.getUserRepository().getUserToken();
         Request request = new Request.Builder()
-                .url("wss://dev.ctemplar.net/api/connect/?token=" + token + "&user_id=" + USERID)
+                .url("wss://dev.ctemplar.net/api/connect/?token=" + token)
                 .build();
         client.newWebSocket(request, this);
     }
