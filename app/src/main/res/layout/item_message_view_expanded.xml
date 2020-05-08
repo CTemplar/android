@@ -19,9 +19,9 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <RelativeLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/item_message_view_expanded_sender_layout"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -36,7 +36,10 @@
                 android:ellipsize="end"
                 android:fontFamily="@font/lato_regular"
                 android:textSize="14sp"
-                android:textColor="@color/colorGrey"/>
+                android:textColor="@color/colorGrey"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
 
             <TextView
                 android:id="@+id/item_message_view_expanded_sender_name"
@@ -48,18 +51,20 @@
                 android:textColor="@color/colorGrey"
                 android:fontFamily="@font/lato_regular"
                 android:textSize="14sp"
-                android:layout_toEndOf="@id/item_message_view_expanded_sender_text"
-                android:layout_toRightOf="@id/item_message_view_expanded_sender_text"
                 android:layout_marginRight="5dp"
-                android:layout_marginEnd="5dp" />
+                android:layout_marginEnd="5dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/item_message_view_expanded_sender_text" />
 
             <ImageView
                 android:id="@+id/item_message_view_expanded_attachment_image_view"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
                 android:src="@drawable/ic_attachment_small"
-                android:layout_toEndOf="@id/item_message_view_expanded_sender_name"
-                android:layout_toRightOf="@id/item_message_view_expanded_sender_name" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/item_message_view_expanded_sender_name"/>
 
             <ImageView
                 android:id="@+id/item_message_view_expanded_reply_image_view"
@@ -67,45 +72,61 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:src="@drawable/ic_reply_message"
-                android:layout_toEndOf="@id/item_message_view_expanded_attachment_image_view"
-                android:layout_toRightOf="@id/item_message_view_expanded_attachment_image_view" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/item_message_view_expanded_attachment_image_view" />
 
-            <TextView
-                android:id="@+id/item_message_view_expanded_short_date_text_view"
-                android:layout_width="wrap_content"
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/item_message_view_expanded_right_bar"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="10dp"
-                android:layout_marginEnd="10dp"
-                android:ellipsize="end"
-                android:fontFamily="@font/lato_regular"
-                android:gravity="start"
-                android:lines="1"
-                android:text="Apr 6"
-                android:textColor="@color/colorGrey"
-                android:textSize="14sp"
-                android:layout_toStartOf="@id/item_message_view_expanded_folder_name_text_view"
-                android:layout_toLeftOf="@id/item_message_view_expanded_folder_name_text_view" />
+                android:gravity="center_vertical"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/item_message_view_expanded_reply_image_view"
+                app:layout_constraintEnd_toEndOf="parent">
 
-            <TextView
-                android:id="@+id/item_message_view_expanded_folder_name_text_view"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="4dp"
-                android:layout_marginEnd="4dp"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-                android:gravity="center"
-                android:text="inbox"
-                android:maxLines="1"
-                android:ellipsize="end"
-                android:background="@drawable/ic_message_status_blue"
-                android:fontFamily="@font/lato_regular"
-                android:textColor="@color/colorWhiteLight"
-                android:textSize="14sp"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true" />
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1" />
 
-        </RelativeLayout>
+                <TextView
+                    android:id="@+id/item_message_view_expanded_short_date_text_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/lato_regular"
+                    android:lines="1"
+                    android:text="Apr 6"
+                    android:textColor="@color/colorGrey"
+                    android:textSize="14sp"
+                    android:layout_toStartOf="@id/item_message_view_expanded_folder_name_text_view"
+                    android:layout_toLeftOf="@id/item_message_view_expanded_folder_name_text_view" />
+
+                <TextView
+                    android:id="@+id/item_message_view_expanded_folder_name_text_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:maxWidth="80dp"
+                    android:gravity="center_vertical"
+                    android:layout_marginRight="4dp"
+                    android:layout_marginEnd="4dp"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:text="inbox"
+                    android:background="@drawable/ic_message_status_blue"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/lato_regular"
+                    android:textColor="@color/colorWhiteLight"
+                    android:textSize="14sp" />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <RelativeLayout
             android:id="@+id/item_message_view_expanded_receiver_layout"
