@@ -213,7 +213,7 @@ public class ViewMessagesViewModel extends ViewModel {
 
                     @Override
                     public void onError(Throwable e) {
-                        e.printStackTrace();
+                        Timber.e(e);
                     }
 
                     @Override

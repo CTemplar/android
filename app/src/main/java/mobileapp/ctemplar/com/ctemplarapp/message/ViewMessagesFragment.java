@@ -49,6 +49,7 @@ import mobileapp.ctemplar.com.ctemplarapp.main.MainActivity;
 import mobileapp.ctemplar.com.ctemplarapp.main.MainActivityViewModel;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.net.entity.AttachmentsEntity;
+import mobileapp.ctemplar.com.ctemplarapp.repository.constant.MessageActions;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.AttachmentProvider;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageProvider;
@@ -448,6 +449,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
         Intent intentForward = new Intent(getActivity(), SendMessageActivity.class);
         intentForward.putExtra(Intent.EXTRA_SUBJECT, lastMessage.getSubject());
         intentForward.putExtra(Intent.EXTRA_TEXT, forwardHead() + EditTextUtils.fromHtml(decryptedLastMessage));
+        intentForward.putExtra(SendMessageActivity.LAST_ACTION, MessageActions.REPLY);
 
         Bundle extras = new Bundle();
         AttachmentsEntity attachmentsEntity = withAttachments
@@ -462,6 +464,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
                 new String[] {},
                 new String[] {},
                 new String[] {},
+                MessageActions.FORWARD,
                 attachmentsEntity,
                 null
         );
@@ -487,6 +490,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
                 intentReply.putExtra(Intent.EXTRA_EMAIL, new String[] { lastMessage.getSender() });
                 intentReply.putExtra(Intent.EXTRA_SUBJECT, lastMessage.getSubject());
                 intentReply.putExtra(Intent.EXTRA_TEXT, replyHead() + EditTextUtils.fromHtml(decryptedLastMessage));
+                intentReply.putExtra(SendMessageActivity.LAST_ACTION, MessageActions.REPLY);
                 intentReply.putExtra(SendMessageActivity.PARENT_ID, parentMessage.getId());
 
                 Fragment fragmentReply = SendMessageFragment.newInstance(
@@ -495,6 +499,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
                         new String[] { lastMessage.getSender() },
                         new String[] {},
                         new String[] {},
+                        MessageActions.REPLY,
                         new AttachmentsEntity(),
                         parentMessage.getId()
                 );
@@ -512,6 +517,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
                 intentReplyAll.putExtra(Intent.EXTRA_TEXT, replyHead() + EditTextUtils.fromHtml(decryptedLastMessage));
                 intentReplyAll.putExtra(Intent.EXTRA_CC, lastMessage.getCc());
                 intentReplyAll.putExtra(Intent.EXTRA_BCC, lastMessage.getBcc());
+                intentReplyAll.putExtra(SendMessageActivity.LAST_ACTION, MessageActions.REPLY);
                 intentReplyAll.putExtra(SendMessageActivity.PARENT_ID, parentMessage.getId());
 
                 Fragment fragmentReplyAll = SendMessageFragment.newInstance(
@@ -520,6 +526,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
                         new String[] { lastMessage.getSender() },
                         lastMessage.getCc(),
                         lastMessage.getBcc(),
+                        MessageActions.REPLY_ALL,
                         new AttachmentsEntity(),
                         parentMessage.getId()
                 );

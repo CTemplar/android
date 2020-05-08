@@ -77,6 +77,7 @@ import timber.log.Timber;
 
 import static android.app.Activity.RESULT_OK;
 import static mobileapp.ctemplar.com.ctemplarapp.message.SendMessageActivity.ATTACHMENT_LIST;
+import static mobileapp.ctemplar.com.ctemplarapp.message.SendMessageActivity.LAST_ACTION;
 import static mobileapp.ctemplar.com.ctemplarapp.message.SendMessageActivity.MESSAGE_ID;
 import static mobileapp.ctemplar.com.ctemplarapp.message.SendMessageActivity.PARENT_ID;
 import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.OUTBOX;
@@ -118,6 +119,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
     private Long delayedDeliveryInMillis;
     private Long destructDeliveryInMillis;
     private Long deadDeliveryInHours;
+    private String lastAction;
     private EncryptionMessage messageEncryptionResult;
     private boolean userIsPrime;
     private boolean isSubjectEncrypted;
@@ -286,8 +288,9 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
             String[] bundleBCC = args.getStringArray(Intent.EXTRA_BCC);
             String bundleSubject = args.getString(Intent.EXTRA_SUBJECT);
             String bundleText = args.getString(Intent.EXTRA_TEXT);
-            parentId = args.getLong(PARENT_ID, -1);
+            lastAction = args.getString(LAST_ACTION);
             currentMessageId = args.getLong(MESSAGE_ID, -1);
+            parentId = args.getLong(PARENT_ID, -1);
             if (parentId < 0) {
                 parentId = null;
             }
@@ -802,6 +805,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         sendMessageRequest.setMailbox(mailboxId);
         sendMessageRequest.setParent(parentId);
         sendMessageRequest.setSubjectEncrypted(isSubjectEncrypted);
+        sendMessageRequest.setLastAction(lastAction);
 
         draftMessage = false;
         boolean messageSent = true;
@@ -905,6 +909,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         messageRequestToDraft.setSend(false);
         messageRequestToDraft.setMailbox(mailboxId);
         messageRequestToDraft.setSubjectEncrypted(isSubjectEncrypted);
+        messageRequestToDraft.setLastAction(lastAction);
 
         if (destructDeliveryInMillis != null) {
             messageRequestToDraft.setDestructDate(AppUtils.datetimeForServer(destructDeliveryInMillis));
@@ -1174,6 +1179,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
             @Nullable String[] receivers,
             @Nullable String[] cc,
             @Nullable String[] bcc,
+            @Nullable String lastAction,
             @Nullable AttachmentsEntity attachmentsEntity,
             @Nullable Long parentId
     ) {
@@ -1192,6 +1198,9 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         }
         if (bcc != null && bcc.length > 0) {
             args.putStringArray(Intent.EXTRA_BCC, bcc);
+        }
+        if (EditTextUtils.isNotEmpty(lastAction)) {
+            args.putString(LAST_ACTION, lastAction);
         }
         if (attachmentsEntity != null
                 && attachmentsEntity.getAttachmentProviderList() != null

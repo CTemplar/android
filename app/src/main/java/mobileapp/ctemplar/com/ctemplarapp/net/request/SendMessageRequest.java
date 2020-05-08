@@ -58,6 +58,9 @@ public class SendMessageRequest {
     @SerializedName("mailbox")
     private long mailbox;
 
+    @SerializedName("last_action")
+    private String lastAction;
+
     @SerializedName("parent")
     private Long parent;
 
@@ -154,6 +157,14 @@ public class SendMessageRequest {
 
     public void setSend(boolean send) {
         this.send = send;
+    }
+
+    public String getLastAction() {
+        return lastAction;
+    }
+
+    public void setLastAction(String lastAction) {
+        this.lastAction = lastAction;
     }
 
     public Long getParent() {

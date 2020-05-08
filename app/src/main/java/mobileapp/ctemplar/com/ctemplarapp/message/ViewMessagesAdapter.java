@@ -223,9 +223,12 @@ public class ViewMessagesAdapter extends BaseAdapter {
         hasAttachmentMessageImageView.setVisibility(isHasAttachment ? View.VISIBLE : View.GONE);
 
         // check for last action (reply, reply all, forward)
-        if (lastAction == null) {
+        if (TextUtils.isEmpty(lastAction)) {
             replyMessageImageView.setVisibility(View.GONE);
             collapsedReplyMessageImageView.setVisibility(View.GONE);
+        } else if (lastAction.equals(MessageActions.REPLY)) {
+            replyMessageImageView.setImageResource(R.drawable.ic_reply_message);
+            collapsedReplyMessageImageView.setImageResource(R.drawable.ic_reply_message);
         } else if (lastAction.equals(MessageActions.REPLY_ALL)) {
             replyMessageImageView.setImageResource(R.drawable.ic_reply_all_message);
             collapsedReplyMessageImageView.setImageResource(R.drawable.ic_reply_all_message);
