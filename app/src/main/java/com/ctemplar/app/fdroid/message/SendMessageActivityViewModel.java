@@ -207,8 +207,9 @@ public class SendMessageActivityViewModel extends ViewModel {
         String content = request.getContent();
         String subject = request.getSubject();
         boolean isSubjectEncrypted = request.isSubjectEncrypted();
+        boolean isEmptyReceiverKeys = receiverPublicKeys.isEmpty();
 
-        if (!receiverPublicKeys.isEmpty()) {
+        if (!isEmptyReceiverKeys) {
             String[] publicKeys = receiverPublicKeys.toArray(new String[0]);
             content = PGPManager.encrypt(content, publicKeys);
             if (isSubjectEncrypted && !subject.isEmpty()) {
@@ -217,7 +218,8 @@ public class SendMessageActivityViewModel extends ViewModel {
             request.setContent(content);
             request.setSubject(subject);
         }
-        request.setIsEncrypted(!receiverPublicKeys.isEmpty());
+        request.setIsEncrypted(!isEmptyReceiverKeys);
+        request.setSubjectEncrypted(isSubjectEncrypted && !isEmptyReceiverKeys);
 
         userRepository.updateMessage(id, request)
                 .subscribe(new Observer<MessagesResult>() {
