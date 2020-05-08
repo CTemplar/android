@@ -82,7 +82,7 @@ class PGPLib {
         PGPPrivateKey sKey = null;
         PGPPublicKeyEncryptedData pbe = null;
         if (enc == null) {
-            return new byte[0];
+            return encryptedBytes;
         }
         int encryptedDataObjectSize = enc.size();
         for (int i = 0; sKey == null && i < encryptedDataObjectSize; i++) {
