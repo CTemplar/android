@@ -10,6 +10,7 @@ import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.BaseAdapter;
@@ -247,8 +248,13 @@ public class ViewMessagesAdapter extends BaseAdapter {
         if (isHtml) {
             String messageWithStyle = "<style type=\"text/css\">*{width:auto;max-width:100%;}</style>" + message;
             String encodedContent = Base64.encodeToString(messageWithStyle.getBytes(), Base64.NO_PADDING);
-            contentWebView.getSettings().setLoadWithOverviewMode(true);
-            contentWebView.getSettings().setBuiltInZoomControls(true);
+            WebSettings webViewSettings = contentWebView.getSettings();
+            webViewSettings.setLoadWithOverviewMode(true);
+            webViewSettings.setBuiltInZoomControls(true);
+            webViewSettings.setJavaScriptEnabled(false);
+            webViewSettings.setAllowFileAccess(false);
+            webViewSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
+            contentWebView.clearCache(true);
             contentWebView.loadData(encodedContent, "text/html", "base64");
             contentWebView.setWebViewClient(new WebViewClient() {
                 @Override
