@@ -106,7 +106,8 @@ public class ViewMessagesAdapter extends BaseAdapter {
         String messageFullDate = AppUtils.messageFullDate(messageData.getCreatedAt());
 
         boolean isHtml = messageData.isHtml();
-        boolean isHasAttachment = messageData.isHasAttachments();
+        boolean isHasAttachment = messageData.isHasAttachments()
+                || !messageData.getAttachments().isEmpty();
 
         // VIEW COLLAPSED
         TextView collapsedSenderTextView = view.findViewById(R.id.item_message_view_collapsed_sender);
@@ -220,22 +221,35 @@ public class ViewMessagesAdapter extends BaseAdapter {
         }
 
         // attachment
-        collapsedHasAttachmentMessageImageView.setVisibility(isHasAttachment ? View.VISIBLE : View.GONE);
-        hasAttachmentMessageImageView.setVisibility(isHasAttachment ? View.VISIBLE : View.GONE);
+        if (isHasAttachment) {
+            collapsedHasAttachmentMessageImageView.setVisibility(View.VISIBLE);
+            hasAttachmentMessageImageView.setVisibility(View.VISIBLE);
+        } else {
+            collapsedHasAttachmentMessageImageView.setVisibility(View.GONE);
+            hasAttachmentMessageImageView.setVisibility(View.GONE);
+        }
 
         // check for last action (reply, reply all, forward)
         if (TextUtils.isEmpty(lastAction)) {
             replyMessageImageView.setVisibility(View.GONE);
             collapsedReplyMessageImageView.setVisibility(View.GONE);
-        } else if (lastAction.equals(MessageActions.REPLY)) {
-            replyMessageImageView.setImageResource(R.drawable.ic_reply_message);
-            collapsedReplyMessageImageView.setImageResource(R.drawable.ic_reply_message);
-        } else if (lastAction.equals(MessageActions.REPLY_ALL)) {
-            replyMessageImageView.setImageResource(R.drawable.ic_reply_all_message);
-            collapsedReplyMessageImageView.setImageResource(R.drawable.ic_reply_all_message);
-        } else if (lastAction.equals(MessageActions.FORWARD)) {
-            replyMessageImageView.setImageResource(R.drawable.ic_forward_message);
-            collapsedReplyMessageImageView.setImageResource(R.drawable.ic_forward_message);
+        } else {
+            switch (lastAction) {
+                case MessageActions.REPLY:
+                    replyMessageImageView.setImageResource(R.drawable.ic_reply_message);
+                    collapsedReplyMessageImageView.setImageResource(R.drawable.ic_reply_message);
+                    break;
+                case MessageActions.REPLY_ALL:
+                    replyMessageImageView.setImageResource(R.drawable.ic_reply_all_message);
+                    collapsedReplyMessageImageView.setImageResource(R.drawable.ic_reply_all_message);
+                    break;
+                case MessageActions.FORWARD:
+                    replyMessageImageView.setImageResource(R.drawable.ic_forward_message);
+                    collapsedReplyMessageImageView.setImageResource(R.drawable.ic_forward_message);
+                    break;
+            }
+            replyMessageImageView.setVisibility(View.VISIBLE);
+            collapsedReplyMessageImageView.setVisibility(View.VISIBLE);
         }
 
 //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
