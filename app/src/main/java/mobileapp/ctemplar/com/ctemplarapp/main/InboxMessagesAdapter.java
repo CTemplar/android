@@ -117,12 +117,19 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesView
         String lastActionThread = message.getLastActionThread();
         if (TextUtils.isEmpty(lastActionThread)) {
             holder.imgReply.setVisibility(View.GONE);
-        } else if (lastActionThread.equals(MessageActions.REPLY)) {
-            holder.imgReply.setImageResource(R.drawable.ic_reply_message);
-        } else if (lastActionThread.equals(MessageActions.REPLY_ALL)) {
-            holder.imgReply.setImageResource(R.drawable.ic_reply_all_message);
-        } else if (lastActionThread.equals(MessageActions.FORWARD)) {
-            holder.imgReply.setImageResource(R.drawable.ic_forward_message);
+        } else {
+            switch (lastActionThread) {
+                case MessageActions.REPLY:
+                    holder.imgReply.setImageResource(R.drawable.ic_reply_message);
+                    break;
+                case MessageActions.REPLY_ALL:
+                    holder.imgReply.setImageResource(R.drawable.ic_reply_all_message);
+                    break;
+                case MessageActions.FORWARD:
+                    holder.imgReply.setImageResource(R.drawable.ic_forward_message);
+                    break;
+            }
+            holder.imgReply.setVisibility(View.VISIBLE);
         }
 
         // check for children count
