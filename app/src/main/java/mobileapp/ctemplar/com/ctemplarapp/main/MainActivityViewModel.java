@@ -1,10 +1,16 @@
 package mobileapp.ctemplar.com.ctemplarapp.main;
 
+import android.app.Application;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.text.TextUtils;
 
+import androidx.annotation.NonNull;
+import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
 
 import java.util.List;
 
@@ -44,8 +50,34 @@ import retrofit2.HttpException;
 import retrofit2.Response;
 import timber.log.Timber;
 
-public class MainActivityViewModel extends ViewModel {
-    private static final String ANDROID = "android";
+public class MainActivityViewModel extends AndroidViewModel {
+    public static final String ANDROID = "android";
+    public static final String EXIT_BROADCAST_ACTION = "ctemplar.action.exit";
+
+    private class ExitBroadcastReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent == null) {
+                return;
+            }
+            String action = intent.getAction();
+            if (action == null) {
+                return;
+            }
+            if (action.equals(EXIT_BROADCAST_ACTION)) {
+                exit();
+            }
+        }
+
+        public void register(Application application) {
+            IntentFilter intentFilter = new IntentFilter(EXIT_BROADCAST_ACTION);
+            application.registerReceiver(this, intentFilter);
+        }
+
+        public void unregister(Application application) {
+            application.unregisterReceiver(this);
+        }
+    }
 
     private UserRepository userRepository;
     private ContactsRepository contactsRepository;
@@ -64,11 +96,21 @@ public class MainActivityViewModel extends ViewModel {
     private MutableLiveData<MyselfResponse> myselfResponse = new MutableLiveData<>();
     MutableLiveData<String> currentFolder = new MutableLiveData<>();
 
-    public MainActivityViewModel() {
+    private ExitBroadcastReceiver exitBroadcastReceiver;
+
+    public MainActivityViewModel(@NonNull Application application) {
+        super(application);
         userRepository = CTemplarApp.getUserRepository();
         contactsRepository = CTemplarApp.getContactsRepository();
         messagesRepository = CTemplarApp.getMessagesRepository();
         manageFoldersRepository = CTemplarApp.getManageFoldersRepository();
+        exitBroadcastReceiver = new ExitBroadcastReceiver();
+        exitBroadcastReceiver.register(application);
+    }
+
+    @Override
+    protected void onCleared() {
+        exitBroadcastReceiver.unregister(getApplication());
     }
 
     public LiveData<MainActivityActions> getActionsStatus() {
