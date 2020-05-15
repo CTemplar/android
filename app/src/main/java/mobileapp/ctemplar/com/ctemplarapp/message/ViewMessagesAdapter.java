@@ -264,7 +264,6 @@ public class ViewMessagesAdapter extends BaseAdapter {
             String encodedContent = Base64.encodeToString(messageWithStyle.getBytes(), Base64.NO_PADDING);
             WebSettings webViewSettings = contentWebView.getSettings();
             webViewSettings.setLoadWithOverviewMode(true);
-            webViewSettings.setBuiltInZoomControls(true);
             webViewSettings.setJavaScriptEnabled(false);
             webViewSettings.setAllowFileAccess(false);
             webViewSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
