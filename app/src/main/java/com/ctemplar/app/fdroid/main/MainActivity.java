@@ -8,6 +8,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -179,6 +180,11 @@ public class MainActivity extends AppCompatActivity
                 .replace(contentContainer.getId(), fragment)
                 .addToBackStack(null)
                 .commit();
+        try {
+            getSupportFragmentManager().executePendingTransactions();
+        } catch (Throwable e) {
+            Timber.w("executePendingTransaction error: %s", e.getMessage());
+        }
     }
 
     private void handleFoldersResponse(NavigationView navigationView, FoldersResponse foldersResponse) {
@@ -256,7 +262,11 @@ public class MainActivity extends AppCompatActivity
             drawer.closeDrawer(GravityCompat.START);
         } else {
             if (!isHandledPressBack(getCurrentFragment())) {
-                super.onBackPressed();
+                try {
+                    super.onBackPressed();
+                } catch (Throwable e) {
+                    Timber.wtf(e, "super.onBackPressed: %s", e.getMessage());
+                }
                 if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
                     finish();
                 }
