@@ -888,14 +888,22 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
     }
 
     private void sendMessageToDraft() {
-        String fromEmail = spinnerFrom.getSelectedItem().toString();
-        MailboxEntity fromMailbox = CTemplarApp.getAppDatabase().mailboxDao().getByEmail(fromEmail);
-        final long mailboxId = fromMailbox.id;
-        String mailboxEmail = fromMailbox.email;
-
-        String toEmail = toEmailTextView.getText().toString().trim();
-        String subject = subjectEditText.getText().toString();
-        String compose = composeEditText.getText().toString();
+        Object fromEmailItem = spinnerFrom.getSelectedItem();
+        if (fromEmailItem == null) {
+            Timber.w("sendMessageToDraft spinnerFrom.getSelectedItem is null");
+            return;
+        }
+        MailboxEntity fromMailboxEntity = CTemplarApp.getAppDatabase()
+                .mailboxDao().getByEmail(fromEmailItem.toString());
+        if (fromMailboxEntity == null) {
+            Timber.w("sendMessageToDraft fromMailboxEntity is null");
+            return;
+        }
+        long mailboxId = fromMailboxEntity.getId();
+        String mailboxEmail = fromMailboxEntity.getEmail();
+        String toEmail = EditTextUtils.getText(toEmailTextView).trim();
+        String subject = EditTextUtils.getText(subjectEditText);
+        String compose = EditTextUtils.getText(composeEditText);
         Spannable composeSpannable = new SpannableString(compose);
 
         updateAttachmentPosition = 0;
