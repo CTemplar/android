@@ -19,7 +19,8 @@
     <string name="nav_drawer_archive">Archive</string>
     <string name="nav_drawer_spam">Spam</string>
     <string name="nav_drawer_trash">Corbeille</string>
-    <string name="nav_drawer_all_mails">Tous les messages</string>
+    <string name="nav_drawer_all_mails">Tous les e-mails</string>
+    <string name="nav_drawer_unread">Non lu</string>
     <string name="nav_drawer_add_folder">Ajouter dossier</string>
     <string name="nav_drawer_add_label">Ajouter un label</string>
     <string name="nav_drawer_contact">Contacts</string>

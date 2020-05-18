@@ -225,11 +225,22 @@ public class MainActivityViewModel extends AndroidViewModel {
         if (folder == null) {
             return;
         }
-        List<MessageEntity> messageEntities = folder.equals(MainFolderNames.STARRED)
-                ? messagesRepository.getLocalStarredMessages()
-                : messagesRepository.getLocalMessagesByFolder(folder);
-        List<MessageProvider> messageProviders
-                = MessageProvider.fromMessageEntities(messageEntities);
+        List<MessageEntity> messageEntities;
+        switch (folder) {
+            case MainFolderNames.STARRED:
+                messageEntities = messagesRepository.getStarredMessages();
+                break;
+            case MainFolderNames.ALL_MAILS:
+                messageEntities = messagesRepository.getAllMailsMessages();
+                break;
+            case MainFolderNames.UNREAD:
+                messageEntities = messagesRepository.getUnreadMessages();
+                break;
+            default:
+                messageEntities = messagesRepository.getMessagesByFolder(folder);
+                break;
+        }
+        List<MessageProvider> messageProviders = MessageProvider.fromMessageEntities(messageEntities);
 
         if (offset == 0) {
             ResponseMessagesData localMessagesData = new ResponseMessagesData(messageProviders,
@@ -239,11 +250,12 @@ public class MainActivityViewModel extends AndroidViewModel {
             }
         }
 
-        Observable<MessagesResponse> messagesResponseObservable
-                = folder.equals(MainFolderNames.STARRED)
-                ? userRepository.getStarredMessagesList(limit, offset)
-                : userRepository.getMessagesList(limit, offset, folder);
-
+        Observable<MessagesResponse> messagesResponseObservable;
+        if (MainFolderNames.STARRED.equals(folder)) {
+            messagesResponseObservable = userRepository.getStarredMessagesList(limit, offset);
+        } else {
+            messagesResponseObservable = userRepository.getMessagesList(limit, offset, folder);
+        }
         messagesResponseObservable.observeOn(Schedulers.computation())
                 .subscribe(new Observer<MessagesResponse>() {
                     @Override
@@ -260,14 +272,27 @@ public class MainActivityViewModel extends AndroidViewModel {
                         List<MessageProvider> messageProviders;
                         if (offset == 0) {
                             List<MessageEntity> localEntities;
-                            if (folder.equals(MainFolderNames.STARRED)) {
-                                messagesRepository.deleteStarredMessages();
-                                messagesRepository.addStarredMessagesToDatabase(messageEntities);
-                                localEntities = messagesRepository.getLocalStarredMessages();
-                            } else {
-                                messagesRepository.deleteMessagesByFolderName(folder);
-                                messagesRepository.addMessagesToDatabase(messageEntities);
-                                localEntities = messagesRepository.getLocalMessagesByFolder(folder);
+                            switch (folder) {
+                                case MainFolderNames.STARRED:
+                                    messagesRepository.deleteStarred();
+                                    messagesRepository.saveAllMessagesWithIgnore(messageEntities);
+                                    localEntities = messagesRepository.getStarredMessages();
+                                    break;
+                                case MainFolderNames.UNREAD:
+                                    messagesRepository.deleteUnread();
+                                    messagesRepository.saveAllMessagesWithIgnore(messageEntities);
+                                    localEntities = messagesRepository.getUnreadMessages();
+                                    break;
+                                case MainFolderNames.ALL_MAILS:
+                                    messagesRepository.deleteWithoutRequestFolder();
+                                    messagesRepository.saveAllMessagesWithIgnore(messageEntities);
+                                    localEntities = messagesRepository.getAllMailsMessages();
+                                    break;
+                                default:
+                                    messagesRepository.deleteMessagesByFolderName(folder);
+                                    messagesRepository.saveAllMessages(messageEntities);
+                                    localEntities = messagesRepository.getMessagesByFolder(folder);
+                                    break;
                             }
                             messageProviders = MessageProvider.fromMessageEntities(localEntities);
                         } else {
