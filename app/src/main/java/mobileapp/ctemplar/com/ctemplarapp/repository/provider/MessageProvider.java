@@ -667,10 +667,12 @@ public class MessageProvider {
         result.setMailboxId(message.getMailboxId());
         result.setParent(message.getParent());
 
-        if (!MainFolderNames.STARRED.equals(requestFolder)) {
-            result.setRequestFolder(requestFolder);
+        if (MainFolderNames.STARRED.equals(requestFolder)
+                || MainFolderNames.UNREAD.equals(requestFolder)
+                || MainFolderNames.ALL_MAILS.equals(requestFolder)) {
+            return result;
         }
-
+        result.setRequestFolder(requestFolder);
         return result;
     }
 

@@ -21,7 +21,8 @@
     <string name="nav_drawer_archive">Archive</string>
     <string name="nav_drawer_spam">Spam</string>
     <string name="nav_drawer_trash">Trash</string>
-    <string name="nav_drawer_all_mails">All Mails</string>
+    <string name="nav_drawer_all_mails">All emails</string>
+    <string name="nav_drawer_unread">Unread</string>
     <string name="nav_drawer_add_folder">Add Folder</string>
     <string name="nav_drawer_add_label">Add Label</string>
     <string name="nav_drawer_contact">Contacts</string>

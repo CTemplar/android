@@ -27,6 +27,16 @@
             android:title="@string/nav_drawer_outbox"
             app:actionLayout="@layout/menu_message_counter" />
         <item
+            android:id="@+id/nav_all_mails"
+            android:icon="@drawable/ic_drawer_inbox"
+            android:title="@string/nav_drawer_all_mails"
+            app:actionLayout="@layout/menu_message_counter" />
+        <item
+            android:id="@+id/nav_unread"
+            android:icon="@drawable/ic_drawer_inbox"
+            android:title="@string/nav_drawer_unread"
+            app:actionLayout="@layout/menu_message_counter" />
+        <item
             android:id="@+id/nav_starred"
             android:icon="@drawable/ic_drawer_star"
             android:title="@string/nav_drawer_starred"

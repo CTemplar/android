@@ -116,7 +116,7 @@ public class ViewMessagesViewModel extends ViewModel {
 
                         messagesRepository.deleteMessagesByParentId(parentEntity.getId());
                         messagesRepository.addMessageToDatabase(parentEntity);
-                        messagesRepository.addMessagesToDatabase(childrenEntities);
+                        messagesRepository.saveAllMessages(childrenEntities);
 
                         List<MessageProvider> resultList = new ArrayList<>(1 + childrenResult.length);
                         resultList.add(parentMessage);
