@@ -19,7 +19,8 @@
     <string name="nav_drawer_archive">Archive</string>
     <string name="nav_drawer_spam">Spam</string>
     <string name="nav_drawer_trash">Corbeille</string>
-    <string name="nav_drawer_all_mails">Tous les messages</string>
+    <string name="nav_drawer_all_mails">Tous les e-mails</string>
+    <string name="nav_drawer_unread">Non lu</string>
     <string name="nav_drawer_add_folder">Ajouter dossier</string>
     <string name="nav_drawer_add_label">Ajouter un label</string>
     <string name="nav_drawer_contact">Contacts</string>
@@ -52,9 +53,6 @@
     <string name="menu_move_to_archive">Archiver</string>
     <string name="menu_mark_as_unread">Marquer comme non lu</string>
 
-    <!-- FONTS -->
-    <string name="FONT_LATO_REGULAR">fonts/Lato-Regular.ttf</string>
-
     <!-- STRINGS -->
     <string name="token_expired_title">Session expirée</string>
     <string name="token_expired_message">Votre session a expiré, merci de bien vouloir vous reconnecter.</string>
@@ -84,8 +82,9 @@
 Pour toute question, merci de nous contacter <![CDATA[<u><a href="mailto:support@ctemplar.com">support@ctemplar.com</a></u>]]>.</string>
     <string name="title_confirm_reset_password_hint2">Êtes vous certain de vouloir réinitialiser votre mot de passe ?</string>
     <string name="title_reset_code_hint">Un email a été envoyé à votre <![CDATA[<u><a href="mailto:%1$s">adresse de récupération</a></u>]]> pour réinitialiser votre mot de passe. \n\n Indiquer ci-dessous pour confirmation.</string>
-    <string name="title_new_pasword_hint">N\'oubliez pas votre mot de passe, il ne pourra pas être restauré.</string>
+    <string name="title_new_password_hint">N\'oubliez pas votre mot de passe, il ne pourra pas être restauré.</string>
     <string name="title_forgot_username_underlined"><u>Nom d\'utilisateur oublié ?</u></string>
+    <string name="title_keep_me_logged_in">Rester connecté</string>
     <string name="title_forgot_username">Nom d\'utilisateur oublié ?</string>
     <string name="title_forgot_username_hint">Enter your email address and we will send you your username</string>
     <string name="title_email_my_username">Email me my username</string>
@@ -116,7 +115,6 @@ Votre mot de passe est connecté à votre clé de cryptage, si vous changez votr
     <string name="btn_confirm">CONFIRMER</string>
     <string name="title_clear_folder">Vider dossier</string>
     <string name="txt_clear_folder">Êtes-vous certain de vouloir supprimer tous les messages du dossier ?</string>
-    <string name="txt_encrypted_subject">Objet crypté</string>
 
     <!-- COMPOSE OPTIONS -->
     <string name="txt_left_time_destruct">Suppression dans %1$s</string>
@@ -137,8 +135,8 @@ Votre mot de passe est connecté à votre clé de cryptage, si vous changez votr
     <string name="txt_attachments_in_processing">En cours…</string>
 
     <!-- VIEW MESSAGES -->
-    <string name="txt_hide_details">Voir détails </string>
-    <string name="txt_view_details">Masquer détails</string>
+    <string name="txt_more_details">Plus de détails</string>
+    <string name="txt_less_details">Moins de détails</string>
     <string name="toast_message_marked_unread">Message marqué comme non lu</string>
     <string name="toast_message_moved_to">Message déplacé vers %1$s</string>
     <string name="toast_messages_doesnt_exist">Ce message n\'existe pas</string>
@@ -147,9 +145,10 @@ Votre mot de passe est connecté à votre clé de cryptage, si vous changez votr
     <string name="txt_user_wrote">\n\n-----------------------------------------------------------------------------------------------\nOn %1$s %2$s wrote:\n\n</string>
     <string name="txt_forwarded_message">Message transféré</string>
     <string name="txt_from">De :&#160;</string>
-    <string name="txt_date">Date</string>
     <string name="txt_subject">Objet</string>
     <string name="txt_to">À :&#160;</string>
+    <string name="txt_date">Date</string>
+    <string name="txt_date_format">Date: %1$s</string>
     <string name="txt_reply_all">Répondre à tous</string>
 
     <!-- CHANGE PASSWORD -->
@@ -293,15 +292,25 @@ Votre mot de passe est connecté à votre clé de cryptage, si vous changez votr
 
     <!-- SETTINGS -->
     <string name="txt_settings">Paramètres</string>
+    <string name="txt_display_name">Afficher un nom</string>
+    <string name="txt_type_your_name">Tapez votre nom</string>
     <string name="txt_type_signature">Saisir signature</string>
-    <string name="txt_type_mobile_signature">Saisir signature mobile</string>
     <string name="txt_signature_enabled">Signature activée</string>
     <string name="txt_mobile_signature_enabled">Signature mobile activée</string>
+
+    <!-- SIGNATURE EDIT BAR -->
+    <string name="txt_panel_bold">B</string>
+    <string name="txt_panel_italic">I</string>
+    <string name="txt_panel_underline">U</string>
+    <string name="txt_panel_monospace">M</string>
+    <string name="txt_panel_normal">Ordinaire</string>
 
     <string name="settings_general">Paramètres</string>
     <string name="settings_recovery_email">Email de récupération</string>
     <string name="settings_enable_recovery_email">Activer email de récupération</string>
     <string name="settings_type_recovery_email">Saisir votre email de récupération</string>
+    <string name="settings_enabled_anti_phishing">Anti hameçonnage</string>
+    <string name="settings_type_anti_phishing_phrase">Tapez votre phrase anti-phishing</string>
     <string name="settings_subject_encryption">Objet chiffré</string>
     <string name="settings_password">Mot de passe</string>
     <string name="settings_language">Langue</string>
@@ -311,6 +320,8 @@ Votre mot de passe est connecté à votre clé de cryptage, si vous changez votr
     <string name="settings_contacts_encryption">Contacts chiffrés</string>
     <string name="settings_attachments_encryption">Pièces jointes chiffrées</string>
     <string name="settings_encryption">Chiffrement des données</string>
+    <string name="settings_phishing_protection">Protection contre le phishing</string>
+    <string name="settings_phishing_protection_description"><![CDATA[<font color="#939191">La phrase Anti-Phishing permet aux utilisateurs de lier un mot ou une phrase personnalisée de votre choix à votre compte CTemplar. Une fois défini, si vous vous connectez à votre messagerie Web et que votre expression anti-hameçonnage est manquante ou incorrecte, vous pouvez être victime d\'hameçonnage. Vous devez immédiatement confirmer que vous visitez</font> <font color="#4d92e2"><u>https://mail.ctemplar.com</u></font> <font color="#939191">Si vous ne l\'êtes pas, un site malveillant pourrait avoir vos informations de connexion pour votre compte CTemplar. Pour éviter d\'endommager votre compte, vous devez immédiatement visiter</font> <font color="#4d92e2"><u>https://mail.ctemplar.com</u></font> <font color="#939191">changer votre mot de passe.<br><br>Notez que la phrase Anti-Phishing sera affichée lorsque vous vous connectez sur le Web uniquement.</font>]]></string>
     <string name="settings_saving_contacts">Sauvegarde des contacts</string>
     <string name="settings_auto_save_contacts">Contacts automatiquement sauvegardés</string>
     <string name="settings_filters">Filtres</string>
@@ -326,7 +337,6 @@ Votre mot de passe est connecté à votre clé de cryptage, si vous changez votr
     <string name="settings_mobile_signature">Signature mobile</string>
     <string name="settings_keys">Clés</string>
     <string name="settings_enable_mobile_signature">Activer la signature mobile</string>
-    <string name="settings_type_mobile_signature">Saisir votre signature mobile</string>
     <string name="settings_about">A propos</string>
     <string name="settings_local_storage_limit">Espace de stockage utilisé :</string>
     <string name="settings_app_version">Version de l\'application</string>
@@ -339,7 +349,6 @@ Votre mot de passe est connecté à votre clé de cryptage, si vous changez votr
     <string name="toast_decryption_error">Une erreur est survenue lors du décryptage. Merci de bien vouloir essayer à nouveau.</string>
 
     <!-- PREFERENCE KEYS -->
-    <string name="password_key">Mot de passe</string>
     <string name="change_password_reset_data">Supprimer les données</string>
     <string name="toast_email_not_valid">Email invalide</string>
     <string name="storage_limit_info">%1$s de %2$s</string>
@@ -362,9 +371,11 @@ Votre mot de passe est connecté à votre clé de cryptage, si vous changez votr
     <!-- KEYS -->
     <string name="email_address">Adresse électronique</string>
     <string name="fingerprint">Empreinte digitale</string>
-    <string name="public_key">Clé Publique</string>
+    <string name="keys">Clés</string>
     <string name="download_public_key">Télécharger la clé publique (4096 Bit)</string>
-    <string name="your_key_saved">Votre clé publique PGP enregistrée dans les téléchargements</string>
+    <string name="download_private_key">Télécharger la clé privée (4096 Bit)</string>
+    <string name="your_public_key_saved">Votre clé publique PGP enregistrée dans les téléchargements</string>
+    <string name="your_private_key_saved">Votre clé privée PGP enregistrée dans les téléchargements</string>
 
     <!-- UPGRADE TO PRIME -->
     <string name="title_upgrade_to_prime">Upgrade to Prime</string>

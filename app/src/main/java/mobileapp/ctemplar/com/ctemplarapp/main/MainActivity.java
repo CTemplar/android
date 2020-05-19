@@ -7,6 +7,7 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -49,6 +50,7 @@ import mobileapp.ctemplar.com.ctemplarapp.utils.EncryptUtils;
 import mobileapp.ctemplar.com.ctemplarapp.view.ResizeAnimation;
 import timber.log.Timber;
 
+import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.ALL_MAILS;
 import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.ARCHIVE;
 import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.CONTACT;
 import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.DRAFT;
@@ -61,13 +63,11 @@ import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderN
 import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.SPAM;
 import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.STARRED;
 import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.TRASH;
+import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.UNREAD;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     private static final int CUSTOM_FOLDER_STEP = 10;
-    private static final int DRAWER_MAX_WIDTH = 640;
-    private static final int DRAWER_MIN_WIDTH = 110;
-
 
     private FrameLayout contentContainer;
     private NavigationView navigationView;
@@ -80,6 +80,9 @@ public class MainActivity extends AppCompatActivity
     private boolean isTablet;
     private JSONObject unreadFolders;
 
+    private int drawerMaxWidth = 400;
+    private int drawerMinWidth = 100;
+
     private MainFragment mainFragment;
     private Handler handler = new Handler();
 
@@ -90,6 +93,9 @@ public class MainActivity extends AppCompatActivity
 
         contentContainer = findViewById(R.id.content_container);
         navigationView = findViewById(R.id.nav_view);
+        Menu navigationMenu = navigationView.getMenu();
+        Drawable navInboxIcon = navigationMenu.findItem(R.id.nav_inbox).getIcon();
+        drawerMinWidth = navInboxIcon.getMinimumWidth() * 3;
 
         navigationView.setNavigationItemSelectedListener(this);
 
@@ -105,18 +111,14 @@ public class MainActivity extends AppCompatActivity
         mainFragment = new MainFragment();
         showFragment(mainFragment);
 
-
         mainModel = new ViewModelProvider(this).get(MainActivityViewModel.class);
-
         mainModel.getActionsStatus().observe(this, this::handleMainActions);
-
         mainModel.getCurrentFolder().observe(this, folder -> {
             showFragmentByFolder(folder);
             loadFolders();
         });
 
         mainModel.getResponseStatus().observe(this, this::handleResponseStatus);
-
         mainModel.getFoldersResponse().observe(this, foldersResponse -> {
             if (foldersResponse != null) {
                 handleFoldersResponse(navigationView, foldersResponse);
@@ -126,40 +128,38 @@ public class MainActivity extends AppCompatActivity
         mainModel.getUnreadFoldersBody().observe(this, unreadFoldersBody -> {
             if (unreadFoldersBody != null) {
                 mainModel.getFolders(customFoldersShowCount, 0);
-                Menu navigationMenu = navigationView.getMenu();
                 TextView inboxCounter = (TextView) navigationMenu.findItem(R.id.nav_inbox).getActionView();
                 TextView draftCounter = (TextView) navigationMenu.findItem(R.id.nav_draft).getActionView();
                 TextView outboxCounter = (TextView) navigationMenu.findItem(R.id.nav_outbox).getActionView();
                 TextView starredCounter = (TextView) navigationMenu.findItem(R.id.nav_starred).getActionView();
                 TextView spamCounter = (TextView) navigationMenu.findItem(R.id.nav_spam).getActionView();
 
+                int inbox = 0, draft = 0, starred = 0, spam = 0, outbox = 0;
                 try {
                     String unreadFoldersString = unreadFoldersBody.string();
                     unreadFolders = new JSONObject(unreadFoldersString);
-                    int inbox = unreadFolders.getInt(INBOX);
-                    int draft = unreadFolders.getInt(DRAFT);
-                    int starred = unreadFolders.getInt(STARRED);
-                    int spam = unreadFolders.getInt(SPAM);
-
+                    inbox = unreadFolders.getInt(INBOX);
+                    draft = unreadFolders.getInt(DRAFT);
+                    starred = unreadFolders.getInt(STARRED);
+                    spam = unreadFolders.getInt(SPAM);
                     int outboxDead = unreadFolders.getInt(OUTBOX_DEAD_MAN);
                     int outboxDelayed = unreadFolders.getInt(OUTBOX_DELAYED_DELIVERY);
                     int outboxDestruct = unreadFolders.getInt(OUTBOX_SELF_DESTRUCT);
-                    int outbox = outboxDelayed + outboxDead + outboxDestruct;
-
-                    String inboxString = inbox > 0 ? String.valueOf(inbox) : "";
-                    String draftString = draft > 0 ? String.valueOf(draft) : "";
-                    String starredString = starred > 0 ? String.valueOf(starred) : "";
-                    String spamString = spam > 0 ? String.valueOf(spam) : "";
-                    String outboxString = outbox > 0 ? String.valueOf(outbox) : "";
-
-                    inboxCounter.setText(inboxString);
-                    draftCounter.setText(draftString);
-                    starredCounter.setText(starredString);
-                    spamCounter.setText(spamString);
-                    outboxCounter.setText(outboxString);
+                    outbox = outboxDelayed + outboxDead + outboxDestruct;
                 } catch (IOException | JSONException e) {
                     Timber.e(e);
                 }
+                String inboxString = inbox > 0 ? String.valueOf(inbox) : "";
+                String draftString = draft > 0 ? String.valueOf(draft) : "";
+                String starredString = starred > 0 ? String.valueOf(starred) : "";
+                String spamString = spam > 0 ? String.valueOf(spam) : "";
+                String outboxString = outbox > 0 ? String.valueOf(outbox) : "";
+
+                inboxCounter.setText(inboxString);
+                draftCounter.setText(draftString);
+                starredCounter.setText(starredString);
+                spamCounter.setText(spamString);
+                outboxCounter.setText(outboxString);
             }
         });
 
@@ -176,6 +176,11 @@ public class MainActivity extends AppCompatActivity
                 .replace(contentContainer.getId(), fragment)
                 .addToBackStack(null)
                 .commit();
+        try {
+            getSupportFragmentManager().executePendingTransactions();
+        } catch (Throwable e) {
+            Timber.w("executePendingTransaction error: %s", e.getMessage());
+        }
     }
 
     private void handleFoldersResponse(NavigationView navigationView, FoldersResponse foldersResponse) {
@@ -253,7 +258,11 @@ public class MainActivity extends AppCompatActivity
             drawer.closeDrawer(GravityCompat.START);
         } else {
             if (!isHandledPressBack(getCurrentFragment())) {
-                super.onBackPressed();
+                try {
+                    super.onBackPressed();
+                } catch (Throwable e) {
+                    Timber.wtf(e, "super.onBackPressed: %s", e.getMessage());
+                }
                 if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
                     finish();
                 }
@@ -333,6 +342,12 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_outbox) {
             setTitle(R.string.nav_drawer_outbox);
             toggleFolder = OUTBOX;
+        } else if (id == R.id.nav_all_mails) {
+            setTitle(R.string.nav_drawer_all_mails);
+            toggleFolder = ALL_MAILS;
+        } else if (id == R.id.nav_unread) {
+            setTitle(R.string.nav_drawer_unread);
+            toggleFolder = UNREAD;
         } else if (id == R.id.nav_starred) {
             setTitle(R.string.nav_drawer_starred);
             toggleFolder = STARRED;
@@ -426,16 +441,26 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void setupTabletDrawer() {
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        drawerMaxWidth = (int) (displayMetrics.widthPixels * 0.3);
+
+        ViewGroup.LayoutParams layoutParams = navigationView.getLayoutParams();
         if (isPortrait()) {
-            navigationView.setTag(DRAWER_MAX_WIDTH);
-            ViewGroup.LayoutParams layoutParams = navigationView.getLayoutParams();
-            layoutParams.width = DRAWER_MIN_WIDTH;
-            navigationView.requestLayout();
+            navigationView.setTag(drawerMaxWidth);
+            layoutParams.width = drawerMinWidth;
+        } else {
+            navigationView.setTag(drawerMinWidth);
+            layoutParams.width = drawerMaxWidth;
         }
+        navigationView.requestLayout();
     }
 
     private void closeOpenNavigationView() {
-        int toWidth = DRAWER_MIN_WIDTH;
+        if (!isPortrait()) {
+            return;
+        }
+        int toWidth = drawerMinWidth;
         Integer viewTag = (Integer) navigationView.getTag();
         if (viewTag != null) {
             toWidth = viewTag;
@@ -449,6 +474,12 @@ public class MainActivity extends AppCompatActivity
                 navigationView.getHeight()
         );
         navigationView.startAnimation(resizeAnimation);
+    }
+
+    @Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        setupTabletDrawer();
     }
 
     private void loadUserInfo() {

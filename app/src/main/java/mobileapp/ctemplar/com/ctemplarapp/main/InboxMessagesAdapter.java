@@ -1,14 +1,16 @@
 package mobileapp.ctemplar.com.ctemplarapp.main;
 
+import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Handler;
 import android.os.Looper;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -81,6 +83,7 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesView
 
     @Override
     public void onBindViewHolder(@NonNull final InboxMessagesViewHolder holder, int position) {
+        Context ctx = holder.root.getContext();
         if (position == getItemCount() - 1 && onReachedBottomCallback != null) {
             if (onReachedBottomCallbackHandler != null) {
                 onReachedBottomCallbackHandler.post(() -> onReachedBottomCallback.onReachedBottom());
@@ -112,12 +115,21 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesView
 
         // check for last action (reply, reply all, forward)
         String lastActionThread = message.getLastActionThread();
-        if (lastActionThread == null) {
+        if (TextUtils.isEmpty(lastActionThread)) {
             holder.imgReply.setVisibility(View.GONE);
-        } else if (lastActionThread.equals(MessageActions.REPLY_ALL)) {
-            holder.imgReply.setImageResource(R.drawable.ic_reply_all_message);
-        } else if (lastActionThread.equals(MessageActions.FORWARD)) {
-            holder.imgReply.setImageResource(R.drawable.ic_forward_message);
+        } else {
+            switch (lastActionThread) {
+                case MessageActions.REPLY:
+                    holder.imgReply.setImageResource(R.drawable.ic_reply_message);
+                    break;
+                case MessageActions.REPLY_ALL:
+                    holder.imgReply.setImageResource(R.drawable.ic_reply_all_message);
+                    break;
+                case MessageActions.FORWARD:
+                    holder.imgReply.setImageResource(R.drawable.ic_forward_message);
+                    break;
+            }
+            holder.imgReply.setVisibility(View.VISIBLE);
         }
 
         // check for children count
@@ -133,12 +145,11 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesView
         if (message.isRead()) {
             holder.imgUnread.setVisibility(View.GONE);
             holder.txtUsername.setTypeface(null, Typeface.NORMAL);
-            int backgroundColor = holder.foreground.getContext()
-                    .getResources().getColor(R.color.colorGrey5);
-            holder.foreground.setBackgroundColor(backgroundColor);
+            holder.foreground.setBackgroundColor(ctx.getResources().getColor(R.color.colorGrey5));
         } else {
             holder.imgUnread.setVisibility(View.VISIBLE);
             holder.txtUsername.setTypeface(null, Typeface.BOLD);
+            holder.foreground.setBackgroundColor(ctx.getResources().getColor(R.color.colorWhiteLight));
         }
 
         // check for protection
@@ -149,7 +160,7 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesView
             String leftTime = AppUtils.elapsedTime(message.getDelayedDelivery());
             if (leftTime != null) {
                 holder.txtStatus.setText(holder.root.getResources().getString(R.string.txt_left_time_delay_delivery, leftTime));
-                holder.txtStatus.setBackgroundColor(holder.root.getResources().getColor(R.color.colorDarkGreen));
+                holder.txtStatus.setBackgroundColor(ctx.getResources().getColor(R.color.colorDarkGreen));
             } else {
                 holder.txtStatus.setVisibility(View.GONE);
             }
@@ -164,7 +175,7 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesView
             String leftTime = AppUtils.deadMansTime(Long.parseLong(message.getDeadManDuration()));
             if (leftTime != null) {
                 holder.txtStatus.setText(holder.root.getResources().getString(R.string.txt_left_time_dead_mans_timer, leftTime));
-                holder.txtStatus.setBackgroundColor(holder.root.getResources().getColor(R.color.colorRed0));
+                holder.txtStatus.setBackgroundColor(ctx.getResources().getColor(R.color.colorRed0));
             } else {
                 holder.txtStatus.setVisibility(View.GONE);
             }

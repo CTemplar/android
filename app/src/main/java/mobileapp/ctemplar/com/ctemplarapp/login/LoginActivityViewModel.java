@@ -81,11 +81,13 @@ public class LoginActivityViewModel extends ViewModel {
         CTemplarApp.getAppDatabase().clearAllTables();
     }
 
-    public void signIn(String username, String password, String otp) {
+    public void signIn(String username, String password, String otp, boolean keepMeLoggedIn) {
         userRepository.saveUsername(username);
         userRepository.saveUserPassword(password);
+        userRepository.saveKeepMeLoggedIn(keepMeLoggedIn);
         final SignInRequest signInRequest = new SignInRequest(username, EncodeUtils.generateHash(username, password));
         signInRequest.setOtp(otp);
+        signInRequest.setRememberMe(keepMeLoggedIn);
 
         userRepository.signIn(signInRequest)
                 .subscribe(new Observer<SignInResponse>() {
@@ -171,7 +173,11 @@ public class LoginActivityViewModel extends ViewModel {
         if(recoverPasswordRequest == null) {
             return;
         }
-        EncodeUtils.getPGPKeyObservable(recoverPasswordRequest.getPassword())
+        String username = recoverPasswordRequest.getUsername();
+        String password = recoverPasswordRequest.getPassword();
+        userRepository.saveUsername(username);
+        userRepository.saveUserPassword(password);
+        EncodeUtils.getPGPKeyObservable(password)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .flatMap((Function<PGPKeyEntity, Observable<RecoverPasswordResponse>>) pgpKeyEntity -> {
@@ -179,10 +185,7 @@ public class LoginActivityViewModel extends ViewModel {
                     recoverPasswordRequest.setPrivateKey(pgpKeyEntity.getPrivateKey());
                     recoverPasswordRequest.setPublicKey(pgpKeyEntity.getPublicKey());
                     recoverPasswordRequest.setPassword(
-                            EncodeUtils.generateHash(
-                                    recoverPasswordRequest.getUsername(),
-                                    recoverPasswordRequest.getPassword()
-                            )
+                            EncodeUtils.generateHash(username, password)
                     );
 
                     return userRepository.resetPassword(recoverPasswordRequest);

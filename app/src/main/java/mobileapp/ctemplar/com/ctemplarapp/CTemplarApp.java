@@ -5,9 +5,6 @@ import android.app.Application;
 import androidx.multidex.MultiDexApplication;
 import androidx.room.Room;
 
-import com.crashlytics.android.Crashlytics;
-
-import io.fabric.sdk.android.Fabric;
 import mobileapp.ctemplar.com.ctemplarapp.net.RestClient;
 import mobileapp.ctemplar.com.ctemplarapp.repository.AppDatabase;
 import mobileapp.ctemplar.com.ctemplarapp.repository.ContactsRepository;
@@ -39,11 +36,6 @@ public class CTemplarApp extends MultiDexApplication {
         instance = this;
         Timber.plant(new Timber.DebugTree());
         installProviders(this);
-        final Fabric fabric = new Fabric.Builder(this)
-                .kits(new Crashlytics())
-                .debuggable(true)
-                .build();
-        Fabric.with(fabric);
     }
 
     public static CTemplarApp getInstance() {

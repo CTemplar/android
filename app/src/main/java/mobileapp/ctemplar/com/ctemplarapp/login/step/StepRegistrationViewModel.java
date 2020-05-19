@@ -31,7 +31,7 @@ public class StepRegistrationViewModel extends ViewModel {
 
     private SignUpRequest signUpRequest = new SignUpRequest();
     private MutableLiveData<StepRegistrationActions> actions = new SingleLiveEvent<>();
-    private MutableLiveData<ResponseStatus> responseStatus = new MutableLiveData<>();
+    private MutableLiveData<ResponseStatus> responseStatus = new SingleLiveEvent<>();
     private MutableLiveData<CaptchaResponse> captchaResponse = new MutableLiveData<>();
     private MutableLiveData<CaptchaVerifyResponse> captchaVerifyResponse = new MutableLiveData<>();
 

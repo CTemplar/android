@@ -1,14 +1,18 @@
 package mobileapp.ctemplar.com.ctemplarapp.settings;
 
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.google.gson.Gson;
 
+import java.util.List;
+
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.AntiPhishingPhraseRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.AttachmentsEncryptedRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.AutoSaveContactEnabledRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.ContactsEncryptionRequest;
@@ -18,26 +22,64 @@ import mobileapp.ctemplar.com.ctemplarapp.net.request.SubjectEncryptedRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.ContactData;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.ContactsResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.EncryptContact;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Mailboxes.MailboxesResult;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.SettingsEntity;
+import mobileapp.ctemplar.com.ctemplarapp.repository.AppDatabase;
 import mobileapp.ctemplar.com.ctemplarapp.repository.ContactsRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.Contact;
+import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import timber.log.Timber;
 
 public class SettingsActivityViewModel extends ViewModel {
 
     private ContactsRepository contactsRepository;
+    private AppDatabase appDatabase;
     private UserRepository userRepository;
 
     public SettingsActivityViewModel() {
         contactsRepository = CTemplarApp.getContactsRepository();
+        appDatabase = CTemplarApp.getAppDatabase();
         userRepository = CTemplarApp.getUserRepository();
     }
 
     private MutableLiveData<ResponseStatus> decryptionStatus = new MutableLiveData<>();
+    private MutableLiveData<ResponseStatus> updateSignatureStatus = new MutableLiveData<>();
 
     MutableLiveData<ResponseStatus> getDecryptionStatus() {
         return decryptionStatus;
+    }
+
+    LiveData<ResponseStatus> getUpdateSignatureStatus() {
+        return updateSignatureStatus;
+    }
+
+    List<MailboxEntity> getAllMailboxes() {
+        return appDatabase.mailboxDao().getAll();
+    }
+
+    public void setSignatureEnabled(boolean isEnabled) {
+        userRepository.setSignatureEnabled(isEnabled);
+    }
+
+    public boolean isSignatureEnabled() {
+        return userRepository.isSignatureEnabled();
+    }
+
+    public void setMobileSignatureEnabled(boolean isEnabled) {
+        userRepository.setMobileSignatureEnabled(isEnabled);
+    }
+
+    public boolean isMobileSignatureEnabled() {
+        return userRepository.isMobileSignatureEnabled();
+    }
+
+    public void setMobileSignature(String signatureText) {
+        userRepository.setMobileSignature(signatureText);
+    }
+
+    public String getMobileSignature() {
+        return userRepository.getMobileSignature();
     }
 
     void updateAutoSaveEnabled(long settingId, boolean isEnabled) {
@@ -68,25 +110,26 @@ public class SettingsActivityViewModel extends ViewModel {
                 });
     }
 
-    void updateSignature(long settingId, long mailboxId, String signatureText) {
-        if (settingId == -1 && mailboxId != -1) {
+    void updateSignature(long mailboxId, String displayName, String signatureText) {
+        if (mailboxId == -1) {
             return;
         }
-
-        userRepository.updateSignature(mailboxId, new SignatureRequest(signatureText))
-                .subscribe(new Observer<SettingsEntity>() {
+        userRepository.updateSignature(mailboxId, new SignatureRequest(displayName, signatureText))
+                .subscribe(new Observer<MailboxesResult>() {
                     @Override
                     public void onSubscribe(Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(SettingsEntity settingsEntity) {
-
+                    public void onNext(MailboxesResult mailboxesResult) {
+                        appDatabase.mailboxDao().updateSignature(mailboxId, displayName, signatureText);
+                        updateSignatureStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
                     }
 
                     @Override
                     public void onError(Throwable e) {
+                        updateSignatureStatus.postValue(ResponseStatus.RESPONSE_ERROR);
                         Timber.e(e);
                     }
 
@@ -259,7 +302,9 @@ public class SettingsActivityViewModel extends ViewModel {
         String encryptedData = contactData.getEncryptedData();
         String decryptedData = Contact.decryptData(encryptedData);
         EncryptContact decryptedContact = gson.fromJson(decryptedData, EncryptContact.class);
-
+        if (decryptedContact == null) {
+            return;
+        }
         contactData.setEmail(decryptedContact.getEmail());
         contactData.setName(decryptedContact.getName());
         contactData.setAddress(decryptedContact.getAddress());
@@ -286,6 +331,35 @@ public class SettingsActivityViewModel extends ViewModel {
                     public void onError(Throwable e) {
                         decryptionStatus.postValue(ResponseStatus.RESPONSE_ERROR);
                         Timber.e(e);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    void updateAntiPhishingPhrase(long settingId, boolean antiPhishingEnabled, String antiPhishingPhrase) {
+        if (settingId == -1) {
+            return;
+        }
+        userRepository.updateAntiPhishingPhrase(settingId,
+                new AntiPhishingPhraseRequest(antiPhishingEnabled, antiPhishingPhrase))
+                .subscribe(new Observer<SettingsEntity>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(SettingsEntity settingsEntity) {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Timber.w(e);
                     }
 
                     @Override

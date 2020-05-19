@@ -10,6 +10,8 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.media.RingtoneManager;
 import android.os.Build;
+
+import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
@@ -19,11 +21,17 @@ import java.lang.ref.WeakReference;
 import java.util.Map;
 import java.util.Random;
 
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.main.InboxFragment;
+import mobileapp.ctemplar.com.ctemplarapp.main.MainActivityViewModel;
 import mobileapp.ctemplar.com.ctemplarapp.message.ViewMessagesActivity;
+import mobileapp.ctemplar.com.ctemplarapp.net.entity.RemoteMessageAction;
+import mobileapp.ctemplar.com.ctemplarapp.net.entity.RemoteMessageEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserStore;
+import retrofit2.Response;
 import timber.log.Timber;
 
 import static mobileapp.ctemplar.com.ctemplarapp.message.ViewMessagesActivity.PARENT_ID;
@@ -39,50 +47,73 @@ public class MessagingService extends FirebaseMessagingService {
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
-        Timber.d("From: %s", remoteMessage.getFrom());
-
         if (remoteMessage.getData().size() > 0) {
             Timber.d("Message data payload: %s", remoteMessage.getData());
-            Map<String, String> data = remoteMessage.getData();
+            Map<String, String> remoteMessageMap = remoteMessage.getData();
+            RemoteMessageEntity remoteMessageEntity = RemoteMessageEntity.getFromMap(remoteMessageMap);
 
-            String subject = data.get("subject");
-            String folder = data.get("folder");
-            String sender = data.get("sender");
-            String messageIdString = data.get("message_id");
-            String parentIdString = data.get("parent_id");
-            String isSubjectEncryptedString = data.get("is_subject_encrypted");
-
-            long messageId = -1;
-            if (messageIdString != null && !messageIdString.isEmpty()) {
-                try {
-                    messageId = Long.parseLong(messageIdString);
-                } catch (NumberFormatException e) {
-                    Timber.e(e);
-                }
+            if (RemoteMessageAction.CHANGE_PASSWORD.toString()
+                    .equals(remoteMessageEntity.getAction())) {
+                onPasswordChanged();
+                return;
             }
-            long parentId = -1;
-            if (parentIdString != null && !parentIdString.isEmpty()) {
-                try {
-                    parentId = Long.parseLong(parentIdString);
-                } catch (NumberFormatException e) {
-                    Timber.e(e);
-                }
-            }
-
-            boolean isSubjectEncrypted = Boolean.parseBoolean(isSubjectEncryptedString);
             boolean isNotificationsEnabled = userStore.getNotificationsEnabled();
             if (isNotificationsEnabled) {
-                sendNotification(sender, subject, folder, messageId, parentId, isSubjectEncrypted);
+                sendNotification(
+                        remoteMessageEntity.getSender(),
+                        remoteMessageEntity.getSubject(),
+                        remoteMessageEntity.getFolder(),
+                        remoteMessageEntity.getMessageID(),
+                        remoteMessageEntity.getParentID(),
+                        remoteMessageEntity.isSubjectEncrypted()
+                );
             }
-
             WeakReference<InboxFragment> inboxFragmentReference = InboxFragment.instanceReference;
             if (inboxFragmentReference != null) {
                 InboxFragment inboxFragment = inboxFragmentReference.get();
                 if (inboxFragment != null && !inboxFragment.isRemoving()) {
-                    inboxFragment.onNewMessage(messageId);
+                    inboxFragment.onNewMessage(remoteMessageEntity.getMessageID());
                 }
             }
         }
+    }
+
+    private void onPasswordChanged() {
+        Timber.d("onPasswordChanged");
+        String token = CTemplarApp.getUserRepository().getFirebaseToken();
+        CTemplarApp.getUserRepository().signOut(MainActivityViewModel.ANDROID, token)
+                .subscribe(new Observer<Response<Void>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(Response<Void> voidResponse) {
+                        postExit();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        postExit();
+                        Timber.e(e);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    private void postExit() {
+        Intent intent = new Intent(MainActivityViewModel.EXIT_BROADCAST_ACTION);
+        sendBroadcast(intent);
+    }
+
+    @Override
+    public void onNewToken(@NonNull String s) {
+        super.onNewToken(s);
     }
 
     private void sendNotification(String sender, String subject, String folder, long messageId, long parentId, boolean isSubjectEncrypted) {

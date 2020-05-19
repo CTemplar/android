@@ -1,10 +1,16 @@
 package mobileapp.ctemplar.com.ctemplarapp.main;
 
+import android.app.Application;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.text.TextUtils;
 
+import androidx.annotation.NonNull;
+import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
 
 import java.util.List;
 
@@ -44,8 +50,34 @@ import retrofit2.HttpException;
 import retrofit2.Response;
 import timber.log.Timber;
 
-public class MainActivityViewModel extends ViewModel {
-    private static final String ANDROID = "android";
+public class MainActivityViewModel extends AndroidViewModel {
+    public static final String ANDROID = "android";
+    public static final String EXIT_BROADCAST_ACTION = "ctemplar.action.exit";
+
+    private class ExitBroadcastReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent == null) {
+                return;
+            }
+            String action = intent.getAction();
+            if (action == null) {
+                return;
+            }
+            if (action.equals(EXIT_BROADCAST_ACTION)) {
+                exit();
+            }
+        }
+
+        public void register(Application application) {
+            IntentFilter intentFilter = new IntentFilter(EXIT_BROADCAST_ACTION);
+            application.registerReceiver(this, intentFilter);
+        }
+
+        public void unregister(Application application) {
+            application.unregisterReceiver(this);
+        }
+    }
 
     private UserRepository userRepository;
     private ContactsRepository contactsRepository;
@@ -63,13 +95,22 @@ public class MainActivityViewModel extends ViewModel {
     private MutableLiveData<ResponseBody> unreadFoldersBody = new MutableLiveData<>();
     private MutableLiveData<MyselfResponse> myselfResponse = new MutableLiveData<>();
     MutableLiveData<String> currentFolder = new MutableLiveData<>();
-    MutableLiveData<SignInResponse> signResponse = new MutableLiveData<>();
 
-    public MainActivityViewModel() {
+    private ExitBroadcastReceiver exitBroadcastReceiver;
+
+    public MainActivityViewModel(@NonNull Application application) {
+        super(application);
         userRepository = CTemplarApp.getUserRepository();
         contactsRepository = CTemplarApp.getContactsRepository();
         messagesRepository = CTemplarApp.getMessagesRepository();
         manageFoldersRepository = CTemplarApp.getManageFoldersRepository();
+        exitBroadcastReceiver = new ExitBroadcastReceiver();
+        exitBroadcastReceiver.register(application);
+    }
+
+    @Override
+    protected void onCleared() {
+        exitBroadcastReceiver.unregister(getApplication());
     }
 
     public LiveData<MainActivityActions> getActionsStatus() {
@@ -142,11 +183,6 @@ public class MainActivityViewModel extends ViewModel {
         }
     }
 
-    public void exit(){
-        userRepository.logout();
-        actions.postValue(MainActivityActions.ACTION_LOGOUT);
-    }
-
     public void signOut() {
         String token = userRepository.getFirebaseToken();
         userRepository.signOut(ANDROID, token)
@@ -174,25 +210,52 @@ public class MainActivityViewModel extends ViewModel {
                 });
     }
 
-    public void getMessages(int limit, final int offset, final String folder) {
+    public void exit() {
+        userRepository.clearData();
+        actions.postValue(MainActivityActions.ACTION_LOGOUT);
+    }
+
+    public void checkUserToken() {
+        if (TextUtils.isEmpty(userRepository.getUserToken())) {
+            exit();
+        }
+    }
+
+    public void getMessages(int limit, int offset, String folder) {
         if (folder == null) {
             return;
         }
-        List<MessageEntity> messageEntities = messagesRepository.getLocalMessagesByFolder(folder);
+        List<MessageEntity> messageEntities;
+        switch (folder) {
+            case MainFolderNames.STARRED:
+                messageEntities = messagesRepository.getStarredMessages();
+                break;
+            case MainFolderNames.ALL_MAILS:
+                messageEntities = messagesRepository.getAllMailsMessages();
+                break;
+            case MainFolderNames.UNREAD:
+                messageEntities = messagesRepository.getUnreadMessages();
+                break;
+            default:
+                messageEntities = messagesRepository.getMessagesByFolder(folder);
+                break;
+        }
         List<MessageProvider> messageProviders = MessageProvider.fromMessageEntities(messageEntities);
 
-        if (offset == 0 && !folder.equals(MainFolderNames.STARRED)) {
-            ResponseMessagesData localMessagesData = new ResponseMessagesData(messageProviders, folder, offset);
+        if (offset == 0) {
+            ResponseMessagesData localMessagesData = new ResponseMessagesData(messageProviders,
+                    folder, offset);
             if (!localMessagesData.messages.isEmpty()) {
                 messagesResponse.postValue(localMessagesData);
             }
         }
 
-        Observable<MessagesResponse> messagesResponseObservable
-                = folder.equals(MainFolderNames.STARRED) ?
-                userRepository.getStarredMessagesList(limit, offset, 1) :
-                userRepository.getMessagesList(limit, offset, folder);
-
+        Observable<MessagesResponse> messagesResponseObservable;
+        if (MainFolderNames.STARRED.equals(folder)) {
+            messagesResponseObservable = userRepository.getStarredMessagesList(limit, offset);
+        } else {
+            messagesResponseObservable = userRepository.getMessagesList(limit, offset, folder);
+        }
         messagesResponseObservable.observeOn(Schedulers.computation())
                 .subscribe(new Observer<MessagesResponse>() {
                     @Override
@@ -201,23 +264,43 @@ public class MainActivityViewModel extends ViewModel {
                     }
 
                     @Override
-                    public void onNext(final MessagesResponse response) {
+                    public void onNext(MessagesResponse response) {
                         List<MessagesResult> messages = response.getMessagesList();
-                        List<MessageEntity> messageEntities = MessageProvider
-                                .fromMessagesResultsToEntities(messages, folder);
+                        List<MessageEntity> messageEntities
+                                = MessageProvider.fromMessagesResultsToEntities(messages, folder);
 
                         List<MessageProvider> messageProviders;
-                        if (offset > 0 || folder.equals(MainFolderNames.STARRED)) {
-                            messageProviders = MessageProvider.fromMessageEntities(messageEntities);
-                        } else {
-                            messagesRepository.deleteMessagesByFolderName(folder);
-                            messagesRepository.addMessagesToDatabase(messageEntities);
-
-                            List<MessageEntity> localEntities = messagesRepository.getLocalMessagesByFolder(folder);
+                        if (offset == 0) {
+                            List<MessageEntity> localEntities;
+                            switch (folder) {
+                                case MainFolderNames.STARRED:
+                                    messagesRepository.deleteStarred();
+                                    messagesRepository.saveAllMessagesWithIgnore(messageEntities);
+                                    localEntities = messagesRepository.getStarredMessages();
+                                    break;
+                                case MainFolderNames.UNREAD:
+                                    messagesRepository.deleteUnread();
+                                    messagesRepository.saveAllMessagesWithIgnore(messageEntities);
+                                    localEntities = messagesRepository.getUnreadMessages();
+                                    break;
+                                case MainFolderNames.ALL_MAILS:
+                                    messagesRepository.deleteWithoutRequestFolder();
+                                    messagesRepository.saveAllMessagesWithIgnore(messageEntities);
+                                    localEntities = messagesRepository.getAllMailsMessages();
+                                    break;
+                                default:
+                                    messagesRepository.deleteMessagesByFolderName(folder);
+                                    messagesRepository.saveAllMessages(messageEntities);
+                                    localEntities = messagesRepository.getMessagesByFolder(folder);
+                                    break;
+                            }
                             messageProviders = MessageProvider.fromMessageEntities(localEntities);
+                        } else {
+                            messageProviders = MessageProvider.fromMessageEntities(messageEntities);
                         }
 
-                        messagesResponse.postValue(new ResponseMessagesData(messageProviders, folder, offset));
+                        messagesResponse.postValue(new ResponseMessagesData(messageProviders,
+                                folder, offset));
                         responseStatus.postValue(ResponseStatus.RESPONSE_NEXT_MESSAGES);
                     }
 
@@ -282,7 +365,6 @@ public class MainActivityViewModel extends ViewModel {
 
                     @Override
                     public void onNext(MailboxesResponse mailboxesResponse) {
-
                         if (mailboxesResponse.getTotalCount() > 0) {
                             userRepository.saveMailboxes(mailboxesResponse.getMailboxesList());
                         }
@@ -552,7 +634,7 @@ public class MainActivityViewModel extends ViewModel {
                     public void onNext(MyselfResponse myselfResponse) {
                         if (myselfResponse != null) {
                             MyselfResult myselfResult = myselfResponse.getResult()[0];
-                            SettingsEntity settingsEntity = myselfResult.settings;
+                            SettingsEntity settingsEntity = myselfResult.getSettings();
 
                             String timezone = settingsEntity.getTimezone();
                             boolean isAttachmentsEncrypted = settingsEntity.isAttachmentsEncrypted();

@@ -48,6 +48,10 @@ public class ViewMessagesViewModel extends ViewModel {
         return CTemplarApp.getAppDatabase().mailboxDao().getById(mailboxId);
     }
 
+    MailboxEntity getDefaultMailbox() {
+        return CTemplarApp.getAppDatabase().mailboxDao().getDefault();
+    }
+
     String getUserPassword() {
         return userRepository.getUserPassword();
     }
@@ -112,7 +116,7 @@ public class ViewMessagesViewModel extends ViewModel {
 
                         messagesRepository.deleteMessagesByParentId(parentEntity.getId());
                         messagesRepository.addMessageToDatabase(parentEntity);
-                        messagesRepository.addMessagesToDatabase(childrenEntities);
+                        messagesRepository.saveAllMessages(childrenEntities);
 
                         List<MessageProvider> resultList = new ArrayList<>(1 + childrenResult.length);
                         resultList.add(parentMessage);
@@ -209,7 +213,7 @@ public class ViewMessagesViewModel extends ViewModel {
 
                     @Override
                     public void onError(Throwable e) {
-                        e.printStackTrace();
+                        Timber.e(e);
                     }
 
                     @Override

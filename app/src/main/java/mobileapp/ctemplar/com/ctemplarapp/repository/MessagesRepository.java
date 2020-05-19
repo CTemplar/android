@@ -20,12 +20,28 @@ public class MessagesRepository {
         service = CTemplarApp.getRestClient().getRestService();
     }
 
-    public List<MessageEntity> getLocalMessagesByFolder(String folder) {
+    public List<MessageEntity> getMessagesByFolder(String folder) {
         return CTemplarApp.getAppDatabase().messageDao().getAllByFolder(folder);
     }
 
-    public void addMessagesToDatabase(List<MessageEntity> entities) {
+    public List<MessageEntity> getStarredMessages() {
+        return CTemplarApp.getAppDatabase().messageDao().getAllStarred();
+    }
+
+    public List<MessageEntity> getUnreadMessages() {
+        return CTemplarApp.getAppDatabase().messageDao().getAllUnread();
+    }
+
+    public List<MessageEntity> getAllMailsMessages() {
+        return CTemplarApp.getAppDatabase().messageDao().getAllMails();
+    }
+
+    public void saveAllMessages(List<MessageEntity> entities) {
         CTemplarApp.getAppDatabase().messageDao().saveAll(entities);
+    }
+
+    public void saveAllMessagesWithIgnore(List<MessageEntity> entities) {
+        CTemplarApp.getAppDatabase().messageDao().saveAllWithIgnore(entities);
     }
 
     public MessageEntity getLocalMessage(long id) {
@@ -58,6 +74,18 @@ public class MessagesRepository {
 
     public void deleteMessagesByFolderName(String folder) {
         CTemplarApp.getAppDatabase().messageDao().deleteAllByFolder(folder);
+    }
+
+    public void deleteStarred() {
+        CTemplarApp.getAppDatabase().messageDao().deleteStarred();
+    }
+
+    public void deleteUnread() {
+        CTemplarApp.getAppDatabase().messageDao().deleteUnread();
+    }
+
+    public void deleteWithoutRequestFolder() {
+        CTemplarApp.getAppDatabase().messageDao().deleteWithoutRequestFolder();
     }
 
     public List<MessageEntity> getChildMessages(MessageEntity parentMessage) {

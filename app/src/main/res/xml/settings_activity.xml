@@ -48,6 +48,10 @@
             android:title="@string/settings_encryption"
             android:fragment="mobileapp.ctemplar.com.ctemplarapp.settings.SettingsActivity$EncryptionFragment" />
 
+        <PreferenceScreen
+            android:title="@string/settings_phishing_protection"
+            android:fragment="mobileapp.ctemplar.com.ctemplarapp.settings.SettingsActivity$PhishingProtectionFragment" />
+
     </PreferenceCategory>
 
     <PreferenceCategory
@@ -59,11 +63,11 @@
 
         <PreferenceScreen
             android:title="@string/settings_signature"
-            android:fragment="mobileapp.ctemplar.com.ctemplarapp.settings.SettingsActivity$SignatureFragment" />
+            android:key="@string/signature_key" />
 
         <PreferenceScreen
             android:title="@string/settings_mobile_signature"
-            android:fragment="mobileapp.ctemplar.com.ctemplarapp.settings.SettingsActivity$MobileSignatureFragment" />
+            android:key="@string/mobile_signature_key" />
 
         <PreferenceScreen
             android:title="@string/settings_keys"

@@ -31,6 +31,9 @@ import mobileapp.ctemplar.com.ctemplarapp.utils.PermissionCheck;
 import timber.log.Timber;
 
 public class KeysActivity extends BaseActivity {
+    private static final String PUBLIC_KEY_FORMAT = "public.asc";
+    private static final String PRIVATE_KEY_FORMAT = "private.asc";
+    private static final String SPLITTER = "_";
 
     @BindView(R.id.activity_setting_keys_address_spinner)
     Spinner mailboxSpinner;
@@ -41,13 +44,16 @@ public class KeysActivity extends BaseActivity {
     @BindView(R.id.activity_setting_keys_public_key_text_view)
     TextView downloadPublicKeyTextView;
 
-    private KeysViewModel keysModel;
-    private List<MailboxEntity> mailboxEntityList;
+    @BindView(R.id.activity_setting_keys_private_key_text_view)
+    TextView downloadPrivateKeyTextView;
 
     @Override
     protected int getLayoutId() {
-        return R.layout.activity_setting_keys;
+        return R.layout.activity_settings_keys;
     }
+
+    private SettingsActivityViewModel settingsViewModel;
+    private List<MailboxEntity> mailboxEntityList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,8 +65,8 @@ public class KeysActivity extends BaseActivity {
             actionBar.setHomeButtonEnabled(true);
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-        keysModel = new ViewModelProvider(this).get(KeysViewModel.class);
-        mailboxEntityList = keysModel.getMailboxEntityList();
+        settingsViewModel = new ViewModelProvider(this).get(SettingsActivityViewModel.class);
+        mailboxEntityList = settingsViewModel.getAllMailboxes();
         String[] addresses = new String[mailboxEntityList.size()];
         for (int addressIterator = 0; addressIterator < addresses.length; addressIterator++) {
             addresses[addressIterator] = mailboxEntityList.get(addressIterator).getEmail();
@@ -71,10 +77,6 @@ public class KeysActivity extends BaseActivity {
                 addresses
         );
         mailboxSpinner.setAdapter(addressAdapter);
-
-        SpannableString downloadTitleSpannable = new SpannableString(getString(R.string.download_public_key));
-        downloadTitleSpannable.setSpan(new UnderlineSpan(), 0, downloadTitleSpannable.length(), 0);
-        downloadPublicKeyTextView.setText(downloadTitleSpannable);
         setListeners();
     }
 
@@ -90,27 +92,54 @@ public class KeysActivity extends BaseActivity {
 
             }
         });
-        downloadPublicKeyTextView.setOnClickListener(v -> {
-            int selectedItemPosition = mailboxSpinner.getSelectedItemPosition();
-            MailboxEntity mailboxEntity = mailboxEntityList.get(selectedItemPosition);
-            String keyName = mailboxEntity.getEmail() + "_" + mailboxEntity.getFingerprint() + ".asc";
-            byte[] keyContent = mailboxEntity.getPublicKey().getBytes();
+        downloadPublicKeyTextView.setOnClickListener(v -> downloadKey(false));
+        downloadPrivateKeyTextView.setOnClickListener(v -> downloadKey(true));
 
-            if (!PermissionCheck.readAndWriteExternalStorage(this)) {
-                return;
-            }
-            File externalStorageFile = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-            File keyFile = new File(externalStorageFile, keyName);
-            try {
-                BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(keyFile));
-                bufferedOutputStream.write(keyContent);
-                bufferedOutputStream.flush();
-                bufferedOutputStream.close();
-            } catch (IOException e) {
-                Timber.e(e);
-            }
-            Toast.makeText(this, getString(R.string.your_key_saved), Toast.LENGTH_SHORT).show();
-        });
+        SpannableString publicKeyTitleSpannable = new SpannableString(getString(R.string.download_public_key));
+        SpannableString privateKeyTitleSpannable = new SpannableString(getString(R.string.download_private_key));
+        publicKeyTitleSpannable.setSpan(new UnderlineSpan(), 0, publicKeyTitleSpannable.length(), 0);
+        privateKeyTitleSpannable.setSpan(new UnderlineSpan(), 0, privateKeyTitleSpannable.length(), 0);
+        downloadPublicKeyTextView.setText(publicKeyTitleSpannable);
+        downloadPrivateKeyTextView.setText(privateKeyTitleSpannable);
+    }
+
+    private void downloadKey(boolean isPrivate) {
+        if (!PermissionCheck.readAndWriteExternalStorage(this)) {
+            return;
+        }
+        int selectedItemPosition = mailboxSpinner.getSelectedItemPosition();
+        MailboxEntity mailboxEntity = mailboxEntityList.get(selectedItemPosition);
+
+        String keyName;
+        byte[] keyContent;
+        if (isPrivate) {
+            keyName = mailboxEntity.getEmail() + SPLITTER + mailboxEntity.getFingerprint()
+                    + SPLITTER + PRIVATE_KEY_FORMAT;
+            keyContent = mailboxEntity.getPrivateKey().getBytes();
+        } else {
+            keyName = mailboxEntity.getEmail() + SPLITTER + mailboxEntity.getFingerprint()
+                    + SPLITTER + PUBLIC_KEY_FORMAT;
+            keyContent = mailboxEntity.getPublicKey().getBytes();
+        }
+
+        File externalStorageFile = Environment
+                .getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+        File keyFile = new File(externalStorageFile, keyName);
+        try {
+            BufferedOutputStream bufferedOutputStream =
+                    new BufferedOutputStream(new FileOutputStream(keyFile));
+            bufferedOutputStream.write(keyContent);
+            bufferedOutputStream.flush();
+            bufferedOutputStream.close();
+        } catch (IOException e) {
+            Timber.e(e);
+            return;
+        }
+
+        String savedToast = isPrivate
+                ? getString(R.string.your_private_key_saved)
+                : getString(R.string.your_public_key_saved);
+        Toast.makeText(this, savedToast, Toast.LENGTH_SHORT).show();
     }
 
     @Override

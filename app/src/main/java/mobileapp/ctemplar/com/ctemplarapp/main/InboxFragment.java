@@ -199,15 +199,11 @@ public class InboxFragment extends BaseFragment
             swipeRefreshLayout.setRefreshing(false);
         });
         mainModel.getMessagesResponse().observe(getViewLifecycleOwner(), messagesResponse -> {
-            if (messagesResponse != null) {
-                handleMessagesList(messagesResponse.messages,
-                        messagesResponse.folderName, messagesResponse.offset);
-                swipeRefreshLayout.setRefreshing(false);
-            }
+            handleMessagesList(messagesResponse.messages, messagesResponse.folderName,
+                    messagesResponse.offset);
         });
         mainModel.getCurrentFolder().observe(getViewLifecycleOwner(), folderName -> {
             currentFolder = folderName;
-            invalidateOptionsMenu();
             requestNewMessages();
             String emptyFolderString = getResources().getString(R.string.title_empty_messages, folderName);
             txtEmpty.setText(emptyFolderString);
@@ -238,6 +234,9 @@ public class InboxFragment extends BaseFragment
     @Override
     public void onPrepareOptionsMenu(@NonNull Menu menu) {
         MenuItem filterIcon = menu.findItem(R.id.action_filter);
+        if (filterIcon == null) {
+            return;
+        }
         if (filterIsStarred || filterIsUnread || filterWithAttachment) {
             filterIcon.setIcon(R.drawable.ic_action_filter_on);
         } else {
@@ -332,6 +331,7 @@ public class InboxFragment extends BaseFragment
     public void onReachedBottom() {
         Timber.i("onReachedBottom");
         requestNextMessages();
+        progressLayout.setVisibility(View.VISIBLE);
     }
 
 
@@ -501,7 +501,8 @@ public class InboxFragment extends BaseFragment
         if(status != null) {
             switch(status) {
                 case RESPONSE_ERROR:
-                    Toast.makeText(getActivity(), getString(R.string.error_messages), Toast.LENGTH_SHORT).show();
+                    mainModel.checkUserToken();
+                    // Toast.makeText(getActivity(), getString(R.string.error_messages), Toast.LENGTH_SHORT).show();
                     Timber.e("Response error");
                     break;
                 case RESPONSE_NEXT_MESSAGES:
@@ -536,6 +537,7 @@ public class InboxFragment extends BaseFragment
     private void handleMessagesList(List<MessageProvider> messages, String folderName, int offset) {
         currentFolder = mainModel.getCurrentFolder().getValue();
         messagesNotEmpty = messages != null && !messages.isEmpty();
+        invalidateOptionsMenu();
 
         if (messagesNotEmpty && currentFolder != null && !currentFolder.equals(folderName)) {
             return;
