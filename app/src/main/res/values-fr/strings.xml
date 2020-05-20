@@ -78,10 +78,9 @@
     <string name="title_confirm">Confirmer</string>
     <string name="title_confirm_reset_password">Confirmer la réinitialisation du mot de passe</string>
     <string name="title_invitation_code">Code d\'invitation</string>
-    <string name="title_confirm_reset_password_hint">Votre clé de cryptage est connectée à votre mot de passe. Pour cette raison <![CDATA[<font color="#e74c3c"> il n\'est pas possible de décrypter les précédents messages, les pièces jointes et vos contacts </font>]]> si vous réinitialiser votre mot de passe.
-Pour toute question, merci de nous contacter <![CDATA[<u><a href="mailto:support@ctemplar.com">support@ctemplar.com</a></u>]]>.</string>
+    <string name="title_confirm_reset_password_hint">Votre clé de cryptage est connectée à votre mot de passe. Pour cette raison <![CDATA[<font color="#e74c3c"> il n\'est pas possible de décrypter les précédents messages, les pièces jointes et vos contacts </font>]]> si vous réinitialiser votre mot de passe. Pour toute question, merci de nous contacter <![CDATA[<u><a href="mailto:support@ctemplar.com">support@ctemplar.com</a></u>]]>.</string>
     <string name="title_confirm_reset_password_hint2">Êtes vous certain de vouloir réinitialiser votre mot de passe ?</string>
-    <string name="title_reset_code_hint">Un email a été envoyé à votre <![CDATA[<u><a href="mailto:%1$s">adresse de récupération</a></u>]]> pour réinitialiser votre mot de passe. \n\n Indiquer ci-dessous pour confirmation.</string>
+    <string name="title_reset_code_hint">Un email a été envoyé à votre <![CDATA[<u><a href="mailto:%1$s">adresse de récupération</a></u>]]> pour réinitialiser votre mot de passe. Indiquer ci-dessous pour confirmation.</string>
     <string name="title_new_password_hint">N\'oubliez pas votre mot de passe, il ne pourra pas être restauré.</string>
     <string name="title_forgot_username_underlined"><u>Nom d\'utilisateur oublié ?</u></string>
     <string name="title_keep_me_logged_in">Rester connecté</string>
@@ -91,13 +90,12 @@ Pour toute question, merci de nous contacter <![CDATA[<u><a href="mailto:support
     <string name="title_username_and_domain">Nom utilisateur et domaine</string>
     <string name="title_step_username_hint">Votre nouvelle adresse email CTemplar.</string>
     <string name="title_step_password_hint">Votre mot de passe doit contenir au moins 10 caractères. Password can contain only latin letters and cannot contain symbols such «-+!@. etc.</string>
-    <string name="hint_step_email_recovery_long">En cochant cette case, vous comprenez que si vous perdez votre mot de passe et ne définissez pas d\'e-mail de récupération, votre compte ne sera pas récupérable.
-Votre mot de passe est connecté à votre clé de cryptage, si vous changez votre mot de passe, vous recevrez une nouvelle clé de cryptage et TOUS les contenus de votre compte seront perdus à l\'exception de votre adresse e-mail. <![CDATA[<u><font color="blue">Réduire</font></u>]]></string>
+    <string name="hint_step_email_recovery_long">En cochant cette case, vous comprenez que si vous perdez votre mot de passe et ne définissez pas d\'e-mail de récupération, votre compte ne sera pas récupérable. Votre mot de passe est connecté à votre clé de cryptage, si vous changez votre mot de passe, vous recevrez une nouvelle clé de cryptage et TOUS les contenus de votre compte seront perdus à l\'exception de votre adresse e-mail. <![CDATA[<u><font color="blue">Réduire</font></u>]]></string>
     <string name="hint_step_email_recovery_short">En cochant cette case, vous comprenez que si vous perdez votre mot de passe et ne définissez pas d\'e-mail de récupération, votre compte ne sera pas récupérable. <![CDATA[<u><font color="blue">Plus d\'info</font></u>]]></string>
     <string name="title_step_email_hint">Cet email sera utilisé pour récupérer votre compte si vous oubliez votre mot de passe.</string>
     <string name="title_step_email_check_hint">Veuillez cocher cette case si vous acceptez de vous conformer à nos <![CDATA[<u><a href="https://ctemplar.com/terms">Termes et Conditions</a></u>]]></string>
     <string name="title_step_invitation_code_hint">Vous pouvez obtenir le code d\'invitation de tout client payant existant ou vous pouvez le demander auprès de nous. Comment obtenir le code d\'invitation? <![CDATA[<u><a href="https://ctemplar.com/faq/get-an-invitation-code/">Apprendre encore plus</a></u>]]></string>
-    <string name="title_more_info_link"><u>Détail</u>></string>
+    <string name="title_more_info_link"><u>Détail</u></string>
     <string name="title_empty_inbox">Aucun message</string>
     <string name="title_empty_messages">Aucun email Dans %1$s</string>
     <string name="title_empty_contacts">Aucun contact</string>
