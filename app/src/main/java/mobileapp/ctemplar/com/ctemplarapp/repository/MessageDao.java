@@ -63,7 +63,7 @@ public interface MessageDao {
     @Query("DELETE FROM messages WHERE isRead=0 AND requestFolder=null")
     void deleteUnread();
 
-    @Query("DELETE FROM messages WHERE isStarred=1 AND requestFolder=null")
+    @Query("DELETE FROM messages WHERE requestFolder=null")
     void deleteWithoutRequestFolder();
 
     @Query("DELETE FROM messages WHERE parent=:id")
