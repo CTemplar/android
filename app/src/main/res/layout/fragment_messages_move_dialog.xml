@@ -103,7 +103,7 @@
             android:layout_marginLeft="4dp"
             android:fontFamily="@font/lato_regular"
             android:textColor="@android:color/white"
-            android:background="@color/colorDarkBlue2"
+            android:background="@drawable/selector_button_blue"
             android:text="@string/btn_apply"/>
 
     </LinearLayout>

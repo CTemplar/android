@@ -308,7 +308,7 @@
             android:layout_marginLeft="4dp"
             android:layout_marginStart="4dp"
             android:layout_weight="1"
-            android:background="@color/colorDarkBlue2"
+            android:background="@drawable/selector_button_blue"
             android:fontFamily="@font/lato_regular"
             android:text="@string/txt_encrypt"
             android:textColor="@android:color/white" />
