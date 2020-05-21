@@ -16,6 +16,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.CheckBoxPreference;
 import androidx.preference.EditTextPreference;
@@ -86,16 +87,9 @@ public class SettingsActivity extends BaseActivity {
             getSupportFragmentManager()
                     .beginTransaction()
                     .add(R.id.container, preferenceFragment)
+                    .addToBackStack(null)
                     .commit();
         }
-    }
-
-    protected void showFragment(Fragment fragment) {
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.container, fragment)
-                .addToBackStack(null)
-                .commit();
     }
 
     private static void setSettingId(long id) {
@@ -476,7 +470,7 @@ public class SettingsActivity extends BaseActivity {
             int count = preferenceScreen.getPreferenceCount();
             for (int i = 0; i < count; i++) {
                 Preference preference = preferenceScreen.getPreference(i);
-                setOnClickPreference(preference);
+//                setOnClickPreference(preference);
                 if (preference instanceof PreferenceCategory) {
                     PreferenceCategory preferenceCategory = (PreferenceCategory) preferenceScreen.getPreference(i);
                     for (int j = 0; j < preferenceCategory.getPreferenceCount(); j++) {
@@ -484,20 +478,6 @@ public class SettingsActivity extends BaseActivity {
                         //setOnClickPreference(inner);
                     }
                 }
-            }
-        }
-
-        private void setOnClickPreference(Preference preference) {
-            final String fragmentName = preference.getFragment();
-            if (fragmentName != null && !fragmentName.isEmpty()) {
-                preference.setOnPreferenceClickListener(preference1 -> {
-                    Fragment fragment = Fragment.instantiate(getActivity(), fragmentName);
-                    SettingsActivity settingsActivity = (SettingsActivity) getActivity();
-                    if (settingsActivity != null) {
-                        settingsActivity.showFragment(fragment);
-                    }
-                    return false;
-                });
             }
         }
     }
@@ -509,5 +489,15 @@ public class SettingsActivity extends BaseActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        if (fragmentManager.getBackStackEntryCount() > 1) {
+            fragmentManager.popBackStack();
+            return;
+        }
+        super.onBackPressed();
     }
 }
