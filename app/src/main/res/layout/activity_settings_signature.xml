@@ -245,7 +245,7 @@
                 android:textSize="18sp"
                 android:layout_alignParentBottom="true"
                 android:textColor="@android:color/white"
-                android:background="@color/colorDarkBlue2"
+                android:background="@drawable/selector_button_blue"
                 app:layout_constraintTop_toBottomOf="@id/activity_settings_signature_linear_layout"
                 app:layout_constraintBottom_toBottomOf="parent" />
 
