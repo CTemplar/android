@@ -23,7 +23,7 @@ public class RestClient {
 
     public RestClient() {
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(BuildConfig.BASE_URL)
+                .baseUrl("https://" + BuildConfig.BASE_URL)
                 .client(logLevel())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())

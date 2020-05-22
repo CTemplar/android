@@ -98,7 +98,7 @@ public class LaunchUtils {
     }
 
     public static boolean launchSingleService(Context context, Class<?> cls) {
-        if (isMyServiceRunning(context, cls)) {
+        if (isServiceRunning(context, cls)) {
             return false;
         }
         return launchService(context, cls);
@@ -159,7 +159,7 @@ public class LaunchUtils {
         return launchForegroundService(context, new Intent(context, serviceClass));
     }
 
-    private static boolean isMyServiceRunning(Context context, Class<?> serviceClass) {
+    public static boolean isServiceRunning(Context context, Class<?> serviceClass) {
         ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
         for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
             if (serviceClass.getName().equals(service.service.getClassName())) {

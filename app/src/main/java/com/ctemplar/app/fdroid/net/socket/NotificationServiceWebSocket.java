@@ -1,5 +1,9 @@
 package com.ctemplar.app.fdroid.net.socket;
 
+import android.os.Handler;
+import android.os.Looper;
+
+import com.ctemplar.app.fdroid.BuildConfig;
 import com.ctemplar.app.fdroid.CTemplarApp;
 import com.ctemplar.app.fdroid.net.response.notification.NotificationMessageResponse;
 import com.ctemplar.app.fdroid.repository.provider.MessageProvider;
@@ -23,9 +27,14 @@ public class NotificationServiceWebSocket extends WebSocketListener {
     private OkHttpClient client;
     private NotificationServiceWebSocketCallback callback;
     private boolean safeShutDown;
+    private Handler handler;
 
     private NotificationServiceWebSocket() {
-
+        if (Looper.myLooper() != null) {
+            handler = new Handler();
+        } else {
+            handler = new Handler(Looper.getMainLooper());
+        }
     }
 
     @Override
@@ -57,10 +66,15 @@ public class NotificationServiceWebSocket extends WebSocketListener {
 
     @Override
     public void onFailure(WebSocket webSocket, Throwable t, Response response) {
-        Timber.e(t);
-        if (!safeShutDown) {
-            reconnect();
+        Timber.e(t, "NotificationServiceWebSocket failure");
+        if (safeShutDown) {
+            return;
         }
+        handler.postDelayed(() -> {
+            if (!safeShutDown) {
+                reconnect();
+            }
+        }, 30_000);
     }
 
     public void start(NotificationServiceWebSocketCallback callback) {
@@ -94,7 +108,7 @@ public class NotificationServiceWebSocket extends WebSocketListener {
 
         String token = CTemplarApp.getUserRepository().getUserToken();
         Request request = new Request.Builder()
-                .url("wss://dev.ctemplar.net/api/connect/?token=" + token)
+                .url("wss://" + BuildConfig.BASE_URL + "connect/?token=" + token)
                 .build();
         client.newWebSocket(request, this);
     }
