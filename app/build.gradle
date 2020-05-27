@@ -5,8 +5,8 @@ android {
     defaultConfig {
         applicationId "com.ctemplar.app.fdroid"
         minSdkVersion 16
-        versionCode 4
-        versionName "1.2.6"
+        versionCode 5
+        versionName "1.2.7"
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
