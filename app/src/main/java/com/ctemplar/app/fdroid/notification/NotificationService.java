@@ -83,7 +83,6 @@ public class NotificationService extends Service {
         }
         String action = intent.getAction();
         if (ACTION_STOP.equals(action)) {
-            Timber.d("onStartCommand action STOP");
             NotificationServiceWebSocket.getInstance().shutdown();
             stopForeground(true);
             stopSelf();

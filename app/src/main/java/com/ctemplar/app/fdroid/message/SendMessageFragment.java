@@ -1118,7 +1118,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         Spanned signatureSpanned = EditTextUtils.fromHtml(signatureText);
         Editable compose = composeEditText.getText();
         CharSequence signatureWithCompose =
-                TextUtils.concat("\n\n--------\n", signatureSpanned, "\n", compose);
+                TextUtils.concat(compose, "\n\n--------\n", signatureSpanned);
         composeEditText.setText(signatureWithCompose);
     }
 
