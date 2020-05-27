@@ -294,14 +294,18 @@ public class FileUtils {
                         "content://downloads/my_downloads"
                 };
 
-                for (String contentUriPrefix : contentUriPrefixesToTry) {
-                    Uri contentUri = ContentUris.withAppendedId(Uri.parse(contentUriPrefix), Long.valueOf(id));
-                    try {
-                        String path = getDataColumn(context, contentUri, null, null);
-                        if (path != null) {
-                            return path;
+                if (id != null && id.length() > 0) {
+                    for (String contentUriPrefix : contentUriPrefixesToTry) {
+                        try {
+                            Uri contentUri = ContentUris.withAppendedId(Uri.parse(contentUriPrefix),
+                                    Long.parseLong(id));
+                            String path = getDataColumn(context, contentUri, null, null);
+                            if (path != null) {
+                                return path;
+                            }
+                        } catch (Exception e) {
                         }
-                    } catch (Exception e) {}
+                    }
                 }
 
                 // path could not be retrieved using ContentResolver, therefore copy file to accessible cache using streams
