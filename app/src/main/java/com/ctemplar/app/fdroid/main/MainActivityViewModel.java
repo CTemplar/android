@@ -1,17 +1,12 @@
 package com.ctemplar.app.fdroid.main;
 
+import android.app.Application;
 import android.text.TextUtils;
 
+import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
 
-import java.util.List;
-
-import io.reactivex.Observable;
-import io.reactivex.Observer;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
 import com.ctemplar.app.fdroid.CTemplarApp;
 import com.ctemplar.app.fdroid.DialogState;
 import com.ctemplar.app.fdroid.SingleLiveEvent;
@@ -29,6 +24,8 @@ import com.ctemplar.app.fdroid.net.response.Myself.MyselfResponse;
 import com.ctemplar.app.fdroid.net.response.Myself.MyselfResult;
 import com.ctemplar.app.fdroid.net.response.Myself.SettingsEntity;
 import com.ctemplar.app.fdroid.net.response.SignInResponse;
+import com.ctemplar.app.fdroid.notification.NotificationService;
+import com.ctemplar.app.fdroid.notification.NotificationServiceListener;
 import com.ctemplar.app.fdroid.repository.ContactsRepository;
 import com.ctemplar.app.fdroid.repository.ManageFoldersRepository;
 import com.ctemplar.app.fdroid.repository.MessagesRepository;
@@ -39,14 +36,19 @@ import com.ctemplar.app.fdroid.repository.entity.ContactEntity;
 import com.ctemplar.app.fdroid.repository.entity.MessageEntity;
 import com.ctemplar.app.fdroid.repository.provider.MessageProvider;
 import com.ctemplar.app.fdroid.utils.EncodeUtils;
+
+import java.util.List;
+
+import io.reactivex.Observable;
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 import okhttp3.ResponseBody;
 import retrofit2.HttpException;
 import retrofit2.Response;
 import timber.log.Timber;
 
-public class MainActivityViewModel extends ViewModel {
-    private static final String ANDROID = "android";
-
+public class MainActivityViewModel extends AndroidViewModel {
     private UserRepository userRepository;
     private ContactsRepository contactsRepository;
     private MessagesRepository messagesRepository;
@@ -64,11 +66,21 @@ public class MainActivityViewModel extends ViewModel {
     private MutableLiveData<MyselfResponse> myselfResponse = new MutableLiveData<>();
     MutableLiveData<String> currentFolder = new MutableLiveData<>();
 
-    public MainActivityViewModel() {
+    private final NotificationServiceListener notificationServiceListener = message
+            -> getMessages(10, 0, currentFolder.getValue());
+
+    public MainActivityViewModel(Application application) {
+        super(application);
         userRepository = CTemplarApp.getUserRepository();
         contactsRepository = CTemplarApp.getContactsRepository();
         messagesRepository = CTemplarApp.getMessagesRepository();
         manageFoldersRepository = CTemplarApp.getManageFoldersRepository();
+        NotificationService.bind(application, notificationServiceListener);
+    }
+
+    @Override
+    protected void onCleared() {
+        NotificationService.unbind(getApplication(), notificationServiceListener);
     }
 
     public LiveData<MainActivityActions> getActionsStatus() {
@@ -138,6 +150,7 @@ public class MainActivityViewModel extends ViewModel {
     public void logout() {
         if (userRepository != null) {
             exit();
+            NotificationService.updateState(getApplication());
         }
     }
 
@@ -156,11 +169,22 @@ public class MainActivityViewModel extends ViewModel {
         if (folder == null) {
             return;
         }
-        List<MessageEntity> messageEntities = folder.equals(MainFolderNames.STARRED)
-                ? messagesRepository.getLocalStarredMessages()
-                : messagesRepository.getLocalMessagesByFolder(folder);
-        List<MessageProvider> messageProviders
-                = MessageProvider.fromMessageEntities(messageEntities);
+        List<MessageEntity> messageEntities;
+        switch (folder) {
+            case MainFolderNames.STARRED:
+                messageEntities = messagesRepository.getStarredMessages();
+                break;
+            case MainFolderNames.ALL_MAILS:
+                messageEntities = messagesRepository.getAllMailsMessages();
+                break;
+            case MainFolderNames.UNREAD:
+                messageEntities = messagesRepository.getUnreadMessages();
+                break;
+            default:
+                messageEntities = messagesRepository.getMessagesByFolder(folder);
+                break;
+        }
+        List<MessageProvider> messageProviders = MessageProvider.fromMessageEntities(messageEntities);
 
         if (offset == 0) {
             ResponseMessagesData localMessagesData = new ResponseMessagesData(messageProviders,
@@ -170,11 +194,12 @@ public class MainActivityViewModel extends ViewModel {
             }
         }
 
-        Observable<MessagesResponse> messagesResponseObservable
-                = folder.equals(MainFolderNames.STARRED)
-                ? userRepository.getStarredMessagesList(limit, offset)
-                : userRepository.getMessagesList(limit, offset, folder);
-
+        Observable<MessagesResponse> messagesResponseObservable;
+        if (MainFolderNames.STARRED.equals(folder)) {
+            messagesResponseObservable = userRepository.getStarredMessagesList(limit, offset);
+        } else {
+            messagesResponseObservable = userRepository.getMessagesList(limit, offset, folder);
+        }
         messagesResponseObservable.observeOn(Schedulers.computation())
                 .subscribe(new Observer<MessagesResponse>() {
                     @Override
@@ -191,14 +216,27 @@ public class MainActivityViewModel extends ViewModel {
                         List<MessageProvider> messageProviders;
                         if (offset == 0) {
                             List<MessageEntity> localEntities;
-                            if (folder.equals(MainFolderNames.STARRED)) {
-                                messagesRepository.deleteStarredMessages();
-                                messagesRepository.addStarredMessagesToDatabase(messageEntities);
-                                localEntities = messagesRepository.getLocalStarredMessages();
-                            } else {
-                                messagesRepository.deleteMessagesByFolderName(folder);
-                                messagesRepository.addMessagesToDatabase(messageEntities);
-                                localEntities = messagesRepository.getLocalMessagesByFolder(folder);
+                            switch (folder) {
+                                case MainFolderNames.STARRED:
+                                    messagesRepository.deleteStarred();
+                                    messagesRepository.saveAllMessagesWithIgnore(messageEntities);
+                                    localEntities = messagesRepository.getStarredMessages();
+                                    break;
+                                case MainFolderNames.UNREAD:
+                                    messagesRepository.deleteUnread();
+                                    messagesRepository.saveAllMessagesWithIgnore(messageEntities);
+                                    localEntities = messagesRepository.getUnreadMessages();
+                                    break;
+                                case MainFolderNames.ALL_MAILS:
+                                    messagesRepository.deleteWithoutRequestFolder();
+                                    messagesRepository.saveAllMessagesWithIgnore(messageEntities);
+                                    localEntities = messagesRepository.getAllMailsMessages();
+                                    break;
+                                default:
+                                    messagesRepository.deleteMessagesByFolderName(folder);
+                                    messagesRepository.saveAllMessages(messageEntities);
+                                    localEntities = messagesRepository.getMessagesByFolder(folder);
+                                    break;
                             }
                             messageProviders = MessageProvider.fromMessageEntities(localEntities);
                         } else {
@@ -271,7 +309,6 @@ public class MainActivityViewModel extends ViewModel {
 
                     @Override
                     public void onNext(MailboxesResponse mailboxesResponse) {
-
                         if (mailboxesResponse.getTotalCount() > 0) {
                             userRepository.saveMailboxes(mailboxesResponse.getMailboxesList());
                         }
@@ -541,7 +578,7 @@ public class MainActivityViewModel extends ViewModel {
                     public void onNext(MyselfResponse myselfResponse) {
                         if (myselfResponse != null) {
                             MyselfResult myselfResult = myselfResponse.getResult()[0];
-                            SettingsEntity settingsEntity = myselfResult.settings;
+                            SettingsEntity settingsEntity = myselfResult.getSettings();
 
                             String timezone = settingsEntity.getTimezone();
                             boolean isAttachmentsEncrypted = settingsEntity.isAttachmentsEncrypted();
@@ -550,7 +587,6 @@ public class MainActivityViewModel extends ViewModel {
                             userRepository.saveTimeZone(timezone);
                             userRepository.setAttachmentsEncryptionEnabled(isAttachmentsEncrypted);
                             userRepository.setContactsEncryptionEnabled(isContactsEncrypted);
-                            userRepository.setNotificationsEnabled(true);
                         }
                     }
 

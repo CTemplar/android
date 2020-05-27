@@ -11,17 +11,17 @@
         android:layout_height="wrap_content"
         android:paddingStart="16dp"
         android:paddingLeft="16dp"
-        android:paddingEnd="25dp"
-        android:paddingRight="25dp"
+        android:paddingEnd="16dp"
+        android:paddingRight="16dp"
         android:paddingTop="16dp"
         android:paddingBottom="16dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <RelativeLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/item_message_view_expanded_sender_layout"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -36,7 +36,10 @@
                 android:ellipsize="end"
                 android:fontFamily="@font/lato_regular"
                 android:textSize="14sp"
-                android:textColor="@color/colorGrey"/>
+                android:textColor="@color/colorGrey"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
 
             <TextView
                 android:id="@+id/item_message_view_expanded_sender_name"
@@ -48,10 +51,20 @@
                 android:textColor="@color/colorGrey"
                 android:fontFamily="@font/lato_regular"
                 android:textSize="14sp"
-                android:layout_toEndOf="@id/item_message_view_expanded_sender_text"
-                android:layout_toRightOf="@id/item_message_view_expanded_sender_text"
                 android:layout_marginRight="5dp"
-                android:layout_marginEnd="5dp" />
+                android:layout_marginEnd="5dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/item_message_view_expanded_sender_text" />
+
+            <ImageView
+                android:id="@+id/item_message_view_expanded_attachment_image_view"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:src="@drawable/ic_attachment_small"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/item_message_view_expanded_sender_name"/>
 
             <ImageView
                 android:id="@+id/item_message_view_expanded_reply_image_view"
@@ -59,10 +72,61 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:src="@drawable/ic_reply_message"
-                android:layout_toEndOf="@id/item_message_view_expanded_sender_name"
-                android:layout_toRightOf="@id/item_message_view_expanded_sender_name" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/item_message_view_expanded_attachment_image_view" />
 
-        </RelativeLayout>
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/item_message_view_expanded_right_bar"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/item_message_view_expanded_reply_image_view"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1" />
+
+                <TextView
+                    android:id="@+id/item_message_view_expanded_short_date_text_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/lato_regular"
+                    android:lines="1"
+                    android:text="Apr 6"
+                    android:textColor="@color/colorGrey"
+                    android:textSize="14sp"
+                    android:layout_toStartOf="@id/item_message_view_expanded_folder_name_text_view"
+                    android:layout_toLeftOf="@id/item_message_view_expanded_folder_name_text_view" />
+
+                <TextView
+                    android:id="@+id/item_message_view_expanded_folder_name_text_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:maxWidth="80dp"
+                    android:gravity="center_vertical"
+                    android:layout_marginRight="4dp"
+                    android:layout_marginEnd="4dp"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:text="inbox"
+                    android:background="@drawable/ic_message_status_blue"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/lato_regular"
+                    android:textColor="@color/colorWhiteLight"
+                    android:textSize="14sp" />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <RelativeLayout
             android:id="@+id/item_message_view_expanded_receiver_layout"
@@ -87,15 +151,31 @@
                 android:id="@+id/item_message_view_expanded_receiver_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginRight="5dp"
+                android:layout_marginEnd="5dp"
                 android:text="John"
                 android:ellipsize="end"
                 android:textColor="@color/colorGrey"
                 android:fontFamily="@font/lato_regular"
                 android:textSize="14sp"
                 android:layout_toEndOf="@id/item_message_view_expanded_receiver_text"
-                android:layout_toRightOf="@id/item_message_view_expanded_receiver_text"
-                android:layout_marginRight="5dp"
-                android:layout_marginEnd="5dp" />
+                android:layout_toRightOf="@id/item_message_view_expanded_receiver_text" />
+
+            <TextView
+                android:id="@+id/item_message_view_expanded_details"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginStart="8dp"
+                android:text="@string/txt_more_details"
+                android:textColor="@color/colorBlue"
+                android:fontFamily="@font/lato_regular"
+                android:textSize="14sp"
+                android:gravity="start"
+                android:ellipsize="end"
+                android:lines="1"
+                android:layout_toEndOf="@id/item_message_view_expanded_receiver_name"
+                android:layout_toRightOf="@id/item_message_view_expanded_receiver_name" />
 
         </RelativeLayout>
 
@@ -112,30 +192,13 @@
             app:layout_constraintTop_toBottomOf="@id/item_message_view_expanded_receiver_layout">
 
             <TextView
-                android:id="@+id/item_message_view_expanded_folder"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="4dp"
-                android:layout_marginEnd="4dp"
-                android:paddingLeft="2dp"
-                android:paddingRight="2dp"
-                android:text="inbox"
-                android:ellipsize="end"
-                android:gravity="center"
-                android:background="@drawable/ic_message_status_blue"
-                android:fontFamily="@font/lato_regular"
-                android:maxLines="1"
-                android:textColor="@android:color/white"
-                android:textSize="13sp" />
-
-            <TextView
                 android:id="@+id/item_message_view_expanded_status"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="4dp"
                 android:layout_marginStart="4dp"
-                android:paddingLeft="2dp"
-                android:paddingRight="2dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
                 android:text="Delete in 0d"
                 android:ellipsize="end"
                 android:gravity="center"
@@ -144,46 +207,6 @@
                 android:maxLines="1"
                 android:textColor="@android:color/white"
                 android:textSize="13sp" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/item_message_view_expanded_date_layout"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginTop="5dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/item_message_view_expanded_info_layout">
-
-            <TextView
-                android:id="@+id/item_message_view_expanded_date"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:fontFamily="@font/lato_regular"
-                android:gravity="left"
-                android:lines="1"
-                android:text="Apr 6, 2018"
-                android:textColor="@color/colorGrey"
-                android:textSize="14sp"/>
-
-            <TextView
-                android:id="@+id/item_message_view_expanded_details"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:fontFamily="@font/lato_regular"
-                android:gravity="left"
-                android:layout_marginLeft="8dp"
-                android:layout_marginStart="8dp"
-                android:lines="1"
-                android:text="@string/txt_hide_details"
-                android:textColor="@color/colorBlue"
-                android:textSize="14sp"/>
 
         </LinearLayout>
 
@@ -332,6 +355,17 @@
                 android:layout_toEndOf="@id/item_message_view_BCC_text" />
 
         </RelativeLayout>
+
+        <TextView
+            android:id="@+id/item_message_view_date_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="@string/txt_date_format"
+            android:fontFamily="@font/lato_regular"
+            android:textSize="14sp"
+            android:textColor="@color/colorGreyLight5"
+            android:layout_below="@id/item_message_view_BCC_layout" />
 
     </RelativeLayout>
 

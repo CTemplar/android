@@ -1,0 +1,12 @@
+* Reworked signatures in settings, improvement speed
+* Signature for multiple emails
+* Removed all track include Firebase Crashlytics
+* Confirm reset password bug
+* Generate increment names for attachment copies during saving
+* Save user credentials after recovery
+* Optimize email details
+* Fix error with fonts
+* Settings improvements, decryption, view message
+* «All Emails» and «Unread» in the side menu
+* Custom notification service
+* Other security and UI improvements

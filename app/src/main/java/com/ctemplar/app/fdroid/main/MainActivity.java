@@ -50,6 +50,7 @@ import com.ctemplar.app.fdroid.utils.EncryptUtils;
 import com.ctemplar.app.fdroid.view.ResizeAnimation;
 import timber.log.Timber;
 
+import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.ALL_MAILS;
 import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.ARCHIVE;
 import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.CONTACT;
 import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.DRAFT;
@@ -62,6 +63,7 @@ import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.SENT;
 import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.SPAM;
 import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.STARRED;
 import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.TRASH;
+import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.UNREAD;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -109,18 +111,14 @@ public class MainActivity extends AppCompatActivity
         mainFragment = new MainFragment();
         showFragment(mainFragment);
 
-
         mainModel = new ViewModelProvider(this).get(MainActivityViewModel.class);
-
         mainModel.getActionsStatus().observe(this, this::handleMainActions);
-
         mainModel.getCurrentFolder().observe(this, folder -> {
             showFragmentByFolder(folder);
             loadFolders();
         });
 
         mainModel.getResponseStatus().observe(this, this::handleResponseStatus);
-
         mainModel.getFoldersResponse().observe(this, foldersResponse -> {
             if (foldersResponse != null) {
                 handleFoldersResponse(navigationView, foldersResponse);
@@ -136,33 +134,32 @@ public class MainActivity extends AppCompatActivity
                 TextView starredCounter = (TextView) navigationMenu.findItem(R.id.nav_starred).getActionView();
                 TextView spamCounter = (TextView) navigationMenu.findItem(R.id.nav_spam).getActionView();
 
+                int inbox = 0, draft = 0, starred = 0, spam = 0, outbox = 0;
                 try {
                     String unreadFoldersString = unreadFoldersBody.string();
                     unreadFolders = new JSONObject(unreadFoldersString);
-                    int inbox = unreadFolders.getInt(INBOX);
-                    int draft = unreadFolders.getInt(DRAFT);
-                    int starred = unreadFolders.getInt(STARRED);
-                    int spam = unreadFolders.getInt(SPAM);
-
+                    inbox = unreadFolders.getInt(INBOX);
+                    draft = unreadFolders.getInt(DRAFT);
+                    starred = unreadFolders.getInt(STARRED);
+                    spam = unreadFolders.getInt(SPAM);
                     int outboxDead = unreadFolders.getInt(OUTBOX_DEAD_MAN);
                     int outboxDelayed = unreadFolders.getInt(OUTBOX_DELAYED_DELIVERY);
                     int outboxDestruct = unreadFolders.getInt(OUTBOX_SELF_DESTRUCT);
-                    int outbox = outboxDelayed + outboxDead + outboxDestruct;
-
-                    String inboxString = inbox > 0 ? String.valueOf(inbox) : "";
-                    String draftString = draft > 0 ? String.valueOf(draft) : "";
-                    String starredString = starred > 0 ? String.valueOf(starred) : "";
-                    String spamString = spam > 0 ? String.valueOf(spam) : "";
-                    String outboxString = outbox > 0 ? String.valueOf(outbox) : "";
-
-                    inboxCounter.setText(inboxString);
-                    draftCounter.setText(draftString);
-                    starredCounter.setText(starredString);
-                    spamCounter.setText(spamString);
-                    outboxCounter.setText(outboxString);
+                    outbox = outboxDelayed + outboxDead + outboxDestruct;
                 } catch (IOException | JSONException e) {
                     Timber.e(e);
                 }
+                String inboxString = inbox > 0 ? String.valueOf(inbox) : "";
+                String draftString = draft > 0 ? String.valueOf(draft) : "";
+                String starredString = starred > 0 ? String.valueOf(starred) : "";
+                String spamString = spam > 0 ? String.valueOf(spam) : "";
+                String outboxString = outbox > 0 ? String.valueOf(outbox) : "";
+
+                inboxCounter.setText(inboxString);
+                draftCounter.setText(draftString);
+                starredCounter.setText(starredString);
+                spamCounter.setText(spamString);
+                outboxCounter.setText(outboxString);
             }
         });
 
@@ -179,6 +176,11 @@ public class MainActivity extends AppCompatActivity
                 .replace(contentContainer.getId(), fragment)
                 .addToBackStack(null)
                 .commit();
+        try {
+            getSupportFragmentManager().executePendingTransactions();
+        } catch (Throwable e) {
+            Timber.w("executePendingTransaction error: %s", e.getMessage());
+        }
     }
 
     private void handleFoldersResponse(NavigationView navigationView, FoldersResponse foldersResponse) {
@@ -256,7 +258,11 @@ public class MainActivity extends AppCompatActivity
             drawer.closeDrawer(GravityCompat.START);
         } else {
             if (!isHandledPressBack(getCurrentFragment())) {
-                super.onBackPressed();
+                try {
+                    super.onBackPressed();
+                } catch (Throwable e) {
+                    Timber.wtf(e, "super.onBackPressed: %s", e.getMessage());
+                }
                 if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
                     finish();
                 }
@@ -336,6 +342,12 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_outbox) {
             setTitle(R.string.nav_drawer_outbox);
             toggleFolder = OUTBOX;
+        } else if (id == R.id.nav_all_mails) {
+            setTitle(R.string.nav_drawer_all_mails);
+            toggleFolder = ALL_MAILS;
+        } else if (id == R.id.nav_unread) {
+            setTitle(R.string.nav_drawer_unread);
+            toggleFolder = UNREAD;
         } else if (id == R.id.nav_starred) {
             setTitle(R.string.nav_drawer_starred);
             toggleFolder = STARRED;

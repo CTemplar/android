@@ -1,6 +1,5 @@
 package com.ctemplar.app.fdroid.login;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
@@ -33,33 +32,16 @@ public class ConfirmResetPasswordFragment extends BaseFragment {
         return R.layout.fragment_confirm_reset_password;
     }
 
-    @Override
-    public void onAttach(@NotNull Context context) {
-        super.onAttach(context);
-    }
-
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         loginActivityModel = new ViewModelProvider(getActivity()).get(LoginActivityViewModel.class);
-        loginActivityModel.getResponseStatus().observe(getViewLifecycleOwner(), this::handleResponseStatus);
     }
 
     @Override
     public void onViewCreated(@NotNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
+        loginActivityModel.getResponseStatus().observe(getViewLifecycleOwner(), this::handleResponseStatus);
         setListeners();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
     }
 
     @OnClick(R.id.fragment_confirm_reset_password_back)

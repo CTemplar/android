@@ -11,10 +11,11 @@ import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
+import android.webkit.MimeTypeMap;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
-import android.webkit.MimeTypeMap;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -293,14 +294,17 @@ public class FileUtils {
                         "content://downloads/my_downloads"
                 };
 
-                for (String contentUriPrefix : contentUriPrefixesToTry) {
-                    Uri contentUri = ContentUris.withAppendedId(Uri.parse(contentUriPrefix), Long.valueOf(id));
-                    try {
-                        String path = getDataColumn(context, contentUri, null, null);
-                        if (path != null) {
-                            return path;
-                        }
-                    } catch (Exception e) {}
+                if (id != null && id.length() > 0) {
+                    for (String contentUriPrefix : contentUriPrefixesToTry) {
+                        try {
+                            Uri contentUri = ContentUris.withAppendedId(Uri.parse(contentUriPrefix),
+                                    Long.parseLong(id));
+                            String path = getDataColumn(context, contentUri, null, null);
+                            if (path != null) {
+                                return path;
+                            }
+                        } catch (Exception e) {}
+                    }
                 }
 
                 // path could not be retrieved using ContentResolver, therefore copy file to accessible cache using streams
@@ -527,7 +531,9 @@ public class FileUtils {
         }
 
         try {
-            if (!file.createNewFile()) {
+            if (file.createNewFile()) {
+                file.delete();
+            } else {
                 return null;
             }
         } catch (IOException e) {

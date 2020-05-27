@@ -2,6 +2,7 @@ package com.ctemplar.app.fdroid.message;
 
 import android.app.Activity;
 import android.app.DownloadManager;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
 import android.text.TextUtils;
@@ -9,6 +10,7 @@ import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.BaseAdapter;
@@ -20,6 +22,7 @@ import android.widget.Toast;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -33,10 +36,12 @@ import com.ctemplar.app.fdroid.repository.provider.MessageProvider;
 import com.ctemplar.app.fdroid.repository.provider.UserDisplayProvider;
 import com.ctemplar.app.fdroid.utils.AppUtils;
 import com.ctemplar.app.fdroid.utils.EditTextUtils;
+import com.ctemplar.app.fdroid.utils.FileUtils;
 import com.ctemplar.app.fdroid.utils.PermissionCheck;
 import timber.log.Timber;
 
 import static android.content.Context.DOWNLOAD_SERVICE;
+import static com.ctemplar.app.fdroid.message.ViewMessagesFragment.ENCRYPTED_EXT;
 
 public class ViewMessagesAdapter extends BaseAdapter {
 
@@ -94,82 +99,94 @@ public class ViewMessagesAdapter extends BaseAdapter {
         List<UserDisplayProvider> receiverDisplayList = messageData.getReceiverDisplayList();
         List<UserDisplayProvider> ccDisplayList = messageData.getCcDisplayList();
         List<UserDisplayProvider> bccDisplayList = messageData.getBccDisplayList();
-        String lastAction = messageData.getLastAction();
 
+        String lastAction = messageData.getLastAction();
         String folderName = messageData.getFolderName();
         String message = messageData.getContent();
+        String messageFullDate = AppUtils.messageFullDate(messageData.getCreatedAt());
+
         boolean isHtml = messageData.isHtml();
+        boolean isHasAttachment = messageData.isHasAttachments()
+                || !messageData.getAttachments().isEmpty();
 
         // VIEW COLLAPSED
-        TextView senderTextView = view.findViewById(R.id.item_message_view_collapsed_sender);
-        TextView contentTextView = view.findViewById(R.id.item_message_view_collapsed_content);
+        TextView collapsedSenderTextView = view.findViewById(R.id.item_message_view_collapsed_sender);
+        TextView collapsedContentTextView = view.findViewById(R.id.item_message_view_collapsed_content);
+        TextView collapsedShortDateTextView = view.findViewById(R.id.item_message_view_short_date_text_view);
+        TextView collapsedFolderNameTextView = view.findViewById(R.id.item_message_view_collapsed_folder_text_view);
+        ImageView collapsedHasAttachmentMessageImageView = view.findViewById(R.id.item_message_view_holder_attachment_image_view);
         ImageView collapsedReplyMessageImageView = view.findViewById(R.id.item_message_view_holder_reply_image_view);
 
-        senderTextView.setText(senderDisplay.getName());
-        contentTextView.setText(EditTextUtils.fromHtml(message));
-
         // VIEW EXPANDED
-        senderTextView = view.findViewById(R.id.item_message_view_expanded_sender_name);
+        TextView senderTextView = view.findViewById(R.id.item_message_view_expanded_sender_name);
         TextView receiverTextView = view.findViewById(R.id.item_message_view_expanded_receiver_name);
-        TextView dateTextView = view.findViewById(R.id.item_message_view_expanded_date);
+        TextView shortDateTextView = view.findViewById(R.id.item_message_view_expanded_short_date_text_view);
         TextView statusTextView = view.findViewById(R.id.item_message_view_expanded_status);
-        TextView folderTextView = view.findViewById(R.id.item_message_view_expanded_folder);
-        final TextView detailsTextView = view.findViewById(R.id.item_message_view_expanded_details);
+        TextView folderNameTextView = view.findViewById(R.id.item_message_view_expanded_folder_name_text_view);
+        TextView detailsTextView = view.findViewById(R.id.item_message_view_expanded_details);
         TextView senderEmailTextView = view.findViewById(R.id.item_message_view_from_email);
         TextView receiverEmailTextView = view.findViewById(R.id.item_message_view_to_email);
         View ccLayout = view.findViewById(R.id.item_message_view_CC_layout);
         TextView ccEmailTextView = view.findViewById(R.id.item_message_view_CC_email);
         View bccLayout = view.findViewById(R.id.item_message_view_BCC_layout);
+        ImageView hasAttachmentMessageImageView = view.findViewById(R.id.item_message_view_expanded_attachment_image_view);
         ImageView replyMessageImageView = view.findViewById(R.id.item_message_view_expanded_reply_image_view);
         TextView bccEmailTextView = view.findViewById(R.id.item_message_view_BCC_email);
+        TextView fullDateEmailTextView = view.findViewById(R.id.item_message_view_date_text_view);
         WebView contentWebView = view.findViewById(R.id.item_message_view_expanded_content);
         TextView contentText = view.findViewById(R.id.item_message_text_view_expanded_content);
         ProgressBar progressBar = view.findViewById(R.id.item_message_view_expanded_progress_bar);
         RecyclerView attachmentsRecyclerView = view.findViewById(R.id.item_message_view_expanded_attachment);
-        final ViewGroup expandedCredentialsLayout = view.findViewById(R.id.item_message_view_expanded_credentials);
-        final View credentialsDivider = view.findViewById(R.id.item_message_view_expanded_credentials_divider);
+        ViewGroup expandedCredentialsLayout = view.findViewById(R.id.item_message_view_expanded_credentials);
+        View credentialsDivider = view.findViewById(R.id.item_message_view_expanded_credentials_divider);
 
         detailsTextView.setOnClickListener(v -> {
-            int credentialsVisibility = expandedCredentialsLayout.getVisibility();
-            if (credentialsVisibility == View.VISIBLE) {
+            int detailsVisibility = expandedCredentialsLayout.getVisibility();
+            if (detailsVisibility == View.VISIBLE) {
                 expandedCredentialsLayout.setVisibility(View.GONE);
                 credentialsDivider.setVisibility(View.GONE);
-                detailsTextView.setText(view.getContext().getResources().getText(R.string.txt_hide_details));
+                detailsTextView.setText(view.getResources().getText(R.string.txt_more_details));
             } else {
                 expandedCredentialsLayout.setVisibility(View.VISIBLE);
                 credentialsDivider.setVisibility(View.VISIBLE);
-                detailsTextView.setText(view.getContext().getResources().getText(R.string.txt_view_details));
+                detailsTextView.setText(view.getResources().getText(R.string.txt_less_details));
             }
         });
 
+        collapsedSenderTextView.setText(senderDisplay.getName());
+        collapsedContentTextView.setText(EditTextUtils.fromHtml(message));
+        collapsedShortDateTextView.setText(AppUtils.messageDate(messageData.getCreatedAt()));
+
         senderTextView.setText(senderDisplay.getName());
         receiverTextView.setText(userDisplayListToNamesString(receiverDisplayList));
-        dateTextView.setText(AppUtils.messageViewDate(messageData.getCreatedAt()));
+        shortDateTextView.setText(AppUtils.messageDate(messageData.getCreatedAt()));
+        fullDateEmailTextView.setText(view.getResources().getString(R.string.txt_date_format, messageFullDate));
 
         // check for folder
-        if (folderName != null) {
-            folderTextView.setText(folderName);
+        if (EditTextUtils.isNotEmpty(folderName)) {
+            folderNameTextView.setText(folderName);
+            collapsedFolderNameTextView.setText(folderName);
         }
 
         // check for status (time delete, delayed delivery)
-        if (!TextUtils.isEmpty(messageData.getDelayedDelivery())) {
+        if (EditTextUtils.isNotEmpty(messageData.getDelayedDelivery())) {
             String leftTime = AppUtils.elapsedTime(messageData.getDelayedDelivery());
-            if (leftTime != null) {
+            if (EditTextUtils.isNotEmpty(leftTime)) {
                 statusTextView.setText(view.getResources().getString(R.string.txt_left_time_delay_delivery, leftTime));
                 statusTextView.setBackgroundColor(view.getResources().getColor(R.color.colorDarkGreen));
             } else {
                 statusTextView.setVisibility(View.GONE);
             }
-        } else if (!TextUtils.isEmpty(messageData.getDestructDate())) {
+        } else if (EditTextUtils.isNotEmpty(messageData.getDestructDate())) {
             String leftTime = AppUtils.elapsedTime(messageData.getDestructDate());
-            if (leftTime != null) {
+            if (EditTextUtils.isNotEmpty(leftTime)) {
                 statusTextView.setText(view.getResources().getString(R.string.txt_left_time_destruct, leftTime));
             } else {
                 statusTextView.setVisibility(View.GONE);
             }
-        } else if (!TextUtils.isEmpty(messageData.getDeadManDuration())) {
-            String leftTime = AppUtils.deadMansTime(Long.valueOf(messageData.getDeadManDuration()));
-            if (leftTime != null) {
+        } else if (EditTextUtils.isNotEmpty(messageData.getDeadManDuration())) {
+            String leftTime = AppUtils.deadMansTime(Long.parseLong(messageData.getDeadManDuration()));
+            if (EditTextUtils.isNotEmpty(leftTime)) {
                 statusTextView.setText(view.getResources().getString(R.string.txt_left_time_dead_mans_timer, leftTime));
                 statusTextView.setBackgroundColor(view.getResources().getColor(R.color.colorRed0));
             } else {
@@ -203,16 +220,36 @@ public class ViewMessagesAdapter extends BaseAdapter {
             bccLayout.setVisibility(View.GONE);
         }
 
+        // attachment
+        if (isHasAttachment) {
+            collapsedHasAttachmentMessageImageView.setVisibility(View.VISIBLE);
+            hasAttachmentMessageImageView.setVisibility(View.VISIBLE);
+        } else {
+            collapsedHasAttachmentMessageImageView.setVisibility(View.GONE);
+            hasAttachmentMessageImageView.setVisibility(View.GONE);
+        }
+
         // check for last action (reply, reply all, forward)
-        if (lastAction == null) {
+        if (TextUtils.isEmpty(lastAction)) {
             replyMessageImageView.setVisibility(View.GONE);
             collapsedReplyMessageImageView.setVisibility(View.GONE);
-        } else if (lastAction.equals(MessageActions.REPLY_ALL)) {
-            replyMessageImageView.setImageResource(R.drawable.ic_reply_all_message);
-            collapsedReplyMessageImageView.setImageResource(R.drawable.ic_reply_all_message);
-        } else if (lastAction.equals(MessageActions.FORWARD)) {
-            replyMessageImageView.setImageResource(R.drawable.ic_forward_message);
-            collapsedReplyMessageImageView.setImageResource(R.drawable.ic_forward_message);
+        } else {
+            switch (lastAction) {
+                case MessageActions.REPLY:
+                    replyMessageImageView.setImageResource(R.drawable.ic_reply_message);
+                    collapsedReplyMessageImageView.setImageResource(R.drawable.ic_reply_message);
+                    break;
+                case MessageActions.REPLY_ALL:
+                    replyMessageImageView.setImageResource(R.drawable.ic_reply_all_message);
+                    collapsedReplyMessageImageView.setImageResource(R.drawable.ic_reply_all_message);
+                    break;
+                case MessageActions.FORWARD:
+                    replyMessageImageView.setImageResource(R.drawable.ic_forward_message);
+                    collapsedReplyMessageImageView.setImageResource(R.drawable.ic_forward_message);
+                    break;
+            }
+            replyMessageImageView.setVisibility(View.VISIBLE);
+            collapsedReplyMessageImageView.setVisibility(View.VISIBLE);
         }
 
 //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -225,15 +262,24 @@ public class ViewMessagesAdapter extends BaseAdapter {
         if (isHtml) {
             String messageWithStyle = "<style type=\"text/css\">*{width:auto;max-width:100%;}</style>" + message;
             String encodedContent = Base64.encodeToString(messageWithStyle.getBytes(), Base64.NO_PADDING);
-            contentWebView.getSettings().setLoadWithOverviewMode(true);
-            contentWebView.getSettings().setBuiltInZoomControls(true);
-            //contentWebView.getSettings().setDomStorageEnabled(true);
+            WebSettings webViewSettings = contentWebView.getSettings();
+            webViewSettings.setLoadWithOverviewMode(true);
+            webViewSettings.setJavaScriptEnabled(false);
+            webViewSettings.setAllowFileAccess(false);
+            webViewSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
+            contentWebView.clearCache(true);
             contentWebView.loadData(encodedContent, "text/html", "base64");
             contentWebView.setWebViewClient(new WebViewClient() {
                 @Override
                 public void onPageFinished(WebView view, String url) {
                     super.onPageFinished(view, url);
                     progressBar.setVisibility(View.GONE);
+                }
+                @Override
+                public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                    Intent urlIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                    activity.startActivity(urlIntent);
+                    return true;
                 }
             });
         } else {
@@ -260,6 +306,7 @@ public class ViewMessagesAdapter extends BaseAdapter {
 
             @Override
             public void onNext(Integer position) {
+                File externalStorageFile = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
                 AttachmentProvider attachmentProvider = messageAttachmentAdapter.getAttachment(position);
                 String documentLink = attachmentProvider.getDocumentLink();
                 if (documentLink == null) {
@@ -267,18 +314,18 @@ public class ViewMessagesAdapter extends BaseAdapter {
                     return;
                 }
                 Uri documentUri = Uri.parse(documentLink);
-                String fileName = AppUtils.getFileNameFromURL(documentLink);
-                if (attachmentProvider.isEncrypted()) {
-                    fileName += "-encrypted";
-                }
+                File file = FileUtils.generateFileName(AppUtils.getFileNameFromURL(documentLink), externalStorageFile);
+                String fileName = file == null ? "" : file.getName();
+                String localFileName = attachmentProvider.isEncrypted() ? fileName + ENCRYPTED_EXT : fileName;
 
                 DownloadManager.Request documentRequest = new DownloadManager.Request(documentUri);
-                documentRequest.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName);
+                documentRequest.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, localFileName);
                 documentRequest.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
                 if (activity != null && PermissionCheck.readAndWriteExternalStorage(activity)) {
                     DownloadManager downloadManager = (DownloadManager) activity.getApplicationContext().getSystemService(DOWNLOAD_SERVICE);
                     downloadManager.enqueue(documentRequest);
                     Toast.makeText(activity, activity.getString(R.string.toast_download_started), Toast.LENGTH_SHORT).show();
+                    attachmentProvider.setFileName(fileName);
                     onAttachmentDownloading.onStart(attachmentProvider);
                 }
             }

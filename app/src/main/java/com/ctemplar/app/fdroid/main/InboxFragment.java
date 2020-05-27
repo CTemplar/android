@@ -25,20 +25,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-
-import org.jetbrains.annotations.NotNull;
-
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.List;
-
-import butterknife.BindView;
-import butterknife.OnClick;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
 import com.ctemplar.app.fdroid.BaseFragment;
 import com.ctemplar.app.fdroid.R;
 import com.ctemplar.app.fdroid.message.MoveDialogFragment;
@@ -48,6 +34,19 @@ import com.ctemplar.app.fdroid.message.ViewMessagesActivity;
 import com.ctemplar.app.fdroid.message.ViewMessagesFragment;
 import com.ctemplar.app.fdroid.net.ResponseStatus;
 import com.ctemplar.app.fdroid.repository.provider.MessageProvider;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
+
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import butterknife.BindView;
+import butterknife.OnClick;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 
 import static com.ctemplar.app.fdroid.message.SendMessageActivity.MESSAGE_ID;
@@ -63,7 +62,6 @@ public class InboxFragment extends BaseFragment
     private static final int SWIPABLE_FOREGROUND_RESOURCE_ID = R.id.item_message_view_holder_foreground;
     private static final int SWIPABLE_BACKGROUND_RESOURCE_ID = R.id.item_message_view_holder_background_layout;
     private static final int REQUEST_MESSAGES_COUNT = 10;
-    public static WeakReference<InboxFragment> instanceReference = null;
 
     private InboxMessagesAdapter adapter;
     private MainActivityViewModel mainModel;
@@ -184,7 +182,6 @@ public class InboxFragment extends BaseFragment
 
                     }
                 });
-        instanceReference = new WeakReference<>(this);
     }
 
     @Override
@@ -329,7 +326,7 @@ public class InboxFragment extends BaseFragment
 
     @Override
     public void onReachedBottom() {
-        Timber.i("onReachedBottom");
+        Timber.d("onReachedBottom");
         requestNextMessages();
         progressLayout.setVisibility(View.VISIBLE);
     }

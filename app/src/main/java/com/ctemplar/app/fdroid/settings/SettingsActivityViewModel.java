@@ -1,9 +1,12 @@
 package com.ctemplar.app.fdroid.settings;
 
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.google.gson.Gson;
+
+import java.util.List;
 
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
@@ -19,26 +22,64 @@ import com.ctemplar.app.fdroid.net.request.SubjectEncryptedRequest;
 import com.ctemplar.app.fdroid.net.response.Contacts.ContactData;
 import com.ctemplar.app.fdroid.net.response.Contacts.ContactsResponse;
 import com.ctemplar.app.fdroid.net.response.Contacts.EncryptContact;
+import com.ctemplar.app.fdroid.net.response.Mailboxes.MailboxesResult;
 import com.ctemplar.app.fdroid.net.response.Myself.SettingsEntity;
+import com.ctemplar.app.fdroid.repository.AppDatabase;
 import com.ctemplar.app.fdroid.repository.ContactsRepository;
 import com.ctemplar.app.fdroid.repository.UserRepository;
 import com.ctemplar.app.fdroid.repository.entity.Contact;
+import com.ctemplar.app.fdroid.repository.entity.MailboxEntity;
 import timber.log.Timber;
 
 public class SettingsActivityViewModel extends ViewModel {
 
     private ContactsRepository contactsRepository;
+    private AppDatabase appDatabase;
     private UserRepository userRepository;
 
     public SettingsActivityViewModel() {
         contactsRepository = CTemplarApp.getContactsRepository();
+        appDatabase = CTemplarApp.getAppDatabase();
         userRepository = CTemplarApp.getUserRepository();
     }
 
     private MutableLiveData<ResponseStatus> decryptionStatus = new MutableLiveData<>();
+    private MutableLiveData<ResponseStatus> updateSignatureStatus = new MutableLiveData<>();
 
     MutableLiveData<ResponseStatus> getDecryptionStatus() {
         return decryptionStatus;
+    }
+
+    LiveData<ResponseStatus> getUpdateSignatureStatus() {
+        return updateSignatureStatus;
+    }
+
+    List<MailboxEntity> getAllMailboxes() {
+        return appDatabase.mailboxDao().getAll();
+    }
+
+    public void setSignatureEnabled(boolean isEnabled) {
+        userRepository.setSignatureEnabled(isEnabled);
+    }
+
+    public boolean isSignatureEnabled() {
+        return userRepository.isSignatureEnabled();
+    }
+
+    public void setMobileSignatureEnabled(boolean isEnabled) {
+        userRepository.setMobileSignatureEnabled(isEnabled);
+    }
+
+    public boolean isMobileSignatureEnabled() {
+        return userRepository.isMobileSignatureEnabled();
+    }
+
+    public void setMobileSignature(String signatureText) {
+        userRepository.setMobileSignature(signatureText);
+    }
+
+    public String getMobileSignature() {
+        return userRepository.getMobileSignature();
     }
 
     void updateAutoSaveEnabled(long settingId, boolean isEnabled) {
@@ -69,24 +110,26 @@ public class SettingsActivityViewModel extends ViewModel {
                 });
     }
 
-    void updateSignature(long settingId, long mailboxId, String signatureText) {
-        if (settingId == -1 && mailboxId != -1) {
+    void updateSignature(long mailboxId, String displayName, String signatureText) {
+        if (mailboxId == -1) {
             return;
         }
-        userRepository.updateSignature(mailboxId, new SignatureRequest(signatureText))
-                .subscribe(new Observer<SettingsEntity>() {
+        userRepository.updateSignature(mailboxId, new SignatureRequest(displayName, signatureText))
+                .subscribe(new Observer<MailboxesResult>() {
                     @Override
                     public void onSubscribe(Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(SettingsEntity settingsEntity) {
-
+                    public void onNext(MailboxesResult mailboxesResult) {
+                        appDatabase.mailboxDao().updateSignature(mailboxId, displayName, signatureText);
+                        updateSignatureStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
                     }
 
                     @Override
                     public void onError(Throwable e) {
+                        updateSignatureStatus.postValue(ResponseStatus.RESPONSE_ERROR);
                         Timber.e(e);
                     }
 
@@ -259,7 +302,9 @@ public class SettingsActivityViewModel extends ViewModel {
         String encryptedData = contactData.getEncryptedData();
         String decryptedData = Contact.decryptData(encryptedData);
         EncryptContact decryptedContact = gson.fromJson(decryptedData, EncryptContact.class);
-
+        if (decryptedContact == null) {
+            return;
+        }
         contactData.setEmail(decryptedContact.getEmail());
         contactData.setName(decryptedContact.getName());
         contactData.setAddress(decryptedContact.getAddress());

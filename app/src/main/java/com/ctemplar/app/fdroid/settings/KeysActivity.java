@@ -47,13 +47,13 @@ public class KeysActivity extends BaseActivity {
     @BindView(R.id.activity_setting_keys_private_key_text_view)
     TextView downloadPrivateKeyTextView;
 
-    private KeysViewModel keysModel;
-    private List<MailboxEntity> mailboxEntityList;
-
     @Override
     protected int getLayoutId() {
-        return R.layout.activity_setting_keys;
+        return R.layout.activity_settings_keys;
     }
+
+    private SettingsActivityViewModel settingsViewModel;
+    private List<MailboxEntity> mailboxEntityList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,8 +65,8 @@ public class KeysActivity extends BaseActivity {
             actionBar.setHomeButtonEnabled(true);
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-        keysModel = new ViewModelProvider(this).get(KeysViewModel.class);
-        mailboxEntityList = keysModel.getMailboxEntityList();
+        settingsViewModel = new ViewModelProvider(this).get(SettingsActivityViewModel.class);
+        mailboxEntityList = settingsViewModel.getAllMailboxes();
         String[] addresses = new String[mailboxEntityList.size()];
         for (int addressIterator = 0; addressIterator < addresses.length; addressIterator++) {
             addresses[addressIterator] = mailboxEntityList.get(addressIterator).getEmail();
