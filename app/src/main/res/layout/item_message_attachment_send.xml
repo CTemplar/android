@@ -21,7 +21,7 @@
             android:layout_marginRight="4dp"
             android:layout_marginEnd="4dp"
             android:text="filename.doc"
-            android:textColor="@color/colorGrey3"
+            android:textColor="?android:textColorSecondary"
             android:fontFamily="@font/lato_regular"
             android:textSize="14sp"
             android:lines="1"
@@ -50,6 +50,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_close"
+            android:tint="?android:textColorSecondary"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintRight_toRightOf="parent" />

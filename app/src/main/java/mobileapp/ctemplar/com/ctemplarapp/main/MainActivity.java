@@ -486,7 +486,8 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         };
-        drawerToggle.setToolbarNavigationClickListener(v -> Toast.makeText(MainActivity.this, "Clicked", Toast.LENGTH_SHORT).show());
+        drawerToggle.setToolbarNavigationClickListener(v ->
+                Toast.makeText(MainActivity.this, "Clicked", Toast.LENGTH_SHORT).show());
         drawer.addDrawerListener(drawerToggle);
         drawerToggle.syncState();
     }

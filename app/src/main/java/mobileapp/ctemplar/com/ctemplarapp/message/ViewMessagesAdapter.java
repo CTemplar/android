@@ -21,6 +21,8 @@ import android.widget.Toast;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.webkit.WebSettingsCompat;
+import androidx.webkit.WebViewFeature;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -269,6 +271,13 @@ public class ViewMessagesAdapter extends BaseAdapter {
             webViewSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
             contentWebView.clearCache(true);
             contentWebView.loadData(encodedContent, "text/html", "base64");
+            if (WebViewFeature.isFeatureSupported(WebViewFeature.FORCE_DARK)) {
+                WebSettingsCompat.setForceDark(webViewSettings, WebSettingsCompat.FORCE_DARK_ON);
+            }
+//            if (WebViewFeature.isFeatureSupported(WebViewFeature.FORCE_DARK_STRATEGY)) {
+//                WebSettingsCompat.setForceDarkStrategy(webViewSettings,
+//                        WebSettingsCompat.DARK_STRATEGY_WEB_THEME_DARKENING_ONLY);
+//            }
             contentWebView.setWebViewClient(new WebViewClient() {
                 @Override
                 public void onPageFinished(WebView view, String url) {

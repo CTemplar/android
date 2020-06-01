@@ -303,8 +303,7 @@ public class FileUtils {
                             if (path != null) {
                                 return path;
                             }
-                        } catch (Exception e) {
-                        }
+                        } catch (Exception e) {}
                     }
                 }
 

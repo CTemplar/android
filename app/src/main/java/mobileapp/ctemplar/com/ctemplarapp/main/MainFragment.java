@@ -1,8 +1,11 @@
 package mobileapp.ctemplar.com.ctemplarapp.main;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -57,7 +60,14 @@ public class MainFragment extends Fragment {
         if (actionBar != null) {
             actionBar.setHomeButtonEnabled(true);
             actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setHomeAsUpIndicator(R.drawable.ic_drawer_menu);
+            if (getContext() != null) {
+                int menuColor = ContextCompat.getColor(getContext(), R.color.secondaryTextColor);
+                Drawable menuDrawable = getResources().getDrawable(R.drawable.ic_drawer_menu);
+                DrawableCompat.setTint(menuDrawable, menuColor);
+                actionBar.setHomeAsUpIndicator(menuDrawable);
+            } else {
+                actionBar.setHomeAsUpIndicator(R.drawable.ic_drawer_menu);
+            }
         }
 
         showFragment(inboxFragment);

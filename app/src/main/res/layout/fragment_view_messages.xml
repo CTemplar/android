@@ -3,24 +3,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
-    android:theme="@style/NavigationBarLight"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/activity_view_messages_bar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay"
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/activity_view_messages_bar"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            android:theme="@style/ActionBarLight"
-            app:titleTextColor="@color/colorDarkBlue2"
-            app:popupTheme="@style/AppTheme.PopupOverlay">
+            android:layout_height="?attr/actionBarSize">
 
         </androidx.appcompat.widget.Toolbar>
 
@@ -30,7 +24,7 @@
         android:id="@+id/activity_view_messages_subject_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorWhiteLight"
+        android:background="@color/colorPrimary"
         app:layout_constraintTop_toBottomOf="@id/activity_view_messages_bar_layout">
 
         <TextView
@@ -40,7 +34,7 @@
             android:layout_centerVertical="true"
             android:text="Welcome to CTemplar!"
             android:fontFamily="@font/lato_bold"
-            android:textColor="@color/colorBlack4"
+            android:textColor="@color/secondaryTextColor"
             android:textSize="18sp"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="16dp"
@@ -97,7 +91,7 @@
         tools:listitem="@layout/item_message_view_expanded"
         app:layout_constraintTop_toBottomOf="@id/activity_view_messages_bottom_subject_divider"
         app:layout_constraintBottom_toTopOf="@id/activity_view_messages_actions"
-        android:background="@color/colorWhiteLight" />
+        android:background="@color/colorPrimary" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/activity_view_messages_actions"
@@ -121,6 +115,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_reply"
+                android:tint="?android:textColorSecondary"
                 android:layout_centerInParent="true"
                 android:contentDescription="Reply"/>
 
@@ -142,8 +137,10 @@
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 android:src="@drawable/ic_reply_all"
+                android:tint="?android:textColorSecondary"
                 android:layout_centerInParent="true"
-                android:contentDescription="Reply"/>
+                android:contentDescription="@string/txt_reply_all"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -152,9 +149,9 @@
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 android:fontFamily="@font/lato_regular"
-                android:textColor="@color/colorDarkBlue2"
+                android:textColor="?android:textColorSecondary"
                 android:textSize="12sp"
-                android:text="@string/txt_reply_all"/>
+                android:text="@string/txt_reply_all" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -172,8 +169,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_forward"
+                android:tint="?android:textColorSecondary"
                 android:layout_centerInParent="true"
-                android:contentDescription="Reply"/>
+                android:contentDescription="Forward"/>
 
         </RelativeLayout>
 
