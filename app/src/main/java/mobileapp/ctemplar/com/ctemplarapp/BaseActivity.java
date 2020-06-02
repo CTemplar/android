@@ -1,8 +1,6 @@
 package mobileapp.ctemplar.com.ctemplarapp;
 
-import android.os.Build;
 import android.os.Bundle;
-import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -10,6 +8,7 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import io.reactivex.disposables.CompositeDisposable;
 import mobileapp.ctemplar.com.ctemplarapp.utils.DialogUtils;
+import mobileapp.ctemplar.com.ctemplarapp.utils.ThemeUtils;
 
 public abstract class BaseActivity extends AppCompatActivity {
 
@@ -26,9 +25,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(getLayoutId());
         mUnbinder = ButterKnife.bind(this);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
-        }
+        ThemeUtils.setupStatusBarTheme(this);
     }
 
     @Override

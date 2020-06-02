@@ -15,10 +15,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -74,16 +76,15 @@ public class MoveDialogFragment extends DialogFragment {
         buttonApply.setOnClickListener(v -> {
             RadioGroup foldersRadioGroup = view.findViewById(R.id.fragment_messages_move_dialog_group);
             int checkedId = foldersRadioGroup.getCheckedRadioButtonId();
-            for (FoldersResult folderItem :
-                    customFoldersList) {
+            for (FoldersResult folderItem : customFoldersList) {
                 if (checkedId == folderItem.getId()) {
                     String folderName = folderItem.getName();
                     viewMessagesModel.moveToFolder(parentMessageId, folderName);
                     if (callback != null) {
                         callback.onMove(folderName);
                     }
-                    String toastMessage = getResources().getString(R.string.toast_message_moved_to, folderName);
-                    Toast.makeText(getActivity(), toastMessage, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), getResources().getString(R.string.toast_message_moved_to, folderName),
+                            Toast.LENGTH_SHORT).show();
                     dismiss();
                 }
             }
@@ -99,21 +100,23 @@ public class MoveDialogFragment extends DialogFragment {
 
         foldersListLayout.removeAllViewsInLayout();
 
-        for (FoldersResult folderItem :
-                customFoldersList) {
+        for (FoldersResult folderItem : customFoldersList) {
             View folderItemButton = inflater.inflate(R.layout.item_move_folder_radiobutton, foldersListLayout, false);
             RadioButton radioButton = folderItemButton.findViewById(R.id.radio_button);
             radioButton.setId(folderItem.getId());
             radioButton.setText(folderItem.getName());
 
-            Resources resources = Objects.requireNonNull(getContext()).getResources();
+            Resources resources = requireContext().getResources();
             Drawable folderLeftDrawable = resources.getDrawable(R.drawable.ic_manage_folders);
             Drawable folderRightDrawable = resources.getDrawable(R.drawable.selector_check);
             folderLeftDrawable.mutate();
             folderRightDrawable.mutate();
 
             int folderColor = Color.parseColor(folderItem.getColor());
+            int markColor = resources.getColor(R.color.secondaryTextColor);
             folderLeftDrawable.setColorFilter(folderColor, PorterDuff.Mode.SRC_IN);
+            folderRightDrawable.setColorFilter(markColor, PorterDuff.Mode.SRC_IN);
+            DrawableCompat.setTint(folderRightDrawable, markColor);
             radioButton.setCompoundDrawablesWithIntrinsicBounds(folderLeftDrawable, null, folderRightDrawable, null);
             foldersListLayout.addView(folderItemButton);
         }
@@ -125,10 +128,10 @@ public class MoveDialogFragment extends DialogFragment {
             startActivity(addFolder);
         });
         View manageFolderLayout = inflater.inflate(R.layout.item_manage_folders, foldersListLayout, false);
-        Button manageFolderButton = manageFolderLayout.findViewById(R.id.manager_folders);
+        TextView manageFolderButton = manageFolderLayout.findViewById(R.id.manager_folders);
         manageFolderButton.setOnClickListener(v -> {
-            Intent addFolder = new Intent(getActivity(), ManageFoldersActivity.class);
-            startActivity(addFolder);
+            Intent managerFolderIntent = new Intent(getActivity(), ManageFoldersActivity.class);
+            startActivity(managerFolderIntent);
         });
 
         if (customFoldersList.isEmpty()) {

@@ -22,7 +22,6 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames;
 import timber.log.Timber;
 
 public class MainFragment extends Fragment {
-
     private static final String TAG = MainFragment.class.getSimpleName();
     private int contentLayoutId = R.id.content_frame;
 
@@ -74,22 +73,14 @@ public class MainFragment extends Fragment {
     }
 
     private void showFragment(Fragment fragment) {
-        FragmentManager fragmentManager = getFragmentManager();
-        if (fragmentManager == null) {
-            Timber.tag(TAG).e("FragmentManager is null");
-            return;
-        }
+        FragmentManager fragmentManager = getParentFragmentManager();
         FragmentTransaction ft = fragmentManager.beginTransaction();
         ft.replace(contentLayoutId, fragment);
         ft.commit();
     }
 
     private Fragment getCurrentFragment() {
-        FragmentManager fragmentManager = getFragmentManager();
-        if (fragmentManager == null) {
-            Timber.tag(TAG).e("FragmentManager is null");
-            return null;
-        }
+        FragmentManager fragmentManager = getParentFragmentManager();
         return fragmentManager.findFragmentById(contentLayoutId);
     }
 

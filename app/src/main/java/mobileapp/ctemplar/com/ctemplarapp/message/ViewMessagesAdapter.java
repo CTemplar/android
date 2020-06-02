@@ -271,9 +271,9 @@ public class ViewMessagesAdapter extends BaseAdapter {
             webViewSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
             contentWebView.clearCache(true);
             contentWebView.loadData(encodedContent, "text/html", "base64");
-            if (WebViewFeature.isFeatureSupported(WebViewFeature.FORCE_DARK)) {
-                WebSettingsCompat.setForceDark(webViewSettings, WebSettingsCompat.FORCE_DARK_ON);
-            }
+//            if (WebViewFeature.isFeatureSupported(WebViewFeature.FORCE_DARK)) {
+//                WebSettingsCompat.setForceDark(webViewSettings, WebSettingsCompat.FORCE_DARK_ON);
+//            }
 //            if (WebViewFeature.isFeatureSupported(WebViewFeature.FORCE_DARK_STRATEGY)) {
 //                WebSettingsCompat.setForceDarkStrategy(webViewSettings,
 //                        WebSettingsCompat.DARK_STRATEGY_WEB_THEME_DARKENING_ONLY);

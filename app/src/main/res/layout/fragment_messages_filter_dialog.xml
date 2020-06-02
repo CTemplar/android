@@ -17,6 +17,8 @@
             android:id="@+id/fragment_messages_filter_dialog_close"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true"
             android:src="@drawable/ic_close"
             android:tint="@color/secondaryTextColor"
             android:layout_marginLeft="16dp"
@@ -26,6 +28,8 @@
             android:id="@+id/fragment_messages_filter_dialog_clear_all"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true"
             android:textSize="16sp"
             android:fontFamily="@font/lato_regular"
             android:textColor="@color/secondaryTextColor"
@@ -139,7 +143,7 @@
             android:layout_marginRight="4dp"
             android:layout_marginEnd="4dp"
             android:fontFamily="@font/lato_regular"
-            android:textColor="@color/secondaryTextColor"
+            android:textColor="@color/colorDarkBlue2"
             android:background="@drawable/dialog_cancel_button_background"
             android:text="@string/action_cancel"/>
 

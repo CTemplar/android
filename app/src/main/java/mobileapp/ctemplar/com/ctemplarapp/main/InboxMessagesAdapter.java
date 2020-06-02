@@ -145,11 +145,11 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesView
         if (message.isRead()) {
             holder.imgUnread.setVisibility(View.GONE);
             holder.txtUsername.setTypeface(null, Typeface.NORMAL);
-//            holder.foreground.setBackgroundColor(ctx.getResources().getColor(R.color.colorGrey5));
+            holder.foreground.setBackgroundColor(ctx.getResources().getColor(R.color.colorPrimaryDark));
         } else {
             holder.imgUnread.setVisibility(View.VISIBLE);
             holder.txtUsername.setTypeface(null, Typeface.BOLD);
-//            holder.foreground.setBackgroundColor(ctx.getResources().getColor(R.color.colorWhiteLight));
+            holder.foreground.setBackgroundColor(ctx.getResources().getColor(R.color.colorPrimary));
         }
 
         // check for protection
