@@ -599,7 +599,7 @@
             android:textSize="18sp"
             android:fontFamily="@font/lato_regular"
             android:textColor="@android:color/white"
-            android:background="@color/colorDarkBlue2"
+            android:background="@drawable/selector_button_blue"
             android:textAllCaps="false"
             android:text="@string/btn_add"/>
 
