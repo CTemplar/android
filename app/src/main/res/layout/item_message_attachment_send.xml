@@ -40,7 +40,7 @@
             android:textSize="14sp"
             android:lines="1"
             android:ellipsize="end"
-            android:textColor="@color/colorGrey4"
+            android:textColor="?android:textColorSecondary"
             android:visibility="gone"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintLeft_toLeftOf="parent" />

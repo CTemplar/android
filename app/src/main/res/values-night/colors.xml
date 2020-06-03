@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="dividerColor">#494949</color>
+    <color name="colorDivider">#494949</color>
     <color name="colorPrimary">#303030</color>
     <color name="colorPrimaryDark">#282828</color>
+    <color name="colorSurface">#3c3c3c</color>
 
     <color name="primaryTextColor">#ededed</color>
     <color name="secondaryTextColor">#e5e5e5</color>
+    <color name="disabledTextColor">#969696</color>
+<!--    <color name="colorAccent">#cf6679</color>-->
 </resources>

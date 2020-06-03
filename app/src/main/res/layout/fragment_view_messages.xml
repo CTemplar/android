@@ -53,6 +53,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/selector_encrypted"
+            android:tint="?android:textColorSecondary"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintRight_toLeftOf="@id/activity_view_messages_subject_star_image_layout"/>
@@ -81,7 +82,7 @@
         android:id="@+id/activity_view_messages_bottom_subject_divider"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/dividerColor"
+        android:background="@color/colorDivider"
         app:layout_constraintTop_toBottomOf="@id/activity_view_messages_subject_layout"/>
 
     <ListView

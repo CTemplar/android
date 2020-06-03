@@ -13,7 +13,7 @@
         android:layout_width="120dp"
         android:layout_height="72dp"
         android:padding="10dp"
-        android:background="@color/colorPrimaryDark"
+        android:background="@drawable/item_attachment_background"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 

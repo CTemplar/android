@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="dividerColor">#ebebeb</color>
+    <color name="colorDivider">#ebebeb</color>
     <color name="colorPrimary">#ffffff</color>
     <color name="colorPrimaryDark">#f5f5f5</color>
+    <color name="colorSurface">#fafafa</color>
 
     <color name="primaryTextColor">#091f35</color>
     <color name="secondaryTextColor">#17324d</color>
+    <color name="disabledTextColor">#61000000</color>
     <color name="colorAccent">#e74c3c</color>
 
     <color name="colorTextGrayLight">#aeffffff</color>
