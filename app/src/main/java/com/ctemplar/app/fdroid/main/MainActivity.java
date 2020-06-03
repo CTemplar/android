@@ -5,6 +5,7 @@ import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.DisplayMetrics;
@@ -41,11 +42,15 @@ import com.ctemplar.app.fdroid.ActivityInterface;
 import com.ctemplar.app.fdroid.R;
 import com.ctemplar.app.fdroid.folders.ManageFoldersActivity;
 import com.ctemplar.app.fdroid.login.LoginActivity;
+import com.ctemplar.app.fdroid.message.SendMessageActivity;
+import com.ctemplar.app.fdroid.message.SendMessageFragment;
 import com.ctemplar.app.fdroid.net.ResponseStatus;
+import com.ctemplar.app.fdroid.net.entity.AttachmentsEntity;
 import com.ctemplar.app.fdroid.net.response.Folders.FoldersResponse;
 import com.ctemplar.app.fdroid.net.response.Folders.FoldersResult;
 import com.ctemplar.app.fdroid.repository.entity.MailboxEntity;
 import com.ctemplar.app.fdroid.settings.SettingsActivity;
+import com.ctemplar.app.fdroid.utils.EditTextUtils;
 import com.ctemplar.app.fdroid.utils.EncryptUtils;
 import com.ctemplar.app.fdroid.view.ResizeAnimation;
 import timber.log.Timber;
@@ -169,86 +174,7 @@ public class MainActivity extends AppCompatActivity
         // default folder
         setTitle(R.string.nav_drawer_inbox);
         mainModel.setCurrentFolder(INBOX);
-    }
-
-    public void showFragment(Fragment fragment) {
-        getSupportFragmentManager().beginTransaction()
-                .replace(contentContainer.getId(), fragment)
-                .addToBackStack(null)
-                .commit();
-        try {
-            getSupportFragmentManager().executePendingTransactions();
-        } catch (Throwable e) {
-            Timber.w("executePendingTransaction error: %s", e.getMessage());
-        }
-    }
-
-    private void handleFoldersResponse(NavigationView navigationView, FoldersResponse foldersResponse) {
-        customFoldersList = foldersResponse.getFoldersList();
-        int customFoldersCount = foldersResponse.getTotalCount();
-        Menu navigationMenu = navigationView.getMenu();
-
-        List<FoldersResult> foldersListForDeleting = customFoldersListAll;
-        for (FoldersResult folderItem : customFoldersListAll) {
-            navigationMenu.removeItem(folderItem.getId());
-        }
-        customFoldersListAll.removeAll(foldersListForDeleting);
-
-        MenuItem manageFolders = navigationMenu.findItem(R.id.nav_manage_folders);
-        String manageFoldersTitle = getResources().getString(R.string.nav_drawer_manage_folders_param, customFoldersCount);
-        manageFolders.setTitle(manageFoldersTitle);
-
-        for (FoldersResult folderItem : customFoldersList) {
-            customFoldersListAll.add(folderItem);
-            int folderId = folderItem.getId();
-            int order = folderItem.getSortOrder();
-            String folderName = folderItem.getName();
-            MenuItem menuItem = navigationMenu.add(
-                    R.id.activity_main_drawer_folders,
-                    folderId,
-                    order,
-                    folderName
-            );
-            menuItem.setCheckable(true);
-
-            menuItem.setIcon(R.drawable.ic_manage_folders);
-            Drawable itemIcon = menuItem.getIcon();
-            itemIcon.mutate();
-            int folderColor = Color.parseColor(folderItem.getColor());
-            itemIcon.setColorFilter(folderColor, PorterDuff.Mode.SRC_IN);
-
-            menuItem.setActionView(R.layout.menu_message_counter);
-            TextView actionView = (TextView) menuItem.getActionView();
-            try {
-                int unreadMessages = unreadFolders.getInt(folderName);
-                String unreadString = unreadMessages > 0 ? String.valueOf(unreadMessages) : null;
-                actionView.setText(unreadString);
-            } catch (Exception e) {
-                Timber.e(e);
-            }
-        }
-
-        MenuItem moreFolders = navigationMenu.findItem(R.id.nav_manage_folders_more);
-        if (customFoldersShowCount < customFoldersCount) {
-            moreFolders.setVisible(true);
-        } else {
-            moreFolders.setVisible(false);
-        }
-    }
-
-    private void showFragmentByFolder(String folder) {
-        if (!(getCurrentFragment() instanceof MainFragment)) {
-            showFragment(mainFragment);
-        }
-        mainFragment.showFragmentByFolder(folder);
-    }
-
-    public void showActivityOrFragment(Intent activityIntent, Fragment fragment) {
-        if (isTablet) {
-            showFragment(fragment);
-        } else {
-            startActivity(activityIntent);
-        }
+        handleSendToIntent(getIntent());
     }
 
     @Override
@@ -268,10 +194,6 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         }
-    }
-
-    public boolean isHandledPressBack(Fragment fragment) {
-        return fragment instanceof ActivityInterface && !((ActivityInterface) fragment).onBackPressed();
     }
 
     @Override
@@ -315,9 +237,10 @@ public class MainActivity extends AppCompatActivity
         return false;
     }
 
-    private Fragment getCurrentFragment() {
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        return fragmentManager.findFragmentById(contentContainer.getId());
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadFolders();
     }
 
     @Override
@@ -408,9 +331,137 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        loadFolders();
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        setupTabletDrawer();
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        handleSendToIntent(intent);
+    }
+
+    private void handleSendToIntent(Intent intent) {
+        String intentAction = intent.getAction();
+        if (Intent.ACTION_SENDTO.equals(intentAction) || Intent.ACTION_SEND.equals(intentAction)) {
+            String email = "";
+            String subject = "";
+            String compose = "";
+            Intent sendToEmailIntent = new Intent(this, SendMessageActivity.class);
+            sendToEmailIntent.putExtras(intent);
+            String dataString = Uri.decode(intent.getDataString());
+            if (EditTextUtils.isNotEmpty(dataString)) {
+                email = dataString.substring(7);
+                sendToEmailIntent.putExtra(Intent.EXTRA_EMAIL, new String[] { email });
+            }
+            if (EditTextUtils.isNotEmpty(intent.getStringExtra(Intent.EXTRA_SUBJECT))) {
+                subject = intent.getStringExtra(Intent.EXTRA_SUBJECT);
+            }
+            if (EditTextUtils.isNotEmpty(intent.getStringExtra(Intent.EXTRA_TEXT))) {
+                compose = intent.getStringExtra(Intent.EXTRA_TEXT);
+            }
+            Fragment fragmentSendToEmail = SendMessageFragment.newInstance(
+                    subject,
+                    compose,
+                    new String[] { email },
+                    new String[] {},
+                    new String[] {},
+                    null,
+                    new AttachmentsEntity(),
+                    null
+            );
+            showActivityOrFragment(sendToEmailIntent, fragmentSendToEmail);
+        }
+    }
+
+    public void showFragment(Fragment fragment) {
+        getSupportFragmentManager().beginTransaction()
+                .replace(contentContainer.getId(), fragment)
+                .addToBackStack(null)
+                .commit();
+        try {
+            getSupportFragmentManager().executePendingTransactions();
+        } catch (Throwable e) {
+            Timber.w("executePendingTransaction error: %s", e.getMessage());
+        }
+    }
+
+    private void handleFoldersResponse(NavigationView navigationView, FoldersResponse foldersResponse) {
+        customFoldersList = foldersResponse.getFoldersList();
+        int customFoldersCount = foldersResponse.getTotalCount();
+        Menu navigationMenu = navigationView.getMenu();
+
+        List<FoldersResult> foldersListForDeleting = customFoldersListAll;
+        for (FoldersResult folderItem : customFoldersListAll) {
+            navigationMenu.removeItem(folderItem.getId());
+        }
+        customFoldersListAll.removeAll(foldersListForDeleting);
+
+        MenuItem manageFolders = navigationMenu.findItem(R.id.nav_manage_folders);
+        String manageFoldersTitle = getResources().getString(R.string.nav_drawer_manage_folders_param, customFoldersCount);
+        manageFolders.setTitle(manageFoldersTitle);
+
+        for (FoldersResult folderItem : customFoldersList) {
+            customFoldersListAll.add(folderItem);
+            int folderId = folderItem.getId();
+            int order = folderItem.getSortOrder();
+            String folderName = folderItem.getName();
+            MenuItem menuItem = navigationMenu.add(
+                    R.id.activity_main_drawer_folders,
+                    folderId,
+                    order,
+                    folderName
+            );
+            menuItem.setCheckable(true);
+
+            menuItem.setIcon(R.drawable.ic_manage_folders);
+            Drawable itemIcon = menuItem.getIcon();
+            itemIcon.mutate();
+            int folderColor = Color.parseColor(folderItem.getColor());
+            itemIcon.setColorFilter(folderColor, PorterDuff.Mode.SRC_IN);
+
+            menuItem.setActionView(R.layout.menu_message_counter);
+            TextView actionView = (TextView) menuItem.getActionView();
+            try {
+                int unreadMessages = unreadFolders.getInt(folderName);
+                String unreadString = unreadMessages > 0 ? String.valueOf(unreadMessages) : null;
+                actionView.setText(unreadString);
+            } catch (Exception e) {
+                Timber.e(e);
+            }
+        }
+
+        MenuItem moreFolders = navigationMenu.findItem(R.id.nav_manage_folders_more);
+        if (customFoldersShowCount < customFoldersCount) {
+            moreFolders.setVisible(true);
+        } else {
+            moreFolders.setVisible(false);
+        }
+    }
+
+    private void showFragmentByFolder(String folder) {
+        if (!(getCurrentFragment() instanceof MainFragment)) {
+            showFragment(mainFragment);
+        }
+        mainFragment.showFragmentByFolder(folder);
+    }
+
+    public void showActivityOrFragment(Intent activityIntent, Fragment fragment) {
+        if (isTablet) {
+            showFragment(fragment);
+        } else {
+            startActivity(activityIntent);
+        }
+    }
+
+    public boolean isHandledPressBack(Fragment fragment) {
+        return fragment instanceof ActivityInterface && !((ActivityInterface) fragment).onBackPressed();
+    }
+
+    private Fragment getCurrentFragment() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        return fragmentManager.findFragmentById(contentContainer.getId());
     }
 
     private void loadFolders() {
@@ -474,12 +525,6 @@ public class MainActivity extends AppCompatActivity
                 navigationView.getHeight()
         );
         navigationView.startAnimation(resizeAnimation);
-    }
-
-    @Override
-    public void onConfigurationChanged(@NonNull Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        setupTabletDrawer();
     }
 
     private void loadUserInfo() {
