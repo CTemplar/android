@@ -22,6 +22,6 @@ The source code is published under [Apache License 2.0](https://www.apache.org/l
 
 The encryption library is distributed under [The Legion of the Bouncy Castle License](https://www.bouncycastle.org/licence.html), which should be read in the same way as the [MIT License](https://opensource.org/licenses/MIT)
 
-Copyright ©2019 Templar Software Systems Ltd., a Seychelles Limited Liability Company
+Copyright ©2020 Templar Software Systems Ltd., a Seychelles Limited Liability Company
 
 Google Play and the Google Play logo are trademarks of Google Inc.
