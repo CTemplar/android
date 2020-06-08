@@ -11,19 +11,14 @@
         android:layout_height="wrap_content"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        app:layout_constraintTop_toTopOf="parent">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            android:theme="@style/ActionBarLight"
             android:fontFamily="@font/lato_bold"
-            app:title="@string/settings_keys"
-            app:titleTextColor="@color/colorDarkBlue2"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
+            app:title="@string/settings_keys" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -45,7 +40,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/lato_regular"
             android:text="@string/email_address"
-            android:textColor="@color/colorDarkBlue5"
+            android:textColor="?android:textColorSecondary"
             android:textStyle="bold"
             android:textSize="16sp"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -67,7 +62,7 @@
             android:layout_marginTop="18dp"
             android:fontFamily="@font/lato_regular"
             android:text="@string/fingerprint"
-            android:textColor="@color/colorDarkBlue5"
+            android:textColor="?android:textColorSecondary"
             android:textStyle="bold"
             android:textSize="16sp"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -80,7 +75,7 @@
             android:layout_marginTop="4dp"
             android:fontFamily="@font/lato_regular"
             android:text="098f6bcd4621d373cade4e832627b4f6"
-            android:textColor="@color/colorDarkBlue5"
+            android:textColor="?android:textColorSecondary"
             android:textSize="14sp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent" />
@@ -92,7 +87,7 @@
             android:layout_marginTop="30dp"
             android:fontFamily="@font/lato_regular"
             android:text="@string/keys"
-            android:textColor="@color/colorDarkBlue5"
+            android:textColor="?android:textColorSecondary"
             android:textStyle="bold"
             android:textSize="16sp"
             app:layout_constraintLeft_toLeftOf="parent"

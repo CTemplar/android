@@ -28,13 +28,13 @@ import java.io.OutputStream;
 import java.text.DecimalFormat;
 import java.util.Comparator;
 
+import mobileapp.ctemplar.com.ctemplarapp.BuildConfig;
 import okhttp3.ResponseBody;
 import timber.log.Timber;
 
 public class FileUtils {
     public static final String DOCUMENTS_DIR = "documents";
-    // configured android:authorities in AndroidManifest (https://developer.android.com/reference/android/support/v4/content/FileProvider)
-    public static final String AUTHORITY =  "YOUR_AUTHORITY.provider";
+    public static final String AUTHORITY =  BuildConfig.APPLICATION_ID + ".fileprovider";
     public static final String HIDDEN_PREFIX = ".";
     /**
      * TAG for log messages.

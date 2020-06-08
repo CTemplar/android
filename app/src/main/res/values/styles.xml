@@ -10,36 +10,22 @@
         <item name="iconTint">@color/secondaryTextColor</item>
     </style>
 
-<!--    <style name="NavigationBarLight" parent="AppTheme.NoActionBar">-->
-<!--        <item name="windowActionBar">false</item>-->
-<!--        <item name="windowNoTitle">true</item>-->
-<!--        <item name="colorPrimary">@color/colorDarkBlue2</item>-->
-<!--        <item name="colorPrimaryDark">@color/colorGreyLight2</item>-->
-<!--        <item name="colorAccent">@color/colorOrangeLight</item>-->
-<!--    </style>-->
-
-<!--    <style name="FabOrange" parent="Theme.AppCompat.Light">-->
-<!--        <item name="colorAccent">@color/colorOrangeLight</item>-->
-<!--    </style>-->
-
-    <style name="ActionBarLight" parent="AppTheme.NoActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-<!--        <item name="colorPrimary">@color/colorGreyLight</item>-->
-<!--        <item name="colorPrimaryDark">@color/colorGreyLight2</item>-->
-<!--        <item name="colorAccent">@color/colorAccent</item>-->
-    </style>
-
-    <style name="EditTextCredentialsThemeLight" parent="AppTheme">
+    <style name="EditTextCredentialsThemeLight" parent="Theme.AppCompat.DayNight.DarkActionBar">
         <item name="colorControlNormal">@color/colorWhite50</item>
         <item name="colorControlActivated">@android:color/white</item>
         <item name="colorControlHighlight">@android:color/white</item>
     </style>
 
-    <style name="EditTextCredentialsThemeDark" parent="AppTheme">
+    <style name="EditTextCredentialsThemeDark" parent="Theme.AppCompat.DayNight.DarkActionBar">
         <item name="colorControlNormal">@color/colorDarkBlue</item>
         <item name="colorControlActivated">@color/colorDarkBlue2</item>
         <item name="colorControlHighlight">@color/colorDarkBlue2</item>
+    </style>
+
+    <style name="EditTextCredentialsThemeDarkDayNight" parent="Theme.AppCompat.DayNight.DarkActionBar">
+        <item name="colorControlNormal">@color/primaryTextColor</item>
+        <item name="colorControlActivated">@color/secondaryTextColor</item>
+        <item name="colorControlHighlight">@color/secondaryTextColor</item>
     </style>
 
     <style name="TextHintAppearanceLight" parent="TextAppearance.Design.Hint">
@@ -52,6 +38,11 @@
         <item name="android:textColorHint">@color/colorDarkBlue2</item>
     </style>
 
+    <style name="TextHintAppearanceDarkDayNight" parent="TextAppearance.Design.Hint">
+        <item name="android:textColor">@color/secondaryTextColor</item>
+        <item name="android:textColorHint">@color/secondaryTextColor</item>
+    </style>
+
     <style name="TextErrorAppearanceDark" parent="TextAppearance.AppCompat.Small">
         <item name="android:textColor">@color/colorAccent</item>
     </style>
@@ -60,10 +51,6 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
-
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
-
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
     <style name="DialogAnimation" parent="Theme.AppCompat.Dialog.Alert">
         <item name="android:windowAnimationStyle">@style/Dialog.Window</item>
@@ -74,13 +61,9 @@
         <item name="android:windowExitAnimation">@anim/fragment_exit_to_bottom</item>
     </style>
 
-    <style name="ActionBarLight.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
-
-    <style name="ActionBarLight.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
-
     <style name="PreferenceScreen" parent="AppTheme.NoActionBar">
         <item name="android:textColor">@color/preference_text_color</item>
-        <item name="colorAccent">@color/colorBlue</item>
+        <item name="colorAccent">@color/colorAccentSettings</item>
     </style>
 
     <style name="CheckBoxLight" parent="AppTheme">
