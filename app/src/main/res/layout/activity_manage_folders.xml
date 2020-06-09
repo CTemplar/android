@@ -16,8 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:fontFamily="@font/lato_bold"
-            app:title="@string/txt_manage_folders">
-        </androidx.appcompat.widget.Toolbar>
+            app:title="@string/txt_manage_folders" />
 
     </com.google.android.material.appbar.AppBarLayout>
 

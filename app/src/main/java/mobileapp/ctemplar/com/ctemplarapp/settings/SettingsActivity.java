@@ -221,7 +221,7 @@ public class SettingsActivity extends BaseActivity {
             });
             preferenceRecoveryEmail.setOnPreferenceChangeListener((preference, newValue) -> {
                 String value = (String) newValue;
-                if (EditTextUtils.isEmailValid(value) || value.isEmpty()) {
+                if (EditTextUtils.isEmailValid(value) || TextUtils.isEmpty(value)) {
                     if (TextUtils.isEmpty(value)) {
                         preferenceRecoveryEmail.setTitle(getString(R.string.settings_type_recovery_email));
                         checkBoxRecoveryEmailEnabled.setChecked(false);

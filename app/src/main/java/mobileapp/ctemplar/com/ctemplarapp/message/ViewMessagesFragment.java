@@ -559,7 +559,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
 
     @Override
     public boolean onBackPressed() {
-        return true;
+        return false;
     }
 
 

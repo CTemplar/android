@@ -2,19 +2,20 @@ package mobileapp.ctemplar.com.ctemplarapp.main;
 
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.contacts.ContactFragment;
@@ -100,7 +101,18 @@ public class MainFragment extends Fragment {
         }
     }
 
+    boolean isCurrentFragmentIsContact() {
+        return getCurrentFragment() instanceof ContactFragment;
+    }
+
+    boolean isCurrentFragmentIsInbox() {
+        return getCurrentFragment() instanceof InboxFragment;
+    }
+
     void clearListAdapter() {
+        if (inboxFragment == null) {
+            return;
+        }
         inboxFragment.clearListAdapter();
     }
 }

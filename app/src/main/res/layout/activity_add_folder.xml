@@ -15,8 +15,7 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             app:title="@string/nav_drawer_add_folder"
-            android:fontFamily="@font/lato_bold">
-        </androidx.appcompat.widget.Toolbar>
+            android:fontFamily="@font/lato_bold" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
