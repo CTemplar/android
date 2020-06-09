@@ -15,9 +15,7 @@
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/activity_view_messages_bar"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize">
-
-        </androidx.appcompat.widget.Toolbar>
+            android:layout_height="?attr/actionBarSize" />
 
     </com.google.android.material.appbar.AppBarLayout>
 

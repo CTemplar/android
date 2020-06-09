@@ -22,7 +22,7 @@
             android:src="@drawable/ic_close"
             android:tint="@color/secondaryTextColor"
             android:layout_marginLeft="16dp"
-            android:layout_marginStart="16dp"/>
+            android:layout_marginStart="16dp" />
 
     </RelativeLayout>
 

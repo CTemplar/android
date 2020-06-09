@@ -18,10 +18,8 @@
             android:id="@+id/settings_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
             android:fontFamily="@font/lato_bold"
-            app:title="@string/txt_settings"
-            app:titleTextColor="?android:textColorSecondary" />
+            app:title="@string/txt_settings" />
 
     </com.google.android.material.appbar.AppBarLayout>
 

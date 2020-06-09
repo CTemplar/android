@@ -1,6 +1,5 @@
 package mobileapp.ctemplar.com.ctemplarapp.login;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
 
@@ -22,7 +21,6 @@ import mobileapp.ctemplar.com.ctemplarapp.login.step.StepPasswordFragment;
 import mobileapp.ctemplar.com.ctemplarapp.login.step.StepRecoveryFragment;
 import mobileapp.ctemplar.com.ctemplarapp.login.step.StepRegistrationActions;
 import mobileapp.ctemplar.com.ctemplarapp.login.step.StepRegistrationViewModel;
-import mobileapp.ctemplar.com.ctemplarapp.login.step.StepSecurityFragment;
 import mobileapp.ctemplar.com.ctemplarapp.login.step.StepUsernameFragment;
 import mobileapp.ctemplar.com.ctemplarapp.login.step.ViewPagerNoScroll;
 
@@ -36,11 +34,6 @@ public class SignUpFragment extends BaseFragment{
     @Override
     protected int getLayoutId() {
         return R.layout.fragment_sign_up;
-    }
-
-    @Override
-    public void onAttach(@NotNull Context context) {
-        super.onAttach(context);
     }
 
     public void onCreate(Bundle savedInstanceState) {
@@ -61,7 +54,7 @@ public class SignUpFragment extends BaseFragment{
         viewPager.setOnTouchListener(null);
 
         stepModel = new ViewModelProvider(getActivity()).get(StepRegistrationViewModel.class);
-        stepModel.getAction().observe(getViewLifecycleOwner(), this::handleRegistrationActions);
+        stepModel.getAction().observe(getActivity(), this::handleRegistrationActions);
     }
 
     @Override

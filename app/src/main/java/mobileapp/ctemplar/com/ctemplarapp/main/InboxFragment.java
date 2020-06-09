@@ -63,6 +63,7 @@ public class InboxFragment extends BaseFragment
     private static final int SWIPABLE_FOREGROUND_RESOURCE_ID = R.id.item_message_view_holder_foreground;
     private static final int SWIPABLE_BACKGROUND_RESOURCE_ID = R.id.item_message_view_holder_background_layout;
     private static final int REQUEST_MESSAGES_COUNT = 10;
+
     public static WeakReference<InboxFragment> instanceReference = null;
 
     private InboxMessagesAdapter adapter;
@@ -103,7 +104,7 @@ public class InboxFragment extends BaseFragment
     ImageView imgEmpty;
 
     @BindView(R.id.fragment_inbox_title_empty)
-    TextView txtEmpty;
+    TextView folderEmptyTextView;
 
     @BindView(R.id.fragment_inbox_list_empty_layout)
     ConstraintLayout listEmptyLayout;
@@ -154,7 +155,7 @@ public class InboxFragment extends BaseFragment
             return;
         }
         mainModel = new ViewModelProvider(activity).get(MainActivityViewModel.class);
-        currentFolder = mainModel.currentFolder.getValue();
+        currentFolder = mainModel.getCurrentFolder().getValue();
         if (currentFolder == null) {
             currentFolder = INBOX;
         }
@@ -205,8 +206,7 @@ public class InboxFragment extends BaseFragment
         mainModel.getCurrentFolder().observe(getViewLifecycleOwner(), folderName -> {
             currentFolder = folderName;
             requestNewMessages();
-            String emptyFolderString = getResources().getString(R.string.title_empty_messages, folderName);
-            txtEmpty.setText(emptyFolderString);
+            folderEmptyTextView.setText(getString(R.string.title_empty_messages, folderName));
             loadMessagesList();
             recyclerView.setAdapter(adapter);
             updateTouchListenerSwipeOptions(currentFolder);
@@ -315,7 +315,7 @@ public class InboxFragment extends BaseFragment
             return;
         }
 
-        currentFolder = mainModel.currentFolder.getValue();
+        currentFolder = mainModel.getCurrentFolder().getValue();
         mainModel.getMessages(REQUEST_MESSAGES_COUNT, currentOffset, currentFolder);
         currentOffset += REQUEST_MESSAGES_COUNT;
         isLoadingNewMessages = true;
@@ -458,10 +458,9 @@ public class InboxFragment extends BaseFragment
         if (activity == null) {
             return;
         }
-
-        Intent intent = new Intent(activity, SendMessageActivity.class);
+        Intent sendMessageIntent = new Intent(activity, SendMessageActivity.class);
         Fragment fragment = SendMessageFragment.newInstance();
-        activity.showActivityOrFragment(intent, fragment);
+        activity.showActivityOrFragment(sendMessageIntent, fragment);
     }
 
     private void startViewMessageActivity(Long parentId) {
@@ -469,8 +468,7 @@ public class InboxFragment extends BaseFragment
         if (activity == null) {
             return;
         }
-        String folderName = mainModel.currentFolder.getValue();
-
+        String folderName = mainModel.getCurrentFolder().getValue();
         if (folderName != null && folderName.equals(DRAFT)) {
             Intent draftIntent = new Intent(activity, SendMessageActivity.class);
             draftIntent.putExtra(MESSAGE_ID, parentId);
