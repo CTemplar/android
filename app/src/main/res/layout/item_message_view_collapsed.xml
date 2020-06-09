@@ -17,7 +17,6 @@
         android:gravity="start"
         android:lines="1"
         android:text="CTemplar"
-        android:textColor="@color/colorDarkBlue3"
         android:textSize="14sp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -29,6 +28,7 @@
         android:layout_width="36dp"
         android:layout_height="36dp"
         android:src="@drawable/ic_attachment_small"
+        android:tint="?android:textColorSecondary"
         app:layout_constraintTop_toTopOf="@id/item_message_view_collapsed_sender"
         app:layout_constraintBottom_toBottomOf="@id/item_message_view_collapsed_sender"
         app:layout_constraintLeft_toRightOf="@id/item_message_view_collapsed_sender" />
@@ -102,7 +102,6 @@
         android:lines="1"
         android:ellipsize="end"
         android:text="You now have an inbox that is protected by strong encryption"
-        android:textColor="@color/colorGrey"
         android:textSize="14sp"
         app:layout_constraintTop_toBottomOf="@id/item_message_view_collapsed_sender"
         app:layout_constraintStart_toStartOf="parent"

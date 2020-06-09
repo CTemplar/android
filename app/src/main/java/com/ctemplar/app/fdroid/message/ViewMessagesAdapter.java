@@ -38,6 +38,8 @@ import com.ctemplar.app.fdroid.utils.AppUtils;
 import com.ctemplar.app.fdroid.utils.EditTextUtils;
 import com.ctemplar.app.fdroid.utils.FileUtils;
 import com.ctemplar.app.fdroid.utils.PermissionCheck;
+import com.ctemplar.app.fdroid.utils.ThemeUtils;
+
 import timber.log.Timber;
 
 import static android.content.Context.DOWNLOAD_SERVICE;
@@ -269,6 +271,7 @@ public class ViewMessagesAdapter extends BaseAdapter {
             webViewSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
             contentWebView.clearCache(true);
             contentWebView.loadData(encodedContent, "text/html", "base64");
+            ThemeUtils.setWebViewDarkTheme(view.getContext(), contentWebView);
             contentWebView.setWebViewClient(new WebViewClient() {
                 @Override
                 public void onPageFinished(WebView view, String url) {

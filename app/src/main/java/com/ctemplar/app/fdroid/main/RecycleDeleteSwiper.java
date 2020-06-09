@@ -9,6 +9,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import android.view.View;
@@ -28,6 +29,7 @@ abstract public class RecycleDeleteSwiper extends ItemTouchHelper.SimpleCallback
         super(0, ItemTouchHelper.LEFT);
 
         deleteIcon = ContextCompat.getDrawable(context, R.drawable.ic_trash);
+        DrawableCompat.setTint(deleteIcon, context.getResources().getColor(R.color.secondaryTextColor));
         intrinsicWidth = deleteIcon.getIntrinsicWidth();
         intrinsicHeight = deleteIcon.getIntrinsicHeight();
         clearPaint = new Paint();

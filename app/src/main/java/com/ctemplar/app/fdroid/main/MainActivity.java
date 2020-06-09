@@ -29,6 +29,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.ctemplar.app.fdroid.utils.ThemeUtils;
 import com.google.android.material.navigation.NavigationView;
 
 import org.json.JSONException;
@@ -95,6 +96,7 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ThemeUtils.setStatusBarTheme(this);
 
         contentContainer = findViewById(R.id.content_container);
         navigationView = findViewById(R.id.nav_view);
@@ -210,7 +212,7 @@ public class MainActivity extends AppCompatActivity
         super.setTitle(title);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
-            getSupportActionBar().setTitle(title);
+            actionBar.setTitle(title);
         }
     }
 
@@ -219,7 +221,6 @@ public class MainActivity extends AppCompatActivity
         if (!(getCurrentFragment() instanceof MainFragment)) {
             return false;
         }
-
         int id = item.getItemId();
         if (id == android.R.id.home) {
             if (isTablet) {
@@ -486,7 +487,8 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         };
-        drawerToggle.setToolbarNavigationClickListener(v -> Toast.makeText(MainActivity.this, "Clicked", Toast.LENGTH_SHORT).show());
+        drawerToggle.setToolbarNavigationClickListener(v ->
+                Toast.makeText(MainActivity.this, "Clicked", Toast.LENGTH_SHORT).show());
         drawer.addDrawerListener(drawerToggle);
         drawerToggle.syncState();
     }

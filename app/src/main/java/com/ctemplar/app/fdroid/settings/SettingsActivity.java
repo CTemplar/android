@@ -112,7 +112,7 @@ public class SettingsActivity extends BaseActivity {
             recoveryEmailPreferenceScreen = findPreference(getString(R.string.recovery_email_holder));
 
             String recoveryEmail = sharedPreferences.getString(getString(R.string.recovery_email), null);
-            if (recoveryEmail != null && !recoveryEmail.isEmpty()) {
+            if (EditTextUtils.isNotEmpty(recoveryEmail)) {
                 recoveryEmailPreferenceScreen.setSummary(recoveryEmail);
             }
             Preference passwordKey = findPreference(getString(R.string.password_key));
@@ -209,12 +209,11 @@ public class SettingsActivity extends BaseActivity {
             CheckBoxPreference checkBoxRecoveryEmailEnabled = findPreference(getString(R.string.recovery_email_enabled));
             String recoveryEmail = sharedPreferences.getString(getString(R.string.recovery_email), null);
 
-            if (preferenceRecoveryEmail == null || checkBoxRecoveryEmailEnabled == null
-                    || TextUtils.isEmpty(recoveryEmail)) {
+            if (preferenceRecoveryEmail == null || checkBoxRecoveryEmailEnabled == null) {
                 return;
             }
 
-            if (recoveryEmail != null && !recoveryEmail.isEmpty()) {
+            if (EditTextUtils.isNotEmpty(recoveryEmail)) {
                 preferenceRecoveryEmail.setTitle(recoveryEmail);
             }
             checkBoxRecoveryEmailEnabled.setOnPreferenceChangeListener((preference, newValue) -> {
@@ -229,8 +228,8 @@ public class SettingsActivity extends BaseActivity {
             });
             preferenceRecoveryEmail.setOnPreferenceChangeListener((preference, newValue) -> {
                 String value = (String) newValue;
-                if (EditTextUtils.isEmailValid(value) || value.isEmpty()) {
-                    if (value.isEmpty()) {
+                if (EditTextUtils.isEmailValid(value) || TextUtils.isEmpty(value)) {
+                    if (TextUtils.isEmpty(value)) {
                         preferenceRecoveryEmail.setTitle(getString(R.string.settings_type_recovery_email));
                         checkBoxRecoveryEmailEnabled.setChecked(false);
                     } else {
@@ -358,11 +357,10 @@ public class SettingsActivity extends BaseActivity {
             String phishingProtection = sharedPreferences.getString(getString(R.string.anti_phishing_key), null);
 
             if (phishingProtectionEditText == null || phishingProtectionCheckBox == null
-                    || descriptionPreference == null || TextUtils.isEmpty(phishingProtection)) {
+                    || descriptionPreference == null) {
                 return;
             }
-
-            if (phishingProtection != null && !phishingProtection.isEmpty()) {
+            if (EditTextUtils.isNotEmpty(phishingProtection)) {
                 phishingProtectionEditText.setTitle(phishingProtection);
             }
             phishingProtectionCheckBox.setOnPreferenceChangeListener((preference, newValue) -> {
@@ -383,13 +381,14 @@ public class SettingsActivity extends BaseActivity {
 
             phishingProtectionEditText.setOnPreferenceChangeListener((preference, newValue) -> {
                 String value = (String) newValue;
-                if (value.isEmpty()) {
+                if (TextUtils.isEmpty(value)) {
                     phishingProtectionEditText.setTitle(getString(R.string.settings_type_anti_phishing_phrase));
                     phishingProtectionCheckBox.setChecked(false);
                 } else {
                     phishingProtectionEditText.setTitle(value);
                 }
-                settingsModel.updateAntiPhishingPhrase(settingId, !value.isEmpty(), value);
+                settingsModel.updateAntiPhishingPhrase(settingId, EditTextUtils.isNotEmpty(value),
+                        value);
                 Toast.makeText(getActivity(), getString(R.string.toast_saved), Toast.LENGTH_SHORT).show();
                 return true;
             });
