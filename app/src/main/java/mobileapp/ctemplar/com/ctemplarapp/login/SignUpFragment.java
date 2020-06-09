@@ -36,10 +36,6 @@ public class SignUpFragment extends BaseFragment{
         return R.layout.fragment_sign_up;
     }
 
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
     @Override
     public void onViewCreated(@NotNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -54,17 +50,7 @@ public class SignUpFragment extends BaseFragment{
         viewPager.setOnTouchListener(null);
 
         stepModel = new ViewModelProvider(getActivity()).get(StepRegistrationViewModel.class);
-        stepModel.getAction().observe(getActivity(), this::handleRegistrationActions);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
+        stepModel.getAction().observe(getViewLifecycleOwner(), this::handleRegistrationActions);
     }
 
     @OnClick(R.id.fragment_sign_up_back)

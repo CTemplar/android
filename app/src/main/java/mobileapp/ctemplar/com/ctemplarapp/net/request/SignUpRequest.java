@@ -53,6 +53,9 @@ public class SignUpRequest {
     @SerializedName("invite_code")
     private String inviteCode;
 
+    @SerializedName("language")
+    private String language = "English";
+
     public void SignUpRequest(String password, String username) {
         this.password = password;
         this.username = username;
@@ -124,5 +127,13 @@ public class SignUpRequest {
 
     public void setInviteCode(String inviteCode) {
         this.inviteCode = inviteCode;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
     }
 }
