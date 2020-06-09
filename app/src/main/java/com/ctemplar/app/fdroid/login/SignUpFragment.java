@@ -56,7 +56,7 @@ public class SignUpFragment extends BaseFragment{
         viewPager.setOnTouchListener(null);
 
         stepModel = new ViewModelProvider(getActivity()).get(StepRegistrationViewModel.class);
-        stepModel.getAction().observe(getActivity(), this::handleRegistrationActions);
+        stepModel.getAction().observe(getViewLifecycleOwner(), this::handleRegistrationActions);
     }
 
     @OnClick(R.id.fragment_sign_up_back)

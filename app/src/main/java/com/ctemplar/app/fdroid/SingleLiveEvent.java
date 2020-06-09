@@ -12,9 +12,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import timber.log.Timber;
 
 public class SingleLiveEvent<T> extends MutableLiveData<T> {
-
-    private static final String TAG = "SingleLiveEvent";
-
     private final AtomicBoolean mPending = new AtomicBoolean(false);
 
     @MainThread
@@ -22,7 +19,7 @@ public class SingleLiveEvent<T> extends MutableLiveData<T> {
     public void observe(@NonNull LifecycleOwner owner, @NonNull Observer<? super T> observer) {
 
         if (hasActiveObservers()) {
-            Timber.tag(TAG).w("Multiple observers registered but only one will be notified of changes.");
+            Timber.w("Multiple observers registered but only one will be notified of changes.");
         }
 
         // Observe the internal MutableLiveData
