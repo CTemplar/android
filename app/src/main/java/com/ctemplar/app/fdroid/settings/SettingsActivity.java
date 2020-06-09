@@ -16,6 +16,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.CheckBoxPreference;
 import androidx.preference.EditTextPreference;
@@ -38,7 +39,6 @@ import com.ctemplar.app.fdroid.net.ResponseStatus;
 import com.ctemplar.app.fdroid.net.response.Myself.MyselfResponse;
 import com.ctemplar.app.fdroid.net.response.Myself.MyselfResult;
 import com.ctemplar.app.fdroid.net.response.Myself.SettingsEntity;
-import com.ctemplar.app.fdroid.notification.NotificationService;
 import com.ctemplar.app.fdroid.repository.UserRepository;
 import com.ctemplar.app.fdroid.repository.UserStore;
 import com.ctemplar.app.fdroid.utils.AppUtils;
@@ -87,16 +87,9 @@ public class SettingsActivity extends BaseActivity {
             getSupportFragmentManager()
                     .beginTransaction()
                     .add(R.id.container, preferenceFragment)
+                    .addToBackStack(null)
                     .commit();
         }
-    }
-
-    protected void showFragment(Fragment fragment) {
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.container, fragment)
-                .addToBackStack(null)
-                .commit();
     }
 
     private static void setSettingId(long id) {
@@ -192,8 +185,8 @@ public class SettingsActivity extends BaseActivity {
             SwitchPreference switchPreferenceNotificationsEnabled = findPreference(getString(R.string.push_notifications_enabled));
             if (switchPreferenceNotificationsEnabled != null) {
                 switchPreferenceNotificationsEnabled.setOnPreferenceChangeListener((preference, newValue) -> {
-                    userStore.setNotificationsEnabled((boolean) newValue);
-                    NotificationService.updateState(getContext());
+                    boolean isEnabled = (boolean) newValue;
+                    userStore.setNotificationsEnabled(isEnabled);
                     return true;
                 });
             }
@@ -409,14 +402,14 @@ public class SettingsActivity extends BaseActivity {
                 .subscribe(new Observer<MyselfResponse>() {
                     @Override
                     public void onSubscribe(Disposable d) {
-                        Timber.d("Request myself info");
+                        Timber.i("Request myself info");
                     }
 
                     @Override
                     public void onNext(MyselfResponse myselfResponse) {
                         if (myselfResponse != null && myselfResponse.getResult() != null) {
                             MyselfResult myselfResult = myselfResponse.getResult()[0];
-                            saveReceivedData(myselfResult);
+                            saveData(myselfResult);
                         }
                     }
 
@@ -432,7 +425,7 @@ public class SettingsActivity extends BaseActivity {
                 });
     }
 
-    private void saveReceivedData(MyselfResult myselfResult) {
+    private void saveData(MyselfResult myselfResult) {
         SettingsEntity settingsEntity = myselfResult.getSettings();
         settingId = settingsEntity.getId();
         isPrimeUser = myselfResult.isPrime();
@@ -475,7 +468,7 @@ public class SettingsActivity extends BaseActivity {
             int count = preferenceScreen.getPreferenceCount();
             for (int i = 0; i < count; i++) {
                 Preference preference = preferenceScreen.getPreference(i);
-                setOnClickPreference(preference);
+//                setOnClickPreference(preference);
                 if (preference instanceof PreferenceCategory) {
                     PreferenceCategory preferenceCategory = (PreferenceCategory) preferenceScreen.getPreference(i);
                     for (int j = 0; j < preferenceCategory.getPreferenceCount(); j++) {
@@ -483,20 +476,6 @@ public class SettingsActivity extends BaseActivity {
                         //setOnClickPreference(inner);
                     }
                 }
-            }
-        }
-
-        private void setOnClickPreference(Preference preference) {
-            final String fragmentName = preference.getFragment();
-            if (fragmentName != null && !fragmentName.isEmpty()) {
-                preference.setOnPreferenceClickListener(preference1 -> {
-                    Fragment fragment = Fragment.instantiate(getActivity(), fragmentName);
-                    SettingsActivity settingsActivity = (SettingsActivity) getActivity();
-                    if (settingsActivity != null) {
-                        settingsActivity.showFragment(fragment);
-                    }
-                    return false;
-                });
             }
         }
     }
@@ -508,5 +487,15 @@ public class SettingsActivity extends BaseActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        if (fragmentManager.getBackStackEntryCount() > 1) {
+            fragmentManager.popBackStack();
+            return;
+        }
+        super.onBackPressed();
     }
 }

@@ -1,6 +1,5 @@
 package com.ctemplar.app.fdroid.login;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -65,11 +64,6 @@ public class SignInFragment extends BaseFragment {
     @Override
     protected int getLayoutId() {
         return R.layout.fragment_sign_in;
-    }
-
-    @Override
-    public void onAttach(@NotNull Context context) {
-        super.onAttach(context);
     }
 
     public void onCreate(Bundle savedInstanceState) {

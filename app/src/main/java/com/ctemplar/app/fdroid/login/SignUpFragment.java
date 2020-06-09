@@ -1,6 +1,5 @@
 package com.ctemplar.app.fdroid.login;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
 
@@ -15,7 +14,6 @@ import com.ctemplar.app.fdroid.login.step.StepPasswordFragment;
 import com.ctemplar.app.fdroid.login.step.StepRecoveryFragment;
 import com.ctemplar.app.fdroid.login.step.StepRegistrationActions;
 import com.ctemplar.app.fdroid.login.step.StepRegistrationViewModel;
-import com.ctemplar.app.fdroid.login.step.StepSecurityFragment;
 import com.ctemplar.app.fdroid.login.step.StepUsernameFragment;
 import com.ctemplar.app.fdroid.login.step.ViewPagerNoScroll;
 import com.google.android.material.tabs.TabLayout;
@@ -44,15 +42,6 @@ public class SignUpFragment extends BaseFragment{
     }
 
     @Override
-    public void onAttach(@NotNull Context context) {
-        super.onAttach(context);
-    }
-
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
     public void onViewCreated(@NotNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
@@ -67,17 +56,7 @@ public class SignUpFragment extends BaseFragment{
         viewPager.setOnTouchListener(null);
 
         stepModel = new ViewModelProvider(getActivity()).get(StepRegistrationViewModel.class);
-        stepModel.getAction().observe(getViewLifecycleOwner(), this::handleRegistrationActions);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
+        stepModel.getAction().observe(getActivity(), this::handleRegistrationActions);
     }
 
     @OnClick(R.id.fragment_sign_up_back)
