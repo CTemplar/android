@@ -12,19 +12,14 @@
         android:layout_height="wrap_content"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        app:layout_constraintTop_toTopOf="parent">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            android:theme="@style/ActionBarLight"
             android:fontFamily="@font/lato_bold"
-            app:title="@string/addresses"
-            app:titleTextColor="@color/colorDarkBlue2"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
+            app:title="@string/addresses" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -38,7 +33,7 @@
         android:gravity="center_vertical"
         android:text="@string/mailbox_add_address"
         android:textSize="16sp"
-        android:textColor="@color/colorBlue"
+        android:textColor="@color/colorAccentSettings"
         android:fontFamily="@font/lato_regular"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@id/app_bar_layout" />
@@ -53,7 +48,7 @@
         android:gravity="center_vertical"
         android:text="@string/select_default_address"
         android:textSize="16sp"
-        android:textColor="@color/colorBlack50"
+        android:textColor="@color/disabledTextColor"
         android:fontFamily="@font/lato_regular"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@id/activity_mailboxes_add" />
@@ -63,7 +58,7 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_marginTop="16dp"
-        android:background="@color/colorGrey2"
+        android:background="@color/colorDivider"
         app:layout_constraintTop_toBottomOf="@id/activity_mailboxes_select_default" />
 
     <androidx.recyclerview.widget.RecyclerView
