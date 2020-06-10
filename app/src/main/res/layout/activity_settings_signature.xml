@@ -15,19 +15,14 @@
             android:layout_height="wrap_content"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:theme="@style/AppTheme.AppBarOverlay">
+            app:layout_constraintTop_toTopOf="parent">
 
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                android:background="?attr/colorPrimary"
-                android:theme="@style/ActionBarLight"
                 android:fontFamily="@font/lato_bold"
-                app:title="@string/settings_signature"
-                app:titleTextColor="@color/colorDarkBlue2"
-                app:popupTheme="@style/AppTheme.PopupOverlay" />
+                app:title="@string/settings_signature" />
 
         </com.google.android.material.appbar.AppBarLayout>
 
@@ -39,7 +34,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
             android:fontFamily="@font/lato_regular"
-            android:textColor="@color/colorDarkBlue5"
+            android:textColor="?android:textColorSecondary"
             android:textSize="16sp"
             android:text="@string/settings_enable_signature"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -64,7 +59,7 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/lato_regular"
                 android:text="@string/email_address"
-                android:textColor="@color/colorDarkBlue5"
+                android:textColor="?android:textColorSecondary"
                 android:textStyle="bold"
                 android:textSize="16sp"
                 app:layout_constraintLeft_toLeftOf="parent"
@@ -85,7 +80,7 @@
                 android:layout_marginTop="10dp"
                 android:fontFamily="@font/lato_regular"
                 android:text="@string/txt_display_name"
-                android:textColor="@color/colorDarkBlue5"
+                android:textColor="?android:textColorSecondary"
                 android:textStyle="bold"
                 android:textSize="16sp"
                 app:layout_constraintLeft_toLeftOf="parent"
@@ -106,7 +101,7 @@
                     android:fontFamily="@font/lato_regular"
                     android:textSize="16sp"
                     android:padding="12dp"
-                    android:textColor="@color/colorDarkBlue"
+                    android:textColor="?android:textColorPrimary"
                     android:minHeight="45dp"
                     android:inputType="text"
                     android:hint="@string/txt_type_your_name"
@@ -121,7 +116,7 @@
                 android:layout_marginTop="14dp"
                 android:fontFamily="@font/lato_regular"
                 android:text="@string/settings_signature"
-                android:textColor="@color/colorDarkBlue5"
+                android:textColor="?android:textColorSecondary"
                 android:textStyle="bold"
                 android:textSize="16sp"
                 app:layout_constraintLeft_toLeftOf="parent"
@@ -146,7 +141,7 @@
                     android:paddingLeft="8dp"
                     android:paddingEnd="8dp"
                     android:paddingRight="8dp"
-                    android:textColor="@color/colorDarkBlue5"
+                    android:textColor="?android:textColorSecondary"
                     android:textSize="18sp"
                     android:textStyle="bold"
                     android:text="@string/txt_panel_bold"
@@ -160,7 +155,7 @@
                     android:layout_height="wrap_content"
                     android:paddingStart="8dp"
                     android:paddingEnd="8dp"
-                    android:textColor="@color/colorDarkBlue5"
+                    android:textColor="?android:textColorSecondary"
                     android:textSize="18sp"
                     android:textStyle="italic"
                     android:text="@string/txt_panel_italic"
@@ -174,7 +169,7 @@
                     android:layout_height="wrap_content"
                     android:paddingStart="8dp"
                     android:paddingEnd="8dp"
-                    android:textColor="@color/colorDarkBlue5"
+                    android:textColor="?android:textColorSecondary"
                     android:textSize="18sp"
                     android:text="@string/txt_panel_underline"
                     android:focusable="true"
@@ -187,7 +182,7 @@
                     android:layout_height="wrap_content"
                     android:paddingStart="8dp"
                     android:paddingEnd="8dp"
-                    android:textColor="@color/colorDarkBlue5"
+                    android:textColor="?android:textColorSecondary"
                     android:textSize="18sp"
                     android:text="@string/txt_panel_monospace"
                     android:focusable="true"
@@ -200,7 +195,7 @@
                     android:layout_height="wrap_content"
                     android:paddingStart="8dp"
                     android:paddingEnd="8dp"
-                    android:textColor="@color/colorDarkBlue5"
+                    android:textColor="?android:textColorSecondary"
                     android:textSize="18sp"
                     android:text="@string/txt_panel_normal"
                     android:focusable="true"
@@ -213,7 +208,7 @@
                 android:id="@+id/fragment_send_message_compose_email_input_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColorHint="@color/colorDarkBlue2"
+                android:textColor="?android:textColorPrimary"
                 app:hintEnabled="false">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -227,7 +222,7 @@
                     android:textSize="16sp"
                     android:inputType="textMultiLine"
                     android:letterSpacing="0.05"
-                    android:textColor="@color/colorDarkBlue2"
+                    android:textColor="?android:textColorPrimary"
                     android:hint="@string/txt_type_signature"
                     android:background="@drawable/text_input_field" />
 
@@ -245,7 +240,7 @@
                 android:textSize="18sp"
                 android:layout_alignParentBottom="true"
                 android:textColor="@android:color/white"
-                android:background="@color/colorDarkBlue2"
+                android:background="@drawable/selector_button_blue"
                 app:layout_constraintTop_toBottomOf="@id/activity_settings_signature_linear_layout"
                 app:layout_constraintBottom_toBottomOf="parent" />
 

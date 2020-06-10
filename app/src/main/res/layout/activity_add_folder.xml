@@ -8,20 +8,14 @@
         android:id="@+id/app_bar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay"
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/activity_add_folder_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:titleTextColor="@color/colorDarkBlue2"
-            android:background="?attr/colorPrimary"
-            android:theme="@style/ActionBarLight"
             app:title="@string/nav_drawer_add_folder"
-            android:fontFamily="@font/lato_bold"
-            app:popupTheme="@style/AppTheme.PopupOverlay">
-        </androidx.appcompat.widget.Toolbar>
+            android:fontFamily="@font/lato_bold" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -29,13 +23,13 @@
         android:id="@+id/activity_add_folder_input_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/app_bar_layout"
         android:layout_marginTop="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@id/app_bar_layout">
 
         <TextView
             android:id="@+id/activity_add_folder_title"
@@ -43,7 +37,7 @@
             android:layout_height="wrap_content"
             android:text="@string/title_folder_name"
             android:fontFamily="@font/lato_regular"
-            android:textColor="@color/colorDarkBlue"
+            android:textColor="?android:textColorPrimary"
             android:textSize="14sp" />
 
         <com.google.android.material.textfield.TextInputLayout
@@ -61,7 +55,7 @@
                 android:textSize="16sp"
                 android:padding="16dp"
                 android:inputType="text"
-                android:textColor="@color/colorDarkBlue"
+                android:textColor="?android:textColorPrimary"
                 android:minHeight="45dp"
                 android:background="@drawable/text_input_field" />
 
@@ -74,7 +68,7 @@
             android:layout_marginTop="25dp"
             android:text="@string/title_choose_color"
             android:fontFamily="@font/lato_regular"
-            android:textColor="@color/colorDarkBlue"
+            android:textColor="?android:textColorPrimary"
             android:textSize="16sp" />
 
     </LinearLayout>
@@ -587,7 +581,7 @@
             android:textColor="@color/colorDarkBlue2"
             android:background="@drawable/dialog_cancel_button_background"
             android:textAllCaps="false"
-            android:text="@string/action_cancel"/>
+            android:text="@string/action_cancel" />
 
         <Button
             android:id="@+id/activity_add_folder_action_add"
@@ -599,9 +593,9 @@
             android:textSize="18sp"
             android:fontFamily="@font/lato_regular"
             android:textColor="@android:color/white"
-            android:background="@color/colorDarkBlue2"
+            android:background="@drawable/selector_button_blue"
             android:textAllCaps="false"
-            android:text="@string/btn_add"/>
+            android:text="@string/btn_add" />
 
     </LinearLayout>
 

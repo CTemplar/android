@@ -1,18 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <Button android:id="@+id/buttonAddBlacklistContact"
-        android:layout_width="wrap_content"
+    <Button
+        android:id="@+id/buttonAddBlacklistContact"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="left|center"
         android:text="@string/txt_add_blacklist_contact"
         android:drawableLeft="@drawable/add_outline"
         android:drawableStart="@drawable/add_outline"
         android:textSize="16sp"
-        android:textColor="#e74c3c"
+        android:textColor="@color/colorAccent"
         android:drawablePadding="10dp"
-        style="@style/Widget.MaterialComponents.Button.TextButton"/>
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

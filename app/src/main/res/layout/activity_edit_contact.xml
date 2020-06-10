@@ -1,40 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    tools:context=".contacts.EditContactActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/app_bar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        app:layout_constraintTop_toTopOf="parent">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/edit_contact_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:titleTextColor="@color/colorDarkBlue2"
-            android:background="?attr/colorPrimary"
-            android:theme="@style/ActionBarLight"
             app:title="@string/txt_edit_contact"
-            android:fontFamily="@font/lato_bold"
-            app:popupTheme="@style/AppTheme.PopupOverlay">
-
-        </androidx.appcompat.widget.Toolbar>
+            android:fontFamily="@font/lato_bold" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="25dp"
         app:layout_constraintTop_toBottomOf="@id/app_bar_layout"
         app:layout_constraintBottom_toBottomOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:paddingTop="25dp"
+            android:paddingBottom="25dp">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/activity_edit_contact_name_container"
@@ -44,7 +42,8 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginRight="16dp"
                 android:layout_marginEnd="16dp"
-                android:layout_marginBottom="22dp">
+                android:layout_marginBottom="22dp"
+                app:layout_constraintTop_toTopOf="parent">
 
                 <TextView
                     android:id="@+id/activity_edit_contact_name_title"
@@ -52,18 +51,19 @@
                     android:layout_height="wrap_content"
                     android:text="@string/title_contact_name"
                     android:fontFamily="@font/lato_regular"
-                    android:textColor="@color/colorDarkBlue"
-                    android:textSize="14sp" />
+                    android:textColor="?android:textColorPrimary"
+                    android:textSize="14sp"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/activity_edit_contact_name_input"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:fontFamily="@font/lato_regular"
                     android:textSize="16sp"
                     android:padding="16dp"
-                    android:textColor="@color/colorDarkBlue"
+                    android:fontFamily="@font/lato_regular"
+                    android:textColor="?android:textColorPrimary"
                     android:minHeight="45dp"
                     android:hint="@string/title_contact_name"
                     app:layout_constraintTop_toBottomOf="@id/activity_edit_contact_name_title"
@@ -87,8 +87,9 @@
                     android:layout_height="wrap_content"
                     android:text="@string/title_email_address"
                     android:fontFamily="@font/lato_regular"
-                    android:textColor="@color/colorDarkBlue"
-                    android:textSize="14sp" />
+                    android:textColor="?android:textColorPrimary"
+                    android:textSize="14sp"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/activity_edit_contact_email_input"
@@ -98,7 +99,7 @@
                     android:fontFamily="@font/lato_regular"
                     android:textSize="16sp"
                     android:inputType="textEmailAddress"
-                    android:textColor="@color/colorDarkBlue"
+                    android:textColor="?android:textColorPrimary"
                     android:paddingTop="8dp"
                     android:paddingBottom="8dp"
                     android:minHeight="45dp"
@@ -138,8 +139,9 @@
                     android:layout_height="wrap_content"
                     android:text="@string/title_phone_number"
                     android:fontFamily="@font/lato_regular"
-                    android:textColor="@color/colorDarkBlue"
-                    android:textSize="14sp" />
+                    android:textColor="?android:textColorPrimary"
+                    android:textSize="14sp"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/activity_edit_contact_phone_input"
@@ -187,8 +189,9 @@
                     android:layout_height="wrap_content"
                     android:text="@string/title_phone_number_second"
                     android:fontFamily="@font/lato_regular"
-                    android:textColor="@color/colorDarkBlue"
-                    android:textSize="14sp" />
+                    android:textColor="?android:textColorPrimary"
+                    android:textSize="14sp"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/activity_edit_contact_phone_input_second"
@@ -236,8 +239,9 @@
                     android:layout_height="wrap_content"
                     android:text="@string/title_address"
                     android:fontFamily="@font/lato_regular"
-                    android:textColor="@color/colorDarkBlue"
-                    android:textSize="14sp" />
+                    android:textColor="?android:textColorPrimary"
+                    android:textSize="14sp"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/activity_edit_contact_address_input"
@@ -287,8 +291,9 @@
                     android:layout_height="wrap_content"
                     android:text="@string/title_note"
                     android:fontFamily="@font/lato_regular"
-                    android:textColor="@color/colorDarkBlue"
-                    android:textSize="14sp" />
+                    android:textColor="?android:textColorPrimary"
+                    android:textSize="14sp"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/activity_edit_contact_note_input"
@@ -298,14 +303,16 @@
                     android:fontFamily="@font/lato_regular"
                     android:textSize="16sp"
                     android:padding="16dp"
-                    android:textColor="@color/colorDarkBlue"
+                    android:textColor="?android:textColorPrimary"
                     android:minHeight="45dp"
                     android:hint="@string/title_note"
                     app:layout_constraintTop_toBottomOf="@id/activity_edit_contact_note_title"
                     android:background="@drawable/text_input_field" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
+
         </androidx.constraintlayout.widget.ConstraintLayout>
+
     </ScrollView>
 
     <ProgressBar

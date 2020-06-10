@@ -9,9 +9,9 @@
         android:id="@+id/item_contact_holder_ico"
         android:layout_width="40dp"
         android:layout_height="40dp"
+        android:src="@drawable/icon_user"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:src="@drawable/icon_user" />
+        app:layout_constraintLeft_toLeftOf="parent" />
 
     <View
         android:id="@+id/item_contact_holder_divider"
@@ -19,10 +19,9 @@
         android:layout_height="1dp"
         android:layout_marginStart="10dp"
         android:layout_marginLeft="10dp"
-        android:background="@android:color/transparent"
         app:layout_constraintLeft_toRightOf="@+id/item_contact_holder_ico"
         app:layout_constraintTop_toTopOf="@id/item_contact_holder_ico"
-        app:layout_constraintBottom_toBottomOf="@id/item_contact_holder_ico"/>
+        app:layout_constraintBottom_toBottomOf="@id/item_contact_holder_ico" />
 
     <TextView
         android:id="@+id/item_contact_holder_name"
@@ -34,20 +33,20 @@
         android:lines="1"
         android:maxWidth="140dp"
         android:text="Andrew Smith"
-        android:textColor="@color/colorDarkBlue3"
+        android:textColor="?android:textColorPrimary"
         android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@id/item_contact_holder_divider"
-        app:layout_constraintLeft_toRightOf="@id/item_contact_holder_divider"/>
+        app:layout_constraintLeft_toRightOf="@id/item_contact_holder_divider" />
 
     <TextView
         android:id="@+id/item_contact_holder_mail"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/colorGreyLight5"
         android:text="andrewsmith@ctemplar.com"
+        android:textColor="@color/disabledTextColor"
         android:textSize="16sp"
         android:fontFamily="@font/lato_regular"
         app:layout_constraintLeft_toRightOf="@id/item_contact_holder_divider"
-        app:layout_constraintTop_toTopOf="@id/item_contact_holder_divider"/>
+        app:layout_constraintTop_toTopOf="@id/item_contact_holder_divider" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

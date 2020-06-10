@@ -136,8 +136,8 @@ public class StepRegistrationViewModel extends ViewModel {
 
             @Override
             public void onError(Throwable e) {
+                Timber.e(e);
                 responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
-                Timber.w(e);
             }
 
             @Override

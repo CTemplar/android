@@ -5,6 +5,7 @@ import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.DisplayMetrics;
@@ -41,12 +42,17 @@ import mobileapp.ctemplar.com.ctemplarapp.ActivityInterface;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.folders.ManageFoldersActivity;
 import mobileapp.ctemplar.com.ctemplarapp.login.LoginActivity;
+import mobileapp.ctemplar.com.ctemplarapp.message.SendMessageActivity;
+import mobileapp.ctemplar.com.ctemplarapp.message.SendMessageFragment;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
+import mobileapp.ctemplar.com.ctemplarapp.net.entity.AttachmentsEntity;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Folders.FoldersResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Folders.FoldersResult;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import mobileapp.ctemplar.com.ctemplarapp.settings.SettingsActivity;
+import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EncryptUtils;
+import mobileapp.ctemplar.com.ctemplarapp.utils.ThemeUtils;
 import mobileapp.ctemplar.com.ctemplarapp.view.ResizeAnimation;
 import timber.log.Timber;
 
@@ -71,6 +77,7 @@ public class MainActivity extends AppCompatActivity
 
     private FrameLayout contentContainer;
     private NavigationView navigationView;
+    private DrawerLayout drawer;
 
     private MainActivityViewModel mainModel;
     private List<FoldersResult> customFoldersList;
@@ -90,7 +97,9 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ThemeUtils.setStatusBarTheme(this);
 
+        drawer = findViewById(R.id.drawer_layout);
         contentContainer = findViewById(R.id.content_container);
         navigationView = findViewById(R.id.nav_view);
         Menu navigationMenu = navigationView.getMenu();
@@ -167,19 +176,243 @@ public class MainActivity extends AppCompatActivity
         loadUserInfo();
 
         // default folder
-        setTitle(R.string.nav_drawer_inbox);
-        mainModel.setCurrentFolder(INBOX);
+        setFolder(INBOX);
+        handleSendToIntent(getIntent());
     }
 
-    public void showFragment(Fragment fragment) {
-        getSupportFragmentManager().beginTransaction()
-                .replace(contentContainer.getId(), fragment)
-                .addToBackStack(null)
-                .commit();
-        try {
-            getSupportFragmentManager().executePendingTransactions();
-        } catch (Throwable e) {
-            Timber.w("executePendingTransaction error: %s", e.getMessage());
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            if (!isHandledPressBack(getCurrentFragment())) {
+                try {
+                    super.onBackPressed();
+                } catch (Throwable e) {
+                    Timber.wtf(e, "super.onBackPressed: %s", e.getMessage());
+                }
+                if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
+                    finish();
+                }
+            }
+        }
+    }
+
+    @Override
+    public void setTitle(int titleId) {
+        super.setTitle(titleId);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setTitle(titleId);
+        }
+    }
+
+    @Override
+    public void setTitle(CharSequence title) {
+        super.setTitle(title);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setTitle(title);
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (!(getCurrentFragment() instanceof MainFragment)) {
+            return false;
+        }
+        int id = item.getItemId();
+        if (id == android.R.id.home) {
+            if (isTablet) {
+                closeOpenNavigationView();
+            } else {
+                DrawerLayout drawer = findViewById(R.id.drawer_layout);
+                if (drawer.isDrawerOpen(GravityCompat.START)) {
+                    drawer.closeDrawer(GravityCompat.START);
+                } else {
+                    drawer.openDrawer(GravityCompat.START);
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadFolders();
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+//        if (isTablet && isHandledPressBack(getCurrentFragment())) {
+//            return false;
+//        }
+        int id = item.getItemId();
+        if (id == R.id.nav_inbox) {
+            setFolder(INBOX);
+        } else if (id == R.id.nav_draft) {
+            setFolder(DRAFT);
+        } else if (id == R.id.nav_sent) {
+            setFolder(SENT);
+        } else if (id == R.id.nav_outbox) {
+            setFolder(OUTBOX);
+        } else if (id == R.id.nav_all_mails) {
+            setFolder(ALL_MAILS);
+        } else if (id == R.id.nav_unread) {
+            setFolder(UNREAD);
+        } else if (id == R.id.nav_starred) {
+            setFolder(STARRED);
+        } else if (id == R.id.nav_archive) {
+            setFolder(ARCHIVE);
+        } else if (id == R.id.nav_spam) {
+            setFolder(SPAM);
+        } else if (id == R.id.nav_trash) {
+            setFolder(TRASH);
+        } else if (id == R.id.nav_contact) {
+            setFolder(CONTACT);
+        } else if (id == R.id.nav_settings) {
+            Intent settingsScreen = new Intent(this, SettingsActivity.class);
+            startActivity(settingsScreen);
+            return true;
+        } else if (id == R.id.nav_logout) {
+            new AlertDialog.Builder(this)
+                    .setTitle(getResources().getString(R.string.dialog_log_out))
+                    .setMessage(getResources().getString(R.string.dialog_log_out_confirm))
+                    .setPositiveButton(getResources().getString(R.string.btn_log_out), (dialog, which) -> mainModel.logout()
+                    )
+                    .setNeutralButton(R.string.btn_cancel, null)
+                    .show();
+            return true;
+        } else if (id == R.id.nav_manage_folders) {
+            Intent manageFolders = new Intent(this, ManageFoldersActivity.class);
+            startActivity(manageFolders);
+            return true;
+        } else if (id == R.id.nav_manage_folders_more) {
+            customFoldersShowCount += CUSTOM_FOLDER_STEP;
+            loadFolders();
+            return true;
+        } else {
+            for (FoldersResult folderItem : customFoldersList) {
+                if (id == folderItem.getId()) {
+                    setFolder(folderItem.getName(), folderItem.getName());
+                }
+            }
+        }
+        return true;
+    }
+
+    private int getFolderTitleId(String folder) {
+        switch (folder) {
+            case INBOX:
+                return R.string.nav_drawer_inbox;
+            case DRAFT:
+                return R.string.nav_drawer_draft;
+            case SENT:
+                return R.string.nav_drawer_sent;
+            case OUTBOX:
+                return R.string.nav_drawer_outbox;
+            case ALL_MAILS:
+                return R.string.nav_drawer_all_mails;
+            case UNREAD:
+                return R.string.nav_drawer_unread;
+            case STARRED:
+                return R.string.nav_drawer_starred;
+            case ARCHIVE:
+                return R.string.nav_drawer_archive;
+            case SPAM:
+                return R.string.nav_drawer_spam;
+            case CONTACT:
+                return R.string.nav_drawer_contact;
+            default:
+                return R.string.nav_drawer_trash;
+        }
+    }
+
+    private String getFolderTitle(String folder) {
+        return getString(getFolderTitleId(folder));
+    }
+
+    private void setFolder(String folder) {
+        setFolder(folder, getFolderTitle(folder));
+    }
+
+    private void setFolder(String folder, String title) {
+        setTitle(title);
+        final Fragment currentFragment = getCurrentFragment();
+        if (isTablet) {
+            if (currentFragment instanceof MainFragment) {
+                ((MainFragment) currentFragment).clearListAdapter();
+            }
+            mainModel.setCurrentFolder(folder);
+        } else {
+            toggleFolder = folder;
+            if (currentFragment instanceof MainFragment) {
+                ((MainFragment) currentFragment).clearListAdapter();
+            }
+            if (drawer.isDrawerOpen(GravityCompat.START)) {
+                handler.post(() -> drawer.closeDrawer(GravityCompat.START));
+            } else {
+                mainModel.setCurrentFolder(folder);
+            }
+        }
+        int id = getNavigationViewMenuItemId(folder);
+        if (id != -1) {
+            navigationView.setCheckedItem(id);
+        }
+    }
+
+    private int getNavigationViewMenuItemId(String folder) {
+        if (INBOX.equals(folder)) {
+            return R.id.nav_inbox;
+        }
+        return -1;
+    }
+
+    @Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        setupTabletDrawer();
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        handleSendToIntent(intent);
+    }
+
+    private void handleSendToIntent(Intent intent) {
+        String intentAction = intent.getAction();
+        if (Intent.ACTION_SENDTO.equals(intentAction) || Intent.ACTION_SEND.equals(intentAction)) {
+            String email = "";
+            String subject = "";
+            String compose = "";
+            Intent sendToEmailIntent = new Intent(this, SendMessageActivity.class);
+            sendToEmailIntent.putExtras(intent);
+            String dataString = Uri.decode(intent.getDataString());
+            if (EditTextUtils.isNotEmpty(dataString)) {
+                email = dataString.substring(7);
+                sendToEmailIntent.putExtra(Intent.EXTRA_EMAIL, new String[] { email });
+            }
+            if (EditTextUtils.isNotEmpty(intent.getStringExtra(Intent.EXTRA_SUBJECT))) {
+                subject = intent.getStringExtra(Intent.EXTRA_SUBJECT);
+            }
+            if (EditTextUtils.isNotEmpty(intent.getStringExtra(Intent.EXTRA_TEXT))) {
+                compose = intent.getStringExtra(Intent.EXTRA_TEXT);
+            }
+            Fragment fragmentSendToEmail = SendMessageFragment.newInstance(
+                    subject,
+                    compose,
+                    new String[] { email },
+                    new String[] {},
+                    new String[] {},
+                    null,
+                    new AttachmentsEntity(),
+                    null
+            );
+            showActivityOrFragment(sendToEmailIntent, fragmentSendToEmail);
         }
     }
 
@@ -236,6 +469,18 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    public void showFragment(Fragment fragment) {
+        getSupportFragmentManager().beginTransaction()
+                .replace(contentContainer.getId(), fragment)
+                .addToBackStack(null)
+                .commit();
+        try {
+            getSupportFragmentManager().executePendingTransactions();
+        } catch (Throwable e) {
+            Timber.w("executePendingTransaction error: %s", e.getMessage());
+        }
+    }
+
     private void showFragmentByFolder(String folder) {
         if (!(getCurrentFragment() instanceof MainFragment)) {
             showFragment(mainFragment);
@@ -251,65 +496,27 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    @Override
-    public void onBackPressed() {
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            if (!isHandledPressBack(getCurrentFragment())) {
-                try {
-                    super.onBackPressed();
-                } catch (Throwable e) {
-                    Timber.wtf(e, "super.onBackPressed: %s", e.getMessage());
-                }
-                if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
-                    finish();
-                }
+    public boolean isHandledPressBack(Fragment fragment) {
+        if (fragment instanceof ActivityInterface) {
+            if (((ActivityInterface) fragment).onBackPressed()) {
+                return true;
+            } else {
+                return false;
             }
         }
-    }
-
-    public boolean isHandledPressBack(Fragment fragment) {
-        return fragment instanceof ActivityInterface && !((ActivityInterface) fragment).onBackPressed();
-    }
-
-    @Override
-    public void setTitle(int titleId) {
-        super.setTitle(titleId);
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setTitle(titleId);
-        }
-    }
-
-    @Override
-    public void setTitle(CharSequence title) {
-        super.setTitle(title);
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            getSupportActionBar().setTitle(title);
-        }
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
         if (!(getCurrentFragment() instanceof MainFragment)) {
+            showFragment(mainFragment);
+            return true;
+        }
+        if (mainFragment.isCurrentFragmentIsContact()) {
+            setFolder(INBOX);
+            return true;
+        }
+        if (!mainFragment.isCurrentFragmentIsInbox()) {
             return false;
         }
-
-        int id = item.getItemId();
-        if (id == android.R.id.home) {
-            if (isTablet) {
-                closeOpenNavigationView();
-            } else {
-                DrawerLayout drawer = findViewById(R.id.drawer_layout);
-                if (drawer.isDrawerOpen(GravityCompat.START)) {
-                    drawer.closeDrawer(GravityCompat.START);
-                } else {
-                    drawer.openDrawer(GravityCompat.START);
-                }
-            }
+        if (!INBOX.equals(mainModel.getCurrentFolder().getValue())) {
+            setFolder(INBOX);
             return true;
         }
         return false;
@@ -318,99 +525,6 @@ public class MainActivity extends AppCompatActivity
     private Fragment getCurrentFragment() {
         FragmentManager fragmentManager = getSupportFragmentManager();
         return fragmentManager.findFragmentById(contentContainer.getId());
-    }
-
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        if (isTablet && isHandledPressBack(getCurrentFragment())) {
-            return false;
-        }
-
-        final DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        int id = item.getItemId();
-        boolean closeDrawer = true;
-
-        if (id == R.id.nav_inbox) {
-            setTitle(R.string.nav_drawer_inbox);
-            toggleFolder = INBOX;
-        } else if (id == R.id.nav_draft) {
-            setTitle(R.string.nav_drawer_draft);
-            toggleFolder = DRAFT;
-        } else if (id == R.id.nav_sent) {
-            setTitle(R.string.nav_drawer_sent);
-            toggleFolder = SENT;
-        } else if (id == R.id.nav_outbox) {
-            setTitle(R.string.nav_drawer_outbox);
-            toggleFolder = OUTBOX;
-        } else if (id == R.id.nav_all_mails) {
-            setTitle(R.string.nav_drawer_all_mails);
-            toggleFolder = ALL_MAILS;
-        } else if (id == R.id.nav_unread) {
-            setTitle(R.string.nav_drawer_unread);
-            toggleFolder = UNREAD;
-        } else if (id == R.id.nav_starred) {
-            setTitle(R.string.nav_drawer_starred);
-            toggleFolder = STARRED;
-        } else if (id == R.id.nav_archive) {
-            setTitle(R.string.nav_drawer_archive);
-            toggleFolder = ARCHIVE;
-        } else if (id == R.id.nav_spam) {
-            setTitle(R.string.nav_drawer_spam);
-            toggleFolder = SPAM;
-        } else if (id == R.id.nav_trash) {
-            setTitle(R.string.nav_drawer_trash);
-            toggleFolder = TRASH;
-        } else if (id == R.id.nav_contact) {
-            setTitle(R.string.nav_drawer_contact);
-            toggleFolder = CONTACT;
-        } else if (id == R.id.nav_settings) {
-            Intent settingsScreen = new Intent(this, SettingsActivity.class);
-            startActivity(settingsScreen);
-        } else if (id == R.id.nav_logout) {
-            new AlertDialog.Builder(this)
-                    .setTitle(getResources().getString(R.string.dialog_log_out))
-                    .setMessage(getResources().getString(R.string.dialog_log_out_confirm))
-                    .setPositiveButton(getResources().getString(R.string.btn_log_out), (dialog, which) -> mainModel.logout()
-                    )
-                    .setNeutralButton(R.string.btn_cancel, null)
-                    .show();
-        } else if (id == R.id.nav_manage_folders) {
-            Intent manageFolders = new Intent(this, ManageFoldersActivity.class);
-            startActivity(manageFolders);
-        } else if (id == R.id.nav_manage_folders_more) {
-            customFoldersShowCount += CUSTOM_FOLDER_STEP;
-            loadFolders();
-            closeDrawer = false;
-        } else {
-            for (FoldersResult folderItem :
-                    customFoldersList) {
-                if (id == folderItem.getId()) {
-                    setTitle(folderItem.getName());
-                    toggleFolder = folderItem.getName();
-                }
-            }
-        }
-
-        final Fragment currentFragment = getCurrentFragment();
-        if (closeDrawer && !isTablet) {
-            if (currentFragment instanceof MainFragment) {
-                ((MainFragment) currentFragment).clearListAdapter();
-
-                handler.post(() -> drawer.closeDrawer(GravityCompat.START));
-            }
-        } else if (isTablet) {
-            if (currentFragment instanceof MainFragment) {
-                ((MainFragment) currentFragment).clearListAdapter();
-            }
-            mainModel.setCurrentFolder(toggleFolder);
-        }
-        return true;
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        loadFolders();
     }
 
     private void loadFolders() {
@@ -432,10 +546,12 @@ public class MainActivity extends AppCompatActivity
                 super.onDrawerClosed(drawerView);
                 if (toggleFolder != null) {
                     mainModel.setCurrentFolder(toggleFolder);
+                    toggleFolder = null;
                 }
             }
         };
-        drawerToggle.setToolbarNavigationClickListener(v -> Toast.makeText(MainActivity.this, "Clicked", Toast.LENGTH_SHORT).show());
+        drawerToggle.setToolbarNavigationClickListener(v ->
+                Toast.makeText(MainActivity.this, "Clicked", Toast.LENGTH_SHORT).show());
         drawer.addDrawerListener(drawerToggle);
         drawerToggle.syncState();
     }
@@ -474,12 +590,6 @@ public class MainActivity extends AppCompatActivity
                 navigationView.getHeight()
         );
         navigationView.startAnimation(resizeAnimation);
-    }
-
-    @Override
-    public void onConfigurationChanged(@NonNull Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        setupTabletDrawer();
     }
 
     private void loadUserInfo() {

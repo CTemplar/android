@@ -120,14 +120,14 @@
     <!-- COMPOSE OPTIONS -->
     <string name="txt_left_time_destruct">Delete in %1$s</string>
     <string name="txt_left_time_delay_delivery">Delivery in %1$s</string>
-    <string name="txt_left_time_dead_mans_timer">Dead Man’s in %1$s</string>
+    <string name="txt_left_time_dead_mans_timer">Dead Man\'s in %1$s</string>
     <string name="txt_encrypt_message_title">Set Password</string>
     <string name="txt_destruct_message_title">Self-destructing Timer</string>
     <string name="txt_dead_mans_title">Dead Man\'s Timer</string>
     <string name="txt_delayed_message_title">Delayed delivery</string>
     <string name="txt_encrypt_message_summary">Encrypt for non-CTemplar Mail Users</string>
     <string name="txt_delayed_message_summary">Email will be sent automatically at the set time.</string>
-    <string name="txt_destruct_message_summary">This email deletes itself from the receiver’s account after</string>
+    <string name="txt_destruct_message_summary">This email deletes itself from the receiver\'s account after</string>
     <string name="txt_dead_mans_summary">If you do not log into your account after the set time email will be sent after</string>
     <string name="txt_schedule">Schedule</string>
     <string name="txt_encrypt">Encrypt</string>
@@ -145,7 +145,7 @@
     <string name="toast_download_complete">Download complete</string>
     <string name="txt_user_wrote">\n\n-----------------------------------------------------------------------------------------------\nOn %1$s %2$s wrote:\n\n</string>
     <string name="txt_forwarded_message">Forwarded message</string>
-    <string name="txt_from">From: </string>
+    <string name="txt_from">From:&#160;</string>
     <string name="txt_date">Date</string>
     <string name="txt_subject">Subject</string>
     <string name="txt_to">To:&#160;</string>

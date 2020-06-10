@@ -28,13 +28,13 @@ import java.io.OutputStream;
 import java.text.DecimalFormat;
 import java.util.Comparator;
 
+import mobileapp.ctemplar.com.ctemplarapp.BuildConfig;
 import okhttp3.ResponseBody;
 import timber.log.Timber;
 
 public class FileUtils {
     public static final String DOCUMENTS_DIR = "documents";
-    // configured android:authorities in AndroidManifest (https://developer.android.com/reference/android/support/v4/content/FileProvider)
-    public static final String AUTHORITY =  "YOUR_AUTHORITY.provider";
+    public static final String AUTHORITY =  BuildConfig.APPLICATION_ID + ".fileprovider";
     public static final String HIDDEN_PREFIX = ".";
     /**
      * TAG for log messages.
@@ -294,14 +294,17 @@ public class FileUtils {
                         "content://downloads/my_downloads"
                 };
 
-                for (String contentUriPrefix : contentUriPrefixesToTry) {
-                    Uri contentUri = ContentUris.withAppendedId(Uri.parse(contentUriPrefix), Long.valueOf(id));
-                    try {
-                        String path = getDataColumn(context, contentUri, null, null);
-                        if (path != null) {
-                            return path;
-                        }
-                    } catch (Exception e) {}
+                if (id != null && id.length() > 0) {
+                    for (String contentUriPrefix : contentUriPrefixesToTry) {
+                        try {
+                            Uri contentUri = ContentUris.withAppendedId(Uri.parse(contentUriPrefix),
+                                    Long.parseLong(id));
+                            String path = getDataColumn(context, contentUri, null, null);
+                            if (path != null) {
+                                return path;
+                            }
+                        } catch (Exception e) {}
+                    }
                 }
 
                 // path could not be retrieved using ContentResolver, therefore copy file to accessible cache using streams

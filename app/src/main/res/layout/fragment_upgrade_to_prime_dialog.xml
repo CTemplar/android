@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorPrimary"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <TextView
@@ -9,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/title_upgrade_to_prime"
-        android:textColor="@color/colorBlack4"
+        android:textColor="@color/secondaryTextColor"
         android:textSize="18sp"
         android:fontFamily="@font/lato_bold"
         android:gravity="center"
@@ -42,7 +43,7 @@
             android:text="@string/txt_one_user"
             android:fontFamily="@font/lato_regular"
             android:textSize="14sp"
-            android:textColor="@color/colorBlack4"
+            android:textColor="@color/secondaryTextColor"
             android:drawablePadding="16dp"
             android:drawableLeft="@drawable/ic_prime_check"
             android:drawableStart="@drawable/ic_prime_check"/>
@@ -53,9 +54,9 @@
             android:paddingTop="15dp"
             android:paddingBottom="15dp"
             android:text="@string/txt_from_five_gb_storage"
+            android:textColor="@color/secondaryTextColor"
             android:fontFamily="@font/lato_regular"
             android:textSize="14sp"
-            android:textColor="@color/colorBlack4"
             android:drawablePadding="16dp"
             android:drawableLeft="@drawable/ic_prime_check"
             android:drawableStart="@drawable/ic_prime_check"/>
@@ -68,7 +69,7 @@
             android:text="@string/txt_from_three_email_addresses"
             android:fontFamily="@font/lato_regular"
             android:textSize="14sp"
-            android:textColor="@color/colorBlack4"
+            android:textColor="@color/secondaryTextColor"
             android:drawablePadding="16dp"
             android:drawableLeft="@drawable/ic_prime_check"
             android:drawableStart="@drawable/ic_prime_check"/>
@@ -81,7 +82,7 @@
             android:text="@string/txt_from_one_custom_domain"
             android:fontFamily="@font/lato_regular"
             android:textSize="14sp"
-            android:textColor="@color/colorBlack4"
+            android:textColor="@color/secondaryTextColor"
             android:drawablePadding="16dp"
             android:drawableLeft="@drawable/ic_prime_check"
             android:drawableStart="@drawable/ic_prime_check"/>
@@ -94,7 +95,7 @@
             android:text="@string/txt_thousand_messages_per_day"
             android:fontFamily="@font/lato_regular"
             android:textSize="14sp"
-            android:textColor="@color/colorBlack4"
+            android:textColor="@color/secondaryTextColor"
             android:drawablePadding="16dp"
             android:drawableLeft="@drawable/ic_prime_check"
             android:drawableStart="@drawable/ic_prime_check"/>
@@ -107,7 +108,7 @@
             android:text="@string/txt_five_hundred_folders"
             android:fontFamily="@font/lato_regular"
             android:textSize="14sp"
-            android:textColor="@color/colorBlack4"
+            android:textColor="@color/secondaryTextColor"
             android:drawablePadding="16dp"
             android:drawableLeft="@drawable/ic_prime_check"
             android:drawableStart="@drawable/ic_prime_check"/>
@@ -125,7 +126,7 @@
                 android:text="@string/txt_dead_mans_title"
                 android:fontFamily="@font/lato_regular"
                 android:textSize="14sp"
-                android:textColor="@color/colorBlack4"
+                android:textColor="@color/secondaryTextColor"
                 android:drawablePadding="16dp"
                 android:drawableLeft="@drawable/ic_prime_check"
                 android:drawableStart="@drawable/ic_prime_check"/>
@@ -181,7 +182,7 @@
             android:text="@string/txt_not_now"
             android:textSize="16sp"
             android:fontFamily="@font/lato_regular"
-            android:textColor="@color/colorDarkBlue2"/>
+            android:textColor="@color/secondaryTextColor" />
 
     </LinearLayout>
 

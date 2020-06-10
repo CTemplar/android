@@ -94,7 +94,7 @@ public class MainActivityViewModel extends AndroidViewModel {
     private MutableLiveData<FoldersResponse> foldersResponse = new MutableLiveData<>();
     private MutableLiveData<ResponseBody> unreadFoldersBody = new MutableLiveData<>();
     private MutableLiveData<MyselfResponse> myselfResponse = new MutableLiveData<>();
-    MutableLiveData<String> currentFolder = new MutableLiveData<>();
+    private MutableLiveData<String> currentFolder = new MutableLiveData<>();
 
     private ExitBroadcastReceiver exitBroadcastReceiver;
 

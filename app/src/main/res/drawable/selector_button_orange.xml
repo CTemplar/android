@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:state_pressed="true" android:drawable="@drawable/ic_button_orange_pressed"></item>
-    <item android:state_enabled="false" android:drawable="@drawable/ic_button_orange_disabled"></item>
-    <item android:drawable="@drawable/ic_button_orange"></item>
+    <item android:state_pressed="true" android:drawable="@drawable/ic_button_orange_pressed" />
+    <item android:state_enabled="false" android:drawable="@drawable/ic_button_orange_disabled" />
+    <item android:drawable="@drawable/ic_button_orange" />
 </selector>
