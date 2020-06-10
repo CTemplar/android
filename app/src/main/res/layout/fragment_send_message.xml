@@ -426,7 +426,7 @@
             android:id="@+id/fragment_send_message_compose_email_input_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColorHint="@color/colorDarkBlue2"
+            android:textColorHint="?android:textColorSecondary"
             app:hintEnabled="false"
             android:padding="12dp">
 
@@ -439,9 +439,8 @@
                     android:hint="@string/hint_compose"
                     android:inputType="textMultiLine"
                     android:letterSpacing="0.05"
-                    android:textColor="?android:textColorSecondary"
+                    android:textColor="?android:textColorPrimary"
                     android:textSize="16sp"
-                    android:theme="@style/EditTextCredentialsThemeDark"
                     android:background="@android:color/transparent" />
 
         </com.google.android.material.textfield.TextInputLayout>
