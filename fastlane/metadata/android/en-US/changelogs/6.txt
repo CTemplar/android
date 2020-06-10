@@ -1,0 +1,4 @@
+* Dark theme
+* UI/UX improvements
+* Email addresses recognition
+* Improved app navigation

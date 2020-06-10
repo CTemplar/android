@@ -395,7 +395,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
 
     @Override
     public boolean onBackPressed() {
-        return finished || onHandleBackPressed();
+        return !(finished || onHandleBackPressed());
     }
 
 

@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/colorPrimary"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_height="match_parent">
 
     <RelativeLayout
         android:id="@+id/fragment_messages_filter_dialog_title_layout"
@@ -16,7 +17,10 @@
             android:id="@+id/fragment_messages_filter_dialog_close"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true"
             android:src="@drawable/ic_close"
+            android:tint="@color/secondaryTextColor"
             android:layout_marginLeft="16dp"
             android:layout_marginStart="16dp"/>
 
@@ -24,9 +28,11 @@
             android:id="@+id/fragment_messages_filter_dialog_clear_all"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true"
             android:textSize="16sp"
             android:fontFamily="@font/lato_regular"
-            android:textColor="@color/colorDarkBlue4"
+            android:textColor="@color/secondaryTextColor"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
             android:layout_marginRight="16dp"
@@ -42,7 +48,7 @@
         android:text="@string/txt_filters"
         android:fontFamily="@font/lato_regular"
         android:textSize="22sp"
-        android:textColor="@color/colorDarkBlue"
+        android:textColor="@color/secondaryTextColor"
         app:layout_constraintTop_toBottomOf="@id/fragment_messages_filter_dialog_title_layout"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"/>
@@ -150,7 +156,7 @@
             android:layout_marginStart="4dp"
             android:fontFamily="@font/lato_regular"
             android:textColor="@android:color/white"
-            android:background="@color/colorDarkBlue2"
+            android:background="@drawable/selector_button_blue"
             android:text="@string/btn_apply"/>
 
     </LinearLayout>

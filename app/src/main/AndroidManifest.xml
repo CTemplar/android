@@ -17,7 +17,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/ActionBarLight"
+        android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         android:largeHeap="true">
 
@@ -37,6 +37,16 @@
             android:noHistory="true"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SENDTO" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:scheme="mailto" />
+            </intent-filter>
+            <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
@@ -49,8 +59,7 @@
 
         <activity
             android:name=".main.MainActivity"
-            android:configChanges="orientation|screenSize"
-            android:theme="@style/ActionBarLight">
+            android:configChanges="orientation|screenSize">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
                 <action android:name="android.intent.action.VIEW" />
@@ -90,6 +99,7 @@
                 <action android:name="com.ctemplar.service.notification.STOP" />
             </intent-filter>
         </service>
+
         <receiver android:name=".notification.NotificationServiceBroadcastReceiver"
             android:enabled="true"
             android:exported="true">
@@ -98,6 +108,7 @@
                 <action android:name="com.ctemplar.notification_service.START" />
             </intent-filter>
         </receiver>
+
     </application>
 
 </manifest>

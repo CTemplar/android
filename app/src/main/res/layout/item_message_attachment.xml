@@ -13,7 +13,7 @@
         android:layout_width="120dp"
         android:layout_height="72dp"
         android:padding="10dp"
-        android:background="@color/colorGreyLight7"
+        android:background="@drawable/item_attachment_background"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -26,7 +26,7 @@
             android:textSize="14sp"
             android:lines="2"
             android:ellipsize="end"
-            android:textColor="@color/colorDarkBlue2" />
+            android:textColor="?android:textColorSecondary" />
 
         <ImageView
             android:id="@+id/item_message_attachment_ext"

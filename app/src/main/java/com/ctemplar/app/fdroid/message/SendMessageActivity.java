@@ -33,7 +33,7 @@ public class SendMessageActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        if (fragment.onBackPressed()) {
+        if (!fragment.onBackPressed()) {
             super.onBackPressed();
         }
     }

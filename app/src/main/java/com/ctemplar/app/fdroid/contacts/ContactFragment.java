@@ -167,9 +167,7 @@ public class ContactFragment extends BaseFragment {
                 final int deletedIndex = viewHolder.getAdapterPosition();
                 final Contact deletedContact =  adapter.removeAt(deletedIndex);
                 final String name = deletedContact.getName();
-                String removedTxt = getResources().getString(R.string.txt_name_removed, name);
-                Snackbar snackbar = Snackbar
-                        .make(frameCompose, removedTxt, Snackbar.LENGTH_LONG);
+                Snackbar snackbar = Snackbar.make(frameCompose, getResources().getString(R.string.txt_name_removed, name), Snackbar.LENGTH_LONG);
                 snackbar.setAction(getString(R.string.action_undo), view -> adapter.restoreItem(deletedContact, deletedIndex));
                 snackbar.addCallback(new BaseTransientBottomBar.BaseCallback<Snackbar>() {
                     @Override

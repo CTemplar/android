@@ -1,18 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/item_message_view_expanded_short"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingStart="16dp"
-        android:paddingLeft="16dp"
         android:paddingEnd="16dp"
-        android:paddingRight="16dp"
         android:paddingTop="16dp"
         android:paddingBottom="16dp"
         app:layout_constraintTop_toTopOf="parent"
@@ -36,7 +35,6 @@
                 android:ellipsize="end"
                 android:fontFamily="@font/lato_regular"
                 android:textSize="14sp"
-                android:textColor="@color/colorGrey"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
@@ -48,7 +46,6 @@
                 android:layout_centerVertical="true"
                 android:text="CTemplar"
                 android:ellipsize="end"
-                android:textColor="@color/colorGrey"
                 android:fontFamily="@font/lato_regular"
                 android:textSize="14sp"
                 android:layout_marginRight="5dp"
@@ -62,6 +59,7 @@
                 android:layout_width="36dp"
                 android:layout_height="36dp"
                 android:src="@drawable/ic_attachment_small"
+                android:tint="?android:textColorSecondary"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@id/item_message_view_expanded_sender_name"/>
@@ -144,8 +142,7 @@
                 android:text="@string/txt_to"
                 android:ellipsize="end"
                 android:fontFamily="@font/lato_regular"
-                android:textSize="14sp"
-                android:textColor="@color/colorGrey"/>
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/item_message_view_expanded_receiver_name"
@@ -155,7 +152,6 @@
                 android:layout_marginEnd="5dp"
                 android:text="John"
                 android:ellipsize="end"
-                android:textColor="@color/colorGrey"
                 android:fontFamily="@font/lato_regular"
                 android:textSize="14sp"
                 android:layout_toEndOf="@id/item_message_view_expanded_receiver_text"
@@ -216,7 +212,7 @@
         android:id="@+id/item_message_view_expanded_short_info_divider"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/colorGreyLight4"
+        android:background="@color/colorDivider"
         app:layout_constraintTop_toBottomOf="@id/item_message_view_expanded_short"
         android:visibility="visible"/>
 
@@ -225,7 +221,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/item_message_view_expanded_short_info_divider"
-        android:background="@color/colorGreyLight6"
+        android:background="@color/colorPrimary"
         android:paddingLeft="16dp"
         android:paddingStart="16dp"
         android:paddingRight="16dp"
@@ -245,8 +241,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/txt_from"
                 android:fontFamily="@font/lato_regular"
-                android:textSize="14sp"
-                android:textColor="@color/colorGreyLight5"/>
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/item_message_view_from_email"
@@ -255,7 +250,6 @@
                 android:text="CTemplar &lt;ctemplar@ctemplar.com&gt;"
                 android:fontFamily="@font/lato_regular"
                 android:textSize="14sp"
-                android:textColor="@color/colorGreyLight5"
                 android:layout_marginRight="5dp"
                 android:layout_marginEnd="5dp"
                 android:layout_toRightOf="@id/item_message_view_from_text"
@@ -276,8 +270,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/txt_to"
                 android:fontFamily="@font/lato_regular"
-                android:textSize="14sp"
-                android:textColor="@color/colorGreyLight5"/>
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/item_message_view_to_email"
@@ -286,7 +279,6 @@
                 android:text="John &lt;john@ctemplar.com&gt;"
                 android:fontFamily="@font/lato_regular"
                 android:textSize="14sp"
-                android:textColor="@color/colorGreyLight5"
                 android:layout_marginRight="5dp"
                 android:layout_marginEnd="5dp"
                 android:layout_toRightOf="@id/item_message_view_to_text"
@@ -307,8 +299,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/txt_cc"
                 android:fontFamily="@font/lato_regular"
-                android:textSize="14sp"
-                android:textColor="@color/colorGreyLight5"/>
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/item_message_view_CC_email"
@@ -317,7 +308,6 @@
                 android:text="Sam &lt;samsmith@ctemplar.com&gt;"
                 android:fontFamily="@font/lato_regular"
                 android:textSize="14sp"
-                android:textColor="@color/colorGreyLight5"
                 android:layout_marginRight="5dp"
                 android:layout_marginEnd="5dp"
                 android:layout_toRightOf="@id/item_message_view_CC_text"
@@ -338,8 +328,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/txt_bcc"
                 android:fontFamily="@font/lato_regular"
-                android:textSize="14sp"
-                android:textColor="@color/colorGreyLight5"/>
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/item_message_view_BCC_email"
@@ -348,7 +337,6 @@
                 android:text="Support &lt;support@ctemplar.com&gt;"
                 android:fontFamily="@font/lato_regular"
                 android:textSize="14sp"
-                android:textColor="@color/colorGreyLight5"
                 android:layout_marginRight="5dp"
                 android:layout_marginEnd="5dp"
                 android:layout_toRightOf="@id/item_message_view_BCC_text"
@@ -364,7 +352,6 @@
             android:text="@string/txt_date_format"
             android:fontFamily="@font/lato_regular"
             android:textSize="14sp"
-            android:textColor="@color/colorGreyLight5"
             android:layout_below="@id/item_message_view_BCC_layout" />
 
     </RelativeLayout>
@@ -373,7 +360,7 @@
         android:id="@+id/item_message_view_expanded_credentials_divider"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/colorGreyLight4"
+        android:background="@color/colorDivider"
         app:layout_constraintTop_toBottomOf="@id/item_message_view_expanded_credentials"
         android:visibility="gone"/>
 
@@ -397,7 +384,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:textSize="16sp"
-            android:textColor="@android:color/black" />
+            android:textColor="?android:textColorPrimary" />
 
     </RelativeLayout>
 
@@ -420,6 +407,6 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/item_message_view_expanded_content_layout"
-        android:background="@color/colorWhiteLight"/>
+        android:background="@color/colorPrimary" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

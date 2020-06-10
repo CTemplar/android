@@ -101,7 +101,7 @@ public class InboxFragment extends BaseFragment
     ImageView imgEmpty;
 
     @BindView(R.id.fragment_inbox_title_empty)
-    TextView txtEmpty;
+    TextView folderEmptyTextView;
 
     @BindView(R.id.fragment_inbox_list_empty_layout)
     ConstraintLayout listEmptyLayout;
@@ -152,7 +152,7 @@ public class InboxFragment extends BaseFragment
             return;
         }
         mainModel = new ViewModelProvider(activity).get(MainActivityViewModel.class);
-        currentFolder = mainModel.currentFolder.getValue();
+        currentFolder = mainModel.getCurrentFolder().getValue();
         if (currentFolder == null) {
             currentFolder = INBOX;
         }
@@ -203,7 +203,7 @@ public class InboxFragment extends BaseFragment
             currentFolder = folderName;
             requestNewMessages();
             String emptyFolderString = getResources().getString(R.string.title_empty_messages, folderName);
-            txtEmpty.setText(emptyFolderString);
+            folderEmptyTextView.setText(emptyFolderString);
             loadMessagesList();
             recyclerView.setAdapter(adapter);
             updateTouchListenerSwipeOptions(currentFolder);
@@ -312,7 +312,7 @@ public class InboxFragment extends BaseFragment
             return;
         }
 
-        currentFolder = mainModel.currentFolder.getValue();
+        currentFolder = mainModel.getCurrentFolder().getValue();
         mainModel.getMessages(REQUEST_MESSAGES_COUNT, currentOffset, currentFolder);
         currentOffset += REQUEST_MESSAGES_COUNT;
         isLoadingNewMessages = true;
@@ -456,9 +456,9 @@ public class InboxFragment extends BaseFragment
             return;
         }
 
-        Intent intent = new Intent(activity, SendMessageActivity.class);
+        Intent sendMessageIntent = new Intent(activity, SendMessageActivity.class);
         Fragment fragment = SendMessageFragment.newInstance();
-        activity.showActivityOrFragment(intent, fragment);
+        activity.showActivityOrFragment(sendMessageIntent, fragment);
     }
 
     private void startViewMessageActivity(Long parentId) {
@@ -466,7 +466,7 @@ public class InboxFragment extends BaseFragment
         if (activity == null) {
             return;
         }
-        String folderName = mainModel.currentFolder.getValue();
+        String folderName = mainModel.getCurrentFolder().getValue();
 
         if (folderName != null && folderName.equals(DRAFT)) {
             Intent draftIntent = new Intent(activity, SendMessageActivity.class);

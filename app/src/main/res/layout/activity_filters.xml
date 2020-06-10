@@ -9,19 +9,14 @@
         android:id="@+id/activity_filters_toolbar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay"
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/activity_filters_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            android:theme="@style/ActionBarLight"
             android:fontFamily="@font/lato_bold"
-            app:title="@string/txt_filters_title"
-            app:titleTextColor="@color/colorDarkBlue2"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
+            app:title="@string/txt_filters_title" />
 
     </com.google.android.material.appbar.AppBarLayout>
 

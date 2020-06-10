@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".main.InboxFragment"
@@ -52,12 +53,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/icon_inbox_empty"
-            app:layout_constraintBottom_toTopOf="@+id/fragment_inbox_title_empty"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintVertical_chainStyle="packed"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_chainStyle="packed" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/fragment_inbox_title_empty" />
 
         <TextView
             android:id="@+id/fragment_inbox_title_empty"
@@ -66,12 +67,12 @@
             android:layout_marginTop="40dp"
             android:fontFamily="@font/lato_regular"
             android:text="@string/title_empty_inbox"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintVertical_chainStyle="spread_inside"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/fragment_inbox_icon_empty"
-            app:layout_constraintVertical_chainStyle="spread_inside" />
+            app:layout_constraintTop_toBottomOf="@+id/fragment_inbox_icon_empty" />
 
         <FrameLayout
             android:id="@+id/fragment_inbox_send_layout"

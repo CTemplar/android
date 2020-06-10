@@ -9,21 +9,14 @@
         android:id="@+id/app_bar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay"
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/activity_add_filter_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            android:theme="@style/ActionBarLight"
             android:fontFamily="@font/lato_bold"
-            app:titleTextColor="@color/colorDarkBlue2"
-            app:title="@string/title_add_custom_filter"
-            app:popupTheme="@style/AppTheme.PopupOverlay">
-
-        </androidx.appcompat.widget.Toolbar>
+            app:title="@string/title_add_custom_filter" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -45,7 +38,7 @@
             android:layout_height="wrap_content"
             android:text="@string/txt_filter_name"
             android:fontFamily="@font/lato_regular"
-            android:textColor="@color/colorDarkBlue"
+            android:textColor="?android:textColorPrimary"
             android:textSize="16sp" />
 
         <com.google.android.material.textfield.TextInputLayout
@@ -63,7 +56,7 @@
                 android:textSize="16sp"
                 android:padding="12dp"
                 android:inputType="text"
-                android:textColor="@color/colorDarkBlue"
+                android:textColor="?android:textColorPrimary"
                 android:minHeight="45dp"
                 android:background="@drawable/text_input_field" />
 
@@ -89,7 +82,7 @@
             android:layout_height="wrap_content"
             android:text="@string/txt_filter_conditions"
             android:fontFamily="@font/lato_regular"
-            android:textColor="@color/colorDarkBlue"
+            android:textColor="?android:textColorPrimary"
             android:textSize="16sp" />
 
         <LinearLayout
@@ -131,7 +124,7 @@
                 android:textSize="16sp"
                 android:padding="12dp"
                 android:inputType="text"
-                android:textColor="@color/colorDarkBlue"
+                android:textColor="?android:textColorPrimary"
                 android:minHeight="45dp"
                 android:background="@drawable/text_input_field" />
 
@@ -157,7 +150,7 @@
             android:layout_height="wrap_content"
             android:text="@string/txt_filter_conditions"
             android:fontFamily="@font/lato_regular"
-            android:textColor="@color/colorDarkBlue"
+            android:textColor="?android:textColorPrimary"
             android:textSize="16sp" />
 
         <LinearLayout
@@ -251,7 +244,7 @@
             android:textSize="18sp"
             android:fontFamily="@font/lato_regular"
             android:textColor="@android:color/white"
-            android:background="@color/colorDarkBlue2"
+            android:background="@drawable/selector_button_blue"
             android:textAllCaps="false"
             android:text="@string/btn_submit"/>
 

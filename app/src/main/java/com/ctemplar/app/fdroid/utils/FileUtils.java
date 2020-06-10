@@ -17,6 +17,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
 
+import com.ctemplar.app.fdroid.BuildConfig;
+
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileFilter;
@@ -33,8 +35,7 @@ import timber.log.Timber;
 
 public class FileUtils {
     public static final String DOCUMENTS_DIR = "documents";
-    // configured android:authorities in AndroidManifest (https://developer.android.com/reference/android/support/v4/content/FileProvider)
-    public static final String AUTHORITY =  "YOUR_AUTHORITY.provider";
+    public static final String AUTHORITY =  BuildConfig.APPLICATION_ID + ".fileprovider";
     public static final String HIDDEN_PREFIX = ".";
     /**
      * TAG for log messages.

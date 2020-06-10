@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/colorPrimary"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -16,9 +17,10 @@
             android:id="@+id/fragment_destruct_message_dialog_close"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:src="@drawable/ic_close"
+            android:tint="@color/secondaryTextColor"
             android:layout_marginStart="16dp"
-            android:layout_marginLeft="16dp"
-            android:src="@drawable/ic_close" />
+            android:layout_marginLeft="16dp" />
 
     </RelativeLayout>
 
@@ -28,7 +30,7 @@
         android:layout_height="wrap_content"
         android:fontFamily="@font/lato_regular"
         android:text="@string/txt_destruct_message_title"
-        android:textColor="@color/colorDarkBlue"
+        android:textColor="@color/secondaryTextColor"
         android:textSize="22sp"
         android:layout_marginTop="55dp"
         app:layout_constraintTop_toBottomOf="@id/fragment_destruct_message_dialog_title_layout"
@@ -57,7 +59,7 @@
             android:fontFamily="@font/lato_regular"
             android:gravity="center"
             android:text="@string/txt_destruct_message_summary"
-            android:textColor="@color/colorDarkBlue"
+            android:textColor="@color/secondaryTextColor"
             android:textSize="16sp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
@@ -78,10 +80,10 @@
                 android:layout_marginRight="5dp"
                 android:layout_marginEnd="5dp"
                 android:fontFamily="@font/lato_regular"
+                android:textColor="@color/secondaryTextColor"
                 android:textSize="18sp"
                 android:text="Fri, 15 Feb 2019"
-                android:gravity="center"
-                android:textColor="@color/colorDarkBlue"/>
+                android:gravity="center" />
 
             <TextView
                 android:id="@+id/fragment_destruct_message_dialog_input_time"
@@ -90,10 +92,10 @@
                 android:layout_marginLeft="5dp"
                 android:layout_marginStart="5dp"
                 android:fontFamily="@font/lato_regular"
+                android:textColor="@color/secondaryTextColor"
                 android:textSize="18sp"
                 android:text="12:00 AM"
-                android:gravity="center"
-                android:textColor="@color/colorDarkBlue"/>
+                android:gravity="center" />
 
         </LinearLayout>
 
@@ -120,7 +122,7 @@
             android:layout_marginLeft="4dp"
             android:layout_marginStart="4dp"
             android:layout_weight="1"
-            android:background="@color/colorDarkBlue2"
+            android:background="@drawable/selector_button_blue"
             android:fontFamily="@font/lato_regular"
             android:text="@string/txt_schedule"
             android:textColor="@android:color/white" />

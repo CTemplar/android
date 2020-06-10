@@ -12,7 +12,7 @@
         android:layout_marginStart="16dp"
         android:text="Filter"
         android:textSize="16sp"
-        android:textColor="@color/colorDarkBlue5"
+        android:textColor="?android:textColorPrimary"
         android:fontFamily="@font/lato_regular"
         android:lines="1"
         android:ellipsize="end"

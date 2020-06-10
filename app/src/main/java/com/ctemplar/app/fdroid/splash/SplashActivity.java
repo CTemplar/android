@@ -60,6 +60,12 @@ public class SplashActivity extends BaseActivity {
 
     private void startMainActivity() {
         Intent intent = new Intent(this, MainActivity.class);
+        Intent startIntent = getIntent();
+        if (startIntent != null) {
+            intent.putExtras(startIntent);
+            intent.setAction(startIntent.getAction());
+            intent.setData(startIntent.getData());
+        }
         startActivity(intent);
     }
 }

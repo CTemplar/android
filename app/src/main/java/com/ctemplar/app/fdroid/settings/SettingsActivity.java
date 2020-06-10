@@ -16,6 +16,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.CheckBoxPreference;
 import androidx.preference.EditTextPreference;
@@ -87,16 +88,9 @@ public class SettingsActivity extends BaseActivity {
             getSupportFragmentManager()
                     .beginTransaction()
                     .add(R.id.container, preferenceFragment)
+                    .addToBackStack(null)
                     .commit();
         }
-    }
-
-    protected void showFragment(Fragment fragment) {
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.container, fragment)
-                .addToBackStack(null)
-                .commit();
     }
 
     private static void setSettingId(long id) {
@@ -112,7 +106,7 @@ public class SettingsActivity extends BaseActivity {
             recoveryEmailPreferenceScreen = findPreference(getString(R.string.recovery_email_holder));
 
             String recoveryEmail = sharedPreferences.getString(getString(R.string.recovery_email), null);
-            if (recoveryEmail != null && !recoveryEmail.isEmpty()) {
+            if (EditTextUtils.isNotEmpty(recoveryEmail)) {
                 recoveryEmailPreferenceScreen.setSummary(recoveryEmail);
             }
             Preference passwordKey = findPreference(getString(R.string.password_key));
@@ -209,12 +203,11 @@ public class SettingsActivity extends BaseActivity {
             CheckBoxPreference checkBoxRecoveryEmailEnabled = findPreference(getString(R.string.recovery_email_enabled));
             String recoveryEmail = sharedPreferences.getString(getString(R.string.recovery_email), null);
 
-            if (preferenceRecoveryEmail == null || checkBoxRecoveryEmailEnabled == null
-                    || TextUtils.isEmpty(recoveryEmail)) {
+            if (preferenceRecoveryEmail == null || checkBoxRecoveryEmailEnabled == null) {
                 return;
             }
 
-            if (recoveryEmail != null && !recoveryEmail.isEmpty()) {
+            if (EditTextUtils.isNotEmpty(recoveryEmail)) {
                 preferenceRecoveryEmail.setTitle(recoveryEmail);
             }
             checkBoxRecoveryEmailEnabled.setOnPreferenceChangeListener((preference, newValue) -> {
@@ -229,8 +222,8 @@ public class SettingsActivity extends BaseActivity {
             });
             preferenceRecoveryEmail.setOnPreferenceChangeListener((preference, newValue) -> {
                 String value = (String) newValue;
-                if (EditTextUtils.isEmailValid(value) || value.isEmpty()) {
-                    if (value.isEmpty()) {
+                if (EditTextUtils.isEmailValid(value) || TextUtils.isEmpty(value)) {
+                    if (TextUtils.isEmpty(value)) {
                         preferenceRecoveryEmail.setTitle(getString(R.string.settings_type_recovery_email));
                         checkBoxRecoveryEmailEnabled.setChecked(false);
                     } else {
@@ -358,11 +351,10 @@ public class SettingsActivity extends BaseActivity {
             String phishingProtection = sharedPreferences.getString(getString(R.string.anti_phishing_key), null);
 
             if (phishingProtectionEditText == null || phishingProtectionCheckBox == null
-                    || descriptionPreference == null || TextUtils.isEmpty(phishingProtection)) {
+                    || descriptionPreference == null) {
                 return;
             }
-
-            if (phishingProtection != null && !phishingProtection.isEmpty()) {
+            if (EditTextUtils.isNotEmpty(phishingProtection)) {
                 phishingProtectionEditText.setTitle(phishingProtection);
             }
             phishingProtectionCheckBox.setOnPreferenceChangeListener((preference, newValue) -> {
@@ -383,13 +375,14 @@ public class SettingsActivity extends BaseActivity {
 
             phishingProtectionEditText.setOnPreferenceChangeListener((preference, newValue) -> {
                 String value = (String) newValue;
-                if (value.isEmpty()) {
+                if (TextUtils.isEmpty(value)) {
                     phishingProtectionEditText.setTitle(getString(R.string.settings_type_anti_phishing_phrase));
                     phishingProtectionCheckBox.setChecked(false);
                 } else {
                     phishingProtectionEditText.setTitle(value);
                 }
-                settingsModel.updateAntiPhishingPhrase(settingId, !value.isEmpty(), value);
+                settingsModel.updateAntiPhishingPhrase(settingId, EditTextUtils.isNotEmpty(value),
+                        value);
                 Toast.makeText(getActivity(), getString(R.string.toast_saved), Toast.LENGTH_SHORT).show();
                 return true;
             });
@@ -410,14 +403,14 @@ public class SettingsActivity extends BaseActivity {
                 .subscribe(new Observer<MyselfResponse>() {
                     @Override
                     public void onSubscribe(Disposable d) {
-                        Timber.d("Request myself info");
+                        Timber.i("Request myself info");
                     }
 
                     @Override
                     public void onNext(MyselfResponse myselfResponse) {
                         if (myselfResponse != null && myselfResponse.getResult() != null) {
                             MyselfResult myselfResult = myselfResponse.getResult()[0];
-                            saveReceivedData(myselfResult);
+                            saveData(myselfResult);
                         }
                     }
 
@@ -433,7 +426,7 @@ public class SettingsActivity extends BaseActivity {
                 });
     }
 
-    private void saveReceivedData(MyselfResult myselfResult) {
+    private void saveData(MyselfResult myselfResult) {
         SettingsEntity settingsEntity = myselfResult.getSettings();
         settingId = settingsEntity.getId();
         isPrimeUser = myselfResult.isPrime();
@@ -476,7 +469,7 @@ public class SettingsActivity extends BaseActivity {
             int count = preferenceScreen.getPreferenceCount();
             for (int i = 0; i < count; i++) {
                 Preference preference = preferenceScreen.getPreference(i);
-                setOnClickPreference(preference);
+//                setOnClickPreference(preference);
                 if (preference instanceof PreferenceCategory) {
                     PreferenceCategory preferenceCategory = (PreferenceCategory) preferenceScreen.getPreference(i);
                     for (int j = 0; j < preferenceCategory.getPreferenceCount(); j++) {
@@ -484,20 +477,6 @@ public class SettingsActivity extends BaseActivity {
                         //setOnClickPreference(inner);
                     }
                 }
-            }
-        }
-
-        private void setOnClickPreference(Preference preference) {
-            final String fragmentName = preference.getFragment();
-            if (fragmentName != null && !fragmentName.isEmpty()) {
-                preference.setOnPreferenceClickListener(preference1 -> {
-                    Fragment fragment = Fragment.instantiate(getActivity(), fragmentName);
-                    SettingsActivity settingsActivity = (SettingsActivity) getActivity();
-                    if (settingsActivity != null) {
-                        settingsActivity.showFragment(fragment);
-                    }
-                    return false;
-                });
             }
         }
     }
@@ -509,5 +488,15 @@ public class SettingsActivity extends BaseActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        if (fragmentManager.getBackStackEntryCount() > 1) {
+            fragmentManager.popBackStack();
+            return;
+        }
+        super.onBackPressed();
     }
 }
