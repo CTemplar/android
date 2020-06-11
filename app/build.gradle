@@ -21,7 +21,7 @@ android {
     applicationVariants.all { variant ->
         variant.resValue "string", "versionName", variant.versionName
         buildConfigField("String", "DOMAIN", "\"ctemplar.com\"")
-        buildConfigField("String", "BASE_URL", "\"mail.ctemplar.com/api/\"")
+        buildConfigField("String", "BASE_URL", "\"api.ctemplar.com/\"")
     }
 
     compileOptions {

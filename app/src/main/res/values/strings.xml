@@ -319,7 +319,7 @@
     <string name="settings_attachments_encryption">Attachments encryption</string>
     <string name="settings_encryption">Encryption</string>
     <string name="settings_phishing_protection">Phishing Protection</string>
-    <string name="settings_phishing_protection_description"><![CDATA[<font color="#939191">The Anti-Phishing phrase allows users to link a custom word or phrase of your choice to your CTemplar account. Once set, if you ever log into your webmail and your Anti-Phishing phrase is either missing or incorrect, you may be the victim of phishing. You should immediately confirm that you are visiting</font> <font color="#4d92e2"><u>https://mail.ctemplar.com</u></font> <font color="#939191">If you are not, then a malicious site might have your login credentials for your CTemplar account. To prevent harm to your account, you should immediately visit</font> <font color="#4d92e2"><u>https://mail.ctemplar.com"></u></font> <font color="#939191">change your password.<br><br>Note that the Anti-Phishing phrase will be displayed when you log on web only.</font>]]></string>
+    <string name="settings_phishing_protection_description"><![CDATA[<font color="#939191">The Anti-Phishing phrase allows users to link a custom word or phrase of your choice to your CTemplar account. Once set, if you ever log into your webmail and your Anti-Phishing phrase is either missing or incorrect, you may be the victim of phishing. You should immediately confirm that you are visiting</font> <font color="#4d92e2"><u>https://mail.ctemplar.com</u></font> <font color="#939191">If you are not, then a malicious site might have your login credentials for your CTemplar account. To prevent harm to your account, you should immediately visit</font> <font color="#4d92e2"><u>https://mail.ctemplar.com</u></font> <font color="#939191">and change your password.<br><br>Note that the Anti-Phishing phrase will be displayed when you log on web only.</font>]]></string>
     <string name="settings_saving_contacts">Saving contacts</string>
     <string name="settings_auto_save_contacts">Automatically save contacts</string>
     <string name="settings_filters">Filters</string>
@@ -407,8 +407,11 @@
     <string name="txt_five_hundred_folders">500 Folders</string><string name="txt_dead_mans_timer">Dead Man\'s Timer</string>
     <string name="txt_and_more_features">and more features</string>
     <string name="txt_not_now">Not now</string>
+
+    <!-- EXTERNAL URLS -->
     <string translatable="false" name="url_prime_upgrade">https://ctemplar.com/mail/settings/dashboard-and-plans</string>
     <string translatable="false" name="url_prime_more">https://ctemplar.com/pricing</string>
+    <string translatable="false" name="url_web_mail">https://mail.ctemplar.com</string>
 
     <!-- ERRORS -->
     <string name="error_field_cannot_be_empty">This field cannot be empty.</string>

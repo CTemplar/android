@@ -30,6 +30,7 @@ import androidx.preference.SwitchPreference;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 import com.ctemplar.app.fdroid.BaseActivity;
+import com.ctemplar.app.fdroid.BuildConfig;
 import com.ctemplar.app.fdroid.CTemplarApp;
 import com.ctemplar.app.fdroid.R;
 import com.ctemplar.app.fdroid.filters.FiltersActivity;
@@ -49,7 +50,6 @@ import com.ctemplar.app.fdroid.wbl.WhiteBlackListActivity;
 import timber.log.Timber;
 
 public class SettingsActivity extends BaseActivity {
-    private static final String WEB_MAIL = "https://mail.ctemplar.com";
     public static final String USER_IS_PRIME = "user_is_prime";
     public static final String SETTING_ID = "setting_id";
 
@@ -391,8 +391,9 @@ public class SettingsActivity extends BaseActivity {
                     getString(R.string.settings_phishing_protection_description))
             );
             descriptionPreference.setOnPreferenceClickListener(preference -> {
-                Intent ctemplarIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(WEB_MAIL));
-                startActivity(ctemplarIntent);
+                Intent webMailIntent = new Intent(Intent.ACTION_VIEW,
+                        Uri.parse(getString(R.string.url_web_mail)));
+                startActivity(webMailIntent);
                 return true;
             });
         }
