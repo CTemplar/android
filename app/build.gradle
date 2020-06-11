@@ -38,13 +38,13 @@ android {
             versionName "${versionMajor}.${versionMinor}.${versionBuild}-${new Date().format('M.d.yyyy')}-dev"
             applicationIdSuffix '.development'
             buildConfigField("String", "DOMAIN", "\"dev.ctemplar.com\"")
-            buildConfigField("String", "BASE_URL", "\"https://devapi.ctemplar.net/\"")
+            buildConfigField("String", "BASE_URL", "\"devapi.ctemplar.net/\"")
         }
         production {
             versionName "${versionMajor}.${versionMinor}.${versionBuild}"
             applicationIdSuffix ".production"
             buildConfigField("String", "DOMAIN", "\"ctemplar.com\"")
-            buildConfigField("String", "BASE_URL", "\"https://mail.ctemplar.com/api/\"")
+            buildConfigField("String", "BASE_URL", "\"api.ctemplar.com/\"")
         }
     }
 
