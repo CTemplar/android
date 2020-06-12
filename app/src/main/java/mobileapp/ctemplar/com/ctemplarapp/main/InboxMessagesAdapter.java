@@ -261,7 +261,7 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesView
     }
 
     void filter(String filter) {
-        if (filter == null) {
+        if (TextUtils.isEmpty(filter)) {
             filterText = "";
         } else {
             filterText = filter.toLowerCase();
