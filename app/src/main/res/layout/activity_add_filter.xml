@@ -58,8 +58,10 @@
                 android:inputType="text"
                 android:textColor="?android:textColorPrimary"
                 android:minHeight="45dp"
-                android:background="@drawable/text_input_field" />
-
+                android:background="@drawable/text_input_field"
+                android:imeOptions="actionNext"
+                android:nextFocusForward="@id/activity_add_filter_text_edit_text" />
+            <requestFocus />
         </com.google.android.material.textfield.TextInputLayout>
 
     </LinearLayout>

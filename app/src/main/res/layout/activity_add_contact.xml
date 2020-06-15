@@ -60,6 +60,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
+                    android:inputType="text"
+                    android:maxLines="1"
                     android:fontFamily="@font/lato_regular"
                     android:textSize="16sp"
                     android:padding="16dp"
@@ -68,7 +70,7 @@
                     android:hint="@string/title_contact_name"
                     app:layout_constraintTop_toBottomOf="@id/activity_add_contact_name_title"
                     android:background="@drawable/text_input_field" />
-
+                <requestFocus />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -99,6 +101,7 @@
                     android:fontFamily="@font/lato_regular"
                     android:textSize="16sp"
                     android:inputType="textEmailAddress"
+                    android:maxLines="1"
                     android:textColor="?android:textColorSecondary"
                     android:paddingTop="8dp"
                     android:paddingBottom="8dp"
@@ -148,6 +151,8 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
+                    android:inputType="text"
+                    android:maxLines="1"
                     android:fontFamily="@font/lato_regular"
                     android:textSize="16sp"
                     android:textColor="?android:textColorSecondary"
@@ -199,6 +204,8 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
+                    android:inputType="text"
+                    android:maxLines="1"
                     android:fontFamily="@font/lato_regular"
                     android:textSize="16sp"
                     android:textColor="?android:textColorSecondary"
@@ -208,6 +215,7 @@
                     android:drawableLeft="@drawable/ic_contact_remove"
                     android:drawableStart="@drawable/ic_contact_remove"
                     android:hint="@string/title_phone_number_second"
+                    android:lines="1"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/activity_add_contact_phone_title_second"
                     app:layout_constraintRight_toLeftOf="@id/activity_add_contact_phone_add_second"
@@ -250,6 +258,8 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
+                    android:inputType="text"
+                    android:maxLines="1"
                     android:fontFamily="@font/lato_regular"
                     android:textSize="16sp"
                     android:textColor="?android:textColorSecondary"
@@ -259,6 +269,7 @@
                     android:drawableLeft="@drawable/ic_contact_remove"
                     android:drawableStart="@drawable/ic_contact_remove"
                     android:hint="@string/title_address"
+                    android:lines="1"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/activity_add_contact_address_title"
                     app:layout_constraintRight_toLeftOf="@id/activity_add_contact_address_add"
@@ -303,6 +314,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
+                    android:inputType="text"
                     android:fontFamily="@font/lato_regular"
                     android:textSize="16sp"
                     android:padding="16dp"

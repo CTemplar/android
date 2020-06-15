@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:state_pressed="true">
-        <shape android:shape="rectangle">
-            <solid android:color="@color/colorOrangeDark" />
-        </shape>
-    </item>
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="@color/colorOrangeDark">
     <item android:state_enabled="false">
         <shape android:shape="rectangle">
             <solid android:color="@color/disabledTextColor" />
@@ -15,4 +11,4 @@
             <solid android:color="@color/colorOrangeLight"/>
         </shape>
     </item>
-</selector>
+</ripple>
