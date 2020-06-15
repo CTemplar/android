@@ -17,12 +17,11 @@
             android:id="@+id/fragment_messages_move_dialog_close"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:clickable="true"
-            android:focusable="true"
             android:src="@drawable/ic_close"
             android:tint="@color/secondaryTextColor"
             android:layout_marginLeft="16dp"
-            android:layout_marginStart="16dp" />
+            android:layout_marginStart="16dp"
+            android:background="@drawable/state_pressed_ripple" />
 
     </RelativeLayout>
 

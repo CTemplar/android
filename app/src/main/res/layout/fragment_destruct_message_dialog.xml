@@ -17,10 +17,11 @@
             android:id="@+id/fragment_destruct_message_dialog_close"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
             android:src="@drawable/ic_close"
             android:tint="@color/secondaryTextColor"
-            android:layout_marginStart="16dp"
-            android:layout_marginLeft="16dp" />
+            android:background="@drawable/state_pressed_ripple" />
 
     </RelativeLayout>
 
