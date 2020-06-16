@@ -1123,11 +1123,11 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
     }
 
     private boolean inputFieldsNotEmpty() {
-        String toEmail = toEmailTextView.getText().toString();
-        String ccEmail = ccTextView.getText().toString();
-        String bccEmail = bccTextView.getText().toString();
-        String subject = subjectEditText.getText().toString();
-        String compose = composeEditText.getText().toString();
+        String toEmail = EditTextUtils.getText(toEmailTextView);
+        String ccEmail = EditTextUtils.getText(ccTextView);
+        String bccEmail = EditTextUtils.getText(bccTextView);
+        String subject = EditTextUtils.getText(subjectEditText);
+        String compose = EditTextUtils.getText(composeEditText);
 
         boolean receiversNotEmpty = !toEmail.isEmpty() || !ccEmail.isEmpty() || !bccEmail.isEmpty();
         boolean contentNotEmpty = !subject.isEmpty() || !compose.isEmpty();

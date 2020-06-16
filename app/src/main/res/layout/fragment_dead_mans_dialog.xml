@@ -17,10 +17,11 @@
             android:id="@+id/fragment_dead_mans_dialog_close"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
             android:src="@drawable/ic_close"
             android:tint="@color/secondaryTextColor"
-            android:layout_marginStart="16dp"
-            android:layout_marginLeft="16dp" />
+            android:background="@drawable/state_pressed_ripple" />
 
     </RelativeLayout>
 
@@ -101,8 +102,10 @@
                     android:inputType="number"
                     android:textSize="16sp"
                     android:text="0"
-                    android:background="@drawable/text_input_field" />
-
+                    android:background="@drawable/text_input_field"
+                    android:imeOptions="actionNext"
+                    android:nextFocusForward="@id/fragment_dead_mans_dialog_hours_edit_text" />
+                <requestFocus />
             </LinearLayout>
 
             <LinearLayout
@@ -134,7 +137,9 @@
                     android:inputType="number"
                     android:textSize="16sp"
                     android:text="0"
-                    android:background="@drawable/text_input_field" />
+                    android:background="@drawable/text_input_field"
+                    android:imeOptions="actionNext"
+                    android:nextFocusForward="@id/fragment_dead_mans_dialog_schedule" />
 
             </LinearLayout>
 

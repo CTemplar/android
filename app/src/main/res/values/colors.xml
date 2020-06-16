@@ -10,6 +10,7 @@
     <color name="disabledTextColor">#61000000</color>
     <color name="colorAccent">#e74c3c</color>
     <color name="colorAccentSettings">#3498db</color>
+    <color name="colorControlHighlight">#16000000</color>
 
     <color name="colorTextGrayLight">#aeffffff</color>
     <color name="colorWhite50">#80ffffff</color>

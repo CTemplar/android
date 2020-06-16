@@ -18,14 +18,15 @@
             android:id="@+id/fragment_send_message_back"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="12dp"
+            android:layout_marginStart="12dp"
             android:padding="4dp"
             android:src="@drawable/icon_back"
             android:tint="?android:textColorSecondary"
+            android:background="@drawable/state_pressed_ripple"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginLeft="12dp"
-            android:layout_marginStart="12dp"
             android:contentDescription="Back" />
 
         <TextView
@@ -49,6 +50,7 @@
             android:padding="4dp"
             android:src="@drawable/icon_message_send"
             android:tint="?android:textColorSecondary"
+            android:background="@drawable/state_pressed_ripple"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -137,6 +139,7 @@
             android:id="@+id/fragment_send_message_to_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginRight="15dp"
             android:fontFamily="@font/lato_regular"
             android:completionThreshold="1"
             android:layout_toRightOf="@id/fragment_send_message_to_text"
@@ -147,21 +150,24 @@
             android:textColor="?android:textColorSecondary"
             android:textSize="14sp"
             android:layout_centerVertical="true"
+            android:imeOptions="actionNext"
+            android:nextFocusForward="@id/fragment_send_message_subject_input"
             android:layout_toLeftOf="@id/fragment_send_message_to_add_button"
-            android:layout_toStartOf="@id/fragment_send_message_to_add_button"
-            android:layout_marginRight="15dp" />
+            android:layout_toStartOf="@id/fragment_send_message_to_add_button" />
 
         <ImageView
             android:id="@+id/fragment_send_message_to_add_button"
             android:layout_width="44dp"
             android:layout_height="44dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginRight="5dp"
             android:src="@drawable/ic_add_active"
             android:tint="?android:textColorSecondary"
+            android:clickable="true"
+            android:focusable="true"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_marginEnd="5dp"
-            android:layout_marginRight="5dp" />
+            android:layout_centerVertical="true" />
 
     </RelativeLayout>
 
@@ -201,15 +207,17 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/lato_regular"
             android:completionThreshold="1"
-            android:layout_toRightOf="@id/fragment_send_message_cc_text"
-            android:layout_toEndOf="@id/fragment_send_message_cc_text"
             android:inputType="textEmailAddress"
             android:letterSpacing="0.05"
             android:background="@android:color/transparent"
             android:textColor="?android:textColorSecondary"
             android:textSize="14sp"
             android:layout_centerVertical="true"
-            android:layout_marginRight="15dp"/>
+            android:layout_marginRight="15dp"
+            android:imeOptions="actionNext"
+            android:nextFocusForward="@id/fragment_send_message_bcc_input"
+            android:layout_toRightOf="@id/fragment_send_message_cc_text"
+            android:layout_toEndOf="@id/fragment_send_message_cc_text" />
 
     </RelativeLayout>
 
@@ -248,16 +256,17 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/lato_regular"
             android:completionThreshold="1"
-            android:layout_toRightOf="@id/fragment_send_message_bcc_text"
-            android:layout_toEndOf="@id/fragment_send_message_bcc_text"
             android:inputType="textEmailAddress"
-            android:text=""
             android:letterSpacing="0.05"
             android:background="@android:color/transparent"
             android:textColor="?android:textColorSecondary"
             android:textSize="14sp"
             android:layout_centerVertical="true"
-            android:layout_marginRight="15dp"/>
+            android:layout_marginRight="15dp"
+            android:imeOptions="actionNext"
+            android:nextFocusForward="@id/fragment_send_message_subject_input"
+            android:layout_toRightOf="@id/fragment_send_message_bcc_text"
+            android:layout_toEndOf="@id/fragment_send_message_bcc_text" />
 
     </RelativeLayout>
 
@@ -293,7 +302,9 @@
             android:textColor="?android:textColorSecondary"
             android:textSize="16sp"
             android:layout_centerVertical="true"
-            android:layout_marginRight="15dp"/>
+            android:layout_marginRight="15dp"
+            android:imeOptions="actionNext"
+            android:nextFocusForward="@id/fragment_send_message_compose_email_input" />
 
     </RelativeLayout>
 
@@ -326,6 +337,7 @@
                 android:src="@drawable/ic_message_attachment_selector"
                 android:tint="?android:textColorSecondary"
                 android:layout_centerInParent="true"
+                android:background="@drawable/state_pressed_ripple"
                 android:contentDescription="Attachment" />
 
         </RelativeLayout>
@@ -343,6 +355,7 @@
                 android:layout_centerInParent="true"
                 android:src="@drawable/ic_encrypt_message_selector"
                 android:tint="?android:textColorSecondary"
+                android:background="@drawable/state_pressed_ripple"
                 android:contentDescription="Secure email" />
 
         </RelativeLayout>
@@ -360,6 +373,7 @@
                 android:src="@drawable/ic_destruct_timer_selector"
                 android:tint="?android:textColorSecondary"
                 android:layout_centerInParent="true"
+                android:background="@drawable/state_pressed_ripple"
                 android:contentDescription="Delete" />
 
         </RelativeLayout>
@@ -377,6 +391,7 @@
                 android:src="@drawable/ic_delayed_delivery_selector"
                 android:tint="?android:textColorSecondary"
                 android:layout_centerInParent="true"
+                android:background="@drawable/state_pressed_ripple"
                 android:contentDescription="Delayed delivery" />
 
         </RelativeLayout>
@@ -394,6 +409,7 @@
                 android:src="@drawable/ic_dead_mans_selector"
                 android:tint="?android:textColorSecondary"
                 android:layout_centerInParent="true"
+                android:background="@drawable/state_pressed_ripple"
                 android:contentDescription="Dead man's timer" />
 
         </RelativeLayout>
