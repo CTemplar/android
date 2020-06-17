@@ -189,6 +189,8 @@ public class SettingsActivity extends BaseActivity {
                     userStore.setNotificationsEnabled(isEnabled);
                     return true;
                 });
+                boolean isNotificationsEnabled = userStore.getNotificationsEnabled();
+                switchPreferenceNotificationsEnabled.setChecked(isNotificationsEnabled);
             }
         }
     }
@@ -434,9 +436,7 @@ public class SettingsActivity extends BaseActivity {
 
         String usedStorage = AppUtils.usedStorage(settingsEntity.getUsedStorage());
         String allocatedStorage = AppUtils.usedStorage(settingsEntity.getAllocatedStorage());
-
         String recoveryEmail = settingsEntity.getRecoveryEmail();
-        boolean isNotificationsEnabled = userStore.getNotificationsEnabled();
 
         if (storageLimitPreference != null) {
             storageLimitPreference.setSummary(getString(
@@ -457,7 +457,6 @@ public class SettingsActivity extends BaseActivity {
                 .putBoolean(getString(R.string.attachments_encryption_enabled), settingsEntity.isAttachmentsEncrypted())
                 .putBoolean(getString(R.string.contacts_encryption_enabled), settingsEntity.isContactsEncrypted())
                 .putBoolean(getString(R.string.anti_phishing_enabled), settingsEntity.isAntiPhishingEnabled())
-                .putBoolean(getString(R.string.push_notifications_enabled), isNotificationsEnabled)
                 .apply();
     }
 

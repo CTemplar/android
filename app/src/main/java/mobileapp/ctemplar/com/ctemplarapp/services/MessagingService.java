@@ -5,8 +5,6 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.media.RingtoneManager;
 import android.os.Build;
@@ -30,7 +28,6 @@ import mobileapp.ctemplar.com.ctemplarapp.main.MainActivityViewModel;
 import mobileapp.ctemplar.com.ctemplarapp.message.ViewMessagesActivity;
 import mobileapp.ctemplar.com.ctemplarapp.net.entity.RemoteMessageAction;
 import mobileapp.ctemplar.com.ctemplarapp.net.entity.RemoteMessageEntity;
-import mobileapp.ctemplar.com.ctemplarapp.repository.UserStore;
 import retrofit2.Response;
 import timber.log.Timber;
 
@@ -38,11 +35,11 @@ import static mobileapp.ctemplar.com.ctemplarapp.message.ViewMessagesActivity.PA
 import static mobileapp.ctemplar.com.ctemplarapp.message.ViewMessagesFragment.FOLDER_NAME;
 
 public class MessagingService extends FirebaseMessagingService {
-    private Random random = new Random();
-    private UserStore userStore;
+    private static final String NOTIFICATION_CHANNEL_ID = "com.ctemplar.emails";
 
-    public MessagingService() {
-        userStore = CTemplarApp.getUserStore();
+    @Override
+    public void onNewToken(@NonNull String s) {
+        super.onNewToken(s);
     }
 
     @Override
@@ -57,9 +54,9 @@ public class MessagingService extends FirebaseMessagingService {
                 onPasswordChanged();
                 return;
             }
-            boolean isNotificationsEnabled = userStore.getNotificationsEnabled();
+            boolean isNotificationsEnabled = CTemplarApp.getUserStore().getNotificationsEnabled();
             if (isNotificationsEnabled) {
-                sendNotification(
+                showNotification(
                         remoteMessageEntity.getSender(),
                         remoteMessageEntity.getSubject(),
                         remoteMessageEntity.getFolder(),
@@ -111,18 +108,10 @@ public class MessagingService extends FirebaseMessagingService {
         sendBroadcast(intent);
     }
 
-    @Override
-    public void onNewToken(@NonNull String s) {
-        super.onNewToken(s);
-    }
-
-    private void sendNotification(String sender, String subject, String folder, long messageId, long parentId, boolean isSubjectEncrypted) {
+    private void showNotification(String sender, String subject, String folder, long messageId,
+                                  long parentId, boolean isSubjectEncrypted) {
         long id = (parentId == -1) ? messageId : parentId;
         String content = (isSubjectEncrypted) ? getString(R.string.txt_encrypted_subject) : subject;
-
-        Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
-        String channelId = getString(R.string.channel_id);
-        String channelName = "messages";
 
         Intent intent = new Intent(this, ViewMessagesActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -130,7 +119,9 @@ public class MessagingService extends FirebaseMessagingService {
         intent.putExtra(FOLDER_NAME, folder);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
 
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, channelId)
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat
+                .Builder(this, NOTIFICATION_CHANNEL_ID)
+//                .setGroup(String.valueOf(parentId))
                 .setContentTitle(sender)
                 .setContentText(content)
                 .setAutoCancel(true)
@@ -139,25 +130,27 @@ public class MessagingService extends FirebaseMessagingService {
                 .setContentInfo(sender)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setDefaults(NotificationCompat.DEFAULT_VIBRATE)
-                .setLargeIcon(largeIcon)
                 .setSmallIcon(R.mipmap.ic_launcher_small);
 
-        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationManager notificationManager = (NotificationManager)
+                getSystemService(Context.NOTIFICATION_SERVICE);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel notificationChannel = new NotificationChannel(
-                    channelId, channelName, NotificationManager.IMPORTANCE_HIGH
+                    NOTIFICATION_CHANNEL_ID, getString(R.string.notification_channel_name),
+                    NotificationManager.IMPORTANCE_HIGH
             );
-            notificationChannel.setDescription(getString(R.string.app_name));
-            notificationChannel.setShowBadge(true);
-            notificationChannel.canShowBadge();
+            notificationChannel.setDescription(getString(R.string.notification_channel_description));
+//            notificationChannel.setShowBadge(true);
             notificationChannel.enableLights(true);
             notificationChannel.setLightColor(Color.RED);
             notificationChannel.enableVibration(true);
             notificationManager.createNotificationChannel(notificationChannel);
         }
 
-        int randomId = random.nextInt(1000);
-        notificationManager.notify(randomId, notificationBuilder.build());
+        int notificationID = (messageId == -1)
+                ? new Random().nextInt(1000)
+                : (int) messageId;
+        notificationManager.notify(notificationID, notificationBuilder.build());
     }
 }

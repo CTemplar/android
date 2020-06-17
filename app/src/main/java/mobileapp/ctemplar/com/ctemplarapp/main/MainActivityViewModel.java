@@ -643,7 +643,6 @@ public class MainActivityViewModel extends AndroidViewModel {
                             userRepository.saveTimeZone(timezone);
                             userRepository.setAttachmentsEncryptionEnabled(isAttachmentsEncrypted);
                             userRepository.setContactsEncryptionEnabled(isContactsEncrypted);
-                            userRepository.setNotificationsEnabled(true);
                         }
                     }
 
