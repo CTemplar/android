@@ -225,6 +225,8 @@
     <string name="hint_compose">Compose email</string>
 
     <!-- NOTIFICATION SERVICE -->
+    <string name="notification_channel_name">CTemplar</string>
+    <string name="notification_channel_description">New email</string>
     <string name="title_notification_service">Notification Service</string>
     <string name="title_service_running">Service is running</string>
 

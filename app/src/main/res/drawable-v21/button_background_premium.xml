@@ -7,7 +7,7 @@ android:color="@color/colorOrangeDark2">
         <gradient
             android:startColor="@color/colorOrangeDark2"
             android:endColor="@color/colorOrangeLight"
-            android:angle="0"/>
+            android:angle="0" />
     </shape>
 </item>
 </ripple>

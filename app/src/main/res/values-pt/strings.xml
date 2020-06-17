@@ -223,6 +223,8 @@ Se você tiver alguma dúvida, por favor, envie um e-mail para <![CDATA[<u><a hr
     <string name="hint_compose">Escrever um e-mail</string>
 
     <!-- MESSAGING SERVICE -->
+    <string name="notification_channel_name">CTemplar</string>
+    <string name="notification_channel_description">Novo E-mail</string>
     <string name="title_notification_service">Serviço de Notificação</string>
     <string name="title_service_running">Serviço em execução</string>
 

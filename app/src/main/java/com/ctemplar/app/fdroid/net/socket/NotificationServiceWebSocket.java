@@ -5,11 +5,12 @@ import android.os.Looper;
 
 import com.ctemplar.app.fdroid.BuildConfig;
 import com.ctemplar.app.fdroid.CTemplarApp;
+import com.ctemplar.app.fdroid.net.response.Messages.MessagesResult;
 import com.ctemplar.app.fdroid.net.response.notification.NotificationMessageResponse;
 import com.ctemplar.app.fdroid.repository.provider.MessageProvider;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonSyntaxException;
+import com.google.gson.JsonParseException;
 
 import java.util.concurrent.TimeUnit;
 
@@ -42,12 +43,15 @@ public class NotificationServiceWebSocket extends WebSocketListener {
         NotificationMessageResponse notificationMessageResponse;
         try {
             notificationMessageResponse = gson.fromJson(text, NotificationMessageResponse.class);
-        } catch (JsonSyntaxException e) {
-            Timber.e(e, "onMessage parse error");
+        } catch (JsonParseException e) {
+            Timber.w(e, "onMessage parse error");
             return;
         }
-        MessageProvider messageProvider = MessageProvider.fromMessagesResult(notificationMessageResponse.getMail());
-        callback.onNewMessage(messageProvider);
+        MessagesResult mailResult = notificationMessageResponse.getMail();
+        if (mailResult != null) {
+            MessageProvider messageProvider = MessageProvider.fromMessagesResult(mailResult);
+            callback.onNewMessage(messageProvider);
+        }
     }
 
     @Override
