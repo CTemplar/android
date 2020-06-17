@@ -225,9 +225,8 @@
     <string name="hint_compose">Compose email</string>
 
     <!-- MESSAGING SERVICE -->
-    <string name="channel_name">CTemplar</string>
-    <string name="channel_description">New email</string>
-    <string translatable="false" name="channel_id">ctemplar</string>
+    <string name="notification_channel_name">CTemplar</string>
+    <string name="notification_channel_description">New email</string>
 
     <!-- CUSTOM FILTERS -->
     <string name="txt_filters_title">Filters</string>

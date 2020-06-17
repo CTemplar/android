@@ -267,7 +267,6 @@
                     android:drawableLeft="@drawable/ic_contact_remove"
                     android:drawableStart="@drawable/ic_contact_remove"
                     android:hint="@string/title_address"
-                    android:lines="1"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/activity_edit_contact_address_title"
                     app:layout_constraintRight_toLeftOf="@id/activity_edit_contact_address_add"

@@ -223,9 +223,8 @@ Se você tiver alguma dúvida, por favor, envie um e-mail para <![CDATA[<u><a hr
     <string name="hint_compose">Escrever um e-mail</string>
 
     <!-- MESSAGING SERVICE -->
-    <string name="channel_name">CTemplar</string>
-    <string name="channel_description">Novo E-mail</string>
-    <string translatable="false" name="channel_id">ctemplar</string>
+    <string name="notification_channel_name">CTemplar</string>
+    <string name="notification_channel_description">Novo E-mail</string>
 
     <!-- CUSTOM FILTERS -->
     <string name="txt_filters_title">Filtros</string>

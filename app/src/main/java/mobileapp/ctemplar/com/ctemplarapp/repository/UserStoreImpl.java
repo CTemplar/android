@@ -174,7 +174,7 @@ public class UserStoreImpl implements UserStore{
 
     @Override
     public boolean getNotificationsEnabled() {
-        return preferences.getBoolean(KEY_NOTIFICATIONS_ENABLED, false);
+        return preferences.getBoolean(KEY_NOTIFICATIONS_ENABLED, true);
     }
 
     @Override
