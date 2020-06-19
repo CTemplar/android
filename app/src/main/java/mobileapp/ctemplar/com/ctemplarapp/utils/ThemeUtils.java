@@ -7,6 +7,7 @@ import android.os.Build;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 
+import androidx.annotation.DimenRes;
 import androidx.core.content.ContextCompat;
 import androidx.webkit.WebSettingsCompat;
 import androidx.webkit.WebViewFeature;
@@ -36,5 +37,9 @@ public class ThemeUtils {
                         WebSettingsCompat.DARK_STRATEGY_PREFER_WEB_THEME_OVER_USER_AGENT_DARKENING);
             }
         }
+    }
+
+    public static float getDimension(Context context, @DimenRes int resourceId) {
+        return context.getResources().getDimension(resourceId);
     }
 }

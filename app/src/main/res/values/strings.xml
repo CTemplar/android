@@ -297,12 +297,16 @@
     <string name="txt_signature_enabled">Signature enabled</string>
     <string name="txt_mobile_signature_enabled">Mobile signature enabled</string>
 
+    <!-- PIN LOCK -->
+    <string name="pin_lock">PIN Lock</string>
+
     <!-- SIGNATURE EDIT BAR -->
     <string name="txt_panel_bold">B</string>
     <string name="txt_panel_italic">I</string>
     <string name="txt_panel_underline">U</string>
     <string name="txt_panel_monospace">M</string>
     <string name="txt_panel_normal">Normal</string>
+
     <string name="settings_general">General settings</string>
     <string name="settings_recovery_email">Recovery email</string>
     <string name="settings_enable_recovery_email">Enable recovery email</string>
@@ -351,6 +355,7 @@
     <string name="toast_email_not_valid">Email is not valid</string>
     <string name="storage_limit_info">%1$s of %2$s</string>
     <string translatable="false" name="password_key">password_key</string>
+    <string translatable="false" name="pin_lock_key">pi_lock_key</string>
     <string translatable="false" name="signature_key">signature_key</string>
     <string translatable="false" name="mobile_signature_key">mobile_signature_key</string>
     <string translatable="false" name="filters">filters</string>

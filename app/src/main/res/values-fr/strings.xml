@@ -31,7 +31,7 @@
     <string name="nav_drawer_manage_folders_param">Gérer les dossiers (%1$d)</string>
     <string name="nav_drawer_folders_show_more">Afficher 10 dossiers supplémentaires</string>
 
-    <!-- Tool Bar -->
+    <!-- TOOL BAR -->
     <string name="action_search">Rechercher</string>
     <string name="action_filter">Filtrer</string>
     <string name="action_search_hint">Rechercher un email</string>
@@ -295,6 +295,9 @@
     <string name="txt_type_signature">Saisir signature</string>
     <string name="txt_signature_enabled">Signature activée</string>
     <string name="txt_mobile_signature_enabled">Signature mobile activée</string>
+
+    <!-- PIN LOCK -->
+    <string name="pin_lock">Verrouillage PIN</string>
 
     <!-- SIGNATURE EDIT BAR -->
     <string name="txt_panel_bold">B</string>

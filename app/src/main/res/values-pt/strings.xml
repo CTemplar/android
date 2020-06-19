@@ -294,6 +294,9 @@ Se você tiver alguma dúvida, por favor, envie um e-mail para <![CDATA[<u><a hr
     <string name="txt_type_signature">Digite sua assinatura</string>
     <string name="txt_signature_enabled">Assinatura ativada</string>
     <string name="txt_mobile_signature_enabled">Assinatura móvel ativada</string>
+
+    <!-- PIN LOCK -->
+    <string name="pin_lock">Bloqueio de PIN</string>
     
     <!-- SIGNATURE EDIT BAR -->
     <string name="txt_panel_bold">B</string>
@@ -301,6 +304,7 @@ Se você tiver alguma dúvida, por favor, envie um e-mail para <![CDATA[<u><a hr
     <string name="txt_panel_underline">U</string>
     <string name="txt_panel_monospace">M</string>
     <string name="txt_panel_normal">Normal</string>
+
     <string name="settings_general">Configurações Gerais</string>
     <string name="settings_recovery_email">E-mail de recuperação</string>
     <string name="settings_enable_recovery_email">Ativar e-mail de recuperação</string>
