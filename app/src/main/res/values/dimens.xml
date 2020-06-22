@@ -15,5 +15,9 @@
     <dimen name="passcode_dot_diameter">10dp</dimen>
     <dimen name="passcode_dot_spacing">8dp</dimen>
 
+    <dimen name="number_button_size">64dp</dimen>
+    <dimen name="keypad_column_space">48dp</dimen>
+    <dimen name="keypad_row_space">12dp</dimen>
+
     <bool name="isTabletLand">false</bool>
 </resources>

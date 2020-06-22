@@ -104,6 +104,8 @@ public class KeypadView extends RecyclerView {
         adapter.setOnItemClickListener(onNumClickListener);
         adapter.setOnDeleteClickListener(onDeleteClickListener);
         setAdapter(adapter);
+
+        addItemDecoration(new RecyclerSpaceDecoration( 3));
         setOverScrollMode(OVER_SCROLL_NEVER);
     }
 
