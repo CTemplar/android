@@ -297,6 +297,8 @@ Se você tiver alguma dúvida, por favor, envie um e-mail para <![CDATA[<u><a hr
 
     <!-- PIN LOCK -->
     <string name="pin_lock">Bloqueio de PIN</string>
+    <string name="pin_lock_enable">Ativar bloqueio de PIN</string>
+    <string name="change_pin">Alterar PIN</string>
     
     <!-- SIGNATURE EDIT BAR -->
     <string name="txt_panel_bold">B</string>

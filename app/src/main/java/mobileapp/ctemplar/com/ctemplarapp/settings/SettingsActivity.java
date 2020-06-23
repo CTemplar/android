@@ -41,6 +41,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.MyselfResult;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.SettingsEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserStore;
+import mobileapp.ctemplar.com.ctemplarapp.splash.PINLockActivity;
 import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EncodeUtils;
@@ -118,8 +119,8 @@ public class SettingsActivity extends BaseActivity {
             Preference pinLockKey = findPreference(getString(R.string.pin_lock_key));
             if (pinLockKey != null) {
                 pinLockKey.setOnPreferenceClickListener(preference -> {
-                    Intent pinLockIntent = new Intent(getActivity(), PINLockActivity.class);
-                    startActivity(pinLockIntent);
+                    Intent pinLockSettingsIntent = new Intent(getActivity(), PINLockSettingsActivity.class);
+                    startActivity(pinLockSettingsIntent);
                     return false;
                 });
             }

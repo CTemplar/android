@@ -1,4 +1,4 @@
-package mobileapp.ctemplar.com.ctemplarapp.settings;
+package mobileapp.ctemplar.com.ctemplarapp.splash;
 
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -16,15 +16,15 @@ import timber.log.Timber;
 
 public class PINLockActivity extends BaseActivity {
 
-    @BindView(R.id.activity_settings_pin_lock_pass_code_view)
+    @BindView(R.id.activity_pin_lock_pass_code_view)
     PasscodeView passcodeView;
 
-    @BindView(R.id.activity_settings_pin_lock_key_pad_view)
+    @BindView(R.id.activity_pin_lock_key_pad_view)
     KeypadView keypadView;
 
     @Override
     protected int getLayoutId() {
-        return R.layout.activity_settings_pin_lock;
+        return R.layout.activity_pin_lock;
     }
 
     private KeypadAdapter.KeypadListener mKeypadListener = new KeypadAdapter.KeypadListener() {

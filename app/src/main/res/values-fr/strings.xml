@@ -298,6 +298,8 @@
 
     <!-- PIN LOCK -->
     <string name="pin_lock">Verrouillage PIN</string>
+    <string name="pin_lock_enable">Activer le verrouillage PIN</string>
+    <string name="change_pin">Modifier le code PIN</string>
 
     <!-- SIGNATURE EDIT BAR -->
     <string name="txt_panel_bold">B</string>
