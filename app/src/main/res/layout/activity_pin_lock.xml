@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:fontFamily="@font/lato_bold"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/activity_pin_lock_app_logo_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar">
+
+        <ImageView
+            android:id="@+id/activity_pin_lock_app_logo_image_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/icon_shield_small"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/activity_pin_lock_app_name_image_view" />
+
+        <ImageView
+            android:id="@+id/activity_pin_lock_app_name_image_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:tint="@color/secondaryTextColor"
+            app:layout_constraintHorizontal_bias="0.5"
+            android:src="@drawable/icon_ctemplar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/activity_pin_lock_app_logo_image_view"
+            app:layout_constraintTop_toTopOf="@id/activity_pin_lock_app_logo_image_view"
+            app:layout_constraintBottom_toBottomOf="@id/activity_pin_lock_app_logo_image_view" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <LinearLayout
+        android:id="@+id/activity_pin_lock_input_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@id/activity_pin_lock_app_logo_layout"
+        app:layout_constraintBottom_toTopOf="@id/activity_pin_lock_key_pad_view">
+
+        <TextView
+            android:id="@+id/activity_pin_lock_hint_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <mobileapp.ctemplar.com.ctemplarapp.view.pinlock.PasscodeView
+            android:id="@+id/activity_pin_lock_pass_code_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="35dp"
+            android:layout_marginRight="35dp"
+            android:background="@color/disabledTextColor" />
+
+    </LinearLayout>
+
+    <mobileapp.ctemplar.com.ctemplarapp.view.pinlock.KeypadView
+        android:id="@+id/activity_pin_lock_key_pad_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:listitem="@layout/item_number"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/activity_pin_lock_input_layout" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

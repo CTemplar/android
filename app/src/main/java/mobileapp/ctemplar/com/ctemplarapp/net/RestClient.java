@@ -23,7 +23,7 @@ public class RestClient {
 
     public RestClient() {
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://" + BuildConfig.BASE_URL)
+                .baseUrl(BuildConfig.BASE_URL)
                 .client(logLevel())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
@@ -54,7 +54,8 @@ public class RestClient {
         } catch (KeyStoreException e) {
             Timber.e(e);
         }
-        client.addInterceptor(interceptor)
+        client
+//                .addInterceptor(interceptor)
                 .addInterceptor(new HttpTokenInterceptor())
                 .authenticator(new TokenAuthenticator())
                 .readTimeout(30, TimeUnit.SECONDS)

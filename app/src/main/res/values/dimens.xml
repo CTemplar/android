@@ -1,17 +1,23 @@
 <resources>
-    <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="nav_header_vertical_spacing">8dp</dimen>
     <dimen name="nav_header_height">100dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="colors_round_size">32dp</dimen>
+    <dimen name="captcha_padding">148dp</dimen>
 
     <integer name="restriction_username_min">4</integer>
     <integer name="restriction_username_max">64</integer>
     <integer name="restriction_password_min">1</integer>
     <integer name="restriction_password_max">255</integer>
-    <bool name="isTabletLand">false</bool>
 
-    <dimen name="captcha_padding">148dp</dimen>
+    <dimen name="passcode_dot_diameter">10dp</dimen>
+    <dimen name="passcode_dot_spacing">8dp</dimen>
+
+    <dimen name="number_button_size">64dp</dimen>
+    <dimen name="keypad_column_space">48dp</dimen>
+    <dimen name="keypad_row_space">12dp</dimen>
+
+    <bool name="isTabletLand">false</bool>
 </resources>

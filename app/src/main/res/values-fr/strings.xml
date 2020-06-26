@@ -31,7 +31,7 @@
     <string name="nav_drawer_manage_folders_param">Gérer les dossiers (%1$d)</string>
     <string name="nav_drawer_folders_show_more">Afficher 10 dossiers supplémentaires</string>
 
-    <!-- Tool Bar -->
+    <!-- TOOLBAR -->
     <string name="action_search">Rechercher</string>
     <string name="action_filter">Filtrer</string>
     <string name="action_search_hint">Rechercher un email</string>
@@ -249,16 +249,6 @@
     <string name="txt_delete_filter_quest_message">"Êtes-vous certain de vouloir supprimer le filtre ?</string>
     <string name="txt_delete_filter">Supprimer filtre</string>
 
-    <string-array name="filter_parameter_list">
-        <item>objet</item>
-        <item>de</item>
-    </string-array>
-
-    <string-array name="filter_condition_list">
-        <item>contient</item>
-        <item>commence par</item>
-    </string-array>
-
     <!-- WHITE-BLACK LIST -->
     <string name="adding_blacklist_contact_error">Une erreur est survenue lors de l\'ajout à la liste noire.</string>
     <string name="adding_whitelist_contact_error">Une erreur est survenue lors de l\'ajout à la liste blanche.</string>
@@ -295,6 +285,16 @@
     <string name="txt_type_signature">Saisir signature</string>
     <string name="txt_signature_enabled">Signature activée</string>
     <string name="txt_mobile_signature_enabled">Signature mobile activée</string>
+
+    <!-- PIN LOCK -->
+    <string name="pin_lock">Verrouillage PIN</string>
+    <string name="pin_lock_enable">Activer le verrouillage PIN</string>
+    <string name="change_pin">Modifier le code PIN</string>
+    <string name="auto_lock">Verrouillage automatique</string>
+    <string name="choose_pin">Entrez un code PIN à 4 chiffres</string>
+    <string name="confirm_pin">Confirmez votre code PIN</string>
+    <string name="invalid_pin">PIN invalide</string>
+    <string name="pins_dont_match">Les codes PIN ne correspondent pas</string>
 
     <!-- SIGNATURE EDIT BAR -->
     <string name="txt_panel_bold">B</string>
@@ -419,4 +419,23 @@
     <string name="toast_undefined_error">Erreur non déterminée</string>
     <string name="whitelist">Liste blanche</string>
     <string name="blacklist">Liste noire</string>
+
+    <string-array name="filter_parameter_list">
+        <item>objet</item>
+        <item>de</item>
+    </string-array>
+
+    <string-array name="filter_condition_list">
+        <item>contient</item>
+        <item>commence par</item>
+    </string-array>
+
+    <string-array name="auto_lock_time">
+        <item>Immédiatement</item>
+        <item>1 minute</item>
+        <item>5 minutes</item>
+        <item>10 minutes</item>
+        <item>1 heure</item>
+        <item>24 heures</item>
+    </string-array>
 </resources>

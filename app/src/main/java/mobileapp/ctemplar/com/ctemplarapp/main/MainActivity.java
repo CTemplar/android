@@ -97,7 +97,7 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ThemeUtils.setStatusBarTheme(this);
+        ThemeUtils.setTheme(this);
 
         drawer = findViewById(R.id.drawer_layout);
         contentContainer = findViewById(R.id.content_container);

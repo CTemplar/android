@@ -30,7 +30,6 @@ import androidx.preference.SwitchPreference;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 import mobileapp.ctemplar.com.ctemplarapp.BaseActivity;
-import mobileapp.ctemplar.com.ctemplarapp.BuildConfig;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.filters.FiltersActivity;
@@ -42,6 +41,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.MyselfResult;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.SettingsEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserStore;
+import mobileapp.ctemplar.com.ctemplarapp.splash.PINLockActivity;
 import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EncodeUtils;
@@ -52,7 +52,7 @@ public class SettingsActivity extends BaseActivity {
     public static final String USER_IS_PRIME = "user_is_prime";
     public static final String SETTING_ID = "setting_id";
 
-    private static SettingsActivityViewModel settingsModel;
+    private static SettingsViewModel settingsModel;
     private static UserRepository userRepository = CTemplarApp.getUserRepository();
     private static UserStore userStore = CTemplarApp.getUserStore();
 
@@ -65,13 +65,13 @@ public class SettingsActivity extends BaseActivity {
 
     @Override
     protected int getLayoutId() {
-        return R.layout.settings_activity;
+        return R.layout.activity_settings;
     }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        settingsModel = new ViewModelProvider(this).get(SettingsActivityViewModel.class);
+        settingsModel = new ViewModelProvider(this).get(SettingsViewModel.class);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         requestMySelfData();
 
@@ -104,15 +104,25 @@ public class SettingsActivity extends BaseActivity {
             storageLimitPreference = findPreference(getString(R.string.local_storage_limit));
             recoveryEmailPreferenceScreen = findPreference(getString(R.string.recovery_email_holder));
 
-            String recoveryEmail = sharedPreferences.getString(getString(R.string.recovery_email), null);
-            if (EditTextUtils.isNotEmpty(recoveryEmail)) {
-                recoveryEmailPreferenceScreen.setSummary(recoveryEmail);
+            if (sharedPreferences != null) {
+                String recoveryEmail = sharedPreferences.getString(getString(R.string.recovery_email), null);
+                if (EditTextUtils.isNotEmpty(recoveryEmail)) {
+                    recoveryEmailPreferenceScreen.setSummary(recoveryEmail);
+                }
             }
             Preference passwordKey = findPreference(getString(R.string.password_key));
             if (passwordKey != null) {
                 passwordKey.setOnPreferenceClickListener(preference -> {
                     Intent changePassword = new Intent(getActivity(), ChangePasswordActivity.class);
                     startActivity(changePassword);
+                    return false;
+                });
+            }
+            Preference pinLockKey = findPreference(getString(R.string.pin_lock_key));
+            if (pinLockKey != null) {
+                pinLockKey.setOnPreferenceClickListener(preference -> {
+                    Intent pinLockSettingsIntent = new Intent(getActivity(), PINLockSettingsActivity.class);
+                    startActivity(pinLockSettingsIntent);
                     return false;
                 });
             }
@@ -195,6 +205,22 @@ public class SettingsActivity extends BaseActivity {
         }
     }
 
+    public static class SavingContactsFragment extends BasePreferenceFragment {
+        @Override
+        public void onCreatePreferences(Bundle bundle, String rootKey) {
+            setPreferencesFromResource(R.xml.saving_contacts_settings, rootKey);
+
+            SwitchPreference autoSaveContactsPreference = findPreference(getString(R.string.auto_save_contacts_enabled));
+            if (autoSaveContactsPreference != null) {
+                autoSaveContactsPreference.setOnPreferenceChangeListener((preference, newValue) -> {
+                    boolean isEnabled = (boolean) newValue;
+                    settingsModel.updateAutoSaveEnabled(settingId, isEnabled);
+                    return true;
+                });
+            }
+        }
+    }
+
     public static class RecoveryEmailFragment extends BasePreferenceFragment {
         @Override
         public void onCreatePreferences(Bundle bundle, String rootKey) {
@@ -239,22 +265,6 @@ public class SettingsActivity extends BaseActivity {
                     return false;
                 }
             });
-        }
-    }
-
-    public static class SavingContactsFragment extends BasePreferenceFragment {
-        @Override
-        public void onCreatePreferences(Bundle bundle, String rootKey) {
-            setPreferencesFromResource(R.xml.saving_contacts_settings, rootKey);
-
-            SwitchPreference autoSaveContactsPreference = findPreference(getString(R.string.auto_save_contacts_enabled));
-            if (autoSaveContactsPreference != null) {
-                autoSaveContactsPreference.setOnPreferenceChangeListener((preference, newValue) -> {
-                    boolean isEnabled = (boolean) newValue;
-                    settingsModel.updateAutoSaveEnabled(settingId, isEnabled);
-                    return true;
-                });
-            }
         }
     }
 

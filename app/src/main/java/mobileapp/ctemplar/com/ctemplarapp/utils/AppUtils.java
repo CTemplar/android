@@ -1,5 +1,9 @@
 package mobileapp.ctemplar.com.ctemplarapp.utils;
 
+import android.content.Context;
+import android.os.Build;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.text.TextUtils;
 import android.webkit.MimeTypeMap;
 
@@ -21,7 +25,6 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.UserStore;
 import timber.log.Timber;
 
 public class AppUtils {
-
     private static UserStore userStore = CTemplarApp.getUserStore();
 
     private static final String DATE_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
@@ -260,5 +263,15 @@ public class AppUtils {
             Timber.e("DateParse error: %s", e.getMessage());
         }
         return stringDate;
+    }
+
+    public static void vibrate(Context context, long milliseconds) {
+        Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            vibrator.vibrate(VibrationEffect.createOneShot(milliseconds,
+                    VibrationEffect.DEFAULT_AMPLITUDE));
+        } else {
+            vibrator.vibrate(milliseconds);
+        }
     }
 }
