@@ -7,6 +7,7 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
         android:name=".CTemplarApp"
@@ -92,6 +93,7 @@
         <activity android:name=".settings.SettingsActivity"
             android:theme="@style/PreferenceScreen" />
         <activity android:name=".settings.PINLockSettingsActivity" />
+        <activity android:name=".settings.PINLockChangeActivity" />
         <activity android:name=".settings.ChangePasswordActivity" />
         <activity android:name=".settings.KeysActivity" />
         <activity android:name=".settings.SignatureActivity" />

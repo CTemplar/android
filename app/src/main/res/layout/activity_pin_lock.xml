@@ -10,14 +10,12 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:fontFamily="@font/lato_bold"
-        app:title="@string/pin_lock"
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/activity_pin_lock_app_logo_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/toolbar">
@@ -57,6 +55,11 @@
         android:orientation="vertical"
         app:layout_constraintTop_toBottomOf="@id/activity_pin_lock_app_logo_layout"
         app:layout_constraintBottom_toTopOf="@id/activity_pin_lock_key_pad_view">
+
+        <TextView
+            android:id="@+id/activity_pin_lock_hint_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
 
         <mobileapp.ctemplar.com.ctemplarapp.view.pinlock.PasscodeView
             android:id="@+id/activity_pin_lock_pass_code_view"

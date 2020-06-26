@@ -104,9 +104,11 @@ public class SettingsActivity extends BaseActivity {
             storageLimitPreference = findPreference(getString(R.string.local_storage_limit));
             recoveryEmailPreferenceScreen = findPreference(getString(R.string.recovery_email_holder));
 
-            String recoveryEmail = sharedPreferences.getString(getString(R.string.recovery_email), null);
-            if (EditTextUtils.isNotEmpty(recoveryEmail)) {
-                recoveryEmailPreferenceScreen.setSummary(recoveryEmail);
+            if (sharedPreferences != null) {
+                String recoveryEmail = sharedPreferences.getString(getString(R.string.recovery_email), null);
+                if (EditTextUtils.isNotEmpty(recoveryEmail)) {
+                    recoveryEmailPreferenceScreen.setSummary(recoveryEmail);
+                }
             }
             Preference passwordKey = findPreference(getString(R.string.password_key));
             if (passwordKey != null) {

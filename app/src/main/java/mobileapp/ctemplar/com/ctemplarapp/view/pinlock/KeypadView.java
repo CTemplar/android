@@ -134,7 +134,7 @@ public class KeypadView extends RecyclerView {
         return passcodeView != null;
     }
 
-    public void attachpasscodeView(PasscodeView passcodeView) {
+    public void attachPasscodeView(PasscodeView passcodeView) {
         this.passcodeView = passcodeView;
     }
 }

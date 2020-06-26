@@ -8,7 +8,7 @@ repositories {
 ext {
     versionMajor = 1
     versionMinor = 2
-    versionBuild = 8
+    versionBuild = 9
 }
 
 android {
@@ -38,13 +38,13 @@ android {
             versionName "${versionMajor}.${versionMinor}.${versionBuild}-${new Date().format('M.d.yyyy')}-dev"
             applicationIdSuffix '.development'
             buildConfigField("String", "DOMAIN", "\"dev.ctemplar.com\"")
-            buildConfigField("String", "BASE_URL", "\"devapi.ctemplar.net/\"")
+            buildConfigField("String", "BASE_URL", "\"https://devapi.ctemplar.net/\"")
         }
         production {
             versionName "${versionMajor}.${versionMinor}.${versionBuild}"
             applicationIdSuffix ".production"
             buildConfigField("String", "DOMAIN", "\"ctemplar.com\"")
-            buildConfigField("String", "BASE_URL", "\"api.ctemplar.com/\"")
+            buildConfigField("String", "BASE_URL", "\"https://api.ctemplar.com/\"")
         }
     }
 
@@ -83,7 +83,7 @@ dependencies {
     implementation 'com.squareup.picasso:picasso:2.71828'
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
 
-    implementation 'com.google.firebase:firebase-messaging:20.2.0'
+    implementation 'com.google.firebase:firebase-messaging:20.2.1'
     implementation 'com.google.dagger:dagger:2.24'
 
     implementation 'com.jakewharton.timber:timber:4.7.1'
@@ -96,7 +96,7 @@ dependencies {
     compileOnly 'com.jakewharton.auto.value:auto-value-annotations:1.4'
 
     testImplementation 'junit:junit:4.12'
-    testImplementation 'org.mockito:mockito-core:3.2.4'
+    testImplementation 'org.mockito:mockito-core:3.3.3'
 
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
