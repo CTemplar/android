@@ -39,6 +39,10 @@
             android:title="@string/settings_password"
             android:key="@string/password_key" />
 
+        <Preference
+            android:title="@string/pin_lock"
+            android:key="@string/pin_lock_key" />
+
         <PreferenceScreen
             android:title="@string/settings_recovery_email"
             android:key="@string/recovery_email_holder"

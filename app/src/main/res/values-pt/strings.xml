@@ -31,7 +31,7 @@
     <string name="nav_drawer_manage_folders_param">Gerenciar pastas (%1$d)</string>
     <string name="nav_drawer_folders_show_more">Mostrar mais 10 pastas</string>
 
-    <!-- Tool Bar -->
+    <!-- TOOLBAR -->
     <string name="action_search">Pesquisar</string>
     <string name="action_filter">Filtro</string>
     <string name="action_search_hint">Pesquisar por e-mails</string>
@@ -43,7 +43,7 @@
     <string name="action_reported_as_not_spam">1 denunciado como não sendo spam</string>
     <string name="action_message_removed">1 mensagem removida</string>
 
-    <!-- MENU -->    
+    <!-- MENU -->
     <string name="menu_save">Salvar</string>
     <string name="menu_spam">Spam</string>
     <string name="menu_not_spam">Marcar como não spam</string>
@@ -53,7 +53,7 @@
     <string name="menu_move_to_archive">Arquivar</string>
     <string name="menu_mark_as_unread">Marcar como não lido</string>
 
-    <!-- STRINGS -->    
+    <!-- STRINGS -->
     <string name="token_expired_title">Sessão expirada</string>
     <string name="token_expired_message">Sua sessão expirou, faça login no CTemplar novamente.</string>
     <string name="title_email">E-mail</string>
@@ -222,7 +222,7 @@ Se você tiver alguma dúvida, por favor, envie um e-mail para <![CDATA[<u><a hr
     <string name="txt_date_format">Data: %1$s</string>
     <string name="hint_compose">Escrever um e-mail</string>
 
-    <!-- MESSAGING SERVICE -->
+    <!-- NOTIFICATION SERVICE -->
     <string name="notification_channel_name">CTemplar</string>
     <string name="notification_channel_description">Novo E-mail</string>
     <string name="title_notification_service">Serviço de Notificação</string>
@@ -251,14 +251,6 @@ Se você tiver alguma dúvida, por favor, envie um e-mail para <![CDATA[<u><a hr
     <string name="txt_delete_filter_quest_title">Excluir filtro?</string>
     <string name="txt_delete_filter_quest_message">"Tem certeza de que deseja excluir o filtro?</string>
     <string name="txt_delete_filter">Excluir filtro</string>
-    <string-array name="filter_parameter_list">
-        <item>assunto</item>
-        <item>remetente</item>
-    </string-array>
-    <string-array name="filter_condition_list">
-        <item>contém</item>
-        <item>começa com</item>
-    </string-array>
 
     <!-- WHITE-BLACK LIST -->
     <string name="adding_blacklist_contact_error">Erro ao adicionar o contato à lista negra</string>
@@ -296,13 +288,24 @@ Se você tiver alguma dúvida, por favor, envie um e-mail para <![CDATA[<u><a hr
     <string name="txt_type_signature">Digite sua assinatura</string>
     <string name="txt_signature_enabled">Assinatura ativada</string>
     <string name="txt_mobile_signature_enabled">Assinatura móvel ativada</string>
-    
+
+    <!-- PIN LOCK -->
+    <string name="pin_lock">Bloqueio de PIN</string>
+    <string name="pin_lock_enable">Ativar bloqueio de PIN</string>
+    <string name="change_pin">Alterar PIN</string>
+    <string name="auto_lock">Bloqueio automático</string>
+    <string name="choose_pin">Digite um PIN de 4 dígitos</string>
+    <string name="confirm_pin">Confirme seu PIN</string>
+    <string name="invalid_pin">PIN inválido</string>
+    <string name="pins_dont_match">PINs não correspondem</string>
+
     <!-- SIGNATURE EDIT BAR -->
     <string name="txt_panel_bold">B</string>
     <string name="txt_panel_italic">I</string>
     <string name="txt_panel_underline">U</string>
     <string name="txt_panel_monospace">M</string>
     <string name="txt_panel_normal">Normal</string>
+
     <string name="settings_general">Configurações Gerais</string>
     <string name="settings_recovery_email">E-mail de recuperação</string>
     <string name="settings_enable_recovery_email">Ativar e-mail de recuperação</string>
@@ -419,4 +422,23 @@ Se você tiver alguma dúvida, por favor, envie um e-mail para <![CDATA[<u><a hr
     <string name="toast_undefined_error">Erro desconhecido</string>
     <string name="whitelist">Lista branca</string>
     <string name="blacklist">Lista negra</string>
+
+    <string-array name="filter_parameter_list">
+        <item>assunto</item>
+        <item>remetente</item>
+    </string-array>
+
+    <string-array name="filter_condition_list">
+        <item>contém</item>
+        <item>começa com</item>
+    </string-array>
+
+    <string-array name="auto_lock_time">
+        <item>Imediatamente</item>
+        <item>1 minuto</item>
+        <item>5 minutos</item>
+        <item>10 minutos</item>
+        <item>1 hora</item>
+        <item>24 horas</item>
+    </string-array>
 </resources>

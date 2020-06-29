@@ -9,6 +9,7 @@ import android.text.Spanned;
 import android.text.TextUtils;
 import android.util.Patterns;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 
@@ -55,6 +56,11 @@ public class EditTextUtils {
     public static String getText(EditText editText) {
         Editable editable = editText.getText();
         return editable == null ? "" : editable.toString();
+    }
+
+    public static String getText(TextView textView) {
+        CharSequence text = textView.getText();
+        return text == null ? "" : text.toString();
     }
 
     public static boolean isTextLength(String text, int min, int max) {

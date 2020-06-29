@@ -26,7 +26,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(getLayoutId());
         mUnbinder = ButterKnife.bind(this);
-        ThemeUtils.setStatusBarTheme(this);
+        ThemeUtils.setTheme(this);
     }
 
     @Override

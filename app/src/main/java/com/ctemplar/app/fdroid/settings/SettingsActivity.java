@@ -30,7 +30,6 @@ import androidx.preference.SwitchPreference;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 import com.ctemplar.app.fdroid.BaseActivity;
-import com.ctemplar.app.fdroid.BuildConfig;
 import com.ctemplar.app.fdroid.CTemplarApp;
 import com.ctemplar.app.fdroid.R;
 import com.ctemplar.app.fdroid.filters.FiltersActivity;
@@ -40,9 +39,9 @@ import com.ctemplar.app.fdroid.net.ResponseStatus;
 import com.ctemplar.app.fdroid.net.response.Myself.MyselfResponse;
 import com.ctemplar.app.fdroid.net.response.Myself.MyselfResult;
 import com.ctemplar.app.fdroid.net.response.Myself.SettingsEntity;
-import com.ctemplar.app.fdroid.notification.NotificationService;
 import com.ctemplar.app.fdroid.repository.UserRepository;
 import com.ctemplar.app.fdroid.repository.UserStore;
+import com.ctemplar.app.fdroid.splash.PINLockActivity;
 import com.ctemplar.app.fdroid.utils.AppUtils;
 import com.ctemplar.app.fdroid.utils.EditTextUtils;
 import com.ctemplar.app.fdroid.utils.EncodeUtils;
@@ -53,7 +52,7 @@ public class SettingsActivity extends BaseActivity {
     public static final String USER_IS_PRIME = "user_is_prime";
     public static final String SETTING_ID = "setting_id";
 
-    private static SettingsActivityViewModel settingsModel;
+    private static SettingsViewModel settingsModel;
     private static UserRepository userRepository = CTemplarApp.getUserRepository();
     private static UserStore userStore = CTemplarApp.getUserStore();
 
@@ -66,13 +65,13 @@ public class SettingsActivity extends BaseActivity {
 
     @Override
     protected int getLayoutId() {
-        return R.layout.settings_activity;
+        return R.layout.activity_settings;
     }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        settingsModel = new ViewModelProvider(this).get(SettingsActivityViewModel.class);
+        settingsModel = new ViewModelProvider(this).get(SettingsViewModel.class);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         requestMySelfData();
 
@@ -105,15 +104,25 @@ public class SettingsActivity extends BaseActivity {
             storageLimitPreference = findPreference(getString(R.string.local_storage_limit));
             recoveryEmailPreferenceScreen = findPreference(getString(R.string.recovery_email_holder));
 
-            String recoveryEmail = sharedPreferences.getString(getString(R.string.recovery_email), null);
-            if (EditTextUtils.isNotEmpty(recoveryEmail)) {
-                recoveryEmailPreferenceScreen.setSummary(recoveryEmail);
+            if (sharedPreferences != null) {
+                String recoveryEmail = sharedPreferences.getString(getString(R.string.recovery_email), null);
+                if (EditTextUtils.isNotEmpty(recoveryEmail)) {
+                    recoveryEmailPreferenceScreen.setSummary(recoveryEmail);
+                }
             }
             Preference passwordKey = findPreference(getString(R.string.password_key));
             if (passwordKey != null) {
                 passwordKey.setOnPreferenceClickListener(preference -> {
                     Intent changePassword = new Intent(getActivity(), ChangePasswordActivity.class);
                     startActivity(changePassword);
+                    return false;
+                });
+            }
+            Preference pinLockKey = findPreference(getString(R.string.pin_lock_key));
+            if (pinLockKey != null) {
+                pinLockKey.setOnPreferenceClickListener(preference -> {
+                    Intent pinLockSettingsIntent = new Intent(getActivity(), PINLockSettingsActivity.class);
+                    startActivity(pinLockSettingsIntent);
                     return false;
                 });
             }
@@ -186,12 +195,28 @@ public class SettingsActivity extends BaseActivity {
             SwitchPreference switchPreferenceNotificationsEnabled = findPreference(getString(R.string.push_notifications_enabled));
             if (switchPreferenceNotificationsEnabled != null) {
                 switchPreferenceNotificationsEnabled.setOnPreferenceChangeListener((preference, newValue) -> {
-                    userStore.setNotificationsEnabled((boolean) newValue);
-                    NotificationService.updateState(getContext());
+                    boolean isEnabled = (boolean) newValue;
+                    userStore.setNotificationsEnabled(isEnabled);
                     return true;
                 });
                 boolean isNotificationsEnabled = userStore.getNotificationsEnabled();
                 switchPreferenceNotificationsEnabled.setChecked(isNotificationsEnabled);
+            }
+        }
+    }
+
+    public static class SavingContactsFragment extends BasePreferenceFragment {
+        @Override
+        public void onCreatePreferences(Bundle bundle, String rootKey) {
+            setPreferencesFromResource(R.xml.saving_contacts_settings, rootKey);
+
+            SwitchPreference autoSaveContactsPreference = findPreference(getString(R.string.auto_save_contacts_enabled));
+            if (autoSaveContactsPreference != null) {
+                autoSaveContactsPreference.setOnPreferenceChangeListener((preference, newValue) -> {
+                    boolean isEnabled = (boolean) newValue;
+                    settingsModel.updateAutoSaveEnabled(settingId, isEnabled);
+                    return true;
+                });
             }
         }
     }
@@ -240,22 +265,6 @@ public class SettingsActivity extends BaseActivity {
                     return false;
                 }
             });
-        }
-    }
-
-    public static class SavingContactsFragment extends BasePreferenceFragment {
-        @Override
-        public void onCreatePreferences(Bundle bundle, String rootKey) {
-            setPreferencesFromResource(R.xml.saving_contacts_settings, rootKey);
-
-            SwitchPreference autoSaveContactsPreference = findPreference(getString(R.string.auto_save_contacts_enabled));
-            if (autoSaveContactsPreference != null) {
-                autoSaveContactsPreference.setOnPreferenceChangeListener((preference, newValue) -> {
-                    boolean isEnabled = (boolean) newValue;
-                    settingsModel.updateAutoSaveEnabled(settingId, isEnabled);
-                    return true;
-                });
-            }
         }
     }
 

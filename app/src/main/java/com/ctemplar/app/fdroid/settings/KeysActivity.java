@@ -47,13 +47,22 @@ public class KeysActivity extends BaseActivity {
     @BindView(R.id.activity_setting_keys_private_key_text_view)
     TextView downloadPrivateKeyTextView;
 
+    private SettingsViewModel settingsViewModel;
+    private List<MailboxEntity> mailboxEntityList;
+
     @Override
     protected int getLayoutId() {
         return R.layout.activity_settings_keys;
     }
 
-    private SettingsActivityViewModel settingsViewModel;
-    private List<MailboxEntity> mailboxEntityList;
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,7 +74,7 @@ public class KeysActivity extends BaseActivity {
             actionBar.setHomeButtonEnabled(true);
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-        settingsViewModel = new ViewModelProvider(this).get(SettingsActivityViewModel.class);
+        settingsViewModel = new ViewModelProvider(this).get(SettingsViewModel.class);
         mailboxEntityList = settingsViewModel.getAllMailboxes();
         String[] addresses = new String[mailboxEntityList.size()];
         for (int addressIterator = 0; addressIterator < addresses.length; addressIterator++) {
@@ -140,14 +149,5 @@ public class KeysActivity extends BaseActivity {
                 ? getString(R.string.your_private_key_saved)
                 : getString(R.string.your_public_key_saved);
         Toast.makeText(this, savedToast, Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            onBackPressed();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
 }

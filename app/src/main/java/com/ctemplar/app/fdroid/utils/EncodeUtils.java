@@ -1,5 +1,7 @@
 package com.ctemplar.app.fdroid.utils;
 
+import android.text.TextUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -52,12 +54,11 @@ public class EncodeUtils {
     }
 
     private static String generateSaltWithUsername(String username, String salt) {
-        if (username.isEmpty()) {
+        if (TextUtils.isEmpty(username)) {
             return "";
         }
-
         username = username.replaceAll("[^a-zA-Z]", "");
-        if(salt.length() < MAX_SYMBOLS) {
+        if (salt.length() < MAX_SYMBOLS) {
             return generateSaltWithUsername(username, salt + username);
         } else {
             return salt.substring(0, MAX_SYMBOLS);

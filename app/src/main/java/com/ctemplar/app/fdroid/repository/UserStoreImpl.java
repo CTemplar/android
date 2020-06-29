@@ -2,13 +2,16 @@ package com.ctemplar.app.fdroid.repository;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.text.TextUtils;
 
+import androidx.annotation.Nullable;
 import androidx.preference.PreferenceManager;
 
 import com.ctemplar.app.fdroid.net.entity.UserEntity;
+import com.ctemplar.app.fdroid.utils.EditTextUtils;
+import com.ctemplar.app.fdroid.utils.EncodeUtils;
 
 public class UserStoreImpl implements UserStore{
-
     private static UserStoreImpl instance;
 
     private static final String PREF_USER = "pref_user";
@@ -26,6 +29,10 @@ public class UserStoreImpl implements UserStore{
     private static final String KEY_NOTIFICATIONS_ENABLED = "key_notifications_enabled";
     private static final String KEY_ATTACHMENTS_ENCRYPTION_ENABLED = "key_attachments_encryption_enabled";
     private static final String KEY_CONTACTS_ENCRYPTION_ENABLED = "key_contacts_encryption_enabled";
+    private static final String KEY_PIN_LOCK = "key_pin_lock";
+    private static final String KEY_AUTO_LOCK_TIME = "key_auto_lock_time";
+    private static final String KEY_LAST_PAUSE_TIME = "key_last_pause_time";
+    private static final String KEY_IS_LOCKED = "key_is_locked";
 
     private SharedPreferences preferences;
     private SharedPreferences globalPreferences;
@@ -184,5 +191,64 @@ public class UserStoreImpl implements UserStore{
     @Override
     public boolean getContactsEncryptionEnabled() {
         return preferences.getBoolean(KEY_CONTACTS_ENCRYPTION_ENABLED, false);
+    }
+
+    @Override
+    public void setPINLock(String pinCode) {
+        String generatedHash = EncodeUtils.generateHash(getUserPassword(), pinCode);
+        preferences.edit().putString(KEY_PIN_LOCK, generatedHash).apply();
+    }
+
+    @Override
+    public boolean checkPINLock(@Nullable String pinCode) {
+        if (pinCode == null) {
+            return false;
+        }
+        String pinCodeHash = preferences.getString(KEY_PIN_LOCK, null);
+        if (pinCodeHash == null) {
+            return true;
+        }
+        String generatedHash = EncodeUtils.generateHash(getUserPassword(), pinCode);
+        return TextUtils.equals(pinCodeHash, generatedHash);
+    }
+
+    @Override
+    public void disablePINLock() {
+        preferences.edit().putString(KEY_PIN_LOCK, null).apply();
+    }
+
+    @Override
+    public boolean isPINLockEnabled() {
+        return EditTextUtils.isNotEmpty(preferences.getString(KEY_PIN_LOCK, null));
+    }
+
+    @Override
+    public void setAutoLockTime(int timeInMillis) {
+        preferences.edit().putInt(KEY_AUTO_LOCK_TIME, timeInMillis).apply();
+    }
+
+    @Override
+    public int getAutoLockTime() {
+        return preferences.getInt(KEY_AUTO_LOCK_TIME, 60000);
+    }
+
+    @Override
+    public void setLastPauseTime(long lastPauseTimeInMillis) {
+        preferences.edit().putLong(KEY_LAST_PAUSE_TIME, lastPauseTimeInMillis).apply();
+    }
+
+    @Override
+    public long getLastPauseTime() {
+        return preferences.getLong(KEY_LAST_PAUSE_TIME, Long.MAX_VALUE);
+    }
+
+    @Override
+    public void setLocked(boolean locked) {
+        preferences.edit().putBoolean(KEY_IS_LOCKED, locked).apply();
+    }
+
+    @Override
+    public boolean isLocked() {
+        return preferences.getBoolean(KEY_IS_LOCKED, false);
     }
 }

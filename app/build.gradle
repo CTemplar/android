@@ -21,7 +21,8 @@ android {
     applicationVariants.all { variant ->
         variant.resValue "string", "versionName", variant.versionName
         buildConfigField("String", "DOMAIN", "\"ctemplar.com\"")
-        buildConfigField("String", "BASE_URL", "\"api.ctemplar.com/\"")
+        buildConfigField("String", "BASE_URL", "\"https://api.ctemplar.com/\"")
+        buildConfigField("String", "BASE_SOCKET_URL", "\"wss://api.ctemplar.com/\"")
     }
 
     compileOptions {
@@ -68,7 +69,7 @@ dependencies {
     compileOnly 'com.jakewharton.auto.value:auto-value-annotations:1.4'
 
     testImplementation 'junit:junit:4.12'
-    testImplementation 'org.mockito:mockito-core:3.2.4'
+    testImplementation 'org.mockito:mockito-core:3.3.3'
 
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'

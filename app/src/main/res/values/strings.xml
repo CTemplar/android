@@ -253,14 +253,6 @@
     <string name="txt_delete_filter_quest_title">Delete filter?</string>
     <string name="txt_delete_filter_quest_message">"Are you sure you want to delete filter?</string>
     <string name="txt_delete_filter">Delete filter</string>
-    <string-array name="filter_parameter_list">
-        <item>subject</item>
-        <item>sender</item>
-    </string-array>
-    <string-array name="filter_condition_list">
-        <item>contains</item>
-        <item>startswith</item>
-    </string-array>
 
     <!-- WHITE-BLACK LIST -->
     <string name="adding_blacklist_contact_error">Error adding contact to blacklist</string>
@@ -299,12 +291,24 @@
     <string name="txt_signature_enabled">Signature enabled</string>
     <string name="txt_mobile_signature_enabled">Mobile signature enabled</string>
 
+    <!-- PIN LOCK -->
+    <string name="pin_lock">PIN Lock</string>
+    <string name="pin_lock_enable">Enable PIN Lock</string>
+    <string name="change_pin">Change PIN</string>
+    <string name="auto_lock">Auto-Lock</string>
+    <string name="choose_pin">Enter a 4-digit PIN</string>
+    <string name="confirm_pin">Confirm your PIN</string>
+    <string name="invalid_pin">Invalid PIN</string>
+    <string name="pins_dont_match">PINs do not match</string>
+
     <!-- SIGNATURE EDIT BAR -->
     <string name="txt_panel_bold">B</string>
     <string name="txt_panel_italic">I</string>
     <string name="txt_panel_underline">U</string>
     <string name="txt_panel_monospace">M</string>
     <string name="txt_panel_normal">Normal</string>
+
+    <!-- SETTINGS -->
     <string name="settings_general">General settings</string>
     <string name="settings_recovery_email">Recovery email</string>
     <string name="settings_enable_recovery_email">Enable recovery email</string>
@@ -353,6 +357,7 @@
     <string name="toast_email_not_valid">Email is not valid</string>
     <string name="storage_limit_info">%1$s of %2$s</string>
     <string translatable="false" name="password_key">password_key</string>
+    <string translatable="false" name="pin_lock_key">pin_lock_key</string>
     <string translatable="false" name="signature_key">signature_key</string>
     <string translatable="false" name="mobile_signature_key">mobile_signature_key</string>
     <string translatable="false" name="filters">filters</string>
@@ -447,4 +452,23 @@
     <string name="toast_undefined_error">Undefined error</string>
     <string name="whitelist">Whitelist</string>
     <string name="blacklist">Blacklist</string>
+
+    <string-array name="filter_parameter_list">
+        <item>subject</item>
+        <item>sender</item>
+    </string-array>
+
+    <string-array name="filter_condition_list">
+        <item>contains</item>
+        <item>startswith</item>
+    </string-array>
+
+    <string-array name="auto_lock_time">
+        <item>Immediately</item>
+        <item>1 minute</item>
+        <item>5 minutes</item>
+        <item>10 minutes</item>
+        <item>1 hour</item>
+        <item>24 hours</item>
+    </string-array>
 </resources>
