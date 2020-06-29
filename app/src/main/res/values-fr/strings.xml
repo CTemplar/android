@@ -221,7 +221,7 @@
     <string name="txt_bcc">Bcc :&#160;</string>
     <string name="hint_compose">Nouveau message</string>
 
-    <!-- MESSAGING SERVICE -->
+    <!-- NOTIFICATION SERVICE -->
     <string name="notification_channel_name">CTemplar</string>
     <string name="notification_channel_description">Nouveau email</string>
 

@@ -224,7 +224,7 @@
     <string name="txt_date_format">Date: %1$s</string>
     <string name="hint_compose">Compose email</string>
 
-    <!-- MESSAGING SERVICE -->
+    <!-- NOTIFICATION SERVICE -->
     <string name="notification_channel_name">CTemplar</string>
     <string name="notification_channel_description">New email</string>
 

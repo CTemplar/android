@@ -58,7 +58,7 @@ public class EncodeUtils {
             return "";
         }
         username = username.replaceAll("[^a-zA-Z]", "");
-        if(salt.length() < MAX_SYMBOLS) {
+        if (salt.length() < MAX_SYMBOLS) {
             return generateSaltWithUsername(username, salt + username);
         } else {
             return salt.substring(0, MAX_SYMBOLS);

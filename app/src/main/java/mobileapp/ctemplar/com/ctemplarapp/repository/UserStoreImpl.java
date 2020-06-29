@@ -12,7 +12,6 @@ import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EncodeUtils;
 
 public class UserStoreImpl implements UserStore{
-
     private static UserStoreImpl instance;
 
     private static final String PREF_USER = "pref_user";
@@ -34,6 +33,7 @@ public class UserStoreImpl implements UserStore{
     private static final String KEY_PIN_LOCK = "key_pin_lock";
     private static final String KEY_AUTO_LOCK_TIME = "key_auto_lock_time";
     private static final String KEY_LAST_PAUSE_TIME = "key_last_pause_time";
+    private static final String KEY_IS_LOCKED = "key_is_locked";
 
     private SharedPreferences preferences;
     private SharedPreferences globalPreferences;
@@ -251,5 +251,15 @@ public class UserStoreImpl implements UserStore{
     @Override
     public long getLastPauseTime() {
         return preferences.getLong(KEY_LAST_PAUSE_TIME, Long.MAX_VALUE);
+    }
+
+    @Override
+    public void setLocked(boolean locked) {
+        preferences.edit().putBoolean(KEY_IS_LOCKED, locked).apply();
+    }
+
+    @Override
+    public boolean isLocked() {
+        return preferences.getBoolean(KEY_IS_LOCKED, false);
     }
 }

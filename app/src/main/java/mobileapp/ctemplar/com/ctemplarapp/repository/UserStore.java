@@ -48,6 +48,7 @@ public interface UserStore {
 
     void setPINLock(String pin);
     boolean checkPINLock(String pinCode);
+
     void disablePINLock();
     boolean isPINLockEnabled();
 
@@ -56,4 +57,7 @@ public interface UserStore {
 
     void setLastPauseTime(long lastPauseTimeInMillis);
     long getLastPauseTime();
+
+    void setLocked(boolean locked);
+    boolean isLocked();
 }
