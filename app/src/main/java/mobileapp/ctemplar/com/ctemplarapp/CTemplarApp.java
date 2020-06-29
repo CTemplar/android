@@ -29,7 +29,6 @@ public class CTemplarApp extends MultiDexApplication {
     private static ContactsRepository contactsRepository;
     private static ManageFoldersRepository manageFoldersRepository;
     private static AppDatabase appDatabase;
-    private static long lastPauseTime;
 
     private ActivityLifecycleCallbacks activityLifecycleCallbacks = new ActivityLifecycleCallbacks() {
         @Override
@@ -50,7 +49,6 @@ public class CTemplarApp extends MultiDexApplication {
             if (activity instanceof SplashActivity) {
                 return;
             }
-            lastPauseTime = userStore.getLastPauseTime();
             checkPINLock();
         }
 
@@ -59,7 +57,9 @@ public class CTemplarApp extends MultiDexApplication {
             if (activity instanceof SplashActivity) {
                 return;
             }
-            userStore.setLastPauseTime(System.currentTimeMillis());
+            if (!userStore.isLocked()) {
+                userStore.setLastPauseTime(System.currentTimeMillis());
+            }
         }
 
         @Override
@@ -160,8 +160,13 @@ public class CTemplarApp extends MultiDexApplication {
         if (!getUserStore().isPINLockEnabled()) {
             return;
         }
+        if (userStore.isLocked()) {
+            launchLockScreen();
+            return;
+        }
         long currentTime = System.currentTimeMillis();
-        if (currentTime - lastPauseTime >= getUserStore().getAutoLockTime()) {
+        if (currentTime - userStore.getLastPauseTime() >= getUserStore().getAutoLockTime()) {
+            userStore.setLocked(true);
             launchLockScreen();
         }
     }
@@ -173,6 +178,7 @@ public class CTemplarApp extends MultiDexApplication {
     }
 
     public void onUnlocked() {
-        lastPauseTime = Long.MAX_VALUE;
+        userStore.setLastPauseTime(Long.MAX_VALUE);
+        userStore.setLocked(false);
     }
 }
