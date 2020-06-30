@@ -1,0 +1,5 @@
+* Improved fields navigation
+* Notifications grouping
+* Portuguese translation
+* PIN Lock
+* Other improvements and fixes
