@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/app_bar_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:fontFamily="@font/lato_bold"
+            app:title="@string/pin_lock" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/activity_settings_pin_lock_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintTop_toBottomOf="@id/app_bar_layout">
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/activity_settings_pin_lock_enable_switch"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:gravity="center_vertical"
+            android:layout_marginStart="8dp"
+            android:fontFamily="@font/lato_regular"
+            android:textColor="?android:textColorSecondary"
+            android:textSize="16sp"
+            android:text="@string/pin_lock_enable"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <LinearLayout
+            android:id="@+id/activity_settings_pin_lock_adjust_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:orientation="vertical"
+            app:layout_constraintTop_toBottomOf="@id/activity_settings_pin_lock_enable_switch">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/activity_settings_pin_lock_change_pin_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="8dp"
+                android:gravity="center_vertical"
+                android:text="@string/change_pin"
+                android:fontFamily="@font/lato_regular"
+                android:textColor="?android:textColorSecondary"
+                android:textSize="16sp"
+                android:textAllCaps="false"
+                android:background="?attr/selectableItemBackground" />
+
+            <LinearLayout
+                android:id="@+id/activity_settings_pin_lock_timer_layout"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:gravity="center_vertical"
+                android:layout_marginTop="5dp"
+                android:layout_marginStart="8dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/auto_lock"
+                    android:textSize="16sp"
+                    android:textColor="?android:textColorSecondary"
+                    android:fontFamily="@font/lato_regular" />
+
+                <Spinner
+                    android:id="@+id/activity_settings_pin_lock_timer_spinner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:spinnerMode="dialog"
+                    tools:listitem="@layout/item_domain_spinner" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

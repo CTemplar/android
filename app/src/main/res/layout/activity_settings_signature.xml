@@ -105,7 +105,9 @@
                     android:minHeight="45dp"
                     android:inputType="text"
                     android:hint="@string/txt_type_your_name"
-                    android:background="@drawable/text_input_field" />
+                    android:background="@drawable/text_input_field"
+                    android:imeOptions="actionNext"
+                    android:nextFocusForward="@id/fragment_send_message_compose_email_input" />
                 <requestFocus />
             </com.google.android.material.textfield.TextInputLayout>
 

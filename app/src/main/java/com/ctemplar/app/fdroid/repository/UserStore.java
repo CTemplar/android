@@ -42,4 +42,19 @@ public interface UserStore {
 
     void setContactsEncryptionEnabled(boolean state);
     boolean getContactsEncryptionEnabled();
+
+    void setPINLock(String pin);
+    boolean checkPINLock(String pinCode);
+
+    void disablePINLock();
+    boolean isPINLockEnabled();
+
+    void setAutoLockTime(int timeInMillis);
+    int getAutoLockTime();
+
+    void setLastPauseTime(long lastPauseTimeInMillis);
+    long getLastPauseTime();
+
+    void setLocked(boolean locked);
+    boolean isLocked();
 }

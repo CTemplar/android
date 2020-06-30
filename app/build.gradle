@@ -5,8 +5,8 @@ android {
     defaultConfig {
         applicationId "com.ctemplar.app.fdroid"
         minSdkVersion 16
-        versionCode 6
-        versionName "1.2.8"
+        versionCode 7
+        versionName "1.3.0"
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
@@ -21,7 +21,8 @@ android {
     applicationVariants.all { variant ->
         variant.resValue "string", "versionName", variant.versionName
         buildConfigField("String", "DOMAIN", "\"ctemplar.com\"")
-        buildConfigField("String", "BASE_URL", "\"mail.ctemplar.com/api/\"")
+        buildConfigField("String", "BASE_URL", "\"https://api.ctemplar.com/\"")
+        buildConfigField("String", "BASE_SOCKET_URL", "\"wss://api.ctemplar.com/\"")
     }
 
     compileOptions {
@@ -38,7 +39,7 @@ dependencies {
     implementation 'androidx.vectordrawable:vectordrawable:1.1.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
-    implementation 'androidx.webkit:webkit:1.3.0-alpha03'
+    implementation 'androidx.webkit:webkit:1.3.0-beta01'
 
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.preference:preference:1.1.1'
@@ -68,7 +69,7 @@ dependencies {
     compileOnly 'com.jakewharton.auto.value:auto-value-annotations:1.4'
 
     testImplementation 'junit:junit:4.12'
-    testImplementation 'org.mockito:mockito-core:3.2.4'
+    testImplementation 'org.mockito:mockito-core:3.3.3'
 
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'

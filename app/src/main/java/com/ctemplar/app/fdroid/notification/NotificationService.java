@@ -9,8 +9,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.media.RingtoneManager;
 import android.os.Build;
@@ -38,13 +36,11 @@ import timber.log.Timber;
 
 public class NotificationService extends Service {
     private static final String NOTIFICATION_CHANNEL_ID = "com.ctemplar.emails";
-    private static final String NOTIFICATION_CHANNEL_NAME = "CTemplar Emails";
-    private static final String NOTIFICATION_CHANNEL_DESCRIPTION = "New email";
 
+    private static final int FOREGROUND_NOTIFICATION_ID = 101;
     private static final String FOREGROUND_NOTIFICATION_CHANNEL_ID = "com.ctemplar.notification.foreground";
     private static final String FOREGROUND_NOTIFICATION_CHANNEL_NAME = "Notification Service";
     private static final String FOREGROUND_NOTIFICATION_CHANNEL_DESCRIPTION = "Notification Service for emails";
-    private static final int FOREGROUND_NOTIFICATION_ID = 101;
 
     private static final String ACTION_STOP = "com.ctemplar.service.notification.STOP";
     private static final String ACTION_START = "com.ctemplar.service.notification.START";
@@ -165,7 +161,7 @@ public class NotificationService extends Service {
                 Timber.e(e);
             }
         }
-        sendNotification(
+        showNotification(
                 messageProvider.getSender(),
                 messageProvider.getSubject(),
                 messageProvider.getFolderName(),
@@ -174,12 +170,11 @@ public class NotificationService extends Service {
         );
     }
 
-    private void sendNotification(String sender, String subject, String folder, long messageId,
+    private void showNotification(String sender, String subject, String folder, long messageId,
                                   long parentId, boolean isSubjectEncrypted) {
         long id = (parentId == -1) ? messageId : parentId;
         String content = (isSubjectEncrypted) ? getString(R.string.txt_encrypted_subject) : subject;
 
-        Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
         Intent intent = new Intent(this, ViewMessagesActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.putExtra(ViewMessagesActivity.PARENT_ID, id);
@@ -189,6 +184,7 @@ public class NotificationService extends Service {
 
         NotificationCompat.Builder notificationBuilder = new NotificationCompat
                 .Builder(this, NOTIFICATION_CHANNEL_ID)
+//                .setGroup(String.valueOf(parentId))
                 .setContentTitle(sender)
                 .setContentText(content)
                 .setAutoCancel(true)
@@ -197,27 +193,28 @@ public class NotificationService extends Service {
                 .setContentInfo(sender)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setDefaults(NotificationCompat.DEFAULT_VIBRATE)
-                .setLargeIcon(largeIcon)
                 .setSmallIcon(R.mipmap.ic_launcher_small);
 
         NotificationManager notificationManager = (NotificationManager)
                 getSystemService(Context.NOTIFICATION_SERVICE);
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel notificationChannel = new NotificationChannel(
-                    NOTIFICATION_CHANNEL_ID, NOTIFICATION_CHANNEL_NAME,
+                    NOTIFICATION_CHANNEL_ID, getString(R.string.notification_channel_name),
                     NotificationManager.IMPORTANCE_HIGH
             );
-            notificationChannel.setDescription(NOTIFICATION_CHANNEL_DESCRIPTION);
+            notificationChannel.setDescription(getString(R.string.notification_channel_description));
 //            notificationChannel.setShowBadge(true);
-            notificationChannel.canShowBadge();
             notificationChannel.enableLights(true);
             notificationChannel.setLightColor(Color.RED);
             notificationChannel.enableVibration(true);
             notificationManager.createNotificationChannel(notificationChannel);
         }
 
-        int randomId = new Random(System.currentTimeMillis()).nextInt(1000);
-        notificationManager.notify(randomId, notificationBuilder.build());
+        int notificationID = (messageId == -1)
+                ? new Random().nextInt(1000)
+                : (int) messageId;
+        notificationManager.notify(notificationID, notificationBuilder.build());
     }
 
 

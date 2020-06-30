@@ -65,7 +65,7 @@
                 android:textSize="16sp"
                 android:theme="@style/EditTextCredentialsThemeDarkDayNight"
                 app:layout_constraintTop_toBottomOf="@id/activity_add_mailbox_title"/>
-
+            <requestFocus />
         </com.google.android.material.textfield.TextInputLayout>
 
         <TextView

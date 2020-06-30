@@ -17,10 +17,11 @@
             android:id="@+id/fragment_encrypt_message_dialog_close"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
             android:src="@drawable/ic_close"
             android:tint="@color/secondaryTextColor"
-            android:layout_marginStart="16dp"
-            android:layout_marginLeft="16dp" />
+            android:background="@drawable/state_pressed_ripple" />
 
     </RelativeLayout>
 
@@ -105,7 +106,9 @@
                         android:minHeight="30dp"
                         android:inputType="textPassword"
                         android:hint="@string/title_message_password"
-                        android:background="@drawable/text_input_field" />
+                        android:background="@drawable/text_input_field"
+                        android:imeOptions="actionNext"
+                        android:nextFocusForward="@id/fragment_encrypt_message_dialog_password_confirm_input" />
                     <requestFocus />
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -147,7 +150,9 @@
                         android:minHeight="30dp"
                         android:inputType="textPassword"
                         android:hint="@string/title_message_password_confirm"
-                        android:background="@drawable/text_input_field" />
+                        android:background="@drawable/text_input_field"
+                        android:imeOptions="actionNext"
+                        android:nextFocusForward="@id/fragment_encrypt_message_dialog_password_hint_input" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -189,7 +194,9 @@
                         android:minHeight="30dp"
                         android:inputType="text"
                         android:hint="@string/title_message_password_hint"
-                        android:background="@drawable/text_input_field" />
+                        android:background="@drawable/text_input_field"
+                        android:imeOptions="actionNext"
+                        android:nextFocusForward="@id/fragment_encrypt_message_dialog_expire_days_edit_text" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -244,7 +251,9 @@
                             android:text="5"
                             android:paddingTop="8dp"
                             android:paddingBottom="8dp"
-                            android:background="@drawable/text_input_field" />
+                            android:background="@drawable/text_input_field"
+                            android:imeOptions="actionNext"
+                            android:nextFocusForward="@id/fragment_encrypt_message_dialog_expire_hours_edit_text" />
 
                     </LinearLayout>
 
@@ -277,7 +286,9 @@
                             android:text="0"
                             android:paddingTop="8dp"
                             android:paddingBottom="8dp"
-                            android:background="@drawable/text_input_field" />
+                            android:background="@drawable/text_input_field"
+                            android:imeOptions="actionNext"
+                            android:nextFocusForward="@id/fragment_encrypt_message_dialog_encrypt" />
 
                     </LinearLayout>
 

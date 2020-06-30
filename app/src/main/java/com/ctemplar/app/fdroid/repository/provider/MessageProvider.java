@@ -1,10 +1,5 @@
 package com.ctemplar.app.fdroid.repository.provider;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 import com.ctemplar.app.fdroid.CTemplarApp;
 import com.ctemplar.app.fdroid.net.response.Messages.MessageAttachment;
 import com.ctemplar.app.fdroid.net.response.Messages.MessagesResult;
@@ -17,6 +12,11 @@ import com.ctemplar.app.fdroid.repository.entity.MailboxEntity;
 import com.ctemplar.app.fdroid.repository.entity.MessageEntity;
 import com.ctemplar.app.fdroid.repository.entity.UserDisplayEntity;
 import com.ctemplar.app.fdroid.security.PGPManager;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public class MessageProvider {
 

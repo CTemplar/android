@@ -4,21 +4,29 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Build;
+import android.view.WindowManager;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 
+import androidx.annotation.DimenRes;
 import androidx.core.content.ContextCompat;
 import androidx.webkit.WebSettingsCompat;
 import androidx.webkit.WebViewFeature;
 
+import com.ctemplar.app.fdroid.CTemplarApp;
 import com.ctemplar.app.fdroid.R;
 
 public class ThemeUtils {
-    public static void setStatusBarTheme(Activity activity) {
+    public static void setTheme(Activity activity) {
         int sdkInt = Build.VERSION.SDK_INT;
         if (sdkInt >= Build.VERSION_CODES.LOLLIPOP && sdkInt < Build.VERSION_CODES.M) {
             int color = ContextCompat.getColor(activity, R.color.colorDarkBlue);
             activity.getWindow().setStatusBarColor(color);
+        }
+        boolean isPinLockEnabled = CTemplarApp.getUserStore().isPINLockEnabled();
+        if (isPinLockEnabled) {
+            activity.getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
+                    WindowManager.LayoutParams.FLAG_SECURE);
         }
     }
 
@@ -36,5 +44,9 @@ public class ThemeUtils {
                         WebSettingsCompat.DARK_STRATEGY_PREFER_WEB_THEME_OVER_USER_AGENT_DARKENING);
             }
         }
+    }
+
+    public static float getDimension(Context context, @DimenRes int resourceId) {
+        return context.getResources().getDimension(resourceId);
     }
 }
