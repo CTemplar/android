@@ -106,7 +106,9 @@
                     android:letterSpacing="0.05"
                     android:textColor="@color/colorDarkBlue2"
                     android:textSize="16sp"
-                    android:theme="@style/EditTextCredentialsThemeDark" />
+                    android:theme="@style/EditTextCredentialsThemeDark"
+                    android:imeOptions="actionNext"
+                    android:nextFocusForward="@id/fragment_step_security_check" />
                 <requestFocus />
             </com.google.android.material.textfield.TextInputLayout>
 

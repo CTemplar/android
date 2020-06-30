@@ -87,7 +87,7 @@ public class SignatureActivity extends BaseActivity {
         return R.layout.activity_settings_signature;
     }
 
-    private SettingsActivityViewModel settingsViewModel;
+    private SettingsViewModel settingsViewModel;
     private List<MailboxEntity> mailboxEntityList;
     private boolean isMobile;
 
@@ -106,7 +106,7 @@ public class SignatureActivity extends BaseActivity {
                 actionBar.setTitle(getString(R.string.settings_mobile_signature));
             }
         }
-        settingsViewModel = new ViewModelProvider(this).get(SettingsActivityViewModel.class);
+        settingsViewModel = new ViewModelProvider(this).get(SettingsViewModel.class);
         mailboxEntityList = settingsViewModel.getAllMailboxes();
         String[] addresses = new String[mailboxEntityList.size()];
         for (int addressIterator = 0; addressIterator < addresses.length; addressIterator++) {

@@ -31,13 +31,13 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.entity.Contact;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import timber.log.Timber;
 
-public class SettingsActivityViewModel extends ViewModel {
+public class SettingsViewModel extends ViewModel {
 
     private ContactsRepository contactsRepository;
     private AppDatabase appDatabase;
     private UserRepository userRepository;
 
-    public SettingsActivityViewModel() {
+    public SettingsViewModel() {
         contactsRepository = CTemplarApp.getContactsRepository();
         appDatabase = CTemplarApp.getAppDatabase();
         userRepository = CTemplarApp.getUserRepository();

@@ -7,6 +7,7 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
         android:name=".CTemplarApp"
@@ -26,7 +27,7 @@
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/provider_paths"/>
+                android:resource="@xml/provider_paths" />
         </provider>
 
         <service
@@ -57,6 +58,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".splash.PINLockActivity" />
 
         <activity
             android:name=".login.LoginActivity"
@@ -90,10 +92,11 @@
         <activity android:name=".wbl.WhiteBlackListActivity" />
         <activity android:name=".settings.SettingsActivity"
             android:theme="@style/PreferenceScreen" />
+        <activity android:name=".settings.PINLockSettingsActivity" />
+        <activity android:name=".settings.PINLockChangeActivity" />
         <activity android:name=".settings.ChangePasswordActivity" />
         <activity android:name=".settings.KeysActivity" />
-        <activity android:name=".settings.SignatureActivity"
-            android:theme="@style/PreferenceScreen" />
+        <activity android:name=".settings.SignatureActivity" />
         <activity android:name=".mailboxes.MailboxesActivity" />
         <activity android:name=".mailboxes.AddMailboxActivity" />
 

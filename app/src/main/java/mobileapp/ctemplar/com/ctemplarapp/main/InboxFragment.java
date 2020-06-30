@@ -70,6 +70,7 @@ public class InboxFragment extends BaseFragment
     private MainActivityViewModel mainModel;
     private InboxMessagesTouchListener touchListener;
     private FilterDialogFragment dialogFragment;
+    private SearchView searchView;
     private String currentFolder;
     private boolean messagesNotEmpty;
 
@@ -130,11 +131,7 @@ public class InboxFragment extends BaseFragment
             filterIsUnread = isUnread;
             filterWithAttachment = withAttachment;
             invalidateOptionsMenu();
-            if (adapter.getItemCount() > 0) {
-                showMessagesList();
-            } else {
-                hideMessagesList();
-            }
+            showIfNotEmpty();
         }
     };
 
@@ -217,10 +214,23 @@ public class InboxFragment extends BaseFragment
 
         swipeRefreshLayout.setOnRefreshListener(this::requestNewMessages);
 
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
+        LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
         recyclerView.setAdapter(adapter);
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                int visibleItemCount = mLayoutManager.getChildCount();
+                int totalItemCount = mLayoutManager.getItemCount();
+                int pastVisibleItems = mLayoutManager.findFirstVisibleItemPosition();
+                if (pastVisibleItems + visibleItemCount >= totalItemCount) {
+                    Timber.i("onReachedBottom");
+                    requestNextMessages();
+                    progressLayout.setVisibility(View.VISIBLE);
+                }
+            }
+        });
 
         bindTouchListener();
     }
@@ -252,7 +262,7 @@ public class InboxFragment extends BaseFragment
         }
 
         MenuItem searchItem = menu.findItem(R.id.action_search);
-        SearchView searchView = (SearchView) searchItem.getActionView();
+        searchView = (SearchView) searchItem.getActionView();
         if (searchView != null) {
             searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                 @Override
@@ -329,15 +339,27 @@ public class InboxFragment extends BaseFragment
 
     @Override
     public void onReachedBottom() {
-        Timber.i("onReachedBottom");
-        requestNextMessages();
-        progressLayout.setVisibility(View.VISIBLE);
+//        requestNextMessages();
+//        progressLayout.setVisibility(View.VISIBLE);
     }
 
 
     private void invalidateOptionsMenu() {
-        if (getActivity() != null) {
-            getActivity().invalidateOptionsMenu();
+        FragmentActivity activity = getActivity();
+        if (activity == null) {
+            return;
+        }
+        if (searchView != null && !searchView.isIconified()) {
+            return;
+        }
+        activity.invalidateOptionsMenu();
+    }
+
+    private void showIfNotEmpty() {
+        if (adapter.getItemCount() > 0) {
+            showMessagesList();
+        } else {
+            hideMessagesList();
         }
     }
 

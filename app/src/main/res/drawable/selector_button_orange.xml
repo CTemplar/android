@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:state_pressed="true" android:drawable="@drawable/ic_button_orange_pressed" />
-    <item android:state_enabled="false" android:drawable="@drawable/ic_button_orange_disabled" />
-    <item android:drawable="@drawable/ic_button_orange" />
+    <item android:state_pressed="true">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/colorOrangeDark" />
+        </shape>
+    </item>
+    <item android:state_enabled="false">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/disabledTextColor" />
+        </shape>
+    </item>
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/colorOrangeLight"/>
+        </shape>
+    </item>
 </selector>

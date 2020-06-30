@@ -68,7 +68,9 @@
                     android:inputType="textEmailAddress"
                     android:letterSpacing="0.05"
                     android:textColor="@color/colorWhiteLight"
-                    android:theme="@style/EditTextCredentialsThemeLight">
+                    android:theme="@style/EditTextCredentialsThemeLight"
+                    android:imeOptions="actionNext"
+                    android:nextFocusForward="@id/fragment_sign_in_password_input">
                     <requestFocus />
                 </com.google.android.material.textfield.TextInputEditText>
 
@@ -101,7 +103,9 @@
                     android:inputType="textPassword"
                     android:letterSpacing="0.05"
                     android:textColor="@color/colorWhiteLight"
-                    android:theme="@style/EditTextCredentialsThemeLight" />
+                    android:theme="@style/EditTextCredentialsThemeLight"
+                    android:imeOptions="actionNext"
+                    android:nextFocusForward="@id/fragment_sign_in_send" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
