@@ -3,7 +3,6 @@ package mobileapp.ctemplar.com.ctemplarapp.repository;
 import mobileapp.ctemplar.com.ctemplarapp.net.entity.UserEntity;
 
 public interface UserStore {
-
     void saveUserPref(String username, String pass, String passHashed, String privateKey, String publicKey);
     UserEntity getUser();
 
