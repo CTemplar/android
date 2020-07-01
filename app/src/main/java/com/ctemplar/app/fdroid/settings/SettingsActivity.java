@@ -42,7 +42,6 @@ import com.ctemplar.app.fdroid.net.response.Myself.SettingsEntity;
 import com.ctemplar.app.fdroid.notification.NotificationService;
 import com.ctemplar.app.fdroid.repository.UserRepository;
 import com.ctemplar.app.fdroid.repository.UserStore;
-import com.ctemplar.app.fdroid.splash.PINLockActivity;
 import com.ctemplar.app.fdroid.utils.AppUtils;
 import com.ctemplar.app.fdroid.utils.EditTextUtils;
 import com.ctemplar.app.fdroid.utils.EncodeUtils;
@@ -54,6 +53,7 @@ public class SettingsActivity extends BaseActivity {
     public static final String SETTING_ID = "setting_id";
 
     private static SettingsViewModel settingsModel;
+
     private static UserRepository userRepository = CTemplarApp.getUserRepository();
     private static UserStore userStore = CTemplarApp.getUserStore();
 
@@ -105,7 +105,7 @@ public class SettingsActivity extends BaseActivity {
             storageLimitPreference = findPreference(getString(R.string.local_storage_limit));
             recoveryEmailPreferenceScreen = findPreference(getString(R.string.recovery_email_holder));
 
-            if (sharedPreferences != null) {
+            if (sharedPreferences != null && recoveryEmailPreferenceScreen != null) {
                 String recoveryEmail = sharedPreferences.getString(getString(R.string.recovery_email), null);
                 if (EditTextUtils.isNotEmpty(recoveryEmail)) {
                     recoveryEmailPreferenceScreen.setSummary(recoveryEmail);
@@ -306,7 +306,7 @@ public class SettingsActivity extends BaseActivity {
         }
 
         private void disableContactsEncryption() {
-            final ProgressDialog progressDialog = new ProgressDialog(getActivity());
+            ProgressDialog progressDialog = new ProgressDialog(getActivity());
             progressDialog.setCanceledOnTouchOutside(false);
             progressDialog.setMessage(getString(R.string.txt_contact_decryption));
             progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
@@ -434,8 +434,8 @@ public class SettingsActivity extends BaseActivity {
         isPrimeUser = myselfResult.isPrime();
         setSettingId(settingId);
 
-        String usedStorage = AppUtils.usedStorage(settingsEntity.getUsedStorage());
-        String allocatedStorage = AppUtils.usedStorage(settingsEntity.getAllocatedStorage());
+        String usedStorage = AppUtils.memoryDisplay(settingsEntity.getUsedStorage());
+        String allocatedStorage = AppUtils.memoryDisplay(settingsEntity.getAllocatedStorage());
         String recoveryEmail = settingsEntity.getRecoveryEmail();
 
         if (storageLimitPreference != null) {
