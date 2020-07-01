@@ -6,21 +6,6 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.List;
-
-import io.reactivex.Observer;
-import io.reactivex.Single;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
 import com.ctemplar.app.fdroid.CTemplarApp;
 import com.ctemplar.app.fdroid.net.ResponseStatus;
 import com.ctemplar.app.fdroid.net.request.PublicKeysRequest;
@@ -43,10 +28,25 @@ import com.ctemplar.app.fdroid.repository.provider.AttachmentProvider;
 import com.ctemplar.app.fdroid.security.PGPManager;
 import com.ctemplar.app.fdroid.utils.AppUtils;
 import com.ctemplar.app.fdroid.utils.FileUtils;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.List;
+
+import io.reactivex.Observer;
+import io.reactivex.Single;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
-import okhttp3.ResponseBody;
 import retrofit2.HttpException;
 import retrofit2.Response;
 import timber.log.Timber;
@@ -110,10 +110,6 @@ public class SendMessageActivityViewModel extends ViewModel {
 
     public String getUserPassword() {
         return userRepository.getUserPassword();
-    }
-
-    public boolean getAttachmentsEncryptionEnabled() {
-        return userRepository.getAttachmentsEncryptionEnabled();
     }
 
     public LiveData<MessagesResult> getMessagesResult() {

@@ -39,6 +39,7 @@ import com.ctemplar.app.fdroid.net.ResponseStatus;
 import com.ctemplar.app.fdroid.net.response.Myself.MyselfResponse;
 import com.ctemplar.app.fdroid.net.response.Myself.MyselfResult;
 import com.ctemplar.app.fdroid.net.response.Myself.SettingsEntity;
+import com.ctemplar.app.fdroid.notification.NotificationService;
 import com.ctemplar.app.fdroid.repository.UserRepository;
 import com.ctemplar.app.fdroid.repository.UserStore;
 import com.ctemplar.app.fdroid.splash.PINLockActivity;
@@ -195,8 +196,8 @@ public class SettingsActivity extends BaseActivity {
             SwitchPreference switchPreferenceNotificationsEnabled = findPreference(getString(R.string.push_notifications_enabled));
             if (switchPreferenceNotificationsEnabled != null) {
                 switchPreferenceNotificationsEnabled.setOnPreferenceChangeListener((preference, newValue) -> {
-                    boolean isEnabled = (boolean) newValue;
-                    userStore.setNotificationsEnabled(isEnabled);
+                    userStore.setNotificationsEnabled((boolean) newValue);
+                    NotificationService.updateState(getContext());
                     return true;
                 });
                 boolean isNotificationsEnabled = userStore.getNotificationsEnabled();
@@ -285,17 +286,6 @@ public class SettingsActivity extends BaseActivity {
                     return true;
                 });
                 subjectEncryptionSwitchPreference.setEnabled(isPrimeUser);
-            }
-
-            SwitchPreference attachmentsEncryptionSwitchPreference = findPreference(getString(R.string.attachments_encryption_enabled));
-            if (attachmentsEncryptionSwitchPreference != null) {
-                attachmentsEncryptionSwitchPreference.setOnPreferenceChangeListener((preference, newValue) -> {
-                    Toast.makeText(getActivity(), getString(R.string.toast_saved), Toast.LENGTH_SHORT).show();
-                    boolean value = (boolean) newValue;
-                    userStore.setAttachmentsEncryptionEnabled(value);
-                    settingsModel.updateAttachmentsEncryption(settingId, value);
-                    return true;
-                });
             }
 
             contactsEncryptionSwitchPreference = findPreference(getString(R.string.contacts_encryption_enabled));
@@ -464,7 +454,6 @@ public class SettingsActivity extends BaseActivity {
                 .putBoolean(getString(R.string.recovery_email_enabled), EditTextUtils.isNotEmpty(recoveryEmail))
                 .putBoolean(getString(R.string.auto_save_contacts_enabled), settingsEntity.isSaveContacts())
                 .putBoolean(getString(R.string.subject_encryption_enabled), settingsEntity.isSubjectEncrypted())
-                .putBoolean(getString(R.string.attachments_encryption_enabled), settingsEntity.isAttachmentsEncrypted())
                 .putBoolean(getString(R.string.contacts_encryption_enabled), settingsEntity.isContactsEncrypted())
                 .putBoolean(getString(R.string.anti_phishing_enabled), settingsEntity.isAntiPhishingEnabled())
                 .apply();

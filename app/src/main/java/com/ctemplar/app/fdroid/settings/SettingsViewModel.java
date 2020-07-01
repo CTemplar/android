@@ -13,7 +13,6 @@ import io.reactivex.disposables.Disposable;
 import com.ctemplar.app.fdroid.CTemplarApp;
 import com.ctemplar.app.fdroid.net.ResponseStatus;
 import com.ctemplar.app.fdroid.net.request.AntiPhishingPhraseRequest;
-import com.ctemplar.app.fdroid.net.request.AttachmentsEncryptedRequest;
 import com.ctemplar.app.fdroid.net.request.AutoSaveContactEnabledRequest;
 import com.ctemplar.app.fdroid.net.request.ContactsEncryptionRequest;
 import com.ctemplar.app.fdroid.net.request.RecoveryEmailRequest;
@@ -186,36 +185,6 @@ public class SettingsViewModel extends ViewModel {
                     @Override
                     public void onNext(SettingsEntity settingsEntity) {
                         Timber.i("Subject encryption updated");
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Timber.e(e);
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
-    }
-
-    void updateAttachmentsEncryption(long settingId, boolean isAttachmentsEncrypted) {
-        if (settingId == -1) {
-            return;
-        }
-
-        AttachmentsEncryptedRequest attachmentsEncryptedRequest = new AttachmentsEncryptedRequest(isAttachmentsEncrypted);
-        userRepository.updateAttachmentsEncrypted(settingId, attachmentsEncryptedRequest)
-                .subscribe(new Observer<SettingsEntity>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(SettingsEntity settingsEntity) {
-
                     }
 
                     @Override

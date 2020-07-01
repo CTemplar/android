@@ -3,7 +3,6 @@ package com.ctemplar.app.fdroid.repository;
 import com.ctemplar.app.fdroid.net.entity.UserEntity;
 
 public interface UserStore {
-
     void saveUserPref(String username, String pass, String passHashed, String privateKey, String publicKey);
     UserEntity getUser();
 
@@ -36,9 +35,6 @@ public interface UserStore {
 
     void setNotificationsEnabled(boolean state);
     boolean getNotificationsEnabled();
-
-    void setAttachmentsEncryptionEnabled(boolean state);
-    boolean getAttachmentsEncryptionEnabled();
 
     void setContactsEncryptionEnabled(boolean state);
     boolean getContactsEncryptionEnabled();
