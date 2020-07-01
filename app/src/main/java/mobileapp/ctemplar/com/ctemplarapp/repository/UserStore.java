@@ -40,9 +40,6 @@ public interface UserStore {
     void setNotificationsEnabled(boolean state);
     boolean getNotificationsEnabled();
 
-    void setAttachmentsEncryptionEnabled(boolean state);
-    boolean getAttachmentsEncryptionEnabled();
-
     void setContactsEncryptionEnabled(boolean state);
     boolean getContactsEncryptionEnabled();
 

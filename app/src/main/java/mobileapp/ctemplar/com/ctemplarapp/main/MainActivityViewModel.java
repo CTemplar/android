@@ -637,11 +637,9 @@ public class MainActivityViewModel extends AndroidViewModel {
                             SettingsEntity settingsEntity = myselfResult.getSettings();
 
                             String timezone = settingsEntity.getTimezone();
-                            boolean isAttachmentsEncrypted = settingsEntity.isAttachmentsEncrypted();
                             boolean isContactsEncrypted = settingsEntity.isContactsEncrypted();
 
                             userRepository.saveTimeZone(timezone);
-                            userRepository.setAttachmentsEncryptionEnabled(isAttachmentsEncrypted);
                             userRepository.setContactsEncryptionEnabled(isContactsEncrypted);
                         }
                     }

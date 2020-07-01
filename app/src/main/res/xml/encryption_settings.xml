@@ -7,10 +7,6 @@
         android:enabled="false" />
 
     <SwitchPreference
-        android:title="@string/settings_attachments_encryption"
-        android:key="@string/attachments_encryption_enabled" />
-
-    <SwitchPreference
         android:title="@string/settings_contacts_encryption"
         android:key="@string/contacts_encryption_enabled" />
 

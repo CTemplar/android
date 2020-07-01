@@ -3,7 +3,7 @@
     android:key="settings_activity">
 
     <PreferenceCategory
-        android:title="General settings">
+        android:title="@string/settings_general">
 
         <PreferenceScreen
             android:title="@string/settings_notifications"

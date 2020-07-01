@@ -320,7 +320,6 @@
     <string name="settings_enable_notifications">Enable push notifications</string>
     <string name="settings_enable_subject_encryption">Subject encryption</string>
     <string name="settings_contacts_encryption">Contacts encryption</string>
-    <string name="settings_attachments_encryption">Attachments encryption</string>
     <string name="settings_encryption">Encryption</string>
     <string name="settings_phishing_protection">Phishing Protection</string>
     <string name="settings_phishing_protection_description"><![CDATA[<font color="#939191">The Anti-Phishing phrase allows users to link a custom word or phrase of your choice to your CTemplar account. Once set, if you ever log into your webmail and your Anti-Phishing phrase is either missing or incorrect, you may be the victim of phishing. You should immediately confirm that you are visiting</font> <font color="#4d92e2"><u>https://mail.ctemplar.com</u></font> <font color="#939191">If you are not, then a malicious site might have your login credentials for your CTemplar account. To prevent harm to your account, you should immediately visit</font> <font color="#4d92e2"><u>https://mail.ctemplar.com</u></font> <font color="#939191">and change your password.<br><br>Note that the Anti-Phishing phrase will be displayed when you log on web only.</font>]]></string>
@@ -373,7 +372,6 @@
     <string translatable="false" name="recovery_email_holder">recovery_email_holder</string>
     <string translatable="false" name="subject_encryption">subject_encryption</string>
     <string translatable="false" name="subject_encryption_enabled">subject_encryption_enabled</string>
-    <string translatable="false" name="attachments_encryption_enabled">attachments_encryption_enabled</string>
     <string translatable="false" name="contacts_encryption_enabled">contacts_encryption_enabled</string>
     <string translatable="false" name="auto_save_contacts_enabled">auto_save_contacts_enabled</string>
     <string translatable="false" name="setting_id">setting_id</string>
