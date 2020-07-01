@@ -790,7 +790,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
     private void sendMessage() {
         String fromEmail = spinnerFrom.getSelectedItem().toString();
         MailboxEntity fromMailbox = sendModel.getMailboxByEmail(fromEmail);
-        final long mailboxId = fromMailbox.getId();
+        long mailboxId = fromMailbox.getId();
         String mailboxEmail = fromMailbox.getEmail();
 
         String subject = EditTextUtils.getText(subjectEditText);
@@ -827,21 +827,21 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         sendMessageRequest.setSend(messageSent);
         sendMessageRequest.setFolder(messageFolder);
 
-        String toEmail = toEmailTextView.getText().toString().trim();
+        String toEmail = EditTextUtils.getText(toEmailTextView).trim();
         List<String> toEmailList = new ArrayList<>();
         if (!toEmail.isEmpty()) {
             toEmailList = EditTextUtils.getListFromString(toEmail);
         }
         sendMessageRequest.setReceivers(toEmailList);
 
-        String ccEmail = ccTextView.getText().toString().trim();
+        String ccEmail = EditTextUtils.getText(ccTextView).trim();
         List<String> ccEmailList = new ArrayList<>();
         if (!ccEmail.isEmpty()) {
             ccEmailList = EditTextUtils.getListFromString(ccEmail);
         }
         sendMessageRequest.setCc(ccEmailList);
 
-        String bccEmail = bccTextView.getText().toString().trim();
+        String bccEmail = EditTextUtils.getText(bccTextView).trim();
         List<String> bccEmailList = new ArrayList<>();
         if (!bccEmail.isEmpty()) {
             bccEmailList = EditTextUtils.getListFromString(bccEmail);
@@ -966,7 +966,6 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         if (getActivity() == null) {
             return false;
         }
-        boolean isEncryptionEnabled = sendModel.getAttachmentsEncryptionEnabled();
 
         List<MessageAttachment> attachmentList = messageSendAttachmentAdapter.getAttachmentList();
         if (updateAttachmentPosition >= attachmentList.size()) {
@@ -975,11 +974,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         MessageAttachment messageAttachment = attachmentList.get(updateAttachmentPosition);
 
         boolean attachmentIsEncrypted = messageAttachment.isEncrypted();
-        if (!(isEncryptionEnabled || attachmentList.get(0).isEncrypted())) {
-            return false;
-        }
-
-        final long id = messageAttachment.getId();
+        long id = messageAttachment.getId();
         String documentLink = messageAttachment.getDocumentLink();
         String fileName = AppUtils.getFileNameFromURL(documentLink);
         String type = AppUtils.getMimeType(documentLink);
@@ -1005,28 +1000,30 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
             bufferedOutputStream.close();
 
             if (attachmentIsEncrypted) {
-                MailboxEntity mailboxEntity = sendModel.getMailboxes().get(0);
+                String fromEmail = spinnerFrom.getSelectedItem().toString();
+                MailboxEntity mailboxEntity = sendModel.getMailboxByEmail(fromEmail);
                 String privateKey = mailboxEntity.getPrivateKey();
                 String password = sendModel.getUserPassword();
                 EncryptUtils.decryptAttachment(downloadedFile, downloadedFile, password, privateKey);
             }
 
             RequestBody attachmentPart;
-            if (isEncryptionEnabled && !publicKeyList.isEmpty()) {
+            if (!publicKeyList.isEmpty()) {
                 EncryptUtils.encryptAttachment(downloadedFile, encryptedFile, publicKeyList);
                 downloadedFile.delete();
                 cacheFileList.add(encryptedFile);
                 attachmentPart = RequestBody.create(mediaType, encryptedFile);
             } else {
-                attachmentPart = RequestBody.create(mediaType, downloadedFile);
                 cacheFileList.add(downloadedFile);
+                attachmentPart = RequestBody.create(mediaType, downloadedFile);
             }
 
             final MultipartBody.Part multipartAttachment = MultipartBody.Part.createFormData("document", fileName, attachmentPart);
-            sendModel.updateAttachment(id, multipartAttachment, currentMessageId, isEncryptionEnabled);
+            sendModel.updateAttachment(id, multipartAttachment, currentMessageId, true);
 
         } catch (IOException e) {
             Timber.e(e);
+            return false;
         }
 
         return true;
@@ -1053,31 +1050,26 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         }
         MediaType mediaType = MediaType.parse(type);
 
-        boolean isEncryptionEnabled = sendModel.getAttachmentsEncryptionEnabled();
-        MailboxEntity mailboxEntity = sendModel.getMailboxes().get(0);
+        String fromEmail = spinnerFrom.getSelectedItem().toString();
+        MailboxEntity mailboxEntity = sendModel.getMailboxByEmail(fromEmail);
         String mailboxPublicKey = mailboxEntity.getPublicKey();
 
         RequestBody attachmentPart;
-        if (isEncryptionEnabled) {
-            try {
-                File cacheDir = getActivity().getCacheDir();
-                File encryptedFile = File.createTempFile("attachment", ".ext", cacheDir);
-                EncryptUtils.encryptAttachment(attachmentFile, encryptedFile, Collections.singletonList(mailboxPublicKey));
-                attachmentPart = RequestBody.create(mediaType, encryptedFile);
-                cacheFileList.add(encryptedFile);
-
-            } catch (IOException e) {
-                Timber.e(e);
-                return;
-            }
-        } else {
-            attachmentPart = RequestBody.create(mediaType, attachmentFile);
+        try {
+            File cacheDir = getActivity().getCacheDir();
+            File encryptedFile = File.createTempFile("attachment", ".ext", cacheDir);
+            EncryptUtils.encryptAttachment(attachmentFile, encryptedFile, Collections.singletonList(mailboxPublicKey));
+            attachmentPart = RequestBody.create(mediaType, encryptedFile);
+            cacheFileList.add(encryptedFile);
+        } catch (IOException e) {
+            Timber.e(e);
+            return;
         }
 
         String attachmentName = attachmentFile.getName();
         MultipartBody.Part multipartAttachment = MultipartBody.Part.createFormData("document", attachmentName, attachmentPart);
 
-        sendModel.uploadAttachment(multipartAttachment, currentMessageId, isEncryptionEnabled);
+        sendModel.uploadAttachment(multipartAttachment, currentMessageId, true);
 
         uploadProgress = new ProgressDialog(getActivity());
         uploadProgress.setCanceledOnTouchOutside(false);

@@ -16,7 +16,6 @@ import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.net.RestService;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.AddFirebaseTokenRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.AntiPhishingPhraseRequest;
-import mobileapp.ctemplar.com.ctemplarapp.net.request.AttachmentsEncryptedRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.AutoSaveContactEnabledRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.CaptchaVerifyRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.ChangePasswordRequest;
@@ -182,14 +181,6 @@ public class UserRepository {
 
     public boolean isNotificationsEnabled() {
         return userStore.getNotificationsEnabled();
-    }
-
-    public void setAttachmentsEncryptionEnabled(boolean state) {
-        userStore.setAttachmentsEncryptionEnabled(state);
-    }
-
-    public boolean getAttachmentsEncryptionEnabled() {
-        return userStore.getAttachmentsEncryptionEnabled();
     }
 
     public void setContactsEncryptionEnabled(boolean isContactsEncryptionEnabled) {
@@ -478,13 +469,6 @@ public class UserRepository {
     public Observable<SettingsEntity> updateSubjectEncrypted(long settingId,
                                                              SubjectEncryptedRequest request) {
         return service.updateSubjectEncrypted(settingId, request)
-                .subscribeOn(io.reactivex.schedulers.Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread());
-    }
-
-    public Observable<SettingsEntity> updateAttachmentsEncrypted(
-            long settingId, AttachmentsEncryptedRequest request) {
-        return service.updateAttachmentsEncrypted(settingId, request)
                 .subscribeOn(io.reactivex.schedulers.Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
