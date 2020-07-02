@@ -1,5 +1,6 @@
 package com.ctemplar.app.fdroid.main;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Color;
@@ -13,6 +14,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -278,13 +280,14 @@ public class MainActivity extends AppCompatActivity
             startActivity(settingsScreen);
             return true;
         } else if (id == R.id.nav_logout) {
-            new AlertDialog.Builder(this)
-                    .setTitle(getResources().getString(R.string.dialog_log_out))
-                    .setMessage(getResources().getString(R.string.dialog_log_out_confirm))
-                    .setPositiveButton(getResources().getString(R.string.btn_log_out), (dialog, which) -> mainModel.logout()
-                    )
+            AlertDialog alertDialog = new AlertDialog.Builder(this)
+                    .setTitle(R.string.dialog_log_out)
+                    .setMessage(R.string.dialog_log_out_confirm)
+                    .setPositiveButton(R.string.btn_log_out, (dialog, which) -> mainModel.logout())
                     .setNeutralButton(R.string.btn_cancel, null)
                     .show();
+            Button neutralButton = alertDialog.getButton(DialogInterface.BUTTON_NEUTRAL);
+            neutralButton.setTextColor(getResources().getColor(R.color.colorBlue));
             return true;
         } else if (id == R.id.nav_manage_folders) {
             Intent manageFolders = new Intent(this, ManageFoldersActivity.class);
