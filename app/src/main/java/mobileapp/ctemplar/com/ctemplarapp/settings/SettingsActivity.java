@@ -195,8 +195,7 @@ public class SettingsActivity extends BaseActivity {
             SwitchPreference switchPreferenceNotificationsEnabled = findPreference(getString(R.string.push_notifications_enabled));
             if (switchPreferenceNotificationsEnabled != null) {
                 switchPreferenceNotificationsEnabled.setOnPreferenceChangeListener((preference, newValue) -> {
-                    boolean isEnabled = (boolean) newValue;
-                    userStore.setNotificationsEnabled(isEnabled);
+                    userStore.setNotificationsEnabled((boolean) newValue);
                     return true;
                 });
                 boolean isNotificationsEnabled = userStore.getNotificationsEnabled();
