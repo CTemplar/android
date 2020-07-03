@@ -57,6 +57,7 @@ import com.ctemplar.app.fdroid.repository.provider.UserDisplayProvider;
 import com.ctemplar.app.fdroid.utils.AppUtils;
 import com.ctemplar.app.fdroid.utils.EditTextUtils;
 import com.ctemplar.app.fdroid.utils.EncryptUtils;
+import com.ctemplar.app.fdroid.utils.FileUtils;
 import timber.log.Timber;
 
 import static com.ctemplar.app.fdroid.message.SendMessageActivity.ATTACHMENT_LIST;
@@ -565,33 +566,38 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
 
     private class DownloadCompleteReceiver extends BroadcastReceiver {
         public void onReceive(Context ctx, Intent intent) {
-            Toast.makeText(ctx, ctx.getString(R.string.toast_download_complete), Toast.LENGTH_SHORT).show();
-            try {
-                String fileName = attachmentProvider.getFileName();
-                boolean isEncrypted = attachmentProvider.isEncrypted();
+            Toast.makeText(ctx, getString(R.string.toast_download_complete),
+                    Toast.LENGTH_SHORT).show();
 
-                File externalStorageFile = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-                if (isEncrypted) {
-                    File downloadedFile = new File(externalStorageFile, fileName + ENCRYPTED_EXT);
+            try {
+                File externalStorageFile = Environment.getExternalStoragePublicDirectory(
+                        Environment.DIRECTORY_DOWNLOADS);
+                String fileName = attachmentProvider.getFileName();
+
+                if (attachmentProvider.isEncrypted()) {
+                    Toast.makeText(ctx, getString(R.string.attachment_decryption),
+                            Toast.LENGTH_SHORT).show();
+
+                    File encryptedFile = new File(externalStorageFile, fileName + ENCRYPTED_EXT);
                     File decryptedFile = new File(externalStorageFile, fileName);
-                    long mailboxId = parentMessage == null
-                            ? viewModel.getDefaultMailbox().getId()
+                    long mailboxId = parentMessage == null ? viewModel.getDefaultMailbox().getId()
                             : parentMessage.getMailboxId();
 
                     MailboxEntity mailboxEntity = viewModel.getMailboxById(mailboxId);
                     String password = viewModel.getUserPassword();
                     String privateKey = mailboxEntity.getPrivateKey();
                     boolean attachmentDecrypted = EncryptUtils.decryptAttachment(
-                            downloadedFile, decryptedFile, password, privateKey
+                            encryptedFile, decryptedFile, password, privateKey
                     );
-                    downloadedFile.delete();
+                    encryptedFile.delete();
 
-                    Uri decryptedUri = FileProvider.getUriForFile(
-                            ctx, BuildConfig.APPLICATION_ID + ".fileprovider", decryptedFile
+                    Uri decryptedUri = FileProvider.getUriForFile(ctx,
+                            BuildConfig.APPLICATION_ID + ".fileprovider", decryptedFile
                     );
                     if (attachmentDecrypted) {
                         openFile(decryptedUri);
                     }
+
                 } else {
                     File downloadedFile = new File(externalStorageFile, fileName);
                     Uri fileUri = FileProvider.getUriForFile(
@@ -600,20 +606,24 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
                     openFile(fileUri);
                 }
             } catch (Exception e) {
-                Timber.i(e);
+                Timber.e(e);
             }
         }
     }
 
     private void openFile(Uri fileUri) {
+        if (getActivity() == null) {
+            return;
+        }
         try {
             Intent openIntent = new Intent(Intent.ACTION_VIEW);
             String fileType = getActivity().getContentResolver().getType(fileUri);
             openIntent.setDataAndType(fileUri, fileType);
+            openIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             openIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             getActivity().startActivity(openIntent);
         } catch (ActivityNotFoundException e) {
-            Timber.i(e);
+            Timber.e(e);
         }
     }
 }

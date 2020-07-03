@@ -39,7 +39,6 @@ import com.ctemplar.app.fdroid.utils.EditTextUtils;
 import com.ctemplar.app.fdroid.utils.FileUtils;
 import com.ctemplar.app.fdroid.utils.PermissionCheck;
 import com.ctemplar.app.fdroid.utils.ThemeUtils;
-
 import timber.log.Timber;
 
 import static android.content.Context.DOWNLOAD_SERVICE;
@@ -309,33 +308,42 @@ public class ViewMessagesAdapter extends BaseAdapter {
 
             @Override
             public void onNext(Integer position) {
-                File externalStorageFile = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+                File externalStorageFile = Environment.getExternalStoragePublicDirectory(
+                        Environment.DIRECTORY_DOWNLOADS);
                 AttachmentProvider attachmentProvider = messageAttachmentAdapter.getAttachment(position);
+
                 String documentLink = attachmentProvider.getDocumentLink();
                 if (documentLink == null) {
                     Toast.makeText(activity, activity.getString(R.string.error_attachment_url), Toast.LENGTH_SHORT).show();
                     return;
                 }
-                Uri documentUri = Uri.parse(documentLink);
-                File file = FileUtils.generateFileName(AppUtils.getFileNameFromURL(documentLink), externalStorageFile);
-                String fileName = file == null ? "" : file.getName();
-                String localFileName = attachmentProvider.isEncrypted() ? fileName + ENCRYPTED_EXT : fileName;
 
-                DownloadManager.Request documentRequest = new DownloadManager.Request(documentUri);
-                documentRequest.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, localFileName);
+                String originalFileName = AppUtils.getFileNameFromURL(documentLink);
+                File generatedFile = FileUtils.generateFileName(originalFileName, externalStorageFile);
+                String fileName = generatedFile == null ? originalFileName : generatedFile.getName();
+
+                String downloadFileName = attachmentProvider.isEncrypted()
+                        ? fileName + ENCRYPTED_EXT : fileName;
+
+                DownloadManager.Request documentRequest = new DownloadManager.Request(Uri.parse(documentLink));
+                documentRequest.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, downloadFileName);
                 documentRequest.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+
                 if (activity != null && PermissionCheck.readAndWriteExternalStorage(activity)) {
-                    DownloadManager downloadManager = (DownloadManager) activity.getApplicationContext().getSystemService(DOWNLOAD_SERVICE);
+                    DownloadManager downloadManager = (DownloadManager) activity
+                            .getApplicationContext().getSystemService(DOWNLOAD_SERVICE);
                     downloadManager.enqueue(documentRequest);
-                    Toast.makeText(activity, activity.getString(R.string.toast_download_started), Toast.LENGTH_SHORT).show();
                     attachmentProvider.setFileName(fileName);
+
                     onAttachmentDownloading.onStart(attachmentProvider);
+                    Toast.makeText(activity, activity.getString(R.string.toast_download_started),
+                            Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onError(Throwable e) {
-                Timber.e(e);
+                Timber.e(e, "MessageAttachmentAdapter");
             }
 
             @Override
