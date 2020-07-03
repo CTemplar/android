@@ -150,6 +150,7 @@
     <string name="txt_subject">Subject</string>
     <string name="txt_to">To:&#160;</string>
     <string name="txt_reply_all">Reply All</string>
+    <string name="attachment_decryption">Attachment decryption…</string>
 
     <!-- CHANGE PASSWORD -->
     <string name="toast_password_changed">Password changed</string>
