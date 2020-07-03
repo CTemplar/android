@@ -148,6 +148,7 @@ Se você tiver alguma dúvida, por favor, envie um e-mail para <![CDATA[<u><a hr
     <string name="txt_subject">Assunto</string>
     <string name="txt_to">Para:&#160;</string>
     <string name="txt_reply_all">Responder todos</string>
+    <string name="attachment_decryption">Descriptografia de anexo…</string>
 
     <!-- CHANGE PASSWORD -->
     <string name="toast_password_changed">Senha alterada</string>

@@ -148,6 +148,7 @@
     <string name="txt_date">Date</string>
     <string name="txt_date_format">Date: %1$s</string>
     <string name="txt_reply_all">Répondre à tous</string>
+    <string name="attachment_decryption">Décryptage des pièces jointes…</string>
 
     <!-- CHANGE PASSWORD -->
     <string name="toast_password_changed">Mot de passe modifié</string>
