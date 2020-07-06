@@ -8,7 +8,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,6 +24,20 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
+
+import org.jetbrains.annotations.NotNull;
+
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.List;
+
+import butterknife.BindView;
+import butterknife.OnClick;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 import com.ctemplar.app.fdroid.BaseFragment;
 import com.ctemplar.app.fdroid.R;
 import com.ctemplar.app.fdroid.message.MoveDialogFragment;
@@ -34,19 +47,7 @@ import com.ctemplar.app.fdroid.message.ViewMessagesActivity;
 import com.ctemplar.app.fdroid.message.ViewMessagesFragment;
 import com.ctemplar.app.fdroid.net.ResponseStatus;
 import com.ctemplar.app.fdroid.repository.provider.MessageProvider;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-
-import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import butterknife.BindView;
-import butterknife.OnClick;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
+import com.ctemplar.app.fdroid.utils.EditTextUtils;
 import timber.log.Timber;
 
 import static com.ctemplar.app.fdroid.message.SendMessageActivity.MESSAGE_ID;
@@ -62,6 +63,8 @@ public class InboxFragment extends BaseFragment
     private static final int SWIPABLE_FOREGROUND_RESOURCE_ID = R.id.item_message_view_holder_foreground;
     private static final int SWIPABLE_BACKGROUND_RESOURCE_ID = R.id.item_message_view_holder_background_layout;
     private static final int REQUEST_MESSAGES_COUNT = 10;
+
+    public static WeakReference<InboxFragment> instanceReference = null;
 
     private InboxMessagesAdapter adapter;
     private MainActivityViewModel mainModel;
@@ -98,14 +101,14 @@ public class InboxFragment extends BaseFragment
     @BindView(R.id.fragment_inbox_recycler_view)
     RecyclerView recyclerView;
 
-    @BindView(R.id.fragment_inbox_icon_empty)
-    ImageView imgEmpty;
-
     @BindView(R.id.fragment_inbox_title_empty)
     TextView folderEmptyTextView;
 
     @BindView(R.id.fragment_inbox_list_empty_layout)
     ConstraintLayout listEmptyLayout;
+
+    @BindView(R.id.fragment_inbox_list_empty_search_layout)
+    ConstraintLayout listEmptySearchLayout;
 
     @BindView(R.id.fragment_inbox_progress_layout)
     ConstraintLayout progressLayout;
@@ -128,7 +131,7 @@ public class InboxFragment extends BaseFragment
             filterIsUnread = isUnread;
             filterWithAttachment = withAttachment;
             invalidateOptionsMenu();
-            showIfNotEmpty();
+            showResultsIfNotEmpty();
         }
     };
 
@@ -179,6 +182,7 @@ public class InboxFragment extends BaseFragment
 
                     }
                 });
+        instanceReference = new WeakReference<>(this);
     }
 
     @Override
@@ -199,8 +203,7 @@ public class InboxFragment extends BaseFragment
         mainModel.getCurrentFolder().observe(getViewLifecycleOwner(), folderName -> {
             currentFolder = folderName;
             requestNewMessages();
-            String emptyFolderString = getResources().getString(R.string.title_empty_messages, folderName);
-            folderEmptyTextView.setText(emptyFolderString);
+            folderEmptyTextView.setText(getString(R.string.title_empty_messages, folderName));
             loadMessagesList();
             recyclerView.setAdapter(adapter);
             updateTouchListenerSwipeOptions(currentFolder);
@@ -271,6 +274,7 @@ public class InboxFragment extends BaseFragment
                 public boolean onQueryTextChange(String text) {
                     adapter.filter(text);
                     filterText = text;
+                    showResultsIfNotEmpty();
                     return false;
                 }
             });
@@ -350,14 +354,6 @@ public class InboxFragment extends BaseFragment
             return;
         }
         activity.invalidateOptionsMenu();
-    }
-
-    private void showIfNotEmpty() {
-        if (adapter.getItemCount() > 0) {
-            showMessagesList();
-        } else {
-            hideMessagesList();
-        }
     }
 
     private void updateMessagesResponse(ResponseStatus responseStatus) {
@@ -477,7 +473,6 @@ public class InboxFragment extends BaseFragment
         if (activity == null) {
             return;
         }
-
         Intent sendMessageIntent = new Intent(activity, SendMessageActivity.class);
         Fragment fragment = SendMessageFragment.newInstance();
         activity.showActivityOrFragment(sendMessageIntent, fragment);
@@ -489,7 +484,6 @@ public class InboxFragment extends BaseFragment
             return;
         }
         String folderName = mainModel.getCurrentFolder().getValue();
-
         if (folderName != null && folderName.equals(DRAFT)) {
             Intent draftIntent = new Intent(activity, SendMessageActivity.class);
             draftIntent.putExtra(MESSAGE_ID, parentId);
@@ -521,13 +515,27 @@ public class InboxFragment extends BaseFragment
             switch(status) {
                 case RESPONSE_ERROR:
                     mainModel.checkUserToken();
+                    Timber.e("handleResponseStatus: RESPONSE_ERROR");
                     // Toast.makeText(getActivity(), getString(R.string.error_messages), Toast.LENGTH_SHORT).show();
-                    Timber.e("Response error");
                     break;
                 case RESPONSE_NEXT_MESSAGES:
+                    Timber.e("handleResponseStatus: RESPONSE_NEXT_MESSAGES");
                     // adapter = new InboxMessagesAdapter(mainModel.getMessagesResponse().getValue().getMessagesList());
                     // recyclerView.setAdapter(adapter);
                     break;
+            }
+        }
+    }
+
+    private void showResultsIfNotEmpty() {
+        if (adapter.getItemCount() > 0) {
+            showMessagesList();
+        } else {
+            if (EditTextUtils.isNotEmpty(filterText) || filterIsStarred || filterIsUnread ||
+                    filterWithAttachment) {
+                emptyFilteredMessagesList();
+            } else {
+                emptyMessagesList();
             }
         }
     }
@@ -536,13 +544,23 @@ public class InboxFragment extends BaseFragment
         recyclerView.setVisibility(View.GONE);
         fabCompose.hide();
         listEmptyLayout.setVisibility(View.GONE);
+        listEmptySearchLayout.setVisibility(View.GONE);
         progressLayout.setVisibility(View.VISIBLE);
     }
 
-    private void hideMessagesList() {
+    private void emptyMessagesList() {
         recyclerView.setVisibility(View.GONE);
         fabCompose.hide();
         listEmptyLayout.setVisibility(View.VISIBLE);
+        listEmptySearchLayout.setVisibility(View.GONE);
+        progressLayout.setVisibility(View.GONE);
+    }
+
+    private void emptyFilteredMessagesList() {
+        recyclerView.setVisibility(View.GONE);
+        fabCompose.hide();
+        listEmptyLayout.setVisibility(View.GONE);
+        listEmptySearchLayout.setVisibility(View.VISIBLE);
         progressLayout.setVisibility(View.GONE);
     }
 
@@ -550,6 +568,7 @@ public class InboxFragment extends BaseFragment
         recyclerView.setVisibility(View.VISIBLE);
         fabCompose.show();
         listEmptyLayout.setVisibility(View.GONE);
+        listEmptySearchLayout.setVisibility(View.GONE);
         progressLayout.setVisibility(View.GONE);
     }
 
@@ -562,7 +581,7 @@ public class InboxFragment extends BaseFragment
             return;
         }
         if (messages == null || messages.isEmpty()) {
-            hideMessagesList();
+            emptyMessagesList();
             messages = new ArrayList<>();
         } else {
             showMessagesList();
@@ -577,11 +596,7 @@ public class InboxFragment extends BaseFragment
         if (filterText != null) {
             adapter.filter(filterText);
         }
-        if (adapter.getItemCount() > 0) {
-            showMessagesList();
-        } else {
-            hideMessagesList();
-        }
+        showResultsIfNotEmpty();
         isLoadingNewMessages = false;
     }
 

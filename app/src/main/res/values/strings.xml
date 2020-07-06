@@ -33,7 +33,7 @@
     <string name="nav_drawer_manage_folders_param">Manage Folders (%1$d)</string>
     <string name="nav_drawer_folders_show_more">Show 10 more folders</string>
 
-    <!-- Tool Bar -->
+    <!-- TOOLBAR -->
     <string name="action_search">Search</string>
     <string name="action_filter">Filter</string>
     <string name="action_search_hint">Search mail</string>
@@ -151,6 +151,7 @@
     <string name="txt_to">To:&#160;</string>
     <string name="txt_reply_all">Reply All</string>
     <string name="attachment_decryption">Attachment decryption…</string>
+    <string name="no_results_found">No results found</string>
 
     <!-- CHANGE PASSWORD -->
     <string name="toast_password_changed">Password changed</string>
