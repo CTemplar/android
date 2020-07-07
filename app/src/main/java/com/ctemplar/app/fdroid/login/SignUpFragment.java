@@ -26,7 +26,7 @@ import java.util.Objects;
 import butterknife.BindView;
 import butterknife.OnClick;
 
-public class SignUpFragment extends BaseFragment{
+public class SignUpFragment extends BaseFragment {
 
     @BindView(R.id.fragment_sign_up_view_pager)
     ViewPagerNoScroll viewPager;

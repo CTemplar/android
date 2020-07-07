@@ -81,7 +81,8 @@
     <string name="title_confirm_reset_password_hint">A sua chave de criptografia está ligada à sua senha. Por causa disso, <![CDATA[<font color="#e74c3c">não será possível descriptografar as mensagens antigas, anexos e contatos</font>]]> se você resetar sua senha.
 Se você tiver alguma dúvida, por favor, envie um e-mail para <![CDATA[<u><a href="mailto:support@ctemplar.com">support@ctemplar.com</a></u>]]>.</string>
     <string name="title_confirm_reset_password_hint2">Tem certeza que deseja resetar sua senha?</string>
-    <string name="title_reset_code_hint">Nós enviamos um código para o seu <![CDATA[<u><a href="mailto:%1$s">e-mail de recuperação</a></u>]]> para resetar sua senha. Insira ele abaixo para confirmar.</string>
+    <string name="title_reset_code_hint">Nós enviamos um código para o seu <![CDATA[<u><a href="mailto:%1$s">e-mail de recuperação</a></u>]]> para resetar sua senha.</string>
+    <string name="title_reset_code_hint2">Insira ele abaixo para confirmar.</string>
     <string name="title_new_password_hint">Não esqueça essa senha! Ela não pode ser recuperada.</string>
     <string name="title_forgot_username_underlined"><u>Esqueceu seu nome de usuário?</u></string>
     <string name="title_keep_me_logged_in">Mantenha essa seção ativa</string>

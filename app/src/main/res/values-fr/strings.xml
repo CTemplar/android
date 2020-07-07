@@ -80,7 +80,8 @@
     <string name="title_invitation_code">Code d\'invitation</string>
     <string name="title_confirm_reset_password_hint">Votre clé de cryptage est connectée à votre mot de passe. Pour cette raison <![CDATA[<font color="#e74c3c"> il n\'est pas possible de décrypter les précédents messages, les pièces jointes et vos contacts </font>]]> si vous réinitialiser votre mot de passe. Pour toute question, merci de nous contacter <![CDATA[<u><a href="mailto:support@ctemplar.com">support@ctemplar.com</a></u>]]>.</string>
     <string name="title_confirm_reset_password_hint2">Êtes vous certain de vouloir réinitialiser votre mot de passe ?</string>
-    <string name="title_reset_code_hint">Un email a été envoyé à votre <![CDATA[<u><a href="mailto:%1$s">adresse de récupération</a></u>]]> pour réinitialiser votre mot de passe. Indiquer ci-dessous pour confirmation.</string>
+    <string name="title_reset_code_hint">Un email a été envoyé à votre <![CDATA[<u><a href="mailto:%1$s">adresse de récupération</a></u>]]> pour réinitialiser votre mot de passe.</string>
+    <string name="title_reset_code_hint2">Indiquer ci-dessous pour confirmation.</string>
     <string name="title_new_password_hint">N\'oubliez pas votre mot de passe, il ne pourra pas être restauré.</string>
     <string name="title_forgot_username_underlined"><u>Nom d\'utilisateur oublié ?</u></string>
     <string name="title_keep_me_logged_in">Rester connecté</string>
