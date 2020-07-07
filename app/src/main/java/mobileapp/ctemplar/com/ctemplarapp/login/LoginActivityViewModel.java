@@ -97,8 +97,8 @@ public class LoginActivityViewModel extends ViewModel {
                 .subscribe(new Observer<SignInResponse>() {
                     @Override
                     public void onError(Throwable e) {
-                        if(e instanceof HttpException ) {
-                            HttpException exception = (HttpException)e;
+                        if (e instanceof HttpException) {
+                            HttpException exception = (HttpException) e;
                             if (exception.code() == 400) {
                                 responseStatus.postValue(ResponseStatus.RESPONSE_ERROR_AUTH_FAILED);
                             } else {
@@ -154,8 +154,8 @@ public class LoginActivityViewModel extends ViewModel {
 
                     @Override
                     public void onError(Throwable e) {
-                        if(e instanceof HttpException ) {
-                            HttpException exception = (HttpException)e;
+                        if (e instanceof HttpException) {
+                            HttpException exception = (HttpException) e;
                             if (exception.code() == 400) {
                                 responseStatus.postValue(ResponseStatus.RESPONSE_ERROR_RECOVER_PASS_FAILED);
                             } else {
@@ -174,7 +174,7 @@ public class LoginActivityViewModel extends ViewModel {
     }
 
     public void resetPassword() {
-        if(recoverPasswordRequest == null) {
+        if (recoverPasswordRequest == null) {
             return;
         }
         String username = recoverPasswordRequest.getUsername();
@@ -208,8 +208,8 @@ public class LoginActivityViewModel extends ViewModel {
 
             @Override
             public void onError(Throwable e) {
-                if(e instanceof HttpException ) {
-                    HttpException exception = (HttpException)e;
+                if (e instanceof HttpException) {
+                    HttpException exception = (HttpException) e;
                     if (exception.code() == 400) {
                         responseStatus.postValue(ResponseStatus.RESPONSE_ERROR_CODE_NOT_MATCH);
                     } else {
