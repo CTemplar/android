@@ -24,7 +24,7 @@ import mobileapp.ctemplar.com.ctemplarapp.login.step.StepRegistrationViewModel;
 import mobileapp.ctemplar.com.ctemplarapp.login.step.StepUsernameFragment;
 import mobileapp.ctemplar.com.ctemplarapp.login.step.ViewPagerNoScroll;
 
-public class SignUpFragment extends BaseFragment{
+public class SignUpFragment extends BaseFragment {
 
     @BindView(R.id.fragment_sign_up_view_pager)
     ViewPagerNoScroll viewPager;

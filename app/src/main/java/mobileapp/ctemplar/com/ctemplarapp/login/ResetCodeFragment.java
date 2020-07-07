@@ -1,6 +1,5 @@
 package mobileapp.ctemplar.com.ctemplarapp.login;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -47,11 +46,6 @@ public class ResetCodeFragment extends BaseFragment {
         return R.layout.fragment_reset_code;
     }
 
-    @Override
-    public void onAttach(@NotNull Context context) {
-        super.onAttach(context);
-    }
-
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -65,16 +59,6 @@ public class ResetCodeFragment extends BaseFragment {
         setListeners();
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-    }
-
     @OnClick(R.id.fragment_reset_code_btn)
     public void onClickConfirmCode() {
         if(!TextUtils.isEmpty(EditTextUtils.getText(editCode))) {
@@ -85,11 +69,12 @@ public class ResetCodeFragment extends BaseFragment {
 
     @OnClick(R.id.fragment_reset_code_back)
     public void onClickBack() {
+        loginActivityModel.resetResponseStatus();
         getActivity().onBackPressed();
     }
 
     private void setListeners() {
-        txtHint.setText(EditTextUtils.fromHtml(getResources().getString(R.string.title_reset_code_hint, loginActivityModel.getRecoverPasswordRequest().getEmail())));
+        txtHint.setText(EditTextUtils.fromHtml(getString(R.string.title_reset_code_hint, loginActivityModel.getRecoverPasswordRequest().getEmail())));
         txtHint.setLinkTextColor(getResources().getColor(R.color.colorLinkBlue));
         txtHint.setMovementMethod(LinkMovementMethod.getInstance());
         txtHint.setAutoLinkMask(Linkify.EMAIL_ADDRESSES);
@@ -101,9 +86,9 @@ public class ResetCodeFragment extends BaseFragment {
             }
 
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(TextUtils.isEmpty(s.toString())) {
-                    editCodeLayout.setError(getResources().getString(R.string.error_empty_password));
+            public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
+                if(TextUtils.isEmpty(charSequence)) {
+                    editCodeLayout.setError(getString(R.string.error_empty_password));
                     btnCodeNext.setEnabled(false);
                 } else {
                     editCodeLayout.setError(null);

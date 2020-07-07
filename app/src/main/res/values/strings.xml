@@ -82,7 +82,8 @@
     <string name="title_invitation_code">Invitation code</string>
     <string name="title_confirm_reset_password_hint">Your encryption key is connected to your password. Because of this <![CDATA[<font color="#e74c3c">you will not be able to decrypt old messages, attachments and contacts</font>]]> if you reset your password. If you have further questions please email <![CDATA[<u><a href="mailto:support@ctemplar.com">support@ctemplar.com</a></u>]]>.</string>
     <string name="title_confirm_reset_password_hint2">Are you sure you want to reset your password?</string>
-    <string name="title_reset_code_hint">We have sent a reset code to your <![CDATA[<u><a href="mailto:%1$s">recovery email</a></u>]]> to reset your password. Enter it below for confirmation.</string>
+    <string name="title_reset_code_hint">We have sent a reset code to your <![CDATA[<u><a href="mailto:%1$s">recovery email</a></u>]]> to reset your password.</string>
+    <string name="title_reset_code_hint2">Enter it below for confirmation.</string>
     <string name="title_new_password_hint">Don\'t forget this password, it can\'t be restored.</string>
     <string name="title_forgot_username_underlined"><u>Forgot your username?</u></string>
     <string name="title_keep_me_logged_in">Keep me logged in</string>

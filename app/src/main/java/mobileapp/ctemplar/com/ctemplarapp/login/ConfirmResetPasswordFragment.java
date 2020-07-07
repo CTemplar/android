@@ -51,7 +51,7 @@ public class ConfirmResetPasswordFragment extends BaseFragment {
 
     @OnClick(R.id.fragment_confirm_reset_password_btn)
     public void onClickConfirm() {
-        if(loginActivityModel.getRecoverPasswordRequest() != null) {
+        if (loginActivityModel.getRecoverPasswordRequest() != null) {
             // loginActivityModel.changeAction(LoginActivityActions.SHOW_PROGRESS_DIALOG);
             loginActivityModel.showProgressDialog();
             loginActivityModel.recoverPassword();
@@ -65,8 +65,8 @@ public class ConfirmResetPasswordFragment extends BaseFragment {
         txtHint.setAutoLinkMask(Linkify.EMAIL_ADDRESSES);
     }
 
-    public void handleResponseStatus(ResponseStatus status) {
-        if(status != null) {
+    public void handleResponseStatus(@Nullable ResponseStatus status) {
+        if (status != null) {
             // loginActivityModel.changeAction(LoginActivityActions.HIDE_PROGRESS_DIALOG);
             loginActivityModel.hideProgressDialog();
 

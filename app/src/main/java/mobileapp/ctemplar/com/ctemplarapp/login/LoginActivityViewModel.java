@@ -65,6 +65,10 @@ public class LoginActivityViewModel extends ViewModel {
         return responseStatus;
     }
 
+    public void resetResponseStatus() {
+        responseStatus.postValue(null);
+    }
+
     public void setRecoveryPassword(String username, String email) {
         recoverPasswordRequest = new RecoverPasswordRequest(username, email);
     }
@@ -130,7 +134,7 @@ public class LoginActivityViewModel extends ViewModel {
     }
 
     public void recoverPassword() {
-        if(recoverPasswordRequest != null) {
+        if (recoverPasswordRequest != null) {
             recoverPassword(recoverPasswordRequest.getUsername(), recoverPasswordRequest.getEmail());
         }
     }
