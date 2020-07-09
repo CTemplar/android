@@ -10,7 +10,7 @@
     <string name="dialog_log_out_confirm">"Êtes-vous certain de vouloir vous déconnecter ?"</string>
     <string name="btn_log_out">SE DECONNECTER</string>
 
-    <!-- Navigation Drawer -->
+    <!-- NAVIGATION DRAWER -->
     <string name="nav_drawer_inbox">Boîte de réception</string>
     <string name="nav_drawer_draft">Brouillons</string>
     <string name="nav_drawer_sent">Envoyés</string>
@@ -114,6 +114,9 @@
     <string name="btn_confirm">CONFIRMER</string>
     <string name="title_clear_folder">Vider dossier</string>
     <string name="txt_clear_folder">Êtes-vous certain de vouloir supprimer tous les messages du dossier ?</string>
+    <string name="username_is_available">Nom d\'utilisateur disponible</string>
+    <string name="username_is_not_available">Le nom d\'utilisateur n\'est pas disponible</string>
+    <string name="checking">Vérification…</string>
 
     <!-- COMPOSE OPTIONS -->
     <string name="txt_left_time_destruct">Suppression dans %1$s</string>
@@ -397,7 +400,7 @@
     <string name="error_username_big">Maximum 64 symboles</string>
     <string name="error_password_small">Minimum 1 symbole</string>
     <string name="error_password_big">Maximum 255 symboles</string>
-    <string name="error_username_incorrect">Saisir un nom utilisateur valide</string>
+    <string name="error_username_incorrect">Le nom d\'utilisateur doit commencer par une lettre et peut contenir uniquement a–z, A–Z, 0–9 ou ._-</string>
     <string name="error_username_exists">L\'email existe déjà.</string>
     <string name="error_password_not_match">Les mots de passe doivent être identiques</string>
     <string name="error_current_password_not_match">Ancien mot de passe incorrect</string>

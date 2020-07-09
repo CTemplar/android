@@ -217,7 +217,7 @@ public class SignInFragment extends BaseFragment {
             editTextUsernameLayout.setError(getResources().getString(R.string.error_username_big));
             return false;
         }
-        if(!EditTextUtils.isUsernameValid(email)) {
+        if(!EditTextUtils.isUserEmailValid(email)) {
             editTextUsernameLayout.setError(getResources().getString(R.string.error_username_incorrect));
             return false;
         }

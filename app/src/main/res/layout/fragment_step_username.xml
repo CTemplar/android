@@ -29,7 +29,7 @@
             android:id="@+id/fragment_step_username_hint"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="6dp"
             android:fontFamily="@font/lato_regular"
             android:text="@string/title_step_username_hint"
             android:textColor="@color/colorBlack50"
@@ -37,21 +37,101 @@
             android:gravity="center"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/fragment_step_username_title" />
+            app:layout_constraintTop_toBottomOf="@id/fragment_step_username_title" />
+
+        <LinearLayout
+            android:id="@+id/fragment_step_username_check_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="22dp"
+            android:layout_marginLeft="24dp"
+            android:layout_marginRight="24dp"
+            android:orientation="vertical"
+            app:layout_constraintTop_toBottomOf="@id/fragment_step_username_hint">
+
+            <LinearLayout
+                android:id="@+id/fragment_step_username_available_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:srcCompat="@drawable/ic_check_success" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:textSize="16sp"
+                    android:textColor="@color/colorGreen"
+                    android:fontFamily="@font/lato_regular"
+                    android:text="@string/username_is_available" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/fragment_step_username_not_available_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:visibility="gone">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:srcCompat="@drawable/ic_error" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:textSize="16sp"
+                    android:textColor="@color/colorOrangeLight"
+                    android:fontFamily="@font/lato_regular"
+                    android:text="@string/username_is_not_available" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/fragment_step_username_checking_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:visibility="gone">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:srcCompat="@drawable/ic_refresh" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:textSize="16sp"
+                    android:textColor="@color/colorDarkBlue"
+                    android:fontFamily="@font/lato_regular"
+                    android:text="@string/checking" />
+
+            </LinearLayout>
+
+        </LinearLayout>
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/fragment_step_username_input_layout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginTop="9dp"
             android:layout_marginLeft="24dp"
-            android:layout_marginTop="36dp"
             android:layout_marginRight="24dp"
             android:textColorHint="@color/colorDarkBlue2"
             app:hintEnabled="true"
             app:hintTextAppearance="@style/TextHintAppearanceDark"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/fragment_step_username_hint"
+            app:layout_constraintTop_toBottomOf="@id/fragment_step_username_check_layout"
             app:layout_constraintBottom_toTopOf="@id/fragment_step_username_invite_code_input_layout">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -78,8 +158,8 @@
             android:id="@+id/fragment_step_username_invite_code_input_layout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="24dp"
             android:layout_marginTop="10dp"
+            android:layout_marginLeft="24dp"
             android:layout_marginRight="24dp"
             android:textColorHint="@color/colorDarkBlue2"
             app:hintEnabled="true"

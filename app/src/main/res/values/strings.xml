@@ -12,7 +12,7 @@
     <string name="dialog_log_out_confirm">"Are you sure you want to log out?"</string>
     <string name="btn_log_out">LOG OUT</string>
 
-    <!-- Navigation Drawer -->
+    <!-- NAVIGATION DRAWER -->
     <string name="nav_drawer_inbox">Inbox</string>
     <string name="nav_drawer_draft">Draft</string>
     <string name="nav_drawer_sent">Sent</string>
@@ -116,6 +116,9 @@
     <string name="btn_confirm">CONFIRM</string>
     <string name="title_clear_folder">Clear folder</string>
     <string name="txt_clear_folder">Are you sure you want to delete all messages from the folder?</string>
+    <string name="username_is_available">Username is available</string>
+    <string name="username_is_not_available">Username is not available</string>
+    <string name="checking">Checking…</string>
     <string translatable="false" name="txt_encrypted_subject">...</string>
 
     <!-- COMPOSE OPTIONS -->
@@ -427,7 +430,7 @@
     <string name="error_username_big">Maximum 64 symbols</string>
     <string name="error_password_small">Minimum 1 symbol</string>
     <string name="error_password_big">Maximum 255 symbols</string>
-    <string name="error_username_incorrect">Enter a valid username</string>
+    <string name="error_username_incorrect">The username must start with a letter and can contain only a–z, A–Z, 0–9 or ._-</string>
     <string name="error_username_exists">Email already exists!</string>
     <string name="error_password_not_match">Passwords do not match.</string>
     <string name="error_current_password_not_match">Old password is not correct!</string>
