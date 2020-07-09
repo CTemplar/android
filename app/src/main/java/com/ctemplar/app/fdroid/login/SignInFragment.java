@@ -12,12 +12,6 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.ctemplar.app.fdroid.BaseFragment;
-import com.ctemplar.app.fdroid.BuildConfig;
-import com.ctemplar.app.fdroid.LoginActivityActions;
-import com.ctemplar.app.fdroid.R;
-import com.ctemplar.app.fdroid.net.ResponseStatus;
-import com.ctemplar.app.fdroid.utils.EditTextUtils;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -26,6 +20,12 @@ import org.jetbrains.annotations.NotNull;
 import butterknife.BindInt;
 import butterknife.BindView;
 import butterknife.OnClick;
+import com.ctemplar.app.fdroid.BaseFragment;
+import com.ctemplar.app.fdroid.BuildConfig;
+import com.ctemplar.app.fdroid.LoginActivityActions;
+import com.ctemplar.app.fdroid.R;
+import com.ctemplar.app.fdroid.net.ResponseStatus;
+import com.ctemplar.app.fdroid.utils.EditTextUtils;
 
 public class SignInFragment extends BaseFragment {
 
@@ -101,7 +101,7 @@ public class SignInFragment extends BaseFragment {
         if (editTextOtpCode.getText() != null && !editTextOtpCode.getText().toString().isEmpty()) {
             otp = EditTextUtils.getText(editTextOtpCode).trim();
         }
-        if(isValid(username, password)) {
+        if (isValid(username, password)) {
             loginActivityModel.showProgressDialog();
             loginActivityModel.signIn(username, password, otp, keepMeLoggedInCheckBox.isChecked());
         }
@@ -154,7 +154,7 @@ public class SignInFragment extends BaseFragment {
     }
 
     private void handleStatus(ResponseStatus status) {
-        if(status != null) {
+        if (status != null) {
             loginActivityModel.hideProgressDialog();
 
             switch (status) {
@@ -189,24 +189,24 @@ public class SignInFragment extends BaseFragment {
     }
 
     private boolean isValid(String email, String password) {
-        if(TextUtils.isEmpty(email)) {
-            editTextUsernameLayout.setError(getResources().getString(R.string.error_empty_email));
+        if (TextUtils.isEmpty(email)) {
+            editTextUsernameLayout.setError(getString(R.string.error_empty_email));
             return false;
         }
-        if(TextUtils.isEmpty(password)) {
-            editTextPasswordLayout.setError(getResources().getString(R.string.error_empty_password));
+        if (TextUtils.isEmpty(password)) {
+            editTextPasswordLayout.setError(getString(R.string.error_empty_password));
             return false;
         }
-        if(email.length() < USERNAME_MIN) {
-            editTextUsernameLayout.setError(getResources().getString(R.string.error_username_small));
+        if (email.length() < USERNAME_MIN) {
+            editTextUsernameLayout.setError(getString(R.string.error_username_small));
             return false;
         }
-        if(email.length() > USERNAME_MAX) {
-            editTextUsernameLayout.setError(getResources().getString(R.string.error_username_big));
+        if (email.length() > USERNAME_MAX) {
+            editTextUsernameLayout.setError(getString(R.string.error_username_big));
             return false;
         }
-        if(!EditTextUtils.isUsernameValid(email)) {
-            editTextUsernameLayout.setError(getResources().getString(R.string.error_username_incorrect));
+        if (!EditTextUtils.isUserEmailValid(email)) {
+            editTextUsernameLayout.setError(getString(R.string.error_username_incorrect));
             return false;
         }
         return true;

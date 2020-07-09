@@ -10,7 +10,7 @@
     <string name="dialog_log_out_confirm">"Tem certeza que deseja sair?"</string>
     <string name="btn_log_out">SAIR</string>
 
-    <!-- Navigation Drawer -->
+    <!-- NAVIGATION DRAWER -->
     <string name="nav_drawer_inbox">Caixa de entrada</string>
     <string name="nav_drawer_draft">Rascunhos</string>
     <string name="nav_drawer_sent">Enviados</string>
@@ -115,6 +115,9 @@ Se você tiver alguma dúvida, por favor, envie um e-mail para <![CDATA[<u><a hr
     <string name="btn_confirm">CONFIRMAR</string>
     <string name="title_clear_folder">Limpar pasta</string>
     <string name="txt_clear_folder">Tem certeza de que deseja excluir todas as mensagens da pasta?</string>
+    <string name="username_is_available">Nome de usuário está disponível</string>
+    <string name="username_is_not_available">Nome de usuário não está disponível</string>
+    <string name="checking">Verificando…</string>
 
     <!-- COMPOSE OPTIONS -->
     <string name="txt_left_time_destruct">Será excluído em %1$s</string>
@@ -400,7 +403,7 @@ Se você tiver alguma dúvida, por favor, envie um e-mail para <![CDATA[<u><a hr
     <string name="error_username_big">Máximo de 64 caracteres</string>
     <string name="error_password_small">Mínimo de 1 caractere</string>
     <string name="error_password_big">Máximo 255 caracteres</string>
-    <string name="error_username_incorrect">Digite um nome de usuário válido</string>
+    <string name="error_username_incorrect">O nome de usuário deve começar com uma letra e pode conter apenas a–z, A–Z, 0–9 ou ._-</string>
     <string name="error_username_exists">Este e-mail já existe!</string>
     <string name="error_password_not_match">As senhas não coincidem.</string>
     <string name="error_current_password_not_match">A senha antiga não está correta!</string>

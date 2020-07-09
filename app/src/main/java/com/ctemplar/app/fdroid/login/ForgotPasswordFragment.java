@@ -24,7 +24,6 @@ import com.ctemplar.app.fdroid.R;
 import com.ctemplar.app.fdroid.utils.EditTextUtils;
 
 public class ForgotPasswordFragment extends BaseFragment {
-
     private LoginActivityViewModel loginActivityModel;
 
     @BindInt(R.integer.restriction_username_min)
@@ -85,10 +84,9 @@ public class ForgotPasswordFragment extends BaseFragment {
 
     @OnClick(R.id.fragment_forgot_password_send_btn)
     public void onClickNext() {
-        // handle error messages
         handleClickError(EditTextUtils.getText(editUsername), EditTextUtils.getText(editEmail));
 
-        if(isValid(EditTextUtils.getText(editUsername), EditTextUtils.getText(editEmail))) {
+        if (isValid(EditTextUtils.getText(editUsername), EditTextUtils.getText(editEmail))) {
             loginActivityModel.setRecoveryPassword(EditTextUtils.getText(editUsername), EditTextUtils.getText(editEmail));
             loginActivityModel.changeAction(LoginActivityActions.CHANGE_FRAGMENT_CONFIRM_PASWORD);
         }
@@ -136,8 +134,8 @@ public class ForgotPasswordFragment extends BaseFragment {
     }
 
     public boolean isValid(String username, String email) {
-        return username.length() >= USERNAME_MIN && username.length() <= USERNAME_MAX && EditTextUtils.isTextValid(username)
-                && EditTextUtils.isEmailValid(email);
+        return EditTextUtils.isTextLength(username, USERNAME_MIN, USERNAME_MAX) &&
+                EditTextUtils.isUsernameValid(username) && EditTextUtils.isEmailValid(email);
     }
 
     private void handleClickError(String username, String email) {
@@ -145,25 +143,20 @@ public class ForgotPasswordFragment extends BaseFragment {
             editEmailLayout.setError(getResources().getString(R.string.error_empty_email));
             return;
         }
-
         if (!EditTextUtils.isEmailValid(email)) {
-            editEmailLayout.setError(getResources().getString(R.string.error_invalid_email));
+            editEmailLayout.setError(getString(R.string.error_invalid_email));
             return;
         }
-
         if (username.length() < USERNAME_MIN) {
-            editUsernameLayout.setError(getResources().getString(R.string.error_username_small));
+            editUsernameLayout.setError(getString(R.string.error_username_small));
             return;
         }
-
         if (username.length() > USERNAME_MAX) {
-            editUsernameLayout.setError(getResources().getString(R.string.error_username_big));
+            editUsernameLayout.setError(getString(R.string.error_username_big));
             return;
         }
-
-        if (!EditTextUtils.isTextValid(username)) {
-            editUsernameLayout.setError(getResources().getString(R.string.error_username_incorrect));
+        if (!EditTextUtils.isUsernameValid(username)) {
+            editUsernameLayout.setError(getString(R.string.error_username_incorrect));
         }
     }
-
 }

@@ -23,10 +23,10 @@ import com.ctemplar.app.fdroid.net.response.CheckUsernameResponse;
 import com.ctemplar.app.fdroid.net.response.SignUpResponse;
 import com.ctemplar.app.fdroid.repository.UserRepository;
 import com.ctemplar.app.fdroid.utils.EncodeUtils;
+import retrofit2.HttpException;
 import timber.log.Timber;
 
 public class StepRegistrationViewModel extends ViewModel {
-
     private UserRepository userRepository = CTemplarApp.getUserRepository();
 
     private SignUpRequest signUpRequest = new SignUpRequest();
@@ -34,6 +34,10 @@ public class StepRegistrationViewModel extends ViewModel {
     private MutableLiveData<ResponseStatus> responseStatus = new SingleLiveEvent<>();
     private MutableLiveData<CaptchaResponse> captchaResponse = new MutableLiveData<>();
     private MutableLiveData<CaptchaVerifyResponse> captchaVerifyResponse = new MutableLiveData<>();
+
+    public String getUsername() {
+        return signUpRequest.getUsername();
+    }
 
     public void changeAction(StepRegistrationActions action) {
         actions.postValue(action);
@@ -76,7 +80,11 @@ public class StepRegistrationViewModel extends ViewModel {
         return captchaVerifyResponse;
     }
 
-    public void checkUsername(final String username) {
+    public void checkUsername(String username) {
+        checkUsername(username, false);
+    }
+
+    public void checkUsername(String username, boolean nextStep) {
         userRepository.checkUsername(new CheckUsernameRequest(username))
                 .subscribe(new Observer<CheckUsernameResponse>() {
 
@@ -87,17 +95,30 @@ public class StepRegistrationViewModel extends ViewModel {
 
                     @Override
                     public void onNext(CheckUsernameResponse checkUsernameResponse) {
-                        if(checkUsernameResponse.isExists()) {
+                        if (checkUsernameResponse.isExists()) {
                             responseStatus.postValue(ResponseStatus.RESPONSE_ERROR_USERNAME_EXISTS);
                         } else {
                             signUpRequest.setUsername(username);
-                            responseStatus.postValue(ResponseStatus.RESPONSE_NEXT_STEP_USERNAME);
+                            if (nextStep) {
+                                responseStatus.postValue(ResponseStatus.RESPONSE_NEXT_STEP_USERNAME);
+                            } else {
+                                responseStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
+                            }
                         }
                     }
 
                     @Override
                     public void onError(Throwable e) {
-
+                        if (e instanceof HttpException) {
+                            HttpException exception = (HttpException) e;
+                            if (exception.code() == 429) {
+                                responseStatus.postValue(ResponseStatus.RESPONSE_ERROR_TOO_MANY_REQUESTS);
+                            } else {
+                                responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
+                            }
+                        } else {
+                            responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
+                        }
                     }
 
                     @Override
@@ -136,8 +157,8 @@ public class StepRegistrationViewModel extends ViewModel {
 
             @Override
             public void onError(Throwable e) {
-                Timber.e(e);
                 responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
+                Timber.e(e);
             }
 
             @Override
@@ -204,6 +225,7 @@ public class StepRegistrationViewModel extends ViewModel {
     }
 
     private void hashPassword() {
-        signUpRequest.setPasswordHashed(EncodeUtils.generateHash(signUpRequest.getUsername(), signUpRequest.getPassword()));
+        signUpRequest.setPasswordHashed(EncodeUtils.generateHash(
+                signUpRequest.getUsername(), signUpRequest.getPassword()));
     }
 }

@@ -48,6 +48,12 @@ public class EditTextUtils {
     }
 
     public static boolean isUsernameValid(String text) {
+        Pattern pattern = Pattern.compile("^[a-zA-Z]+[a-zA-Z0-9-_.]*$");
+        Matcher matcher = pattern.matcher(text);
+        return matcher.matches();
+    }
+
+    public static boolean isUserEmailValid(String text) {
         Pattern pattern = Pattern.compile("^[a-zA-Z0-9-_.@]+$");
         Matcher matcher = pattern.matcher(text);
         return matcher.matches();
@@ -63,8 +69,8 @@ public class EditTextUtils {
         return text == null ? "" : text.toString();
     }
 
-    public static boolean isTextLength(String text, int min, int max) {
-        return text.length() >= min && text.length() <= max;
+    public static boolean isTextLength(@Nullable CharSequence charSequence, int min, int max) {
+        return charSequence != null && charSequence.length() >= min && charSequence.length() <= max;
     }
 
     public static List<String> getListFromString(String text) {

@@ -29,7 +29,6 @@ import io.reactivex.schedulers.Schedulers;
 import retrofit2.HttpException;
 
 public class LoginActivityViewModel extends AndroidViewModel {
-
     private UserRepository userRepository;
     private RecoverPasswordRequest recoverPasswordRequest;
 
