@@ -1,11 +1,14 @@
 package mobileapp.ctemplar.com.ctemplarapp.login.step;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,9 +30,20 @@ import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 
 public class StepUsernameFragment extends BaseFragment {
-
     private LoginActivityViewModel loginActivityModel;
     private StepRegistrationViewModel viewModel;
+
+    private Handler handler = new Handler();
+    private Runnable usernameAvailabilityCheck = this::usernameAvailabilityCheck;
+
+    @BindView(R.id.fragment_step_username_available_layout)
+    LinearLayout usernameAvailableLayout;
+
+    @BindView(R.id.fragment_step_username_not_available_layout)
+    LinearLayout usernameNotAvailableLayout;
+
+    @BindView(R.id.fragment_step_username_checking_layout)
+    LinearLayout usernameCheckingLayout;
 
     @BindView(R.id.fragment_step_username_input)
     TextInputEditText usernameEditText;
@@ -55,14 +69,12 @@ public class StepUsernameFragment extends BaseFragment {
     @BindInt(R.integer.restriction_username_max)
     int USERNAME_MAX;
 
+    @BindInt(R.integer.typing_delay)
+    int TYPING_DELAY;
+
     @Override
     protected int getLayoutId() {
         return R.layout.fragment_step_username;
-    }
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
     }
 
     @Override
@@ -77,43 +89,62 @@ public class StepUsernameFragment extends BaseFragment {
 
     @OnClick(R.id.fragment_step_username_next_btn)
     public void onClickNext() {
-        if (handleErrorUsername(EditTextUtils.getText(usernameEditText))) {
+        String username = EditTextUtils.getText(usernameEditText);
+        if (handleErrorUsername(username)) {
             return;
         }
-        if (handleErrorInviteCode(EditTextUtils.getText(inviteCodeEditText))) {
+        String inviteCode = EditTextUtils.getText(inviteCodeEditText);
+        if (handleErrorInviteCode(inviteCode)) {
             return;
         }
-        viewModel.checkUsername(EditTextUtils.getText(usernameEditText));
-        viewModel.setInviteCode(EditTextUtils.getText(inviteCodeEditText));
-        loginActivityModel.showProgressDialog();
+        viewModel.setInviteCode(inviteCode);
+        if (TextUtils.equals(viewModel.getUsername(), username)) {
+            viewModel.changeAction(StepRegistrationActions.ACTION_NEXT);
+        } else {
+            viewModel.checkUsername(EditTextUtils.getText(usernameEditText), true);
+            displayUsernameChecking();
+            loginActivityModel.showProgressDialog();
+        }
     }
 
     private boolean handleErrorUsername(String username) {
-        if(username.length() < USERNAME_MIN) {
-            usernameInputLayout.setError(getResources().getString(R.string.error_username_small));
+        if (username.length() < USERNAME_MIN) {
+            usernameInputLayout.setError(getString(R.string.error_username_small));
             return true;
         }
-        if(username.length() > USERNAME_MAX) {
-            usernameInputLayout.setError(getResources().getString(R.string.error_username_big));
+        if (username.length() > USERNAME_MAX) {
+            usernameInputLayout.setError(getString(R.string.error_username_big));
             return true;
         }
-        if(!EditTextUtils.isTextValid(username)) {
-            usernameInputLayout.setError(getResources().getString(R.string.error_username_incorrect));
+        if (!EditTextUtils.isUsernameValid(username)) {
+            usernameInputLayout.setError(getString(R.string.error_username_incorrect));
             return true;
         }
         return false;
     }
 
     private boolean handleErrorInviteCode(String inviteCode) {
-        if (inviteCode.isEmpty()) {
+        if (TextUtils.isEmpty(inviteCode)) {
             inviteCodeInputLayout.setError(getString(R.string.error_field_cannot_be_empty));
             return true;
         }
         return false;
     }
 
+    private void usernameAvailabilityCheck() {
+        String username = EditTextUtils.getText(usernameEditText);
+        if (EditTextUtils.isUsernameValid(username)) {
+            viewModel.checkUsername(username);
+            displayUsernameChecking();
+        } else {
+            hideUsernameAvailability();
+            usernameInputLayout.setError(getString(R.string.error_username_incorrect));
+        }
+    }
+
     public void setListeners() {
-        TextWatcher textWatcher = new TextWatcher() {
+        hideUsernameAvailability();
+        usernameEditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -122,6 +153,24 @@ public class StepUsernameFragment extends BaseFragment {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 usernameInputLayout.setError(null);
+                handler.removeCallbacks(usernameAvailabilityCheck);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (EditTextUtils.isTextLength(s, USERNAME_MIN, USERNAME_MAX)) {
+                    handler.postDelayed(usernameAvailabilityCheck, TYPING_DELAY);
+                }
+            }
+        });
+        inviteCodeEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
                 inviteCodeInputLayout.setError(null);
             }
 
@@ -129,31 +178,61 @@ public class StepUsernameFragment extends BaseFragment {
             public void afterTextChanged(Editable s) {
 
             }
-        };
-        usernameEditText.addTextChangedListener(textWatcher);
-        inviteCodeEditText.addTextChangedListener(textWatcher);
+        });
 
         inviteCodeHintTextView.setText(EditTextUtils.fromHtml(
-                getString(R.string.title_step_invitation_code_hint))
-        );
+                getString(R.string.title_step_invitation_code_hint)));
         inviteCodeHintTextView.setMovementMethod(LinkMovementMethod.getInstance());
         inviteCodeHintTextView.setLinkTextColor(getResources().getColor(R.color.colorLinkBlue));
     }
 
     public void handleResponseStatus(ResponseStatus status) {
-        if(status != null) {
+        if (status != null) {
             loginActivityModel.hideProgressDialog();
             switch (status) {
                 case RESPONSE_ERROR:
                     Toast.makeText(getActivity(), getString(R.string.error_server), Toast.LENGTH_LONG).show();
+                    hideUsernameAvailability();
+                    break;
+                case RESPONSE_ERROR_TOO_MANY_REQUESTS:
+                    Toast.makeText(getActivity(), getString(R.string.error_too_many_requests), Toast.LENGTH_LONG).show();
+                    hideUsernameAvailability();
                     break;
                 case RESPONSE_ERROR_USERNAME_EXISTS:
-                    usernameInputLayout.setError(getString(R.string.error_username_exists));
+                    usernameIsNotAvailable();
+                    break;
+                case RESPONSE_COMPLETE:
+                    usernameIsAvailable();
                     break;
                 case RESPONSE_NEXT_STEP_USERNAME:
+                    usernameIsAvailable();
                     viewModel.changeAction(StepRegistrationActions.ACTION_NEXT);
                     break;
             }
         }
+    }
+
+    private void usernameIsAvailable() {
+        usernameAvailableLayout.setVisibility(View.VISIBLE);
+        usernameNotAvailableLayout.setVisibility(View.GONE);
+        usernameCheckingLayout.setVisibility(View.GONE);
+    }
+
+    private void usernameIsNotAvailable() {
+        usernameAvailableLayout.setVisibility(View.GONE);
+        usernameNotAvailableLayout.setVisibility(View.VISIBLE);
+        usernameCheckingLayout.setVisibility(View.GONE);
+    }
+
+    private void displayUsernameChecking() {
+        usernameAvailableLayout.setVisibility(View.GONE);
+        usernameNotAvailableLayout.setVisibility(View.GONE);
+        usernameCheckingLayout.setVisibility(View.VISIBLE);
+    }
+
+    private void hideUsernameAvailability() {
+        usernameAvailableLayout.setVisibility(View.INVISIBLE);
+        usernameNotAvailableLayout.setVisibility(View.GONE);
+        usernameCheckingLayout.setVisibility(View.GONE);
     }
 }

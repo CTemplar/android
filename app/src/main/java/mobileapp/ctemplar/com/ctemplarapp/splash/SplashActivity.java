@@ -23,7 +23,7 @@ public class SplashActivity extends BaseActivity {
     private Runnable run = new Runnable() {
         @Override
         public void run() {
-            if(TextUtils.isEmpty(viewModel.getToken())) {
+            if (TextUtils.isEmpty(viewModel.getToken())) {
                 startSignInActivity();
             } else {
                 startMainActivity();

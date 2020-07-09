@@ -28,7 +28,6 @@ import retrofit2.HttpException;
 import timber.log.Timber;
 
 public class LoginActivityViewModel extends ViewModel {
-
     private UserRepository userRepository;
     private RecoverPasswordRequest recoverPasswordRequest;
 
