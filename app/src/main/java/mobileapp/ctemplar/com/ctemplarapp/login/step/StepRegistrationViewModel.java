@@ -158,7 +158,12 @@ public class StepRegistrationViewModel extends ViewModel {
             @Override
             public void onError(Throwable e) {
                 responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
-                Timber.e(e);
+                if (e instanceof HttpException) {
+                    HttpException exception = (HttpException) e;
+                    Timber.e(exception, "signUp");
+                } else {
+                    Timber.e(e);
+                }
             }
 
             @Override
@@ -225,6 +230,7 @@ public class StepRegistrationViewModel extends ViewModel {
     }
 
     private void hashPassword() {
-        signUpRequest.setPasswordHashed(EncodeUtils.generateHash(signUpRequest.getUsername(), signUpRequest.getPassword()));
+        signUpRequest.setPasswordHashed(EncodeUtils.generateHash(
+                signUpRequest.getUsername(), signUpRequest.getPassword()));
     }
 }

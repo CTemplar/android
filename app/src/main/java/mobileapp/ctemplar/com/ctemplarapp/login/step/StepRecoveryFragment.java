@@ -118,7 +118,7 @@ public class StepRecoveryFragment extends BaseFragment {
     }
 
     private void handleResponseStatus(ResponseStatus status) {
-        if(status != null) {
+        if (status != null) {
             loginActivityModel.hideProgressDialog();
             switch (status) {
                 case RESPONSE_ERROR:
