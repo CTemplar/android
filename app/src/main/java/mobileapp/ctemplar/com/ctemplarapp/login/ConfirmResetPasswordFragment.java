@@ -1,6 +1,8 @@
 package mobileapp.ctemplar.com.ctemplarapp.login;
 
 import android.os.Bundle;
+import android.text.Spanned;
+import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
 import android.view.View;
@@ -59,7 +61,9 @@ public class ConfirmResetPasswordFragment extends BaseFragment {
     }
 
     private void setListeners() {
-        txtHint.setText(EditTextUtils.fromHtml(getString(R.string.title_confirm_reset_password_hint)));
+        Spanned resetPasswordHint = EditTextUtils.fromHtml(getString(R.string.title_confirm_reset_password_hint));
+        Spanned furtherQuestionsHint = EditTextUtils.fromHtml(getString(R.string.title_further_question_hint));
+        txtHint.setText(TextUtils.concat(resetPasswordHint, " ", furtherQuestionsHint));
         txtHint.setLinkTextColor(getResources().getColor(R.color.colorLinkBlue));
         txtHint.setMovementMethod(LinkMovementMethod.getInstance());
         txtHint.setAutoLinkMask(Linkify.EMAIL_ADDRESSES);

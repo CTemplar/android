@@ -24,7 +24,6 @@ import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 
 public class ForgotPasswordFragment extends BaseFragment {
-
     private LoginActivityViewModel loginActivityModel;
 
     @BindInt(R.integer.restriction_username_min)
@@ -85,10 +84,9 @@ public class ForgotPasswordFragment extends BaseFragment {
 
     @OnClick(R.id.fragment_forgot_password_send_btn)
     public void onClickNext() {
-        // handle error messages
         handleClickError(EditTextUtils.getText(editUsername), EditTextUtils.getText(editEmail));
 
-        if(isValid(EditTextUtils.getText(editUsername), EditTextUtils.getText(editEmail))) {
+        if (isValid(EditTextUtils.getText(editUsername), EditTextUtils.getText(editEmail))) {
             loginActivityModel.setRecoveryPassword(EditTextUtils.getText(editUsername), EditTextUtils.getText(editEmail));
             loginActivityModel.changeAction(LoginActivityActions.CHANGE_FRAGMENT_CONFIRM_PASWORD);
         }

@@ -4,7 +4,10 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.text.method.LinkMovementMethod;
+import android.text.util.Linkify;
 import android.view.View;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
@@ -42,6 +45,9 @@ public class StepPasswordFragment extends BaseFragment {
 
     @BindView(R.id.fragment_step_password_confirm_input_layout)
     TextInputLayout passwordConfirmInputLayout;
+
+    @BindView(R.id.fragment_step_password_hint)
+    TextView passwordHint;
 
     @Override
     protected int getLayoutId() {
@@ -94,6 +100,9 @@ public class StepPasswordFragment extends BaseFragment {
     }
 
     private void setListeners() {
+        passwordHint.setText(EditTextUtils.fromHtml(getString(R.string.title_further_question_hint)));
+        passwordHint.setMovementMethod(LinkMovementMethod.getInstance());
+        passwordHint.setAutoLinkMask(Linkify.EMAIL_ADDRESSES);
         TextWatcher watcher = new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
