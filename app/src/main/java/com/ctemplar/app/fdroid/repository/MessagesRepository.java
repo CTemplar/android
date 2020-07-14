@@ -7,7 +7,6 @@ import com.ctemplar.app.fdroid.net.RestService;
 import com.ctemplar.app.fdroid.repository.entity.MessageEntity;
 
 public class MessagesRepository {
-
     private static MessagesRepository instance = new MessagesRepository();
 
     public static MessagesRepository getInstance() {
@@ -84,8 +83,8 @@ public class MessagesRepository {
         CTemplarApp.getAppDatabase().messageDao().deleteUnread();
     }
 
-    public void deleteWithoutRequestFolder() {
-        CTemplarApp.getAppDatabase().messageDao().deleteWithoutRequestFolder();
+    public void deleteAllMails() {
+        CTemplarApp.getAppDatabase().messageDao().deleteAllMails();
     }
 
     public List<MessageEntity> getChildMessages(MessageEntity parentMessage) {
