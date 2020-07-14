@@ -26,12 +26,6 @@ import com.ctemplar.app.fdroid.utils.EditTextUtils;
 public class ForgotPasswordFragment extends BaseFragment {
     private LoginActivityViewModel loginActivityModel;
 
-    @BindInt(R.integer.restriction_username_min)
-    int USERNAME_MIN;
-
-    @BindInt(R.integer.restriction_username_max)
-    int USERNAME_MAX;
-
     @BindView(R.id.fragment_forgot_password_email_input)
     TextInputEditText editEmail;
 
@@ -43,6 +37,12 @@ public class ForgotPasswordFragment extends BaseFragment {
 
     @BindView(R.id.fragment_forgot_password_username_input_layout)
     TextInputLayout editUsernameLayout;
+
+    @BindInt(R.integer.restriction_username_min)
+    int USERNAME_MIN;
+
+    @BindInt(R.integer.restriction_username_max)
+    int USERNAME_MAX;
 
     @Override
     protected int getLayoutId() {
@@ -65,16 +65,6 @@ public class ForgotPasswordFragment extends BaseFragment {
         super.onViewCreated(view, savedInstanceState);
 
         setListeners();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
     }
 
     @OnClick(R.id.fragment_forgot_password_back)
@@ -139,14 +129,6 @@ public class ForgotPasswordFragment extends BaseFragment {
     }
 
     private void handleClickError(String username, String email) {
-        if (TextUtils.isEmpty(email)) {
-            editEmailLayout.setError(getResources().getString(R.string.error_empty_email));
-            return;
-        }
-        if (!EditTextUtils.isEmailValid(email)) {
-            editEmailLayout.setError(getString(R.string.error_invalid_email));
-            return;
-        }
         if (username.length() < USERNAME_MIN) {
             editUsernameLayout.setError(getString(R.string.error_username_small));
             return;
@@ -157,6 +139,14 @@ public class ForgotPasswordFragment extends BaseFragment {
         }
         if (!EditTextUtils.isUsernameValid(username)) {
             editUsernameLayout.setError(getString(R.string.error_username_incorrect));
+            return;
+        }
+        if (TextUtils.isEmpty(email)) {
+            editEmailLayout.setError(getString(R.string.error_empty_email));
+            return;
+        }
+        if (!EditTextUtils.isEmailValid(email)) {
+            editEmailLayout.setError(getString(R.string.error_invalid_email));
         }
     }
 }
