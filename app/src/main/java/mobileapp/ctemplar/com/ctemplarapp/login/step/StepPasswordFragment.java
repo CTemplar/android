@@ -25,7 +25,6 @@ import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 
 public class StepPasswordFragment extends BaseFragment {
-
     private StepRegistrationViewModel viewModel;
 
     @BindInt(R.integer.restriction_password_min)

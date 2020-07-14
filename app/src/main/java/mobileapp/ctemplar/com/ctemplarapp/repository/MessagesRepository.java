@@ -84,8 +84,8 @@ public class MessagesRepository {
         CTemplarApp.getAppDatabase().messageDao().deleteUnread();
     }
 
-    public void deleteWithoutRequestFolder() {
-        CTemplarApp.getAppDatabase().messageDao().deleteWithoutRequestFolder();
+    public void deleteAllMails() {
+        CTemplarApp.getAppDatabase().messageDao().deleteAllMails();
     }
 
     public List<MessageEntity> getChildMessages(MessageEntity parentMessage) {

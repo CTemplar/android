@@ -72,7 +72,6 @@ public class InboxFragment extends BaseFragment
     private FilterDialogFragment dialogFragment;
     private SearchView searchView;
     private String currentFolder;
-    private boolean messagesNotEmpty;
 
     private boolean filterIsStarred;
     private boolean filterIsUnread;
@@ -225,7 +224,7 @@ public class InboxFragment extends BaseFragment
                 int totalItemCount = mLayoutManager.getItemCount();
                 int pastVisibleItems = mLayoutManager.findFirstVisibleItemPosition();
                 if (pastVisibleItems + visibleItemCount >= totalItemCount) {
-                    Timber.i("onReachedBottom");
+                    Timber.d("onReachedBottom");
                     requestNextMessages();
                     progressLayout.setVisibility(View.VISIBLE);
                 }
@@ -258,7 +257,7 @@ public class InboxFragment extends BaseFragment
             boolean inTrash = currentFolder.equals(TRASH);
             boolean inSpam = currentFolder.equals(SPAM);
             boolean inDraft = currentFolder.equals(DRAFT);
-            emptyFolder.setVisible((inTrash || inSpam || inDraft) && messagesNotEmpty);
+            emptyFolder.setVisible((inTrash || inSpam || inDraft) && adapterIsNotEmpty());
         }
 
         MenuItem searchItem = menu.findItem(R.id.action_search);
@@ -342,18 +341,6 @@ public class InboxFragment extends BaseFragment
     public void onReachedBottom() {
 //        requestNextMessages();
 //        progressLayout.setVisibility(View.VISIBLE);
-    }
-
-
-    private void invalidateOptionsMenu() {
-        FragmentActivity activity = getActivity();
-        if (activity == null) {
-            return;
-        }
-        if (searchView != null && !searchView.isIconified()) {
-            return;
-        }
-        activity.invalidateOptionsMenu();
     }
 
     private void updateMessagesResponse(ResponseStatus responseStatus) {
@@ -527,8 +514,16 @@ public class InboxFragment extends BaseFragment
         }
     }
 
+    private void invalidateOptionsMenu() {
+        FragmentActivity activity = getActivity();
+        if (activity == null || searchView == null || !searchView.isIconified()) {
+            return;
+        }
+        activity.invalidateOptionsMenu();
+    }
+
     private void showResultsIfNotEmpty() {
-        if (adapter.getItemCount() > 0) {
+        if (adapterIsNotEmpty()) {
             showMessagesList();
         } else {
             if (EditTextUtils.isNotEmpty(filterText) || filterIsStarred || filterIsUnread ||
@@ -574,17 +569,13 @@ public class InboxFragment extends BaseFragment
 
     private void handleMessagesList(List<MessageProvider> messages, String folderName, int offset) {
         currentFolder = mainModel.getCurrentFolder().getValue();
-        messagesNotEmpty = messages != null && !messages.isEmpty();
-        invalidateOptionsMenu();
+        boolean messagesIsEmpty = messages == null || messages.isEmpty();
 
-        if (messagesNotEmpty && currentFolder != null && !currentFolder.equals(folderName)) {
+        if (!messagesIsEmpty && currentFolder != null && !currentFolder.equals(folderName)) {
             return;
         }
-        if (messages == null || messages.isEmpty()) {
-            emptyMessagesList();
+        if (messagesIsEmpty) {
             messages = new ArrayList<>();
-        } else {
-            showMessagesList();
         }
         if (offset == 0) {
             adapter.clear();
@@ -596,11 +587,19 @@ public class InboxFragment extends BaseFragment
         if (filterText != null) {
             adapter.filter(filterText);
         }
-        showResultsIfNotEmpty();
         isLoadingNewMessages = false;
+        invalidateOptionsMenu();
+        showResultsIfNotEmpty();
     }
 
-    void clearListAdapter() {
+    private boolean adapterIsNotEmpty() {
+        if (adapter != null) {
+            return adapter.getItemCount() > 0;
+        }
+        return false;
+    }
+
+    public void clearListAdapter() {
         if (recyclerView != null && adapter != null) {
             adapter.clear();
         }
