@@ -7,7 +7,6 @@ import mobileapp.ctemplar.com.ctemplarapp.net.RestService;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MessageEntity;
 
 public class MessagesRepository {
-
     private static MessagesRepository instance = new MessagesRepository();
 
     public static MessagesRepository getInstance() {
