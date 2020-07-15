@@ -10,7 +10,9 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatCheckBox;
+import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelStoreOwner;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
@@ -25,12 +27,9 @@ import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.login.LoginActivityViewModel;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
+import timber.log.Timber;
 
 public class StepRecoveryFragment extends BaseFragment {
-
-    private StepRegistrationViewModel viewModel;
-    private LoginActivityViewModel loginActivityModel;
-
     @BindView(R.id.fragment_step_recovery_email_input)
     TextInputEditText recoveryEmailEditText;
 
@@ -43,25 +42,30 @@ public class StepRecoveryFragment extends BaseFragment {
     @BindView(R.id.fragment_step_recovery_check_text)
     TextView recoveryEmailCheckText;
 
+    private StepRegistrationViewModel viewModel;
+    private LoginActivityViewModel loginActivityModel;
+
     @Override
     protected int getLayoutId() {
         return R.layout.fragment_step_recovery;
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
     public void onViewCreated(@NotNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        if (getActivity() == null) {
+        FragmentActivity activity = getActivity();
+        if (activity == null) {
+            Timber.e("FragmentActivity is null");
             return;
         }
+        ViewModelStoreOwner viewModelStoreOwner = getParentFragment();
+        if (viewModelStoreOwner == null) {
+            Timber.w("getParentFragment is null");
+            viewModelStoreOwner = activity;
+        }
 
-        loginActivityModel = new ViewModelProvider(getActivity()).get(LoginActivityViewModel.class);
-        viewModel = new ViewModelProvider(getActivity()).get(StepRegistrationViewModel.class);
+        loginActivityModel = new ViewModelProvider(activity).get(LoginActivityViewModel.class);
+        viewModel = new ViewModelProvider(viewModelStoreOwner).get(StepRegistrationViewModel.class);
         viewModel.getResponseStatus().observe(getViewLifecycleOwner(), this::handleResponseStatus);
         setListeners();
     }
@@ -118,8 +122,8 @@ public class StepRecoveryFragment extends BaseFragment {
     }
 
     private void handleResponseStatus(ResponseStatus status) {
+        loginActivityModel.hideProgressDialog();
         if (status != null) {
-            loginActivityModel.hideProgressDialog();
             switch (status) {
                 case RESPONSE_ERROR:
                     Toast.makeText(getActivity(), getString(R.string.error_server), Toast.LENGTH_LONG).show();
