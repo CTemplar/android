@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.textfield.TextInputEditText;
@@ -24,9 +25,9 @@ import com.ctemplar.app.fdroid.BaseFragment;
 import com.ctemplar.app.fdroid.LoginActivityActions;
 import com.ctemplar.app.fdroid.R;
 import com.ctemplar.app.fdroid.utils.EditTextUtils;
+import timber.log.Timber;
 
 public class ResetCodeFragment extends BaseFragment {
-
     @BindView(R.id.fragment_reset_code_hint)
     TextView txtHint;
 
@@ -48,8 +49,13 @@ public class ResetCodeFragment extends BaseFragment {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        FragmentActivity activity = getActivity();
+        if (activity == null) {
+            Timber.e("FragmentActivity is null");
+            return;
+        }
 
-        loginActivityModel = new ViewModelProvider(getActivity()).get(LoginActivityViewModel.class);
+        loginActivityModel = new ViewModelProvider(activity).get(LoginActivityViewModel.class);
     }
 
     @Override

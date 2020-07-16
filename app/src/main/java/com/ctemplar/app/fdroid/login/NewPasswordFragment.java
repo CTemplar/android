@@ -1,6 +1,5 @@
 package com.ctemplar.app.fdroid.login;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -9,6 +8,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.textfield.TextInputEditText;
@@ -24,17 +24,9 @@ import com.ctemplar.app.fdroid.LoginActivityActions;
 import com.ctemplar.app.fdroid.R;
 import com.ctemplar.app.fdroid.net.ResponseStatus;
 import com.ctemplar.app.fdroid.utils.EditTextUtils;
+import timber.log.Timber;
 
 public class NewPasswordFragment extends BaseFragment {
-
-    private LoginActivityViewModel viewModel;
-
-    @BindInt(R.integer.restriction_password_min)
-    int PASSWORD_MIN;
-
-    @BindInt(R.integer.restriction_password_max)
-    int PASSWORD_MAX;
-
     @BindView(R.id.fragment_new_password_input)
     TextInputEditText editChoose;
 
@@ -44,27 +36,30 @@ public class NewPasswordFragment extends BaseFragment {
     @BindView(R.id.fragment_new_password_confirm_input_layout)
     TextInputLayout editConfirmLayout;
 
+    @BindInt(R.integer.restriction_password_min)
+    int PASSWORD_MIN;
+
+    @BindInt(R.integer.restriction_password_max)
+    int PASSWORD_MAX;
+
+    private LoginActivityViewModel viewModel;
+
     @Override
     protected int getLayoutId() {
         return R.layout.fragment_new_password;
     }
 
     @Override
-    public void onAttach(@NotNull Context context) {
-        super.onAttach(context);
-    }
-
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
     public void onViewCreated(@NotNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        FragmentActivity activity = getActivity();
+        if (activity == null) {
+            Timber.e("FragmentActivity is null");
+            return;
+        }
 
-        viewModel = new ViewModelProvider(getActivity()).get(LoginActivityViewModel.class);
-        viewModel.getResponseStatus().observe(getActivity(), this::handleStatus);
-
+        viewModel = new ViewModelProvider(activity).get(LoginActivityViewModel.class);
+        viewModel.getResponseStatus().observe(getViewLifecycleOwner(), this::handleStatus);
         setListeners();
     }
 

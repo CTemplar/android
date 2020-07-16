@@ -13,7 +13,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelStoreOwner;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
@@ -28,14 +30,9 @@ import com.ctemplar.app.fdroid.R;
 import com.ctemplar.app.fdroid.login.LoginActivityViewModel;
 import com.ctemplar.app.fdroid.net.ResponseStatus;
 import com.ctemplar.app.fdroid.utils.EditTextUtils;
+import timber.log.Timber;
 
 public class StepUsernameFragment extends BaseFragment {
-    private LoginActivityViewModel loginActivityModel;
-    private StepRegistrationViewModel viewModel;
-
-    private Handler handler = new Handler();
-    private Runnable usernameAvailabilityCheck = this::usernameAvailabilityCheck;
-
     @BindView(R.id.fragment_step_username_available_layout)
     LinearLayout usernameAvailableLayout;
 
@@ -72,6 +69,12 @@ public class StepUsernameFragment extends BaseFragment {
     @BindInt(R.integer.typing_delay)
     int TYPING_DELAY;
 
+    private LoginActivityViewModel loginActivityModel;
+    private StepRegistrationViewModel viewModel;
+
+    private Handler handler = new Handler();
+    private Runnable usernameAvailabilityCheck = this::usernameAvailabilityCheck;
+
     @Override
     protected int getLayoutId() {
         return R.layout.fragment_step_username;
@@ -80,9 +83,19 @@ public class StepUsernameFragment extends BaseFragment {
     @Override
     public void onViewCreated(@NotNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        FragmentActivity activity = getActivity();
+        if (activity == null) {
+            Timber.e("FragmentActivity is null");
+            return;
+        }
+        ViewModelStoreOwner viewModelStoreOwner = getParentFragment();
+        if (viewModelStoreOwner == null) {
+            Timber.w("getParentFragment is null");
+            viewModelStoreOwner = activity;
+        }
 
-        loginActivityModel = new ViewModelProvider(getActivity()).get(LoginActivityViewModel.class);
-        viewModel = new ViewModelProvider(getActivity()).get(StepRegistrationViewModel.class);
+        loginActivityModel = new ViewModelProvider(activity).get(LoginActivityViewModel.class);
+        viewModel = new ViewModelProvider(viewModelStoreOwner).get(StepRegistrationViewModel.class);
         viewModel.getResponseStatus().observe(getViewLifecycleOwner(), this::handleResponseStatus);
         setListeners();
     }
@@ -99,6 +112,7 @@ public class StepUsernameFragment extends BaseFragment {
         }
         viewModel.setInviteCode(inviteCode);
         if (TextUtils.equals(viewModel.getUsername(), username)) {
+            usernameIsAvailable();
             viewModel.changeAction(StepRegistrationActions.ACTION_NEXT);
         } else {
             viewModel.checkUsername(EditTextUtils.getText(usernameEditText), true);
@@ -160,6 +174,8 @@ public class StepUsernameFragment extends BaseFragment {
             public void afterTextChanged(Editable s) {
                 if (EditTextUtils.isTextLength(s, USERNAME_MIN, USERNAME_MAX)) {
                     handler.postDelayed(usernameAvailabilityCheck, TYPING_DELAY);
+                } else {
+                    hideUsernameAvailability();
                 }
             }
         });

@@ -10,6 +10,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import org.jetbrains.annotations.NotNull;
@@ -21,9 +22,9 @@ import com.ctemplar.app.fdroid.LoginActivityActions;
 import com.ctemplar.app.fdroid.R;
 import com.ctemplar.app.fdroid.net.ResponseStatus;
 import com.ctemplar.app.fdroid.utils.EditTextUtils;
+import timber.log.Timber;
 
 public class ConfirmResetPasswordFragment extends BaseFragment {
-
     @BindView(R.id.fragment_confirm_reset_password_hint)
     TextView txtHint;
 
@@ -34,14 +35,16 @@ public class ConfirmResetPasswordFragment extends BaseFragment {
         return R.layout.fragment_confirm_reset_password;
     }
 
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        loginActivityModel = new ViewModelProvider(getActivity()).get(LoginActivityViewModel.class);
-    }
-
     @Override
     public void onViewCreated(@NotNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        FragmentActivity activity = getActivity();
+        if (activity == null) {
+            Timber.e("FragmentActivity is null");
+            return;
+        }
+
+        loginActivityModel = new ViewModelProvider(activity).get(LoginActivityViewModel.class);
         loginActivityModel.getResponseStatus().observe(getViewLifecycleOwner(), this::handleResponseStatus);
         setListeners();
     }

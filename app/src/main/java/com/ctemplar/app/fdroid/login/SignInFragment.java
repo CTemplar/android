@@ -10,6 +10,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.textfield.TextInputEditText;
@@ -26,15 +27,9 @@ import com.ctemplar.app.fdroid.LoginActivityActions;
 import com.ctemplar.app.fdroid.R;
 import com.ctemplar.app.fdroid.net.ResponseStatus;
 import com.ctemplar.app.fdroid.utils.EditTextUtils;
+import timber.log.Timber;
 
 public class SignInFragment extends BaseFragment {
-
-    @BindInt(R.integer.restriction_username_min)
-    int USERNAME_MIN;
-
-    @BindInt(R.integer.restriction_username_max)
-    int USERNAME_MAX;
-
     @BindView(R.id.fragment_sign_in_username_input)
     TextInputEditText editTextUsername;
 
@@ -59,6 +54,12 @@ public class SignInFragment extends BaseFragment {
     @BindView(R.id.fragment_sign_in_otp_code_title)
     TextView textViewOtpTitle;
 
+    @BindInt(R.integer.restriction_username_min)
+    int USERNAME_MIN;
+
+    @BindInt(R.integer.restriction_username_max)
+    int USERNAME_MAX;
+
     private LoginActivityViewModel loginActivityModel;
 
     @Override
@@ -66,44 +67,33 @@ public class SignInFragment extends BaseFragment {
         return R.layout.fragment_sign_in;
     }
 
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        loginActivityModel = new ViewModelProvider(getActivity()).get(LoginActivityViewModel.class);
-        loginActivityModel.getResponseStatus().observe(getActivity(), this::handleStatus);
-    }
-
     @Override
     public void onViewCreated(@NotNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        FragmentActivity activity = getActivity();
+        if (activity == null) {
+            Timber.e("FragmentActivity is null");
+            return;
+        }
+
+        loginActivityModel = new ViewModelProvider(activity).get(LoginActivityViewModel.class);
+        loginActivityModel.getResponseStatus().observe(getViewLifecycleOwner(), this::handleStatus);
         setListeners();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
     }
 
     @OnClick(R.id.fragment_sign_in_send)
     public void onClickLogin() {
-        String username = "";
-        String password = "";
-        String otp = null;
+        String username = formatUsername(EditTextUtils.getText(editTextUsername).trim());
+        String password = EditTextUtils.getText(editTextPassword).trim();
+        String otpCode = EditTextUtils.getText(editTextOtpCode).trim();
 
-        if (editTextUsername.getText() != null && editTextPassword.getText() != null) {
-            username = trimUsername(EditTextUtils.getText(editTextUsername).trim());
-            password = EditTextUtils.getText(editTextPassword).trim();
-        }
-        if (editTextOtpCode.getText() != null && !editTextOtpCode.getText().toString().isEmpty()) {
-            otp = EditTextUtils.getText(editTextOtpCode).trim();
-        }
         if (isValid(username, password)) {
             loginActivityModel.showProgressDialog();
-            loginActivityModel.signIn(username, password, otp, keepMeLoggedInCheckBox.isChecked());
+            loginActivityModel.signIn(
+                    username, password,
+                    TextUtils.isEmpty(otpCode) ? null : otpCode,
+                    keepMeLoggedInCheckBox.isChecked()
+            );
         }
     }
 
@@ -184,7 +174,7 @@ public class SignInFragment extends BaseFragment {
         editTextOtpLayout.requestFocus();
     }
 
-    private String trimUsername(String username) {
+    private String formatUsername(String username) {
         return username.toLowerCase().replace("@" + BuildConfig.DOMAIN, "");
     }
 
