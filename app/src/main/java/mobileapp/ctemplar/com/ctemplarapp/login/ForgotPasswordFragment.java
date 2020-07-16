@@ -7,6 +7,7 @@ import android.text.TextWatcher;
 import android.view.View;
 
 import androidx.annotation.Nullable;
+import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.textfield.TextInputEditText;
@@ -21,10 +22,9 @@ import mobileapp.ctemplar.com.ctemplarapp.BaseFragment;
 import mobileapp.ctemplar.com.ctemplarapp.LoginActivityActions;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
+import timber.log.Timber;
 
 public class ForgotPasswordFragment extends BaseFragment {
-    private LoginActivityViewModel loginActivityModel;
-
     @BindView(R.id.fragment_forgot_password_email_input)
     TextInputEditText editEmail;
 
@@ -43,21 +43,23 @@ public class ForgotPasswordFragment extends BaseFragment {
     @BindInt(R.integer.restriction_username_max)
     int USERNAME_MAX;
 
+    private LoginActivityViewModel loginActivityModel;
+
     @Override
     protected int getLayoutId() {
         return R.layout.fragment_forgot_password;
     }
 
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        loginActivityModel = new ViewModelProvider(getActivity()).get(LoginActivityViewModel.class);
-    }
-
     @Override
     public void onViewCreated(@NotNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        FragmentActivity activity = getActivity();
+        if (activity == null) {
+            Timber.e("FragmentActivity is null");
+            return;
+        }
 
+        loginActivityModel = new ViewModelProvider(activity).get(LoginActivityViewModel.class);
         setListeners();
     }
 

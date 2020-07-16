@@ -10,7 +10,9 @@ import android.view.View;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelStoreOwner;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
@@ -23,16 +25,9 @@ import butterknife.OnClick;
 import mobileapp.ctemplar.com.ctemplarapp.BaseFragment;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
+import timber.log.Timber;
 
 public class StepPasswordFragment extends BaseFragment {
-    private StepRegistrationViewModel viewModel;
-
-    @BindInt(R.integer.restriction_password_min)
-    int PASSWORD_MIN;
-
-    @BindInt(R.integer.restriction_password_max)
-    int PASSWORD_MAX;
-
     @BindView(R.id.fragment_step_password_choose_input)
     TextInputEditText passwordEditText;
 
@@ -48,32 +43,35 @@ public class StepPasswordFragment extends BaseFragment {
     @BindView(R.id.fragment_step_password_hint)
     TextView passwordHint;
 
+    @BindInt(R.integer.restriction_password_min)
+    int PASSWORD_MIN;
+
+    @BindInt(R.integer.restriction_password_max)
+    int PASSWORD_MAX;
+
+    private StepRegistrationViewModel viewModel;
+
     @Override
     protected int getLayoutId() {
         return R.layout.fragment_step_password;
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
     public void onViewCreated(@NotNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        FragmentActivity activity = getActivity();
+        if (activity == null) {
+            Timber.e("FragmentActivity is null");
+            return;
+        }
+        ViewModelStoreOwner viewModelStoreOwner = getParentFragment();
+        if (viewModelStoreOwner == null) {
+            Timber.w("getParentFragment is null");
+            viewModelStoreOwner = activity;
+        }
 
-        viewModel = new ViewModelProvider(getActivity()).get(StepRegistrationViewModel.class);
+        viewModel = new ViewModelProvider(viewModelStoreOwner).get(StepRegistrationViewModel.class);
         setListeners();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
     }
 
     @OnClick({R.id.fragment_step_password_next_btn})
