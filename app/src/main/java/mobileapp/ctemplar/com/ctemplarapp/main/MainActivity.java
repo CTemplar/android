@@ -431,7 +431,7 @@ public class MainActivity extends AppCompatActivity
         customFoldersListAll.removeAll(foldersListForDeleting);
 
         MenuItem manageFolders = navigationMenu.findItem(R.id.nav_manage_folders);
-        String manageFoldersTitle = getResources().getString(R.string.nav_drawer_manage_folders_param, customFoldersCount);
+        String manageFoldersTitle = getString(R.string.nav_drawer_manage_folders_param, customFoldersCount);
         manageFolders.setTitle(manageFoldersTitle);
 
         for (FoldersResult folderItem : customFoldersList) {
