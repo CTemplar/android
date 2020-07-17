@@ -28,7 +28,6 @@ import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 import timber.log.Timber;
 
 public class ResetCodeFragment extends BaseFragment {
-
     @BindView(R.id.fragment_reset_code_hint)
     TextView txtHint;
 
