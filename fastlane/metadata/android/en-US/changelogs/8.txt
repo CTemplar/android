@@ -1,0 +1,6 @@
+* Attachments will always encrypted
+* Allocated storage info format is updated
+* Blue cancel logout button
+* Displaying of empty search result
+* Improved username validation
+* Other fixes

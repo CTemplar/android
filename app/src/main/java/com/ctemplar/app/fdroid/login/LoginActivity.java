@@ -24,7 +24,6 @@ import com.ctemplar.app.fdroid.R;
 import com.ctemplar.app.fdroid.main.MainActivity;
 
 public class LoginActivity extends BaseFragmentActivity {
-
     @BindView(R.id.progress_bar)
     public ProgressBar progress;
 

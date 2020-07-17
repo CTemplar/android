@@ -13,7 +13,9 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatCheckBox;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelStoreOwner;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
@@ -32,12 +34,9 @@ import com.ctemplar.app.fdroid.net.ResponseStatus;
 import com.ctemplar.app.fdroid.net.response.CaptchaResponse;
 import com.ctemplar.app.fdroid.net.response.CaptchaVerifyResponse;
 import com.ctemplar.app.fdroid.utils.EditTextUtils;
+import timber.log.Timber;
 
 public class StepSecurityFragment extends BaseFragment {
-
-    private StepRegistrationViewModel viewModel;
-    private LoginActivityViewModel loginActivityModel;
-
     @BindView(R.id.fragment_step_security_captcha_img)
     ImageView captchaImageView;
 
@@ -62,6 +61,9 @@ public class StepSecurityFragment extends BaseFragment {
     @BindView(R.id.fragment_step_security_next_btn)
     Button nextButton;
 
+    private StepRegistrationViewModel viewModel;
+    private LoginActivityViewModel loginActivityModel;
+
     private boolean captchaState;
     private String captchaKey;
     private String captchaValue;
@@ -72,19 +74,21 @@ public class StepSecurityFragment extends BaseFragment {
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
     public void onViewCreated(@NotNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        if (getActivity() == null) {
+        FragmentActivity activity = getActivity();
+        if (activity == null) {
+            Timber.e("FragmentActivity is null");
             return;
         }
+        ViewModelStoreOwner viewModelStoreOwner = getParentFragment();
+        if (viewModelStoreOwner == null) {
+            Timber.w("getParentFragment is null");
+            viewModelStoreOwner = activity;
+        }
 
-        loginActivityModel = new ViewModelProvider(getActivity()).get(LoginActivityViewModel.class);
-        viewModel = new ViewModelProvider(getActivity()).get(StepRegistrationViewModel.class);
+        loginActivityModel = new ViewModelProvider(activity).get(LoginActivityViewModel.class);
+        viewModel = new ViewModelProvider(viewModelStoreOwner).get(StepRegistrationViewModel.class);
         viewModel.getResponseStatus().observe(getViewLifecycleOwner(), this::handleResponseStatus);
         viewModel.getCaptchaResponse().observe(getViewLifecycleOwner(), this::handleCaptchaResponse);
         viewModel.getCaptchaVerifyResponse().observe(getViewLifecycleOwner(), this::handleCaptchaVerifyResponse);

@@ -1,13 +1,8 @@
 package com.ctemplar.app.fdroid.net;
 
-import javax.inject.Singleton;
-
-import io.reactivex.Observable;
-
 import com.ctemplar.app.fdroid.net.request.AddAppTokenRequest;
 import com.ctemplar.app.fdroid.net.request.AddFolderRequest;
 import com.ctemplar.app.fdroid.net.request.AntiPhishingPhraseRequest;
-import com.ctemplar.app.fdroid.net.request.AttachmentsEncryptedRequest;
 import com.ctemplar.app.fdroid.net.request.AutoSaveContactEnabledRequest;
 import com.ctemplar.app.fdroid.net.request.CaptchaVerifyRequest;
 import com.ctemplar.app.fdroid.net.request.ChangePasswordRequest;
@@ -59,6 +54,10 @@ import com.ctemplar.app.fdroid.net.response.SignInResponse;
 import com.ctemplar.app.fdroid.net.response.SignUpResponse;
 import com.ctemplar.app.fdroid.net.response.WhiteBlackLists.BlackListResponse;
 import com.ctemplar.app.fdroid.net.response.WhiteBlackLists.WhiteListResponse;
+
+import javax.inject.Singleton;
+
+import io.reactivex.Observable;
 import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -301,12 +300,6 @@ public interface RestService {
     Observable<SettingsEntity> updateSubjectEncrypted(
             @Path("id") long settingId,
             @Body SubjectEncryptedRequest body
-    );
-
-    @PATCH("users/settings/{id}/")
-    Observable<SettingsEntity> updateAttachmentsEncrypted(
-            @Path("id") long settingId,
-            @Body AttachmentsEncryptedRequest body
     );
 
     @PATCH("users/settings/{id}/")

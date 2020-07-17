@@ -10,7 +10,7 @@
     <string name="dialog_log_out_confirm">"Tem certeza que deseja sair?"</string>
     <string name="btn_log_out">SAIR</string>
 
-    <!-- Navigation Drawer -->
+    <!-- NAVIGATION DRAWER -->
     <string name="nav_drawer_inbox">Caixa de entrada</string>
     <string name="nav_drawer_draft">Rascunhos</string>
     <string name="nav_drawer_sent">Enviados</string>
@@ -78,10 +78,11 @@
     <string name="title_confirm">Confirmar</string>
     <string name="title_confirm_reset_password">Confirmar redefinição de senha</string>
     <string name="title_invitation_code">Código do convite</string>
-    <string name="title_confirm_reset_password_hint">A sua chave de criptografia está ligada à sua senha. Por causa disso, <![CDATA[<font color="#e74c3c">não será possível descriptografar as mensagens antigas, anexos e contatos</font>]]> se você resetar sua senha.
-Se você tiver alguma dúvida, por favor, envie um e-mail para <![CDATA[<u><a href="mailto:support@ctemplar.com">support@ctemplar.com</a></u>]]>.</string>
+    <string name="title_further_question_hint">Se você tiver alguma dúvida, por favor, envie um e-mail para <![CDATA[<u><a href="mailto:support@ctemplar.com">support@ctemplar.com</a></u>]]></string>
+    <string name="title_confirm_reset_password_hint">A sua chave de criptografia está ligada à sua senha. Por causa disso, <![CDATA[<font color="#e74c3c">não será possível descriptografar as mensagens antigas, anexos e contatos</font>]]> se você resetar sua senha.</string>
     <string name="title_confirm_reset_password_hint2">Tem certeza que deseja resetar sua senha?</string>
-    <string name="title_reset_code_hint">Nós enviamos um código para o seu <![CDATA[<u><a href="mailto:%1$s">e-mail de recuperação</a></u>]]> para resetar sua senha. Insira ele abaixo para confirmar.</string>
+    <string name="title_reset_code_hint">Nós enviamos um código para o seu <![CDATA[<u><a href="mailto:%1$s">e-mail de recuperação</a></u>]]> para resetar sua senha.</string>
+    <string name="title_reset_code_hint2">Insira ele abaixo para confirmar.</string>
     <string name="title_new_password_hint">Não esqueça essa senha! Ela não pode ser recuperada.</string>
     <string name="title_forgot_username_underlined"><u>Esqueceu seu nome de usuário?</u></string>
     <string name="title_keep_me_logged_in">Mantenha essa seção ativa</string>
@@ -114,6 +115,9 @@ Se você tiver alguma dúvida, por favor, envie um e-mail para <![CDATA[<u><a hr
     <string name="btn_confirm">CONFIRMAR</string>
     <string name="title_clear_folder">Limpar pasta</string>
     <string name="txt_clear_folder">Tem certeza de que deseja excluir todas as mensagens da pasta?</string>
+    <string name="username_is_available">Nome de usuário está disponível</string>
+    <string name="username_is_not_available">Nome de usuário não está disponível</string>
+    <string name="checking">Verificando…</string>
 
     <!-- COMPOSE OPTIONS -->
     <string name="txt_left_time_destruct">Será excluído em %1$s</string>
@@ -148,6 +152,8 @@ Se você tiver alguma dúvida, por favor, envie um e-mail para <![CDATA[<u><a hr
     <string name="txt_subject">Assunto</string>
     <string name="txt_to">Para:&#160;</string>
     <string name="txt_reply_all">Responder todos</string>
+    <string name="attachment_decryption">Descriptografia de anexo…</string>
+    <string name="no_results_found">Nenhum resultado encontrado</string>
 
     <!-- CHANGE PASSWORD -->
     <string name="toast_password_changed">Senha alterada</string>
@@ -225,8 +231,6 @@ Se você tiver alguma dúvida, por favor, envie um e-mail para <![CDATA[<u><a hr
     <!-- NOTIFICATION SERVICE -->
     <string name="notification_channel_name">CTemplar</string>
     <string name="notification_channel_description">Novo E-mail</string>
-    <string name="title_notification_service">Serviço de Notificação</string>
-    <string name="title_service_running">Serviço em execução</string>
 
     <!-- CUSTOM FILTERS -->
     <string name="txt_filters_title">Filtros</string>
@@ -319,7 +323,6 @@ Se você tiver alguma dúvida, por favor, envie um e-mail para <![CDATA[<u><a hr
     <string name="settings_enable_notifications">Ativar notificações push</string>
     <string name="settings_enable_subject_encryption">Criptografia do assunto</string>
     <string name="settings_contacts_encryption">Criptografia dos contatos</string>
-    <string name="settings_attachments_encryption">Criptografia dos anexos</string>
     <string name="settings_encryption">Criptografia</string>
     <string name="settings_phishing_protection">Phishing Protection</string>
     <string name="settings_phishing_protection_description"><![CDATA[<font color="#939191">A frase Anti-Phishing permite que os usuários vinculem uma palavra ou frase personalizada de sua escolha à sua conta CTemplar. Portanto, se você fizer login no webmail e sua frase anti-phishing estiver faltando ou incorreta, você pode estar sendo vítima de phishing. Verifique imediatamente se está acessando a URL correta: </font> <font color="#4d92e2"><u>https://mail.ctemplar.com</u></font> <font color="#939191">Se não estiver, então um site malicioso pode estar tentando roubar as suas credenciais. Para evitar danos à sua conta, você deve ir até</font> <font color="#4d92e2"><u>https://mail.ctemplar.com"></u></font> <font color="#939191">e mudar sua senha.<br><br>Atente-se que a frase Anti-Phishing somente será exibida quando você acessar a versão web.</font>]]></string>
@@ -398,7 +401,7 @@ Se você tiver alguma dúvida, por favor, envie um e-mail para <![CDATA[<u><a hr
     <string name="error_username_big">Máximo de 64 caracteres</string>
     <string name="error_password_small">Mínimo de 1 caractere</string>
     <string name="error_password_big">Máximo 255 caracteres</string>
-    <string name="error_username_incorrect">Digite um nome de usuário válido</string>
+    <string name="error_username_incorrect">O nome de usuário deve começar com uma letra e pode conter apenas a–z, A–Z, 0–9 ou ._-</string>
     <string name="error_username_exists">Este e-mail já existe!</string>
     <string name="error_password_not_match">As senhas não coincidem.</string>
     <string name="error_current_password_not_match">A senha antiga não está correta!</string>

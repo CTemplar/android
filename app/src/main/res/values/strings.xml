@@ -12,7 +12,7 @@
     <string name="dialog_log_out_confirm">"Are you sure you want to log out?"</string>
     <string name="btn_log_out">LOG OUT</string>
 
-    <!-- Navigation Drawer -->
+    <!-- NAVIGATION DRAWER -->
     <string name="nav_drawer_inbox">Inbox</string>
     <string name="nav_drawer_draft">Draft</string>
     <string name="nav_drawer_sent">Sent</string>
@@ -33,7 +33,7 @@
     <string name="nav_drawer_manage_folders_param">Manage Folders (%1$d)</string>
     <string name="nav_drawer_folders_show_more">Show 10 more folders</string>
 
-    <!-- Tool Bar -->
+    <!-- TOOLBAR -->
     <string name="action_search">Search</string>
     <string name="action_filter">Filter</string>
     <string name="action_search_hint">Search mail</string>
@@ -80,9 +80,11 @@
     <string name="title_confirm">Confirm</string>
     <string name="title_confirm_reset_password">Confirm Reset Password</string>
     <string name="title_invitation_code">Invitation code</string>
-    <string name="title_confirm_reset_password_hint">Your encryption key is connected to your password. Because of this <![CDATA[<font color="#e74c3c">you will not be able to decrypt old messages, attachments and contacts</font>]]> if you reset your password. If you have further questions please email <![CDATA[<u><a href="mailto:support@ctemplar.com">support@ctemplar.com</a></u>]]>.</string>
+    <string name="title_further_question_hint">If you have further questions please email <![CDATA[<u><a href="mailto:support@ctemplar.com">support@ctemplar.com</a></u>]]></string>
+    <string name="title_confirm_reset_password_hint">Your encryption key is connected to your password. Because of this <![CDATA[<font color="#e74c3c">you will not be able to decrypt old messages, attachments and contacts</font>]]> if you reset your password.</string>
     <string name="title_confirm_reset_password_hint2">Are you sure you want to reset your password?</string>
-    <string name="title_reset_code_hint">We have sent a reset code to your <![CDATA[<u><a href="mailto:%1$s">recovery email</a></u>]]> to reset your password. Enter it below for confirmation.</string>
+    <string name="title_reset_code_hint">We have sent a reset code to your <![CDATA[<u><a href="mailto:%1$s">recovery email</a></u>]]> to reset your password.</string>
+    <string name="title_reset_code_hint2">Enter it below for confirmation.</string>
     <string name="title_new_password_hint">Don\'t forget this password, it can\'t be restored.</string>
     <string name="title_forgot_username_underlined"><u>Forgot your username?</u></string>
     <string name="title_keep_me_logged_in">Keep me logged in</string>
@@ -115,6 +117,9 @@
     <string name="btn_confirm">CONFIRM</string>
     <string name="title_clear_folder">Clear folder</string>
     <string name="txt_clear_folder">Are you sure you want to delete all messages from the folder?</string>
+    <string name="username_is_available">Username is available</string>
+    <string name="username_is_not_available">Username is not available</string>
+    <string name="checking">Checking…</string>
     <string translatable="false" name="txt_encrypted_subject">...</string>
 
     <!-- COMPOSE OPTIONS -->
@@ -150,6 +155,8 @@
     <string name="txt_subject">Subject</string>
     <string name="txt_to">To:&#160;</string>
     <string name="txt_reply_all">Reply All</string>
+    <string name="attachment_decryption">Attachment decryption…</string>
+    <string name="no_results_found">No results found</string>
 
     <!-- CHANGE PASSWORD -->
     <string name="toast_password_changed">Password changed</string>
@@ -322,7 +329,6 @@
     <string name="settings_enable_notifications">Enable push notifications</string>
     <string name="settings_enable_subject_encryption">Subject encryption</string>
     <string name="settings_contacts_encryption">Contacts encryption</string>
-    <string name="settings_attachments_encryption">Attachments encryption</string>
     <string name="settings_encryption">Encryption</string>
     <string name="settings_phishing_protection">Phishing Protection</string>
     <string name="settings_phishing_protection_description"><![CDATA[<font color="#939191">The Anti-Phishing phrase allows users to link a custom word or phrase of your choice to your CTemplar account. Once set, if you ever log into your webmail and your Anti-Phishing phrase is either missing or incorrect, you may be the victim of phishing. You should immediately confirm that you are visiting</font> <font color="#4d92e2"><u>https://mail.ctemplar.com</u></font> <font color="#939191">If you are not, then a malicious site might have your login credentials for your CTemplar account. To prevent harm to your account, you should immediately visit</font> <font color="#4d92e2"><u>https://mail.ctemplar.com</u></font> <font color="#939191">and change your password.<br><br>Note that the Anti-Phishing phrase will be displayed when you log on web only.</font>]]></string>
@@ -375,7 +381,6 @@
     <string translatable="false" name="recovery_email_holder">recovery_email_holder</string>
     <string translatable="false" name="subject_encryption">subject_encryption</string>
     <string translatable="false" name="subject_encryption_enabled">subject_encryption_enabled</string>
-    <string translatable="false" name="attachments_encryption_enabled">attachments_encryption_enabled</string>
     <string translatable="false" name="contacts_encryption_enabled">contacts_encryption_enabled</string>
     <string translatable="false" name="auto_save_contacts_enabled">auto_save_contacts_enabled</string>
     <string translatable="false" name="setting_id">setting_id</string>
@@ -428,7 +433,7 @@
     <string name="error_username_big">Maximum 64 symbols</string>
     <string name="error_password_small">Minimum 1 symbol</string>
     <string name="error_password_big">Maximum 255 symbols</string>
-    <string name="error_username_incorrect">Enter a valid username</string>
+    <string name="error_username_incorrect">The username must start with a letter and can contain only a–z, A–Z, 0–9 or ._-</string>
     <string name="error_username_exists">Email already exists!</string>
     <string name="error_password_not_match">Passwords do not match.</string>
     <string name="error_current_password_not_match">Old password is not correct!</string>

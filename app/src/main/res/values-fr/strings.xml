@@ -10,7 +10,7 @@
     <string name="dialog_log_out_confirm">"Êtes-vous certain de vouloir vous déconnecter ?"</string>
     <string name="btn_log_out">SE DECONNECTER</string>
 
-    <!-- Navigation Drawer -->
+    <!-- NAVIGATION DRAWER -->
     <string name="nav_drawer_inbox">Boîte de réception</string>
     <string name="nav_drawer_draft">Brouillons</string>
     <string name="nav_drawer_sent">Envoyés</string>
@@ -78,9 +78,11 @@
     <string name="title_confirm">Confirmer</string>
     <string name="title_confirm_reset_password">Confirmer la réinitialisation du mot de passe</string>
     <string name="title_invitation_code">Code d\'invitation</string>
-    <string name="title_confirm_reset_password_hint">Votre clé de cryptage est connectée à votre mot de passe. Pour cette raison <![CDATA[<font color="#e74c3c"> il n\'est pas possible de décrypter les précédents messages, les pièces jointes et vos contacts </font>]]> si vous réinitialiser votre mot de passe. Pour toute question, merci de nous contacter <![CDATA[<u><a href="mailto:support@ctemplar.com">support@ctemplar.com</a></u>]]>.</string>
+    <string name="title_further_question_hint">Pour toute question, merci de nous contacter <![CDATA[<u><a href="mailto:support@ctemplar.com">support@ctemplar.com</a></u>]]></string>
+    <string name="title_confirm_reset_password_hint">Votre clé de cryptage est connectée à votre mot de passe. Pour cette raison <![CDATA[<font color="#e74c3c"> il n\'est pas possible de décrypter les précédents messages, les pièces jointes et vos contacts </font>]]> si vous réinitialiser votre mot de passe.</string>
     <string name="title_confirm_reset_password_hint2">Êtes vous certain de vouloir réinitialiser votre mot de passe ?</string>
-    <string name="title_reset_code_hint">Un email a été envoyé à votre <![CDATA[<u><a href="mailto:%1$s">adresse de récupération</a></u>]]> pour réinitialiser votre mot de passe. Indiquer ci-dessous pour confirmation.</string>
+    <string name="title_reset_code_hint">Un email a été envoyé à votre <![CDATA[<u><a href="mailto:%1$s">adresse de récupération</a></u>]]> pour réinitialiser votre mot de passe.</string>
+    <string name="title_reset_code_hint2">Indiquer ci-dessous pour confirmation.</string>
     <string name="title_new_password_hint">N\'oubliez pas votre mot de passe, il ne pourra pas être restauré.</string>
     <string name="title_forgot_username_underlined"><u>Nom d\'utilisateur oublié ?</u></string>
     <string name="title_keep_me_logged_in">Rester connecté</string>
@@ -113,6 +115,9 @@
     <string name="btn_confirm">CONFIRMER</string>
     <string name="title_clear_folder">Vider dossier</string>
     <string name="txt_clear_folder">Êtes-vous certain de vouloir supprimer tous les messages du dossier ?</string>
+    <string name="username_is_available">Nom d\'utilisateur disponible</string>
+    <string name="username_is_not_available">Le nom d\'utilisateur n\'est pas disponible</string>
+    <string name="checking">Vérification…</string>
 
     <!-- COMPOSE OPTIONS -->
     <string name="txt_left_time_destruct">Suppression dans %1$s</string>
@@ -148,6 +153,8 @@
     <string name="txt_date">Date</string>
     <string name="txt_date_format">Date: %1$s</string>
     <string name="txt_reply_all">Répondre à tous</string>
+    <string name="attachment_decryption">Décryptage des pièces jointes…</string>
+    <string name="no_results_found">Aucun résultat trouvé</string>
 
     <!-- CHANGE PASSWORD -->
     <string name="toast_password_changed">Mot de passe modifié</string>
@@ -318,7 +325,6 @@
     <string name="settings_enable_notifications">Activer les notifications</string>
     <string name="settings_enable_subject_encryption">Objets chiffrés</string>
     <string name="settings_contacts_encryption">Contacts chiffrés</string>
-    <string name="settings_attachments_encryption">Pièces jointes chiffrées</string>
     <string name="settings_encryption">Chiffrement des données</string>
     <string name="settings_phishing_protection">Protection contre le phishing</string>
     <string name="settings_phishing_protection_description"><![CDATA[<font color="#939191">La phrase Anti-Phishing permet aux utilisateurs de lier un mot ou une phrase personnalisée de votre choix à votre compte CTemplar. Une fois défini, si vous vous connectez à votre messagerie Web et que votre expression anti-hameçonnage est manquante ou incorrecte, vous pouvez être victime d\'hameçonnage. Vous devez immédiatement confirmer que vous visitez</font> <font color="#4d92e2"><u>https://mail.ctemplar.com</u></font> <font color="#939191">Si vous ne l\'êtes pas, un site malveillant pourrait avoir vos informations de connexion pour votre compte CTemplar. Pour éviter d\'endommager votre compte, vous devez immédiatement visiter</font> <font color="#4d92e2"><u>https://mail.ctemplar.com</u></font> <font color="#939191">changer votre mot de passe.<br><br>Notez que la phrase Anti-Phishing sera affichée lorsque vous vous connectez sur le Web uniquement.</font>]]></string>
@@ -397,7 +403,7 @@
     <string name="error_username_big">Maximum 64 symboles</string>
     <string name="error_password_small">Minimum 1 symbole</string>
     <string name="error_password_big">Maximum 255 symboles</string>
-    <string name="error_username_incorrect">Saisir un nom utilisateur valide</string>
+    <string name="error_username_incorrect">Le nom d\'utilisateur doit commencer par une lettre et peut contenir uniquement a–z, A–Z, 0–9 ou ._-</string>
     <string name="error_username_exists">L\'email existe déjà.</string>
     <string name="error_password_not_match">Les mots de passe doivent être identiques</string>
     <string name="error_current_password_not_match">Ancien mot de passe incorrect</string>

@@ -16,23 +16,22 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.google.android.material.textfield.TextInputEditText;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import butterknife.BindInt;
+import butterknife.BindView;
+import butterknife.OnClick;
 import com.ctemplar.app.fdroid.BaseActivity;
 import com.ctemplar.app.fdroid.BuildConfig;
 import com.ctemplar.app.fdroid.R;
 import com.ctemplar.app.fdroid.net.ResponseStatus;
 import com.ctemplar.app.fdroid.net.response.Domains.DomainsResults;
 import com.ctemplar.app.fdroid.utils.EditTextUtils;
-import com.google.android.material.textfield.TextInputEditText;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import butterknife.BindView;
-import butterknife.OnClick;
 
 public class AddMailboxActivity extends BaseActivity {
-    private static final long typingDelay = 1000;
-
     private MailboxesViewModel mailboxesModel;
     private ProgressDialog progressDialog;
 
@@ -47,6 +46,15 @@ public class AddMailboxActivity extends BaseActivity {
 
     @BindView(R.id.activity_add_mailbox_create_btn)
     Button createMailboxButton;
+
+    @BindInt(R.integer.restriction_username_min)
+    int USERNAME_MIN;
+
+    @BindInt(R.integer.restriction_username_max)
+    int USERNAME_MAX;
+
+    @BindInt(R.integer.typing_delay)
+    int TYPING_DELAY;
 
     @Override
     protected int getLayoutId() {
@@ -112,7 +120,6 @@ public class AddMailboxActivity extends BaseActivity {
             progressDialog.cancel();
             onBackPressed();
         });
-
         addListeners();
     }
 
@@ -142,7 +149,7 @@ public class AddMailboxActivity extends BaseActivity {
                 createMailboxButton.setEnabled(false);
                 emailEditText.setError(null);
                 if (s.length() > 0) {
-                    handler.postDelayed(inputFinishChecker, typingDelay);
+                    handler.postDelayed(inputFinishChecker, TYPING_DELAY);
                 }
             }
         });
@@ -150,14 +157,15 @@ public class AddMailboxActivity extends BaseActivity {
 
     private void checkEmailAddress() {
         String username = EditTextUtils.getText(emailEditText);
-        if (username.isEmpty()) {
+        if (username.length() < USERNAME_MIN) {
+            emailEditText.setError(getString(R.string.error_username_small));
             return;
         }
-        if (username.length() < 2) {
-            emailEditText.setError(getString(R.string.error_username_small_two));
+        if (username.length() > USERNAME_MAX) {
+            emailEditText.setError(getString(R.string.error_username_big));
             return;
         }
-        if (!EditTextUtils.isTextValid(username)) {
+        if (!EditTextUtils.isUsernameValid(username)) {
             emailEditText.setError(getString(R.string.error_username_incorrect));
             return;
         }
