@@ -44,6 +44,7 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.entity.Contact;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.ContactEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MessageEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageProvider;
+import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EncodeUtils;
 import okhttp3.ResponseBody;
 import retrofit2.HttpException;
@@ -222,7 +223,7 @@ public class MainActivityViewModel extends AndroidViewModel {
     }
 
     public void getMessages(int limit, int offset, String folder) {
-        if (folder == null) {
+        if (TextUtils.isEmpty(folder)) {
             return;
         }
         List<MessageEntity> messageEntities;
@@ -284,7 +285,7 @@ public class MainActivityViewModel extends AndroidViewModel {
                                     localEntities = messagesRepository.getUnreadMessages();
                                     break;
                                 case MainFolderNames.ALL_MAILS:
-                                    messagesRepository.deleteWithoutRequestFolder();
+                                    messagesRepository.deleteAllMails();
                                     messagesRepository.saveAllMessagesWithIgnore(messageEntities);
                                     localEntities = messagesRepository.getAllMailsMessages();
                                     break;
@@ -637,11 +638,9 @@ public class MainActivityViewModel extends AndroidViewModel {
                             SettingsEntity settingsEntity = myselfResult.getSettings();
 
                             String timezone = settingsEntity.getTimezone();
-                            boolean isAttachmentsEncrypted = settingsEntity.isAttachmentsEncrypted();
                             boolean isContactsEncrypted = settingsEntity.isContactsEncrypted();
 
                             userRepository.saveTimeZone(timezone);
-                            userRepository.setAttachmentsEncryptionEnabled(isAttachmentsEncrypted);
                             userRepository.setContactsEncryptionEnabled(isContactsEncrypted);
                         }
                     }

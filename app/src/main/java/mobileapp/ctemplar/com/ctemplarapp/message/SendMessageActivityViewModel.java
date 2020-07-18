@@ -46,7 +46,6 @@ import mobileapp.ctemplar.com.ctemplarapp.utils.FileUtils;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
-import okhttp3.ResponseBody;
 import retrofit2.HttpException;
 import retrofit2.Response;
 import timber.log.Timber;
@@ -110,10 +109,6 @@ public class SendMessageActivityViewModel extends ViewModel {
 
     public String getUserPassword() {
         return userRepository.getUserPassword();
-    }
-
-    public boolean getAttachmentsEncryptionEnabled() {
-        return userRepository.getAttachmentsEncryptionEnabled();
     }
 
     public LiveData<MessagesResult> getMessagesResult() {

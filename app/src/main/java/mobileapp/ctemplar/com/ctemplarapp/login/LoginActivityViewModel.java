@@ -28,7 +28,6 @@ import retrofit2.HttpException;
 import timber.log.Timber;
 
 public class LoginActivityViewModel extends ViewModel {
-
     private UserRepository userRepository;
     private RecoverPasswordRequest recoverPasswordRequest;
 
@@ -65,6 +64,10 @@ public class LoginActivityViewModel extends ViewModel {
         return responseStatus;
     }
 
+    public void resetResponseStatus() {
+        responseStatus.postValue(null);
+    }
+
     public void setRecoveryPassword(String username, String email) {
         recoverPasswordRequest = new RecoverPasswordRequest(username, email);
     }
@@ -93,8 +96,8 @@ public class LoginActivityViewModel extends ViewModel {
                 .subscribe(new Observer<SignInResponse>() {
                     @Override
                     public void onError(Throwable e) {
-                        if(e instanceof HttpException ) {
-                            HttpException exception = (HttpException)e;
+                        if (e instanceof HttpException) {
+                            HttpException exception = (HttpException) e;
                             if (exception.code() == 400) {
                                 responseStatus.postValue(ResponseStatus.RESPONSE_ERROR_AUTH_FAILED);
                             } else {
@@ -130,7 +133,7 @@ public class LoginActivityViewModel extends ViewModel {
     }
 
     public void recoverPassword() {
-        if(recoverPasswordRequest != null) {
+        if (recoverPasswordRequest != null) {
             recoverPassword(recoverPasswordRequest.getUsername(), recoverPasswordRequest.getEmail());
         }
     }
@@ -150,8 +153,8 @@ public class LoginActivityViewModel extends ViewModel {
 
                     @Override
                     public void onError(Throwable e) {
-                        if(e instanceof HttpException ) {
-                            HttpException exception = (HttpException)e;
+                        if (e instanceof HttpException) {
+                            HttpException exception = (HttpException) e;
                             if (exception.code() == 400) {
                                 responseStatus.postValue(ResponseStatus.RESPONSE_ERROR_RECOVER_PASS_FAILED);
                             } else {
@@ -170,7 +173,7 @@ public class LoginActivityViewModel extends ViewModel {
     }
 
     public void resetPassword() {
-        if(recoverPasswordRequest == null) {
+        if (recoverPasswordRequest == null) {
             return;
         }
         String username = recoverPasswordRequest.getUsername();
@@ -204,8 +207,8 @@ public class LoginActivityViewModel extends ViewModel {
 
             @Override
             public void onError(Throwable e) {
-                if(e instanceof HttpException ) {
-                    HttpException exception = (HttpException)e;
+                if (e instanceof HttpException) {
+                    HttpException exception = (HttpException) e;
                     if (exception.code() == 400) {
                         responseStatus.postValue(ResponseStatus.RESPONSE_ERROR_CODE_NOT_MATCH);
                     } else {

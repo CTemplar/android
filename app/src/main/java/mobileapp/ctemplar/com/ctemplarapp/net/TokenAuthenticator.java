@@ -10,6 +10,7 @@ import java.io.IOException;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.TokenRefreshRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.SignInResponse;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
+import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 import okhttp3.Authenticator;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -18,7 +19,7 @@ import timber.log.Timber;
 
 public class TokenAuthenticator implements Authenticator {
     private static final String HEADER_AUTHORIZATION = "Authorization";
-    private final static String TOKEN_TYPE = "JWT";
+    private static final String TOKEN_TYPE = "JWT";
 
     @Nullable
     @Override
@@ -26,15 +27,15 @@ public class TokenAuthenticator implements Authenticator {
         UserRepository userRepository = UserRepository.getInstance();
         boolean keepMeLoggedIn = userRepository.getKeepMeLoggedIn();
         String userToken = userRepository.getUserToken();
-        if (!TextUtils.isEmpty(userToken) && !keepMeLoggedIn) {
-            Timber.d("Auto logout");
+        if (EditTextUtils.isNotEmpty(userToken) && !keepMeLoggedIn) {
+            Timber.d("Token expiration auto-logout");
             userRepository.clearData();
             return response.request();
         }
 
         String newToken = refreshToken(userToken);
         if (TextUtils.isEmpty(newToken)) {
-            Timber.d("Token is null");
+            Timber.d("Refresh token is null");
             userRepository.clearData();
             return response.request();
         }

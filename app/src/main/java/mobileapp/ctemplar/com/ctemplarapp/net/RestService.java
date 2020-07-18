@@ -6,7 +6,6 @@ import io.reactivex.Observable;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.AddFirebaseTokenRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.AddFolderRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.AntiPhishingPhraseRequest;
-import mobileapp.ctemplar.com.ctemplarapp.net.request.AttachmentsEncryptedRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.AutoSaveContactEnabledRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.CaptchaVerifyRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.ChangePasswordRequest;
@@ -300,12 +299,6 @@ public interface RestService {
     Observable<SettingsEntity> updateSubjectEncrypted(
             @Path("id") long settingId,
             @Body SubjectEncryptedRequest body
-    );
-
-    @PATCH("users/settings/{id}/")
-    Observable<SettingsEntity> updateAttachmentsEncrypted(
-            @Path("id") long settingId,
-            @Body AttachmentsEncryptedRequest body
     );
 
     @PATCH("users/settings/{id}/")

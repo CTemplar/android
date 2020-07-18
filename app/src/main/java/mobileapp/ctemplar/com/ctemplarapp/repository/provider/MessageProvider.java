@@ -19,7 +19,6 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.entity.UserDisplayEntity;
 import mobileapp.ctemplar.com.ctemplarapp.security.PGPManager;
 
 public class MessageProvider {
-
     private long id;
     private String encryption;
     private String sender;
@@ -667,12 +666,12 @@ public class MessageProvider {
         result.setMailboxId(message.getMailboxId());
         result.setParent(message.getParent());
 
-        if (MainFolderNames.STARRED.equals(requestFolder)
+        if (!(MainFolderNames.STARRED.equals(requestFolder)
                 || MainFolderNames.UNREAD.equals(requestFolder)
-                || MainFolderNames.ALL_MAILS.equals(requestFolder)) {
-            return result;
+                || MainFolderNames.ALL_MAILS.equals(requestFolder))) {
+            result.setRequestFolder(requestFolder);
         }
-        result.setRequestFolder(requestFolder);
+
         return result;
     }
 

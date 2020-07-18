@@ -3,7 +3,7 @@
     android:key="settings_activity">
 
     <PreferenceCategory
-        android:title="General settings">
+        android:title="@string/settings_general">
 
         <PreferenceScreen
             android:title="@string/settings_notifications"
@@ -84,7 +84,7 @@
 
         <Preference
             android:title="@string/settings_local_storage_limit"
-            android:summary="826KB of 500MB"
+            android:summary="0 B of 500 MB"
             android:key="@string/local_storage_limit" />
 
         <Preference

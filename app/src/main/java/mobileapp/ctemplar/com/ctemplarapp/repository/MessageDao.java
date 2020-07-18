@@ -14,7 +14,6 @@ import static androidx.room.OnConflictStrategy.REPLACE;
 
 @Dao
 public interface MessageDao {
-
     @Query("SELECT * FROM messages")
     List<MessageEntity> getAll();
 
@@ -57,14 +56,14 @@ public interface MessageDao {
     @Query("DELETE FROM messages WHERE requestFolder=:folderName")
     void deleteAllByFolder(String folderName);
 
-    @Query("DELETE FROM messages WHERE isStarred=1 AND requestFolder=null")
+    @Query("DELETE FROM messages WHERE isStarred=1")
     void deleteStarred();
 
-    @Query("DELETE FROM messages WHERE isRead=0 AND requestFolder=null")
+    @Query("DELETE FROM messages WHERE isRead=0 AND folderName<>'spam'")
     void deleteUnread();
 
-    @Query("DELETE FROM messages WHERE requestFolder=null")
-    void deleteWithoutRequestFolder();
+    @Query("DELETE FROM messages WHERE folderName<>'spam' AND folderName<>'trash'")
+    void deleteAllMails();
 
     @Query("DELETE FROM messages WHERE parent=:id")
     void deleteAllByParentId(String id);

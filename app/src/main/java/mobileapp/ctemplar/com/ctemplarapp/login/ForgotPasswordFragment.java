@@ -1,6 +1,5 @@
 package mobileapp.ctemplar.com.ctemplarapp.login;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -8,6 +7,7 @@ import android.text.TextWatcher;
 import android.view.View;
 
 import androidx.annotation.Nullable;
+import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.textfield.TextInputEditText;
@@ -22,17 +22,9 @@ import mobileapp.ctemplar.com.ctemplarapp.BaseFragment;
 import mobileapp.ctemplar.com.ctemplarapp.LoginActivityActions;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
+import timber.log.Timber;
 
 public class ForgotPasswordFragment extends BaseFragment {
-
-    private LoginActivityViewModel loginActivityModel;
-
-    @BindInt(R.integer.restriction_username_min)
-    int USERNAME_MIN;
-
-    @BindInt(R.integer.restriction_username_max)
-    int USERNAME_MAX;
-
     @BindView(R.id.fragment_forgot_password_email_input)
     TextInputEditText editEmail;
 
@@ -45,37 +37,30 @@ public class ForgotPasswordFragment extends BaseFragment {
     @BindView(R.id.fragment_forgot_password_username_input_layout)
     TextInputLayout editUsernameLayout;
 
+    @BindInt(R.integer.restriction_username_min)
+    int USERNAME_MIN;
+
+    @BindInt(R.integer.restriction_username_max)
+    int USERNAME_MAX;
+
+    private LoginActivityViewModel loginActivityModel;
+
     @Override
     protected int getLayoutId() {
         return R.layout.fragment_forgot_password;
     }
 
     @Override
-    public void onAttach(@NotNull Context context) {
-        super.onAttach(context);
-    }
-
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        loginActivityModel = new ViewModelProvider(getActivity()).get(LoginActivityViewModel.class);
-    }
-
-    @Override
     public void onViewCreated(@NotNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        FragmentActivity activity = getActivity();
+        if (activity == null) {
+            Timber.e("FragmentActivity is null");
+            return;
+        }
 
+        loginActivityModel = new ViewModelProvider(activity).get(LoginActivityViewModel.class);
         setListeners();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
     }
 
     @OnClick(R.id.fragment_forgot_password_back)
@@ -85,10 +70,9 @@ public class ForgotPasswordFragment extends BaseFragment {
 
     @OnClick(R.id.fragment_forgot_password_send_btn)
     public void onClickNext() {
-        // handle error messages
         handleClickError(EditTextUtils.getText(editUsername), EditTextUtils.getText(editEmail));
 
-        if(isValid(EditTextUtils.getText(editUsername), EditTextUtils.getText(editEmail))) {
+        if (isValid(EditTextUtils.getText(editUsername), EditTextUtils.getText(editEmail))) {
             loginActivityModel.setRecoveryPassword(EditTextUtils.getText(editUsername), EditTextUtils.getText(editEmail));
             loginActivityModel.changeAction(LoginActivityActions.CHANGE_FRAGMENT_CONFIRM_PASWORD);
         }
@@ -136,34 +120,29 @@ public class ForgotPasswordFragment extends BaseFragment {
     }
 
     public boolean isValid(String username, String email) {
-        return username.length() >= USERNAME_MIN && username.length() <= USERNAME_MAX && EditTextUtils.isTextValid(username)
-                && EditTextUtils.isEmailValid(email);
+        return EditTextUtils.isTextLength(username, USERNAME_MIN, USERNAME_MAX) &&
+                EditTextUtils.isUsernameValid(username) && EditTextUtils.isEmailValid(email);
     }
 
     private void handleClickError(String username, String email) {
-        if (TextUtils.isEmpty(email)) {
-            editEmailLayout.setError(getResources().getString(R.string.error_empty_email));
-            return;
-        }
-
-        if (!EditTextUtils.isEmailValid(email)) {
-            editEmailLayout.setError(getResources().getString(R.string.error_invalid_email));
-            return;
-        }
-
         if (username.length() < USERNAME_MIN) {
-            editUsernameLayout.setError(getResources().getString(R.string.error_username_small));
+            editUsernameLayout.setError(getString(R.string.error_username_small));
             return;
         }
-
         if (username.length() > USERNAME_MAX) {
-            editUsernameLayout.setError(getResources().getString(R.string.error_username_big));
+            editUsernameLayout.setError(getString(R.string.error_username_big));
             return;
         }
-
-        if (!EditTextUtils.isTextValid(username)) {
-            editUsernameLayout.setError(getResources().getString(R.string.error_username_incorrect));
+        if (!EditTextUtils.isUsernameValid(username)) {
+            editUsernameLayout.setError(getString(R.string.error_username_incorrect));
+            return;
+        }
+        if (TextUtils.isEmpty(email)) {
+            editEmailLayout.setError(getString(R.string.error_empty_email));
+            return;
+        }
+        if (!EditTextUtils.isEmailValid(email)) {
+            editEmailLayout.setError(getString(R.string.error_invalid_email));
         }
     }
-
 }

@@ -24,8 +24,7 @@ import mobileapp.ctemplar.com.ctemplarapp.login.step.StepRegistrationViewModel;
 import mobileapp.ctemplar.com.ctemplarapp.login.step.StepUsernameFragment;
 import mobileapp.ctemplar.com.ctemplarapp.login.step.ViewPagerNoScroll;
 
-public class SignUpFragment extends BaseFragment{
-
+public class SignUpFragment extends BaseFragment {
     @BindView(R.id.fragment_sign_up_view_pager)
     ViewPagerNoScroll viewPager;
 
@@ -46,10 +45,10 @@ public class SignUpFragment extends BaseFragment{
         list.add(new StepRecoveryFragment());
         //list.add(new StepSecurityFragment());
 
-        viewPager.setAdapter(new SignUpFragmentsAdapter(getParentFragmentManager(), list));
+        viewPager.setAdapter(new SignUpFragmentsAdapter(getChildFragmentManager(), list));
         viewPager.setOnTouchListener(null);
 
-        stepModel = new ViewModelProvider(getActivity()).get(StepRegistrationViewModel.class);
+        stepModel = new ViewModelProvider(this).get(StepRegistrationViewModel.class);
         stepModel.getAction().observe(getViewLifecycleOwner(), this::handleRegistrationActions);
     }
 

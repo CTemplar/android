@@ -41,7 +41,6 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.MyselfResult;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.SettingsEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserStore;
-import mobileapp.ctemplar.com.ctemplarapp.splash.PINLockActivity;
 import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EncodeUtils;
@@ -53,6 +52,7 @@ public class SettingsActivity extends BaseActivity {
     public static final String SETTING_ID = "setting_id";
 
     private static SettingsViewModel settingsModel;
+
     private static UserRepository userRepository = CTemplarApp.getUserRepository();
     private static UserStore userStore = CTemplarApp.getUserStore();
 
@@ -104,7 +104,7 @@ public class SettingsActivity extends BaseActivity {
             storageLimitPreference = findPreference(getString(R.string.local_storage_limit));
             recoveryEmailPreferenceScreen = findPreference(getString(R.string.recovery_email_holder));
 
-            if (sharedPreferences != null) {
+            if (sharedPreferences != null && recoveryEmailPreferenceScreen != null) {
                 String recoveryEmail = sharedPreferences.getString(getString(R.string.recovery_email), null);
                 if (EditTextUtils.isNotEmpty(recoveryEmail)) {
                     recoveryEmailPreferenceScreen.setSummary(recoveryEmail);
@@ -195,8 +195,7 @@ public class SettingsActivity extends BaseActivity {
             SwitchPreference switchPreferenceNotificationsEnabled = findPreference(getString(R.string.push_notifications_enabled));
             if (switchPreferenceNotificationsEnabled != null) {
                 switchPreferenceNotificationsEnabled.setOnPreferenceChangeListener((preference, newValue) -> {
-                    boolean isEnabled = (boolean) newValue;
-                    userStore.setNotificationsEnabled(isEnabled);
+                    userStore.setNotificationsEnabled((boolean) newValue);
                     return true;
                 });
                 boolean isNotificationsEnabled = userStore.getNotificationsEnabled();
@@ -287,17 +286,6 @@ public class SettingsActivity extends BaseActivity {
                 subjectEncryptionSwitchPreference.setEnabled(isPrimeUser);
             }
 
-            SwitchPreference attachmentsEncryptionSwitchPreference = findPreference(getString(R.string.attachments_encryption_enabled));
-            if (attachmentsEncryptionSwitchPreference != null) {
-                attachmentsEncryptionSwitchPreference.setOnPreferenceChangeListener((preference, newValue) -> {
-                    Toast.makeText(getActivity(), getString(R.string.toast_saved), Toast.LENGTH_SHORT).show();
-                    boolean value = (boolean) newValue;
-                    userStore.setAttachmentsEncryptionEnabled(value);
-                    settingsModel.updateAttachmentsEncryption(settingId, value);
-                    return true;
-                });
-            }
-
             contactsEncryptionSwitchPreference = findPreference(getString(R.string.contacts_encryption_enabled));
             if (contactsEncryptionSwitchPreference != null) {
                 contactsEncryptionSwitchPreference.setOnPreferenceChangeListener((preference, newValue) -> {
@@ -316,7 +304,7 @@ public class SettingsActivity extends BaseActivity {
         }
 
         private void disableContactsEncryption() {
-            final ProgressDialog progressDialog = new ProgressDialog(getActivity());
+            ProgressDialog progressDialog = new ProgressDialog(getActivity());
             progressDialog.setCanceledOnTouchOutside(false);
             progressDialog.setMessage(getString(R.string.txt_contact_decryption));
             progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
@@ -444,8 +432,8 @@ public class SettingsActivity extends BaseActivity {
         isPrimeUser = myselfResult.isPrime();
         setSettingId(settingId);
 
-        String usedStorage = AppUtils.usedStorage(settingsEntity.getUsedStorage());
-        String allocatedStorage = AppUtils.usedStorage(settingsEntity.getAllocatedStorage());
+        String usedStorage = AppUtils.memoryDisplay(settingsEntity.getUsedStorage());
+        String allocatedStorage = AppUtils.memoryDisplay(settingsEntity.getAllocatedStorage());
         String recoveryEmail = settingsEntity.getRecoveryEmail();
 
         if (storageLimitPreference != null) {
@@ -464,7 +452,6 @@ public class SettingsActivity extends BaseActivity {
                 .putBoolean(getString(R.string.recovery_email_enabled), EditTextUtils.isNotEmpty(recoveryEmail))
                 .putBoolean(getString(R.string.auto_save_contacts_enabled), settingsEntity.isSaveContacts())
                 .putBoolean(getString(R.string.subject_encryption_enabled), settingsEntity.isSubjectEncrypted())
-                .putBoolean(getString(R.string.attachments_encryption_enabled), settingsEntity.isAttachmentsEncrypted())
                 .putBoolean(getString(R.string.contacts_encryption_enabled), settingsEntity.isContactsEncrypted())
                 .putBoolean(getString(R.string.anti_phishing_enabled), settingsEntity.isAntiPhishingEnabled())
                 .apply();

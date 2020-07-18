@@ -1,6 +1,5 @@
 package mobileapp.ctemplar.com.ctemplarapp.login;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -12,6 +11,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.textfield.TextInputEditText;
@@ -25,9 +25,9 @@ import mobileapp.ctemplar.com.ctemplarapp.BaseFragment;
 import mobileapp.ctemplar.com.ctemplarapp.LoginActivityActions;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
+import timber.log.Timber;
 
 public class ResetCodeFragment extends BaseFragment {
-
     @BindView(R.id.fragment_reset_code_hint)
     TextView txtHint;
 
@@ -47,15 +47,15 @@ public class ResetCodeFragment extends BaseFragment {
         return R.layout.fragment_reset_code;
     }
 
-    @Override
-    public void onAttach(@NotNull Context context) {
-        super.onAttach(context);
-    }
-
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        FragmentActivity activity = getActivity();
+        if (activity == null) {
+            Timber.e("FragmentActivity is null");
+            return;
+        }
 
-        loginActivityModel = new ViewModelProvider(getActivity()).get(LoginActivityViewModel.class);
+        loginActivityModel = new ViewModelProvider(activity).get(LoginActivityViewModel.class);
     }
 
     @Override
@@ -63,16 +63,6 @@ public class ResetCodeFragment extends BaseFragment {
         super.onViewCreated(view, savedInstanceState);
 
         setListeners();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
     }
 
     @OnClick(R.id.fragment_reset_code_btn)
@@ -85,11 +75,12 @@ public class ResetCodeFragment extends BaseFragment {
 
     @OnClick(R.id.fragment_reset_code_back)
     public void onClickBack() {
+        loginActivityModel.resetResponseStatus();
         getActivity().onBackPressed();
     }
 
     private void setListeners() {
-        txtHint.setText(EditTextUtils.fromHtml(getResources().getString(R.string.title_reset_code_hint, loginActivityModel.getRecoverPasswordRequest().getEmail())));
+        txtHint.setText(EditTextUtils.fromHtml(getString(R.string.title_reset_code_hint, loginActivityModel.getRecoverPasswordRequest().getEmail())));
         txtHint.setLinkTextColor(getResources().getColor(R.color.colorLinkBlue));
         txtHint.setMovementMethod(LinkMovementMethod.getInstance());
         txtHint.setAutoLinkMask(Linkify.EMAIL_ADDRESSES);
@@ -101,9 +92,9 @@ public class ResetCodeFragment extends BaseFragment {
             }
 
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(TextUtils.isEmpty(s.toString())) {
-                    editCodeLayout.setError(getResources().getString(R.string.error_empty_password));
+            public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
+                if(TextUtils.isEmpty(charSequence)) {
+                    editCodeLayout.setError(getString(R.string.error_empty_password));
                     btnCodeNext.setEnabled(false);
                 } else {
                     editCodeLayout.setError(null);
