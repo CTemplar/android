@@ -50,7 +50,6 @@ import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.main.UpgradeToPrimeFragment;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.net.entity.AttachmentsEntity;
-import mobileapp.ctemplar.com.ctemplarapp.net.entity.PGPKeyEntity;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.PublicKeysRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SendMessageRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.KeyResult;
@@ -63,7 +62,10 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.entity.Contact;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MessageEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.AttachmentProvider;
-import mobileapp.ctemplar.com.ctemplarapp.security.PGPManager;
+import mobileapp.ctemplar.com.ctemplarapp.repository.provider.EncryptionMessageProvider;
+import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageAttachmentProvider;
+import mobileapp.ctemplar.com.ctemplarapp.repository.provider.SendMessageRequestProvider;
+import mobileapp.ctemplar.com.ctemplarapp.services.SendMailService;
 import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EncryptUtils;
@@ -490,7 +492,11 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         sendingProgress.setCanceledOnTouchOutside(false);
         sendingProgress.setMessage(getResources().getString(R.string.txt_sending_mail));
         sendingProgress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        sendingProgress.show();
+        try {
+            sendingProgress.show();
+        } catch (Throwable e) {
+            Timber.e(e, "onClickSend");
+        }
 
         List<String> receiverList = new ArrayList<>();
         if (!toEmail.isEmpty()) {
@@ -556,7 +562,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         // checking for attachment updates when sending
         sendModel.getUpdateAttachmentStatus().observe(getViewLifecycleOwner(), responseStatus -> {
             if (responseStatus == ResponseStatus.RESPONSE_COMPLETE) {
-                List<MessageAttachment> attachmentList = messageSendAttachmentAdapter.getAttachmentList();
+                List<MessageAttachmentProvider> attachmentList = messageSendAttachmentAdapter.getAttachmentList();
                 int attachmentListSize = attachmentList.size();
                 if (updateAttachmentPosition < attachmentListSize) {
                     new Thread(() -> {
@@ -646,7 +652,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         sendModel.getUploadAttachmentResponse()
                 .observe(getViewLifecycleOwner(), messageAttachment -> {
                     if (messageAttachment != null) {
-                        messageSendAttachmentAdapter.addAttachment(messageAttachment);
+                        messageSendAttachmentAdapter.addAttachment(MessageAttachmentProvider.fromResponse(messageAttachment));
                         if (messageSendAttachmentAdapter.getItemCount() > 0) {
                             sendMessageAttachmentIco.setSelected(true);
                             sendMessage.setEnabled(true);
@@ -761,7 +767,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         }
         if (messageAttachmentList != null) {
             for (AttachmentEntity attachmentEntity : messageAttachmentList) {
-                MessageAttachment messageAttachment = new MessageAttachment();
+                MessageAttachmentProvider messageAttachment = new MessageAttachmentProvider();
                 messageAttachment.setId(attachmentEntity.getId());
                 messageAttachment.setMessage(attachmentEntity.getMessage());
                 messageAttachment.setContentId(attachmentEntity.getContentId());
@@ -797,7 +803,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         String compose = EditTextUtils.getText(composeEditText);
         Spannable composeSpannable = new SpannableString(compose);
 
-        sendMessageRequest = new SendMessageRequest();
+        SendMessageRequestProvider sendMessageRequest = new SendMessageRequestProvider();
         sendMessageRequest.setSender(mailboxEmail);
         sendMessageRequest.setSubject(subject);
         sendMessageRequest.setHtml(true);
@@ -848,43 +854,24 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         }
         sendMessageRequest.setBcc(bccEmailList);
 
-        List<MessageAttachment> attachments = messageSendAttachmentAdapter.getAttachmentList();
-        if (attachments != null && !attachments.isEmpty()) {
-            sendMessageRequest.setAttachments(attachments);
+        List<MessageAttachmentProvider> attachments = messageSendAttachmentAdapter.getAttachmentList();
+        if (attachments == null) {
+            attachments = new ArrayList<>();
         }
 
-        new Thread(() -> {
-            if (messageEncryptionResult != null) {
-                String randomSecret = messageEncryptionResult.getRandomSecret();
-                String password = messageEncryptionResult.getPassword();
+        MailboxEntity mailboxEntity = sendModel.getMailboxById(mailboxId);
+        String senderPublicKey = mailboxEntity.getPublicKey();
+        publicKeyList.add(senderPublicKey);
 
-                PGPKeyEntity pgpKeyEntity = PGPManager.generateKeys(randomSecret, password);
-                messageEncryptionResult.setPublicKey(pgpKeyEntity.getPublicKey());
-                messageEncryptionResult.setPrivateKey(pgpKeyEntity.getPrivateKey());
-
-                publicKeyList.add(pgpKeyEntity.getPublicKey());
-                sendMessageRequest.setEncryptionMessage(messageEncryptionResult);
-            }
-
-            MailboxEntity mailboxEntity = sendModel.getMailboxById(mailboxId);
-            String senderPublicKey = mailboxEntity.getPublicKey();
-            publicKeyList.add(senderPublicKey);
-
-            if (publicKeyList.contains(null) && messageEncryptionResult == null) {
-                publicKeyList.clear();
-            } else if (publicKeyList.contains(null)) {
-                publicKeyList.removeAll(Collections.singleton(null));
-            }
-
-            int attachmentCount = messageSendAttachmentAdapter.getItemCount();
-            if (attachmentCount > 0) {
-                boolean needUpdate = updateAttachments();
-                if (needUpdate) {
-                    return;
-                }
-            }
-            sendModel.updateMessage(currentMessageId, sendMessageRequest, publicKeyList);
-        }).start();
+        SendMailService.updateMessage(
+                getContext(),
+                currentMessageId,
+                sendMessageRequest,
+                publicKeyList.toArray(new String[0]),
+                attachments.toArray(new MessageAttachmentProvider[0]),
+                EncryptionMessageProvider.fromResponse(messageEncryptionResult)
+        );
+        finish();
     }
 
     private void sendMessageToDraft() {
@@ -929,9 +916,13 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
             messageRequestToDraft.setDeadManDuration(deadDeliveryInHours);
         }
 
-        List<MessageAttachment> attachments = messageSendAttachmentAdapter.getAttachmentList();
+        List<MessageAttachmentProvider> attachments = messageSendAttachmentAdapter.getAttachmentList();
         if (attachments != null && !attachments.isEmpty()) {
-            messageRequestToDraft.setAttachments(attachments);
+            List<MessageAttachment> attachmentsRequests = new ArrayList<>(attachments.size());
+            for (MessageAttachmentProvider attachment : attachments) {
+                attachmentsRequests.add(attachment.toRequest());
+            }
+            messageRequestToDraft.setAttachments(attachmentsRequests);
         }
 
         List<String> toEmailList = new ArrayList<>();
@@ -967,11 +958,11 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
             return false;
         }
 
-        List<MessageAttachment> attachmentList = messageSendAttachmentAdapter.getAttachmentList();
+        List<MessageAttachmentProvider> attachmentList = messageSendAttachmentAdapter.getAttachmentList();
         if (updateAttachmentPosition >= attachmentList.size()) {
             return false;
         }
-        MessageAttachment messageAttachment = attachmentList.get(updateAttachmentPosition);
+        MessageAttachmentProvider messageAttachment = attachmentList.get(updateAttachmentPosition);
 
         boolean attachmentIsEncrypted = messageAttachment.isEncrypted();
         long id = messageAttachment.getId();

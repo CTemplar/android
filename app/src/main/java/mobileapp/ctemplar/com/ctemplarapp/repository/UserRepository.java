@@ -335,10 +335,17 @@ public class UserRepository {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<MessagesResult> updateMessage(long id, SendMessageRequest request) {
+    public Single<MessagesResult> updateMessage(long id, SendMessageRequest request) {
         return service.updateMessage(id, request)
                 .subscribeOn(io.reactivex.schedulers.Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public MessagesResult updateMessageSync(long id, SendMessageRequest request) {
+        return service.updateMessage(id, request)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .blockingGet();
     }
 
     public Observable<MessagesResult> sendMessage(SendMessageRequest request) {
@@ -354,11 +361,19 @@ public class UserRepository {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<MessageAttachment> updateAttachment(long id, MultipartBody.Part attachment,
+    public Single<MessageAttachment> updateAttachment(long id, MultipartBody.Part attachment,
                                                           long message, boolean isEncrypted) {
         return service.updateAttachment(id, attachment, message, isEncrypted)
                 .subscribeOn(io.reactivex.schedulers.Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public MessageAttachment updateAttachmentSync(long id, MultipartBody.Part attachment,
+                                                          long message, boolean isEncrypted) {
+        return service.updateAttachment(id, attachment, message, isEncrypted)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .blockingGet();
     }
 
     public Observable<Response<Void>> deleteAttachment(long id) {

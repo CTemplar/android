@@ -19,6 +19,7 @@ import java.util.List;
 
 import io.reactivex.Observer;
 import io.reactivex.Single;
+import io.reactivex.SingleObserver;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
@@ -217,14 +218,14 @@ public class SendMessageActivityViewModel extends ViewModel {
         request.setSubjectEncrypted(isSubjectEncrypted && !isEmptyReceiverKeys);
 
         userRepository.updateMessage(id, request)
-                .subscribe(new Observer<MessagesResult>() {
+                .subscribe(new SingleObserver<MessagesResult>() {
                     @Override
                     public void onSubscribe(Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(MessagesResult result) {
+                    public void onSuccess(MessagesResult result) {
                         messagesResult.postValue(result);
                         responseStatus.postValue(ResponseStatus.RESPONSE_NEXT_MESSAGES);
                     }
@@ -234,35 +235,25 @@ public class SendMessageActivityViewModel extends ViewModel {
                         messagesResult.postValue(null);
                         responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
                     }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
                 });
     }
 
     public void setEncryptionMessage(long id, SendMessageRequest sendMessageRequest) {
         userRepository.updateMessage(id, sendMessageRequest)
-                .subscribe(new Observer<MessagesResult>() {
+                .subscribe(new SingleObserver<MessagesResult>() {
                     @Override
                     public void onSubscribe(Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(MessagesResult messagesResult) {
+                    public void onSuccess(MessagesResult messagesResult) {
                         messageEncryptionResult.postValue(messagesResult);
                     }
 
                     @Override
                     public void onError(Throwable e) {
                         Timber.e(e.getCause());
-                    }
-
-                    @Override
-                    public void onComplete() {
-
                     }
                 });
     }
@@ -421,14 +412,14 @@ public class SendMessageActivityViewModel extends ViewModel {
 
     public void updateAttachment(long id, MultipartBody.Part attachment, long message, boolean isEncrypted) {
         userRepository.updateAttachment(id, attachment, message, isEncrypted)
-                .subscribe(new Observer<MessageAttachment>() {
+                .subscribe(new SingleObserver<MessageAttachment>() {
                     @Override
                     public void onSubscribe(Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(MessageAttachment messageAttachment) {
+                    public void onSuccess(MessageAttachment messageAttachment) {
                         updateAttachmentStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
                     }
 
@@ -443,11 +434,6 @@ public class SendMessageActivityViewModel extends ViewModel {
                         } else {
                             updateAttachmentStatus.postValue(ResponseStatus.RESPONSE_ERROR);
                         }
-                    }
-
-                    @Override
-                    public void onComplete() {
-
                     }
                 });
     }
