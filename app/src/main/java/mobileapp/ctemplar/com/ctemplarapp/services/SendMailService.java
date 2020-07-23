@@ -16,6 +16,13 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -24,18 +31,26 @@ import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.net.entity.PGPKeyEntity;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SendMessageRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessageAttachment;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResult;
+import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.EncryptionMessageProvider;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageAttachmentProvider;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.SendMessageRequestProvider;
 import mobileapp.ctemplar.com.ctemplarapp.security.PGPManager;
+import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
+import mobileapp.ctemplar.com.ctemplarapp.utils.EncryptUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.LaunchUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.ToastUtils;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import retrofit2.HttpException;
 import timber.log.Timber;
 
 public class SendMailService extends IntentService {
     private static final String TAG = "SendMailService";
-    private static final String SEND_MAIL_ACTION = "com.ctemplar.service.mail.send";
+    private static final String SEND_MAIL_ACTION = "com.ctemplar.service.mail.sending";
 
     private static final String SEND_MAIL_NOTIFICATION_CHANNEL_ID = "com.ctemplar.mail.sending";
     private static final String SEND_MAIL_NOTIFICATION_CHANNEL_NAME = "Sending mail...";
@@ -110,7 +125,7 @@ public class SendMailService extends IntentService {
                         Timber.e(e, "Cannot parse external encryption provider");
                     }
                 }
-                sendMessage(messageId, sendMessageRequestProvider, publicKeys, attachmentProviders, encryptionMessageProvider);
+                updateMessage(messageId, sendMessageRequestProvider, publicKeys, attachmentProviders, encryptionMessageProvider);
         }
     }
 
@@ -118,7 +133,7 @@ public class SendMailService extends IntentService {
 
     }
 
-    public void sendMessage(
+    public void updateMessage(
             long messageId,
             @NonNull
             SendMessageRequestProvider sendMessageRequestProvider,
@@ -158,6 +173,28 @@ public class SendMailService extends IntentService {
             publicKeyList.removeAll(Collections.singleton(null));
         }
 
+        List<File> cacheFileList = new ArrayList<>();
+        final List<MessageAttachment> messageAttachmentList = new ArrayList<>(attachmentProviders.length);
+        if (attachmentProviders.length > 0) {
+            notificationBuilder.setContentText("Attachments uploading");
+            notificationBuilder.setProgress(attachmentProviders.length, 0, false);
+            notificationManager.notify((int) messageId, notificationBuilder.build());
+            for (int i = 0, attachmentProvidersLength = attachmentProviders.length; i < attachmentProvidersLength; ++i) {
+                MessageAttachmentProvider attachmentProvider = attachmentProviders[i];
+                MessageAttachment messageAttachment = updateAttachment(attachmentProvider, publicKeyList, cacheFileList, messageId,
+                        sendMessageRequestProvider.getMailbox());
+                if (messageAttachment == null) {
+                    Timber.e("Message attachment is null");
+                } else {
+                    messageAttachmentList.add(messageAttachment);
+                }
+
+                notificationBuilder.setProgress(attachmentProvidersLength, i + 1, false);
+                notificationManager.notify((int) messageId, notificationBuilder.build());
+            }
+        }
+        sendMessageRequest.setAttachments(messageAttachmentList);
+
         updateMessage(messageId, sendMessageRequest, publicKeyList, notificationManager, notificationBuilder);
     }
 
@@ -172,13 +209,7 @@ public class SendMailService extends IntentService {
         }
     }
 
-    private void updateMessage(
-            long messageId,
-            SendMessageRequest request,
-            List<String> receiverPublicKeys,
-            NotificationManager notificationManager,
-            NotificationCompat.Builder notificationBuilder
-    ) {
+    private void updateMessage(long messageId, SendMessageRequest request, List<String> receiverPublicKeys, NotificationManager notificationManager, NotificationCompat.Builder notificationBuilder) {
         String content = request.getContent();
         String subject = request.getSubject();
         boolean isSubjectEncrypted = request.isSubjectEncrypted();
@@ -208,23 +239,110 @@ public class SendMailService extends IntentService {
 
     private void onFailedUpdateMessage(Throwable e, long messageId, NotificationManager notificationManager, NotificationCompat.Builder notificationBuilder) {
         Timber.e(e, "onFailedUpdateMessage");
-        ToastUtils.showLongToast(this, "Sending failed: " + e.getMessage());
-        notificationBuilder.setContentText("Sending failed")
+        ToastUtils.showLongToast(this, "Failed upload message: " + e.getMessage());
+        notificationBuilder.setContentText("Upload failed")
                 .setOngoing(false);
         notificationManager.notify((int) messageId, notificationBuilder.build());
         notificationManager.cancel((int) messageId);
     }
 
     private void onMessageUploadedSuccess(MessagesResult messagesResult, NotificationManager notificationManager, NotificationCompat.Builder notificationBuilder) {
-        Timber.i("Sending success");
+        Timber.i("Uploaded message success");
         ToastUtils.showLongToast(this, "Uploaded message success");
-        notificationBuilder.setContentText("Sending success")
+        notificationBuilder.setContentText("Uploaded success")
                 .setOngoing(false);
         notificationManager.notify((int) messagesResult.getId(), notificationBuilder.build());
         notificationManager.cancel((int) messagesResult.getId());
     }
 
-    public static void sendMessage(
+    private MessageAttachment updateAttachment(
+            MessageAttachmentProvider attachmentProvider,
+            List<String> publicKeyList,
+            List<File> cacheFileList,
+            long messageId,
+            long mailboxId
+    ) {
+        String documentLink = attachmentProvider.getDocumentLink();
+        String type = AppUtils.getMimeType(documentLink);
+        if (type == null) {
+            Timber.e("updateAttachment failed: type is null");
+            return null;
+        }
+        String fileName = AppUtils.getFileNameFromURL(documentLink);
+        MediaType mediaType = MediaType.parse(type);
+
+        File downloadedFile;
+        File encryptedFile;
+        try {
+            File cacheDir = getCacheDir();
+            downloadedFile = File.createTempFile("attachment", ".ext", cacheDir);
+            encryptedFile = File.createTempFile("attachment", ".ext", cacheDir);
+
+            BufferedInputStream bufferedInputStream = new BufferedInputStream(new URL(documentLink).openStream());
+
+            BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(downloadedFile));
+            byte[] dataBuffer = new byte[1024];
+            int bytesRead;
+            while ((bytesRead = bufferedInputStream.read(dataBuffer, 0, 1024)) != -1) {
+                bufferedOutputStream.write(dataBuffer, 0, bytesRead);
+                bufferedOutputStream.flush();
+            }
+            bufferedInputStream.close();
+            bufferedOutputStream.close();
+        } catch (IOException e) {
+            Timber.e(e, "updateAttachment");
+            return null;
+        }
+
+        if (attachmentProvider.isEncrypted()) {
+            MailboxEntity mailboxEntity = CTemplarApp.getAppDatabase().mailboxDao().getById(mailboxId);
+            String privateKey = mailboxEntity.getPrivateKey();
+            String password = CTemplarApp.getUserRepository().getUserPassword();
+            EncryptUtils.decryptAttachment(downloadedFile, downloadedFile, password, privateKey);
+        }
+
+        RequestBody attachmentPart;
+        if (publicKeyList.isEmpty()) {
+            cacheFileList.add(downloadedFile);
+            attachmentPart = RequestBody.create(mediaType, downloadedFile);
+        } else {
+            EncryptUtils.encryptAttachment(downloadedFile, encryptedFile, publicKeyList);
+            if (!downloadedFile.delete()) {
+                Timber.e("Cannot delete downloaded file");
+            }
+            cacheFileList.add(encryptedFile);
+            attachmentPart = RequestBody.create(mediaType, encryptedFile);
+        }
+
+        final MultipartBody.Part multipartAttachment = MultipartBody.Part.createFormData("document", fileName, attachmentPart);
+
+        Timber.e("updateAttachmentSync");
+        MessageAttachment result;
+        try {
+            result = CTemplarApp.getUserRepository()
+                    .updateAttachmentSync(
+                            attachmentProvider.getId(),
+                            multipartAttachment,
+                            messageId,
+                            true
+                    );
+            Timber.e("A: STOP UPDATE ATTACH" + System.currentTimeMillis());
+        } catch (Throwable e) {
+            if(e instanceof HttpException) {
+                if (((HttpException)e).code() == 413) {
+                    ToastUtils.showLongToast(this, "Upload attachment: Too large file");
+                } else {
+                    ToastUtils.showLongToast(this, "Upload attachment: Something went wrong");
+                }
+            } else {
+                ToastUtils.showLongToast(this, "Upload attachment: Some error is occured");
+            }
+            return null;
+        }
+        return result;
+    }
+
+    public static void updateMessage(
             Context context,
             long messageId,
             SendMessageRequestProvider sendMessageRequestProvider,
@@ -237,6 +355,12 @@ public class SendMailService extends IntentService {
         intent.putExtra(MESSAGE_ID_EXTRA_KEY, messageId);
         intent.putExtra(MESSAGE_PROVIDER_EXTRA_KEY, GSON.toJson(sendMessageRequestProvider));
         intent.putExtra(PUBLIC_KEYS_EXTRA_KEY, publicKeyList);
+        String[] attachmentsStringArray = new String[attachmentProviderList.length];
+        for (int i = 0, count = attachmentProviderList.length; i < count; ++i) {
+            MessageAttachmentProvider attachmentProvider = attachmentProviderList[i];
+            attachmentsStringArray[i] = GSON.toJson(attachmentProvider);
+        }
+        intent.putExtra(ATTACHMENTS_EXTRA_KEY, attachmentsStringArray);
         if (encryptionMessageProvider != null) {
             intent.putExtra(EXTERNAL_ENCRYPTION_EXTRA_KEY, GSON.toJson(encryptionMessageProvider));
         }

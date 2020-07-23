@@ -863,7 +863,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         String senderPublicKey = mailboxEntity.getPublicKey();
         publicKeyList.add(senderPublicKey);
 
-        SendMailService.sendMessage(
+        SendMailService.updateMessage(
                 getContext(),
                 currentMessageId,
                 sendMessageRequest,

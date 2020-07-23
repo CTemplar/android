@@ -40,7 +40,7 @@
         <service android:name=".services.SendMailService"
             android:exported="false">
             <intent-filter>
-                <action android:name="com.ctemplar.service.email.send" />
+                <action android:name="com.ctemplar.service.email.sending" />
             </intent-filter>
         </service>
 
