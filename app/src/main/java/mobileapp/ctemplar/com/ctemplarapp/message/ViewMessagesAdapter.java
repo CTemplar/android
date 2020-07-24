@@ -50,10 +50,11 @@ public class ViewMessagesAdapter extends BaseAdapter {
     private OnAttachmentDownloading onAttachmentDownloading;
     private Activity activity;
 
-    ViewMessagesAdapter(List<MessageProvider> messageProviderList,
-                        OnAttachmentDownloading onAttachmentDownloading,
-                        Activity activity) {
-
+    ViewMessagesAdapter(
+            List<MessageProvider> messageProviderList,
+            OnAttachmentDownloading onAttachmentDownloading,
+            Activity activity
+    ) {
         this.messageProviderList = messageProviderList;
         this.onAttachmentDownloading = onAttachmentDownloading;
         this.activity = activity;
@@ -74,26 +75,42 @@ public class ViewMessagesAdapter extends BaseAdapter {
         return messageProviderList.get(position).getId();
     }
 
-    private View getViewByFlag(LayoutInflater inflater, ViewGroup parent, MessageProvider messageData, boolean isLast) {
-        final View view = inflater.inflate(R.layout.item_message_view_selector, parent, false);
+    private static class CEHolder {
+        private final ViewGroup containerView;
+        private final View collapsedView;
+        private final View expandedView;
 
-        final View collapsedView = view.findViewById(R.id.collapsed);
-        final View expandedView = view.findViewById(R.id.expanded);
+        public CEHolder(ViewGroup containerView, View collapsedView, View expandedView) {
+            this.containerView = containerView;
+            this.collapsedView = collapsedView;
+            this.expandedView = expandedView;
 
-        collapsedView.setOnClickListener(v -> {
-            collapsedView.setVisibility(View.GONE);
-            expandedView.setVisibility(View.VISIBLE);
-        });
-
-        expandedView.setOnClickListener(v -> {
-            collapsedView.setVisibility(View.VISIBLE);
-            expandedView.setVisibility(View.GONE);
-        });
-
-        if (isLast) {
-            collapsedView.setVisibility(View.GONE);
-            expandedView.setVisibility(View.VISIBLE);
+            collapsedView.setOnClickListener(v -> switchVisibility());
+            expandedView.setOnClickListener(v -> switchVisibility());
         }
+
+        private void switchVisibility() {
+            setExpanded(collapsedView.getParent() != null);
+        }
+
+        private void setExpanded(boolean expanded) {
+            containerView.removeAllViews();
+            if (expanded) {
+                containerView.addView(expandedView);
+            } else {
+                containerView.addView(collapsedView);
+            }
+        }
+    }
+
+    private View getViewByFlag(LayoutInflater inflater, ViewGroup parent, MessageProvider messageData, boolean isLast) {
+        final ViewGroup view = (ViewGroup) inflater.inflate(R.layout.item_message_view_selector, parent, false);
+
+        final View collapsedView = inflater.inflate(R.layout.item_message_view_collapsed, view, false);
+        final View expandedView = inflater.inflate(R.layout.item_message_view_expanded, view, false);
+
+        CEHolder ceHolder = new CEHolder(view, collapsedView, expandedView);
+        ceHolder.setExpanded(isLast);
 
         UserDisplayProvider senderDisplay = messageData.getSenderDisplay();
 
@@ -111,35 +128,35 @@ public class ViewMessagesAdapter extends BaseAdapter {
                 || !messageData.getAttachments().isEmpty();
 
         // VIEW COLLAPSED
-        TextView collapsedSenderTextView = view.findViewById(R.id.item_message_view_collapsed_sender);
-        TextView collapsedContentTextView = view.findViewById(R.id.item_message_view_collapsed_content);
-        TextView collapsedShortDateTextView = view.findViewById(R.id.item_message_view_short_date_text_view);
-        TextView collapsedFolderNameTextView = view.findViewById(R.id.item_message_view_collapsed_folder_text_view);
-        ImageView collapsedHasAttachmentMessageImageView = view.findViewById(R.id.item_message_view_holder_attachment_image_view);
-        ImageView collapsedReplyMessageImageView = view.findViewById(R.id.item_message_view_holder_reply_image_view);
+        TextView collapsedSenderTextView = collapsedView.findViewById(R.id.item_message_view_collapsed_sender);
+        TextView collapsedContentTextView = collapsedView.findViewById(R.id.item_message_view_collapsed_content);
+        TextView collapsedShortDateTextView = collapsedView.findViewById(R.id.item_message_view_short_date_text_view);
+        TextView collapsedFolderNameTextView = collapsedView.findViewById(R.id.item_message_view_collapsed_folder_text_view);
+        ImageView collapsedHasAttachmentMessageImageView = collapsedView.findViewById(R.id.item_message_view_holder_attachment_image_view);
+        ImageView collapsedReplyMessageImageView = collapsedView.findViewById(R.id.item_message_view_holder_reply_image_view);
 
         // VIEW EXPANDED
-        TextView senderTextView = view.findViewById(R.id.item_message_view_expanded_sender_name);
-        TextView receiverTextView = view.findViewById(R.id.item_message_view_expanded_receiver_name);
-        TextView shortDateTextView = view.findViewById(R.id.item_message_view_expanded_short_date_text_view);
-        TextView statusTextView = view.findViewById(R.id.item_message_view_expanded_status);
-        TextView folderNameTextView = view.findViewById(R.id.item_message_view_expanded_folder_name_text_view);
-        TextView detailsTextView = view.findViewById(R.id.item_message_view_expanded_details);
-        TextView senderEmailTextView = view.findViewById(R.id.item_message_view_from_email);
-        TextView receiverEmailTextView = view.findViewById(R.id.item_message_view_to_email);
-        View ccLayout = view.findViewById(R.id.item_message_view_CC_layout);
-        TextView ccEmailTextView = view.findViewById(R.id.item_message_view_CC_email);
-        View bccLayout = view.findViewById(R.id.item_message_view_BCC_layout);
-        ImageView hasAttachmentMessageImageView = view.findViewById(R.id.item_message_view_expanded_attachment_image_view);
-        ImageView replyMessageImageView = view.findViewById(R.id.item_message_view_expanded_reply_image_view);
-        TextView bccEmailTextView = view.findViewById(R.id.item_message_view_BCC_email);
-        TextView fullDateEmailTextView = view.findViewById(R.id.item_message_view_date_text_view);
-        WebView contentWebView = view.findViewById(R.id.item_message_view_expanded_content);
-        TextView contentText = view.findViewById(R.id.item_message_text_view_expanded_content);
-        ProgressBar progressBar = view.findViewById(R.id.item_message_view_expanded_progress_bar);
-        RecyclerView attachmentsRecyclerView = view.findViewById(R.id.item_message_view_expanded_attachment);
-        ViewGroup expandedCredentialsLayout = view.findViewById(R.id.item_message_view_expanded_credentials);
-        View credentialsDivider = view.findViewById(R.id.item_message_view_expanded_credentials_divider);
+        TextView senderTextView = expandedView.findViewById(R.id.item_message_view_expanded_sender_name);
+        TextView receiverTextView = expandedView.findViewById(R.id.item_message_view_expanded_receiver_name);
+        TextView shortDateTextView = expandedView.findViewById(R.id.item_message_view_expanded_short_date_text_view);
+        TextView statusTextView = expandedView.findViewById(R.id.item_message_view_expanded_status);
+        TextView folderNameTextView = expandedView.findViewById(R.id.item_message_view_expanded_folder_name_text_view);
+        TextView detailsTextView = expandedView.findViewById(R.id.item_message_view_expanded_details);
+        TextView senderEmailTextView = expandedView.findViewById(R.id.item_message_view_from_email);
+        TextView receiverEmailTextView = expandedView.findViewById(R.id.item_message_view_to_email);
+        View ccLayout = expandedView.findViewById(R.id.item_message_view_CC_layout);
+        TextView ccEmailTextView = expandedView.findViewById(R.id.item_message_view_CC_email);
+        View bccLayout = expandedView.findViewById(R.id.item_message_view_BCC_layout);
+        ImageView hasAttachmentMessageImageView = expandedView.findViewById(R.id.item_message_view_expanded_attachment_image_view);
+        ImageView replyMessageImageView = expandedView.findViewById(R.id.item_message_view_expanded_reply_image_view);
+        TextView bccEmailTextView = expandedView.findViewById(R.id.item_message_view_BCC_email);
+        TextView fullDateEmailTextView = expandedView.findViewById(R.id.item_message_view_date_text_view);
+        WebView contentWebView = expandedView.findViewById(R.id.item_message_view_expanded_content);
+        TextView contentText = expandedView.findViewById(R.id.item_message_text_view_expanded_content);
+        ProgressBar progressBar = expandedView.findViewById(R.id.item_message_view_expanded_progress_bar);
+        RecyclerView attachmentsRecyclerView = expandedView.findViewById(R.id.item_message_view_expanded_attachment);
+        ViewGroup expandedCredentialsLayout = expandedView.findViewById(R.id.item_message_view_expanded_credentials);
+        View credentialsDivider = expandedView.findViewById(R.id.item_message_view_expanded_credentials_divider);
 
         detailsTextView.setOnClickListener(v -> {
             int detailsVisibility = expandedCredentialsLayout.getVisibility();
