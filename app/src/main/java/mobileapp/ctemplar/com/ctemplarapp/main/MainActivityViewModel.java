@@ -44,7 +44,6 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.entity.Contact;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.ContactEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MessageEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageProvider;
-import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EncodeUtils;
 import okhttp3.ResponseBody;
 import retrofit2.HttpException;
@@ -324,7 +323,6 @@ public class MainActivityViewModel extends AndroidViewModel {
         contactsResponse.postValue(contactList.isEmpty() ? null : contactList);
 
         contactsRepository.getContactsList(limit, offset)
-                .observeOn(Schedulers.computation())
                 .subscribe(new Observer<ContactsResponse>() {
                     @Override
                     public void onSubscribe(Disposable d) {

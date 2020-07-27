@@ -13,13 +13,12 @@ import io.reactivex.subjects.PublishSubject;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.Contact;
 
-public class ContactAdapter extends RecyclerView.Adapter<ContactViewHolder> {
-
+public class ContactsAdapter extends RecyclerView.Adapter<ContactViewHolder> {
     private List<Contact> contactsList;
     private List<Contact> filteredList;
     private final PublishSubject<Long> onClickSubject = PublishSubject.create();
 
-    ContactAdapter(List<Contact> contactsList) {
+    ContactsAdapter(List<Contact> contactsList) {
         this.contactsList = contactsList;
         filteredList = new ArrayList<>();
         filteredList.addAll(contactsList);

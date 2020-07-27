@@ -74,7 +74,6 @@ import retrofit2.http.Query;
 
 @Singleton
 public interface RestService {
-
     @POST("auth/sign-in/")
     Observable<SignInResponse> signIn(@Body SignInRequest request);
 

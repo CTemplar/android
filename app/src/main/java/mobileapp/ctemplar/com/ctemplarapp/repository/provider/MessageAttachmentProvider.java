@@ -1,5 +1,7 @@
 package mobileapp.ctemplar.com.ctemplarapp.repository.provider;
 
+import androidx.annotation.Nullable;
+
 import com.google.gson.annotations.SerializedName;
 
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessageAttachment;
@@ -23,6 +25,11 @@ public class MessageAttachmentProvider {
 
     @SerializedName("message")
     private long message;
+
+    // Local object
+    @SerializedName("filePath")
+    private String filePath;
+
 
     public long getId() {
         return id;
@@ -70,6 +77,15 @@ public class MessageAttachmentProvider {
 
     public void setMessage(long message) {
         this.message = message;
+    }
+
+    @Nullable
+    public String getFilePath() {
+        return filePath;
+    }
+
+    public void setFilePath(@Nullable String filePath) {
+        this.filePath = filePath;
     }
 
 
