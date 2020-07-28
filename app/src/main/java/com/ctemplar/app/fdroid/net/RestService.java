@@ -58,6 +58,7 @@ import com.ctemplar.app.fdroid.net.response.WhiteBlackLists.WhiteListResponse;
 import javax.inject.Singleton;
 
 import io.reactivex.Observable;
+import io.reactivex.Single;
 import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -74,7 +75,6 @@ import retrofit2.http.Query;
 
 @Singleton
 public interface RestService {
-
     @POST("auth/sign-in/")
     Observable<SignInResponse> signIn(@Body SignInRequest request);
 
@@ -118,7 +118,7 @@ public interface RestService {
 
     @Multipart
     @PATCH("emails/attachments/update/{id}/")
-    Observable<MessageAttachment> updateAttachment(
+    Single<MessageAttachment> updateAttachment(
             @Path("id") long id,
             @Part MultipartBody.Part document,
             @Part("message") long message,
@@ -203,7 +203,7 @@ public interface RestService {
     Observable<MessagesResult> sendMessage(@Body SendMessageRequest request);
 
     @PATCH("emails/messages/{id}/")
-    Observable<MessagesResult> updateMessage(@Path("id") long id, @Body SendMessageRequest request);
+    Single<MessagesResult> updateMessage(@Path("id") long id, @Body SendMessageRequest request);
 
     @PATCH("emails/mailboxes/{id}/")
     Observable<MailboxesResult> updateDefaultMailbox(

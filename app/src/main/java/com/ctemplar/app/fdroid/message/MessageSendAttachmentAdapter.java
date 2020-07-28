@@ -13,19 +13,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.ctemplar.app.fdroid.R;
-import com.ctemplar.app.fdroid.net.response.Messages.MessageAttachment;
+import com.ctemplar.app.fdroid.repository.provider.MessageAttachmentProvider;
 import com.ctemplar.app.fdroid.utils.AppUtils;
 
 public class MessageSendAttachmentAdapter extends RecyclerView.Adapter<MessageSendAttachmentHolder> {
 
-    private List<MessageAttachment> attachmentList = new ArrayList<>();
+    private List<MessageAttachmentProvider> attachmentList = new ArrayList<>();
     private SendMessageActivityViewModel sendMessageActivityViewModel;
 
     public MessageSendAttachmentAdapter(FragmentActivity fragmentActivity) {
         sendMessageActivityViewModel = new ViewModelProvider(fragmentActivity).get(SendMessageActivityViewModel.class);
     }
 
-    public List<MessageAttachment> getAttachmentList() {
+    public List<MessageAttachmentProvider> getAttachmentList() {
         return attachmentList;
     }
 
@@ -39,7 +39,7 @@ public class MessageSendAttachmentAdapter extends RecyclerView.Adapter<MessageSe
 
     @Override
     public void onBindViewHolder(@NonNull MessageSendAttachmentHolder holder, int position) {
-        final MessageAttachment messageAttachment = attachmentList.get(position);
+        final MessageAttachmentProvider messageAttachment = attachmentList.get(position);
         final String documentLink = messageAttachment.getDocumentLink();
         final String fileName = AppUtils.getFileNameFromURL(documentLink);
 
@@ -52,12 +52,12 @@ public class MessageSendAttachmentAdapter extends RecyclerView.Adapter<MessageSe
         return attachmentList.size();
     }
 
-    public void addAttachment(MessageAttachment messageAttachment) {
+    public void addAttachment(MessageAttachmentProvider messageAttachment) {
         attachmentList.add(messageAttachment);
         notifyItemInserted(attachmentList.size() - 1);
     }
 
-    public void deleteAttachment(MessageAttachment messageAttachment) {
+    public void deleteAttachment(MessageAttachmentProvider messageAttachment) {
         sendMessageActivityViewModel.deleteAttachment(messageAttachment.getId());
         int attachmentPosition = attachmentList.indexOf(messageAttachment);
         if (attachmentPosition != -1) {

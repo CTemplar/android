@@ -1,4 +1,4 @@
-package com.ctemplar.app.fdroid.notification;
+package com.ctemplar.app.fdroid.services;
 
 import com.ctemplar.app.fdroid.repository.provider.MessageProvider;
 

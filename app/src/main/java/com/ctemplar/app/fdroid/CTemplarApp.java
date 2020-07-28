@@ -9,8 +9,8 @@ import androidx.multidex.MultiDexApplication;
 import androidx.room.Room;
 
 import com.ctemplar.app.fdroid.net.RestClient;
-import com.ctemplar.app.fdroid.notification.NotificationService;
-import com.ctemplar.app.fdroid.notification.NotificationServiceBroadcastReceiver;
+import com.ctemplar.app.fdroid.services.NotificationService;
+import com.ctemplar.app.fdroid.services.NotificationServiceBroadcastReceiver;
 import com.ctemplar.app.fdroid.repository.AppDatabase;
 import com.ctemplar.app.fdroid.repository.ContactsRepository;
 import com.ctemplar.app.fdroid.repository.ManageFoldersRepository;

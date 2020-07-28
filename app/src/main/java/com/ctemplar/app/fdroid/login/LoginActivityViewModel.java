@@ -16,7 +16,7 @@ import com.ctemplar.app.fdroid.net.request.RecoverPasswordRequest;
 import com.ctemplar.app.fdroid.net.request.SignInRequest;
 import com.ctemplar.app.fdroid.net.response.RecoverPasswordResponse;
 import com.ctemplar.app.fdroid.net.response.SignInResponse;
-import com.ctemplar.app.fdroid.notification.NotificationService;
+import com.ctemplar.app.fdroid.services.NotificationService;
 import com.ctemplar.app.fdroid.repository.UserRepository;
 import com.ctemplar.app.fdroid.utils.EncodeUtils;
 

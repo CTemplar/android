@@ -14,7 +14,6 @@ import com.ctemplar.app.fdroid.security.PGPManager;
 import com.ctemplar.app.fdroid.utils.EncryptUtils;
 
 public class Contact {
-
     private long id;
     private String email;
     private String name;

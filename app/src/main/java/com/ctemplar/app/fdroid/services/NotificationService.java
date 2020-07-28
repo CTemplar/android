@@ -1,4 +1,4 @@
-package com.ctemplar.app.fdroid.notification;
+package com.ctemplar.app.fdroid.services;
 
 import android.app.AlarmManager;
 import android.app.NotificationChannel;
@@ -35,15 +35,13 @@ import java.util.Random;
 import timber.log.Timber;
 
 public class NotificationService extends Service {
-    private static final String NOTIFICATION_CHANNEL_ID = "com.ctemplar.emails";
-
     private static final int FOREGROUND_NOTIFICATION_ID = 101;
-    private static final String FOREGROUND_NOTIFICATION_CHANNEL_ID = "com.ctemplar.notification.foreground";
-    private static final String FOREGROUND_NOTIFICATION_CHANNEL_NAME = "Notification Service";
-    private static final String FOREGROUND_NOTIFICATION_CHANNEL_DESCRIPTION = "Notification Service for emails";
 
-    private static final String ACTION_STOP = "com.ctemplar.service.notification.STOP";
     private static final String ACTION_START = "com.ctemplar.service.notification.START";
+    private static final String ACTION_STOP = "com.ctemplar.service.notification.STOP";
+
+    private static final String NOTIFICATION_CHANNEL_ID = "com.ctemplar.emails";
+    private static final String FOREGROUND_NOTIFICATION_CHANNEL_ID = "com.ctemplar.notification.foreground";
 
     private static Map<NotificationServiceListener, NotificationServiceConnection> listenerServiceConnectionMap;
 
@@ -128,7 +126,7 @@ public class NotificationService extends Service {
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this,
                 FOREGROUND_NOTIFICATION_CHANNEL_ID)
-                .setPriority(NotificationCompat.PRIORITY_MIN)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setOngoing(true)
                 .setWhen(0)
                 .setContentTitle(getString(R.string.title_notification_service))
@@ -141,11 +139,11 @@ public class NotificationService extends Service {
 
     private void createForegroundNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            int importance = NotificationManager.IMPORTANCE_MIN;
             NotificationChannel channel = new NotificationChannel(
                     FOREGROUND_NOTIFICATION_CHANNEL_ID,
-                    FOREGROUND_NOTIFICATION_CHANNEL_NAME, importance);
-            channel.setDescription(FOREGROUND_NOTIFICATION_CHANNEL_DESCRIPTION);
+                    getString(R.string.title_notification_service),
+                    NotificationManager.IMPORTANCE_DEFAULT);
+            channel.setDescription(getString(R.string.title_service_running));
             ((NotificationManager) getSystemService(NOTIFICATION_SERVICE))
                     .createNotificationChannel(channel);
         }
@@ -204,7 +202,7 @@ public class NotificationService extends Service {
                     NotificationManager.IMPORTANCE_HIGH
             );
             notificationChannel.setDescription(getString(R.string.notification_channel_description));
-//            notificationChannel.setShowBadge(true);
+            notificationChannel.setShowBadge(false);
             notificationChannel.enableLights(true);
             notificationChannel.setLightColor(Color.RED);
             notificationChannel.enableVibration(true);

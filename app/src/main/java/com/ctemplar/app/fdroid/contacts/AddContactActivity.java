@@ -17,7 +17,6 @@ import com.ctemplar.app.fdroid.net.ResponseStatus;
 import com.ctemplar.app.fdroid.net.response.Contacts.ContactData;
 
 public class AddContactActivity extends BaseActivity {
-
     private AddContactViewModel viewModel;
 
     @BindView(R.id.activity_add_contact_name_input)

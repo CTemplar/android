@@ -39,7 +39,7 @@ import com.ctemplar.app.fdroid.net.ResponseStatus;
 import com.ctemplar.app.fdroid.net.response.Myself.MyselfResponse;
 import com.ctemplar.app.fdroid.net.response.Myself.MyselfResult;
 import com.ctemplar.app.fdroid.net.response.Myself.SettingsEntity;
-import com.ctemplar.app.fdroid.notification.NotificationService;
+import com.ctemplar.app.fdroid.services.NotificationService;
 import com.ctemplar.app.fdroid.repository.UserRepository;
 import com.ctemplar.app.fdroid.repository.UserStore;
 import com.ctemplar.app.fdroid.utils.AppUtils;

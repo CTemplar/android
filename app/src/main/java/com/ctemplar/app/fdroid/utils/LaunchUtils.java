@@ -140,11 +140,10 @@ public class LaunchUtils {
                     return false;
                 }
                 return true;
-            } else {
-                String message = "launchService startService error: " + e.getMessage();
-                Timber.e(e, message);
-                return false;
             }
+            String message = "launchService startService error: " + e.getMessage();
+            Timber.e(e, message);
+            return false;
         }
         return true;
     }
