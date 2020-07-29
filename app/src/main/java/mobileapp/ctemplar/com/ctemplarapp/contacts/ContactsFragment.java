@@ -39,10 +39,9 @@ import mobileapp.ctemplar.com.ctemplarapp.main.RecycleDeleteSwiper;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.Contact;
 import timber.log.Timber;
 
-public class ContactFragment extends BaseFragment {
-
+public class ContactsFragment extends BaseFragment {
     private MainActivityViewModel mainModel;
-    private ContactAdapter contactAdapter;
+    private ContactsAdapter contactsAdapter;
 
     @BindView(R.id.fragment_contact_recycler_view)
     RecyclerView recyclerView;
@@ -88,8 +87,8 @@ public class ContactFragment extends BaseFragment {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                if (contactAdapter != null) {
-                    contactAdapter.filter(newText);
+                if (contactsAdapter != null) {
+                    contactsAdapter.filter(newText);
                 }
                 return false;
             }
@@ -122,8 +121,8 @@ public class ContactFragment extends BaseFragment {
         progressLayout.setVisibility(View.GONE);
         listEmptyLayout.setVisibility(View.GONE);
 
-        contactAdapter = new ContactAdapter(contactList);
-        contactAdapter.getOnClickSubject()
+        contactsAdapter = new ContactsAdapter(contactList);
+        contactsAdapter.getOnClickSubject()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new io.reactivex.Observer<Long>() {
@@ -153,14 +152,14 @@ public class ContactFragment extends BaseFragment {
                     }
                 });
 
-        recyclerView.setAdapter(contactAdapter);
+        recyclerView.setAdapter(contactsAdapter);
     }
 
     private void setupSwiperForRecyclerView() {
         RecycleDeleteSwiper swipeHandler = new RecycleDeleteSwiper(getActivity()) {
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
-                final ContactAdapter adapter = ContactFragment.this.contactAdapter;
+                final ContactsAdapter adapter = ContactsFragment.this.contactsAdapter;
                 if (adapter == null) {
                     return;
                 }

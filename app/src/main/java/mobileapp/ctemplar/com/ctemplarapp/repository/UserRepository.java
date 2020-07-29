@@ -68,7 +68,6 @@ import timber.log.Timber;
 
 @Singleton
 public class UserRepository {
-
     private static UserRepository instance = new UserRepository();
     private RestService service;
     private UserStore userStore;

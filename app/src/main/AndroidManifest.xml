@@ -31,9 +31,16 @@
         </provider>
 
         <service
-            android:name=".services.MessagingService">
+            android:name=".services.CloudMessagingService"
+            android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+        <service android:name=".services.SendMailService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.ctemplar.service.email.send" />
             </intent-filter>
         </service>
 

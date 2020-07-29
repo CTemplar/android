@@ -230,7 +230,7 @@
 
     <!-- NOTIFICATION SERVICE -->
     <string name="notification_channel_name">CTemplar</string>
-    <string name="notification_channel_description">Novo E-mail</string>
+    <string name="notification_channel_description">Novo mail</string>
 
     <!-- CUSTOM FILTERS -->
     <string name="txt_filters_title">Filtros</string>

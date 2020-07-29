@@ -17,7 +17,6 @@ import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.ContactData;
 
 public class AddContactActivity extends BaseActivity {
-
     private AddContactViewModel viewModel;
 
     @BindView(R.id.activity_add_contact_name_input)

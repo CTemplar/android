@@ -233,7 +233,7 @@
 
     <!-- NOTIFICATION SERVICE -->
     <string name="notification_channel_name">CTemplar</string>
-    <string name="notification_channel_description">New email</string>
+    <string name="notification_channel_description">New mail</string>
 
     <!-- CUSTOM FILTERS -->
     <string name="txt_filters_title">Filters</string>

@@ -17,15 +17,14 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.entity.Contact;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.ContactEntity;
 import timber.log.Timber;
 
-public class EditContactViewModel extends ViewModel {
-
+public class ContactsViewModel extends ViewModel {
     private ContactsRepository contactsRepository;
     private UserStore userStore;
 
     private MutableLiveData<ResponseStatus> responseStatus = new MutableLiveData<>();
     private MutableLiveData<Contact> contactResponse = new MutableLiveData<>();
 
-    public EditContactViewModel() {
+    public ContactsViewModel() {
         contactsRepository = CTemplarApp.getContactsRepository();
         userStore = CTemplarApp.getUserStore();
     }
