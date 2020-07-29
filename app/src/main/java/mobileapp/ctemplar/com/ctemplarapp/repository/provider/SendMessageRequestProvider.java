@@ -8,6 +8,7 @@ import java.util.List;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SendMessageRequest;
 
 public class SendMessageRequestProvider {
+
     @SerializedName("sender")
     private String sender;
 

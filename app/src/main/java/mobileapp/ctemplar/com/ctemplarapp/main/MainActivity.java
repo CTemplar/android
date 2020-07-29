@@ -377,7 +377,9 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        setupTabletDrawer();
+        if (isTablet) {
+            setupTabletDrawer();
+        }
     }
 
     @Override
@@ -554,7 +556,7 @@ public class MainActivity extends AppCompatActivity
             }
         };
         drawerToggle.setToolbarNavigationClickListener(v ->
-                Toast.makeText(MainActivity.this, "Clicked", Toast.LENGTH_SHORT).show());
+                Toast.makeText(this, "Clicked", Toast.LENGTH_SHORT).show());
         drawer.addDrawerListener(drawerToggle);
         drawerToggle.syncState();
     }
