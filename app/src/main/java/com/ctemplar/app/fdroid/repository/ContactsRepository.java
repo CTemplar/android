@@ -4,6 +4,7 @@ import java.util.List;
 
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import com.ctemplar.app.fdroid.CTemplarApp;
 import com.ctemplar.app.fdroid.net.RestService;
 import com.ctemplar.app.fdroid.net.response.Contacts.ContactData;
@@ -12,7 +13,6 @@ import com.ctemplar.app.fdroid.repository.entity.ContactEntity;
 import okhttp3.ResponseBody;
 
 public class ContactsRepository {
-
     private RestService service;
 
     private static ContactsRepository instance = new ContactsRepository();
@@ -34,25 +34,25 @@ public class ContactsRepository {
         id__in.deleteCharAt(id__in.length() - 1);
 
         return service.getContacts(limit, offset, id__in.toString())
-                .subscribeOn(io.reactivex.schedulers.Schedulers.io())
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
     public Observable<ContactsResponse> getContactsList(int limit, int offset) {
         return service.getContacts(limit, offset)
-                .subscribeOn(io.reactivex.schedulers.Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread());
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.computation());
     }
 
     public Observable<ContactsResponse> getContact(long id) {
         return service.getContact(id)
-                .subscribeOn(io.reactivex.schedulers.Schedulers.io())
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
     public Observable<ContactData> createContact(ContactData contactData) {
         return service.createContact(contactData)
-                .subscribeOn(io.reactivex.schedulers.Schedulers.io())
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
@@ -65,13 +65,13 @@ public class ContactsRepository {
 
     public Observable<ContactData> updateContact(long id, ContactData contactData) {
         return service.updateContact(id, contactData)
-                .subscribeOn(io.reactivex.schedulers.Schedulers.io())
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
     public Observable<ResponseBody> deleteContact(long id) {
         return service.deleteContact(id)
-                .subscribeOn(io.reactivex.schedulers.Schedulers.io())
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 

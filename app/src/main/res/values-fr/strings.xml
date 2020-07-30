@@ -208,17 +208,18 @@
     <string name="txt_create_folder_free_error">Seulement 5 dossiers sont autorisés avec un compte gratuit.</string>
 
     <!-- SEND MESSAGE -->
-    <string name="toast_message_sent">Email envoyé</string>
-    <string name="toast_message_not_sent">Email non envoyé</string>
+    <string name="toast_message_sent">Mail envoyé</string>
+    <string name="toast_message_not_sent">Mail non envoyé</string>
     <string name="toast_message_saved_as_draft">Brouillon enregistré</string>
-    <string name="toast_message_not_created">Message non créé</string>
-    <string name="toast_message_not_loaded">Message non chargé</string>
+    <string name="toast_message_not_created">Mail non créé</string>
+    <string name="toast_message_not_loaded">Mail non chargé</string>
     <string name="toast_attachment_unable_read_file">Impossible de lire le fichier</string>
     <string name="toast_attachment_unable_read_path">"Unable to read selected path"</string>
     <string name="txt_sending_mail">Envoi en cours…</string>
+    <string name="txt_saving_mail">Sauvegarde du courrier…</string>
     <string name="txt_uploading">Téléchargement…</string>
-    <string name="dialog_discard_mail">Supprimer email</string>
-    <string name="dialog_discard_confirm">Êtes-vous certain de vouloir supprimer cet email ?</string>
+    <string name="dialog_discard_mail">Supprimer mail</string>
+    <string name="dialog_discard_confirm">Êtes-vous certain de vouloir supprimer cet mail ?</string>
     <string name="dialog_save_in_drafts">Enregistrer comme brouillon</string>
     <string name="action_discard">Supprimer</string>
     <string name="action_cancel">Annuler</string>
@@ -230,7 +231,7 @@
 
     <!-- NOTIFICATION SERVICE -->
     <string name="notification_channel_name">CTemplar</string>
-    <string name="notification_channel_description">Nouveau email</string>
+    <string name="notification_channel_description">Nouveau mail</string>
     <string name="title_notification_service">Service de notification</string>
     <string name="title_service_running">Le service est en cours d\'exécutiong</string>
 
@@ -332,6 +333,7 @@
     <string name="settings_auto_save_contacts">Contacts automatiquement sauvegardés</string>
     <string name="settings_filters">Filtres</string>
     <string name="settings_wb_list">Liste blanche / Liste noire</string>
+    <string name="settings_dark_mode">Mode sombre</string>
     <string name="settings_folders">Dossier</string>
     <string name="settings_manage_folders">Gérer les dossiers</string>
     <string name="settings_mail">Mail</string>
@@ -445,5 +447,11 @@
         <item>10 minutes</item>
         <item>1 heure</item>
         <item>24 heures</item>
+    </string-array>
+
+    <string-array name="dark_mode_entries">
+        <item>Auto (détecter)</item>
+        <item>Sur</item>
+        <item>De</item>
     </string-array>
 </resources>

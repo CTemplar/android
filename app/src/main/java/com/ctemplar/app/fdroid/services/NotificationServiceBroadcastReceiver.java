@@ -1,4 +1,4 @@
-package com.ctemplar.app.fdroid.notification;
+package com.ctemplar.app.fdroid.services;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

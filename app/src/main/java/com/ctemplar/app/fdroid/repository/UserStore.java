@@ -53,4 +53,7 @@ public interface UserStore {
 
     void setLocked(boolean locked);
     boolean isLocked();
+
+    void setDarkMode(int value);
+    int getDarkMode();
 }

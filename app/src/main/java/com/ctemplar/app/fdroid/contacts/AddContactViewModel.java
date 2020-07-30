@@ -17,7 +17,6 @@ import com.ctemplar.app.fdroid.repository.entity.Contact;
 import timber.log.Timber;
 
 public class AddContactViewModel extends ViewModel {
-
     private ContactsRepository contactsRepository;
     private UserStore userStore;
 

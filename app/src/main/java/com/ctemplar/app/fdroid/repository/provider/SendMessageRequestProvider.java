@@ -1,18 +1,13 @@
-package com.ctemplar.app.fdroid.net.request;
+package com.ctemplar.app.fdroid.repository.provider;
 
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
-import com.ctemplar.app.fdroid.net.response.Messages.EncryptionMessage;
-import com.ctemplar.app.fdroid.net.response.Messages.MessageAttachment;
+import com.ctemplar.app.fdroid.net.request.SendMessageRequest;
 
-public class SendMessageRequest {
-
-    @SerializedName("encryption")
-    private EncryptionMessage encryptionMessage;
+public class SendMessageRequestProvider {
 
     @SerializedName("sender")
     private String sender;
@@ -65,23 +60,17 @@ public class SendMessageRequest {
     @SerializedName("parent")
     private Long parent;
 
-    @SerializedName("attachments")
-    private List<MessageAttachment> attachments;
-
-    @SerializedName("updated")
-    private String updatedAt;
-
-    public SendMessageRequest() {
+    public SendMessageRequestProvider() {
 
     }
 
-    public SendMessageRequest(String sender,
-                              String content,
-                              ArrayList<String> receivers,
-                              ArrayList<String> cc,
-                              ArrayList<String> bcc,
-                              String folder,
-                              long mailbox) {
+    public SendMessageRequestProvider(String sender,
+                                      String content,
+                                      ArrayList<String> receivers,
+                                      ArrayList<String> cc,
+                                      ArrayList<String> bcc,
+                                      String folder,
+                                      long mailbox) {
         this.sender = sender;
         this.content = content;
         this.receivers = receivers;
@@ -187,14 +176,6 @@ public class SendMessageRequest {
         this.sender = sender;
     }
 
-    public List<MessageAttachment> getAttachments() {
-        return attachments;
-    }
-
-    public void setAttachments(List<MessageAttachment> attachments) {
-        this.attachments = attachments;
-    }
-
     public List<String> getCc() {
         return cc;
     }
@@ -235,19 +216,26 @@ public class SendMessageRequest {
         this.deadManDuration = deadManDuration;
     }
 
-    public EncryptionMessage getEncryptionMessage() {
-        return encryptionMessage;
-    }
 
-    public void setEncryptionMessage(EncryptionMessage encryptionMessage) {
-        this.encryptionMessage = encryptionMessage;
-    }
-
-    public String getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(String updatedAt) {
-        this.updatedAt = updatedAt;
+    public SendMessageRequest toRequest() {
+        SendMessageRequest request = new SendMessageRequest();
+        request.setSender(getSender());
+        request.setSubject(getSubject());
+        request.setContent(getContent());
+        request.setReceivers(getReceivers());
+        request.setCc(getCc());
+        request.setBcc(getBcc());
+        request.setFolder(getFolder());
+        request.setDestructDate(getDestructDate());
+        request.setDelayedDelivery(getDelayedDelivery());
+        request.setDeadManDuration(getDeadManDuration());
+        request.setSend(isSend());
+        request.setIsEncrypted(getIsEncrypted());
+        request.setHtml(isHtml());
+        request.setSubjectEncrypted(isSubjectEncrypted());
+        request.setMailbox(getMailbox());
+        request.setLastAction(getLastAction());
+        request.setParent(getParent());
+        return request;
     }
 }

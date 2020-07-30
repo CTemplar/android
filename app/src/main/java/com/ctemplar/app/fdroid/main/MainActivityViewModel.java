@@ -3,6 +3,7 @@ package com.ctemplar.app.fdroid.main;
 import android.app.Application;
 import android.text.TextUtils;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -24,8 +25,8 @@ import com.ctemplar.app.fdroid.net.response.Myself.MyselfResponse;
 import com.ctemplar.app.fdroid.net.response.Myself.MyselfResult;
 import com.ctemplar.app.fdroid.net.response.Myself.SettingsEntity;
 import com.ctemplar.app.fdroid.net.response.SignInResponse;
-import com.ctemplar.app.fdroid.notification.NotificationService;
-import com.ctemplar.app.fdroid.notification.NotificationServiceListener;
+import com.ctemplar.app.fdroid.services.NotificationService;
+import com.ctemplar.app.fdroid.services.NotificationServiceListener;
 import com.ctemplar.app.fdroid.repository.ContactsRepository;
 import com.ctemplar.app.fdroid.repository.ManageFoldersRepository;
 import com.ctemplar.app.fdroid.repository.MessagesRepository;
@@ -69,7 +70,7 @@ public class MainActivityViewModel extends AndroidViewModel {
     private final NotificationServiceListener notificationServiceListener = message
             -> getMessages(10, 0, currentFolder.getValue());
 
-    public MainActivityViewModel(Application application) {
+    public MainActivityViewModel(@NonNull Application application) {
         super(application);
         userRepository = CTemplarApp.getUserRepository();
         contactsRepository = CTemplarApp.getContactsRepository();
@@ -267,7 +268,6 @@ public class MainActivityViewModel extends AndroidViewModel {
         contactsResponse.postValue(contactList.isEmpty() ? null : contactList);
 
         contactsRepository.getContactsList(limit, offset)
-                .observeOn(Schedulers.computation())
                 .subscribe(new Observer<ContactsResponse>() {
                     @Override
                     public void onSubscribe(Disposable d) {

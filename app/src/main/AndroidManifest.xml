@@ -32,6 +32,31 @@
                 android:resource="@xml/provider_paths" />
         </provider>
 
+        <service android:name=".services.NotificationService"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.ctemplar.service.notification.START" />
+                <action android:name="com.ctemplar.service.notification.STOP" />
+            </intent-filter>
+        </service>
+
+        <service android:name=".services.SendMailService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.ctemplar.service.email.send" />
+            </intent-filter>
+        </service>
+
+        <receiver android:name=".services.NotificationServiceBroadcastReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="com.ctemplar.notification_service.START" />
+            </intent-filter>
+        </receiver>
+
         <activity
             android:name=".splash.SplashActivity"
             android:label="@string/app_name"
@@ -56,7 +81,7 @@
 
         <activity
             android:name=".login.LoginActivity"
-            android:configChanges="screenSize|orientation"
+            android:configChanges="orientation|screenSize"
             android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
@@ -71,7 +96,8 @@
                 android:resource="@xml/searchable" />
         </activity>
 
-        <activity android:name=".message.SendMessageActivity" />
+        <activity android:name=".message.SendMessageActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize" />
         <activity android:name=".message.ViewMessagesActivity" />
         <activity android:name=".contacts.AddContactActivity" />
         <activity android:name=".contacts.EditContactActivity" />
@@ -93,24 +119,6 @@
         <activity android:name=".settings.SignatureActivity" />
         <activity android:name=".mailboxes.MailboxesActivity" />
         <activity android:name=".mailboxes.AddMailboxActivity" />
-
-        <service android:name=".notification.NotificationService"
-            android:enabled="true"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.ctemplar.service.notification.START" />
-                <action android:name="com.ctemplar.service.notification.STOP" />
-            </intent-filter>
-        </service>
-
-        <receiver android:name=".notification.NotificationServiceBroadcastReceiver"
-            android:enabled="true"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <action android:name="com.ctemplar.notification_service.START" />
-            </intent-filter>
-        </receiver>
 
     </application>
 
