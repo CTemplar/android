@@ -8,7 +8,7 @@ repositories {
 ext {
     versionMajor = 1
     versionMinor = 3
-    versionBuild = 2
+    versionBuild = 3
 }
 
 android {
@@ -16,7 +16,7 @@ android {
     defaultConfig {
         applicationId "mobileapp.ctemplar.com.ctemplarapp"
         minSdkVersion 16
-        versionCode 42
+        versionCode 43
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
