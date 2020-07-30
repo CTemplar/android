@@ -1,0 +1,5 @@
+* Sending mail in the background
+* Optimized loading thread messages
+* Improved attachments encryption speed
+* Dark mode setting
+* Other improvements
