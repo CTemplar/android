@@ -767,10 +767,10 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         sendMessageRequest.setFolder(SENT);
 
         if (destructDeliveryInMillis != null) {
-            sendMessageRequest.setDestructDate(AppUtils.datetimeForServer(destructDeliveryInMillis));
+            sendMessageRequest.setDestructDate(AppUtils.millisToServer(destructDeliveryInMillis));
         }
         if (delayedDeliveryInMillis != null) {
-            sendMessageRequest.setDelayedDelivery(AppUtils.datetimeForServer(delayedDeliveryInMillis));
+            sendMessageRequest.setDelayedDelivery(AppUtils.millisToServer(delayedDeliveryInMillis));
             sendMessageRequest.setSend(false);
             sendMessageRequest.setFolder(OUTBOX);
         }

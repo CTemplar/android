@@ -162,6 +162,7 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesView
             if (leftTime != null) {
                 holder.txtStatus.setText(holder.root.getResources().getString(R.string.txt_left_time_delay_delivery, leftTime));
                 holder.txtStatus.setBackgroundColor(ctx.getResources().getColor(R.color.colorDarkGreen));
+                holder.txtStatus.setVisibility(View.VISIBLE);
             } else {
                 holder.txtStatus.setVisibility(View.GONE);
             }
@@ -169,6 +170,7 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesView
             String leftTime = AppUtils.elapsedTime(message.getDestructDate());
             if (leftTime != null) {
                 holder.txtStatus.setText(holder.root.getResources().getString(R.string.txt_left_time_destruct, leftTime));
+                holder.txtStatus.setVisibility(View.VISIBLE);
             } else {
                 holder.txtStatus.setVisibility(View.GONE);
             }
@@ -177,6 +179,7 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesView
             if (leftTime != null) {
                 holder.txtStatus.setText(holder.root.getResources().getString(R.string.txt_left_time_dead_mans_timer, leftTime));
                 holder.txtStatus.setBackgroundColor(ctx.getResources().getColor(R.color.colorRed0));
+                holder.txtStatus.setVisibility(View.VISIBLE);
             } else {
                 holder.txtStatus.setVisibility(View.GONE);
             }
