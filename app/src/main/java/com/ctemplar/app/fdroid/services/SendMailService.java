@@ -61,14 +61,13 @@ public class SendMailService extends IntentService {
     private static final String SEND_MAIL_ACTION = "com.ctemplar.service.mail.send";
     private static final String SEND_MAIL_NOTIFICATION_CHANNEL_ID = "com.ctemplar.mail.sending";
 
-    //    private static Gson GSON = new GsonBuilder().setDateFormat(SERVER_FULL_DATE_FORMAT).create();
-    private static Gson GSON = new Gson();
-
     private static final String MESSAGE_ID_EXTRA_KEY = "message_id";
     private static final String MESSAGE_PROVIDER_EXTRA_KEY = "message_provider";
     private static final String PUBLIC_KEYS_EXTRA_KEY = "public_keys";
     private static final String ATTACHMENTS_EXTRA_KEY = "attachments";
     private static final String EXTERNAL_ENCRYPTION_EXTRA_KEY = "external_encryption";
+
+    private static Gson GSON = new Gson();
 
     public SendMailService() {
         super(TAG);
@@ -232,7 +231,7 @@ public class SendMailService extends IntentService {
         }
         request.setIsEncrypted(!isEmptyReceiverKeys);
         request.setSubjectEncrypted(isSubjectEncrypted && !isEmptyReceiverKeys);
-        request.setUpdated(new Date());
+        request.setUpdatedAt(AppUtils.convertToServerDatePattern(new Date()));
 
         MessagesResult messagesResult;
         boolean isDraft = isDraft(request);
@@ -400,8 +399,8 @@ public class SendMailService extends IntentService {
                             true
                     );
         } catch (Throwable e) {
-            if(e instanceof HttpException) {
-                if (((HttpException)e).code() == 413) {
+            if (e instanceof HttpException) {
+                if (((HttpException) e).code() == 413) {
                     ToastUtils.showLongToast(this, getString(R.string.error_upload_attachment_too_large));
                 } else {
                     ToastUtils.showLongToast(this, getString(R.string.error_upload_attachment));

@@ -69,7 +69,7 @@ public class SendMessageRequest {
     private List<MessageAttachment> attachments;
 
     @SerializedName("updated")
-    private Date updated;
+    private String updatedAt;
 
     public SendMessageRequest() {
 
@@ -243,11 +243,11 @@ public class SendMessageRequest {
         this.encryptionMessage = encryptionMessage;
     }
 
-    public Date getUpdated() {
-        return updated;
+    public String getUpdatedAt() {
+        return updatedAt;
     }
 
-    public void setUpdated(Date updated) {
-        this.updated = updated;
+    public void setUpdatedAt(String updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }
