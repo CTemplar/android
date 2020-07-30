@@ -8,6 +8,8 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:name=".CTemplarApp"
@@ -31,9 +33,17 @@
         </provider>
 
         <service
-            android:name=".services.MessagingService">
+            android:name=".services.CloudMessagingService"
+            android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+        <service android:name=".services.SendMailService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.ctemplar.service.email.send" />
             </intent-filter>
         </service>
 
@@ -62,7 +72,7 @@
 
         <activity
             android:name=".login.LoginActivity"
-            android:configChanges="screenSize|orientation"
+            android:configChanges="orientation|screenSize"
             android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
@@ -77,7 +87,8 @@
                 android:resource="@xml/searchable" />
         </activity>
 
-        <activity android:name=".message.SendMessageActivity" />
+        <activity android:name=".message.SendMessageActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize" />
         <activity android:name=".message.ViewMessagesActivity" />
         <activity android:name=".contacts.AddContactActivity" />
         <activity android:name=".contacts.EditContactActivity" />

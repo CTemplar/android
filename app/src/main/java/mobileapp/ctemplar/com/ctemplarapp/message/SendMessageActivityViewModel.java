@@ -19,6 +19,7 @@ import java.util.List;
 
 import io.reactivex.Observer;
 import io.reactivex.Single;
+import io.reactivex.SingleObserver;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
@@ -40,8 +41,10 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.entity.ContactEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MessageEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.AttachmentProvider;
+import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageAttachmentProvider;
 import mobileapp.ctemplar.com.ctemplarapp.security.PGPManager;
 import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
+import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.FileUtils;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -59,7 +62,7 @@ public class SendMessageActivityViewModel extends ViewModel {
 
     private MutableLiveData<ResponseStatus> responseStatus = new MutableLiveData<>();
     private MutableLiveData<ResponseStatus> uploadAttachmentStatus = new MutableLiveData<>();
-    private MutableLiveData<MessageAttachment> uploadAttachmentResponse = new MutableLiveData<>();
+    private MutableLiveData<MessageAttachmentProvider> uploadAttachmentResponse = new MutableLiveData<>();
     private MutableLiveData<ResponseStatus> deleteAttachmentStatus = new MutableLiveData<>();
     private MutableLiveData<ResponseStatus> updateAttachmentStatus = new MutableLiveData<>();
     private MutableLiveData<Boolean> grabAttachmentStatus = new MutableLiveData<>();
@@ -147,7 +150,7 @@ public class SendMessageActivityViewModel extends ViewModel {
         return grabAttachmentStatus;
     }
 
-    public LiveData<MessageAttachment> getUploadAttachmentResponse() {
+    public LiveData<MessageAttachmentProvider> getUploadAttachmentResponse() {
         return uploadAttachmentResponse;
     }
 
@@ -207,7 +210,7 @@ public class SendMessageActivityViewModel extends ViewModel {
         if (!isEmptyReceiverKeys) {
             String[] publicKeys = receiverPublicKeys.toArray(new String[0]);
             content = PGPManager.encrypt(content, publicKeys);
-            if (isSubjectEncrypted && !subject.isEmpty()) {
+            if (isSubjectEncrypted && EditTextUtils.isNotEmpty(subject)) {
                 subject = PGPManager.encrypt(subject, publicKeys);
             }
             request.setContent(content);
@@ -217,14 +220,14 @@ public class SendMessageActivityViewModel extends ViewModel {
         request.setSubjectEncrypted(isSubjectEncrypted && !isEmptyReceiverKeys);
 
         userRepository.updateMessage(id, request)
-                .subscribe(new Observer<MessagesResult>() {
+                .subscribe(new SingleObserver<MessagesResult>() {
                     @Override
                     public void onSubscribe(Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(MessagesResult result) {
+                    public void onSuccess(MessagesResult result) {
                         messagesResult.postValue(result);
                         responseStatus.postValue(ResponseStatus.RESPONSE_NEXT_MESSAGES);
                     }
@@ -234,35 +237,25 @@ public class SendMessageActivityViewModel extends ViewModel {
                         messagesResult.postValue(null);
                         responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
                     }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
                 });
     }
 
     public void setEncryptionMessage(long id, SendMessageRequest sendMessageRequest) {
         userRepository.updateMessage(id, sendMessageRequest)
-                .subscribe(new Observer<MessagesResult>() {
+                .subscribe(new SingleObserver<MessagesResult>() {
                     @Override
                     public void onSubscribe(Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(MessagesResult messagesResult) {
+                    public void onSuccess(MessagesResult messagesResult) {
                         messageEncryptionResult.postValue(messagesResult);
                     }
 
                     @Override
                     public void onError(Throwable e) {
                         Timber.e(e.getCause());
-                    }
-
-                    @Override
-                    public void onComplete() {
-
                     }
                 });
     }
@@ -277,7 +270,7 @@ public class SendMessageActivityViewModel extends ViewModel {
 
                     @Override
                     public void onNext(Response<Void> voidResponse) {
-
+                        Timber.i("deleteMessage");
                     }
 
                     @Override
@@ -337,15 +330,13 @@ public class SendMessageActivityViewModel extends ViewModel {
 
                     @Override
                     public void onNext(final ContactsResponse response) {
-                        new Thread(() -> {
-                            ContactData[] contacts = response.getResults();
-                            ContactData[] decryptedContacts = Contact.decryptContactData(contacts);
+                        ContactData[] contacts = response.getResults();
+                        ContactData[] decryptedContacts = Contact.decryptContactData(contacts);
 
-                            contactsRepository.saveContacts(decryptedContacts);
-                            List<Contact> contactList1 = Contact.fromResponseResults(decryptedContacts);
+                        contactsRepository.saveContacts(decryptedContacts);
+                        List<Contact> contactList1 = Contact.fromResponseResults(decryptedContacts);
 
-                            contactsResponse.postValue(contactList1);
-                        }).start();
+                        contactsResponse.postValue(contactList1);
                     }
 
                     @Override
@@ -360,8 +351,13 @@ public class SendMessageActivityViewModel extends ViewModel {
                 });
     }
 
-    public void uploadAttachment(MultipartBody.Part attachment, final long message, boolean isEncrypted) {
-        userRepository.uploadAttachment(attachment, message, isEncrypted)
+    public void uploadAttachment(
+            @NonNull final MultipartBody.Part attachment,
+            final long messageId,
+            final String filePath,
+            final boolean isEncrypted
+    ) {
+        userRepository.uploadAttachment(attachment, messageId, isEncrypted)
                 .subscribe(new Observer<MessageAttachment>() {
                     @Override
                     public void onSubscribe(Disposable d) {
@@ -370,14 +366,21 @@ public class SendMessageActivityViewModel extends ViewModel {
 
                     @Override
                     public void onNext(MessageAttachment messageAttachment) {
-                        uploadAttachmentStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
-                        uploadAttachmentResponse.postValue(messageAttachment);
+                        if (messageAttachment != null) {
+                            MessageAttachmentProvider messageAttachmentProvider
+                                    = MessageAttachmentProvider.fromResponse(messageAttachment);
+                            messageAttachmentProvider.setFilePath(filePath);
+                            uploadAttachmentResponse.postValue(messageAttachmentProvider);
+                            uploadAttachmentStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
+                        } else {
+                            uploadAttachmentStatus.postValue(ResponseStatus.RESPONSE_ERROR);
+                        }
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        if(e instanceof HttpException) {
-                            if (((HttpException)e).code() == 413) {
+                        if (e instanceof HttpException) {
+                            if (((HttpException) e).code() == 413) {
                                 uploadAttachmentStatus.postValue(ResponseStatus.RESPONSE_ERROR_TOO_LARGE);
                             } else {
                                 uploadAttachmentStatus.postValue(ResponseStatus.RESPONSE_ERROR);
@@ -397,7 +400,7 @@ public class SendMessageActivityViewModel extends ViewModel {
     @Nullable
     MessageAttachment uploadAttachmentSync(
             MultipartBody.Part attachment,
-            final long message,
+            long message,
             boolean isEncrypted
     ) {
         try {
@@ -419,16 +422,21 @@ public class SendMessageActivityViewModel extends ViewModel {
         }
     }
 
-    public void updateAttachment(long id, MultipartBody.Part attachment, long message, boolean isEncrypted) {
+    public void updateAttachment(
+            long id,
+            MultipartBody.Part attachment,
+            long message,
+            boolean isEncrypted
+    ) {
         userRepository.updateAttachment(id, attachment, message, isEncrypted)
-                .subscribe(new Observer<MessageAttachment>() {
+                .subscribe(new SingleObserver<MessageAttachment>() {
                     @Override
                     public void onSubscribe(Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(MessageAttachment messageAttachment) {
+                    public void onSuccess(MessageAttachment messageAttachment) {
                         updateAttachmentStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
                     }
 
@@ -443,11 +451,6 @@ public class SendMessageActivityViewModel extends ViewModel {
                         } else {
                             updateAttachmentStatus.postValue(ResponseStatus.RESPONSE_ERROR);
                         }
-                    }
-
-                    @Override
-                    public void onComplete() {
-
                     }
                 });
     }
@@ -513,7 +516,9 @@ public class SendMessageActivityViewModel extends ViewModel {
             for (AttachmentProvider forwardedAttachment : forwardedAttachments) {
                 MessageAttachment attachment = remakeAttachment(forwardedAttachment, messageId);
                 if (attachment != null) {
-                    uploadAttachmentResponse.postValue(attachment);
+                    MessageAttachmentProvider messageAttachmentProvider
+                            = MessageAttachmentProvider.fromResponse(attachment);
+                    uploadAttachmentResponse.postValue(messageAttachmentProvider);
                 } else {
                     Timber.e("grabForwardedAttachments uploaded attachment is null");
                 }
@@ -544,7 +549,7 @@ public class SendMessageActivityViewModel extends ViewModel {
         BufferedInputStream inputStream = new BufferedInputStream(downloadStream);
         File downloadedFile;
         try {
-            downloadedFile = File.createTempFile("AtTouchMeNow", ".ext", cacheDir);
+            downloadedFile = File.createTempFile("attachment", ".ext", cacheDir);
         } catch (IOException e) {
             Timber.e(e, "remakeAttachment createTempFile error");
             return null;

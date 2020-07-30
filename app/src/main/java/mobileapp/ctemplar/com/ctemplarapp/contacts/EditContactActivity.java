@@ -21,9 +21,8 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.entity.Contact;
 import timber.log.Timber;
 
 public class EditContactActivity extends BaseActivity {
-
     public static final String ARG_ID = "id";
-    private EditContactViewModel viewModel;
+    private ContactsViewModel viewModel;
     private long contactId;
 
     @BindView(R.id.activity_edit_contact_name_input)
@@ -65,7 +64,7 @@ public class EditContactActivity extends BaseActivity {
             supportActionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        viewModel = new ViewModelProvider(this).get(EditContactViewModel.class);
+        viewModel = new ViewModelProvider(this).get(ContactsViewModel.class);
         viewModel.getResponseStatus().observe(this, this::handleResponse);
         viewModel.getContactResponse().observe(this, contact -> {
             if (contact != null) {

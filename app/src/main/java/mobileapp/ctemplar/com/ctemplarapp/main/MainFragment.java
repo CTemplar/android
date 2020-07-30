@@ -18,7 +18,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import mobileapp.ctemplar.com.ctemplarapp.R;
-import mobileapp.ctemplar.com.ctemplarapp.contacts.ContactFragment;
+import mobileapp.ctemplar.com.ctemplarapp.contacts.ContactsFragment;
 import mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames;
 import timber.log.Timber;
 
@@ -27,7 +27,7 @@ public class MainFragment extends Fragment {
     private int contentLayoutId = R.id.content_frame;
 
     private InboxFragment inboxFragment;
-    private ContactFragment contactFragment;
+    private ContactsFragment contactsFragment;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -52,7 +52,7 @@ public class MainFragment extends Fragment {
         }
 
         inboxFragment = new InboxFragment();
-        contactFragment = new ContactFragment();
+        contactsFragment = new ContactsFragment();
 
         Toolbar toolbar = view.findViewById(R.id.main_toolbar);
         activity.setSupportActionBar(toolbar);
@@ -91,8 +91,8 @@ public class MainFragment extends Fragment {
         }
         Fragment currentFragment = getCurrentFragment();
         if (MainFolderNames.CONTACT.equals(folder)) {
-            if (!(currentFragment instanceof ContactFragment)) {
-                showFragment(contactFragment);
+            if (!(currentFragment instanceof ContactsFragment)) {
+                showFragment(contactsFragment);
             }
         } else {
             if (!(currentFragment instanceof InboxFragment)) {
@@ -102,7 +102,7 @@ public class MainFragment extends Fragment {
     }
 
     boolean isCurrentFragmentIsContact() {
-        return getCurrentFragment() instanceof ContactFragment;
+        return getCurrentFragment() instanceof ContactsFragment;
     }
 
     boolean isCurrentFragmentIsInbox() {

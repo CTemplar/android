@@ -27,8 +27,8 @@ import timber.log.Timber;
 public class AppUtils {
     private static UserStore userStore = CTemplarApp.getUserStore();
 
+    public static final String MAIN_DATE_PATTERN = "yyyy-MM-dd'T'HH:mm:ss'Z'";
     private static final String DATE_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
-    private static final String LEFT_DATE_PATTERN = "yyyy-MM-dd'T'HH:mm:ss'Z'";
     private static final String VIEW_DATE_PATTERN = "MMM d, yyyy',' h:mm a";
     private static final String EMAIL_PATTERN = "EEE',' MMMM d, yyyy 'at' h:mm a";
 
@@ -42,7 +42,7 @@ public class AppUtils {
                     nowCalendar.getTimeInMillis() - timezoneOffsetInMillis()
             );
 
-            DateFormat parseFormat = new SimpleDateFormat(LEFT_DATE_PATTERN, Locale.getDefault());
+            DateFormat parseFormat = new SimpleDateFormat(MAIN_DATE_PATTERN, Locale.getDefault());
             parseFormat.setTimeZone(getTimeZone());
             try {
                 Date parseDate = parseFormat.parse(stringDate);
@@ -166,14 +166,20 @@ public class AppUtils {
         return false;
     }
 
-    public static String datetimeForServer(long timeInMillis) {
-        DateFormat standardFormat = new SimpleDateFormat(LEFT_DATE_PATTERN, Locale.getDefault());
+    public static String convertToServerDatePattern(Date date) {
+        DateFormat dateFormat = new SimpleDateFormat(MAIN_DATE_PATTERN, Locale.getDefault());
+        dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        return dateFormat.format(date);
+    }
+
+    public static String millisToServer(long timeInMillis) {
+        DateFormat standardFormat = new SimpleDateFormat(MAIN_DATE_PATTERN, Locale.getDefault());
         standardFormat.setTimeZone(getTimeZone());
         return standardFormat.format(timeInMillis);
     }
 
     public static Long millisFromServer(String stringDate) {
-        DateFormat parseFormat = new SimpleDateFormat(LEFT_DATE_PATTERN, Locale.getDefault());
+        DateFormat parseFormat = new SimpleDateFormat(MAIN_DATE_PATTERN, Locale.getDefault());
         try {
             Date parseDate = parseFormat.parse(stringDate);
             return parseDate.getTime();

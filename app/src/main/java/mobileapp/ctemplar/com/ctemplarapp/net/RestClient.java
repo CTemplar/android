@@ -55,7 +55,7 @@ public class RestClient {
             Timber.e(e);
         }
         client
-//                .addInterceptor(interceptor)
+                .addInterceptor(interceptor)
                 .addInterceptor(new HttpTokenInterceptor())
                 .authenticator(new TokenAuthenticator())
                 .readTimeout(30, TimeUnit.SECONDS)

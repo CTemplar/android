@@ -3,6 +3,7 @@ package mobileapp.ctemplar.com.ctemplarapp.net.request;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.EncryptionMessage;
@@ -66,6 +67,9 @@ public class SendMessageRequest {
 
     @SerializedName("attachments")
     private List<MessageAttachment> attachments;
+
+    @SerializedName("updated")
+    private String updatedAt;
 
     public SendMessageRequest() {
 
@@ -237,5 +241,13 @@ public class SendMessageRequest {
 
     public void setEncryptionMessage(EncryptionMessage encryptionMessage) {
         this.encryptionMessage = encryptionMessage;
+    }
+
+    public String getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(String updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }

@@ -14,6 +14,10 @@
             android:fragment="mobileapp.ctemplar.com.ctemplarapp.settings.SettingsActivity$SavingContactsFragment" />
 
         <Preference
+            android:title="@string/settings_dark_mode"
+            android:fragment="mobileapp.ctemplar.com.ctemplarapp.settings.SettingsActivity$DarkModeFragment" />
+
+        <Preference
             android:title="@string/settings_filters"
             android:key="@string/filters" />
 

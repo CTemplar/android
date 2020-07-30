@@ -207,17 +207,18 @@
     <string name="txt_create_folder_free_error">Usuários gratuitos podem criar, no máximo, 5 pastas.</string>
 
     <!-- SEND MESSAGE -->
-    <string name="toast_message_sent">E-mail enviado</string>
-    <string name="toast_message_not_sent">O e-mail não foi enviado</string>
-    <string name="toast_message_saved_as_draft">Mensagem salva como rascunho</string>
-    <string name="toast_message_not_created">A mensagem não foi criada</string>
-    <string name="toast_message_not_loaded">A mensagem não foi carregada</string>
+    <string name="toast_message_sent">Mail enviado</string>
+    <string name="toast_message_not_sent">O mail não foi enviado</string>
+    <string name="toast_message_saved_as_draft">Correio salvo como rascunho</string>
+    <string name="toast_message_not_created">Correio não criado</string>
+    <string name="toast_message_not_loaded">Correio não carregado</string>
     <string name="toast_attachment_unable_read_file">Não foi possível ler o arquivo no caminho selecionado</string>
     <string name="toast_attachment_unable_read_path">"Não foi possível ler o caminho selecionado"</string>
-    <string name="txt_sending_mail">Enviando e-mail…</string>
+    <string name="txt_sending_mail">Enviando mail…</string>
+    <string name="txt_saving_mail">Salvando correio…</string>
     <string name="txt_uploading">Enviando…</string>
-    <string name="dialog_discard_mail">Descartar o e-mail</string>
-    <string name="dialog_discard_confirm">Tem certeza de que deseja descartar este e-mail?</string>
+    <string name="dialog_discard_mail">Descartar o mail</string>
+    <string name="dialog_discard_confirm">Tem certeza de que deseja descartar este mail?</string>
     <string name="dialog_save_in_drafts">Salvar nos rascunhos</string>
     <string name="action_discard">Descartar</string>
     <string name="action_cancel">Cancelar</string>
@@ -230,7 +231,7 @@
 
     <!-- NOTIFICATION SERVICE -->
     <string name="notification_channel_name">CTemplar</string>
-    <string name="notification_channel_description">Novo E-mail</string>
+    <string name="notification_channel_description">Novo mail</string>
 
     <!-- CUSTOM FILTERS -->
     <string name="txt_filters_title">Filtros</string>
@@ -330,6 +331,7 @@
     <string name="settings_auto_save_contacts">Salvar contatos automaticamente</string>
     <string name="settings_filters">Filtros</string>
     <string name="settings_wb_list">Lista branca / Lista negra</string>
+    <string name="settings_dark_mode">Modo escuro</string>
     <string name="settings_folders">Pastas</string>
     <string name="settings_manage_folders">Gerenciar pastas</string>
     <string name="settings_security">Segurança</string>
@@ -443,5 +445,11 @@
         <item>10 minutos</item>
         <item>1 hora</item>
         <item>24 horas</item>
+    </string-array>
+
+    <string-array name="dark_mode_entries">
+        <item>Auto (detectar)</item>
+        <item>Em</item>
+        <item>Fora</item>
     </string-array>
 </resources>
