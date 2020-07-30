@@ -106,7 +106,8 @@ public class NotificationService extends Service {
         Intent restartServiceIntent = new Intent(getApplicationContext(), this.getClass());
         restartServiceIntent.setPackage(getPackageName());
 
-        PendingIntent restartServicePendingIntent = PendingIntent.getService(getApplicationContext(), 1, restartServiceIntent, PendingIntent.FLAG_ONE_SHOT);
+        PendingIntent restartServicePendingIntent = PendingIntent.getService(getApplicationContext(),
+                1, restartServiceIntent, PendingIntent.FLAG_ONE_SHOT);
         AlarmManager alarmService = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
         alarmService.set(
                 AlarmManager.ELAPSED_REALTIME,
@@ -124,9 +125,9 @@ public class NotificationService extends Service {
         }
         createForegroundNotificationChannel();
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this,
-                FOREGROUND_NOTIFICATION_CHANNEL_ID)
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+        NotificationCompat.Builder builder = new NotificationCompat
+                .Builder(this, FOREGROUND_NOTIFICATION_CHANNEL_ID)
+                .setPriority(NotificationCompat.PRIORITY_LOW)
                 .setOngoing(true)
                 .setWhen(0)
                 .setContentTitle(getString(R.string.title_notification_service))
@@ -142,7 +143,7 @@ public class NotificationService extends Service {
             NotificationChannel channel = new NotificationChannel(
                     FOREGROUND_NOTIFICATION_CHANNEL_ID,
                     getString(R.string.title_notification_service),
-                    NotificationManager.IMPORTANCE_DEFAULT);
+                    NotificationManager.IMPORTANCE_LOW);
             channel.setDescription(getString(R.string.title_service_running));
             ((NotificationManager) getSystemService(NOTIFICATION_SERVICE))
                     .createNotificationChannel(channel);

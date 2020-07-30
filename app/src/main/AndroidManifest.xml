@@ -81,7 +81,7 @@
 
         <activity
             android:name=".login.LoginActivity"
-            android:configChanges="screenSize|orientation"
+            android:configChanges="orientation|screenSize"
             android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
@@ -96,7 +96,8 @@
                 android:resource="@xml/searchable" />
         </activity>
 
-        <activity android:name=".message.SendMessageActivity" />
+        <activity android:name=".message.SendMessageActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize" />
         <activity android:name=".message.ViewMessagesActivity" />
         <activity android:name=".contacts.AddContactActivity" />
         <activity android:name=".contacts.EditContactActivity" />

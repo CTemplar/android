@@ -736,7 +736,6 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
     }
 
     private void sendMessage() {
-        Timber.e("SEND MESSAGE");
         Object fromEmailItem = spinnerFrom.getSelectedItem();
         if (fromEmailItem == null) {
             Timber.e("sendMessage spinnerFrom.getSelectedItem is null");

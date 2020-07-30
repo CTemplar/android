@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.text.TextUtils;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.preference.PreferenceManager;
 
 import com.ctemplar.app.fdroid.net.entity.UserEntity;
@@ -32,6 +33,7 @@ public class UserStoreImpl implements UserStore{
     private static final String KEY_AUTO_LOCK_TIME = "key_auto_lock_time";
     private static final String KEY_LAST_PAUSE_TIME = "key_last_pause_time";
     private static final String KEY_IS_LOCKED = "key_is_locked";
+    private static final String KEY_DARK_MODE = "key_dark_mode";
 
     private SharedPreferences preferences;
     private SharedPreferences globalPreferences;
@@ -239,5 +241,15 @@ public class UserStoreImpl implements UserStore{
     @Override
     public boolean isLocked() {
         return preferences.getBoolean(KEY_IS_LOCKED, false);
+    }
+
+    @Override
+    public void setDarkMode(int value) {
+        preferences.edit().putInt(KEY_DARK_MODE, value).apply();
+    }
+
+    @Override
+    public int getDarkMode() {
+        return preferences.getInt(KEY_DARK_MODE, AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
     }
 }

@@ -337,6 +337,7 @@
     <string name="settings_auto_save_contacts">Automatically save contacts</string>
     <string name="settings_filters">Filters</string>
     <string name="settings_wb_list">Whitelist/Blacklist</string>
+    <string name="settings_dark_mode">Dark mode</string>
     <string name="settings_folders">Folders</string>
     <string name="settings_manage_folders">Manage folders</string>
     <string name="settings_security">Security</string>
@@ -358,33 +359,6 @@
     <string name="toast_contacts_encrypted">Contacts are encrypted</string>
     <string name="toast_contacts_decrypted">Contacts are decrypted</string>
     <string name="toast_decryption_error">An error occurred while decrypting. Try again</string>
-
-    <!-- PREFERENCE KEYS -->
-    <string name="change_password_reset_data">Delete data</string>
-    <string name="toast_email_not_valid">Email is not valid</string>
-    <string name="storage_limit_info">%1$s of %2$s</string>
-    <string translatable="false" name="password_key">password_key</string>
-    <string translatable="false" name="pin_lock_key">pin_lock_key</string>
-    <string translatable="false" name="signature_key">signature_key</string>
-    <string translatable="false" name="mobile_signature_key">mobile_signature_key</string>
-    <string translatable="false" name="filters">filters</string>
-    <string translatable="false" name="white_black_list">white_black_list</string>
-    <string translatable="false" name="manage_folders">manage_folders</string>
-    <string translatable="false" name="push_notifications_enabled">push_notifications_enabled</string>
-    <string translatable="false" name="recovery_email_enabled">recovery_email_enabled</string>
-    <string translatable="false" name="recovery_email">recovery_email</string>
-    <string translatable="false" name="anti_phishing_enabled">anti_phishing_enabled</string>
-    <string translatable="false" name="anti_phishing_key">anti_phishing_key</string>
-    <string translatable="false" name="anti_phishing_description_key">anti_phishing_description_key</string>
-    <string translatable="false" name="setting_keys">setting_keys</string>
-    <string translatable="false" name="email_addresses">email_addresses</string>
-    <string translatable="false" name="local_storage_limit">local_storage_limit</string>
-    <string translatable="false" name="recovery_email_holder">recovery_email_holder</string>
-    <string translatable="false" name="subject_encryption">subject_encryption</string>
-    <string translatable="false" name="subject_encryption_enabled">subject_encryption_enabled</string>
-    <string translatable="false" name="contacts_encryption_enabled">contacts_encryption_enabled</string>
-    <string translatable="false" name="auto_save_contacts_enabled">auto_save_contacts_enabled</string>
-    <string translatable="false" name="setting_id">setting_id</string>
 
     <!-- MAILBOXES -->
     <string name="addresses">Addresses</string>
@@ -459,6 +433,34 @@
     <string name="whitelist">Whitelist</string>
     <string name="blacklist">Blacklist</string>
 
+    <!-- PREFERENCE KEYS -->
+    <string name="change_password_reset_data">Delete data</string>
+    <string name="toast_email_not_valid">Email is not valid</string>
+    <string name="storage_limit_info">%1$s of %2$s</string>
+    <string translatable="false" name="password_key">password_key</string>
+    <string translatable="false" name="pin_lock_key">pin_lock_key</string>
+    <string translatable="false" name="signature_key">signature_key</string>
+    <string translatable="false" name="mobile_signature_key">mobile_signature_key</string>
+    <string translatable="false" name="filters">filters</string>
+    <string translatable="false" name="white_black_list">white_black_list</string>
+    <string translatable="false" name="manage_folders">manage_folders</string>
+    <string translatable="false" name="push_notifications_enabled">push_notifications_enabled</string>
+    <string translatable="false" name="recovery_email_enabled">recovery_email_enabled</string>
+    <string translatable="false" name="recovery_email">recovery_email</string>
+    <string translatable="false" name="anti_phishing_enabled">anti_phishing_enabled</string>
+    <string translatable="false" name="anti_phishing_key">anti_phishing_key</string>
+    <string translatable="false" name="anti_phishing_description_key">anti_phishing_description_key</string>
+    <string translatable="false" name="setting_keys">setting_keys</string>
+    <string translatable="false" name="email_addresses">email_addresses</string>
+    <string translatable="false" name="local_storage_limit">local_storage_limit</string>
+    <string translatable="false" name="recovery_email_holder">recovery_email_holder</string>
+    <string translatable="false" name="subject_encryption">subject_encryption</string>
+    <string translatable="false" name="subject_encryption_enabled">subject_encryption_enabled</string>
+    <string translatable="false" name="contacts_encryption_enabled">contacts_encryption_enabled</string>
+    <string translatable="false" name="auto_save_contacts_enabled">auto_save_contacts_enabled</string>
+    <string translatable="false" name="dark_mode_key">dark_mode_key</string>
+    <string translatable="false" name="setting_id">setting_id</string>
+
     <string-array name="filter_parameter_list">
         <item>subject</item>
         <item>sender</item>
@@ -476,5 +478,17 @@
         <item>10 minutes</item>
         <item>1 hour</item>
         <item>24 hours</item>
+    </string-array>
+
+    <string-array name="dark_mode_entries">
+        <item>Auto (detect)</item>
+        <item>On</item>
+        <item>Off</item>
+    </string-array>
+
+    <string-array name="dark_mode_values">
+        <item>auto</item>
+        <item>on</item>
+        <item>off</item>
     </string-array>
 </resources>

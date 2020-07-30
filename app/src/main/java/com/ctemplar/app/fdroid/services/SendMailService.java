@@ -145,14 +145,16 @@ public class SendMailService extends IntentService {
         String title = isDraft ? getString(R.string.txt_saving_mail) : getString(R.string.txt_sending_mail);
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         createSendMailNotificationChannel(notificationManager, title);
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, SEND_MAIL_NOTIFICATION_CHANNEL_ID);
-        notificationBuilder.setContentTitle(title)
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat
+                .Builder(this, SEND_MAIL_NOTIFICATION_CHANNEL_ID)
+                .setPriority(NotificationCompat.PRIORITY_LOW)
+                .setContentTitle(title)
                 .setSmallIcon(R.drawable.ic_message_send)
                 .setOngoing(true)
                 .setProgress(100, 10, true);
         notificationManager.notify((int) messageId, notificationBuilder.build());
 
-        List<String> publicKeyList = Arrays.asList(publicKeys);
+        List<String> publicKeyList = new ArrayList<>(Arrays.asList(publicKeys));
         if (encryptionMessageProvider != null) {
             String randomSecret = encryptionMessageProvider.getRandomSecret();
             String password = encryptionMessageProvider.getPassword();
@@ -202,7 +204,7 @@ public class SendMailService extends IntentService {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(
                     SEND_MAIL_NOTIFICATION_CHANNEL_ID,
-                    title, NotificationManager.IMPORTANCE_HIGH);
+                    title, NotificationManager.IMPORTANCE_LOW);
             notificationManager.createNotificationChannel(channel);
         }
     }
@@ -447,4 +449,3 @@ public class SendMailService extends IntentService {
         LaunchUtils.launchService(context, intent);
     }
 }
-

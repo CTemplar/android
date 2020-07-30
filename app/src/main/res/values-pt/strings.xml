@@ -333,6 +333,7 @@
     <string name="settings_auto_save_contacts">Salvar contatos automaticamente</string>
     <string name="settings_filters">Filtros</string>
     <string name="settings_wb_list">Lista branca / Lista negra</string>
+    <string name="settings_dark_mode">Modo escuro</string>
     <string name="settings_folders">Pastas</string>
     <string name="settings_manage_folders">Gerenciar pastas</string>
     <string name="settings_security">Segurança</string>
@@ -446,5 +447,11 @@
         <item>10 minutos</item>
         <item>1 hora</item>
         <item>24 horas</item>
+    </string-array>
+
+    <string-array name="dark_mode_entries">
+        <item>Auto (detectar)</item>
+        <item>Em</item>
+        <item>Fora</item>
     </string-array>
 </resources>

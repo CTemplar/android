@@ -150,7 +150,7 @@
             android:textSize="22sp"
             android:fontFamily="@font/lato_regular"
             android:textStyle="bold"
-            android:textColor="@color/colorDarkBlue3"
+            android:textColor="?android:textColorPrimary"
             android:maxLines="1"
             app:layout_constraintEnd_toStartOf="@+id/message_holder_subject"
             app:layout_constraintStart_toStartOf="@+id/message_top_layout"

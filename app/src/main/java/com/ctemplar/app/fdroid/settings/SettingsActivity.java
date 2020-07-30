@@ -14,12 +14,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.CheckBoxPreference;
 import androidx.preference.EditTextPreference;
+import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceCategory;
 import androidx.preference.PreferenceFragmentCompat;
@@ -216,6 +218,36 @@ public class SettingsActivity extends BaseActivity {
                 autoSaveContactsPreference.setOnPreferenceChangeListener((preference, newValue) -> {
                     boolean isEnabled = (boolean) newValue;
                     settingsModel.updateAutoSaveEnabled(settingId, isEnabled);
+                    return true;
+                });
+            }
+        }
+    }
+
+    public static class DarkModeFragment extends BasePreferenceFragment {
+        @Override
+        public void onCreatePreferences(Bundle bundle, String rootKey) {
+            setPreferencesFromResource(R.xml.dark_mode_settings, rootKey);
+
+            ListPreference darkModeListPreference = findPreference(getString(R.string.dark_mode_key));
+            if (darkModeListPreference != null) {
+                darkModeListPreference.setOnPreferenceChangeListener((preference, newValue) -> {
+                    if (!(newValue instanceof String)) {
+                        return false;
+                    }
+                    int mode;
+                    switch ((String) newValue) {
+                        case "on":
+                            mode = AppCompatDelegate.MODE_NIGHT_YES;
+                            break;
+                        case "off":
+                            mode = AppCompatDelegate.MODE_NIGHT_NO;
+                            break;
+                        default:
+                            mode = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM;
+                    }
+                    userStore.setDarkMode(mode);
+                    AppCompatDelegate.setDefaultNightMode(mode);
                     return true;
                 });
             }
