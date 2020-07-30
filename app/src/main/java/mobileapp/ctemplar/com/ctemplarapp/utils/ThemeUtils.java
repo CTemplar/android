@@ -9,22 +9,26 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 
 import androidx.annotation.DimenRes;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.content.ContextCompat;
 import androidx.webkit.WebSettingsCompat;
 import androidx.webkit.WebViewFeature;
 
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.R;
+import mobileapp.ctemplar.com.ctemplarapp.repository.UserStore;
 
 public class ThemeUtils {
     public static void setTheme(Activity activity) {
-        int sdkInt = Build.VERSION.SDK_INT;
-        if (sdkInt >= Build.VERSION_CODES.LOLLIPOP && sdkInt < Build.VERSION_CODES.M) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
+                && Build.VERSION.SDK_INT < Build.VERSION_CODES.M
+        ) {
             int color = ContextCompat.getColor(activity, R.color.colorDarkBlue);
             activity.getWindow().setStatusBarColor(color);
         }
-        boolean isPinLockEnabled = CTemplarApp.getUserStore().isPINLockEnabled();
-        if (isPinLockEnabled) {
+        UserStore userStore = CTemplarApp.getUserStore();
+        AppCompatDelegate.setDefaultNightMode(userStore.getDarkMode());
+        if (userStore.isPINLockEnabled()) {
             activity.getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
                     WindowManager.LayoutParams.FLAG_SECURE);
         }

@@ -44,6 +44,7 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.provider.AttachmentProvider
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageAttachmentProvider;
 import mobileapp.ctemplar.com.ctemplarapp.security.PGPManager;
 import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
+import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.FileUtils;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -209,7 +210,7 @@ public class SendMessageActivityViewModel extends ViewModel {
         if (!isEmptyReceiverKeys) {
             String[] publicKeys = receiverPublicKeys.toArray(new String[0]);
             content = PGPManager.encrypt(content, publicKeys);
-            if (isSubjectEncrypted && !subject.isEmpty()) {
+            if (isSubjectEncrypted && EditTextUtils.isNotEmpty(subject)) {
                 subject = PGPManager.encrypt(subject, publicKeys);
             }
             request.setContent(content);
@@ -366,11 +367,13 @@ public class SendMessageActivityViewModel extends ViewModel {
                     @Override
                     public void onNext(MessageAttachment messageAttachment) {
                         if (messageAttachment != null) {
-                            uploadAttachmentStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
                             MessageAttachmentProvider messageAttachmentProvider
                                     = MessageAttachmentProvider.fromResponse(messageAttachment);
                             messageAttachmentProvider.setFilePath(filePath);
                             uploadAttachmentResponse.postValue(messageAttachmentProvider);
+                            uploadAttachmentStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
+                        } else {
+                            uploadAttachmentStatus.postValue(ResponseStatus.RESPONSE_ERROR);
                         }
                     }
 

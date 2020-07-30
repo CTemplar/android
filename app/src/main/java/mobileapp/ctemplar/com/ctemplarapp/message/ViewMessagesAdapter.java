@@ -189,7 +189,7 @@ public class ViewMessagesAdapter extends BaseAdapter {
         // check for status (time delete, delayed delivery)
         if (EditTextUtils.isNotEmpty(messageData.getDelayedDelivery())) {
             String leftTime = AppUtils.elapsedTime(messageData.getDelayedDelivery());
-            if (EditTextUtils.isNotEmpty(leftTime)) {
+            if (leftTime != null) {
                 statusTextView.setText(view.getResources().getString(R.string.txt_left_time_delay_delivery, leftTime));
                 statusTextView.setBackgroundColor(view.getResources().getColor(R.color.colorDarkGreen));
             } else {
@@ -197,14 +197,14 @@ public class ViewMessagesAdapter extends BaseAdapter {
             }
         } else if (EditTextUtils.isNotEmpty(messageData.getDestructDate())) {
             String leftTime = AppUtils.elapsedTime(messageData.getDestructDate());
-            if (EditTextUtils.isNotEmpty(leftTime)) {
+            if (leftTime != null) {
                 statusTextView.setText(view.getResources().getString(R.string.txt_left_time_destruct, leftTime));
             } else {
                 statusTextView.setVisibility(View.GONE);
             }
         } else if (EditTextUtils.isNotEmpty(messageData.getDeadManDuration())) {
             String leftTime = AppUtils.deadMansTime(Long.parseLong(messageData.getDeadManDuration()));
-            if (EditTextUtils.isNotEmpty(leftTime)) {
+            if (leftTime != null) {
                 statusTextView.setText(view.getResources().getString(R.string.txt_left_time_dead_mans_timer, leftTime));
                 statusTextView.setBackgroundColor(view.getResources().getColor(R.color.colorRed0));
             } else {

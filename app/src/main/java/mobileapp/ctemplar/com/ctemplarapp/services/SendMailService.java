@@ -27,6 +27,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
@@ -56,21 +57,17 @@ import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderN
 
 public class SendMailService extends IntentService {
     private static final String TAG = "SendMailService";
+
     private static final String SEND_MAIL_ACTION = "com.ctemplar.service.mail.send";
-
     private static final String SEND_MAIL_NOTIFICATION_CHANNEL_ID = "com.ctemplar.mail.sending";
-    private static final String SEND_MAIL_NOTIFICATION_CHANNEL_NAME = "Sending mail...";
-    private static final String SEND_MAIL_NOTIFICATION_CHANNEL_DESCRIPTION = "Status";
-
-//    private static final String SERVER_FULL_DATE_FORMAT = "yyyy-MM-dd'T'hh:mm:ss";
-//    private static Gson GSON = new GsonBuilder().setDateFormat(SERVER_FULL_DATE_FORMAT).create();
-    private static Gson GSON = new Gson();
 
     private static final String MESSAGE_ID_EXTRA_KEY = "message_id";
     private static final String MESSAGE_PROVIDER_EXTRA_KEY = "message_provider";
     private static final String PUBLIC_KEYS_EXTRA_KEY = "public_keys";
     private static final String ATTACHMENTS_EXTRA_KEY = "attachments";
     private static final String EXTERNAL_ENCRYPTION_EXTRA_KEY = "external_encryption";
+
+    private static Gson GSON = new Gson();
 
     public SendMailService() {
         super(TAG);
@@ -84,9 +81,6 @@ public class SendMailService extends IntentService {
         String action = intent.getAction();
         if (action == null) {
             return;
-        }
-        if (LaunchUtils.needForeground(intent)) {
-            runAsForeground();
         }
         switch (action) {
             case SEND_MAIL_ACTION:
@@ -136,10 +130,6 @@ public class SendMailService extends IntentService {
         }
     }
 
-    private void runAsForeground() {
-
-    }
-
     public void sendMail(
             final long messageId,
             @NonNull
@@ -149,18 +139,21 @@ public class SendMailService extends IntentService {
             @Nullable
             final EncryptionMessageProvider encryptionMessageProvider
     ) {
+        SendMessageRequest sendMessageRequest = sendMessageRequestProvider.toRequest();
+        boolean isDraft = isDraft(sendMessageRequest);
+        String title = isDraft ? getString(R.string.txt_saving_mail) : getString(R.string.txt_sending_mail);
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        createUploadMessageNotificationChannel(notificationManager);
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, SEND_MAIL_NOTIFICATION_CHANNEL_ID);
-        notificationBuilder.setContentTitle("Sending mail")
-                .setContentText("In progress..")
+        createSendMailNotificationChannel(notificationManager, title);
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat
+                .Builder(this, SEND_MAIL_NOTIFICATION_CHANNEL_ID)
+                .setPriority(NotificationCompat.PRIORITY_LOW)
+                .setContentTitle(title)
                 .setSmallIcon(R.drawable.ic_message_send)
                 .setOngoing(true)
                 .setProgress(100, 10, true);
         notificationManager.notify((int) messageId, notificationBuilder.build());
 
-        SendMessageRequest sendMessageRequest = sendMessageRequestProvider.toRequest();
-        List<String> publicKeyList = Arrays.asList(publicKeys);
+        List<String> publicKeyList = new ArrayList<>(Arrays.asList(publicKeys));
         if (encryptionMessageProvider != null) {
             String randomSecret = encryptionMessageProvider.getRandomSecret();
             String password = encryptionMessageProvider.getPassword();
@@ -182,8 +175,8 @@ public class SendMailService extends IntentService {
 
         final List<MessageAttachment> messageAttachmentList = new ArrayList<>(attachmentProviders.length);
         if (attachmentProviders.length > 0) {
-            if (!DRAFT.equals(sendMessageRequest.getFolder())) {
-                notificationBuilder.setContentText("Attachments uploading");
+            if (!isDraft) {
+                notificationBuilder.setContentText(getString(R.string.txt_attachments_in_processing));
                 notificationBuilder.setProgress(attachmentProviders.length, 0, false);
                 notificationManager.notify((int) messageId, notificationBuilder.build());
                 for (int i = 0, attachmentProvidersLength = attachmentProviders.length; i < attachmentProvidersLength; ++i) {
@@ -206,13 +199,11 @@ public class SendMailService extends IntentService {
         updateMessage(messageId, sendMessageRequest, publicKeyList, notificationManager, notificationBuilder);
     }
 
-    private void createUploadMessageNotificationChannel(NotificationManager notificationManager) {
+    private void createSendMailNotificationChannel(NotificationManager notificationManager, String title) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            int importance = NotificationManager.IMPORTANCE_HIGH;
             NotificationChannel channel = new NotificationChannel(
-                    SEND_MAIL_NOTIFICATION_CHANNEL_ID, SEND_MAIL_NOTIFICATION_CHANNEL_NAME, importance);
-            channel.setDescription(SEND_MAIL_NOTIFICATION_CHANNEL_DESCRIPTION);
-            channel.setSound(null, null);
+                    SEND_MAIL_NOTIFICATION_CHANNEL_ID,
+                    title, NotificationManager.IMPORTANCE_LOW);
             notificationManager.createNotificationChannel(channel);
         }
     }
@@ -232,7 +223,7 @@ public class SendMailService extends IntentService {
         if (!isEmptyReceiverKeys) {
             String[] publicKeys = receiverPublicKeys.toArray(new String[0]);
             content = PGPManager.encrypt(content, publicKeys);
-            if (isSubjectEncrypted && !subject.isEmpty()) {
+            if (isSubjectEncrypted && EditTextUtils.isNotEmpty(subject)) {
                 subject = PGPManager.encrypt(subject, publicKeys);
             }
             request.setContent(content);
@@ -240,40 +231,46 @@ public class SendMailService extends IntentService {
         }
         request.setIsEncrypted(!isEmptyReceiverKeys);
         request.setSubjectEncrypted(isSubjectEncrypted && !isEmptyReceiverKeys);
+        request.setUpdatedAt(AppUtils.convertToServerDatePattern(new Date()));
 
         MessagesResult messagesResult;
+        boolean isDraft = isDraft(request);
         try {
             messagesResult = CTemplarApp.getUserRepository().updateMessageSync(messageId, request);
         } catch (Throwable e) {
-            onFailedUpdateMessage(e, messageId, notificationManager, notificationBuilder);
+            onFailedUpdateMessage(e, messageId, isDraft, notificationManager, notificationBuilder);
             return;
         }
-        onMessageUploadedSuccess(messagesResult, notificationManager, notificationBuilder);
+        onMessageSentSuccess(messagesResult, isDraft, notificationManager, notificationBuilder);
     }
 
     private void onFailedUpdateMessage(
             final Throwable e,
             final long messageId,
+            final boolean isDraft,
             final NotificationManager notificationManager,
             final NotificationCompat.Builder notificationBuilder
     ) {
-        Timber.e(e, "onFailedUpdateMessage");
-        ToastUtils.showLongToast(this, "Failed upload message: " + e.getMessage());
-        notificationBuilder.setContentText("Upload failed")
-                .setOngoing(false);
+        Timber.e(e, "onFailedUpdateMessage, draft: %s", isDraft);
+        String errorMessage = isDraft ? getString(R.string.toast_not_saved)
+                : getString(R.string.toast_message_not_sent);
+        ToastUtils.showToast(getApplicationContext(), errorMessage);
+        notificationBuilder.setContentText(errorMessage).setOngoing(false);
         notificationManager.notify((int) messageId, notificationBuilder.build());
         notificationManager.cancel((int) messageId);
     }
 
-    private void onMessageUploadedSuccess(
+    private void onMessageSentSuccess(
             final MessagesResult messagesResult,
+            final boolean isDraft,
             final NotificationManager notificationManager,
             final NotificationCompat.Builder notificationBuilder
     ) {
-        Timber.i("Uploaded message success");
-        ToastUtils.showLongToast(this, "Uploaded message success");
-        notificationBuilder.setContentText("Uploaded success")
-                .setOngoing(false);
+        Timber.i("onMessageSentSuccess");
+        String displayMessage = isDraft ? getString(R.string.toast_message_saved_as_draft)
+                : getString(R.string.toast_message_sent);
+        ToastUtils.showLongToast(getApplicationContext(), displayMessage);
+        notificationBuilder.setContentText(displayMessage).setOngoing(false);
         notificationManager.notify((int) messagesResult.getId(), notificationBuilder.build());
         notificationManager.cancel((int) messagesResult.getId());
     }
@@ -402,14 +399,14 @@ public class SendMailService extends IntentService {
                             true
                     );
         } catch (Throwable e) {
-            if(e instanceof HttpException) {
-                if (((HttpException)e).code() == 413) {
-                    ToastUtils.showLongToast(this, "Upload attachment: Too large file");
+            if (e instanceof HttpException) {
+                if (((HttpException) e).code() == 413) {
+                    ToastUtils.showLongToast(this, getString(R.string.error_upload_attachment_too_large));
                 } else {
-                    ToastUtils.showLongToast(this, "Upload attachment: Something went wrong");
+                    ToastUtils.showLongToast(this, getString(R.string.error_upload_attachment));
                 }
             } else {
-                ToastUtils.showLongToast(this, "Upload attachment: Some error is occured");
+                ToastUtils.showLongToast(this, getString(R.string.error_upload_attachment));
             }
             return null;
         }
@@ -420,6 +417,10 @@ public class SendMailService extends IntentService {
             Timber.e("updateAttachment: delete encrypted cached file error");
         }
         return result;
+    }
+
+    private boolean isDraft(SendMessageRequest sendMessageRequest) {
+        return DRAFT.equals(sendMessageRequest.getFolder());
     }
 
     public static void sendMessage(

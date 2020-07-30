@@ -117,7 +117,8 @@ public class CloudMessagingService extends FirebaseMessagingService {
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.putExtra(PARENT_ID, id);
         intent.putExtra(FOLDER_NAME, folder);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent,
+                PendingIntent.FLAG_ONE_SHOT);
 
         NotificationCompat.Builder notificationBuilder = new NotificationCompat
                 .Builder(this, NOTIFICATION_CHANNEL_ID)
@@ -137,11 +138,12 @@ public class CloudMessagingService extends FirebaseMessagingService {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel notificationChannel = new NotificationChannel(
-                    NOTIFICATION_CHANNEL_ID, getString(R.string.notification_channel_name),
+                    NOTIFICATION_CHANNEL_ID,
+                    getString(R.string.notification_channel_name),
                     NotificationManager.IMPORTANCE_HIGH
             );
             notificationChannel.setDescription(getString(R.string.notification_channel_description));
-//            notificationChannel.setShowBadge(true);
+            notificationChannel.setShowBadge(false);
             notificationChannel.enableLights(true);
             notificationChannel.setLightColor(Color.RED);
             notificationChannel.enableVibration(true);

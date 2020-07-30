@@ -12,6 +12,7 @@ import timber.log.Timber;
 
  public class PGPManager {
     private static final int KEY_STRENGTH = 4096;
+    private static final boolean COMPRESSION = false;
 
     public static PGPKeyEntity generateKeys(String keyRingId, String password) {
         try {
@@ -48,7 +49,7 @@ import timber.log.Timber;
     public static byte[] encrypt(byte[] inputBytes, String[] pubKeys, boolean asciiArmor) {
         try {
             PGPPublicKeyRing[] pgpPublicKeyRings = PGPLib.getPGPPublicKeyRings(pubKeys);
-            return PGPLib.encrypt(inputBytes, pgpPublicKeyRings, asciiArmor);
+            return PGPLib.encrypt(inputBytes, pgpPublicKeyRings, asciiArmor, COMPRESSION);
         } catch (Exception e) {
             Timber.e(e);
         }

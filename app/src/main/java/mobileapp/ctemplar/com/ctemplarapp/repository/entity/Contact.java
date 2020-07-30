@@ -14,7 +14,6 @@ import mobileapp.ctemplar.com.ctemplarapp.security.PGPManager;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EncryptUtils;
 
 public class Contact {
-
     private long id;
     private String email;
     private String name;

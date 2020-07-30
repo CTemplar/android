@@ -73,7 +73,7 @@ public class UserRepository {
     private UserStore userStore;
 
     public static UserRepository getInstance() {
-        if(instance == null) {
+        if (instance == null) {
             instance = new UserRepository();
         }
         return instance;
@@ -328,6 +328,7 @@ public class UserRepository {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
+
     public Observable<MailboxesResponse> getMailboxesList(int limit, int offset) {
         return service.getMailboxes(limit, offset)
                 .subscribeOn(Schedulers.io())

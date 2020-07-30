@@ -112,12 +112,15 @@ class PGPLib {
         return new byte[0];
     }
 
-    static byte[] encrypt(byte[] inputBytes, PGPPublicKeyRing[] pgpPublicKeyRings, boolean asciiArmor) throws IOException, PGPException {
+    static byte[] encrypt(byte[] inputBytes, PGPPublicKeyRing[] pgpPublicKeyRings, boolean asciiArmor, boolean compression) throws IOException, PGPException {
+        if (pgpPublicKeyRings.length <= 0) {
+            return new byte[0];
+        }
         ByteArrayOutputStream encOut = new ByteArrayOutputStream();
         OutputStream out = asciiArmor ? new ArmoredOutputStream(encOut) : encOut;
         ByteArrayOutputStream bOut = new ByteArrayOutputStream();
         PGPCompressedDataGenerator comData = new PGPCompressedDataGenerator(PGPCompressedDataGenerator.ZIP);
-        OutputStream cos = comData.open(bOut);
+        OutputStream cos = compression ? comData.open(bOut) : bOut;
         PGPLiteralDataGenerator lData = new PGPLiteralDataGenerator();
         OutputStream pOut = lData.open(
                 cos, PGPLiteralData.BINARY, PGPLiteralData.CONSOLE, inputBytes.length, new Date()
@@ -132,18 +135,16 @@ class PGPLib {
                         .setSecureRandom(new SecureRandom())
         );
 
-        if (pgpPublicKeyRings.length > 0) {
-            for (PGPPublicKeyRing pgpPublicKeyRing : pgpPublicKeyRings) {
-                PGPPublicKey encKey = getPublicKey(pgpPublicKeyRing);
-                if (encKey != null) {
-                    encGen.addMethod(new JcePublicKeyKeyEncryptionMethodGenerator(encKey));
-                }
+        for (PGPPublicKeyRing pgpPublicKeyRing : pgpPublicKeyRings) {
+            PGPPublicKey encKey = getPublicKey(pgpPublicKeyRing);
+            if (encKey != null) {
+                encGen.addMethod(new JcePublicKeyKeyEncryptionMethodGenerator(encKey));
             }
-            byte[] encryptedBytes = bOut.toByteArray();
-            OutputStream cOut = encGen.open(out, encryptedBytes.length);
-            cOut.write(encryptedBytes);
-            cOut.close();
         }
+        byte[] encryptedBytes = bOut.toByteArray();
+        OutputStream cOut = encGen.open(out, encryptedBytes.length);
+        cOut.write(encryptedBytes);
+        cOut.close();
         out.close();
         return encOut.toByteArray();
     }

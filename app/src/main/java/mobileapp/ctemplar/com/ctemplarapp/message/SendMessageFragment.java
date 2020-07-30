@@ -391,6 +391,12 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         return !(finished || onHandleBackPressed());
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        cancelSendingProgress();
+    }
+
 
     @Override
     public void onClick(View v) {
@@ -447,14 +453,6 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
                 encryptMessageDialogFragment.show(getParentFragmentManager(), "EncryptMessageDialogFragment");
                 encryptMessageDialogFragment.setEncryptMessagePassword(onSetEncryptMessagePassword);
                 break;
-        }
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        if (sendingProgress != null && sendingProgress.isShowing()) {
-            sendingProgress.cancel();
         }
     }
 
@@ -768,13 +766,11 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         sendMessageRequest.setSend(true);
         sendMessageRequest.setFolder(SENT);
 
-//        sendMessageRequest.setIsEncrypted(true);
-
         if (destructDeliveryInMillis != null) {
-            sendMessageRequest.setDestructDate(AppUtils.datetimeForServer(destructDeliveryInMillis));
+            sendMessageRequest.setDestructDate(AppUtils.millisToServer(destructDeliveryInMillis));
         }
         if (delayedDeliveryInMillis != null) {
-            sendMessageRequest.setDelayedDelivery(AppUtils.datetimeForServer(delayedDeliveryInMillis));
+            sendMessageRequest.setDelayedDelivery(AppUtils.millisToServer(delayedDeliveryInMillis));
             sendMessageRequest.setSend(false);
             sendMessageRequest.setFolder(OUTBOX);
         }
@@ -826,6 +822,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
                 attachments.toArray(new MessageAttachmentProvider[0]),
                 EncryptionMessageProvider.fromResponse(messageEncryptionResult)
         );
+        cancelSendingProgress();
         if (!draftMessage) {
             finish();
         }
@@ -890,17 +887,16 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         if (activity == null) {
             return false;
         }
-
         new AlertDialog.Builder(activity)
                 .setTitle(getResources().getString(R.string.dialog_discard_mail))
                 .setMessage(getResources().getString(R.string.dialog_discard_confirm))
                 .setPositiveButton(getResources().getString(R.string.dialog_save_in_drafts), (dialog, which) -> {
-                            sendMessage();
                             dialog.dismiss();
                             finish();
                         }
                 )
                 .setNegativeButton(getResources().getString(R.string.action_discard), (dialog, which) -> {
+                            draftMessage = false;
                             sendModel.deleteMessage(currentMessageId);
                             dialog.dismiss();
                             finish();
@@ -963,19 +959,25 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         composeEditText.addTextChangedListener(textWatcher);
     }
 
-    private void finish() {
-        finished = true;
-        Activity activity = getActivity();
-        if (activity != null) {
-            activity.onBackPressed();
-        }
-    }
-
     private void grabForwardedAttachments() {
         if (forwardedAttachments != null) {
             sendModel.grabForwardedAttachments(forwardedAttachments, currentMessageId);
             messageAttachmentsProcessingTextView.setVisibility(View.VISIBLE);
             attachmentsProcessingEnabled = true;
+        }
+    }
+
+    private void cancelSendingProgress() {
+        if (sendingProgress != null && sendingProgress.isShowing()) {
+            sendingProgress.cancel();
+        }
+    }
+
+    private void finish() {
+        finished = true;
+        Activity activity = getActivity();
+        if (activity != null) {
+            activity.onBackPressed();
         }
     }
 
