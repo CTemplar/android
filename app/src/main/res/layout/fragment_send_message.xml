@@ -294,7 +294,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/lato_regular"
-            android:inputType="textEmailAddress"
+            android:inputType="text"
             android:layout_marginLeft="15dp"
             android:hint="@string/txt_subject"
             android:letterSpacing="0.05"
