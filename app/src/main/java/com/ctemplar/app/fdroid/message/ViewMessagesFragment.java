@@ -57,7 +57,6 @@ import com.ctemplar.app.fdroid.repository.provider.UserDisplayProvider;
 import com.ctemplar.app.fdroid.utils.AppUtils;
 import com.ctemplar.app.fdroid.utils.EditTextUtils;
 import com.ctemplar.app.fdroid.utils.EncryptUtils;
-import com.ctemplar.app.fdroid.utils.FileUtils;
 import timber.log.Timber;
 
 import static com.ctemplar.app.fdroid.message.SendMessageActivity.ATTACHMENT_LIST;
@@ -419,9 +418,9 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
     }
 
     private String replyHead() {
-        String createdAt = AppUtils.getStringDate(lastMessage.getCreatedAt());
+        String messageDate = AppUtils.getDeliveryDate(lastMessage);
         String sender = "<" + lastMessage.getSender() + ">";
-        return getResources().getString(R.string.txt_user_wrote, createdAt, sender);
+        return getString(R.string.txt_user_wrote, AppUtils.getStringDate(messageDate), sender);
     }
 
     private String addQuotesToNames(String[] names) {
@@ -435,15 +434,13 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
 
     private String forwardHead() {
         String receiversString = addQuotesToNames(lastMessage.getReceivers());
-        String sender = lastMessage.getSender();
-        String createdAt = AppUtils.getStringDate(lastMessage.getCreatedAt());
-        String subject = lastMessage.getSubject();
+        String messageDate = AppUtils.getDeliveryDate(lastMessage);
 
-        return "\n\n---------- " + getResources().getString(R.string.txt_forwarded_message) + "----------\n" +
-                getResources().getString(R.string.txt_from) + " <" + sender + ">\n" +
-                getResources().getString(R.string.txt_date) + ": " + createdAt + "\n" +
-                getResources().getString(R.string.txt_subject) + ": " + subject + "\n" +
-                getResources().getString(R.string.txt_to) + " " + receiversString + "\n\n";
+        return "\n\n---------- " + getString(R.string.txt_forwarded_message) + "----------\n" +
+                getString(R.string.txt_from) + " <" + lastMessage.getSender() + ">\n" +
+                getString(R.string.txt_date) + ": " + AppUtils.getStringDate(messageDate) + "\n" +
+                getString(R.string.txt_subject) + ": " + lastMessage.getSubject() + "\n" +
+                getString(R.string.txt_to) + " " + receiversString + "\n\n";
     }
 
     private void forwardMessage(boolean withAttachments) {

@@ -121,7 +121,7 @@ public class ViewMessagesAdapter extends BaseAdapter {
         String lastAction = messageData.getLastAction();
         String folderName = messageData.getFolderName();
         String message = messageData.getContent();
-        String messageFullDate = AppUtils.messageFullDate(messageData.getCreatedAt());
+        String messageDate = AppUtils.getDeliveryDate(messageData);
 
         boolean isHtml = messageData.isHtml();
         boolean isHasAttachment = messageData.isHasAttachments()
@@ -173,12 +173,13 @@ public class ViewMessagesAdapter extends BaseAdapter {
 
         collapsedSenderTextView.setText(senderDisplay.getName());
         collapsedContentTextView.setText(EditTextUtils.fromHtml(message));
-        collapsedShortDateTextView.setText(AppUtils.messageDate(messageData.getCreatedAt()));
+        collapsedShortDateTextView.setText(AppUtils.messageDate(messageDate));
 
         senderTextView.setText(senderDisplay.getName());
         receiverTextView.setText(userDisplayListToNamesString(receiverDisplayList));
-        shortDateTextView.setText(AppUtils.messageDate(messageData.getCreatedAt()));
-        fullDateEmailTextView.setText(view.getResources().getString(R.string.txt_date_format, messageFullDate));
+        shortDateTextView.setText(AppUtils.messageDate(messageDate));
+        fullDateEmailTextView.setText(view.getResources().getString(R.string.txt_date_format,
+                AppUtils.messageFullDate(messageDate)));
 
         // check for folder
         if (EditTextUtils.isNotEmpty(folderName)) {
