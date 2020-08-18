@@ -419,9 +419,9 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
 
     private String replyHead() {
         String messageDate = AppUtils.getDeliveryDate(lastMessage);
-        String createdAt = AppUtils.getStringDate(messageDate);
-        String sender = "<" + lastMessage.getSender() + ">";
-        return getResources().getString(R.string.txt_user_wrote, createdAt, sender);
+
+        return getString(R.string.txt_user_wrote,
+                AppUtils.getStringDate(messageDate), "<" + lastMessage.getSender() + ">");
     }
 
     private String addQuotesToNames(String[] names) {
@@ -434,17 +434,13 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
     }
 
     private String forwardHead() {
-        String receiversString = addQuotesToNames(lastMessage.getReceivers());
-        String sender = lastMessage.getSender();
         String messageDate = AppUtils.getDeliveryDate(lastMessage);
-        String createdAt = AppUtils.getStringDate(messageDate);
-        String subject = lastMessage.getSubject();
 
-        return "\n\n---------- " + getResources().getString(R.string.txt_forwarded_message) + "----------\n" +
-                getResources().getString(R.string.txt_from) + " <" + sender + ">\n" +
-                getResources().getString(R.string.txt_date) + ": " + createdAt + "\n" +
-                getResources().getString(R.string.txt_subject) + ": " + subject + "\n" +
-                getResources().getString(R.string.txt_to) + " " + receiversString + "\n\n";
+        return "\n\n---------- " + getString(R.string.txt_forwarded_message) + "----------\n" +
+                getString(R.string.txt_from) + " <" + lastMessage.getSender() + ">\n" +
+                getString(R.string.txt_date) + ": " + AppUtils.getStringDate(messageDate) + "\n" +
+                getString(R.string.txt_subject) + ": " + lastMessage.getSubject() + "\n" +
+                getString(R.string.txt_to) + " " + addQuotesToNames(lastMessage.getReceivers()) + "\n\n";
     }
 
     private void forwardMessage(boolean withAttachments) {
