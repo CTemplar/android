@@ -57,7 +57,6 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.provider.UserDisplayProvide
 import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EncryptUtils;
-import mobileapp.ctemplar.com.ctemplarapp.utils.FileUtils;
 import timber.log.Timber;
 
 import static mobileapp.ctemplar.com.ctemplarapp.message.SendMessageActivity.ATTACHMENT_LIST;
@@ -419,7 +418,8 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
     }
 
     private String replyHead() {
-        String createdAt = AppUtils.getStringDate(lastMessage.getCreatedAt());
+        String messageDate = AppUtils.getDeliveryDate(lastMessage);
+        String createdAt = AppUtils.getStringDate(messageDate);
         String sender = "<" + lastMessage.getSender() + ">";
         return getResources().getString(R.string.txt_user_wrote, createdAt, sender);
     }
@@ -436,7 +436,8 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
     private String forwardHead() {
         String receiversString = addQuotesToNames(lastMessage.getReceivers());
         String sender = lastMessage.getSender();
-        String createdAt = AppUtils.getStringDate(lastMessage.getCreatedAt());
+        String messageDate = AppUtils.getDeliveryDate(lastMessage);
+        String createdAt = AppUtils.getStringDate(messageDate);
         String subject = lastMessage.getSubject();
 
         return "\n\n---------- " + getResources().getString(R.string.txt_forwarded_message) + "----------\n" +

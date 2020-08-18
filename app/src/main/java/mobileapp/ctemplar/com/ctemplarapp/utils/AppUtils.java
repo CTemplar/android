@@ -7,6 +7,8 @@ import android.os.Vibrator;
 import android.text.TextUtils;
 import android.webkit.MimeTypeMap;
 
+import androidx.annotation.Nullable;
+
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -22,6 +24,7 @@ import java.util.TimeZone;
 
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserStore;
+import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageProvider;
 import timber.log.Timber;
 
 public class AppUtils {
@@ -35,71 +38,73 @@ public class AppUtils {
     private static final String ELAPSED_TIME_FORMAT = "%2dd %02d:%02d";
     private static final String ELAPSED_TIME_SHORT_FORMAT = "%02d:%02d";
 
-    public static String elapsedTime(String stringDate) {
-        if (!TextUtils.isEmpty(stringDate)) {
-            Calendar nowCalendar = Calendar.getInstance(getTimeZone());
-            nowCalendar.setTimeInMillis(
-                    nowCalendar.getTimeInMillis() - timezoneOffsetInMillis()
-            );
-
-            DateFormat parseFormat = new SimpleDateFormat(MAIN_DATE_PATTERN, Locale.getDefault());
-            parseFormat.setTimeZone(getTimeZone());
-            try {
-                Date parseDate = parseFormat.parse(stringDate);
-                long stringTimeInMillis = parseDate.getTime();
-                long diffInMillis = stringTimeInMillis - nowCalendar.getTimeInMillis();
-                if (diffInMillis < 0) {
-                    return null;
-                }
-
-                long seconds = diffInMillis / 1000;
-                long minutes = seconds / 60;
-                long hours = minutes / 60;
-                long days = hours / 24;
-                minutes %= 60;
-                hours %= 24;
-
-                if (days <= 0) {
-                    return String.format(Locale.getDefault(), ELAPSED_TIME_SHORT_FORMAT, hours, minutes);
-                } else {
-                    return String.format(Locale.getDefault(), ELAPSED_TIME_FORMAT, days, hours, minutes);
-                }
-            } catch (ParseException e) {
-                Timber.e(e);
-            }
+    public static String elapsedTime(@Nullable String stringDate) {
+        if (TextUtils.isEmpty(stringDate)) {
+            return "";
         }
-        return null;
+        Calendar nowCalendar = Calendar.getInstance(getTimeZone());
+        nowCalendar.setTimeInMillis(
+                nowCalendar.getTimeInMillis() - timezoneOffsetInMillis()
+        );
+
+        DateFormat parseFormat = new SimpleDateFormat(MAIN_DATE_PATTERN, Locale.getDefault());
+        parseFormat.setTimeZone(getTimeZone());
+        try {
+            Date parseDate = parseFormat.parse(stringDate);
+            long stringTimeInMillis = parseDate.getTime();
+            long diffInMillis = stringTimeInMillis - nowCalendar.getTimeInMillis();
+            if (diffInMillis < 0) {
+                return null;
+            }
+
+            long seconds = diffInMillis / 1000;
+            long minutes = seconds / 60;
+            long hours = minutes / 60;
+            long days = hours / 24;
+            minutes %= 60;
+            hours %= 24;
+
+            if (days <= 0) {
+                return String.format(Locale.getDefault(), ELAPSED_TIME_SHORT_FORMAT, hours, minutes);
+            } else {
+                return String.format(Locale.getDefault(), ELAPSED_TIME_FORMAT, days, hours, minutes);
+            }
+        } catch (ParseException e) {
+            Timber.e(e);
+        }
+        return "";
     }
 
-    public static String messageDate(String stringDate) {
-        if (!TextUtils.isEmpty(stringDate)) {
-            Calendar nowCalendar = Calendar.getInstance(getTimeZone());
-            DateFormat parseFormat = new SimpleDateFormat(DATE_PATTERN, Locale.getDefault());
-            DateFormat timeFormat = new SimpleDateFormat("h:mm aa", Locale.getDefault());
-            DateFormat monthFormat = new SimpleDateFormat("MMM d", Locale.getDefault());
-            DateFormat yearFormat = new SimpleDateFormat("MMM d, yyyy", Locale.getDefault());
-
-            try {
-                Date date = parseFormat.parse(stringDate);
-                Calendar parseCalendar = parseFormat.getCalendar();
-                date.setTime(date.getTime() + timezoneOffsetInMillis());
-
-                if (nowCalendar.get(Calendar.YEAR) == parseCalendar.get(Calendar.YEAR)) {
-                    if (nowCalendar.get(Calendar.DATE) == parseCalendar.get(Calendar.DATE)) {
-                        return timeFormat.format(date);
-                    } else if (nowCalendar.get(Calendar.DATE) - parseCalendar.get(Calendar.DATE) == 1) {
-                        return "Yesterday";
-                    } else {
-                        return monthFormat.format(date);
-                    }
-                } else {
-                    return yearFormat.format(date);
-                }
-            } catch (ParseException e) {
-                Timber.e(e);
-            }
+    public static String messageDate(@Nullable String stringDate) {
+        if (TextUtils.isEmpty(stringDate)) {
+            return "";
         }
-        return null;
+        Calendar nowCalendar = Calendar.getInstance(getTimeZone());
+        DateFormat parseFormat = new SimpleDateFormat(DATE_PATTERN, Locale.getDefault());
+        DateFormat timeFormat = new SimpleDateFormat("h:mm aa", Locale.getDefault());
+        DateFormat monthFormat = new SimpleDateFormat("MMM d", Locale.getDefault());
+        DateFormat yearFormat = new SimpleDateFormat("MMM d, yyyy", Locale.getDefault());
+
+        try {
+            Date date = parseFormat.parse(stringDate);
+            Calendar parseCalendar = parseFormat.getCalendar();
+            date.setTime(date.getTime() + timezoneOffsetInMillis());
+
+            if (nowCalendar.get(Calendar.YEAR) == parseCalendar.get(Calendar.YEAR)) {
+                if (nowCalendar.get(Calendar.DATE) == parseCalendar.get(Calendar.DATE)) {
+                    return timeFormat.format(date);
+                } else if (nowCalendar.get(Calendar.DATE) - parseCalendar.get(Calendar.DATE) == 1) {
+                    return "Yesterday";
+                } else {
+                    return monthFormat.format(date);
+                }
+            } else {
+                return yearFormat.format(date);
+            }
+        } catch (ParseException e) {
+            Timber.e(e);
+        }
+        return "";
     }
 
     public static String messageFullDate(String stringDate) {
@@ -108,15 +113,22 @@ public class AppUtils {
         }
         DateFormat parseFormat = new SimpleDateFormat(DATE_PATTERN, Locale.getDefault());
         DateFormat viewFormat = new SimpleDateFormat(VIEW_DATE_PATTERN, Locale.getDefault());
-        String viewDate = "";
         try {
             Date date = parseFormat.parse(stringDate);
             date.setTime(date.getTime() + timezoneOffsetInMillis());
-            viewDate = viewFormat.format(date);
+            return viewFormat.format(date);
         } catch (ParseException e) {
             Timber.e(e);
         }
-        return viewDate;
+        return "";
+    }
+
+    @Nullable
+    public static String getDeliveryDate(@Nullable MessageProvider messageProvider) {
+        if (messageProvider == null) {
+            return "";
+        }
+        return messageProvider.isSend() ? messageProvider.getSentAt() : messageProvider.getCreatedAt();
     }
 
     public static int timezoneOffsetInMillis() {
@@ -262,19 +274,18 @@ public class AppUtils {
     }
 
     public static String getStringDate(String stringDate) {
-        if (stringDate == null) {
+        if (TextUtils.isEmpty(stringDate)) {
             return "";
         }
         DateFormat parseFormat = new SimpleDateFormat(DATE_PATTERN, Locale.getDefault());
         DateFormat viewFormat = new SimpleDateFormat(EMAIL_PATTERN, Locale.getDefault());
         try {
             Date date = parseFormat.parse(stringDate);
-            stringDate = viewFormat.format(date);
-
+            return viewFormat.format(date);
         } catch (ParseException e) {
             Timber.e("DateParse error: %s", e.getMessage());
         }
-        return stringDate;
+        return "";
     }
 
     public static void vibrate(Context context, long milliseconds) {
