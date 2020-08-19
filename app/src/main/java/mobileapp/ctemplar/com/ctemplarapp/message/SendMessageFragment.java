@@ -461,19 +461,19 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         String ccEmail = EditTextUtils.getText(ccTextView).trim();
         String bccEmail = EditTextUtils.getText(bccTextView).trim();
 
-        if (toEmail.isEmpty() || EditTextUtils.isEmailListValid(toEmail)) {
+        if (TextUtils.isEmpty(toEmail) || EditTextUtils.isEmailListValid(toEmail)) {
             toEmailTextView.setError(null);
         } else {
             toEmailTextView.setError(getString(R.string.txt_enter_valid_email));
             return;
         }
-        if (ccEmail.isEmpty() || EditTextUtils.isEmailListValid(ccEmail)) {
+        if (TextUtils.isEmpty(ccEmail) || EditTextUtils.isEmailListValid(ccEmail)) {
             ccTextView.setError(null);
         } else {
             ccTextView.setError(getString(R.string.txt_enter_valid_email));
             return;
         }
-        if (bccEmail.isEmpty() || EditTextUtils.isEmailListValid(bccEmail)) {
+        if (TextUtils.isEmpty(bccEmail) || EditTextUtils.isEmailListValid(bccEmail)) {
             bccTextView.setError(null);
         } else {
             bccTextView.setError(getString(R.string.txt_enter_valid_email));
@@ -491,13 +491,13 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         sendingProgress.show();
 
         List<String> receiverList = new ArrayList<>();
-        if (!toEmail.isEmpty()) {
+        if (EditTextUtils.isNotEmpty(toEmail)) {
             receiverList.addAll(EditTextUtils.getListFromString(toEmail));
         }
-        if (!ccEmail.isEmpty()) {
+        if (EditTextUtils.isNotEmpty(ccEmail)) {
             receiverList.addAll(EditTextUtils.getListFromString(ccEmail));
         }
-        if (!bccEmail.isEmpty()) {
+        if (EditTextUtils.isNotEmpty(bccEmail)) {
             receiverList.addAll(EditTextUtils.getListFromString(bccEmail));
         }
 
