@@ -111,13 +111,14 @@ public class CloudMessagingService extends FirebaseMessagingService {
     private void showNotification(String sender, String subject, String folder, long messageId,
                                   long parentId, boolean isSubjectEncrypted) {
         long id = (parentId == -1) ? messageId : parentId;
+        int notificationID = (messageId == -1) ? new Random().nextInt(1000) : (int) messageId;
         String content = (isSubjectEncrypted) ? getString(R.string.txt_encrypted_subject) : subject;
 
         Intent intent = new Intent(this, ViewMessagesActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.putExtra(PARENT_ID, id);
         intent.putExtra(FOLDER_NAME, folder);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent,
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, notificationID, intent,
                 PendingIntent.FLAG_ONE_SHOT);
 
         NotificationCompat.Builder notificationBuilder = new NotificationCompat
@@ -150,9 +151,6 @@ public class CloudMessagingService extends FirebaseMessagingService {
             notificationManager.createNotificationChannel(notificationChannel);
         }
 
-        int notificationID = (messageId == -1)
-                ? new Random().nextInt(1000)
-                : (int) messageId;
         notificationManager.notify(notificationID, notificationBuilder.build());
     }
 }
