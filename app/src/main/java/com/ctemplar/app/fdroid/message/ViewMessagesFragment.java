@@ -419,8 +419,9 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
 
     private String replyHead() {
         String messageDate = AppUtils.getDeliveryDate(lastMessage);
-        String sender = "<" + lastMessage.getSender() + ">";
-        return getString(R.string.txt_user_wrote, AppUtils.getStringDate(messageDate), sender);
+
+        return getString(R.string.txt_user_wrote,
+                AppUtils.getStringDate(messageDate), "<" + lastMessage.getSender() + ">");
     }
 
     private String addQuotesToNames(String[] names) {
@@ -433,14 +434,13 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
     }
 
     private String forwardHead() {
-        String receiversString = addQuotesToNames(lastMessage.getReceivers());
         String messageDate = AppUtils.getDeliveryDate(lastMessage);
 
         return "\n\n---------- " + getString(R.string.txt_forwarded_message) + "----------\n" +
                 getString(R.string.txt_from) + " <" + lastMessage.getSender() + ">\n" +
                 getString(R.string.txt_date) + ": " + AppUtils.getStringDate(messageDate) + "\n" +
                 getString(R.string.txt_subject) + ": " + lastMessage.getSubject() + "\n" +
-                getString(R.string.txt_to) + " " + receiversString + "\n\n";
+                getString(R.string.txt_to) + " " + addQuotesToNames(lastMessage.getReceivers()) + "\n\n";
     }
 
     private void forwardMessage(boolean withAttachments) {
