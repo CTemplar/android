@@ -112,14 +112,14 @@ public class InboxFragment extends BaseFragment
     @BindView(R.id.fragment_inbox_progress_layout)
     ConstraintLayout progressLayout;
 
+    @BindView(R.id.fragment_inbox_swiperefresh)
+    SwipeRefreshLayout swipeRefreshLayout;
+
     @BindView(R.id.fragment_inbox_send_layout)
     FrameLayout frameCompose;
 
     @BindView(R.id.fragment_inbox_fab_compose)
     FloatingActionButton fabCompose;
-
-    @BindView(R.id.fragment_inbox_swiperefresh)
-    SwipeRefreshLayout swipeRefreshLayout;
 
     private FilterDialogFragment.OnApplyClickListener onFilterApplyClickListener
             = new FilterDialogFragment.OnApplyClickListener() {
@@ -130,7 +130,7 @@ public class InboxFragment extends BaseFragment
             filterIsUnread = isUnread;
             filterWithAttachment = withAttachment;
             invalidateOptionsMenu();
-            showResultsIfNotEmpty();
+            showResultIfNotEmpty();
         }
     };
 
@@ -191,27 +191,30 @@ public class InboxFragment extends BaseFragment
             return;
         }
 
-        mainModel.getResponseStatus().observe(getViewLifecycleOwner(), status -> {
-            handleResponseStatus(status);
-            swipeRefreshLayout.setRefreshing(false);
-        });
+        swipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorAccent));
+        mainModel.getResponseStatus().observe(getViewLifecycleOwner(), this::handleResponseStatus);
         mainModel.getMessagesResponse().observe(getViewLifecycleOwner(), messagesResponse -> {
             handleMessagesList(messagesResponse.messages, messagesResponse.folderName,
                     messagesResponse.offset);
         });
         mainModel.getCurrentFolder().observe(getViewLifecycleOwner(), folderName -> {
             currentFolder = folderName;
+            swipeRefreshLayout.setRefreshing(false);
             requestNewMessages();
             folderEmptyTextView.setText(getString(R.string.title_empty_messages, folderName));
-            loadMessagesList();
             recyclerView.setAdapter(adapter);
             updateTouchListenerSwipeOptions(currentFolder);
-            swipeRefreshLayout.setRefreshing(false);
         });
         mainModel.getDeleteMessagesStatus().observe(getViewLifecycleOwner(), this::updateMessagesResponse);
         mainModel.getEmptyFolderStatus().observe(getViewLifecycleOwner(), this::updateMessagesResponse);
 
-        swipeRefreshLayout.setOnRefreshListener(this::requestNewMessages);
+        swipeRefreshLayout.setOnRefreshListener(() -> {
+            // display loader only if another is off
+            if (isMainProgressLoaderVisible()) {
+                swipeRefreshLayout.setRefreshing(false);
+            }
+            requestNewMessages();
+        });
 
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(mLayoutManager);
@@ -226,7 +229,6 @@ public class InboxFragment extends BaseFragment
                 if (pastVisibleItems + visibleItemCount >= totalItemCount) {
                     Timber.d("onReachedBottom");
                     requestNextMessages();
-                    progressLayout.setVisibility(View.VISIBLE);
                 }
             }
         });
@@ -273,7 +275,7 @@ public class InboxFragment extends BaseFragment
                 public boolean onQueryTextChange(String text) {
                     adapter.filter(text);
                     filterText = text;
-                    showResultsIfNotEmpty();
+                    showResultIfNotEmpty();
                     return false;
                 }
             });
@@ -312,6 +314,16 @@ public class InboxFragment extends BaseFragment
         return super.onOptionsItemSelected(item);
     }
 
+    private void requestNewMessages() {
+        isLoadingNewMessages = false;
+        currentOffset = 0;
+        // display loader only if another is off
+        if (!swipeRefreshLayout.isRefreshing() && !isMainProgressLoaderVisible()) {
+            showMessagesListProgressLoader();
+        }
+        requestNextMessages();
+    }
+
     private void requestNextMessages() {
         if (isLoadingNewMessages) {
             return;
@@ -329,12 +341,10 @@ public class InboxFragment extends BaseFragment
         mainModel.getMessages(REQUEST_MESSAGES_COUNT, currentOffset, currentFolder);
         currentOffset += REQUEST_MESSAGES_COUNT;
         isLoadingNewMessages = true;
-    }
-
-    private void requestNewMessages() {
-        isLoadingNewMessages = false;
-        currentOffset = 0;
-        requestNextMessages();
+        // display loader only if another is off
+        if (!swipeRefreshLayout.isRefreshing() && !isMainProgressLoaderVisible()) {
+            showNextMessagesProgressLoader();
+        }
     }
 
     @Override
@@ -498,8 +508,9 @@ public class InboxFragment extends BaseFragment
 
     private void handleResponseStatus(ResponseStatus status) {
         mainModel.hideProgressDialog();
-        if(status != null) {
-            switch(status) {
+        swipeRefreshLayout.setRefreshing(false);
+        if (status != null) {
+            switch (status) {
                 case RESPONSE_ERROR:
                     mainModel.checkUserToken();
                     Timber.e("handleResponseStatus: RESPONSE_ERROR");
@@ -520,51 +531,6 @@ public class InboxFragment extends BaseFragment
             return;
         }
         activity.invalidateOptionsMenu();
-    }
-
-    private void showResultsIfNotEmpty() {
-        if (adapterIsNotEmpty()) {
-            showMessagesList();
-        } else {
-            if (EditTextUtils.isNotEmpty(filterText) || filterIsStarred || filterIsUnread ||
-                    filterWithAttachment) {
-                emptyFilteredMessagesList();
-            } else {
-                emptyMessagesList();
-            }
-        }
-    }
-
-    private void loadMessagesList() {
-        recyclerView.setVisibility(View.GONE);
-        fabCompose.hide();
-        listEmptyLayout.setVisibility(View.GONE);
-        listEmptySearchLayout.setVisibility(View.GONE);
-        progressLayout.setVisibility(View.VISIBLE);
-    }
-
-    private void emptyMessagesList() {
-        recyclerView.setVisibility(View.GONE);
-        fabCompose.hide();
-        listEmptyLayout.setVisibility(View.VISIBLE);
-        listEmptySearchLayout.setVisibility(View.GONE);
-        progressLayout.setVisibility(View.GONE);
-    }
-
-    private void emptyFilteredMessagesList() {
-        recyclerView.setVisibility(View.GONE);
-        fabCompose.hide();
-        listEmptyLayout.setVisibility(View.GONE);
-        listEmptySearchLayout.setVisibility(View.VISIBLE);
-        progressLayout.setVisibility(View.GONE);
-    }
-
-    private void showMessagesList() {
-        recyclerView.setVisibility(View.VISIBLE);
-        fabCompose.show();
-        listEmptyLayout.setVisibility(View.GONE);
-        listEmptySearchLayout.setVisibility(View.GONE);
-        progressLayout.setVisibility(View.GONE);
     }
 
     private void handleMessagesList(List<MessageProvider> messages, String folderName, int offset) {
@@ -589,7 +555,7 @@ public class InboxFragment extends BaseFragment
         }
         isLoadingNewMessages = false;
         invalidateOptionsMenu();
-        showResultsIfNotEmpty();
+        showResultIfNotEmpty();
     }
 
     private boolean adapterIsNotEmpty() {
@@ -607,5 +573,58 @@ public class InboxFragment extends BaseFragment
 
     public void onNewMessage(long messageId) {
         requestNewMessages();
+    }
+
+    private void showResultIfNotEmpty() {
+        if (adapterIsNotEmpty()) {
+            showMessagesList();
+        } else {
+            if (EditTextUtils.isNotEmpty(filterText) || filterIsStarred || filterIsUnread ||
+                    filterWithAttachment) {
+                showFilteredMessagesListEmptyIcon();
+            } else {
+                showMessagesListEmptyIcon();
+            }
+        }
+    }
+
+    private void showNextMessagesProgressLoader() {
+        progressLayout.setVisibility(View.VISIBLE);
+    }
+
+    private void showMessagesListProgressLoader() {
+        recyclerView.setVisibility(View.GONE);
+        fabCompose.hide();
+        listEmptyLayout.setVisibility(View.GONE);
+        listEmptySearchLayout.setVisibility(View.GONE);
+        progressLayout.setVisibility(View.VISIBLE);
+    }
+
+    private void showMessagesListEmptyIcon() {
+        recyclerView.setVisibility(View.GONE);
+        fabCompose.hide();
+        listEmptyLayout.setVisibility(View.VISIBLE);
+        listEmptySearchLayout.setVisibility(View.GONE);
+        progressLayout.setVisibility(View.GONE);
+    }
+
+    private void showFilteredMessagesListEmptyIcon() {
+        recyclerView.setVisibility(View.GONE);
+        fabCompose.hide();
+        listEmptyLayout.setVisibility(View.GONE);
+        listEmptySearchLayout.setVisibility(View.VISIBLE);
+        progressLayout.setVisibility(View.GONE);
+    }
+
+    private void showMessagesList() {
+        recyclerView.setVisibility(View.VISIBLE);
+        fabCompose.show();
+        listEmptyLayout.setVisibility(View.GONE);
+        listEmptySearchLayout.setVisibility(View.GONE);
+        progressLayout.setVisibility(View.GONE);
+    }
+
+    private boolean isMainProgressLoaderVisible() {
+        return progressLayout.getVisibility() == View.VISIBLE;
     }
 }
