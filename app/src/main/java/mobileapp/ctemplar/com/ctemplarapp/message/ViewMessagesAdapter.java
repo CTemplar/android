@@ -85,8 +85,9 @@ public class ViewMessagesAdapter extends BaseAdapter {
             this.collapsedView = collapsedView;
             this.expandedView = expandedView;
 
+            final View expandedShortView = expandedView.findViewById(R.id.item_message_view_expanded_short);
+            expandedShortView.setOnClickListener(v -> switchVisibility());
             collapsedView.setOnClickListener(v -> switchVisibility());
-            expandedView.setOnClickListener(v -> switchVisibility());
         }
 
         private void switchVisibility() {
