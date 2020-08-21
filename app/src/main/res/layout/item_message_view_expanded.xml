@@ -382,7 +382,6 @@
             android:id="@+id/item_message_text_view_expanded_content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
             android:textSize="16sp"
             android:textColor="?android:textColorPrimary" />
 
@@ -402,7 +401,7 @@
         android:orientation="horizontal"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:padding="12dp"
+        android:padding="10dp"
         tools:listitem="@layout/item_message_attachment"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
