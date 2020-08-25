@@ -45,10 +45,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/fragment_inbox_list_empty_search_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="60dp"
-        android:visibility="gone"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_height="match_parent"
+        android:visibility="gone">
 
         <ImageView
             android:id="@+id/fragment_inbox_icon_empty_search_image_view"
@@ -126,6 +124,7 @@
                 android:layout_gravity="center"
                 android:background="@null"
                 android:drawableLeft="@drawable/icon_compose"
+                android:drawableStart="@drawable/icon_compose"
                 android:drawablePadding="24dp"
                 android:fontFamily="@font/lato_regular"
                 android:gravity="center"

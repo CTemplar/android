@@ -281,6 +281,12 @@ public class UserRepository {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
+    public Observable<MessagesResponse> searchMessages(String query, int limit, int offset) {
+        return service.searchMessages(query, limit, offset)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
     public Observable<MessagesResponse> getMessage(long id) {
         return service.getMessage(id)
                 .subscribeOn(Schedulers.io())
