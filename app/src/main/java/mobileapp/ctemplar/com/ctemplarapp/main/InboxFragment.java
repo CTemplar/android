@@ -3,6 +3,7 @@ package mobileapp.ctemplar.com.ctemplarapp.main;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -46,6 +47,7 @@ import mobileapp.ctemplar.com.ctemplarapp.message.SendMessageFragment;
 import mobileapp.ctemplar.com.ctemplarapp.message.ViewMessagesActivity;
 import mobileapp.ctemplar.com.ctemplarapp.message.ViewMessagesFragment;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.ResponseMessagesData;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageProvider;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 import timber.log.Timber;
@@ -130,7 +132,7 @@ public class InboxFragment extends BaseFragment
             filterIsUnread = isUnread;
             filterWithAttachment = withAttachment;
             invalidateOptionsMenu();
-            showResultIfNotEmpty();
+            showResultIfNotEmpty(false);
         }
     };
 
@@ -190,13 +192,12 @@ public class InboxFragment extends BaseFragment
         if (getActivity() == null) {
             return;
         }
-
         swipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorAccent));
         mainModel.getResponseStatus().observe(getViewLifecycleOwner(), this::handleResponseStatus);
-        mainModel.getMessagesResponse().observe(getViewLifecycleOwner(), messagesResponse -> {
-            handleMessagesList(messagesResponse.messages, messagesResponse.folderName,
-                    messagesResponse.offset);
-        });
+        mainModel.getMessagesResponse().observe(getViewLifecycleOwner(), this::handleMessagesList);
+        mainModel.getSearchMessagesResponse().observe(getViewLifecycleOwner(), this::handleSearchMessagesList);
+        mainModel.getDeleteMessagesStatus().observe(getViewLifecycleOwner(), this::updateMessagesResponse);
+        mainModel.getEmptyFolderStatus().observe(getViewLifecycleOwner(), this::updateMessagesResponse);
         mainModel.getCurrentFolder().observe(getViewLifecycleOwner(), folderName -> {
             currentFolder = folderName;
             swipeRefreshLayout.setRefreshing(false);
@@ -205,8 +206,6 @@ public class InboxFragment extends BaseFragment
             recyclerView.setAdapter(adapter);
             updateTouchListenerSwipeOptions(currentFolder);
         });
-        mainModel.getDeleteMessagesStatus().observe(getViewLifecycleOwner(), this::updateMessagesResponse);
-        mainModel.getEmptyFolderStatus().observe(getViewLifecycleOwner(), this::updateMessagesResponse);
 
         swipeRefreshLayout.setOnRefreshListener(() -> {
             // display loader only if another is off
@@ -268,6 +267,7 @@ public class InboxFragment extends BaseFragment
             searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                 @Override
                 public boolean onQueryTextSubmit(String text) {
+                    requestNewMessages();
                     return false;
                 }
 
@@ -275,7 +275,9 @@ public class InboxFragment extends BaseFragment
                 public boolean onQueryTextChange(String text) {
                     adapter.filter(text);
                     filterText = text;
-                    showResultIfNotEmpty();
+                    if (TextUtils.isEmpty(text)) {
+                        requestNewMessages();
+                    }
                     return false;
                 }
             });
@@ -338,7 +340,12 @@ public class InboxFragment extends BaseFragment
         }
 
         currentFolder = mainModel.getCurrentFolder().getValue();
-        mainModel.getMessages(REQUEST_MESSAGES_COUNT, currentOffset, currentFolder);
+        boolean isSearch = EditTextUtils.isNotEmpty(filterText);
+        if (isSearch) {
+            mainModel.searchMessages(filterText, REQUEST_MESSAGES_COUNT, currentOffset);
+        } else {
+            mainModel.getMessages(REQUEST_MESSAGES_COUNT, currentOffset, currentFolder);
+        }
         currentOffset += REQUEST_MESSAGES_COUNT;
         isLoadingNewMessages = true;
         // display loader only if another is off
@@ -508,7 +515,6 @@ public class InboxFragment extends BaseFragment
 
     private void handleResponseStatus(ResponseStatus status) {
         mainModel.hideProgressDialog();
-        swipeRefreshLayout.setRefreshing(false);
         if (status != null) {
             switch (status) {
                 case RESPONSE_ERROR:
@@ -533,7 +539,10 @@ public class InboxFragment extends BaseFragment
         activity.invalidateOptionsMenu();
     }
 
-    private void handleMessagesList(List<MessageProvider> messages, String folderName, int offset) {
+    private void handleMessagesList(ResponseMessagesData response) {
+        List<MessageProvider> messages = response.getMessages();
+        int offset = response.getOffset();
+        String folderName = response.getFolderName() == null ? "" : response.getFolderName();
         currentFolder = mainModel.getCurrentFolder().getValue();
         boolean messagesIsEmpty = messages == null || messages.isEmpty();
 
@@ -547,15 +556,30 @@ public class InboxFragment extends BaseFragment
             adapter.clear();
         }
         adapter.addMessages(messages);
+        applyFiltersToMessages();
+        showResultIfNotEmpty(false);
+    }
+
+    private void handleSearchMessagesList(ResponseMessagesData response) {
+        List<MessageProvider> messages = response.getMessages();
+        int offset = response.getOffset();
+        if (offset == 0) {
+            adapter.clear();
+        }
+        adapter.addMessages(messages);
+        applyFiltersToMessages();
+        showResultIfNotEmpty(true);
+    }
+
+    private void applyFiltersToMessages() {
         if (filterIsStarred || filterIsUnread || filterWithAttachment) {
             adapter.filter(filterIsStarred, filterIsUnread, filterWithAttachment);
         }
-        if (filterText != null) {
+        if (EditTextUtils.isNotEmpty(filterText)) {
             adapter.filter(filterText);
         }
         isLoadingNewMessages = false;
         invalidateOptionsMenu();
-        showResultIfNotEmpty();
     }
 
     private boolean adapterIsNotEmpty() {
@@ -575,14 +599,13 @@ public class InboxFragment extends BaseFragment
         requestNewMessages();
     }
 
-    private void showResultIfNotEmpty() {
+    private void showResultIfNotEmpty(boolean isServerSearchResult) {
         if (adapterIsNotEmpty()) {
             showMessagesList();
         } else {
-            if (EditTextUtils.isNotEmpty(filterText) || filterIsStarred || filterIsUnread ||
-                    filterWithAttachment) {
-                showFilteredMessagesListEmptyIcon();
-            } else {
+            if (filterIsStarred || filterIsUnread || filterWithAttachment || isServerSearchResult) {
+                showSearchMessagesListEmptyIcon();
+            } else if (currentOffset == 0 || TextUtils.isEmpty(filterText)) {
                 showMessagesListEmptyIcon();
             }
         }
@@ -590,6 +613,7 @@ public class InboxFragment extends BaseFragment
 
     private void showNextMessagesProgressLoader() {
         progressLayout.setVisibility(View.VISIBLE);
+        swipeRefreshLayout.setRefreshing(false);
     }
 
     private void showMessagesListProgressLoader() {
@@ -598,6 +622,7 @@ public class InboxFragment extends BaseFragment
         listEmptyLayout.setVisibility(View.GONE);
         listEmptySearchLayout.setVisibility(View.GONE);
         progressLayout.setVisibility(View.VISIBLE);
+        swipeRefreshLayout.setRefreshing(false);
     }
 
     private void showMessagesListEmptyIcon() {
@@ -606,14 +631,16 @@ public class InboxFragment extends BaseFragment
         listEmptyLayout.setVisibility(View.VISIBLE);
         listEmptySearchLayout.setVisibility(View.GONE);
         progressLayout.setVisibility(View.GONE);
+        swipeRefreshLayout.setRefreshing(false);
     }
 
-    private void showFilteredMessagesListEmptyIcon() {
+    private void showSearchMessagesListEmptyIcon() {
         recyclerView.setVisibility(View.GONE);
         fabCompose.hide();
         listEmptyLayout.setVisibility(View.GONE);
         listEmptySearchLayout.setVisibility(View.VISIBLE);
         progressLayout.setVisibility(View.GONE);
+        swipeRefreshLayout.setRefreshing(false);
     }
 
     private void showMessagesList() {
@@ -622,6 +649,7 @@ public class InboxFragment extends BaseFragment
         listEmptyLayout.setVisibility(View.GONE);
         listEmptySearchLayout.setVisibility(View.GONE);
         progressLayout.setVisibility(View.GONE);
+        swipeRefreshLayout.setRefreshing(false);
     }
 
     private boolean isMainProgressLoaderVisible() {
