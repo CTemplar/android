@@ -130,7 +130,7 @@ public class UserRepository {
     }
 
     public boolean isSignatureEnabled() {
-        return userStore.getSignatureEnabled();
+        return userStore.isSignatureEnabled();
     }
 
     public void setMobileSignatureEnabled(boolean isEnabled) {
@@ -138,7 +138,7 @@ public class UserRepository {
     }
 
     public boolean isMobileSignatureEnabled() {
-        return userStore.getMobileSignatureEnabled();
+        return userStore.isMobileSignatureEnabled();
     }
 
     public void setMobileSignature(String signatureText) {
@@ -147,6 +147,10 @@ public class UserRepository {
 
     public String getMobileSignature() {
         return userStore.getMobileSignature();
+    }
+
+    public boolean isDraftsAutoSaveEnabled() {
+        return userStore.isDraftsAutoSaveEnabled();
     }
 
     public MailboxEntity getDefaultMailbox() {

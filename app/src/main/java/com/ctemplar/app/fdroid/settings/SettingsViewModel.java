@@ -154,7 +154,7 @@ public class SettingsViewModel extends ViewModel {
 
                     @Override
                     public void onNext(SettingsEntity settingsEntity) {
-
+                        Timber.i("Recovery email updated");
                     }
 
                     @Override
