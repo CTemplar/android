@@ -24,23 +24,26 @@ public interface UserStore {
     void saveKeepMeLoggedIn(boolean state);
     boolean getKeepMeLoggedIn();
 
-    void saveMobileSignature(String signature);
-    String getMobileSignature();
-
     void saveTimeZone(String timezone);
     String getTimeZone();
 
+    void saveMobileSignature(String signature);
+    String getMobileSignature();
+
     void setSignatureEnabled(boolean state);
-    boolean getSignatureEnabled();
+    boolean isSignatureEnabled();
 
     void setMobileSignatureEnabled(boolean state);
-    boolean getMobileSignatureEnabled();
+    boolean isMobileSignatureEnabled();
 
     void setNotificationsEnabled(boolean state);
     boolean getNotificationsEnabled();
 
     void setContactsEncryptionEnabled(boolean state);
     boolean getContactsEncryptionEnabled();
+
+    void setDraftsAutoSaveEnabled(boolean state);
+    boolean isDraftsAutoSaveEnabled();
 
     void setPINLock(String pin);
     boolean checkPINLock(String pinCode);

@@ -10,8 +10,8 @@
             android:fragment="mobileapp.ctemplar.com.ctemplarapp.settings.SettingsActivity$NotificationsFragment" />
 
         <PreferenceScreen
-            android:title="@string/settings_saving_contacts"
-            android:fragment="mobileapp.ctemplar.com.ctemplarapp.settings.SettingsActivity$SavingContactsFragment" />
+            android:title="@string/settings_auto_save"
+            android:fragment="mobileapp.ctemplar.com.ctemplarapp.settings.SettingsActivity$AutoSaveFragment" />
 
         <Preference
             android:title="@string/settings_dark_mode"

@@ -82,8 +82,6 @@ import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderN
 public class SendMessageFragment extends Fragment implements View.OnClickListener, ActivityInterface {
     private final static int PICK_FILE_FROM_STORAGE = 1;
 
-    private boolean finished;
-
     private EditText subjectEditText;
     private EditText composeEditText;
 
@@ -125,8 +123,10 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
     private EncryptionMessage messageEncryptionResult;
     private List<AttachmentProvider> forwardedAttachments;
 
-    private boolean attachmentsProcessingEnabled;
+    private String startupBodyContent;
+    private boolean finished;
     private boolean draftMessage = true;
+    private boolean attachmentsProcessingEnabled;
 
     private DelayedDeliveryDialogFragment delayedDeliveryDialogFragment = new DelayedDeliveryDialogFragment();
     private DestructTimerDialogFragment destructTimerDialogFragment = new DestructTimerDialogFragment();
@@ -394,7 +394,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        cancelSendingProgress();
+        cancelSendingProgressBar();
     }
 
 
@@ -530,7 +530,6 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         if (activity == null) {
             return;
         }
-
         // Load contacts for autocomplete
         sendModel.getContactsResponse().observe(getViewLifecycleOwner(), contactList -> {
             if (contactList != null) {
@@ -538,7 +537,6 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
             }
         });
         sendModel.getContacts(200, 0);
-
         // Load keys before sending message
         sendModel.getKeyResponse().observe(getViewLifecycleOwner(), keyResponse -> {
             if (keyResponse != null && keyResponse.getKeyResult() != null && keyResponse.getKeyResult().length > 0) {
@@ -637,6 +635,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
 //                        userIsPrime = userPrime || userTrial;
             }
         });
+        startupBodyContent = EditTextUtils.getText(composeEditText);
     }
 
     private void createMessage() {
@@ -822,7 +821,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
                 attachments.toArray(new MessageAttachmentProvider[0]),
                 EncryptionMessageProvider.fromResponse(messageEncryptionResult)
         );
-        cancelSendingProgress();
+        cancelSendingProgressBar();
         if (!draftMessage) {
             finish();
         }
@@ -887,45 +886,65 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         if (activity == null) {
             return false;
         }
-        new AlertDialog.Builder(activity)
-                .setTitle(getResources().getString(R.string.dialog_discard_mail))
-                .setMessage(getResources().getString(R.string.dialog_discard_confirm))
-                .setPositiveButton(getResources().getString(R.string.dialog_save_in_drafts), (dialog, which) -> {
-                            dialog.dismiss();
-                            finish();
-                        }
-                )
-                .setNegativeButton(getResources().getString(R.string.action_discard), (dialog, which) -> {
-                            draftMessage = false;
-                            sendModel.deleteMessage(currentMessageId);
-                            dialog.dismiss();
-                            finish();
-                        }
-                )
-                .setNeutralButton(getResources().getString(R.string.action_cancel), null)
-                .show();
+        if (isMessageBodyEmpty()) {
+            draftMessage = false;
+            sendModel.deleteMessage(currentMessageId);
+            finish();
+            return false;
+        }
+        if (sendModel.isDraftsAutoSaveEnabled()) {
+            finish();
+            return false;
+        }
+
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(activity);
+        alertDialog.setTitle(getString(R.string.dialog_discard_mail));
+        alertDialog.setMessage(getString(R.string.dialog_discard_confirm));
+        alertDialog.setPositiveButton(getString(R.string.dialog_save_in_drafts), (dialog, which) -> {
+            dialog.dismiss();
+            finish();
+        });
+        alertDialog.setNegativeButton(getString(R.string.action_discard), (dialog, which) -> {
+            draftMessage = false;
+            sendModel.deleteMessage(currentMessageId);
+            dialog.dismiss();
+            finish();
+        });
+        alertDialog.setNeutralButton(getString(R.string.action_cancel), null);
+        alertDialog.show();
 
         return false;
     }
 
     private void addSignature(String signatureText) {
         Spanned signatureSpanned = EditTextUtils.fromHtml(signatureText);
-        Editable compose = composeEditText.getText();
-        CharSequence signatureWithCompose =
-                TextUtils.concat(compose, "\n\n--------\n", signatureSpanned);
-        composeEditText.setText(signatureWithCompose);
+        if (EditTextUtils.isNotEmpty(signatureSpanned)) {
+            Editable compose = composeEditText.getText();
+            CharSequence signatureWithCompose = TextUtils.concat(compose, "\n", signatureSpanned);
+            composeEditText.setText(signatureWithCompose);
+        }
     }
 
-    private boolean inputFieldsNotEmpty() {
+    private boolean isSentFieldsFilled() {
         String toEmail = EditTextUtils.getText(toEmailTextView);
         String ccEmail = EditTextUtils.getText(ccTextView);
         String bccEmail = EditTextUtils.getText(bccTextView);
         String subject = EditTextUtils.getText(subjectEditText);
         String compose = EditTextUtils.getText(composeEditText);
 
-        boolean receiversNotEmpty = !toEmail.isEmpty() || !ccEmail.isEmpty() || !bccEmail.isEmpty();
-        boolean contentNotEmpty = !subject.isEmpty() || !compose.isEmpty();
-        return receiversNotEmpty && contentNotEmpty;
+        boolean receiversEmpty = toEmail.isEmpty() && ccEmail.isEmpty() && bccEmail.isEmpty();
+        boolean contentEmpty = subject.isEmpty() && compose.isEmpty();
+        return !(receiversEmpty || contentEmpty);
+    }
+
+    private boolean isMessageBodyEmpty() {
+        String toEmail = EditTextUtils.getText(toEmailTextView);
+        String ccEmail = EditTextUtils.getText(ccTextView);
+        String bccEmail = EditTextUtils.getText(bccTextView);
+        String subject = EditTextUtils.getText(subjectEditText);
+        String compose = EditTextUtils.getText(composeEditText);
+        return toEmail.isEmpty() && ccEmail.isEmpty() && bccEmail.isEmpty() && subject.isEmpty()
+                && compose.equals(startupBodyContent);
     }
 
     private void upgradeToPrimeDialog() {
@@ -943,8 +962,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                boolean inputIsNotEmpty = inputFieldsNotEmpty();
-                sendMessage.setEnabled(inputIsNotEmpty);
+                sendMessage.setEnabled(isSentFieldsFilled());
             }
 
             @Override
@@ -967,7 +985,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         }
     }
 
-    private void cancelSendingProgress() {
+    private void cancelSendingProgressBar() {
         if (sendingProgress != null && sendingProgress.isShowing()) {
             sendingProgress.cancel();
         }
