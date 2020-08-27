@@ -1,5 +1,6 @@
 package mobileapp.ctemplar.com.ctemplarapp.main;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -596,7 +597,11 @@ public class InboxFragment extends BaseFragment
     }
 
     public void onNewMessage(long messageId) {
-        requestNewMessages();
+        Activity activity = getActivity();
+        if (activity == null) {
+            return;
+        }
+        activity.runOnUiThread(this::requestNewMessages);
     }
 
     private void showResultIfNotEmpty(boolean isServerSearchResult) {

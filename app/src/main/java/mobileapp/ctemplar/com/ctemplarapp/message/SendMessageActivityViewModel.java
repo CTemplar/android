@@ -114,6 +114,10 @@ public class SendMessageActivityViewModel extends ViewModel {
         return userRepository.getUserPassword();
     }
 
+    public boolean isDraftsAutoSaveEnabled() {
+        return userRepository.isDraftsAutoSaveEnabled();
+    }
+
     public LiveData<MessagesResult> getMessagesResult() {
         return messagesResult;
     }
@@ -187,6 +191,7 @@ public class SendMessageActivityViewModel extends ViewModel {
                     @Override
                     public void onError(Throwable e) {
                         createMessageStatus.postValue(ResponseStatus.RESPONSE_ERROR);
+                        Timber.e(e);
                     }
 
                     @Override

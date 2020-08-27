@@ -206,10 +206,10 @@ public class SettingsActivity extends BaseActivity {
         }
     }
 
-    public static class SavingContactsFragment extends BasePreferenceFragment {
+    public static class AutoSaveFragment extends BasePreferenceFragment {
         @Override
         public void onCreatePreferences(Bundle bundle, String rootKey) {
-            setPreferencesFromResource(R.xml.saving_contacts_settings, rootKey);
+            setPreferencesFromResource(R.xml.auto_save_settings, rootKey);
 
             SwitchPreference autoSaveContactsPreference = findPreference(getString(R.string.auto_save_contacts_enabled));
             if (autoSaveContactsPreference != null) {
@@ -218,6 +218,16 @@ public class SettingsActivity extends BaseActivity {
                     settingsModel.updateAutoSaveEnabled(settingId, isEnabled);
                     return true;
                 });
+            }
+
+            SwitchPreference autoSaveDraftsPreference = findPreference(getString(R.string.auto_save_drafts_enabled));
+            if (autoSaveDraftsPreference != null) {
+                autoSaveDraftsPreference.setOnPreferenceChangeListener((preference, newValue) -> {
+                    userStore.setDraftsAutoSaveEnabled((boolean) newValue);
+                    return true;
+                });
+                boolean isDraftsAutoSaveEnabled = userStore.isDraftsAutoSaveEnabled();
+                autoSaveDraftsPreference.setChecked(isDraftsAutoSaveEnabled);
             }
         }
     }
