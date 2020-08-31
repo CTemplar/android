@@ -272,6 +272,7 @@
     <string name="txt_add_whitelist_contact">Adicionar contato na lista branca</string>
 
     <!-- FILTER DIALOG -->
+    <string name="filtered">Filtrado</string>
     <string name="txt_filters">Filtros</string>
     <string name="txt_clear_all">Limpar tudo</string>
     <string name="txt_select_filters">Filtros selecionados</string>

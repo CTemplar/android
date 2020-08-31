@@ -15,6 +15,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.LinearLayoutCompat;
 import androidx.appcompat.widget.SearchView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
@@ -95,6 +96,14 @@ public class InboxFragment extends BaseFragment
         startSendMessageActivity();
     }
 
+    @BindView(R.id.fragment_inbox_filtered_layout)
+    LinearLayoutCompat filteredLayout;
+
+    @BindView(R.id.fragment_inbox_filtered_categories_text_view)
+    TextView filteredCategoriesTextView;
+
+    @BindView(R.id.fragment_inbox_swiperefresh)
+    SwipeRefreshLayout swipeRefreshLayout;
 
     @BindView(R.id.fragment_inbox_recycler_view)
     RecyclerView recyclerView;
@@ -110,9 +119,6 @@ public class InboxFragment extends BaseFragment
 
     @BindView(R.id.fragment_inbox_progress_layout)
     ConstraintLayout progressLayout;
-
-    @BindView(R.id.fragment_inbox_swiperefresh)
-    SwipeRefreshLayout swipeRefreshLayout;
 
     @BindView(R.id.fragment_inbox_send_layout)
     FrameLayout frameCompose;
@@ -130,6 +136,7 @@ public class InboxFragment extends BaseFragment
             filterWithAttachment = withAttachment;
             invalidateOptionsMenu();
             showResultIfNotEmpty(false);
+            displayFilteredCategories();
         }
     };
 
@@ -331,9 +338,9 @@ public class InboxFragment extends BaseFragment
             Timber.e("RequestNextMessages: current folder is null");
             return;
         }
-        if (filterIsStarred || filterIsUnread || filterWithAttachment) {
-            return;
-        }
+//        if (filterIsStarred || filterIsUnread || filterWithAttachment) {
+//            return;
+//        }
 
         currentFolder = mainModel.getCurrentFolder().getValue();
         boolean isSearch = EditTextUtils.isNotEmpty(filterText);
@@ -600,6 +607,25 @@ public class InboxFragment extends BaseFragment
             } else if (currentOffset == 0 || TextUtils.isEmpty(filterText)) {
                 showMessagesListEmptyIcon();
             }
+        }
+    }
+
+    private void displayFilteredCategories() {
+        List<String> filteredBy = new ArrayList<>();
+        if (filterIsStarred) {
+            filteredBy.add(getString(R.string.txt_starred));
+        }
+        if (filterIsUnread) {
+            filteredBy.add(getString(R.string.txt_unread));
+        }
+        if (filterWithAttachment) {
+            filteredBy.add(getString(R.string.txt_with_attachments));
+        }
+        if (filteredBy.size() > 0) {
+            filteredCategoriesTextView.setText(TextUtils.join(", ", filteredBy));
+            filteredLayout.setVisibility(View.VISIBLE);
+        } else {
+            filteredLayout.setVisibility(View.GONE);
         }
     }
 
