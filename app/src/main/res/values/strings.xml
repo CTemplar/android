@@ -340,6 +340,7 @@
     <string name="settings_filters">Filters</string>
     <string name="settings_wb_list">Whitelist/Blacklist</string>
     <string name="settings_dark_mode">Dark mode</string>
+    <string name="settings_block_external_images">Block external images</string>
     <string name="settings_folders">Folders</string>
     <string name="settings_manage_folders">Manage folders</string>
     <string name="settings_security">Security</string>
@@ -443,7 +444,9 @@
     <string translatable="false" name="pin_lock_key">pin_lock_key</string>
     <string translatable="false" name="signature_key">signature_key</string>
     <string translatable="false" name="mobile_signature_key">mobile_signature_key</string>
-    <string translatable="false" name="filters">filters</string>
+    <string translatable="false" name="filters_key">filters_key</string>
+    <string translatable="false" name="dark_mode_key">dark_mode_key</string>
+    <string translatable="false" name="block_external_images_key">block_external_images_key</string>
     <string translatable="false" name="white_black_list">white_black_list</string>
     <string translatable="false" name="manage_folders">manage_folders</string>
     <string translatable="false" name="push_notifications_enabled">push_notifications_enabled</string>
@@ -461,7 +464,6 @@
     <string translatable="false" name="contacts_encryption_enabled">contacts_encryption_enabled</string>
     <string translatable="false" name="auto_save_contacts_enabled">auto_save_contacts_enabled</string>
     <string translatable="false" name="auto_save_drafts_enabled">auto_save_drafts_enabled</string>
-    <string translatable="false" name="dark_mode_key">dark_mode_key</string>
     <string translatable="false" name="setting_id">setting_id</string>
 
     <string-array name="filter_parameter_list">

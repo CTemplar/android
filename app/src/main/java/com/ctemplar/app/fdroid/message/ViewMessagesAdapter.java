@@ -29,7 +29,9 @@ import java.util.List;
 
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
+import com.ctemplar.app.fdroid.CTemplarApp;
 import com.ctemplar.app.fdroid.R;
+import com.ctemplar.app.fdroid.repository.UserStore;
 import com.ctemplar.app.fdroid.repository.constant.MessageActions;
 import com.ctemplar.app.fdroid.repository.provider.AttachmentProvider;
 import com.ctemplar.app.fdroid.repository.provider.MessageProvider;
@@ -48,6 +50,7 @@ public class ViewMessagesAdapter extends BaseAdapter {
 
     private List<MessageProvider> messageProviderList;
     private OnAttachmentDownloading onAttachmentDownloading;
+    private UserStore userStore;
     private Activity activity;
 
     ViewMessagesAdapter(
@@ -58,6 +61,7 @@ public class ViewMessagesAdapter extends BaseAdapter {
         this.messageProviderList = messageProviderList;
         this.onAttachmentDownloading = onAttachmentDownloading;
         this.activity = activity;
+        userStore = CTemplarApp.getUserStore();
     }
 
     @Override
@@ -282,11 +286,13 @@ public class ViewMessagesAdapter extends BaseAdapter {
         if (isHtml) {
             String messageWithStyle = "<style type=\"text/css\">*{width:auto;max-width:100%;}</style>" + message;
             String encodedContent = Base64.encodeToString(messageWithStyle.getBytes(), Base64.NO_PADDING);
+
             WebSettings webViewSettings = contentWebView.getSettings();
             webViewSettings.setLoadWithOverviewMode(true);
             webViewSettings.setJavaScriptEnabled(false);
             webViewSettings.setAllowFileAccess(false);
             webViewSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
+            webViewSettings.setLoadsImagesAutomatically(!userStore.isBlockExternalImagesEnabled());
             contentWebView.clearCache(true);
             contentWebView.loadData(encodedContent, "text/html", "base64");
             ThemeUtils.setWebViewDarkTheme(view.getContext(), contentWebView);

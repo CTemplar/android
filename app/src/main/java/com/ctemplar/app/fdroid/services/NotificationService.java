@@ -273,7 +273,7 @@ public class NotificationService extends Service {
     }
 
     public static void updateState(Context context) {
-        boolean active = CTemplarApp.getUserStore().getNotificationsEnabled();
+        boolean active = CTemplarApp.getUserStore().isNotificationsEnabled();
         if (active && CTemplarApp.isAuthorized()) {
             start(context);
         } else {

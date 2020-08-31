@@ -154,7 +154,7 @@ public class SettingsActivity extends BaseActivity {
                     return false;
                 });
             }
-            Preference filters = findPreference(getString(R.string.filters));
+            Preference filters = findPreference(getString(R.string.filters_key));
             if (filters != null) {
                 filters.setOnPreferenceClickListener(preference -> {
                     Intent filtersIntent = new Intent(getActivity(), FiltersActivity.class);
@@ -202,7 +202,7 @@ public class SettingsActivity extends BaseActivity {
                     NotificationService.updateState(getContext());
                     return true;
                 });
-                boolean isNotificationsEnabled = userStore.getNotificationsEnabled();
+                boolean isNotificationsEnabled = userStore.isNotificationsEnabled();
                 switchPreferenceNotificationsEnabled.setChecked(isNotificationsEnabled);
             }
         }
@@ -217,7 +217,7 @@ public class SettingsActivity extends BaseActivity {
             if (autoSaveContactsPreference != null) {
                 autoSaveContactsPreference.setOnPreferenceChangeListener((preference, newValue) -> {
                     boolean isEnabled = (boolean) newValue;
-                    settingsModel.updateAutoSaveEnabled(settingId, isEnabled);
+                    settingsModel.updateAutoSaveContactsEnabled(settingId, isEnabled);
                     return true;
                 });
             }
@@ -260,6 +260,23 @@ public class SettingsActivity extends BaseActivity {
                     AppCompatDelegate.setDefaultNightMode(mode);
                     return true;
                 });
+            }
+        }
+    }
+
+    public static class BlockExternalImagesFragment extends BasePreferenceFragment {
+        @Override
+        public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+            setPreferencesFromResource(R.xml.block_external_images_settings, rootKey);
+
+            SwitchPreference blockExternalImagesPreference = findPreference(getString(R.string.block_external_images_key));
+            if (blockExternalImagesPreference != null) {
+                blockExternalImagesPreference.setOnPreferenceChangeListener((preference, newValue) -> {
+                    userStore.setBlockExternalImagesEnabled((boolean) newValue);
+                    return true;
+                });
+                boolean isBlockExternalImagesEnabled = userStore.isBlockExternalImagesEnabled();
+                blockExternalImagesPreference.setChecked(isBlockExternalImagesEnabled);
             }
         }
     }
