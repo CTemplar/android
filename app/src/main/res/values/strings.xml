@@ -273,6 +273,7 @@
     <string name="txt_add_whitelist_contact">Add whitelist contact</string>
 
     <!-- FILTER DIALOG -->
+    <string name="filtered">Filtered</string>
     <string name="txt_filters">Filters</string>
     <string name="txt_clear_all">Clear all</string>
     <string name="txt_select_filters">Select filters</string>
