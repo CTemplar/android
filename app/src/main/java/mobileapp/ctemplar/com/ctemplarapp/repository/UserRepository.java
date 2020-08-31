@@ -183,7 +183,7 @@ public class UserRepository {
     }
 
     public boolean isNotificationsEnabled() {
-        return userStore.getNotificationsEnabled();
+        return userStore.isNotificationsEnabled();
     }
 
     public void setContactsEncryptionEnabled(boolean isContactsEncryptionEnabled) {
@@ -191,7 +191,7 @@ public class UserRepository {
     }
 
     public boolean getContactsEncryptionEnabled() {
-        return userStore.getContactsEncryptionEnabled();
+        return userStore.isContactsEncryptionEnabled();
     }
 
     public void clearData() {

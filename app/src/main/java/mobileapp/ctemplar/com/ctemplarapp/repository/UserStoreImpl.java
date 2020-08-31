@@ -12,7 +12,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.entity.UserEntity;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EncodeUtils;
 
-public class UserStoreImpl implements UserStore{
+public class UserStoreImpl implements UserStore {
     private static UserStoreImpl instance;
 
     private static final String PREF_USER = "pref_user";
@@ -31,6 +31,7 @@ public class UserStoreImpl implements UserStore{
     private static final String KEY_NOTIFICATIONS_ENABLED = "key_notifications_enabled";
     private static final String KEY_CONTACTS_ENCRYPTION_ENABLED = "key_contacts_encryption_enabled";
     private static final String KEY_DRAFTS_AUTO_SAVE_ENABLED = "key_drafts_auto_save_enabled";
+    private static final String KEY_BLOCK_EXTERNAL_IMAGES_ENABLED = "key_block_external_images_enabled";
     private static final String KEY_PIN_LOCK = "key_pin_lock";
     private static final String KEY_AUTO_LOCK_TIME = "key_auto_lock_time";
     private static final String KEY_LAST_PAUSE_TIME = "key_last_pause_time";
@@ -41,7 +42,7 @@ public class UserStoreImpl implements UserStore{
     private SharedPreferences globalPreferences;
 
     public static UserStoreImpl getInstance(Context context) {
-        if(instance == null) {
+        if (instance == null) {
             instance = new UserStoreImpl(context);
         }
         return instance;
@@ -182,7 +183,7 @@ public class UserStoreImpl implements UserStore{
     }
 
     @Override
-    public boolean getNotificationsEnabled() {
+    public boolean isNotificationsEnabled() {
         return preferences.getBoolean(KEY_NOTIFICATIONS_ENABLED, true);
     }
 
@@ -192,7 +193,7 @@ public class UserStoreImpl implements UserStore{
     }
 
     @Override
-    public boolean getContactsEncryptionEnabled() {
+    public boolean isContactsEncryptionEnabled() {
         return preferences.getBoolean(KEY_CONTACTS_ENCRYPTION_ENABLED, false);
     }
 
@@ -204,6 +205,16 @@ public class UserStoreImpl implements UserStore{
     @Override
     public boolean isDraftsAutoSaveEnabled() {
         return preferences.getBoolean(KEY_DRAFTS_AUTO_SAVE_ENABLED, false);
+    }
+
+    @Override
+    public void setBlockExternalImagesEnabled(boolean state) {
+        globalPreferences.edit().putBoolean(KEY_BLOCK_EXTERNAL_IMAGES_ENABLED, state).apply();
+    }
+
+    @Override
+    public boolean isBlockExternalImagesEnabled() {
+        return globalPreferences.getBoolean(KEY_BLOCK_EXTERNAL_IMAGES_ENABLED, false);
     }
 
     @Override
