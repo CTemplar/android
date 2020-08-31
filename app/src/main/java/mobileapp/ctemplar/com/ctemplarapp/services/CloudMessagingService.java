@@ -54,7 +54,7 @@ public class CloudMessagingService extends FirebaseMessagingService {
                 onPasswordChanged();
                 return;
             }
-            boolean isNotificationsEnabled = CTemplarApp.getUserStore().getNotificationsEnabled();
+            boolean isNotificationsEnabled = CTemplarApp.getUserStore().isNotificationsEnabled();
             if (isNotificationsEnabled) {
                 showNotification(
                         remoteMessageEntity.getSender(),

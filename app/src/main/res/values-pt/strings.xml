@@ -334,6 +334,7 @@
     <string name="settings_filters">Filtros</string>
     <string name="settings_wb_list">Lista branca / Lista negra</string>
     <string name="settings_dark_mode">Modo escuro</string>
+    <string name="settings_block_external_images">Bloquear imagens externas</string>
     <string name="settings_folders">Pastas</string>
     <string name="settings_manage_folders">Gerenciar pastas</string>
     <string name="settings_security">Segurança</string>

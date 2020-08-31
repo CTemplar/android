@@ -334,6 +334,7 @@
     <string name="settings_filters">Filtres</string>
     <string name="settings_wb_list">Liste blanche / Liste noire</string>
     <string name="settings_dark_mode">Mode sombre</string>
+    <string name="settings_block_external_images">Bloquer les images externes</string>
     <string name="settings_folders">Dossier</string>
     <string name="settings_manage_folders">Gérer les dossiers</string>
     <string name="settings_mail">Mail</string>
