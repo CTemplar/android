@@ -30,6 +30,7 @@ import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.login.LoginActivityViewModel;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
+import mobileapp.ctemplar.com.ctemplarapp.utils.HtmlUtils;
 import timber.log.Timber;
 
 public class StepUsernameFragment extends BaseFragment {
@@ -196,7 +197,7 @@ public class StepUsernameFragment extends BaseFragment {
             }
         });
 
-        inviteCodeHintTextView.setText(EditTextUtils.fromHtml(
+        inviteCodeHintTextView.setText(HtmlUtils.fromHtml(
                 getString(R.string.title_step_invitation_code_hint)));
         inviteCodeHintTextView.setMovementMethod(LinkMovementMethod.getInstance());
         inviteCodeHintTextView.setLinkTextColor(getResources().getColor(R.color.colorLinkBlue));

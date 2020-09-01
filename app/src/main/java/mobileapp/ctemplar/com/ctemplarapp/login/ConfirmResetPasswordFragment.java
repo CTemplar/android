@@ -21,7 +21,7 @@ import mobileapp.ctemplar.com.ctemplarapp.BaseFragment;
 import mobileapp.ctemplar.com.ctemplarapp.LoginActivityActions;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
-import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
+import mobileapp.ctemplar.com.ctemplarapp.utils.HtmlUtils;
 import timber.log.Timber;
 
 public class ConfirmResetPasswordFragment extends BaseFragment {
@@ -64,8 +64,8 @@ public class ConfirmResetPasswordFragment extends BaseFragment {
     }
 
     private void setListeners() {
-        Spanned resetPasswordHint = EditTextUtils.fromHtml(getString(R.string.title_confirm_reset_password_hint));
-        Spanned furtherQuestionsHint = EditTextUtils.fromHtml(getString(R.string.title_further_question_hint));
+        Spanned resetPasswordHint = HtmlUtils.fromHtml(getString(R.string.title_confirm_reset_password_hint));
+        Spanned furtherQuestionsHint = HtmlUtils.fromHtml(getString(R.string.title_further_question_hint));
         txtHint.setText(TextUtils.concat(resetPasswordHint, " ", furtherQuestionsHint));
         txtHint.setLinkTextColor(getResources().getColor(R.color.colorLinkBlue));
         txtHint.setMovementMethod(LinkMovementMethod.getInstance());

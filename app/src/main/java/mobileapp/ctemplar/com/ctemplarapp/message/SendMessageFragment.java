@@ -63,6 +63,7 @@ import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EncryptUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.FileUtils;
+import mobileapp.ctemplar.com.ctemplarapp.utils.HtmlUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.PermissionCheck;
 import mobileapp.ctemplar.com.ctemplarapp.utils.SpaceTokenizer;
 import okhttp3.MediaType;
@@ -691,7 +692,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
             subjectEditText.setText(messageSubject);
         }
         if (messageContent != null && !messageContent.isEmpty()) {
-            Spanned messageSpanned = EditTextUtils.fromHtml(messageContent);
+            Spanned messageSpanned = HtmlUtils.fromHtml(messageContent);
             composeEditText.setText(messageSpanned);
         }
         if (messageDestruct != null && !messageDestruct.isEmpty()) {
@@ -755,7 +756,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         SendMessageRequestProvider sendMessageRequest = new SendMessageRequestProvider();
         sendMessageRequest.setSender(mailboxEmail);
         sendMessageRequest.setSubject(subject);
-        sendMessageRequest.setContent(EditTextUtils.toHtml(composeSpannable));
+        sendMessageRequest.setContent(HtmlUtils.toHtml(composeSpannable));
         sendMessageRequest.setMailbox(mailboxId);
         sendMessageRequest.setParent(parentId);
         sendMessageRequest.setSubjectEncrypted(isSubjectEncrypted);
@@ -917,7 +918,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
     }
 
     private void addSignature(String signatureText) {
-        Spanned signatureSpanned = EditTextUtils.fromHtml(signatureText);
+        Spanned signatureSpanned = HtmlUtils.fromHtml(signatureText);
         if (EditTextUtils.isNotEmpty(signatureSpanned)) {
             Editable compose = composeEditText.getText();
             CharSequence signatureWithCompose = TextUtils.concat(compose, "\n", signatureSpanned);
