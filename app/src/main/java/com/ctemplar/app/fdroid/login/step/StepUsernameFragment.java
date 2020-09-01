@@ -30,6 +30,7 @@ import com.ctemplar.app.fdroid.R;
 import com.ctemplar.app.fdroid.login.LoginActivityViewModel;
 import com.ctemplar.app.fdroid.net.ResponseStatus;
 import com.ctemplar.app.fdroid.utils.EditTextUtils;
+import com.ctemplar.app.fdroid.utils.HtmlUtils;
 import timber.log.Timber;
 
 public class StepUsernameFragment extends BaseFragment {
@@ -196,7 +197,7 @@ public class StepUsernameFragment extends BaseFragment {
             }
         });
 
-        inviteCodeHintTextView.setText(EditTextUtils.fromHtml(
+        inviteCodeHintTextView.setText(HtmlUtils.fromHtml(
                 getString(R.string.title_step_invitation_code_hint)));
         inviteCodeHintTextView.setMovementMethod(LinkMovementMethod.getInstance());
         inviteCodeHintTextView.setLinkTextColor(getResources().getColor(R.color.colorLinkBlue));

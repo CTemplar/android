@@ -21,7 +21,7 @@ import com.ctemplar.app.fdroid.BaseFragment;
 import com.ctemplar.app.fdroid.LoginActivityActions;
 import com.ctemplar.app.fdroid.R;
 import com.ctemplar.app.fdroid.net.ResponseStatus;
-import com.ctemplar.app.fdroid.utils.EditTextUtils;
+import com.ctemplar.app.fdroid.utils.HtmlUtils;
 import timber.log.Timber;
 
 public class ConfirmResetPasswordFragment extends BaseFragment {
@@ -64,8 +64,8 @@ public class ConfirmResetPasswordFragment extends BaseFragment {
     }
 
     private void setListeners() {
-        Spanned resetPasswordHint = EditTextUtils.fromHtml(getString(R.string.title_confirm_reset_password_hint));
-        Spanned furtherQuestionsHint = EditTextUtils.fromHtml(getString(R.string.title_further_question_hint));
+        Spanned resetPasswordHint = HtmlUtils.fromHtml(getString(R.string.title_confirm_reset_password_hint));
+        Spanned furtherQuestionsHint = HtmlUtils.fromHtml(getString(R.string.title_further_question_hint));
         txtHint.setText(TextUtils.concat(resetPasswordHint, " ", furtherQuestionsHint));
         txtHint.setLinkTextColor(getResources().getColor(R.color.colorLinkBlue));
         txtHint.setMovementMethod(LinkMovementMethod.getInstance());

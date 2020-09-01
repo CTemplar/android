@@ -1,11 +1,6 @@
 package com.ctemplar.app.fdroid.utils;
 
-import android.os.Build;
 import android.text.Editable;
-import android.text.Html;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.Spanned;
 import android.text.TextUtils;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -74,36 +69,6 @@ public class EditTextUtils {
 
     public static String getStringFromList(String[] stringArray) {
         return TextUtils.join(",", stringArray);
-    }
-
-    public static String toHtml(Spannable text) {
-        if (TextUtils.isEmpty(text)) {
-            return "";
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            return Html.toHtml(text, Html.TO_HTML_PARAGRAPH_LINES_CONSECUTIVE);
-        } else {
-            return Html.toHtml(text);
-        }
-    }
-
-    public static Spanned fromHtml(String text) {
-        if (TextUtils.isEmpty(text)) {
-            return new SpannableString("");
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            return Html.fromHtml(text, Html.FROM_HTML_MODE_COMPACT);
-        } else {
-            return Html.fromHtml(text);
-        }
-    }
-
-    public static boolean isHtml(String text) {
-        if (TextUtils.isEmpty(text)) {
-            return false;
-        }
-        String fromHtml = fromHtml(text).toString();
-        return !text.equals(fromHtml);
     }
 
     public static boolean isNotEmpty(@Nullable CharSequence str) {

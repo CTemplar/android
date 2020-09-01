@@ -47,6 +47,7 @@ import com.ctemplar.app.fdroid.repository.UserStore;
 import com.ctemplar.app.fdroid.utils.AppUtils;
 import com.ctemplar.app.fdroid.utils.EditTextUtils;
 import com.ctemplar.app.fdroid.utils.EncodeUtils;
+import com.ctemplar.app.fdroid.utils.HtmlUtils;
 import com.ctemplar.app.fdroid.wbl.WhiteBlackListActivity;
 import timber.log.Timber;
 
@@ -447,7 +448,7 @@ public class SettingsActivity extends BaseActivity {
                 return true;
             });
 
-            descriptionPreference.setTitle(EditTextUtils.fromHtml(
+            descriptionPreference.setTitle(HtmlUtils.fromHtml(
                     getString(R.string.settings_phishing_protection_description))
             );
             descriptionPreference.setOnPreferenceClickListener(preference -> {

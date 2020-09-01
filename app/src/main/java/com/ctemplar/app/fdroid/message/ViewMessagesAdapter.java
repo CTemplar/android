@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
 import android.text.TextUtils;
-import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,6 +38,7 @@ import com.ctemplar.app.fdroid.repository.provider.UserDisplayProvider;
 import com.ctemplar.app.fdroid.utils.AppUtils;
 import com.ctemplar.app.fdroid.utils.EditTextUtils;
 import com.ctemplar.app.fdroid.utils.FileUtils;
+import com.ctemplar.app.fdroid.utils.HtmlUtils;
 import com.ctemplar.app.fdroid.utils.PermissionCheck;
 import com.ctemplar.app.fdroid.utils.ThemeUtils;
 import timber.log.Timber;
@@ -177,7 +177,7 @@ public class ViewMessagesAdapter extends BaseAdapter {
         });
 
         collapsedSenderTextView.setText(senderDisplay.getName());
-        collapsedContentTextView.setText(EditTextUtils.fromHtml(message));
+        collapsedContentTextView.setText(HtmlUtils.fromHtml(message));
         collapsedShortDateTextView.setText(AppUtils.messageDate(messageDate));
 
         senderTextView.setText(senderDisplay.getName());
@@ -284,9 +284,6 @@ public class ViewMessagesAdapter extends BaseAdapter {
 
         // display message
         if (isHtml) {
-            String messageWithStyle = "<style type=\"text/css\">*{width:auto;max-width:100%;}</style>" + message;
-            String encodedContent = Base64.encodeToString(messageWithStyle.getBytes(), Base64.NO_PADDING);
-
             WebSettings webViewSettings = contentWebView.getSettings();
             webViewSettings.setLoadWithOverviewMode(true);
             webViewSettings.setJavaScriptEnabled(false);
@@ -294,7 +291,7 @@ public class ViewMessagesAdapter extends BaseAdapter {
             webViewSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
             webViewSettings.setLoadsImagesAutomatically(!userStore.isBlockExternalImagesEnabled());
             contentWebView.clearCache(true);
-            contentWebView.loadData(encodedContent, "text/html", "base64");
+            contentWebView.loadData(HtmlUtils.formatHtml(message), "text/html", "UTF-8");
             ThemeUtils.setWebViewDarkTheme(view.getContext(), contentWebView);
             contentWebView.setWebViewClient(new WebViewClient() {
                 @Override
@@ -302,6 +299,7 @@ public class ViewMessagesAdapter extends BaseAdapter {
                     super.onPageFinished(view, url);
                     progressBar.setVisibility(View.GONE);
                 }
+
                 @Override
                 public boolean shouldOverrideUrlLoading(WebView view, String url) {
                     Intent urlIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
@@ -311,7 +309,7 @@ public class ViewMessagesAdapter extends BaseAdapter {
             });
         } else {
             progressBar.setVisibility(View.GONE);
-            contentText.setText(EditTextUtils.fromHtml(message));
+            contentText.setText(HtmlUtils.fromHtml(message));
         }
 
         List<AttachmentProvider> attachmentList = messageData.getAttachments();

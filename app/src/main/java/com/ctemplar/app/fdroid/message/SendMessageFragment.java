@@ -63,6 +63,7 @@ import com.ctemplar.app.fdroid.utils.AppUtils;
 import com.ctemplar.app.fdroid.utils.EditTextUtils;
 import com.ctemplar.app.fdroid.utils.EncryptUtils;
 import com.ctemplar.app.fdroid.utils.FileUtils;
+import com.ctemplar.app.fdroid.utils.HtmlUtils;
 import com.ctemplar.app.fdroid.utils.PermissionCheck;
 import com.ctemplar.app.fdroid.utils.SpaceTokenizer;
 import okhttp3.MediaType;
@@ -691,7 +692,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
             subjectEditText.setText(messageSubject);
         }
         if (messageContent != null && !messageContent.isEmpty()) {
-            Spanned messageSpanned = EditTextUtils.fromHtml(messageContent);
+            Spanned messageSpanned = HtmlUtils.fromHtml(messageContent);
             composeEditText.setText(messageSpanned);
         }
         if (messageDestruct != null && !messageDestruct.isEmpty()) {
@@ -755,7 +756,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         SendMessageRequestProvider sendMessageRequest = new SendMessageRequestProvider();
         sendMessageRequest.setSender(mailboxEmail);
         sendMessageRequest.setSubject(subject);
-        sendMessageRequest.setContent(EditTextUtils.toHtml(composeSpannable));
+        sendMessageRequest.setContent(HtmlUtils.toHtml(composeSpannable));
         sendMessageRequest.setMailbox(mailboxId);
         sendMessageRequest.setParent(parentId);
         sendMessageRequest.setSubjectEncrypted(isSubjectEncrypted);
@@ -917,7 +918,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
     }
 
     private void addSignature(String signatureText) {
-        Spanned signatureSpanned = EditTextUtils.fromHtml(signatureText);
+        Spanned signatureSpanned = HtmlUtils.fromHtml(signatureText);
         if (EditTextUtils.isNotEmpty(signatureSpanned)) {
             Editable compose = composeEditText.getText();
             CharSequence signatureWithCompose = TextUtils.concat(compose, "\n", signatureSpanned);
