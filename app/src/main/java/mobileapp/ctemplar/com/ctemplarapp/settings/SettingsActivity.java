@@ -46,6 +46,7 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.UserStore;
 import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EncodeUtils;
+import mobileapp.ctemplar.com.ctemplarapp.utils.HtmlUtils;
 import mobileapp.ctemplar.com.ctemplarapp.wbl.WhiteBlackListActivity;
 import timber.log.Timber;
 
@@ -445,7 +446,7 @@ public class SettingsActivity extends BaseActivity {
                 return true;
             });
 
-            descriptionPreference.setTitle(EditTextUtils.fromHtml(
+            descriptionPreference.setTitle(HtmlUtils.fromHtml(
                     getString(R.string.settings_phishing_protection_description))
             );
             descriptionPreference.setOnPreferenceClickListener(preference -> {

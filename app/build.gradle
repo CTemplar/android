@@ -86,9 +86,10 @@ dependencies {
         exclude group: 'com.google.firebase', module: 'firebase-measurement-connector'
     }
 
-    implementation 'com.google.dagger:dagger:2.27'
     implementation 'com.jakewharton.timber:timber:4.7.1'
     implementation 'com.jakewharton:butterknife:10.2.1'
+    implementation 'com.google.dagger:dagger:2.27'
+    implementation 'com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer:20200713.1'
 
     annotationProcessor 'androidx.room:room-compiler:2.2.5'
     annotationProcessor 'com.google.dagger:dagger-compiler:2.17'

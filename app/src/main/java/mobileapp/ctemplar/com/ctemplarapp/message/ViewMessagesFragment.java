@@ -55,8 +55,8 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.provider.AttachmentProvider
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageProvider;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.UserDisplayProvider;
 import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
-import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EncryptUtils;
+import mobileapp.ctemplar.com.ctemplarapp.utils.HtmlUtils;
 import timber.log.Timber;
 
 import static mobileapp.ctemplar.com.ctemplarapp.message.SendMessageActivity.ATTACHMENT_LIST;
@@ -446,7 +446,8 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
     private void forwardMessage(boolean withAttachments) {
         Intent intentForward = new Intent(getActivity(), SendMessageActivity.class);
         intentForward.putExtra(Intent.EXTRA_SUBJECT, lastMessage.getSubject());
-        intentForward.putExtra(Intent.EXTRA_TEXT, forwardHead() + EditTextUtils.fromHtml(decryptedLastMessage));
+        intentForward.putExtra(Intent.EXTRA_TEXT, forwardHead()
+                + HtmlUtils.fromHtml(decryptedLastMessage));
         intentForward.putExtra(SendMessageActivity.LAST_ACTION, MessageActions.REPLY);
 
         Bundle extras = new Bundle();
@@ -458,7 +459,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
 
         Fragment fragmentForward = SendMessageFragment.newInstance(
                 lastMessage.getSubject(),
-                forwardHead() + EditTextUtils.fromHtml(decryptedLastMessage),
+                forwardHead() + HtmlUtils.fromHtml(decryptedLastMessage),
                 new String[] {},
                 new String[] {},
                 new String[] {},
@@ -487,13 +488,13 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
                 Intent intentReply = new Intent(getActivity(), SendMessageActivity.class);
                 intentReply.putExtra(Intent.EXTRA_EMAIL, new String[] { lastMessage.getSender() });
                 intentReply.putExtra(Intent.EXTRA_SUBJECT, lastMessage.getSubject());
-                intentReply.putExtra(Intent.EXTRA_TEXT, replyHead() + EditTextUtils.fromHtml(decryptedLastMessage));
+                intentReply.putExtra(Intent.EXTRA_TEXT, replyHead() + HtmlUtils.fromHtml(decryptedLastMessage));
                 intentReply.putExtra(SendMessageActivity.LAST_ACTION, MessageActions.REPLY);
                 intentReply.putExtra(SendMessageActivity.PARENT_ID, parentMessage.getId());
 
                 Fragment fragmentReply = SendMessageFragment.newInstance(
                         lastMessage.getSubject(),
-                        replyHead() + EditTextUtils.fromHtml(decryptedLastMessage),
+                        replyHead() + HtmlUtils.fromHtml(decryptedLastMessage),
                         new String[] { lastMessage.getSender() },
                         new String[] {},
                         new String[] {},
@@ -512,7 +513,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
                 Intent intentReplyAll = new Intent(getActivity(), SendMessageActivity.class);
                 intentReplyAll.putExtra(Intent.EXTRA_EMAIL, new String[] { lastMessage.getSender() });
                 intentReplyAll.putExtra(Intent.EXTRA_SUBJECT, lastMessage.getSubject());
-                intentReplyAll.putExtra(Intent.EXTRA_TEXT, replyHead() + EditTextUtils.fromHtml(decryptedLastMessage));
+                intentReplyAll.putExtra(Intent.EXTRA_TEXT, replyHead() + HtmlUtils.fromHtml(decryptedLastMessage));
                 intentReplyAll.putExtra(Intent.EXTRA_CC, lastMessage.getCc());
                 intentReplyAll.putExtra(Intent.EXTRA_BCC, lastMessage.getBcc());
                 intentReplyAll.putExtra(SendMessageActivity.LAST_ACTION, MessageActions.REPLY);
@@ -520,7 +521,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
 
                 Fragment fragmentReplyAll = SendMessageFragment.newInstance(
                         lastMessage.getSubject(),
-                        replyHead() + EditTextUtils.fromHtml(decryptedLastMessage),
+                        replyHead() + HtmlUtils.fromHtml(decryptedLastMessage),
                         new String[] { lastMessage.getSender() },
                         lastMessage.getCc(),
                         lastMessage.getBcc(),

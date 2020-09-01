@@ -25,6 +25,7 @@ import butterknife.OnClick;
 import mobileapp.ctemplar.com.ctemplarapp.BaseFragment;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
+import mobileapp.ctemplar.com.ctemplarapp.utils.HtmlUtils;
 import timber.log.Timber;
 
 public class StepPasswordFragment extends BaseFragment {
@@ -97,7 +98,7 @@ public class StepPasswordFragment extends BaseFragment {
     }
 
     private void setListeners() {
-        passwordHint.setText(EditTextUtils.fromHtml(getString(R.string.title_further_question_hint)));
+        passwordHint.setText(HtmlUtils.fromHtml(getString(R.string.title_further_question_hint)));
         passwordHint.setMovementMethod(LinkMovementMethod.getInstance());
         passwordHint.setAutoLinkMask(Linkify.EMAIL_ADDRESSES);
         TextWatcher watcher = new TextWatcher() {
