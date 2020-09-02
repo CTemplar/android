@@ -13,8 +13,6 @@ import com.ctemplar.app.fdroid.login.LoginActivity;
 import com.ctemplar.app.fdroid.main.MainActivity;
 
 public class SplashActivity extends BaseActivity {
-    private static final String ANDROID = "android";
-
     private SplashActivityModel viewModel;
     private Handler handler = new Handler();
 

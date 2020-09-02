@@ -52,6 +52,8 @@ import retrofit2.Response;
 import timber.log.Timber;
 
 public class MainActivityViewModel extends AndroidViewModel {
+    public static final String ANDROID = "android";
+
     private UserRepository userRepository;
     private ContactsRepository contactsRepository;
     private MessagesRepository messagesRepository;
@@ -156,21 +158,45 @@ public class MainActivityViewModel extends AndroidViewModel {
     }
 
     public void logout() {
-        if (userRepository != null) {
-            exit();
-            NotificationService.updateState(getApplication());
+        if (userRepository == null) {
+            return;
+        }
+        userRepository.signOut(ANDROID, "")
+                .doFinally(this::clearUserData)
+                .subscribe(new Observer<Response<Void>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(Response<Void> voidResponse) {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Timber.e(e, "logout");
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Timber.e("logout: onComplete");
+                    }
+                });
+        clearUserData();
+        NotificationService.updateState(getApplication());
+    }
+
+    public void checkUserSession() {
+        if (TextUtils.isEmpty(userRepository.getUserToken())) {
+            clearUserData();
         }
     }
 
-    public void exit() {
+    public void clearUserData() {
         userRepository.clearData();
         actions.postValue(MainActivityActions.ACTION_LOGOUT);
-    }
-
-    public void checkUserToken() {
-        if (TextUtils.isEmpty(userRepository.getUserToken())) {
-            exit();
-        }
     }
 
     public void getMessages(int limit, int offset, String folder) {
