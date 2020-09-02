@@ -28,6 +28,7 @@ import mobileapp.ctemplar.com.ctemplarapp.main.MainActivityViewModel;
 import mobileapp.ctemplar.com.ctemplarapp.message.ViewMessagesActivity;
 import mobileapp.ctemplar.com.ctemplarapp.net.entity.RemoteMessageAction;
 import mobileapp.ctemplar.com.ctemplarapp.net.entity.RemoteMessageEntity;
+import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
 import retrofit2.Response;
 import timber.log.Timber;
 
@@ -77,8 +78,9 @@ public class CloudMessagingService extends FirebaseMessagingService {
 
     private void onPasswordChanged() {
         Timber.d("onPasswordChanged");
-        String token = CTemplarApp.getUserRepository().getFirebaseToken();
-        CTemplarApp.getUserRepository().signOut(MainActivityViewModel.ANDROID, token)
+        UserRepository userRepository = CTemplarApp.getUserRepository();
+        String token = userRepository.getFirebaseToken();
+        userRepository.signOut(MainActivityViewModel.ANDROID, token)
                 .subscribe(new Observer<Response<Void>>() {
                     @Override
                     public void onSubscribe(Disposable d) {

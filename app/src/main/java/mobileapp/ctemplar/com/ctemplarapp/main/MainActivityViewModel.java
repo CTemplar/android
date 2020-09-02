@@ -56,31 +56,6 @@ public class MainActivityViewModel extends AndroidViewModel {
     public static final String ANDROID = "android";
     public static final String EXIT_BROADCAST_ACTION = "ctemplar.action.exit";
 
-    private class ExitBroadcastReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (intent == null) {
-                return;
-            }
-            String action = intent.getAction();
-            if (action == null) {
-                return;
-            }
-            if (action.equals(EXIT_BROADCAST_ACTION)) {
-                exit();
-            }
-        }
-
-        public void register(Application application) {
-            IntentFilter intentFilter = new IntentFilter(EXIT_BROADCAST_ACTION);
-            application.registerReceiver(this, intentFilter);
-        }
-
-        public void unregister(Application application) {
-            application.unregisterReceiver(this);
-        }
-    }
-
     private UserRepository userRepository;
     private ContactsRepository contactsRepository;
     private MessagesRepository messagesRepository;
@@ -98,6 +73,31 @@ public class MainActivityViewModel extends AndroidViewModel {
     private MutableLiveData<ResponseBody> unreadFoldersBody = new MutableLiveData<>();
     private MutableLiveData<MyselfResponse> myselfResponse = new MutableLiveData<>();
     private MutableLiveData<String> currentFolder = new MutableLiveData<>();
+
+    private class ExitBroadcastReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent == null) {
+                return;
+            }
+            String action = intent.getAction();
+            if (action == null) {
+                return;
+            }
+            if (action.equals(EXIT_BROADCAST_ACTION)) {
+                clearUserData();
+            }
+        }
+
+        public void register(Application application) {
+            IntentFilter intentFilter = new IntentFilter(EXIT_BROADCAST_ACTION);
+            application.registerReceiver(this, intentFilter);
+        }
+
+        public void unregister(Application application) {
+            application.unregisterReceiver(this);
+        }
+    }
 
     private ExitBroadcastReceiver exitBroadcastReceiver;
 
@@ -183,49 +183,48 @@ public class MainActivityViewModel extends AndroidViewModel {
     public MutableLiveData<MyselfResponse> getMyselfResponse() {
         return myselfResponse;
     }
-
     public void logout() {
-        if (userRepository != null) {
-            signOut();
+        if (userRepository == null) {
+            return;
+        }
+        String token = userRepository.getFirebaseToken();
+        Observable.merge(
+                userRepository.deleteFirebaseToken(token),
+                userRepository.signOut(ANDROID, token)
+        )
+                .doFinally(this::clearUserData)
+                .subscribe(new Observer<Response<Void>>() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onNext(Response<Void> voidResponse) {
+
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Timber.e(e, "logout");
+            }
+
+            @Override
+            public void onComplete() {
+                Timber.e("logout: onComplete");
+            }
+        });
+    }
+
+    public void checkUserSession() {
+        if (TextUtils.isEmpty(userRepository.getUserToken())) {
+            clearUserData();
         }
     }
 
-    public void signOut() {
-        String token = userRepository.getFirebaseToken();
-        userRepository.signOut(ANDROID, token)
-                .subscribe(new Observer<Response<Void>>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(Response<Void> voidResponse) {
-                        exit();
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        exit();
-                        Timber.e(e);
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
-    }
-
-    public void exit() {
+    public void clearUserData() {
         userRepository.clearData();
         actions.postValue(MainActivityActions.ACTION_LOGOUT);
-    }
-
-    public void checkUserToken() {
-        if (TextUtils.isEmpty(userRepository.getUserToken())) {
-            exit();
-        }
     }
 
     public void getMessages(int limit, int offset, String folder) {

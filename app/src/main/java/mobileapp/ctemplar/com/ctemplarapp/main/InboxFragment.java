@@ -526,7 +526,7 @@ public class InboxFragment extends BaseFragment
         if (status != null) {
             switch (status) {
                 case RESPONSE_ERROR:
-                    mainModel.checkUserToken();
+                    mainModel.checkUserSession();
                     Timber.e("handleResponseStatus: RESPONSE_ERROR");
                     // Toast.makeText(getActivity(), getString(R.string.error_messages), Toast.LENGTH_SHORT).show();
                     break;

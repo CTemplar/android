@@ -242,8 +242,8 @@ public class LoginActivityViewModel extends ViewModel {
 
                     @Override
                     public void onError(Throwable e) {
-                        addFirebaseTokenStatus.postValue(ResponseStatus.RESPONSE_NEXT);
                         Timber.e(e);
+                        addFirebaseTokenStatus.postValue(ResponseStatus.RESPONSE_NEXT);
                     }
 
                     @Override
