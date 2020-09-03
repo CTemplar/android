@@ -81,7 +81,7 @@ public class SettingsViewModel extends ViewModel {
         return userRepository.getMobileSignature();
     }
 
-    void updateAutoSaveEnabled(long settingId, boolean isEnabled) {
+    void updateAutoSaveContactsEnabled(long settingId, boolean isEnabled) {
         if (settingId == -1) {
             return;
         }
@@ -154,7 +154,7 @@ public class SettingsViewModel extends ViewModel {
 
                     @Override
                     public void onNext(SettingsEntity settingsEntity) {
-
+                        Timber.i("Recovery email updated");
                     }
 
                     @Override

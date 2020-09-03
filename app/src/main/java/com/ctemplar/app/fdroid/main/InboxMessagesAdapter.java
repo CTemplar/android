@@ -187,11 +187,8 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesView
             holder.txtStatus.setVisibility(View.GONE);
         }
 
-        // format creation date
-        if (!TextUtils.isEmpty(message.getCreatedAt())) {
-            String creationDate = AppUtils.messageDate(message.getCreatedAt());
-            holder.txtDate.setText(creationDate);
-        }
+        String messageDate = AppUtils.getDeliveryDate(message);
+        holder.txtDate.setText(AppUtils.messageDate(messageDate));
 
         holder.imgStarredLayout.setOnClickListener(v -> {
             boolean isStarred = !message.isStarred();

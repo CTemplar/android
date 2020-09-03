@@ -100,10 +100,10 @@
     <string name="title_step_email_check_hint">Please check this box if you agree to abide by our <![CDATA[<u><a href="https://ctemplar.com/terms">Terms and Conditions.</a></u>]]></string>
     <string name="title_step_invitation_code_hint">You can get invitation code from any existing paid customer or you can request an invitation code from us. How to get invitation code? <![CDATA[<u><a href="https://ctemplar.com/faq/get-an-invitation-code/">Learn more</a></u>]]></string>
     <string name="title_more_info_link"><u>More Info</u></string>
-    <string name="title_empty_inbox">You have no inbox messages.</string>
+    <string name="title_empty_inbox">You have no inbox messages</string>
     <string name="title_empty_messages">You have no %1$s messages</string>
     <string name="title_empty_contacts">You have no contacts yet</string>
-    <string name="title_empty_folders">You have no folders.</string>
+    <string name="title_empty_folders">You have no folders</string>
     <string name="btn_login">Log in</string>
     <string name="btn_compose">Compose</string>
     <string name="btn_add_folder">Add folder</string>
@@ -275,6 +275,7 @@
     <string name="txt_add_whitelist_contact">Add whitelist contact</string>
 
     <!-- FILTER DIALOG -->
+    <string name="filtered">Filtered</string>
     <string name="txt_filters">Filters</string>
     <string name="txt_clear_all">Clear all</string>
     <string name="txt_select_filters">Select filters</string>
@@ -333,11 +334,13 @@
     <string name="settings_encryption">Encryption</string>
     <string name="settings_phishing_protection">Phishing Protection</string>
     <string name="settings_phishing_protection_description"><![CDATA[<font color="#939191">The Anti-Phishing phrase allows users to link a custom word or phrase of your choice to your CTemplar account. Once set, if you ever log into your webmail and your Anti-Phishing phrase is either missing or incorrect, you may be the victim of phishing. You should immediately confirm that you are visiting</font> <font color="#4d92e2"><u>https://mail.ctemplar.com</u></font> <font color="#939191">If you are not, then a malicious site might have your login credentials for your CTemplar account. To prevent harm to your account, you should immediately visit</font> <font color="#4d92e2"><u>https://mail.ctemplar.com</u></font> <font color="#939191">and change your password.<br><br>Note that the Anti-Phishing phrase will be displayed when you log on web only.</font>]]></string>
-    <string name="settings_saving_contacts">Saving contacts</string>
+    <string name="settings_auto_save">AutoSave</string>
     <string name="settings_auto_save_contacts">Automatically save contacts</string>
+    <string name="settings_auto_save_drafts">Automatically save drafts</string>
     <string name="settings_filters">Filters</string>
     <string name="settings_wb_list">Whitelist/Blacklist</string>
     <string name="settings_dark_mode">Dark mode</string>
+    <string name="settings_block_external_images">Block external images</string>
     <string name="settings_folders">Folders</string>
     <string name="settings_manage_folders">Manage folders</string>
     <string name="settings_security">Security</string>
@@ -441,7 +444,9 @@
     <string translatable="false" name="pin_lock_key">pin_lock_key</string>
     <string translatable="false" name="signature_key">signature_key</string>
     <string translatable="false" name="mobile_signature_key">mobile_signature_key</string>
-    <string translatable="false" name="filters">filters</string>
+    <string translatable="false" name="filters_key">filters_key</string>
+    <string translatable="false" name="dark_mode_key">dark_mode_key</string>
+    <string translatable="false" name="block_external_images_key">block_external_images_key</string>
     <string translatable="false" name="white_black_list">white_black_list</string>
     <string translatable="false" name="manage_folders">manage_folders</string>
     <string translatable="false" name="push_notifications_enabled">push_notifications_enabled</string>
@@ -458,7 +463,7 @@
     <string translatable="false" name="subject_encryption_enabled">subject_encryption_enabled</string>
     <string translatable="false" name="contacts_encryption_enabled">contacts_encryption_enabled</string>
     <string translatable="false" name="auto_save_contacts_enabled">auto_save_contacts_enabled</string>
-    <string translatable="false" name="dark_mode_key">dark_mode_key</string>
+    <string translatable="false" name="auto_save_drafts_enabled">auto_save_drafts_enabled</string>
     <string translatable="false" name="setting_id">setting_id</string>
 
     <string-array name="filter_parameter_list">

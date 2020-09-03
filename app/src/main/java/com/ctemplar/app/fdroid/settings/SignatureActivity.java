@@ -36,6 +36,7 @@ import com.ctemplar.app.fdroid.R;
 import com.ctemplar.app.fdroid.net.ResponseStatus;
 import com.ctemplar.app.fdroid.repository.entity.MailboxEntity;
 import com.ctemplar.app.fdroid.utils.EditTextUtils;
+import com.ctemplar.app.fdroid.utils.HtmlUtils;
 
 public class SignatureActivity extends BaseActivity {
     public static final String IS_MOBILE = "is_mobile";
@@ -154,7 +155,7 @@ public class SignatureActivity extends BaseActivity {
                     String displayName = mailboxEntity.getDisplayName();
                     String signatureText = mailboxEntity.getSignature();
                     displayNameEditText.setText(displayName);
-                    signatureEditText.setText(EditTextUtils.fromHtml(signatureText));
+                    signatureEditText.setText(HtmlUtils.fromHtml(signatureText));
                 }
             }
 
@@ -166,7 +167,7 @@ public class SignatureActivity extends BaseActivity {
 
         if (isMobile) {
             String mobileSignatureText = settingsViewModel.getMobileSignature();
-            signatureEditText.setText(EditTextUtils.fromHtml(mobileSignatureText));
+            signatureEditText.setText(HtmlUtils.fromHtml(mobileSignatureText));
         }
 
         formatBoldTextView.setOnClickListener(v -> signatureTypeface(new StyleSpan(Typeface.BOLD)));
@@ -221,7 +222,7 @@ public class SignatureActivity extends BaseActivity {
     @OnClick(R.id.activity_settings_signature_save_button)
     void saveButton() {
         String displayName = EditTextUtils.getText(displayNameEditText);
-        String signature = EditTextUtils.toHtml(signatureEditText.getText());
+        String signature = HtmlUtils.toHtml(signatureEditText.getText());
         if (isMobile) {
             settingsViewModel.setMobileSignature(signature);
         } else {

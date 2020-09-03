@@ -55,9 +55,8 @@ import com.ctemplar.app.fdroid.repository.provider.AttachmentProvider;
 import com.ctemplar.app.fdroid.repository.provider.MessageProvider;
 import com.ctemplar.app.fdroid.repository.provider.UserDisplayProvider;
 import com.ctemplar.app.fdroid.utils.AppUtils;
-import com.ctemplar.app.fdroid.utils.EditTextUtils;
 import com.ctemplar.app.fdroid.utils.EncryptUtils;
-import com.ctemplar.app.fdroid.utils.FileUtils;
+import com.ctemplar.app.fdroid.utils.HtmlUtils;
 import timber.log.Timber;
 
 import static com.ctemplar.app.fdroid.message.SendMessageActivity.ATTACHMENT_LIST;
@@ -419,9 +418,10 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
     }
 
     private String replyHead() {
-        String createdAt = AppUtils.getStringDate(lastMessage.getCreatedAt());
-        String sender = "<" + lastMessage.getSender() + ">";
-        return getResources().getString(R.string.txt_user_wrote, createdAt, sender);
+        String messageDate = AppUtils.getDeliveryDate(lastMessage);
+
+        return getString(R.string.txt_user_wrote,
+                AppUtils.getStringDate(messageDate), "<" + lastMessage.getSender() + ">");
     }
 
     private String addQuotesToNames(String[] names) {
@@ -434,22 +434,20 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
     }
 
     private String forwardHead() {
-        String receiversString = addQuotesToNames(lastMessage.getReceivers());
-        String sender = lastMessage.getSender();
-        String createdAt = AppUtils.getStringDate(lastMessage.getCreatedAt());
-        String subject = lastMessage.getSubject();
+        String messageDate = AppUtils.getDeliveryDate(lastMessage);
 
-        return "\n\n---------- " + getResources().getString(R.string.txt_forwarded_message) + "----------\n" +
-                getResources().getString(R.string.txt_from) + " <" + sender + ">\n" +
-                getResources().getString(R.string.txt_date) + ": " + createdAt + "\n" +
-                getResources().getString(R.string.txt_subject) + ": " + subject + "\n" +
-                getResources().getString(R.string.txt_to) + " " + receiversString + "\n\n";
+        return "\n\n---------- " + getString(R.string.txt_forwarded_message) + "----------\n" +
+                getString(R.string.txt_from) + " <" + lastMessage.getSender() + ">\n" +
+                getString(R.string.txt_date) + ": " + AppUtils.getStringDate(messageDate) + "\n" +
+                getString(R.string.txt_subject) + ": " + lastMessage.getSubject() + "\n" +
+                getString(R.string.txt_to) + " " + addQuotesToNames(lastMessage.getReceivers()) + "\n\n";
     }
 
     private void forwardMessage(boolean withAttachments) {
         Intent intentForward = new Intent(getActivity(), SendMessageActivity.class);
         intentForward.putExtra(Intent.EXTRA_SUBJECT, lastMessage.getSubject());
-        intentForward.putExtra(Intent.EXTRA_TEXT, forwardHead() + EditTextUtils.fromHtml(decryptedLastMessage));
+        intentForward.putExtra(Intent.EXTRA_TEXT, forwardHead()
+                + HtmlUtils.fromHtml(decryptedLastMessage));
         intentForward.putExtra(SendMessageActivity.LAST_ACTION, MessageActions.REPLY);
 
         Bundle extras = new Bundle();
@@ -461,7 +459,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
 
         Fragment fragmentForward = SendMessageFragment.newInstance(
                 lastMessage.getSubject(),
-                forwardHead() + EditTextUtils.fromHtml(decryptedLastMessage),
+                forwardHead() + HtmlUtils.fromHtml(decryptedLastMessage),
                 new String[] {},
                 new String[] {},
                 new String[] {},
@@ -490,13 +488,13 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
                 Intent intentReply = new Intent(getActivity(), SendMessageActivity.class);
                 intentReply.putExtra(Intent.EXTRA_EMAIL, new String[] { lastMessage.getSender() });
                 intentReply.putExtra(Intent.EXTRA_SUBJECT, lastMessage.getSubject());
-                intentReply.putExtra(Intent.EXTRA_TEXT, replyHead() + EditTextUtils.fromHtml(decryptedLastMessage));
+                intentReply.putExtra(Intent.EXTRA_TEXT, replyHead() + HtmlUtils.fromHtml(decryptedLastMessage));
                 intentReply.putExtra(SendMessageActivity.LAST_ACTION, MessageActions.REPLY);
                 intentReply.putExtra(SendMessageActivity.PARENT_ID, parentMessage.getId());
 
                 Fragment fragmentReply = SendMessageFragment.newInstance(
                         lastMessage.getSubject(),
-                        replyHead() + EditTextUtils.fromHtml(decryptedLastMessage),
+                        replyHead() + HtmlUtils.fromHtml(decryptedLastMessage),
                         new String[] { lastMessage.getSender() },
                         new String[] {},
                         new String[] {},
@@ -515,7 +513,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
                 Intent intentReplyAll = new Intent(getActivity(), SendMessageActivity.class);
                 intentReplyAll.putExtra(Intent.EXTRA_EMAIL, new String[] { lastMessage.getSender() });
                 intentReplyAll.putExtra(Intent.EXTRA_SUBJECT, lastMessage.getSubject());
-                intentReplyAll.putExtra(Intent.EXTRA_TEXT, replyHead() + EditTextUtils.fromHtml(decryptedLastMessage));
+                intentReplyAll.putExtra(Intent.EXTRA_TEXT, replyHead() + HtmlUtils.fromHtml(decryptedLastMessage));
                 intentReplyAll.putExtra(Intent.EXTRA_CC, lastMessage.getCc());
                 intentReplyAll.putExtra(Intent.EXTRA_BCC, lastMessage.getBcc());
                 intentReplyAll.putExtra(SendMessageActivity.LAST_ACTION, MessageActions.REPLY);
@@ -523,7 +521,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
 
                 Fragment fragmentReplyAll = SendMessageFragment.newInstance(
                         lastMessage.getSubject(),
-                        replyHead() + EditTextUtils.fromHtml(decryptedLastMessage),
+                        replyHead() + HtmlUtils.fromHtml(decryptedLastMessage),
                         new String[] { lastMessage.getSender() },
                         lastMessage.getCc(),
                         lastMessage.getBcc(),

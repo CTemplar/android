@@ -25,6 +25,7 @@ import butterknife.OnClick;
 import com.ctemplar.app.fdroid.BaseFragment;
 import com.ctemplar.app.fdroid.R;
 import com.ctemplar.app.fdroid.utils.EditTextUtils;
+import com.ctemplar.app.fdroid.utils.HtmlUtils;
 import timber.log.Timber;
 
 public class StepPasswordFragment extends BaseFragment {
@@ -97,7 +98,7 @@ public class StepPasswordFragment extends BaseFragment {
     }
 
     private void setListeners() {
-        passwordHint.setText(EditTextUtils.fromHtml(getString(R.string.title_further_question_hint)));
+        passwordHint.setText(HtmlUtils.fromHtml(getString(R.string.title_further_question_hint)));
         passwordHint.setMovementMethod(LinkMovementMethod.getInstance());
         passwordHint.setAutoLinkMask(Linkify.EMAIL_ADDRESSES);
         TextWatcher watcher = new TextWatcher() {

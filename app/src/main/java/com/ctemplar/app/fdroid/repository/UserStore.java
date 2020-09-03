@@ -21,23 +21,29 @@ public interface UserStore {
     void saveKeepMeLoggedIn(boolean state);
     boolean getKeepMeLoggedIn();
 
-    void saveMobileSignature(String signature);
-    String getMobileSignature();
-
     void saveTimeZone(String timezone);
     String getTimeZone();
 
+    void saveMobileSignature(String signature);
+    String getMobileSignature();
+
     void setSignatureEnabled(boolean state);
-    boolean getSignatureEnabled();
+    boolean isSignatureEnabled();
 
     void setMobileSignatureEnabled(boolean state);
-    boolean getMobileSignatureEnabled();
+    boolean isMobileSignatureEnabled();
 
     void setNotificationsEnabled(boolean state);
-    boolean getNotificationsEnabled();
+    boolean isNotificationsEnabled();
 
     void setContactsEncryptionEnabled(boolean state);
-    boolean getContactsEncryptionEnabled();
+    boolean isContactsEncryptionEnabled();
+
+    void setDraftsAutoSaveEnabled(boolean state);
+    boolean isDraftsAutoSaveEnabled();
+
+    void setBlockExternalImagesEnabled(boolean state);
+    boolean isBlockExternalImagesEnabled();
 
     void setPINLock(String pin);
     boolean checkPINLock(String pinCode);

@@ -12,7 +12,7 @@ import com.ctemplar.app.fdroid.net.entity.UserEntity;
 import com.ctemplar.app.fdroid.utils.EditTextUtils;
 import com.ctemplar.app.fdroid.utils.EncodeUtils;
 
-public class UserStoreImpl implements UserStore{
+public class UserStoreImpl implements UserStore {
     private static UserStoreImpl instance;
 
     private static final String PREF_USER = "pref_user";
@@ -29,6 +29,8 @@ public class UserStoreImpl implements UserStore{
     private static final String KEY_MOBILE_SIGNATURE_ENABLED = "key_mobile_signature_enabled";
     private static final String KEY_NOTIFICATIONS_ENABLED = "key_notifications_enabled";
     private static final String KEY_CONTACTS_ENCRYPTION_ENABLED = "key_contacts_encryption_enabled";
+    private static final String KEY_DRAFTS_AUTO_SAVE_ENABLED = "key_drafts_auto_save_enabled";
+    private static final String KEY_BLOCK_EXTERNAL_IMAGES_ENABLED = "key_block_external_images_enabled";
     private static final String KEY_PIN_LOCK = "key_pin_lock";
     private static final String KEY_AUTO_LOCK_TIME = "key_auto_lock_time";
     private static final String KEY_LAST_PAUSE_TIME = "key_last_pause_time";
@@ -39,7 +41,7 @@ public class UserStoreImpl implements UserStore{
     private SharedPreferences globalPreferences;
 
     public static UserStoreImpl getInstance(Context context) {
-        if(instance == null) {
+        if (instance == null) {
             instance = new UserStoreImpl(context);
         }
         return instance;
@@ -125,16 +127,6 @@ public class UserStoreImpl implements UserStore{
     }
 
     @Override
-    public void saveMobileSignature(String signature) {
-        preferences.edit().putString(KEY_MOBILE_SIGNATURE, signature).apply();
-    }
-
-    @Override
-    public String getMobileSignature() {
-        return preferences.getString(KEY_MOBILE_SIGNATURE, "");
-    }
-
-    @Override
     public void saveTimeZone(String timezone) {
         preferences.edit().putString(KEY_TIMEZONE, timezone).apply();
     }
@@ -145,12 +137,22 @@ public class UserStoreImpl implements UserStore{
     }
 
     @Override
+    public void saveMobileSignature(String signature) {
+        preferences.edit().putString(KEY_MOBILE_SIGNATURE, signature).apply();
+    }
+
+    @Override
+    public String getMobileSignature() {
+        return preferences.getString(KEY_MOBILE_SIGNATURE, "");
+    }
+
+    @Override
     public void setSignatureEnabled(boolean state) {
         preferences.edit().putBoolean(KEY_SIGNATURE_ENABLED, state).apply();
     }
 
     @Override
-    public boolean getSignatureEnabled() {
+    public boolean isSignatureEnabled() {
         return preferences.getBoolean(KEY_SIGNATURE_ENABLED, true);
     }
 
@@ -160,7 +162,7 @@ public class UserStoreImpl implements UserStore{
     }
 
     @Override
-    public boolean getMobileSignatureEnabled() {
+    public boolean isMobileSignatureEnabled() {
         return preferences.getBoolean(KEY_MOBILE_SIGNATURE_ENABLED, false);
     }
 
@@ -170,7 +172,7 @@ public class UserStoreImpl implements UserStore{
     }
 
     @Override
-    public boolean getNotificationsEnabled() {
+    public boolean isNotificationsEnabled() {
         return preferences.getBoolean(KEY_NOTIFICATIONS_ENABLED, true);
     }
 
@@ -180,8 +182,28 @@ public class UserStoreImpl implements UserStore{
     }
 
     @Override
-    public boolean getContactsEncryptionEnabled() {
+    public boolean isContactsEncryptionEnabled() {
         return preferences.getBoolean(KEY_CONTACTS_ENCRYPTION_ENABLED, false);
+    }
+
+    @Override
+    public void setDraftsAutoSaveEnabled(boolean state) {
+        preferences.edit().putBoolean(KEY_DRAFTS_AUTO_SAVE_ENABLED, state).apply();
+    }
+
+    @Override
+    public boolean isDraftsAutoSaveEnabled() {
+        return preferences.getBoolean(KEY_DRAFTS_AUTO_SAVE_ENABLED, false);
+    }
+
+    @Override
+    public void setBlockExternalImagesEnabled(boolean state) {
+        globalPreferences.edit().putBoolean(KEY_BLOCK_EXTERNAL_IMAGES_ENABLED, state).apply();
+    }
+
+    @Override
+    public boolean isBlockExternalImagesEnabled() {
+        return globalPreferences.getBoolean(KEY_BLOCK_EXTERNAL_IMAGES_ENABLED, false);
     }
 
     @Override

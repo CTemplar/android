@@ -24,9 +24,8 @@ import com.ctemplar.app.fdroid.net.response.Messages.MessagesResult;
 import com.ctemplar.app.fdroid.net.response.Myself.MyselfResponse;
 import com.ctemplar.app.fdroid.net.response.Myself.MyselfResult;
 import com.ctemplar.app.fdroid.net.response.Myself.SettingsEntity;
+import com.ctemplar.app.fdroid.net.response.ResponseMessagesData;
 import com.ctemplar.app.fdroid.net.response.SignInResponse;
-import com.ctemplar.app.fdroid.services.NotificationService;
-import com.ctemplar.app.fdroid.services.NotificationServiceListener;
 import com.ctemplar.app.fdroid.repository.ContactsRepository;
 import com.ctemplar.app.fdroid.repository.ManageFoldersRepository;
 import com.ctemplar.app.fdroid.repository.MessagesRepository;
@@ -36,8 +35,11 @@ import com.ctemplar.app.fdroid.repository.entity.Contact;
 import com.ctemplar.app.fdroid.repository.entity.ContactEntity;
 import com.ctemplar.app.fdroid.repository.entity.MessageEntity;
 import com.ctemplar.app.fdroid.repository.provider.MessageProvider;
+import com.ctemplar.app.fdroid.services.NotificationService;
+import com.ctemplar.app.fdroid.services.NotificationServiceListener;
 import com.ctemplar.app.fdroid.utils.EncodeUtils;
 
+import java.util.Collections;
 import java.util.List;
 
 import io.reactivex.Observable;
@@ -50,6 +52,8 @@ import retrofit2.Response;
 import timber.log.Timber;
 
 public class MainActivityViewModel extends AndroidViewModel {
+    public static final String ANDROID = "android";
+
     private UserRepository userRepository;
     private ContactsRepository contactsRepository;
     private MessagesRepository messagesRepository;
@@ -58,6 +62,7 @@ public class MainActivityViewModel extends AndroidViewModel {
     private MutableLiveData<DialogState> dialogState = new SingleLiveEvent<>();
     private MutableLiveData<ResponseStatus> responseStatus = new MutableLiveData<>();
     private MutableLiveData<ResponseMessagesData> messagesResponse = new MutableLiveData<>();
+    private MutableLiveData<ResponseMessagesData> searchMessagesResponse = new MutableLiveData<>();
     private MutableLiveData<List<Contact>> contactsResponse = new MutableLiveData<>();
     private MutableLiveData<ResponseStatus> toFolderStatus = new MutableLiveData<>();
     private MutableLiveData<ResponseStatus> deleteMessagesStatus = new MutableLiveData<>();
@@ -140,6 +145,10 @@ public class MainActivityViewModel extends AndroidViewModel {
         return messagesResponse;
     }
 
+    public LiveData<ResponseMessagesData> getSearchMessagesResponse() {
+        return searchMessagesResponse;
+    }
+
     public LiveData<List<Contact>> getContactsResponse() {
         return contactsResponse;
     }
@@ -149,21 +158,45 @@ public class MainActivityViewModel extends AndroidViewModel {
     }
 
     public void logout() {
-        if (userRepository != null) {
-            exit();
-            NotificationService.updateState(getApplication());
+        if (userRepository == null) {
+            return;
+        }
+        userRepository.signOut(ANDROID, "")
+                .doFinally(this::clearUserData)
+                .subscribe(new Observer<Response<Void>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(Response<Void> voidResponse) {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Timber.e(e, "logout");
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Timber.d("logout: onComplete");
+                    }
+                });
+        clearUserData();
+        NotificationService.updateState(getApplication());
+    }
+
+    public void checkUserSession() {
+        if (TextUtils.isEmpty(userRepository.getUserToken())) {
+            clearUserData();
         }
     }
 
-    public void exit() {
+    public void clearUserData() {
         userRepository.clearData();
         actions.postValue(MainActivityActions.ACTION_LOGOUT);
-    }
-
-    public void checkUserToken() {
-        if (TextUtils.isEmpty(userRepository.getUserToken())) {
-            exit();
-        }
     }
 
     public void getMessages(int limit, int offset, String folder) {
@@ -189,7 +222,7 @@ public class MainActivityViewModel extends AndroidViewModel {
 
         if (offset == 0) {
             ResponseMessagesData localMessagesData = new ResponseMessagesData(messageProviders,
-                    folder, offset);
+                    offset, folder);
             if (!localMessagesData.messages.isEmpty()) {
                 messagesResponse.postValue(localMessagesData);
             }
@@ -201,7 +234,8 @@ public class MainActivityViewModel extends AndroidViewModel {
         } else {
             messagesResponseObservable = userRepository.getMessagesList(limit, offset, folder);
         }
-        messagesResponseObservable.observeOn(Schedulers.computation())
+        messagesResponseObservable
+                .observeOn(Schedulers.computation())
                 .subscribe(new Observer<MessagesResponse>() {
                     @Override
                     public void onSubscribe(Disposable d) {
@@ -245,13 +279,50 @@ public class MainActivityViewModel extends AndroidViewModel {
                         }
 
                         messagesResponse.postValue(new ResponseMessagesData(messageProviders,
-                                folder, offset));
+                                offset, folder));
                         responseStatus.postValue(ResponseStatus.RESPONSE_NEXT_MESSAGES);
                     }
 
                     @Override
                     public void onError(Throwable e) {
                         responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
+                        Timber.e(e);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    public void searchMessages(String query, int limit, int offset) {
+        if (TextUtils.isEmpty(query)) {
+            return;
+        }
+        userRepository.searchMessages(query, limit, offset)
+                .observeOn(Schedulers.computation())
+                .subscribe(new Observer<MessagesResponse>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(MessagesResponse response) {
+                        List<MessagesResult> messages = response.getMessagesList();
+                        List<MessageEntity> messageEntities = MessageProvider
+                                .fromMessagesResultsToEntities(messages);
+                        List<MessageProvider> messagesProvider = MessageProvider
+                                .fromMessageEntities(messageEntities);
+                        searchMessagesResponse.postValue(new ResponseMessagesData(
+                                messagesProvider, offset));
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        searchMessagesResponse.postValue(new ResponseMessagesData(
+                                Collections.emptyList(), offset));
                         Timber.e(e);
                     }
 

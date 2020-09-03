@@ -27,6 +27,7 @@ import com.ctemplar.app.fdroid.R;
 import com.ctemplar.app.fdroid.login.LoginActivityViewModel;
 import com.ctemplar.app.fdroid.net.ResponseStatus;
 import com.ctemplar.app.fdroid.utils.EditTextUtils;
+import com.ctemplar.app.fdroid.utils.HtmlUtils;
 import timber.log.Timber;
 
 public class StepRecoveryFragment extends BaseFragment {
@@ -87,8 +88,8 @@ public class StepRecoveryFragment extends BaseFragment {
     }
 
     private void setListeners() {
-        final Spanned shortHint = EditTextUtils.fromHtml(getString(R.string.hint_step_email_recovery_short));
-        final Spanned longHint = EditTextUtils.fromHtml(getString(R.string.hint_step_email_recovery_long));
+        final Spanned shortHint = HtmlUtils.fromHtml(getString(R.string.hint_step_email_recovery_short));
+        final Spanned longHint = HtmlUtils.fromHtml(getString(R.string.hint_step_email_recovery_long));
         recoveryEmailCheckText.setText(shortHint, TextView.BufferType.SPANNABLE);
         recoveryEmailCheckText.setOnClickListener(v -> {
             recoveryEmailCheckText.setText(

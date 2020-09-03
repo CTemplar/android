@@ -34,6 +34,7 @@ import com.ctemplar.app.fdroid.net.ResponseStatus;
 import com.ctemplar.app.fdroid.net.response.CaptchaResponse;
 import com.ctemplar.app.fdroid.net.response.CaptchaVerifyResponse;
 import com.ctemplar.app.fdroid.utils.EditTextUtils;
+import com.ctemplar.app.fdroid.utils.HtmlUtils;
 import timber.log.Timber;
 
 public class StepSecurityFragment extends BaseFragment {
@@ -155,7 +156,7 @@ public class StepSecurityFragment extends BaseFragment {
     }
 
     private void setListeners() {
-        txtCheckHint.setText(EditTextUtils.fromHtml(getResources().getString(R.string.title_step_email_check_hint)));
+        txtCheckHint.setText(HtmlUtils.fromHtml(getResources().getString(R.string.title_step_email_check_hint)));
         txtCheckHint.setMovementMethod(LinkMovementMethod.getInstance());
         txtCheckHint.setLinkTextColor(getResources().getColor(R.color.colorLinkBlue));
 

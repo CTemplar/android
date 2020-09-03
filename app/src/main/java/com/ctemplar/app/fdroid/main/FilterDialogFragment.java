@@ -50,19 +50,23 @@ public class FilterDialogFragment extends DialogFragment {
 
         final TextView clearAllSelected = view.findViewById(R.id.fragment_messages_filter_dialog_clear_all);
         clearAllSelected.setOnClickListener(v -> {
-            checkBoxIsStarred.setChecked(false);
-            checkBoxIsUnread.setChecked(false);
-            checkBoxWithAttachment.setChecked(false);
+            if (onApplyClickListener != null) {
+                checkBoxIsStarred.setChecked(false);
+                checkBoxIsUnread.setChecked(false);
+                checkBoxWithAttachment.setChecked(false);
+                onApplyClickListener.onApply(false, false, false);
+                dismiss();
+            }
         });
 
         Button buttonApply = view.findViewById(R.id.fragment_messages_filter_dialog_action_apply);
         buttonApply.setOnClickListener(v -> {
-            dismiss();
             if (onApplyClickListener != null) {
                 boolean isStarred = checkBoxIsStarred.isChecked();
                 boolean isUnread = checkBoxIsUnread.isChecked();
                 boolean withAttachment = checkBoxWithAttachment.isChecked();
                 onApplyClickListener.onApply(isStarred, isUnread, withAttachment);
+                dismiss();
             }
         });
 

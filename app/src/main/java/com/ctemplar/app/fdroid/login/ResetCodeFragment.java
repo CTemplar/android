@@ -25,6 +25,7 @@ import com.ctemplar.app.fdroid.BaseFragment;
 import com.ctemplar.app.fdroid.LoginActivityActions;
 import com.ctemplar.app.fdroid.R;
 import com.ctemplar.app.fdroid.utils.EditTextUtils;
+import com.ctemplar.app.fdroid.utils.HtmlUtils;
 import timber.log.Timber;
 
 public class ResetCodeFragment extends BaseFragment {
@@ -80,7 +81,7 @@ public class ResetCodeFragment extends BaseFragment {
     }
 
     private void setListeners() {
-        txtHint.setText(EditTextUtils.fromHtml(getString(R.string.title_reset_code_hint, loginActivityModel.getRecoverPasswordRequest().getEmail())));
+        txtHint.setText(HtmlUtils.fromHtml(getString(R.string.title_reset_code_hint, loginActivityModel.getRecoverPasswordRequest().getEmail())));
         txtHint.setLinkTextColor(getResources().getColor(R.color.colorLinkBlue));
         txtHint.setMovementMethod(LinkMovementMethod.getInstance());
         txtHint.setAutoLinkMask(Linkify.EMAIL_ADDRESSES);

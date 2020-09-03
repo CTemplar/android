@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
 import android.text.TextUtils;
-import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,7 +28,9 @@ import java.util.List;
 
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
+import com.ctemplar.app.fdroid.CTemplarApp;
 import com.ctemplar.app.fdroid.R;
+import com.ctemplar.app.fdroid.repository.UserStore;
 import com.ctemplar.app.fdroid.repository.constant.MessageActions;
 import com.ctemplar.app.fdroid.repository.provider.AttachmentProvider;
 import com.ctemplar.app.fdroid.repository.provider.MessageProvider;
@@ -37,6 +38,7 @@ import com.ctemplar.app.fdroid.repository.provider.UserDisplayProvider;
 import com.ctemplar.app.fdroid.utils.AppUtils;
 import com.ctemplar.app.fdroid.utils.EditTextUtils;
 import com.ctemplar.app.fdroid.utils.FileUtils;
+import com.ctemplar.app.fdroid.utils.HtmlUtils;
 import com.ctemplar.app.fdroid.utils.PermissionCheck;
 import com.ctemplar.app.fdroid.utils.ThemeUtils;
 import timber.log.Timber;
@@ -48,6 +50,7 @@ public class ViewMessagesAdapter extends BaseAdapter {
 
     private List<MessageProvider> messageProviderList;
     private OnAttachmentDownloading onAttachmentDownloading;
+    private UserStore userStore;
     private Activity activity;
 
     ViewMessagesAdapter(
@@ -58,6 +61,7 @@ public class ViewMessagesAdapter extends BaseAdapter {
         this.messageProviderList = messageProviderList;
         this.onAttachmentDownloading = onAttachmentDownloading;
         this.activity = activity;
+        userStore = CTemplarApp.getUserStore();
     }
 
     @Override
@@ -85,8 +89,9 @@ public class ViewMessagesAdapter extends BaseAdapter {
             this.collapsedView = collapsedView;
             this.expandedView = expandedView;
 
+            final View expandedShortView = expandedView.findViewById(R.id.item_message_view_expanded_short);
+            expandedShortView.setOnClickListener(v -> switchVisibility());
             collapsedView.setOnClickListener(v -> switchVisibility());
-            expandedView.setOnClickListener(v -> switchVisibility());
         }
 
         private void switchVisibility() {
@@ -121,7 +126,7 @@ public class ViewMessagesAdapter extends BaseAdapter {
         String lastAction = messageData.getLastAction();
         String folderName = messageData.getFolderName();
         String message = messageData.getContent();
-        String messageFullDate = AppUtils.messageFullDate(messageData.getCreatedAt());
+        String messageDate = AppUtils.getDeliveryDate(messageData);
 
         boolean isHtml = messageData.isHtml();
         boolean isHasAttachment = messageData.isHasAttachments()
@@ -172,13 +177,14 @@ public class ViewMessagesAdapter extends BaseAdapter {
         });
 
         collapsedSenderTextView.setText(senderDisplay.getName());
-        collapsedContentTextView.setText(EditTextUtils.fromHtml(message));
-        collapsedShortDateTextView.setText(AppUtils.messageDate(messageData.getCreatedAt()));
+        collapsedContentTextView.setText(HtmlUtils.fromHtml(message));
+        collapsedShortDateTextView.setText(AppUtils.messageDate(messageDate));
 
         senderTextView.setText(senderDisplay.getName());
         receiverTextView.setText(userDisplayListToNamesString(receiverDisplayList));
-        shortDateTextView.setText(AppUtils.messageDate(messageData.getCreatedAt()));
-        fullDateEmailTextView.setText(view.getResources().getString(R.string.txt_date_format, messageFullDate));
+        shortDateTextView.setText(AppUtils.messageDate(messageDate));
+        fullDateEmailTextView.setText(view.getResources().getString(R.string.txt_date_format,
+                AppUtils.messageFullDate(messageDate)));
 
         // check for folder
         if (EditTextUtils.isNotEmpty(folderName)) {
@@ -278,15 +284,14 @@ public class ViewMessagesAdapter extends BaseAdapter {
 
         // display message
         if (isHtml) {
-            String messageWithStyle = "<style type=\"text/css\">*{width:auto;max-width:100%;}</style>" + message;
-            String encodedContent = Base64.encodeToString(messageWithStyle.getBytes(), Base64.NO_PADDING);
             WebSettings webViewSettings = contentWebView.getSettings();
             webViewSettings.setLoadWithOverviewMode(true);
             webViewSettings.setJavaScriptEnabled(false);
             webViewSettings.setAllowFileAccess(false);
             webViewSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
+            webViewSettings.setLoadsImagesAutomatically(!userStore.isBlockExternalImagesEnabled());
             contentWebView.clearCache(true);
-            contentWebView.loadData(encodedContent, "text/html", "base64");
+            contentWebView.loadData(HtmlUtils.formatHtml(message), "text/html", "UTF-8");
             ThemeUtils.setWebViewDarkTheme(view.getContext(), contentWebView);
             contentWebView.setWebViewClient(new WebViewClient() {
                 @Override
@@ -294,6 +299,7 @@ public class ViewMessagesAdapter extends BaseAdapter {
                     super.onPageFinished(view, url);
                     progressBar.setVisibility(View.GONE);
                 }
+
                 @Override
                 public boolean shouldOverrideUrlLoading(WebView view, String url) {
                     Intent urlIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
@@ -303,7 +309,7 @@ public class ViewMessagesAdapter extends BaseAdapter {
             });
         } else {
             progressBar.setVisibility(View.GONE);
-            contentText.setText(EditTextUtils.fromHtml(message));
+            contentText.setText(HtmlUtils.fromHtml(message));
         }
 
         List<AttachmentProvider> attachmentList = messageData.getAttachments();
