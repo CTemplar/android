@@ -1,0 +1,7 @@
+* Combined fast and deep search
+* Displaying active filters
+* More convenient switching of message layouts
+* Option for disabling draft saving dialog
+* Option for blocking external images in messages
+* UX/UI fixes
+* Improved security
