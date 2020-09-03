@@ -81,10 +81,7 @@ public class MainActivityViewModel extends AndroidViewModel {
                 return;
             }
             String action = intent.getAction();
-            if (action == null) {
-                return;
-            }
-            if (action.equals(EXIT_BROADCAST_ACTION)) {
+            if (EXIT_BROADCAST_ACTION.equals(action)) {
                 clearUserData();
             }
         }
@@ -183,12 +180,13 @@ public class MainActivityViewModel extends AndroidViewModel {
     public MutableLiveData<MyselfResponse> getMyselfResponse() {
         return myselfResponse;
     }
+
     public void logout() {
         if (userRepository == null) {
             return;
         }
         String token = userRepository.getFirebaseToken();
-        Observable.merge(
+        Observable.concat(
                 userRepository.deleteFirebaseToken(token),
                 userRepository.signOut(ANDROID, token)
         )
@@ -211,7 +209,7 @@ public class MainActivityViewModel extends AndroidViewModel {
 
             @Override
             public void onComplete() {
-                Timber.e("logout: onComplete");
+                Timber.d("logout: onComplete");
             }
         });
     }
