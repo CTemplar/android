@@ -181,7 +181,7 @@ public class MainActivityViewModel extends AndroidViewModel {
 
                     @Override
                     public void onComplete() {
-                        Timber.e("logout: onComplete");
+                        Timber.d("logout: onComplete");
                     }
                 });
         clearUserData();
