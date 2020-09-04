@@ -34,6 +34,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.CaptchaResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.CaptchaVerifyResponse;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
+import mobileapp.ctemplar.com.ctemplarapp.utils.HtmlUtils;
 import timber.log.Timber;
 
 public class StepSecurityFragment extends BaseFragment {
@@ -155,7 +156,7 @@ public class StepSecurityFragment extends BaseFragment {
     }
 
     private void setListeners() {
-        txtCheckHint.setText(EditTextUtils.fromHtml(getResources().getString(R.string.title_step_email_check_hint)));
+        txtCheckHint.setText(HtmlUtils.fromHtml(getResources().getString(R.string.title_step_email_check_hint)));
         txtCheckHint.setMovementMethod(LinkMovementMethod.getInstance());
         txtCheckHint.setLinkTextColor(getResources().getColor(R.color.colorLinkBlue));
 

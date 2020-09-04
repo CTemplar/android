@@ -13,17 +13,16 @@ import mobileapp.ctemplar.com.ctemplarapp.BaseActivity;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.login.LoginActivity;
 import mobileapp.ctemplar.com.ctemplarapp.main.MainActivity;
+import mobileapp.ctemplar.com.ctemplarapp.main.MainActivityViewModel;
 
 public class SplashActivity extends BaseActivity {
-    private static final String ANDROID = "android";
-
     private SplashActivityModel viewModel;
     private Handler handler = new Handler();
 
     private Runnable run = new Runnable() {
         @Override
         public void run() {
-            if (TextUtils.isEmpty(viewModel.getToken())) {
+            if (TextUtils.isEmpty(viewModel.getUserToken())) {
                 startSignInActivity();
             } else {
                 startMainActivity();
@@ -58,14 +57,14 @@ public class SplashActivity extends BaseActivity {
         FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(this, instanceIdResult -> {
             String instanceToken = instanceIdResult.getToken();
             String storedToken = viewModel.getFirebaseToken();
-            String userToken = viewModel.getToken();
+            String userToken = viewModel.getUserToken();
             if (TextUtils.isEmpty(userToken) && TextUtils.isEmpty(storedToken) || instanceToken.equals(storedToken)) {
                 skipDelay();
             } else {
                 if (!TextUtils.isEmpty(storedToken)) {
                     viewModel.deleteFirebaseToken(storedToken);
                 }
-                viewModel.addFirebaseToken(instanceToken, ANDROID);
+                viewModel.addFirebaseToken(instanceToken, MainActivityViewModel.ANDROID);
             }
         });
     }

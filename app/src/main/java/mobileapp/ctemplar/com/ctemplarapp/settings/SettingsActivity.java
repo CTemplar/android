@@ -46,6 +46,7 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.UserStore;
 import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EncodeUtils;
+import mobileapp.ctemplar.com.ctemplarapp.utils.HtmlUtils;
 import mobileapp.ctemplar.com.ctemplarapp.wbl.WhiteBlackListActivity;
 import timber.log.Timber;
 
@@ -153,7 +154,7 @@ public class SettingsActivity extends BaseActivity {
                     return false;
                 });
             }
-            Preference filters = findPreference(getString(R.string.filters));
+            Preference filters = findPreference(getString(R.string.filters_key));
             if (filters != null) {
                 filters.setOnPreferenceClickListener(preference -> {
                     Intent filtersIntent = new Intent(getActivity(), FiltersActivity.class);
@@ -200,24 +201,34 @@ public class SettingsActivity extends BaseActivity {
                     userStore.setNotificationsEnabled((boolean) newValue);
                     return true;
                 });
-                boolean isNotificationsEnabled = userStore.getNotificationsEnabled();
+                boolean isNotificationsEnabled = userStore.isNotificationsEnabled();
                 switchPreferenceNotificationsEnabled.setChecked(isNotificationsEnabled);
             }
         }
     }
 
-    public static class SavingContactsFragment extends BasePreferenceFragment {
+    public static class AutoSaveFragment extends BasePreferenceFragment {
         @Override
         public void onCreatePreferences(Bundle bundle, String rootKey) {
-            setPreferencesFromResource(R.xml.saving_contacts_settings, rootKey);
+            setPreferencesFromResource(R.xml.auto_save_settings, rootKey);
 
             SwitchPreference autoSaveContactsPreference = findPreference(getString(R.string.auto_save_contacts_enabled));
             if (autoSaveContactsPreference != null) {
                 autoSaveContactsPreference.setOnPreferenceChangeListener((preference, newValue) -> {
                     boolean isEnabled = (boolean) newValue;
-                    settingsModel.updateAutoSaveEnabled(settingId, isEnabled);
+                    settingsModel.updateAutoSaveContactsEnabled(settingId, isEnabled);
                     return true;
                 });
+            }
+
+            SwitchPreference autoSaveDraftsPreference = findPreference(getString(R.string.auto_save_drafts_enabled));
+            if (autoSaveDraftsPreference != null) {
+                autoSaveDraftsPreference.setOnPreferenceChangeListener((preference, newValue) -> {
+                    userStore.setDraftsAutoSaveEnabled((boolean) newValue);
+                    return true;
+                });
+                boolean isDraftsAutoSaveEnabled = userStore.isDraftsAutoSaveEnabled();
+                autoSaveDraftsPreference.setChecked(isDraftsAutoSaveEnabled);
             }
         }
     }
@@ -248,6 +259,23 @@ public class SettingsActivity extends BaseActivity {
                     AppCompatDelegate.setDefaultNightMode(mode);
                     return true;
                 });
+            }
+        }
+    }
+
+    public static class BlockExternalImagesFragment extends BasePreferenceFragment {
+        @Override
+        public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+            setPreferencesFromResource(R.xml.block_external_images_settings, rootKey);
+
+            SwitchPreference blockExternalImagesPreference = findPreference(getString(R.string.block_external_images_key));
+            if (blockExternalImagesPreference != null) {
+                blockExternalImagesPreference.setOnPreferenceChangeListener((preference, newValue) -> {
+                    userStore.setBlockExternalImagesEnabled((boolean) newValue);
+                    return true;
+                });
+                boolean isBlockExternalImagesEnabled = userStore.isBlockExternalImagesEnabled();
+                blockExternalImagesPreference.setChecked(isBlockExternalImagesEnabled);
             }
         }
     }
@@ -418,7 +446,7 @@ public class SettingsActivity extends BaseActivity {
                 return true;
             });
 
-            descriptionPreference.setTitle(EditTextUtils.fromHtml(
+            descriptionPreference.setTitle(HtmlUtils.fromHtml(
                     getString(R.string.settings_phishing_protection_description))
             );
             descriptionPreference.setOnPreferenceClickListener(preference -> {

@@ -12,6 +12,7 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import java.util.Collections;
 import java.util.List;
 
 import io.reactivex.Observable;
@@ -34,6 +35,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResult;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.MyselfResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.MyselfResult;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.SettingsEntity;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.ResponseMessagesData;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.SignInResponse;
 import mobileapp.ctemplar.com.ctemplarapp.repository.ContactsRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.ManageFoldersRepository;
@@ -54,6 +56,24 @@ public class MainActivityViewModel extends AndroidViewModel {
     public static final String ANDROID = "android";
     public static final String EXIT_BROADCAST_ACTION = "ctemplar.action.exit";
 
+    private UserRepository userRepository;
+    private ContactsRepository contactsRepository;
+    private MessagesRepository messagesRepository;
+    private ManageFoldersRepository manageFoldersRepository;
+    private MutableLiveData<MainActivityActions> actions = new SingleLiveEvent<>();
+    private MutableLiveData<DialogState> dialogState = new SingleLiveEvent<>();
+    private MutableLiveData<ResponseStatus> responseStatus = new MutableLiveData<>();
+    private MutableLiveData<ResponseMessagesData> messagesResponse = new MutableLiveData<>();
+    private MutableLiveData<ResponseMessagesData> searchMessagesResponse = new MutableLiveData<>();
+    private MutableLiveData<List<Contact>> contactsResponse = new MutableLiveData<>();
+    private MutableLiveData<ResponseStatus> toFolderStatus = new MutableLiveData<>();
+    private MutableLiveData<ResponseStatus> deleteMessagesStatus = new MutableLiveData<>();
+    private MutableLiveData<ResponseStatus> emptyFolderStatus = new MutableLiveData<>();
+    private MutableLiveData<FoldersResponse> foldersResponse = new MutableLiveData<>();
+    private MutableLiveData<ResponseBody> unreadFoldersBody = new MutableLiveData<>();
+    private MutableLiveData<MyselfResponse> myselfResponse = new MutableLiveData<>();
+    private MutableLiveData<String> currentFolder = new MutableLiveData<>();
+
     private class ExitBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -61,11 +81,8 @@ public class MainActivityViewModel extends AndroidViewModel {
                 return;
             }
             String action = intent.getAction();
-            if (action == null) {
-                return;
-            }
-            if (action.equals(EXIT_BROADCAST_ACTION)) {
-                exit();
+            if (EXIT_BROADCAST_ACTION.equals(action)) {
+                clearUserData();
             }
         }
 
@@ -78,23 +95,6 @@ public class MainActivityViewModel extends AndroidViewModel {
             application.unregisterReceiver(this);
         }
     }
-
-    private UserRepository userRepository;
-    private ContactsRepository contactsRepository;
-    private MessagesRepository messagesRepository;
-    private ManageFoldersRepository manageFoldersRepository;
-    private MutableLiveData<MainActivityActions> actions = new SingleLiveEvent<>();
-    private MutableLiveData<DialogState> dialogState = new SingleLiveEvent<>();
-    private MutableLiveData<ResponseStatus> responseStatus = new MutableLiveData<>();
-    private MutableLiveData<ResponseMessagesData> messagesResponse = new MutableLiveData<>();
-    private MutableLiveData<List<Contact>> contactsResponse = new MutableLiveData<>();
-    private MutableLiveData<ResponseStatus> toFolderStatus = new MutableLiveData<>();
-    private MutableLiveData<ResponseStatus> deleteMessagesStatus = new MutableLiveData<>();
-    private MutableLiveData<ResponseStatus> emptyFolderStatus = new MutableLiveData<>();
-    private MutableLiveData<FoldersResponse> foldersResponse = new MutableLiveData<>();
-    private MutableLiveData<ResponseBody> unreadFoldersBody = new MutableLiveData<>();
-    private MutableLiveData<MyselfResponse> myselfResponse = new MutableLiveData<>();
-    private MutableLiveData<String> currentFolder = new MutableLiveData<>();
 
     private ExitBroadcastReceiver exitBroadcastReceiver;
 
@@ -169,6 +169,10 @@ public class MainActivityViewModel extends AndroidViewModel {
         return messagesResponse;
     }
 
+    public LiveData<ResponseMessagesData> getSearchMessagesResponse() {
+        return searchMessagesResponse;
+    }
+
     public LiveData<List<Contact>> getContactsResponse() {
         return contactsResponse;
     }
@@ -178,47 +182,47 @@ public class MainActivityViewModel extends AndroidViewModel {
     }
 
     public void logout() {
-        if (userRepository != null) {
-            signOut();
+        if (userRepository == null) {
+            return;
+        }
+        String token = userRepository.getFirebaseToken();
+        Observable.concat(
+                userRepository.deleteFirebaseToken(token),
+                userRepository.signOut(ANDROID, token)
+        )
+                .doFinally(this::clearUserData)
+                .subscribe(new Observer<Response<Void>>() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onNext(Response<Void> voidResponse) {
+
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Timber.e(e, "logout");
+            }
+
+            @Override
+            public void onComplete() {
+                Timber.d("logout: onComplete");
+            }
+        });
+    }
+
+    public void checkUserSession() {
+        if (TextUtils.isEmpty(userRepository.getUserToken())) {
+            clearUserData();
         }
     }
 
-    public void signOut() {
-        String token = userRepository.getFirebaseToken();
-        userRepository.signOut(ANDROID, token)
-                .subscribe(new Observer<Response<Void>>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(Response<Void> voidResponse) {
-                        exit();
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        exit();
-                        Timber.e(e);
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
-    }
-
-    public void exit() {
+    public void clearUserData() {
         userRepository.clearData();
         actions.postValue(MainActivityActions.ACTION_LOGOUT);
-    }
-
-    public void checkUserToken() {
-        if (TextUtils.isEmpty(userRepository.getUserToken())) {
-            exit();
-        }
     }
 
     public void getMessages(int limit, int offset, String folder) {
@@ -244,7 +248,7 @@ public class MainActivityViewModel extends AndroidViewModel {
 
         if (offset == 0) {
             ResponseMessagesData localMessagesData = new ResponseMessagesData(messageProviders,
-                    folder, offset);
+                    offset, folder);
             if (!localMessagesData.messages.isEmpty()) {
                 messagesResponse.postValue(localMessagesData);
             }
@@ -256,7 +260,8 @@ public class MainActivityViewModel extends AndroidViewModel {
         } else {
             messagesResponseObservable = userRepository.getMessagesList(limit, offset, folder);
         }
-        messagesResponseObservable.observeOn(Schedulers.computation())
+        messagesResponseObservable
+                .observeOn(Schedulers.computation())
                 .subscribe(new Observer<MessagesResponse>() {
                     @Override
                     public void onSubscribe(Disposable d) {
@@ -300,13 +305,50 @@ public class MainActivityViewModel extends AndroidViewModel {
                         }
 
                         messagesResponse.postValue(new ResponseMessagesData(messageProviders,
-                                folder, offset));
+                                offset, folder));
                         responseStatus.postValue(ResponseStatus.RESPONSE_NEXT_MESSAGES);
                     }
 
                     @Override
                     public void onError(Throwable e) {
                         responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
+                        Timber.e(e);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    public void searchMessages(String query, int limit, int offset) {
+        if (TextUtils.isEmpty(query)) {
+            return;
+        }
+        userRepository.searchMessages(query, limit, offset)
+                .observeOn(Schedulers.computation())
+                .subscribe(new Observer<MessagesResponse>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(MessagesResponse response) {
+                        List<MessagesResult> messages = response.getMessagesList();
+                        List<MessageEntity> messageEntities = MessageProvider
+                                .fromMessagesResultsToEntities(messages);
+                        List<MessageProvider> messagesProvider = MessageProvider
+                                .fromMessageEntities(messageEntities);
+                        searchMessagesResponse.postValue(new ResponseMessagesData(
+                                messagesProvider, offset));
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        searchMessagesResponse.postValue(new ResponseMessagesData(
+                                Collections.emptyList(), offset));
                         Timber.e(e);
                     }
 

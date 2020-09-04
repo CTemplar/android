@@ -132,12 +132,10 @@ public class SendMailService extends IntentService {
 
     public void sendMail(
             final long messageId,
-            @NonNull
-            final SendMessageRequestProvider sendMessageRequestProvider,
+            @NonNull final SendMessageRequestProvider sendMessageRequestProvider,
             final String[] publicKeys,
             final MessageAttachmentProvider[] attachmentProviders,
-            @Nullable
-            final EncryptionMessageProvider encryptionMessageProvider
+            @Nullable final EncryptionMessageProvider encryptionMessageProvider
     ) {
         SendMessageRequest sendMessageRequest = sendMessageRequestProvider.toRequest();
         boolean isDraft = isDraft(sendMessageRequest);

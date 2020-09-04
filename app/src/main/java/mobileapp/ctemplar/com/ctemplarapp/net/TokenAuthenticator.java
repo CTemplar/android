@@ -7,6 +7,7 @@ import androidx.annotation.Nullable;
 
 import java.io.IOException;
 
+import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.TokenRefreshRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.SignInResponse;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
@@ -24,9 +25,9 @@ public class TokenAuthenticator implements Authenticator {
     @Nullable
     @Override
     public Request authenticate(@Nullable Route route, @NonNull Response response) throws IOException {
-        UserRepository userRepository = UserRepository.getInstance();
-        boolean keepMeLoggedIn = userRepository.getKeepMeLoggedIn();
+        UserRepository userRepository = CTemplarApp.getUserRepository();
         String userToken = userRepository.getUserToken();
+        boolean keepMeLoggedIn = userRepository.getKeepMeLoggedIn();
         if (EditTextUtils.isNotEmpty(userToken) && !keepMeLoggedIn) {
             Timber.d("Token expiration auto-logout");
             userRepository.clearData();
@@ -51,8 +52,8 @@ public class TokenAuthenticator implements Authenticator {
         Timber.d("Refreshing token...");
         retrofit2.Response<SignInResponse> refreshResponse = new RestClient()
                 .getRestService()
-                .refreshToken(new TokenRefreshRequest(userToken)).execute();
-
+                .refreshToken(new TokenRefreshRequest(userToken))
+                .execute();
         SignInResponse signInResponse = refreshResponse.body();
         if (signInResponse == null) {
             return null;

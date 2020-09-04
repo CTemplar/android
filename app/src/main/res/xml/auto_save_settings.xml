@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <SwitchPreference
+        android:title="@string/settings_auto_save_contacts"
+        android:key="@string/auto_save_contacts_enabled" />
+
+    <SwitchPreference
+        android:title="@string/settings_auto_save_drafts"
+        android:key="@string/auto_save_drafts_enabled" />
+
+</PreferenceScreen>

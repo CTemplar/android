@@ -270,6 +270,7 @@
     <string name="txt_add_whitelist_contact">Ajouter le contact à la liste blanche</string>
 
     <!-- FILTER DIALOG -->
+    <string name="filtered">Filtré</string>
     <string name="txt_filters">Filtres</string>
     <string name="txt_clear_all">Réinitialiser</string>
     <string name="txt_select_filters">Sélectionner les filtres</string>
@@ -327,11 +328,13 @@
     <string name="settings_encryption">Chiffrement des données</string>
     <string name="settings_phishing_protection">Protection contre le phishing</string>
     <string name="settings_phishing_protection_description"><![CDATA[<font color="#939191">La phrase Anti-Phishing permet aux utilisateurs de lier un mot ou une phrase personnalisée de votre choix à votre compte CTemplar. Une fois défini, si vous vous connectez à votre messagerie Web et que votre expression anti-hameçonnage est manquante ou incorrecte, vous pouvez être victime d\'hameçonnage. Vous devez immédiatement confirmer que vous visitez</font> <font color="#4d92e2"><u>https://mail.ctemplar.com</u></font> <font color="#939191">Si vous ne l\'êtes pas, un site malveillant pourrait avoir vos informations de connexion pour votre compte CTemplar. Pour éviter d\'endommager votre compte, vous devez immédiatement visiter</font> <font color="#4d92e2"><u>https://mail.ctemplar.com</u></font> <font color="#939191">changer votre mot de passe.<br><br>Notez que la phrase Anti-Phishing sera affichée lorsque vous vous connectez sur le Web uniquement.</font>]]></string>
-    <string name="settings_saving_contacts">Sauvegarde des contacts</string>
-    <string name="settings_auto_save_contacts">Contacts automatiquement sauvegardés</string>
+    <string name="settings_auto_save">AutoSave</string>
+    <string name="settings_auto_save_contacts">Enregistrer automatiquement les contacts</string>
+    <string name="settings_auto_save_drafts">Enregistrer automatiquement les brouillons</string>
     <string name="settings_filters">Filtres</string>
     <string name="settings_wb_list">Liste blanche / Liste noire</string>
     <string name="settings_dark_mode">Mode sombre</string>
+    <string name="settings_block_external_images">Bloquer les images externes</string>
     <string name="settings_folders">Dossier</string>
     <string name="settings_manage_folders">Gérer les dossiers</string>
     <string name="settings_mail">Mail</string>

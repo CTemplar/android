@@ -141,7 +141,7 @@ public class UserRepository {
     }
 
     public boolean isSignatureEnabled() {
-        return userStore.getSignatureEnabled();
+        return userStore.isSignatureEnabled();
     }
 
     public void setMobileSignatureEnabled(boolean isEnabled) {
@@ -149,7 +149,7 @@ public class UserRepository {
     }
 
     public boolean isMobileSignatureEnabled() {
-        return userStore.getMobileSignatureEnabled();
+        return userStore.isMobileSignatureEnabled();
     }
 
     public void setMobileSignature(String signatureText) {
@@ -158,6 +158,10 @@ public class UserRepository {
 
     public String getMobileSignature() {
         return userStore.getMobileSignature();
+    }
+
+    public boolean isDraftsAutoSaveEnabled() {
+        return userStore.isDraftsAutoSaveEnabled();
     }
 
     public MailboxEntity getDefaultMailbox() {
@@ -179,7 +183,7 @@ public class UserRepository {
     }
 
     public boolean isNotificationsEnabled() {
-        return userStore.getNotificationsEnabled();
+        return userStore.isNotificationsEnabled();
     }
 
     public void setContactsEncryptionEnabled(boolean isContactsEncryptionEnabled) {
@@ -187,7 +191,7 @@ public class UserRepository {
     }
 
     public boolean getContactsEncryptionEnabled() {
-        return userStore.getContactsEncryptionEnabled();
+        return userStore.isContactsEncryptionEnabled();
     }
 
     public void clearData() {
@@ -277,6 +281,12 @@ public class UserRepository {
 
     public Observable<MessagesResponse> getStarredMessagesList(int limit, int offset) {
         return service.getStarredMessages(limit, offset, true)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public Observable<MessagesResponse> searchMessages(String query, int limit, int offset) {
+        return service.searchMessages(query, limit, offset)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }

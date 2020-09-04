@@ -141,6 +141,13 @@ public interface RestService {
             @Query("starred") boolean starred
     );
 
+    @GET("search/messages/")
+    Observable<MessagesResponse> searchMessages(
+            @Query("q") String query,
+            @Query("limit") int limit,
+            @Query("offset") int offset
+    );
+
     @GET("emails/messages/")
     Observable<MessagesResponse> getMessage(@Query("id") long id);
 

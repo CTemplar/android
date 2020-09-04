@@ -27,6 +27,7 @@ import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.login.LoginActivityViewModel;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
+import mobileapp.ctemplar.com.ctemplarapp.utils.HtmlUtils;
 import timber.log.Timber;
 
 public class StepRecoveryFragment extends BaseFragment {
@@ -87,8 +88,8 @@ public class StepRecoveryFragment extends BaseFragment {
     }
 
     private void setListeners() {
-        final Spanned shortHint = EditTextUtils.fromHtml(getString(R.string.hint_step_email_recovery_short));
-        final Spanned longHint = EditTextUtils.fromHtml(getString(R.string.hint_step_email_recovery_long));
+        final Spanned shortHint = HtmlUtils.fromHtml(getString(R.string.hint_step_email_recovery_short));
+        final Spanned longHint = HtmlUtils.fromHtml(getString(R.string.hint_step_email_recovery_long));
         recoveryEmailCheckText.setText(shortHint, TextView.BufferType.SPANNABLE);
         recoveryEmailCheckText.setOnClickListener(v -> {
             recoveryEmailCheckText.setText(

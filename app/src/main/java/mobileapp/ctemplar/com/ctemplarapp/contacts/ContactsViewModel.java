@@ -47,7 +47,7 @@ public class ContactsViewModel extends ViewModel {
     }
 
     void updateContact(ContactData contactData) {
-        boolean contactsEncryption = userStore.getContactsEncryptionEnabled();
+        boolean contactsEncryption = userStore.isContactsEncryptionEnabled();
         if (contactsEncryption) {
             EncryptContact encryptContact = new EncryptContact();
             encryptContact.setEmail(contactData.getEmail());
