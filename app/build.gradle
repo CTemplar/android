@@ -12,7 +12,7 @@ ext {
 }
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 29
     defaultConfig {
         applicationId "mobileapp.ctemplar.com.ctemplarapp"
         minSdkVersion 16
