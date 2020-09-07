@@ -36,6 +36,7 @@ import static mobileapp.ctemplar.com.ctemplarapp.message.ViewMessagesActivity.PA
 import static mobileapp.ctemplar.com.ctemplarapp.message.ViewMessagesFragment.FOLDER_NAME;
 
 public class CloudMessagingService extends FirebaseMessagingService {
+    public static final String FROM_NOTIFICATION = "from_notification";
     private static final String NOTIFICATION_CHANNEL_ID = "com.ctemplar.mails";
 
     @Override
@@ -120,6 +121,7 @@ public class CloudMessagingService extends FirebaseMessagingService {
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.putExtra(PARENT_ID, id);
         intent.putExtra(FOLDER_NAME, folder);
+        intent.putExtra(FROM_NOTIFICATION, true);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, notificationID, intent,
                 PendingIntent.FLAG_ONE_SHOT);
 
