@@ -10,41 +10,46 @@ import android.text.TextUtils;
 import org.owasp.html.HtmlPolicyBuilder;
 import org.owasp.html.PolicyFactory;
 
-import io.reactivex.Completable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 
 public class HtmlUtils {
-    private static final PolicyFactory htmlPolicyFactory = new HtmlPolicyBuilder()
-            .allowElements("a", "b", "br", "div", "font", "h1", "h2", "h3", "h4", "h5", "h6", "hr", "img", "label", "li", "ol", "p", "span", "strong", "table", "td", "th", "tr", "u", "ul", "i")
-            .allowAttributes("style").onElements("a", "b", "br", "div", "font", "img", "label", "li", "ol", "p", "span", "strong", "table", "td", "th", "tr", "u", "ul")
-            .allowAttributes("align", "dir", "id", "style").onElements("h1", "h2", "h3", "h4", "h5", "h6")
-            .allowAttributes("dir").onElements("div", "li", "ol", "p", "table", "td", "th", "tr", "ul")
-            .allowAttributes("align").onElements("div", "hr", "img", "p", "table", "td", "th", "tr")
-            .allowAttributes("width").onElements("hr", "img", "table", "td", "th")
-            .allowAttributes("cellpadding", "cellspacing").onElements("table")
-            .allowAttributes("bgcolor").onElements("table", "td", "th", "tr")
-            .allowAttributes("hspace", "vspace", "usemap").onElements("img")
-            .allowAttributes("height").onElements("img", "td", "th")
-            .allowAttributes("valign").onElements("td", "th", "tr")
-            .allowAttributes("border").onElements("img", "table")
-            .allowAttributes("frame, rules").onElements("table")
-            .allowAttributes("color", "face").onElements("font")
-            .allowAttributes("href", "target").onElements("a")
-            .allowAttributes("colspan").onElements("td", "th")
-            .allowAttributes("size").onElements("font", "hr")
-            .allowAttributes("scope").onElements("td", "th")
-            .allowAttributes("lang").onElements("td", "th")
-            .allowAttributes("type").onElements("li", "ol")
-            .allowAttributes("abbr").onElements("td", "th")
-            .allowAttributes("background").onElements("th")
-            .allowAttributes("id").onElements("label")
-            .allowAttributes("src").onElements("img")
-            .allowUrlProtocols("https")
-            .requireRelNofollowOnLinks()
-            .toFactory();
+    private static final PolicyFactory htmlPolicyFactory = getPolicyFactory();
+
+    public static PolicyFactory getPolicyFactory() {
+        try {
+            new HtmlPolicyBuilder()
+                    .allowElements("a", "b", "br", "div", "font", "h1", "h2", "h3", "h4", "h5", "h6", "hr", "img", "label", "li", "ol", "p", "span", "strong", "table", "td", "th", "tr", "u", "ul", "i")
+                    .allowAttributes("style").onElements("a", "b", "br", "div", "font", "img", "label", "li", "ol", "p", "span", "strong", "table", "td", "th", "tr", "u", "ul")
+                    .allowAttributes("align", "dir", "id", "style").onElements("h1", "h2", "h3", "h4", "h5", "h6")
+                    .allowAttributes("dir").onElements("div", "li", "ol", "p", "table", "td", "th", "tr", "ul")
+                    .allowAttributes("align").onElements("div", "hr", "img", "p", "table", "td", "th", "tr")
+                    .allowAttributes("width").onElements("hr", "img", "table", "td", "th")
+                    .allowAttributes("cellpadding", "cellspacing").onElements("table")
+                    .allowAttributes("bgcolor").onElements("table", "td", "th", "tr")
+                    .allowAttributes("hspace", "vspace", "usemap").onElements("img")
+                    .allowAttributes("height").onElements("img", "td", "th")
+                    .allowAttributes("valign").onElements("td", "th", "tr")
+                    .allowAttributes("border").onElements("img", "table")
+                    .allowAttributes("frame, rules").onElements("table")
+                    .allowAttributes("color", "face").onElements("font")
+                    .allowAttributes("href", "target").onElements("a")
+                    .allowAttributes("colspan").onElements("td", "th")
+                    .allowAttributes("size").onElements("font", "hr")
+                    .allowAttributes("scope").onElements("td", "th")
+                    .allowAttributes("lang").onElements("td", "th")
+                    .allowAttributes("type").onElements("li", "ol")
+                    .allowAttributes("abbr").onElements("td", "th")
+                    .allowAttributes("background").onElements("th")
+                    .allowAttributes("id").onElements("label")
+                    .allowAttributes("src").onElements("img")
+                    .allowUrlProtocols("https")
+                    .requireRelNofollowOnLinks()
+                    .toFactory();
+        } catch (Throwable e) {
+            Timber.w(e);
+        }
+        return null;
+    }
 
     public static String toHtml(Spannable text) {
         if (TextUtils.isEmpty(text)) {
@@ -77,6 +82,9 @@ public class HtmlUtils {
     }
 
     public static String sanitizeHTML(String untrustedHTML) {
+        if (htmlPolicyFactory == null) {
+            return untrustedHTML;
+        }
         return htmlPolicyFactory.sanitize(untrustedHTML);
     }
 
