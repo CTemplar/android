@@ -3,7 +3,6 @@ package com.ctemplar.app.fdroid.net.response.Myself;
 import com.google.gson.annotations.SerializedName;
 
 public class SettingsEntity {
-
     @SerializedName("id")
     private Long id;
 
@@ -79,6 +78,9 @@ public class SettingsEntity {
     @SerializedName("anti_phishing_phrase")
     private String antiPhishingPhrase;
 
+    @SerializedName("is_disable_loading_images")
+    private boolean isDisableLoadingImages;
+
     @SerializedName("attachment_size_error")
     private String attachmentSizeError;
 
@@ -105,6 +107,7 @@ public class SettingsEntity {
 
     @SerializedName("notification_email")
     private String notificationEmail;
+
 
     public Long getId() {
         return id;
@@ -304,6 +307,14 @@ public class SettingsEntity {
 
     public void setAntiPhishingPhrase(String antiPhishingPhrase) {
         this.antiPhishingPhrase = antiPhishingPhrase;
+    }
+
+    public boolean isDisableLoadingImages() {
+        return isDisableLoadingImages;
+    }
+
+    public void setDisableLoadingImages(boolean disableLoadingImages) {
+        isDisableLoadingImages = disableLoadingImages;
     }
 
     public String getAttachmentSizeError() {

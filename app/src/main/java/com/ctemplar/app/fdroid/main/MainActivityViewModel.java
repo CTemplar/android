@@ -653,9 +653,11 @@ public class MainActivityViewModel extends AndroidViewModel {
 
                             String timezone = settingsEntity.getTimezone();
                             boolean isContactsEncrypted = settingsEntity.isContactsEncrypted();
+                            boolean isDisableLoadingImages = settingsEntity.isDisableLoadingImages();
 
                             userRepository.saveTimeZone(timezone);
                             userRepository.setContactsEncryptionEnabled(isContactsEncrypted);
+                            userRepository.setBlockExternalImagesEnabled(isDisableLoadingImages);
                         }
                     }
 

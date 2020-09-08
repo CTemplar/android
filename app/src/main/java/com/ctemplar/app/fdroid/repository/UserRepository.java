@@ -12,6 +12,7 @@ import com.ctemplar.app.fdroid.net.request.ContactsEncryptionRequest;
 import com.ctemplar.app.fdroid.net.request.CreateMailboxRequest;
 import com.ctemplar.app.fdroid.net.request.CustomFilterRequest;
 import com.ctemplar.app.fdroid.net.request.DefaultMailboxRequest;
+import com.ctemplar.app.fdroid.net.request.DisableLoadingImagesRequest;
 import com.ctemplar.app.fdroid.net.request.EmptyFolderRequest;
 import com.ctemplar.app.fdroid.net.request.EnabledMailboxRequest;
 import com.ctemplar.app.fdroid.net.request.MarkMessageAsReadRequest;
@@ -181,6 +182,14 @@ public class UserRepository {
 
     public boolean getContactsEncryptionEnabled() {
         return userStore.isContactsEncryptionEnabled();
+    }
+
+    public void setBlockExternalImagesEnabled(boolean isEnabled) {
+        userStore.setBlockExternalImagesEnabled(isEnabled);
+    }
+
+    public boolean isBlockExternalImagesEnabled() {
+        return userStore.isBlockExternalImagesEnabled();
     }
 
     public void clearData() {
@@ -516,6 +525,15 @@ public class UserRepository {
             AntiPhishingPhraseRequest request
     ) {
         return service.updateAntiPhishingPhrase(settingId, request)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public Observable<SettingsEntity> updateDisableLoadingImages(
+            long settingId,
+            DisableLoadingImagesRequest request
+    ) {
+        return service.updateDisableLoadingImages(settingId, request)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
