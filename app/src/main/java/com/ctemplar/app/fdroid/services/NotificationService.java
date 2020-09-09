@@ -35,6 +35,7 @@ import java.util.Random;
 import timber.log.Timber;
 
 public class NotificationService extends Service {
+    public static final String FROM_NOTIFICATION = "from_notification";
     private static final int FOREGROUND_NOTIFICATION_ID = 101;
 
     private static final String ACTION_START = "com.ctemplar.service.notification.START";
@@ -179,6 +180,7 @@ public class NotificationService extends Service {
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.putExtra(ViewMessagesActivity.PARENT_ID, id);
         intent.putExtra(ViewMessagesFragment.FOLDER_NAME, folder);
+        intent.putExtra(FROM_NOTIFICATION, true);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, notificationID, intent,
                 PendingIntent.FLAG_ONE_SHOT);
 

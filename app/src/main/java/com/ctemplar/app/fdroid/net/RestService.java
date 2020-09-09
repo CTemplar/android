@@ -11,6 +11,7 @@ import com.ctemplar.app.fdroid.net.request.ContactsEncryptionRequest;
 import com.ctemplar.app.fdroid.net.request.CreateMailboxRequest;
 import com.ctemplar.app.fdroid.net.request.CustomFilterRequest;
 import com.ctemplar.app.fdroid.net.request.DefaultMailboxRequest;
+import com.ctemplar.app.fdroid.net.request.DisableLoadingImagesRequest;
 import com.ctemplar.app.fdroid.net.request.EditFolderRequest;
 import com.ctemplar.app.fdroid.net.request.EmptyFolderRequest;
 import com.ctemplar.app.fdroid.net.request.EnabledMailboxRequest;
@@ -325,6 +326,12 @@ public interface RestService {
     Observable<SettingsEntity> updateAntiPhishingPhrase(
             @Path("id") long settingId,
             @Body AntiPhishingPhraseRequest request
+    );
+
+    @PATCH("users/settings/{id}/")
+    Observable<SettingsEntity> updateDisableLoadingImages(
+            @Path("id") long settingId,
+            @Body DisableLoadingImagesRequest request
     );
 
     @POST("users/app-token/")
