@@ -113,6 +113,7 @@ public class NotificationServiceWebSocket extends WebSocketListener {
         String token = CTemplarApp.getUserRepository().getUserToken();
         Request request = new Request.Builder()
                 .url(BuildConfig.BASE_SOCKET_URL + "connect/?token=" + token)
+                .addHeader("Origin", BuildConfig.ORIGIN)
                 .build();
         client.newWebSocket(request, this);
     }

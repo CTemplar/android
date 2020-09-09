@@ -401,7 +401,6 @@
     <!-- EXTERNAL URLS -->
     <string translatable="false" name="url_prime_upgrade">https://ctemplar.com/mail/settings/dashboard-and-plans</string>
     <string translatable="false" name="url_prime_more">https://ctemplar.com/pricing</string>
-    <string translatable="false" name="url_web_mail">https://mail.ctemplar.com</string>
 
     <!-- ERRORS -->
     <string name="error_field_cannot_be_empty">This field cannot be empty.</string>

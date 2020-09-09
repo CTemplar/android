@@ -32,6 +32,7 @@ import androidx.preference.SwitchPreference;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 import com.ctemplar.app.fdroid.BaseActivity;
+import com.ctemplar.app.fdroid.BuildConfig;
 import com.ctemplar.app.fdroid.CTemplarApp;
 import com.ctemplar.app.fdroid.R;
 import com.ctemplar.app.fdroid.filters.FiltersActivity;
@@ -451,7 +452,7 @@ public class SettingsActivity extends BaseActivity {
             );
             descriptionPreference.setOnPreferenceClickListener(preference -> {
                 Intent webMailIntent = new Intent(Intent.ACTION_VIEW,
-                        Uri.parse(getString(R.string.url_web_mail)));
+                        Uri.parse(BuildConfig.ORIGIN));
                 startActivity(webMailIntent);
                 return true;
             });
