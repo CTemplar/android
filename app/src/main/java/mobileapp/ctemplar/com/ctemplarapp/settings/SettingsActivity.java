@@ -32,6 +32,7 @@ import androidx.preference.SwitchPreference;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 import mobileapp.ctemplar.com.ctemplarapp.BaseActivity;
+import mobileapp.ctemplar.com.ctemplarapp.BuildConfig;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.filters.FiltersActivity;
@@ -449,7 +450,7 @@ public class SettingsActivity extends BaseActivity {
             );
             descriptionPreference.setOnPreferenceClickListener(preference -> {
                 Intent webMailIntent = new Intent(Intent.ACTION_VIEW,
-                        Uri.parse(getString(R.string.url_web_mail)));
+                        Uri.parse(BuildConfig.ORIGIN));
                 startActivity(webMailIntent);
                 return true;
             });
