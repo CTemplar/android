@@ -8,7 +8,7 @@ repositories {
 ext {
     versionMajor = 1
     versionMinor = 3
-    versionBuild = 5
+    versionBuild = 6
 }
 
 android {
@@ -38,7 +38,7 @@ android {
             versionName "${versionMajor}.${versionMinor}.${versionBuild}-${new Date().format('M.d.yyyy')}-dev"
             applicationIdSuffix '.development'
             buildConfigField("String", "DOMAIN", "\"dev.ctemplar.com\"")
-            buildConfigField("String", "ORIGIN", "\"https://mail.ctemplar.com\"")
+            buildConfigField("String", "ORIGIN", "\"https://dev.ctemplar.net\"")
             buildConfigField("String", "BASE_URL", "\"https://devapi.ctemplar.net/\"")
         }
         production {

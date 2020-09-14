@@ -5,14 +5,16 @@ import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.graphics.Rect;
 import android.os.Handler;
-import androidx.recyclerview.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
 import android.view.ViewConfiguration;
+import android.view.ViewParent;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ListView;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -73,6 +75,7 @@ public class InboxMessagesTouchListener implements RecyclerView.OnItemTouchListe
     private boolean swipeable = false, swipeableLeftOptions = false;
     private int LONG_CLICK_DELAY = 800;
     private boolean longClickVibrate;
+    private final ViewParent recycleViewParent;
     Runnable mLongPressed = new Runnable() {
         public void run() {
             if (!longClickable)
@@ -91,6 +94,10 @@ public class InboxMessagesTouchListener implements RecyclerView.OnItemTouchListe
     };
 
     public InboxMessagesTouchListener(Activity a, RecyclerView recyclerView) {
+        this(a, recyclerView, true);
+    }
+
+    public InboxMessagesTouchListener(Activity a, RecyclerView recyclerView, boolean disallowInterceptTouchEventOnSwipe) {
         this.act = a;
         ViewConfiguration vc = ViewConfiguration.get(recyclerView.getContext());
         touchSlop = vc.getScaledTouchSlop();
@@ -108,6 +115,11 @@ public class InboxMessagesTouchListener implements RecyclerView.OnItemTouchListe
         optionViews = new ArrayList<>();
         fadeViews = new ArrayList<>();
         isRViewScrolling = false;
+        if (disallowInterceptTouchEventOnSwipe) {
+            recycleViewParent = recyclerView.getParent();
+        } else {
+            recycleViewParent = null;
+        }
 
 //        mSwipeListener = listener;
 
@@ -510,6 +522,9 @@ public class InboxMessagesTouchListener implements RecyclerView.OnItemTouchListe
                 if (mVelocityTracker == null) {
                     break;
                 }
+                if (recycleViewParent != null) {
+                    recycleViewParent.requestDisallowInterceptTouchEvent(false);
+                }
                 if (swipeable) {
                     if (touchedView != null && isFgSwiping) {
                         // cancel
@@ -537,6 +552,9 @@ public class InboxMessagesTouchListener implements RecyclerView.OnItemTouchListe
                 }
                 if (touchedPosition < 0)
                     break;
+                if (recycleViewParent != null) {
+                    recycleViewParent.requestDisallowInterceptTouchEvent(false);
+                }
 
                 boolean swipedLeft = false;
                 boolean swipedRight = false;
@@ -681,6 +699,9 @@ public class InboxMessagesTouchListener implements RecyclerView.OnItemTouchListe
                     break;
                 if (mVelocityTracker == null || mPaused || !swipeable) {
                     break;
+                }
+                if (recycleViewParent != null) {
+                    recycleViewParent.requestDisallowInterceptTouchEvent(true);
                 }
 
                 mVelocityTracker.addMovement(motionEvent);
