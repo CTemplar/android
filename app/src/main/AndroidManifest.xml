@@ -108,6 +108,7 @@
         <activity android:name=".settings.ChangePasswordActivity" />
         <activity android:name=".settings.KeysActivity" />
         <activity android:name=".settings.SignatureActivity" />
+        <activity android:name=".settings.HelpdeskActivity" />
         <activity android:name=".mailboxes.MailboxesActivity" />
         <activity android:name=".mailboxes.AddMailboxActivity" />
 

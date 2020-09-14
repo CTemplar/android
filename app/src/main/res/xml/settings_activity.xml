@@ -73,11 +73,11 @@
             android:title="@string/settings_addresses"
             android:key="@string/email_addresses" />
 
-        <PreferenceScreen
+        <Preference
             android:title="@string/settings_signature"
             android:key="@string/signature_key" />
 
-        <PreferenceScreen
+        <Preference
             android:title="@string/settings_mobile_signature"
             android:key="@string/mobile_signature_key" />
 
@@ -89,6 +89,10 @@
 
     <PreferenceCategory
         android:title="@string/settings_about">
+
+        <Preference
+            android:title="@string/settings_helpdesk"
+            android:key="@string/helpdesk_key" />
 
         <Preference
             android:title="@string/settings_local_storage_limit"
