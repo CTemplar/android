@@ -98,7 +98,7 @@
     <string name="hint_step_email_recovery_short">By checking this box you understand that if you lose your password and do not set a recovery email your account will not be recoverable. <![CDATA[<u><font color="blue">More info</font></u>]]></string>
     <string name="title_step_email_hint">This is used to recover your account if you forget your password.</string>
     <string name="title_step_email_check_hint">Please check this box if you agree to abide by our <![CDATA[<u><a href="https://ctemplar.com/terms">Terms and Conditions.</a></u>]]></string>
-    <string name="title_step_invitation_code_hint">You can get invitation code from any existing paid customer or you can request an invitation code from us. How to get invitation code? <![CDATA[<u><a href="https://ctemplar.com/faq/get-an-invitation-code/">Learn more</a></u>]]></string>
+    <string name="title_step_invitation_code_hint">You can get invitation code from any existing paid customer or you can request an invitation code from us. Why invite codes and how to get one? <![CDATA[<u><a href="https://ctemplar.com/email-creation-restriction/">Learn more</a></u>]]></string>
     <string name="title_more_info_link"><u>More Info</u></string>
     <string name="title_empty_inbox">You have no inbox messages</string>
     <string name="title_empty_messages">You have no %1$s messages</string>
