@@ -349,6 +349,7 @@
     <string name="settings_keys">Clés</string>
     <string name="settings_enable_mobile_signature">Activer la signature mobile</string>
     <string name="settings_about">A propos</string>
+    <string name="settings_helpdesk">Bureau d\'aide</string>
     <string name="settings_local_storage_limit">Espace de stockage utilisé :</string>
     <string name="settings_app_version">Version de l\'application</string>
     <string name="settings_disable_contacts_encryption">Êtes-vous certain de vouloir désactiver le chiffrement de vos contacts ?</string>

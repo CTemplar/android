@@ -189,6 +189,14 @@ public class SettingsActivity extends BaseActivity {
                     return true;
                 });
             }
+            Preference helpdeskPreference = findPreference(getString(R.string.helpdesk_key));
+            if (helpdeskPreference != null) {
+                helpdeskPreference.setOnPreferenceClickListener(preference -> {
+                    Intent helpdeskIntent = new Intent(getActivity(), HelpdeskActivity.class);
+                    startActivity(helpdeskIntent);
+                    return true;
+                });
+            }
         }
     }
 
