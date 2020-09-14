@@ -817,4 +817,3 @@ public class InboxMessagesTouchListener implements RecyclerView.OnItemTouchListe
         void onSwipeOptionsOpened();
     }
 }
-

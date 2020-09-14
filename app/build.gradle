@@ -35,7 +35,7 @@ android {
     flavorDimensions "version"
     productFlavors {
         development {
-            versionName "${versionMajor}.${versionMinor}.${versionBuild}-${new Date().format('M.d.yyyy')}-dev"
+            versionName "${versionMajor}.${versionMinor}.${versionBuild}-${new Date().format('M.d.yyyy')}.dev"
             applicationIdSuffix '.development'
             buildConfigField("String", "DOMAIN", "\"dev.ctemplar.com\"")
             buildConfigField("String", "ORIGIN", "\"https://dev.ctemplar.net\"")
