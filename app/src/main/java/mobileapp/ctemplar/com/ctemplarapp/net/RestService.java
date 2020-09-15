@@ -15,6 +15,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.request.ContactsEncryptionRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.CreateMailboxRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.CustomFilterRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.DefaultMailboxRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.DisableLoadingImagesRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.EditFolderRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.EmptyFolderRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.EnabledMailboxRequest;
@@ -324,6 +325,12 @@ public interface RestService {
     Observable<SettingsEntity> updateAntiPhishingPhrase(
             @Path("id") long settingId,
             @Body AntiPhishingPhraseRequest request
+    );
+
+    @PATCH("users/settings/{id}/")
+    Observable<SettingsEntity> updateDisableLoadingImages(
+            @Path("id") long settingId,
+            @Body DisableLoadingImagesRequest request
     );
 
     @POST("users/app-token/")

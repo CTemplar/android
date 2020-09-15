@@ -234,7 +234,6 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
             }
         });
 
-
         return root;
     }
 

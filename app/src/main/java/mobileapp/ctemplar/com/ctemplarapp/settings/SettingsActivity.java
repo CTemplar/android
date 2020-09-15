@@ -32,6 +32,7 @@ import androidx.preference.SwitchPreference;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 import mobileapp.ctemplar.com.ctemplarapp.BaseActivity;
+import mobileapp.ctemplar.com.ctemplarapp.BuildConfig;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.filters.FiltersActivity;
@@ -187,6 +188,14 @@ public class SettingsActivity extends BaseActivity {
                     return true;
                 });
             }
+            Preference helpdeskPreference = findPreference(getString(R.string.helpdesk_key));
+            if (helpdeskPreference != null) {
+                helpdeskPreference.setOnPreferenceClickListener(preference -> {
+                    Intent helpdeskIntent = new Intent(getActivity(), HelpdeskActivity.class);
+                    startActivity(helpdeskIntent);
+                    return true;
+                });
+            }
         }
     }
 
@@ -272,10 +281,10 @@ public class SettingsActivity extends BaseActivity {
             if (blockExternalImagesPreference != null) {
                 blockExternalImagesPreference.setOnPreferenceChangeListener((preference, newValue) -> {
                     userStore.setBlockExternalImagesEnabled((boolean) newValue);
+                    settingsModel.updateDisableLoadingImages(settingId, (boolean) newValue);
+                    Toast.makeText(getActivity(), getString(R.string.toast_saved), Toast.LENGTH_SHORT).show();
                     return true;
                 });
-                boolean isBlockExternalImagesEnabled = userStore.isBlockExternalImagesEnabled();
-                blockExternalImagesPreference.setChecked(isBlockExternalImagesEnabled);
             }
         }
     }
@@ -328,7 +337,6 @@ public class SettingsActivity extends BaseActivity {
     }
 
     public static class EncryptionFragment extends BasePreferenceFragment {
-
         private SwitchPreference contactsEncryptionSwitchPreference;
 
         @Override
@@ -339,8 +347,7 @@ public class SettingsActivity extends BaseActivity {
             if (subjectEncryptionSwitchPreference != null) {
                 subjectEncryptionSwitchPreference.setOnPreferenceChangeListener((preference, newValue) -> {
                     Toast.makeText(getActivity(), getString(R.string.toast_saved), Toast.LENGTH_SHORT).show();
-                    boolean value = (boolean) newValue;
-                    settingsModel.updateSubjectEncryption(settingId, value);
+                    settingsModel.updateSubjectEncryption(settingId, (boolean) newValue);
                     return true;
                 });
                 subjectEncryptionSwitchPreference.setEnabled(isPrimeUser);
@@ -451,7 +458,7 @@ public class SettingsActivity extends BaseActivity {
             );
             descriptionPreference.setOnPreferenceClickListener(preference -> {
                 Intent webMailIntent = new Intent(Intent.ACTION_VIEW,
-                        Uri.parse(getString(R.string.url_web_mail)));
+                        Uri.parse(BuildConfig.ORIGIN));
                 startActivity(webMailIntent);
                 return true;
             });
@@ -514,6 +521,7 @@ public class SettingsActivity extends BaseActivity {
                 .putBoolean(getString(R.string.subject_encryption_enabled), settingsEntity.isSubjectEncrypted())
                 .putBoolean(getString(R.string.contacts_encryption_enabled), settingsEntity.isContactsEncrypted())
                 .putBoolean(getString(R.string.anti_phishing_enabled), settingsEntity.isAntiPhishingEnabled())
+                .putBoolean(getString(R.string.block_external_images_key), settingsEntity.isDisableLoadingImages())
                 .apply();
     }
 

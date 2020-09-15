@@ -15,6 +15,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.AntiPhishingPhraseRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.AutoSaveContactEnabledRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.ContactsEncryptionRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.DisableLoadingImagesRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.RecoveryEmailRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SignatureRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SubjectEncryptedRequest;
@@ -31,15 +32,14 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import timber.log.Timber;
 
 public class SettingsViewModel extends ViewModel {
-
     private ContactsRepository contactsRepository;
-    private AppDatabase appDatabase;
     private UserRepository userRepository;
+    private AppDatabase appDatabase;
 
     public SettingsViewModel() {
         contactsRepository = CTemplarApp.getContactsRepository();
-        appDatabase = CTemplarApp.getAppDatabase();
         userRepository = CTemplarApp.getUserRepository();
+        appDatabase = CTemplarApp.getAppDatabase();
     }
 
     private MutableLiveData<ResponseStatus> decryptionStatus = new MutableLiveData<>();
@@ -85,7 +85,10 @@ public class SettingsViewModel extends ViewModel {
         if (settingId == -1) {
             return;
         }
-        userRepository.updateAutoSaveEnabled(settingId, new AutoSaveContactEnabledRequest(isEnabled))
+        userRepository.updateAutoSaveEnabled(
+                settingId,
+                new AutoSaveContactEnabledRequest(isEnabled)
+        )
                 .subscribe(new Observer<SettingsEntity>() {
                     @Override
                     public void onSubscribe(Disposable d) {
@@ -94,7 +97,38 @@ public class SettingsViewModel extends ViewModel {
 
                     @Override
                     public void onNext(SettingsEntity settingsEntity) {
+                        Timber.i("AutoSave contacts updated");
+                    }
 
+                    @Override
+                    public void onError(Throwable e) {
+                        Timber.e(e);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    void updateDisableLoadingImages(long settingId, boolean isEnabled) {
+        if (settingId == -1) {
+            return;
+        }
+        userRepository.updateDisableLoadingImages(
+                settingId,
+                new DisableLoadingImagesRequest(isEnabled)
+        )
+                .subscribe(new Observer<SettingsEntity>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(SettingsEntity settingsEntity) {
+                        Timber.i("Disable loading images updated");
                     }
 
                     @Override
@@ -113,7 +147,10 @@ public class SettingsViewModel extends ViewModel {
         if (mailboxId == -1) {
             return;
         }
-        userRepository.updateSignature(mailboxId, new SignatureRequest(displayName, signatureText))
+        userRepository.updateSignature(
+                mailboxId,
+                new SignatureRequest(displayName, signatureText)
+        )
                 .subscribe(new Observer<MailboxesResult>() {
                     @Override
                     public void onSubscribe(Disposable d) {
@@ -143,9 +180,10 @@ public class SettingsViewModel extends ViewModel {
         if (settingId == -1) {
             return;
         }
-
-        RecoveryEmailRequest request = new RecoveryEmailRequest(newRecoveryEmail);
-        userRepository.updateRecoveryEmail(settingId, request)
+        userRepository.updateRecoveryEmail(
+                settingId,
+                new RecoveryEmailRequest(newRecoveryEmail)
+        )
                 .subscribe(new Observer<SettingsEntity>() {
                     @Override
                     public void onSubscribe(Disposable d) {
@@ -173,9 +211,10 @@ public class SettingsViewModel extends ViewModel {
         if (settingId == -1) {
             return;
         }
-
-        SubjectEncryptedRequest subjectEncryptedRequest = new SubjectEncryptedRequest(isSubjectEncryption);
-        userRepository.updateSubjectEncrypted(settingId, subjectEncryptedRequest)
+        userRepository.updateSubjectEncrypted(
+                settingId,
+                new SubjectEncryptedRequest(isSubjectEncryption)
+        )
                 .subscribe(new Observer<SettingsEntity>() {
                     @Override
                     public void onSubscribe(Disposable d) {
@@ -203,9 +242,10 @@ public class SettingsViewModel extends ViewModel {
         if (settingId == -1) {
             return;
         }
-
-        ContactsEncryptionRequest contactsEncryptionRequest = new ContactsEncryptionRequest(isContactsEncryption);
-        userRepository.updateContactsEncryption(settingId, contactsEncryptionRequest)
+        userRepository.updateContactsEncryption(
+                settingId,
+                new ContactsEncryptionRequest(isContactsEncryption)
+        )
                 .subscribe(new Observer<SettingsEntity>() {
                     @Override
                     public void onSubscribe(Disposable d) {
@@ -214,7 +254,7 @@ public class SettingsViewModel extends ViewModel {
 
                     @Override
                     public void onNext(SettingsEntity settingsEntity) {
-
+                        Timber.i("Contacts encryption updated");
                     }
 
                     @Override
@@ -262,6 +302,37 @@ public class SettingsViewModel extends ViewModel {
                 });
     }
 
+    void updateAntiPhishingPhrase(long settingId, boolean antiPhishingEnabled, String antiPhishingPhrase) {
+        if (settingId == -1) {
+            return;
+        }
+        userRepository.updateAntiPhishingPhrase(
+                settingId,
+                new AntiPhishingPhraseRequest(antiPhishingEnabled, antiPhishingPhrase)
+        )
+                .subscribe(new Observer<SettingsEntity>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(SettingsEntity settingsEntity) {
+                        Timber.i("AntiPhishing phrase updated");
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Timber.w(e);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
     private void updateContact(ContactData contactData) {
         if (!contactData.isEncrypted()) {
             return;
@@ -300,35 +371,6 @@ public class SettingsViewModel extends ViewModel {
                     public void onError(Throwable e) {
                         decryptionStatus.postValue(ResponseStatus.RESPONSE_ERROR);
                         Timber.e(e);
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
-    }
-
-    void updateAntiPhishingPhrase(long settingId, boolean antiPhishingEnabled, String antiPhishingPhrase) {
-        if (settingId == -1) {
-            return;
-        }
-        userRepository.updateAntiPhishingPhrase(settingId,
-                new AntiPhishingPhraseRequest(antiPhishingEnabled, antiPhishingPhrase))
-                .subscribe(new Observer<SettingsEntity>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(SettingsEntity settingsEntity) {
-
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Timber.w(e);
                     }
 
                     @Override

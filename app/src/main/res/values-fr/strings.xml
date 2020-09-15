@@ -96,7 +96,7 @@
     <string name="hint_step_email_recovery_short">En cochant cette case, vous comprenez que si vous perdez votre mot de passe et ne définissez pas d\'e-mail de récupération, votre compte ne sera pas récupérable. <![CDATA[<u><font color="blue">Plus d\'info</font></u>]]></string>
     <string name="title_step_email_hint">Cet email sera utilisé pour récupérer votre compte si vous oubliez votre mot de passe.</string>
     <string name="title_step_email_check_hint">Veuillez cocher cette case si vous acceptez de vous conformer à nos <![CDATA[<u><a href="https://ctemplar.com/terms">Termes et Conditions</a></u>]]></string>
-    <string name="title_step_invitation_code_hint">Vous pouvez obtenir le code d\'invitation de tout client payant existant ou vous pouvez le demander auprès de nous. Comment obtenir le code d\'invitation? <![CDATA[<u><a href="https://ctemplar.com/faq/get-an-invitation-code/">Apprendre encore plus</a></u>]]></string>
+    <string name="title_step_invitation_code_hint">Vous pouvez obtenir le code d\'invitation de tout client payant existant ou vous pouvez le demander auprès de nous. Pourquoi inviter des codes et comment en obtenir un? <![CDATA[<u><a href="https://ctemplar.com/email-creation-restriction/">Apprendre encore plus</a></u>]]></string>
     <string name="title_more_info_link"><u>Détail</u></string>
     <string name="title_empty_inbox">Aucun message</string>
     <string name="title_empty_messages">Aucun email Dans %1$s</string>
@@ -347,6 +347,7 @@
     <string name="settings_keys">Clés</string>
     <string name="settings_enable_mobile_signature">Activer la signature mobile</string>
     <string name="settings_about">A propos</string>
+    <string name="settings_helpdesk">Bureau d\'aide</string>
     <string name="settings_local_storage_limit">Espace de stockage utilisé :</string>
     <string name="settings_app_version">Version de l\'application</string>
     <string name="settings_disable_contacts_encryption">Êtes-vous certain de vouloir désactiver le chiffrement de vos contacts ?</string>

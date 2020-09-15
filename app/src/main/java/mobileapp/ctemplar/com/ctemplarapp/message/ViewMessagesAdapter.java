@@ -47,7 +47,6 @@ import static android.content.Context.DOWNLOAD_SERVICE;
 import static mobileapp.ctemplar.com.ctemplarapp.message.ViewMessagesFragment.ENCRYPTED_EXT;
 
 public class ViewMessagesAdapter extends BaseAdapter {
-
     private List<MessageProvider> messageProviderList;
     private OnAttachmentDownloading onAttachmentDownloading;
     private UserStore userStore;
@@ -353,14 +352,15 @@ public class ViewMessagesAdapter extends BaseAdapter {
                 documentRequest.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
 
                 if (activity != null && PermissionCheck.readAndWriteExternalStorage(activity)) {
-                    DownloadManager downloadManager = (DownloadManager) activity
-                            .getApplicationContext().getSystemService(DOWNLOAD_SERVICE);
+                    DownloadManager downloadManager = (DownloadManager) activity.getApplicationContext()
+                            .getSystemService(DOWNLOAD_SERVICE);
+                    if (downloadManager == null) {
+                        return;
+                    }
                     downloadManager.enqueue(documentRequest);
                     attachmentProvider.setFileName(fileName);
-
                     onAttachmentDownloading.onStart(attachmentProvider);
-                    Toast.makeText(activity, activity.getString(R.string.toast_download_started),
-                            Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, activity.getString(R.string.toast_download_started), Toast.LENGTH_SHORT).show();
                 }
             }
 
