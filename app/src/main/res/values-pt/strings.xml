@@ -96,7 +96,7 @@
     <string name="hint_step_email_recovery_short">Ao marcar a caixa de seleção, você entende que, caso perca sua senha e não tenha definido um e-mail de recuperação, os dados da sua conta NÃO serão recuperáveis. <![CDATA[<u><font color="blue">Mais informações</font></u>]]></string>
     <string name="title_step_email_hint">Ele será usado para recuperar sua conta se você esquecer sua senha.</string>
     <string name="title_step_email_check_hint">Por favor, marque a caixa de verificação se você concorda em cumprir nossos <![CDATA[<u><a href="https://ctemplar.com/terms">Termos e Condições.</a></u>]]></string>
-    <string name="title_step_invitation_code_hint">Você pode obter o código de convite de qualquer cliente pago existente ou solicitar um de nós. Como obter um código do convite? <![CDATA[<u><a href="https://ctemplar.com/faq/get-an-invitation-code/">Saiba mais</a></u>]]></string>
+    <string name="title_step_invitation_code_hint">Você pode obter o código de convite de qualquer cliente pago existente ou solicitar um de nós. Por que convidar códigos e como obter um? <![CDATA[<u><a href="https://ctemplar.com/email-creation-restriction/">Saiba mais</a></u>]]></string>
     <string name="title_more_info_link"><u>Mais informações</u></string>
     <string name="title_empty_inbox">Caixa  de entrada vazia.</string>
     <string name="title_empty_messages">Nenhuma mensagem na %1$s</string>
@@ -349,6 +349,7 @@
     <string name="settings_keys">Chaves</string>
     <string name="settings_enable_mobile_signature">Ativar assinatura móvel</string>
     <string name="settings_about">Sobre</string>
+    <string name="settings_helpdesk">Central de Ajuda</string>
     <string name="settings_local_storage_limit">Limite de armazenamento local</string>
     <string name="settings_app_version">Versão do aplicativo</string>
     <string name="settings_disable_contacts_encryption">Tem certeza de que deseja desativar a criptografia dos contatos?</string>
