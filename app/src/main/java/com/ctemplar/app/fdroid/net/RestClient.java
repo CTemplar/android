@@ -1,5 +1,7 @@
 package com.ctemplar.app.fdroid.net;
 
+import android.os.Build;
+
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -17,10 +19,6 @@ public class RestClient {
     private static final RestClient instance = new RestClient();
     private final RestService services;
 
-    public static RestClient instance() {
-        return instance;
-    }
-
     public RestClient() {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BuildConfig.BASE_URL)
@@ -32,36 +30,40 @@ public class RestClient {
         services = retrofit.create(RestService.class);
     }
 
+    private OkHttpClient logLevel() {
+        HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor();
+        httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+
+        OkHttpClient.Builder client = new OkHttpClient.Builder()
+//                .addInterceptor(httpLoggingInterceptor)
+                .addInterceptor(new HttpTokenInterceptor())
+                .authenticator(new TokenAuthenticator())
+                .readTimeout(30, TimeUnit.SECONDS)
+                .connectTimeout(30, TimeUnit.SECONDS);
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            try {
+                TLSSocketFactory tlsSocketFactory = new TLSSocketFactory();
+                if (tlsSocketFactory.getTrustManager() != null) {
+                    client.sslSocketFactory(tlsSocketFactory, tlsSocketFactory.getTrustManager());
+                }
+            } catch (KeyManagementException e) {
+                Timber.e(e);
+            } catch (NoSuchAlgorithmException e) {
+                Timber.e(e);
+            } catch (KeyStoreException e) {
+                Timber.e(e);
+            }
+        }
+
+        return client.build();
+    }
+
     public RestService getRestService() {
         return services;
     }
 
-    private OkHttpClient logLevel() {
-        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-
-        OkHttpClient.Builder client = new OkHttpClient.Builder();
-        try {
-            TLSSocketFactory tlsSocketFactory = new TLSSocketFactory();
-            if (tlsSocketFactory.getTrustManager() != null) {
-                client.sslSocketFactory(tlsSocketFactory, tlsSocketFactory.getTrustManager())
-                        .build();
-            }
-        } catch (KeyManagementException e) {
-            Timber.e(e);
-        } catch (NoSuchAlgorithmException e) {
-            Timber.e(e);
-        } catch (KeyStoreException e) {
-            Timber.e(e);
-        }
-        client
-//                .addInterceptor(interceptor)
-                .addInterceptor(new HttpTokenInterceptor())
-                .authenticator(new TokenAuthenticator())
-                .readTimeout(30, TimeUnit.SECONDS)
-                .connectTimeout(30, TimeUnit.SECONDS)
-                .build();
-
-        return client.build();
+    public static RestClient instance() {
+        return instance;
     }
 }
