@@ -23,7 +23,6 @@ import butterknife.BindInt;
 import butterknife.BindView;
 import butterknife.OnClick;
 import mobileapp.ctemplar.com.ctemplarapp.BaseFragment;
-import mobileapp.ctemplar.com.ctemplarapp.BuildConfig;
 import mobileapp.ctemplar.com.ctemplarapp.LoginActivityActions;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
@@ -84,7 +83,7 @@ public class SignInFragment extends BaseFragment {
 
     @OnClick(R.id.fragment_sign_in_send)
     public void onClickLogin() {
-        String username = formatUsername(EditTextUtils.getText(editTextUsername).trim());
+        String username = EditTextUtils.formatUsername(EditTextUtils.getText(editTextUsername).trim());
         String password = EditTextUtils.getText(editTextPassword).trim();
         String otpCode = EditTextUtils.getText(editTextOtpCode).trim();
 
@@ -184,10 +183,6 @@ public class SignInFragment extends BaseFragment {
             String token = instanceIdResult.getToken();
             loginActivityModel.addFirebaseToken(token, getString(R.string.platform));
         });
-    }
-
-    private String formatUsername(String username) {
-        return username.toLowerCase().replace("@" + BuildConfig.DOMAIN, "");
     }
 
     private boolean isValid(String email, String password) {

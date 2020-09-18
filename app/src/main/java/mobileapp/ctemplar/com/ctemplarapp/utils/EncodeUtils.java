@@ -69,31 +69,39 @@ public class EncodeUtils {
         return BCrypt.hashpw(password, generateSaltWithUsername(username, ENCODE_SCHEME));
     }
 
-    public static Observable<PGPKeyEntity> getPGPKeyObservable(final String password) {
+    public static Observable<PGPKeyEntity> getPGPKeyObservable(
+            final String emailAddress,
+            final String password
+    ) {
         return Observable.fromCallable(()
-                -> PGPManager.generateKeys("user@ctemplar.com", password))
+                -> PGPManager.generateKeys(emailAddress, password))
                 .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public static Observable<List<MailboxKey>> generateMailboxKeys(final String username,
-                                                                   final String oldPassword,
-                                                                   final String password,
-                                                                   final boolean resetKeys,
-                                                                   final List<MailboxEntity> mailboxEntities) {
-
+    public static Observable<List<MailboxKey>> generateMailboxKeys(
+            final List<MailboxEntity> mailboxEntities,
+            final String oldPassword,
+            final String password,
+            final boolean resetKeys
+    ) {
         return Observable.fromCallable(() -> {
             List<MailboxKey> mailboxKeys = new ArrayList<>();
 
             for (MailboxEntity mailboxEntity : mailboxEntities) {
                 PGPKeyEntity pgpKeyEntity;
                 if (resetKeys) {
-                    pgpKeyEntity = PGPManager.generateKeys(username, password);
+                    String emailAddress = mailboxEntity.getEmail();
+                    pgpKeyEntity = PGPManager.generateKeys(emailAddress, password);
                 } else {
                     PGPKeyEntity oldPgpKeyEntity = new PGPKeyEntity(
-                            mailboxEntity.getPublicKey(), mailboxEntity.getPrivateKey(), mailboxEntity.getFingerprint()
+                            mailboxEntity.getPublicKey(),
+                            mailboxEntity.getPrivateKey(),
+                            mailboxEntity.getFingerprint()
                     );
-                    pgpKeyEntity = PGPManager.changePrivateKeyPassword(oldPgpKeyEntity, oldPassword, password);
+                    pgpKeyEntity = PGPManager.changePrivateKeyPassword(
+                            oldPgpKeyEntity, oldPassword,password
+                    );
                 }
 
                 MailboxKey mailboxKey = new MailboxKey();
@@ -109,8 +117,11 @@ public class EncodeUtils {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public static Observable<PGPKeyEntity> generateAdditionalMailbox(final String username, final String password) {
-        return Observable.fromCallable(() -> PGPManager.generateKeys(username, password))
+    public static Observable<PGPKeyEntity> generateAdditionalMailbox(
+            final String emailAddress,
+            final String password
+    ) {
+        return Observable.fromCallable(() -> PGPManager.generateKeys(emailAddress, password))
                 .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread());
     }

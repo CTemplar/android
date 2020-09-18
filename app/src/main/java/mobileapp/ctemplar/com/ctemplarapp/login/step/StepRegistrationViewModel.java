@@ -22,6 +22,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.CaptchaVerifyResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.CheckUsernameResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.SignUpResponse;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
+import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EncodeUtils;
 import retrofit2.HttpException;
 import timber.log.Timber;
@@ -129,11 +130,12 @@ public class StepRegistrationViewModel extends ViewModel {
     }
 
     public void signUp() {
-        if(signUpRequest == null) {
+        if (signUpRequest == null) {
             return;
         }
+        String emailAddress = EditTextUtils.formatUserEmail(signUpRequest.getUsername());
         String password = signUpRequest.getPassword();
-        EncodeUtils.getPGPKeyObservable(password)
+        EncodeUtils.getPGPKeyObservable(emailAddress, password)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .flatMap((Function<PGPKeyEntity, Observable<SignUpResponse>>) pgpKeyEntity -> {

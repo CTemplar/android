@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import mobileapp.ctemplar.com.ctemplarapp.BuildConfig;
+
 public class EditTextUtils {
     private static final String EMAIL_PATTERN = "(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])";
     private static final Pattern EMAIL_LIST = Pattern.compile("([, ]{0,}" + EMAIL_PATTERN + ")+");
@@ -43,6 +45,14 @@ public class EditTextUtils {
         Pattern pattern = Pattern.compile("^[a-zA-Z0-9-_.@]+$");
         Matcher matcher = pattern.matcher(text);
         return matcher.matches();
+    }
+
+    public static String formatUsername(String username) {
+        return username.toLowerCase().replace("@" + BuildConfig.DOMAIN, "");
+    }
+
+    public static String formatUserEmail(String username) {
+        return username + "@" + BuildConfig.DOMAIN;
     }
 
     public static String getText(EditText editText) {
