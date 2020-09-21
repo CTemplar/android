@@ -22,6 +22,7 @@ import com.ctemplar.app.fdroid.net.response.CaptchaVerifyResponse;
 import com.ctemplar.app.fdroid.net.response.CheckUsernameResponse;
 import com.ctemplar.app.fdroid.net.response.SignUpResponse;
 import com.ctemplar.app.fdroid.repository.UserRepository;
+import com.ctemplar.app.fdroid.utils.EditTextUtils;
 import com.ctemplar.app.fdroid.utils.EncodeUtils;
 import retrofit2.HttpException;
 import timber.log.Timber;
@@ -129,11 +130,12 @@ public class StepRegistrationViewModel extends ViewModel {
     }
 
     public void signUp() {
-        if(signUpRequest == null) {
+        if (signUpRequest == null) {
             return;
         }
+        String emailAddress = EditTextUtils.formatUserEmail(signUpRequest.getUsername());
         String password = signUpRequest.getPassword();
-        EncodeUtils.getPGPKeyObservable(password)
+        EncodeUtils.getPGPKeyObservable(emailAddress, password)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .flatMap((Function<PGPKeyEntity, Observable<SignUpResponse>>) pgpKeyEntity -> {

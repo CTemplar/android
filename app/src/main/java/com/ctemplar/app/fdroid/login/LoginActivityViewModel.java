@@ -16,8 +16,8 @@ import com.ctemplar.app.fdroid.net.request.RecoverPasswordRequest;
 import com.ctemplar.app.fdroid.net.request.SignInRequest;
 import com.ctemplar.app.fdroid.net.response.RecoverPasswordResponse;
 import com.ctemplar.app.fdroid.net.response.SignInResponse;
-import com.ctemplar.app.fdroid.services.NotificationService;
 import com.ctemplar.app.fdroid.repository.UserRepository;
+import com.ctemplar.app.fdroid.utils.EditTextUtils;
 import com.ctemplar.app.fdroid.utils.EncodeUtils;
 
 import io.reactivex.Observable;
@@ -124,7 +124,6 @@ public class LoginActivityViewModel extends AndroidViewModel {
                             responseStatus.postValue(ResponseStatus.RESPONSE_WAIT_OTP);
                         } else {
                             userRepository.saveUserToken(signInResponse.getToken());
-                            NotificationService.updateState(getApplication());
                             responseStatus.postValue(ResponseStatus.RESPONSE_NEXT);
                         }
                     }
@@ -177,13 +176,13 @@ public class LoginActivityViewModel extends AndroidViewModel {
         }
         String username = recoverPasswordRequest.getUsername();
         String password = recoverPasswordRequest.getPassword();
+        String emailAddress = EditTextUtils.formatUserEmail(username);
         userRepository.saveUsername(username);
         userRepository.saveUserPassword(password);
-        EncodeUtils.getPGPKeyObservable(password)
+        EncodeUtils.getPGPKeyObservable(emailAddress, password)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .flatMap((Function<PGPKeyEntity, Observable<RecoverPasswordResponse>>) pgpKeyEntity -> {
-
                     recoverPasswordRequest.setPrivateKey(pgpKeyEntity.getPrivateKey());
                     recoverPasswordRequest.setPublicKey(pgpKeyEntity.getPublicKey());
                     recoverPasswordRequest.setPassword(

@@ -13,6 +13,11 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.ctemplar.app.fdroid.BaseFragment;
+import com.ctemplar.app.fdroid.LoginActivityActions;
+import com.ctemplar.app.fdroid.R;
+import com.ctemplar.app.fdroid.net.ResponseStatus;
+import com.ctemplar.app.fdroid.utils.EditTextUtils;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -21,12 +26,6 @@ import org.jetbrains.annotations.NotNull;
 import butterknife.BindInt;
 import butterknife.BindView;
 import butterknife.OnClick;
-import com.ctemplar.app.fdroid.BaseFragment;
-import com.ctemplar.app.fdroid.BuildConfig;
-import com.ctemplar.app.fdroid.LoginActivityActions;
-import com.ctemplar.app.fdroid.R;
-import com.ctemplar.app.fdroid.net.ResponseStatus;
-import com.ctemplar.app.fdroid.utils.EditTextUtils;
 import timber.log.Timber;
 
 public class SignInFragment extends BaseFragment {
@@ -83,7 +82,7 @@ public class SignInFragment extends BaseFragment {
 
     @OnClick(R.id.fragment_sign_in_send)
     public void onClickLogin() {
-        String username = formatUsername(EditTextUtils.getText(editTextUsername).trim());
+        String username = EditTextUtils.formatUsername(EditTextUtils.getText(editTextUsername).trim());
         String password = EditTextUtils.getText(editTextPassword).trim();
         String otpCode = EditTextUtils.getText(editTextOtpCode).trim();
 
@@ -172,10 +171,6 @@ public class SignInFragment extends BaseFragment {
         textViewOtpTitle.setVisibility(View.VISIBLE);
         editTextOtpLayout.setVisibility(View.VISIBLE);
         editTextOtpLayout.requestFocus();
-    }
-
-    private String formatUsername(String username) {
-        return username.toLowerCase().replace("@" + BuildConfig.DOMAIN, "");
     }
 
     private boolean isValid(String email, String password) {

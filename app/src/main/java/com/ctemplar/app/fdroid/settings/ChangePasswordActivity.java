@@ -32,7 +32,6 @@ import com.ctemplar.app.fdroid.main.MainActivityActions;
 import com.ctemplar.app.fdroid.net.ResponseStatus;
 
 public class ChangePasswordActivity extends BaseActivity {
-
     private String userCurrentPassword;
     private ChangePasswordViewModel changePasswordModel;
 
@@ -127,7 +126,7 @@ public class ChangePasswordActivity extends BaseActivity {
         final String passwordConfirmation = editTextPasswordConfirmation.getText().toString();
         final boolean resetData = checkBoxResetData.isChecked();
 
-        if(!TextUtils.equals(userCurrentPassword, currentPassword)) {
+        if (!TextUtils.equals(userCurrentPassword, currentPassword)) {
             editTextCurrentPasswordLayout.setError(getString(R.string.error_current_password_not_match));
             return;
         }
@@ -139,20 +138,24 @@ public class ChangePasswordActivity extends BaseActivity {
             editTextNewPasswordLayout.setError(getString(R.string.error_password_big));
             return;
         }
-        if(!TextUtils.equals(newPassword, passwordConfirmation)) {
+        if (!TextUtils.equals(newPassword, passwordConfirmation)) {
             editTextPasswordConfirmationLayout.setError(getString(R.string.error_password_not_match));
             return;
         }
 
-        String alertMessage = getString(R.string.dialog_change_password_confirm);
-        if (resetData) {
-            alertMessage = getString(R.string.dialog_change_password_confirm_reset);
-        }
+        String alertMessage = resetData
+                ? getString(R.string.dialog_change_password_confirm_reset)
+                : getString(R.string.dialog_change_password_confirm);
+
         new AlertDialog.Builder(this)
                 .setTitle(getString(R.string.dialog_change_password))
                 .setMessage(alertMessage)
                 .setPositiveButton(getString(R.string.btn_change), (dialog, which) -> {
-                            changePasswordModel.changePassword(currentPassword, newPassword, resetData);
+                            changePasswordModel.changePassword(
+                                    currentPassword,
+                                    newPassword,
+                                    resetData
+                            );
                             dialogState(true);
                         }
                 )
