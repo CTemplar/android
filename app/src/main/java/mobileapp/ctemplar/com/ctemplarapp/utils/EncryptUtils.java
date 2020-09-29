@@ -16,7 +16,6 @@ import mobileapp.ctemplar.com.ctemplarapp.security.PGPManager;
 import timber.log.Timber;
 
 public class EncryptUtils {
-
     private static MailboxDao mailboxDao = CTemplarApp.getAppDatabase().mailboxDao();
 
     public static boolean encryptAttachment(File originalFile, File encryptedFile, List<String> publicKeyList) {
