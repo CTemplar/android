@@ -111,10 +111,9 @@ public class CloudMessagingService extends FirebaseMessagingService {
                 .setDefaults(NotificationCompat.DEFAULT_VIBRATE)
                 .setSmallIcon(R.mipmap.ic_launcher_small);
 
-        NotificationManager notificationManager = (NotificationManager) getSystemService(
-                Context.NOTIFICATION_SERVICE);
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         if (notificationManager == null) {
-            Timber.d("NotificationManager is null");
+            Timber.e("showNotification NotificationManager is null");
             return;
         }
 
