@@ -91,8 +91,9 @@ public class EncodeUtils {
             for (MailboxEntity mailboxEntity : mailboxEntities) {
                 PGPKeyEntity pgpKeyEntity;
                 if (resetKeys) {
-                    String emailAddress = mailboxEntity.getEmail();
-                    pgpKeyEntity = PGPManager.generateKeys(emailAddress, password);
+                    pgpKeyEntity = PGPManager.generateKeys(
+                            mailboxEntity.getEmail(), password
+                    );
                 } else {
                     PGPKeyEntity oldPgpKeyEntity = new PGPKeyEntity(
                             mailboxEntity.getPublicKey(),
@@ -100,7 +101,7 @@ public class EncodeUtils {
                             mailboxEntity.getFingerprint()
                     );
                     pgpKeyEntity = PGPManager.changePrivateKeyPassword(
-                            oldPgpKeyEntity, oldPassword,password
+                            oldPgpKeyEntity, oldPassword, password
                     );
                 }
 
@@ -108,7 +109,6 @@ public class EncodeUtils {
                 mailboxKey.setMailboxId(mailboxEntity.getId());
                 mailboxKey.setPrivateKey(pgpKeyEntity.getPrivateKey());
                 mailboxKey.setPublicKey(pgpKeyEntity.getPublicKey());
-
                 mailboxKeys.add(mailboxKey);
             }
 

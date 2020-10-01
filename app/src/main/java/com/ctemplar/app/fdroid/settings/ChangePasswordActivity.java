@@ -1,6 +1,5 @@
 package com.ctemplar.app.fdroid.settings;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -25,14 +24,12 @@ import butterknife.BindInt;
 import butterknife.BindView;
 import butterknife.OnClick;
 import com.ctemplar.app.fdroid.BaseActivity;
-import com.ctemplar.app.fdroid.CTemplarApp;
 import com.ctemplar.app.fdroid.R;
 import com.ctemplar.app.fdroid.login.LoginActivity;
 import com.ctemplar.app.fdroid.main.MainActivityActions;
 import com.ctemplar.app.fdroid.net.ResponseStatus;
 
 public class ChangePasswordActivity extends BaseActivity {
-    private String userCurrentPassword;
     private ChangePasswordViewModel changePasswordModel;
 
     @BindInt(R.integer.restriction_password_min)
@@ -76,7 +73,6 @@ public class ChangePasswordActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
@@ -86,13 +82,8 @@ public class ChangePasswordActivity extends BaseActivity {
         }
 
         changePasswordModel = new ViewModelProvider(this).get(ChangePasswordViewModel.class);
-        userCurrentPassword = CTemplarApp.getInstance()
-                .getSharedPreferences("pref_user", Context.MODE_PRIVATE).getString("key_password", null);
-
         changePasswordModel.getResponseStatus().observe(this, this::handleResponse);
-
         changePasswordModel.getActionsStatus().observe(this, this::handleMainActions);
-
         setListeners();
     }
 
@@ -121,6 +112,7 @@ public class ChangePasswordActivity extends BaseActivity {
 
     @OnClick(R.id.activity_change_password_button)
     public void OnClickChange() {
+        final String userCurrentPassword = changePasswordModel.getUserPassword();
         final String currentPassword = editTextCurrentPassword.getText().toString();
         final String newPassword = editTextNewPassword.getText().toString();
         final String passwordConfirmation = editTextPasswordConfirmation.getText().toString();

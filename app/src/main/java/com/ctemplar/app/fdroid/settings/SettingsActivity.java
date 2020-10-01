@@ -42,9 +42,9 @@ import com.ctemplar.app.fdroid.net.ResponseStatus;
 import com.ctemplar.app.fdroid.net.response.Myself.MyselfResponse;
 import com.ctemplar.app.fdroid.net.response.Myself.MyselfResult;
 import com.ctemplar.app.fdroid.net.response.Myself.SettingsEntity;
-import com.ctemplar.app.fdroid.services.NotificationService;
 import com.ctemplar.app.fdroid.repository.UserRepository;
 import com.ctemplar.app.fdroid.repository.UserStore;
+import com.ctemplar.app.fdroid.services.NotificationService;
 import com.ctemplar.app.fdroid.utils.AppUtils;
 import com.ctemplar.app.fdroid.utils.EditTextUtils;
 import com.ctemplar.app.fdroid.utils.EncodeUtils;
@@ -345,16 +345,6 @@ public class SettingsActivity extends BaseActivity {
         public void onCreatePreferences(Bundle bundle, String rootKey) {
             setPreferencesFromResource(R.xml.encryption_settings, rootKey);
 
-            SwitchPreference subjectEncryptionSwitchPreference = findPreference(getString(R.string.subject_encryption_enabled));
-            if (subjectEncryptionSwitchPreference != null) {
-                subjectEncryptionSwitchPreference.setOnPreferenceChangeListener((preference, newValue) -> {
-                    Toast.makeText(getActivity(), getString(R.string.toast_saved), Toast.LENGTH_SHORT).show();
-                    settingsModel.updateSubjectEncryption(settingId, (boolean) newValue);
-                    return true;
-                });
-                subjectEncryptionSwitchPreference.setEnabled(isPrimeUser);
-            }
-
             contactsEncryptionSwitchPreference = findPreference(getString(R.string.contacts_encryption_enabled));
             if (contactsEncryptionSwitchPreference != null) {
                 contactsEncryptionSwitchPreference.setOnPreferenceChangeListener((preference, newValue) -> {
@@ -520,7 +510,6 @@ public class SettingsActivity extends BaseActivity {
                 .putString(getString(R.string.anti_phishing_key), settingsEntity.getAntiPhishingPhrase())
                 .putBoolean(getString(R.string.recovery_email_enabled), EditTextUtils.isNotEmpty(recoveryEmail))
                 .putBoolean(getString(R.string.auto_save_contacts_enabled), settingsEntity.isSaveContacts())
-                .putBoolean(getString(R.string.subject_encryption_enabled), settingsEntity.isSubjectEncrypted())
                 .putBoolean(getString(R.string.contacts_encryption_enabled), settingsEntity.isContactsEncrypted())
                 .putBoolean(getString(R.string.anti_phishing_enabled), settingsEntity.isAntiPhishingEnabled())
                 .putBoolean(getString(R.string.block_external_images_key), settingsEntity.isDisableLoadingImages())

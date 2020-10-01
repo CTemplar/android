@@ -25,7 +25,6 @@ import com.ctemplar.app.fdroid.utils.AppUtils;
 import com.ctemplar.app.fdroid.utils.EditTextUtils;
 
 public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesViewHolder> {
-
     private final PublishSubject<Long> onClickSubject = PublishSubject.create();
     private List<MessageProvider> messageList;
     private List<MessageProvider> filteredList;
@@ -33,7 +32,7 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesView
     private OnReachedBottomCallback onReachedBottomCallback;
     private Handler onReachedBottomCallbackHandler;
 
-    InboxMessagesAdapter(MainActivityViewModel mainModel) {
+    public InboxMessagesAdapter(MainActivityViewModel mainModel) {
         this.mainModel = mainModel;
         this.messageList = new ArrayList<>();
         this.filteredList = new ArrayList<>();
@@ -207,16 +206,10 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesView
         }
 
         // check for subject
-        boolean isSubjectEncrypted = message.isSubjectEncrypted();
         String subjectText = message.getSubject();
-        if (isSubjectEncrypted) {
-            holder.txtSubjectEncrypted.setVisibility(View.VISIBLE);
-            holder.txtSubject.setVisibility(View.INVISIBLE);
-        } else {
-            holder.txtSubject.setText(subjectText);
-            holder.txtSubjectEncrypted.setVisibility(View.GONE);
-            holder.txtSubject.setVisibility(View.VISIBLE);
-        }
+        holder.txtSubject.setText(subjectText);
+        holder.txtSubjectEncrypted.setVisibility(View.GONE);
+        holder.txtSubject.setVisibility(View.VISIBLE);
     }
 
     @Override

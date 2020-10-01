@@ -325,7 +325,6 @@
     <string name="settings_language">Idioma</string>
     <string name="settings_notifications">Notificações</string>
     <string name="settings_enable_notifications">Ativar notificações push</string>
-    <string name="settings_enable_subject_encryption">Criptografia do assunto</string>
     <string name="settings_contacts_encryption">Criptografia dos contatos</string>
     <string name="settings_encryption">Criptografia</string>
     <string name="settings_phishing_protection">Phishing Protection</string>

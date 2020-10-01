@@ -113,7 +113,8 @@ public class NotificationService extends Service {
         alarmService.set(
                 AlarmManager.ELAPSED_REALTIME,
                 SystemClock.elapsedRealtime() + 1000,
-                restartServicePendingIntent);
+                restartServicePendingIntent
+        );
     }
 
     private void onRestarted() {
@@ -144,10 +145,15 @@ public class NotificationService extends Service {
             NotificationChannel channel = new NotificationChannel(
                     FOREGROUND_NOTIFICATION_CHANNEL_ID,
                     getString(R.string.title_notification_service),
-                    NotificationManager.IMPORTANCE_LOW);
+                    NotificationManager.IMPORTANCE_LOW
+            );
             channel.setDescription(getString(R.string.title_service_running));
-            ((NotificationManager) getSystemService(NOTIFICATION_SERVICE))
-                    .createNotificationChannel(channel);
+            NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            if (notificationManager == null) {
+                Timber.e("createForegroundNotificationChannel NotificationManager is null");
+                return;
+            }
+            notificationManager.createNotificationChannel(channel);
         }
     }
 
@@ -174,7 +180,7 @@ public class NotificationService extends Service {
                                   long parentId, boolean isSubjectEncrypted) {
         long id = (parentId == -1) ? messageId : parentId;
         int notificationID = (messageId == -1) ? new Random().nextInt(1000) : (int) messageId;
-        String content = (isSubjectEncrypted) ? getString(R.string.txt_encrypted_subject) : subject;
+        String content = (isSubjectEncrypted) ? getString(R.string.txt_new_message) : subject;
 
         Intent intent = new Intent(this, ViewMessagesActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -197,8 +203,11 @@ public class NotificationService extends Service {
                 .setDefaults(NotificationCompat.DEFAULT_VIBRATE)
                 .setSmallIcon(R.mipmap.ic_launcher_small);
 
-        NotificationManager notificationManager = (NotificationManager)
-                getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        if (notificationManager == null) {
+            Timber.e("showNotification NotificationManager is null");
+            return;
+        }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel notificationChannel = new NotificationChannel(
@@ -212,7 +221,6 @@ public class NotificationService extends Service {
             notificationChannel.enableVibration(true);
             notificationManager.createNotificationChannel(notificationChannel);
         }
-
         notificationManager.notify(notificationID, notificationBuilder.build());
     }
 

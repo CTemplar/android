@@ -40,6 +40,10 @@ public class ChangePasswordViewModel extends ViewModel {
         return responseStatus;
     }
 
+    public String getUserPassword() {
+        return userRepository.getUserPassword();
+    }
+
     public void changePassword(String oldPassword, String password, boolean resetKeys) {
         String username = userRepository.getUsername();
 

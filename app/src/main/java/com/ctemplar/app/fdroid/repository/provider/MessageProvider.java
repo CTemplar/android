@@ -4,8 +4,6 @@ import com.ctemplar.app.fdroid.CTemplarApp;
 import com.ctemplar.app.fdroid.net.response.Messages.MessageAttachment;
 import com.ctemplar.app.fdroid.net.response.Messages.MessagesResult;
 import com.ctemplar.app.fdroid.net.response.Messages.UserDisplay;
-import com.ctemplar.app.fdroid.repository.MailboxDao;
-import com.ctemplar.app.fdroid.repository.UserStore;
 import com.ctemplar.app.fdroid.repository.constant.MainFolderNames;
 import com.ctemplar.app.fdroid.repository.entity.AttachmentEntity;
 import com.ctemplar.app.fdroid.repository.entity.MailboxEntity;
@@ -349,10 +347,8 @@ public class MessageProvider {
         if (content == null) {
             return "";
         }
-        UserStore userStore = CTemplarApp.getUserStore();
-        MailboxDao mailboxDao = CTemplarApp.getAppDatabase().mailboxDao();
-        MailboxEntity mailboxEntity = mailboxDao.getById(mailboxId);
-        String password = userStore.getUserPassword();
+        MailboxEntity mailboxEntity = CTemplarApp.getAppDatabase().mailboxDao().getById(mailboxId);
+        String password = CTemplarApp.getUserStore().getUserPassword();
         if (mailboxEntity != null) {
             String privateKey = mailboxEntity.getPrivateKey();
             content = PGPManager.decrypt(content, privateKey, password);
@@ -365,11 +361,7 @@ public class MessageProvider {
     }
 
     private static String decryptSubject(String subject, long mailboxId, boolean isEncrypted) {
-        if (isEncrypted) {
-            return decryptContent(subject, mailboxId, true);
-        } else {
-            return subject;
-        }
+        return isEncrypted ? decryptContent(subject, mailboxId, true) : subject;
     }
 
     private static AttachmentProvider convertFromResponseMessageAttachmentToAttachmentProvider(MessageAttachment messageAttachment) {

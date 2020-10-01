@@ -144,7 +144,7 @@
             android:layout_marginLeft="16dp"
             android:layout_marginStart="16dp"
             android:padding="2dp"
-            android:text="@string/txt_encrypted_subject"
+            android:text="@string/encrypted_subject"
             android:ellipsize="end"
             android:gravity="center"
             android:textSize="22sp"

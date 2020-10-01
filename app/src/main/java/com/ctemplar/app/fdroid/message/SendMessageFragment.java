@@ -109,8 +109,6 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
     private ProgressDialog uploadProgress;
 
     private boolean userIsPrime;
-    private boolean isSubjectEncrypted;
-
     private long currentMessageId = -1;
     private Long parentId;
     private List<String> publicKeyList = new ArrayList<>();
@@ -628,7 +626,6 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         sendModel.getMySelfResponse().observe(getViewLifecycleOwner(), myselfResponse -> {
             if (myselfResponse != null) {
                 MyselfResult myself = myselfResponse.getResult()[0];
-                isSubjectEncrypted = myself.settings.isSubjectEncrypted();
                 userIsPrime = myself.isPrime();
 //                        String joinedDate = myself.joinedDate;
 //                        boolean userTrial = AppUtils.twoWeeksTrial(joinedDate);
@@ -759,7 +756,6 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         sendMessageRequest.setContent(HtmlUtils.toHtml(composeSpannable));
         sendMessageRequest.setMailbox(mailboxId);
         sendMessageRequest.setParent(parentId);
-        sendMessageRequest.setSubjectEncrypted(isSubjectEncrypted);
         sendMessageRequest.setLastAction(lastAction);
         sendMessageRequest.setHtml(true);
 
