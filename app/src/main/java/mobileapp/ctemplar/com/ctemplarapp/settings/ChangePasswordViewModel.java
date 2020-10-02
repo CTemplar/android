@@ -22,7 +22,6 @@ import mobileapp.ctemplar.com.ctemplarapp.utils.EncodeUtils;
 import okhttp3.ResponseBody;
 
 public class ChangePasswordViewModel extends ViewModel {
-
     private UserRepository userRepository;
     private List<MailboxEntity> mailboxEntities;
     private MutableLiveData<ResponseStatus> responseStatus = new MutableLiveData<>();
@@ -39,6 +38,10 @@ public class ChangePasswordViewModel extends ViewModel {
 
     public MutableLiveData<ResponseStatus> getResponseStatus() {
         return responseStatus;
+    }
+
+    public String getUserPassword() {
+        return userRepository.getUserPassword();
     }
 
     public void changePassword(String oldPassword, String password, boolean resetKeys) {

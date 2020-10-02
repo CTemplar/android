@@ -52,7 +52,8 @@ public class CloudMessagingService extends FirebaseMessagingService {
             RemoteMessageEntity remoteMessageEntity = RemoteMessageEntity.getFromMap(remoteMessageMap);
 
             if (RemoteMessageAction.CHANGE_PASSWORD.toString()
-                    .equals(remoteMessageEntity.getAction())) {
+                    .equals(remoteMessageEntity.getAction())
+            ) {
                 onPasswordChanged();
                 return;
             }
@@ -75,6 +76,61 @@ public class CloudMessagingService extends FirebaseMessagingService {
                 }
             }
         }
+    }
+
+    private void showNotification(
+            final String sender,
+            final String subject,
+            final String folder,
+            final long messageId,
+            final long parentId,
+            final boolean isSubjectEncrypted
+    ) {
+        long id = (parentId == -1) ? messageId : parentId;
+        int notificationID = (messageId == -1) ? new Random().nextInt(1000) : (int) messageId;
+        String content = (isSubjectEncrypted) ? getString(R.string.txt_new_message) : subject;
+
+        Intent intent = new Intent(this, ViewMessagesActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.putExtra(PARENT_ID, id);
+        intent.putExtra(FOLDER_NAME, folder);
+        intent.putExtra(FROM_NOTIFICATION, true);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, notificationID, intent,
+                PendingIntent.FLAG_ONE_SHOT);
+
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat
+                .Builder(this, NOTIFICATION_CHANNEL_ID)
+//                .setGroup(String.valueOf(parentId))
+                .setContentTitle(sender)
+                .setContentText(content)
+                .setAutoCancel(true)
+                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+                .setContentIntent(pendingIntent)
+                .setContentInfo(sender)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setDefaults(NotificationCompat.DEFAULT_VIBRATE)
+                .setSmallIcon(R.mipmap.ic_launcher_small);
+
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        if (notificationManager == null) {
+            Timber.e("showNotification NotificationManager is null");
+            return;
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel notificationChannel = new NotificationChannel(
+                    NOTIFICATION_CHANNEL_ID,
+                    getString(R.string.notification_channel_name),
+                    NotificationManager.IMPORTANCE_HIGH
+            );
+            notificationChannel.setDescription(getString(R.string.notification_channel_description));
+            notificationChannel.setShowBadge(false);
+            notificationChannel.enableLights(true);
+            notificationChannel.setLightColor(Color.RED);
+            notificationChannel.enableVibration(true);
+            notificationManager.createNotificationChannel(notificationChannel);
+        }
+        notificationManager.notify(notificationID, notificationBuilder.build());
     }
 
     private void onPasswordChanged() {
@@ -109,52 +165,5 @@ public class CloudMessagingService extends FirebaseMessagingService {
     private void postExit() {
         Intent intent = new Intent(MainActivityViewModel.EXIT_BROADCAST_ACTION);
         sendBroadcast(intent);
-    }
-
-    private void showNotification(String sender, String subject, String folder, long messageId,
-                                  long parentId, boolean isSubjectEncrypted) {
-        long id = (parentId == -1) ? messageId : parentId;
-        int notificationID = (messageId == -1) ? new Random().nextInt(1000) : (int) messageId;
-        String content = (isSubjectEncrypted) ? getString(R.string.txt_encrypted_subject) : subject;
-
-        Intent intent = new Intent(this, ViewMessagesActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        intent.putExtra(PARENT_ID, id);
-        intent.putExtra(FOLDER_NAME, folder);
-        intent.putExtra(FROM_NOTIFICATION, true);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, notificationID, intent,
-                PendingIntent.FLAG_ONE_SHOT);
-
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat
-                .Builder(this, NOTIFICATION_CHANNEL_ID)
-//                .setGroup(String.valueOf(parentId))
-                .setContentTitle(sender)
-                .setContentText(content)
-                .setAutoCancel(true)
-                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
-                .setContentIntent(pendingIntent)
-                .setContentInfo(sender)
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setDefaults(NotificationCompat.DEFAULT_VIBRATE)
-                .setSmallIcon(R.mipmap.ic_launcher_small);
-
-        NotificationManager notificationManager = (NotificationManager)
-                getSystemService(Context.NOTIFICATION_SERVICE);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel notificationChannel = new NotificationChannel(
-                    NOTIFICATION_CHANNEL_ID,
-                    getString(R.string.notification_channel_name),
-                    NotificationManager.IMPORTANCE_HIGH
-            );
-            notificationChannel.setDescription(getString(R.string.notification_channel_description));
-            notificationChannel.setShowBadge(false);
-            notificationChannel.enableLights(true);
-            notificationChannel.setLightColor(Color.RED);
-            notificationChannel.enableVibration(true);
-            notificationManager.createNotificationChannel(notificationChannel);
-        }
-
-        notificationManager.notify(notificationID, notificationBuilder.build());
     }
 }
