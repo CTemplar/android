@@ -18,8 +18,8 @@ android {
         minSdkVersion 16
         versionCode 46
         multiDexEnabled true
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
@@ -88,7 +88,7 @@ dependencies {
         exclude group: 'com.google.firebase', module: 'firebase-measurement-connector'
     }
 
-    implementation 'org.bouncycastle:bcpg-jdk15on:1.64'
+    implementation 'org.bouncycastle:bcpg-jdk15on:1.66'
 
     implementation 'com.jakewharton.timber:timber:4.7.1'
     implementation 'com.jakewharton:butterknife:10.2.1'

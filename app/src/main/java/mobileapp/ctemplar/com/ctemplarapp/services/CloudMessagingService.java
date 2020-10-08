@@ -119,8 +119,7 @@ public class CloudMessagingService extends FirebaseMessagingService {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel notificationChannel = new NotificationChannel(
-                    NOTIFICATION_CHANNEL_ID,
-                    getString(R.string.notification_channel_name),
+                    NOTIFICATION_CHANNEL_ID, getString(R.string.notification_channel_name),
                     NotificationManager.IMPORTANCE_HIGH
             );
             notificationChannel.setDescription(getString(R.string.notification_channel_description));
