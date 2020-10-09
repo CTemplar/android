@@ -33,7 +33,7 @@ public class EncryptUtils {
         byte[] encryptedBytes = PGPManager.encrypt(
                 fileBytes,
                 publicKeyList.toArray(new String[0]),
-                false
+                true
         );
 
         try {
