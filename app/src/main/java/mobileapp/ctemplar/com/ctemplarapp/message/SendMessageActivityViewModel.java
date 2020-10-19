@@ -26,18 +26,13 @@ import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.PublicKeysRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SendMessageRequest;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.ContactData;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.ContactsResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.KeyResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessageAttachment;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResult;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.MyselfResponse;
-import mobileapp.ctemplar.com.ctemplarapp.repository.ContactsRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.MailboxDao;
 import mobileapp.ctemplar.com.ctemplarapp.repository.MessagesRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
-import mobileapp.ctemplar.com.ctemplarapp.repository.entity.Contact;
-import mobileapp.ctemplar.com.ctemplarapp.repository.entity.ContactEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MessageEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.AttachmentProvider;
@@ -55,10 +50,9 @@ import timber.log.Timber;
 
 public class SendMessageActivityViewModel extends ViewModel {
 
-    private MessagesRepository messagesRepository;
-    private UserRepository userRepository;
-    private ContactsRepository contactsRepository;
-    private MailboxDao mailboxDao;
+    private final MessagesRepository messagesRepository;
+    private final UserRepository userRepository;
+    private final MailboxDao mailboxDao;
 
     private MutableLiveData<ResponseStatus> responseStatus = new MutableLiveData<>();
     private MutableLiveData<ResponseStatus> uploadAttachmentStatus = new MutableLiveData<>();
@@ -69,7 +63,6 @@ public class SendMessageActivityViewModel extends ViewModel {
     private MutableLiveData<MessagesResult> messagesResult = new MutableLiveData<>();
     private MutableLiveData<MessagesResult> createMessageResponse = new MutableLiveData<>();
     private MutableLiveData<ResponseStatus> createMessageStatus = new MutableLiveData<>();
-    private MutableLiveData<List<Contact>> contactsResponse = new MutableLiveData<>();
     private MutableLiveData<KeyResponse> keyResponse = new MutableLiveData<>();
     private MutableLiveData<MessagesResult> messageEncryptionResult = new MutableLiveData<>();
     private MutableLiveData<MyselfResponse> myselfResponse = new MutableLiveData<>();
@@ -78,7 +71,6 @@ public class SendMessageActivityViewModel extends ViewModel {
     public SendMessageActivityViewModel() {
         messagesRepository = MessagesRepository.getInstance();
         userRepository = CTemplarApp.getUserRepository();
-        contactsRepository = CTemplarApp.getContactsRepository();
         mailboxDao = CTemplarApp.getAppDatabase().mailboxDao();
     }
 
@@ -92,10 +84,6 @@ public class SendMessageActivityViewModel extends ViewModel {
 
     public MailboxEntity getMailboxByEmail(String email) {
         return mailboxDao.getByEmail(email);
-    }
-
-    public MailboxEntity getDefaultMailbox() {
-        return userRepository.getDefaultMailbox();
     }
 
     public boolean isSignatureEnabled() {
@@ -124,10 +112,6 @@ public class SendMessageActivityViewModel extends ViewModel {
 
     public LiveData<ResponseStatus> getResponseStatus() {
         return responseStatus;
-    }
-
-    public LiveData<List<Contact>> getContactsResponse() {
-        return contactsResponse;
     }
 
     public LiveData<KeyResponse> getKeyResponse() {
@@ -206,6 +190,7 @@ public class SendMessageActivityViewModel extends ViewModel {
         openMessageResponse.postValue(messageEntity);
     }
 
+    @Deprecated
     public void updateMessage(long id, SendMessageRequest request, List<String> receiverPublicKeys) {
         String content = request.getContent();
         String subject = request.getSubject();
@@ -306,46 +291,6 @@ public class SendMessageActivityViewModel extends ViewModel {
                     @Override
                     public void onError(Throwable e) {
                         responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
-                        Timber.e(e);
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
-    }
-
-    public void getContacts(int limit, int offset) {
-        List<ContactEntity> contactEntities = contactsRepository.getLocalContacts();
-        List<Contact> contactList = Contact.fromEntities(contactEntities);
-        if (contactList.isEmpty()) {
-            contactsResponse.postValue(null);
-        } else {
-            contactsResponse.postValue(contactList);
-            return;
-        }
-
-        contactsRepository.getContactsList(limit, offset)
-                .subscribe(new Observer<ContactsResponse>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(final ContactsResponse response) {
-                        ContactData[] contacts = response.getResults();
-                        ContactData[] decryptedContacts = Contact.decryptContactData(contacts);
-
-                        contactsRepository.saveContacts(decryptedContacts);
-                        List<Contact> contactList1 = Contact.fromResponseResults(decryptedContacts);
-
-                        contactsResponse.postValue(contactList1);
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
                         Timber.e(e);
                     }
 

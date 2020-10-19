@@ -6,6 +6,8 @@ import androidx.lifecycle.ViewModel;
 
 import com.google.gson.Gson;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 
 import io.reactivex.Observer;
@@ -28,13 +30,15 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.AppDatabase;
 import mobileapp.ctemplar.com.ctemplarapp.repository.ContactsRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.Contact;
+import mobileapp.ctemplar.com.ctemplarapp.repository.entity.ContactEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
+import mobileapp.ctemplar.com.ctemplarapp.utils.EncryptUtils;
 import timber.log.Timber;
 
 public class SettingsViewModel extends ViewModel {
-    private ContactsRepository contactsRepository;
-    private UserRepository userRepository;
-    private AppDatabase appDatabase;
+    private final ContactsRepository contactsRepository;
+    private final UserRepository userRepository;
+    private final AppDatabase appDatabase;
 
     public SettingsViewModel() {
         contactsRepository = CTemplarApp.getContactsRepository();
@@ -91,17 +95,17 @@ public class SettingsViewModel extends ViewModel {
         )
                 .subscribe(new Observer<SettingsEntity>() {
                     @Override
-                    public void onSubscribe(Disposable d) {
+                    public void onSubscribe(@NotNull Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(SettingsEntity settingsEntity) {
+                    public void onNext(@NotNull SettingsEntity settingsEntity) {
                         Timber.i("AutoSave contacts updated");
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onError(@NotNull Throwable e) {
                         Timber.e(e);
                     }
 
@@ -122,17 +126,17 @@ public class SettingsViewModel extends ViewModel {
         )
                 .subscribe(new Observer<SettingsEntity>() {
                     @Override
-                    public void onSubscribe(Disposable d) {
+                    public void onSubscribe(@NotNull Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(SettingsEntity settingsEntity) {
+                    public void onNext(@NotNull SettingsEntity settingsEntity) {
                         Timber.i("Disable loading images updated");
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onError(@NotNull Throwable e) {
                         Timber.e(e);
                     }
 
@@ -153,18 +157,18 @@ public class SettingsViewModel extends ViewModel {
         )
                 .subscribe(new Observer<MailboxesResult>() {
                     @Override
-                    public void onSubscribe(Disposable d) {
+                    public void onSubscribe(@NotNull Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(MailboxesResult mailboxesResult) {
+                    public void onNext(@NotNull MailboxesResult mailboxesResult) {
                         appDatabase.mailboxDao().updateSignature(mailboxId, displayName, signatureText);
                         updateSignatureStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onError(@NotNull Throwable e) {
                         updateSignatureStatus.postValue(ResponseStatus.RESPONSE_ERROR);
                         Timber.e(e);
                     }
@@ -186,17 +190,17 @@ public class SettingsViewModel extends ViewModel {
         )
                 .subscribe(new Observer<SettingsEntity>() {
                     @Override
-                    public void onSubscribe(Disposable d) {
+                    public void onSubscribe(@NotNull Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(SettingsEntity settingsEntity) {
+                    public void onNext(@NotNull SettingsEntity settingsEntity) {
                         Timber.i("Recovery email updated");
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onError(@NotNull Throwable e) {
                         Timber.e(e);
                     }
 
@@ -217,17 +221,17 @@ public class SettingsViewModel extends ViewModel {
         )
                 .subscribe(new Observer<SettingsEntity>() {
                     @Override
-                    public void onSubscribe(Disposable d) {
+                    public void onSubscribe(@NotNull Disposable d) {
                         Timber.i("Updating subject encryption");
                     }
 
                     @Override
-                    public void onNext(SettingsEntity settingsEntity) {
+                    public void onNext(@NotNull SettingsEntity settingsEntity) {
                         Timber.i("Subject encryption updated");
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onError(@NotNull Throwable e) {
                         Timber.e(e);
                     }
 
@@ -248,17 +252,17 @@ public class SettingsViewModel extends ViewModel {
         )
                 .subscribe(new Observer<SettingsEntity>() {
                     @Override
-                    public void onSubscribe(Disposable d) {
+                    public void onSubscribe(@NotNull Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(SettingsEntity settingsEntity) {
+                    public void onNext(@NotNull SettingsEntity settingsEntity) {
                         Timber.i("Contacts encryption updated");
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onError(@NotNull Throwable e) {
                         Timber.e(e);
                     }
 
@@ -269,19 +273,19 @@ public class SettingsViewModel extends ViewModel {
                 });
     }
 
-    void decryptContacts(int offset) {
+    public void decryptContacts(int offset) {
         contactsRepository.getContactsList(20, offset)
                 .subscribe(new Observer<ContactsResponse>() {
                     @Override
-                    public void onSubscribe(Disposable d) {
+                    public void onSubscribe(@NotNull Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(ContactsResponse contactsResponse) {
+                    public void onNext(@NotNull ContactsResponse contactsResponse) {
                         ContactData[] contacts = contactsResponse.getResults();
                         for (ContactData contactData : contacts) {
-                            updateContact(contactData);
+                            decryptContact(contactData);
                         }
                         if (contacts.length == 0) {
                             decryptionStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
@@ -291,7 +295,7 @@ public class SettingsViewModel extends ViewModel {
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onError(@NotNull Throwable e) {
                         Timber.e(e);
                     }
 
@@ -312,17 +316,17 @@ public class SettingsViewModel extends ViewModel {
         )
                 .subscribe(new Observer<SettingsEntity>() {
                     @Override
-                    public void onSubscribe(Disposable d) {
+                    public void onSubscribe(@NotNull Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(SettingsEntity settingsEntity) {
+                    public void onNext(@NotNull SettingsEntity settingsEntity) {
                         Timber.i("AntiPhishing phrase updated");
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onError(@NotNull Throwable e) {
                         Timber.w(e);
                     }
 
@@ -333,15 +337,13 @@ public class SettingsViewModel extends ViewModel {
                 });
     }
 
-    private void updateContact(ContactData contactData) {
+    private void decryptContact(ContactData contactData) {
         if (!contactData.isEncrypted()) {
             return;
         }
-
-        Gson gson = new Gson();
         String encryptedData = contactData.getEncryptedData();
-        String decryptedData = Contact.decryptData(encryptedData);
-        EncryptContact decryptedContact = gson.fromJson(decryptedData, EncryptContact.class);
+        String decryptedData = EncryptUtils.decryptData(encryptedData);
+        EncryptContact decryptedContact = new Gson().fromJson(decryptedData, EncryptContact.class);
         if (decryptedContact == null) {
             return;
         }
@@ -358,17 +360,18 @@ public class SettingsViewModel extends ViewModel {
         contactsRepository.updateContact(contactData)
                 .subscribe(new Observer<ContactData>() {
                     @Override
-                    public void onSubscribe(Disposable d) {
+                    public void onSubscribe(@NotNull Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(ContactData contactData) {
-                        contactsRepository.saveLocalContact(contactData);
+                    public void onNext(@NotNull ContactData contactData) {
+                        ContactEntity contactEntity = Contact.fromContactDataToEntity(contactData);
+                        contactsRepository.saveContact(contactEntity);
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onError(@NotNull Throwable e) {
                         decryptionStatus.postValue(ResponseStatus.RESPONSE_ERROR);
                         Timber.e(e);
                     }

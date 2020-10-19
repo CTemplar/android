@@ -70,15 +70,12 @@ public class AddContactActivity extends BaseActivity {
             case R.id.action_save_contact:
                 saveContact();
                 break;
-
             case android.R.id.home:
                 onBackPressed();
                 break;
-
             default:
                 return super.onOptionsItemSelected(item);
         }
-
         return true;
     }
 
