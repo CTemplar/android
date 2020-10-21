@@ -32,10 +32,9 @@ import retrofit2.Response;
 import timber.log.Timber;
 
 public class ViewMessagesViewModel extends ViewModel {
-
-    private UserRepository userRepository;
-    private MessagesRepository messagesRepository;
-    private ManageFoldersRepository manageFoldersRepository;
+    private final UserRepository userRepository;
+    private final MessagesRepository messagesRepository;
+    private final ManageFoldersRepository manageFoldersRepository;
 
     private MutableLiveData<ResponseStatus> responseStatus = new MutableLiveData<>();
     private MutableLiveData<List<MessageProvider>> messagesResponse = new MutableLiveData<>();

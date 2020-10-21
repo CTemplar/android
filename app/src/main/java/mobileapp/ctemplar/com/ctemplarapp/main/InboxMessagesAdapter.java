@@ -23,12 +23,11 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageProvider;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.UserDisplayProvider;
 import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
-import mobileapp.ctemplar.com.ctemplarapp.utils.EncryptUtils;
 
 public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesViewHolder> {
     private final PublishSubject<Long> onClickSubject = PublishSubject.create();
-    private List<MessageProvider> messageList;
-    private List<MessageProvider> filteredList;
+    private final List<MessageProvider> messageList;
+    private final List<MessageProvider> filteredList;
     private final MainActivityViewModel mainModel;
     private OnReachedBottomCallback onReachedBottomCallback;
     private Handler onReachedBottomCallbackHandler;

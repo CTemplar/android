@@ -49,7 +49,6 @@ import retrofit2.Response;
 import timber.log.Timber;
 
 public class SendMessageActivityViewModel extends ViewModel {
-
     private final MessagesRepository messagesRepository;
     private final UserRepository userRepository;
     private final MailboxDao mailboxDao;
