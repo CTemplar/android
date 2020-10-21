@@ -1,3 +1,5 @@
 /build
-*.json
-src/main/res/values/fabric_api_key.xml
+/development
+/production
+/src/development
+/src/production

@@ -62,13 +62,12 @@ import io.reactivex.schedulers.Schedulers;
 import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
 import retrofit2.Response;
-import timber.log.Timber;
 
 @Singleton
 public class UserRepository {
     private static UserRepository instance = new UserRepository();
-    private RestService service;
-    private UserStore userStore;
+    private final RestService service;
+    private final UserStore userStore;
 
     public static UserRepository getInstance() {
         if (instance == null) {
@@ -152,20 +151,6 @@ public class UserRepository {
 
     public boolean isDraftsAutoSaveEnabled() {
         return userStore.isDraftsAutoSaveEnabled();
-    }
-
-    public MailboxEntity getDefaultMailbox() {
-        MailboxDao mailboxDao = CTemplarApp.getAppDatabase().mailboxDao();
-        if (mailboxDao.getDefault() == null) {
-            if (!mailboxDao.getAll().isEmpty()) {
-                return mailboxDao.getAll().get(0);
-            } else {
-                Timber.e("Mailbox not found");
-            }
-        } else {
-            return mailboxDao.getDefault();
-        }
-        return new MailboxEntity();
     }
 
     public void setNotificationsEnabled(boolean isEnabled) {
@@ -264,19 +249,19 @@ public class UserRepository {
     public Observable<MessagesResponse> getMessagesList(int limit, int offset, String folder) {
         return service.getMessages(limit, offset, folder)
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread());
+                .observeOn(Schedulers.computation());
     }
 
     public Observable<MessagesResponse> getStarredMessagesList(int limit, int offset) {
         return service.getStarredMessages(limit, offset, true)
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread());
+                .observeOn(Schedulers.computation());
     }
 
     public Observable<MessagesResponse> searchMessages(String query, int limit, int offset) {
         return service.searchMessages(query, limit, offset)
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread());
+                .observeOn(Schedulers.computation());
     }
 
     public Observable<MessagesResponse> getMessage(long id) {

@@ -87,7 +87,7 @@ public class MessagesRepository {
         CTemplarApp.getAppDatabase().messageDao().deleteAllMails();
     }
 
-    public List<MessageEntity> getChildMessages(MessageEntity parentMessage) {
-        return CTemplarApp.getAppDatabase().messageDao().getByParentId(String.valueOf(parentMessage.getId()));
+    public List<MessageEntity> getChildMessages(long parentMessageId) {
+        return CTemplarApp.getAppDatabase().messageDao().getByParentId(String.valueOf(parentMessageId));
     }
 }

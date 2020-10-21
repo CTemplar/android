@@ -12,10 +12,6 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import io.reactivex.subjects.PublishSubject;
 import com.ctemplar.app.fdroid.R;
 import com.ctemplar.app.fdroid.repository.constant.MainFolderNames;
 import com.ctemplar.app.fdroid.repository.constant.MessageActions;
@@ -24,10 +20,15 @@ import com.ctemplar.app.fdroid.repository.provider.UserDisplayProvider;
 import com.ctemplar.app.fdroid.utils.AppUtils;
 import com.ctemplar.app.fdroid.utils.EditTextUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import io.reactivex.subjects.PublishSubject;
+
 public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesViewHolder> {
     private final PublishSubject<Long> onClickSubject = PublishSubject.create();
-    private List<MessageProvider> messageList;
-    private List<MessageProvider> filteredList;
+    private final List<MessageProvider> messageList;
+    private final List<MessageProvider> filteredList;
     private final MainActivityViewModel mainModel;
     private OnReachedBottomCallback onReachedBottomCallback;
     private Handler onReachedBottomCallbackHandler;
@@ -206,10 +207,9 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesView
         }
 
         // check for subject
-        String subjectText = message.getSubject();
-        holder.txtSubject.setText(subjectText);
-        holder.txtSubjectEncrypted.setVisibility(View.GONE);
+        holder.txtSubject.setText(message.getSubject());
         holder.txtSubject.setVisibility(View.VISIBLE);
+        holder.txtSubjectEncrypted.setVisibility(View.GONE);
     }
 
     @Override

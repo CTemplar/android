@@ -40,7 +40,7 @@ import com.ctemplar.app.fdroid.repository.entity.Contact;
 import timber.log.Timber;
 
 public class ContactsFragment extends BaseFragment {
-    private MainActivityViewModel mainModel;
+    private ContactsViewModel contactsViewModel;
     private ContactsAdapter contactsAdapter;
 
     @BindView(R.id.fragment_contact_recycler_view)
@@ -73,8 +73,8 @@ public class ContactsFragment extends BaseFragment {
         recyclerView.setLayoutManager(mLayoutManager);
         setupSwiperForRecyclerView();
 
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
-                mLayoutManager.getOrientation());
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(
+                recyclerView.getContext(), mLayoutManager.getOrientation());
         recyclerView.addItemDecoration(dividerItemDecoration);
 
         searchView.setIconifiedByDefault(false);
@@ -95,16 +95,15 @@ public class ContactsFragment extends BaseFragment {
         });
 
 
-        mainModel = new ViewModelProvider(getActivity()).get(MainActivityViewModel.class);
-        mainModel.getContactsResponse()
-                .observe(getViewLifecycleOwner(), this::handleContactsList);
-        mainModel.getContacts(200, 0);
+        contactsViewModel = new ViewModelProvider(getActivity()).get(ContactsViewModel.class);
+        contactsViewModel.getContactsResponse().observe(getViewLifecycleOwner(), this::handleContactsList);
+        contactsViewModel.getContacts(200, 0);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        mainModel.getContacts(200, 0);
+        contactsViewModel.getContacts(200, 0);
     }
 
     private void handleContactsList(@Nullable List<Contact> contactList) {
@@ -127,12 +126,12 @@ public class ContactsFragment extends BaseFragment {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new io.reactivex.Observer<Long>() {
                     @Override
-                    public void onSubscribe(Disposable d) {
+                    public void onSubscribe(@NotNull Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(Long id) {
+                    public void onNext(@NotNull Long id) {
                         Activity activity = getActivity();
                         if (activity != null) {
                             Intent intent = new Intent(activity, EditContactActivity.class);
@@ -142,7 +141,7 @@ public class ContactsFragment extends BaseFragment {
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onError(@NotNull Throwable e) {
                         Timber.e(e);
                     }
 
@@ -172,7 +171,7 @@ public class ContactsFragment extends BaseFragment {
                     @Override
                     public void onDismissed(Snackbar transientBottomBar, int event) {
                         if (event != DISMISS_EVENT_ACTION) {
-                            mainModel.deleteContact(deletedContact);
+                            contactsViewModel.deleteContact(deletedContact);
                         }
                     }
                 });

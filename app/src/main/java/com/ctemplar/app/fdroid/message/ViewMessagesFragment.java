@@ -180,8 +180,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
             }
 
             MessageProvider currentParentMessage = messagesList.get(0);
-            String subjectText = currentParentMessage.getSubject();
-            subjectTextView.setText(subjectText);
+            subjectTextView.setText(currentParentMessage.getSubject());
             parentMessage = currentParentMessage;
 
             lastMessage = messagesList.get(messagesList.size() - 1);
