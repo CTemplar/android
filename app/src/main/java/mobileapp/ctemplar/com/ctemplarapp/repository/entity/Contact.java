@@ -2,15 +2,12 @@ package mobileapp.ctemplar.com.ctemplarapp.repository.entity;
 
 import com.google.gson.Gson;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.ContactData;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.EncryptContact;
-import mobileapp.ctemplar.com.ctemplarapp.repository.MailboxDao;
-import mobileapp.ctemplar.com.ctemplarapp.repository.UserStore;
-import mobileapp.ctemplar.com.ctemplarapp.security.PGPManager;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EncryptUtils;
 
 public class Contact {
@@ -105,103 +102,107 @@ public class Contact {
         this.encryptedData = encryptedData;
     }
 
-    private static MailboxDao mailboxDao = CTemplarApp.getAppDatabase().mailboxDao();
-    private static UserStore userStore = CTemplarApp.getUserStore();
-
-    public static String encryptData(String content) {
-        if (content == null || mailboxDao.getAll().isEmpty()) {
-            return "";
+    public static Contact fromContactData(ContactData contactData) {
+        if (contactData == null) {
+            return new Contact();
         }
-        MailboxEntity mailboxEntity = mailboxDao.getAll().get(0);
-        String publicKey = mailboxEntity.getPublicKey();
-        String[] keys = { publicKey };
-        return PGPManager.encrypt(content, keys);
-    }
-
-    public static String decryptData(String content) {
-        MailboxEntity mailboxEntity = EncryptUtils.getDefaultMailbox();
-        String password = userStore.getUserPassword();
-        if (content == null || mailboxEntity == null) {
-            return "";
-        }
-        String privateKey = mailboxEntity.getPrivateKey();
-        return PGPManager.decrypt(content, privateKey, password);
-    }
-
-    public static ContactData[] decryptContactData(ContactData[] contacts) {
-        for (ContactData contactData : contacts) {
-            if (contactData.isEncrypted()) {
-                Gson gson = new Gson();
-                String encryptedData = contactData.getEncryptedData();
-                String decryptedData = decryptData(encryptedData);
-                if (decryptedData.isEmpty()) {
-                    continue;
-                }
-                EncryptContact decryptedContact = gson.fromJson(decryptedData, EncryptContact.class);
-
-                contactData.setEmail(decryptedContact.getEmail());
-                contactData.setName(decryptedContact.getName());
-                contactData.setAddress(decryptedContact.getAddress());
-                contactData.setNote(decryptedContact.getNote());
-                contactData.setPhone(decryptedContact.getPhone());
-                contactData.setPhone2(decryptedContact.getPhone2());
-                contactData.setProvider(decryptedContact.getProvider());
-            }
-        }
-        return contacts;
-    }
-
-    public static Contact fromResponseResult(ContactData contactData) {
-        Contact result = new Contact();
-
-        result.setId(contactData.getId());
-        result.setEmail(contactData.getEmail());
-        result.setName(contactData.getName());
-        result.setAddress(contactData.getAddress());
-        result.setNote(contactData.getNote());
-        result.setPhone(contactData.getPhone());
-        result.setPhone2(contactData.getPhone2());
-        result.setProvider(contactData.getProvider());
-        result.setEncrypted(contactData.isEncrypted());
-        result.setEncryptedData(contactData.getEncryptedData());
-
-        return result;
+        Contact contact = new Contact();
+        contact.setId(contactData.getId());
+        contact.setEmail(contactData.getEmail());
+        contact.setName(contactData.getName());
+        contact.setAddress(contactData.getAddress());
+        contact.setNote(contactData.getNote());
+        contact.setPhone(contactData.getPhone());
+        contact.setPhone2(contactData.getPhone2());
+        contact.setProvider(contactData.getProvider());
+        contact.setEncrypted(contactData.isEncrypted());
+        contact.setEncryptedData(contactData.getEncryptedData());
+        return contact;
     }
 
     public static Contact fromEntity(ContactEntity entity) {
-        Contact result = new Contact();
-
-        result.setId(entity.getId());
-        result.setEmail(entity.getEmail());
-        result.setName(entity.getName());
-        result.setAddress(entity.getAddress());
-        result.setNote(entity.getNote());
-        result.setPhone(entity.getPhone());
-        result.setPhone2(entity.getPhone2());
-        result.setProvider(entity.getProvider());
-        result.setEncrypted(entity.isEncrypted());
-        result.setEncryptedData(entity.getEncryptedData());
-
-        return result;
+        if (entity == null) {
+            return new Contact();
+        }
+        Contact contact = new Contact();
+        contact.setId(entity.getId());
+        contact.setEncryptedData(entity.getEncryptedData());
+        if (entity.isEncrypted) {
+            String encryptedData = entity.getEncryptedData();
+            String decryptedData = EncryptUtils.decryptData(encryptedData);
+            EncryptContact decryptedContact = new Gson().fromJson(decryptedData, EncryptContact.class);
+            if (decryptedContact == null) {
+                return contact;
+            }
+            contact.setEmail(decryptedContact.getEmail());
+            contact.setName(decryptedContact.getName());
+            contact.setAddress(decryptedContact.getAddress());
+            contact.setNote(decryptedContact.getNote());
+            contact.setPhone(decryptedContact.getPhone());
+            contact.setPhone2(decryptedContact.getPhone2());
+            contact.setProvider(decryptedContact.getProvider());
+            contact.setEncrypted(false);
+        } else {
+            contact.setEmail(entity.getEmail());
+            contact.setName(entity.getName());
+            contact.setAddress(entity.getAddress());
+            contact.setNote(entity.getNote());
+            contact.setPhone(entity.getPhone());
+            contact.setPhone2(entity.getPhone2());
+            contact.setProvider(entity.getProvider());
+            contact.setEncrypted(true);
+        }
+        return contact;
     }
 
-    public static List<Contact> fromEntities(List<ContactEntity> entities) {
-        List<Contact> result = new LinkedList<>();
-
-        for (ContactEntity entity : entities) {
-            result.add(fromEntity(entity));
+    public static ContactEntity fromContactDataToEntity(ContactData contactData) {
+        if (contactData == null) {
+            return new ContactEntity();
         }
-
-        return result;
+        ContactEntity contactEntity = new ContactEntity();
+        contactEntity.setId(contactData.getId());
+        contactEntity.setEmail(contactData.getEmail());
+        contactEntity.setName(contactData.getName());
+        contactEntity.setAddress(contactData.getAddress());
+        contactEntity.setNote(contactData.getNote());
+        contactEntity.setPhone(contactData.getPhone());
+        contactEntity.setProvider(contactData.getProvider());
+        contactEntity.setPhone2(contactData.getPhone2());
+        contactEntity.setEncrypted(contactData.isEncrypted());
+        contactEntity.setEncryptedData(contactData.getEncryptedData());
+        return contactEntity;
     }
 
-    public static List<Contact> fromResponseResults(ContactData[] contactDataList) {
-        List<Contact> result = new LinkedList<>();
-
-        for (ContactData contactData : contactDataList) {
-            result.add(fromResponseResult(contactData));
+    public static List<Contact> fromContactData(ContactData[] contactData) {
+        if (contactData == null || contactData.length == 0) {
+            return new ArrayList<>();
         }
+        List<Contact> contactDataList = new LinkedList<>();
+        for (ContactData contactDatum : contactData) {
+            contactDataList.add(fromContactData(contactDatum));
+        }
+        return contactDataList;
+    }
 
-        return result;
+    public static List<Contact> fromEntities(List<ContactEntity> contactEntityList) {
+        if (contactEntityList == null || contactEntityList.isEmpty()) {
+            return new ArrayList<>();
+        }
+        List<Contact> contactList = new LinkedList<>();
+        for (ContactEntity contactEntity : contactEntityList) {
+            contactList.add(fromEntity(contactEntity));
+        }
+        return contactList;
+    }
+
+    public static ContactEntity[] fromContactDataToEntities(ContactData[] contactData) {
+        if (contactData == null || contactData.length == 0) {
+            return new ContactEntity[0];
+        }
+        ContactEntity[] contactEntities = new ContactEntity[contactData.length];
+        for (int i = 0; i < contactData.length; ++i) {
+            contactEntities[i] = fromContactDataToEntity(contactData[i]);
+        }
+        return contactEntities;
     }
 }

@@ -26,8 +26,8 @@ import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 
 public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesViewHolder> {
     private final PublishSubject<Long> onClickSubject = PublishSubject.create();
-    private List<MessageProvider> messageList;
-    private List<MessageProvider> filteredList;
+    private final List<MessageProvider> messageList;
+    private final List<MessageProvider> filteredList;
     private final MainActivityViewModel mainModel;
     private OnReachedBottomCallback onReachedBottomCallback;
     private Handler onReachedBottomCallbackHandler;
@@ -206,10 +206,9 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesView
         }
 
         // check for subject
-        String subjectText = message.getSubject();
-        holder.txtSubject.setText(subjectText);
-        holder.txtSubjectEncrypted.setVisibility(View.GONE);
+        holder.txtSubject.setText(message.getSubject());
         holder.txtSubject.setVisibility(View.VISIBLE);
+        holder.txtSubjectEncrypted.setVisibility(View.GONE);
     }
 
     @Override
