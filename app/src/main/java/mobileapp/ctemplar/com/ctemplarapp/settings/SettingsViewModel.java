@@ -21,11 +21,12 @@ import mobileapp.ctemplar.com.ctemplarapp.net.request.DisableLoadingImagesReques
 import mobileapp.ctemplar.com.ctemplarapp.net.request.RecoveryEmailRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SignatureRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SubjectEncryptedRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.UpdateReportBugsRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.ContactData;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.ContactsResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.EncryptContact;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Mailboxes.MailboxesResult;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.SettingsEntity;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.SettingsResponse;
 import mobileapp.ctemplar.com.ctemplarapp.repository.AppDatabase;
 import mobileapp.ctemplar.com.ctemplarapp.repository.ContactsRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
@@ -93,14 +94,14 @@ public class SettingsViewModel extends ViewModel {
                 settingId,
                 new AutoSaveContactEnabledRequest(isEnabled)
         )
-                .subscribe(new Observer<SettingsEntity>() {
+                .subscribe(new Observer<SettingsResponse>() {
                     @Override
                     public void onSubscribe(@NotNull Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(@NotNull SettingsEntity settingsEntity) {
+                    public void onNext(@NotNull SettingsResponse settingsResponse) {
                         Timber.i("AutoSave contacts updated");
                     }
 
@@ -116,7 +117,7 @@ public class SettingsViewModel extends ViewModel {
                 });
     }
 
-    void updateDisableLoadingImages(long settingId, boolean isEnabled) {
+    public void updateDisableLoadingImages(long settingId, boolean isEnabled) {
         if (settingId == -1) {
             return;
         }
@@ -124,15 +125,46 @@ public class SettingsViewModel extends ViewModel {
                 settingId,
                 new DisableLoadingImagesRequest(isEnabled)
         )
-                .subscribe(new Observer<SettingsEntity>() {
+                .subscribe(new Observer<SettingsResponse>() {
                     @Override
                     public void onSubscribe(@NotNull Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(@NotNull SettingsEntity settingsEntity) {
+                    public void onNext(@NotNull SettingsResponse settingsResponse) {
                         Timber.i("Disable loading images updated");
+                    }
+
+                    @Override
+                    public void onError(@NotNull Throwable e) {
+                        Timber.e(e);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    public void updateReportBugs(long settingId, boolean isEnabled) {
+        if (settingId == -1) {
+            return;
+        }
+        userRepository.updateReportBugs(
+                settingId,
+                new UpdateReportBugsRequest(isEnabled)
+        )
+                .subscribe(new Observer<SettingsResponse>() {
+                    @Override
+                    public void onSubscribe(@NotNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(@NotNull SettingsResponse settingsResponse) {
+                        Timber.i("Report bugs setting updated");
                     }
 
                     @Override
@@ -188,14 +220,14 @@ public class SettingsViewModel extends ViewModel {
                 settingId,
                 new RecoveryEmailRequest(newRecoveryEmail)
         )
-                .subscribe(new Observer<SettingsEntity>() {
+                .subscribe(new Observer<SettingsResponse>() {
                     @Override
                     public void onSubscribe(@NotNull Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(@NotNull SettingsEntity settingsEntity) {
+                    public void onNext(@NotNull SettingsResponse settingsResponse) {
                         Timber.i("Recovery email updated");
                     }
 
@@ -219,14 +251,14 @@ public class SettingsViewModel extends ViewModel {
                 settingId,
                 new SubjectEncryptedRequest(isSubjectEncryption)
         )
-                .subscribe(new Observer<SettingsEntity>() {
+                .subscribe(new Observer<SettingsResponse>() {
                     @Override
                     public void onSubscribe(@NotNull Disposable d) {
                         Timber.i("Updating subject encryption");
                     }
 
                     @Override
-                    public void onNext(@NotNull SettingsEntity settingsEntity) {
+                    public void onNext(@NotNull SettingsResponse settingsResponse) {
                         Timber.i("Subject encryption updated");
                     }
 
@@ -250,14 +282,14 @@ public class SettingsViewModel extends ViewModel {
                 settingId,
                 new ContactsEncryptionRequest(isContactsEncryption)
         )
-                .subscribe(new Observer<SettingsEntity>() {
+                .subscribe(new Observer<SettingsResponse>() {
                     @Override
                     public void onSubscribe(@NotNull Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(@NotNull SettingsEntity settingsEntity) {
+                    public void onNext(@NotNull SettingsResponse settingsResponse) {
                         Timber.i("Contacts encryption updated");
                     }
 
@@ -314,14 +346,14 @@ public class SettingsViewModel extends ViewModel {
                 settingId,
                 new AntiPhishingPhraseRequest(antiPhishingEnabled, antiPhishingPhrase)
         )
-                .subscribe(new Observer<SettingsEntity>() {
+                .subscribe(new Observer<SettingsResponse>() {
                     @Override
                     public void onSubscribe(@NotNull Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(@NotNull SettingsEntity settingsEntity) {
+                    public void onNext(@NotNull SettingsResponse settingsResponse) {
                         Timber.i("AntiPhishing phrase updated");
                     }
 

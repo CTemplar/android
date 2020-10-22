@@ -28,7 +28,7 @@ public class MyselfResult {
     public String joinedDate;
 
     @SerializedName("settings")
-    public SettingsEntity settings;
+    public SettingsResponse settings;
 
     @SerializedName("mailboxes")
     public MailboxesResult[] mailboxes;
@@ -67,7 +67,7 @@ public class MyselfResult {
         return joinedDate;
     }
 
-    public SettingsEntity getSettings() {
+    public SettingsResponse getSettings() {
         return settings;
     }
 

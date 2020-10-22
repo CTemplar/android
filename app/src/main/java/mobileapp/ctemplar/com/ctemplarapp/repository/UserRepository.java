@@ -38,6 +38,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.request.SignInRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SignUpRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SignatureRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SubjectEncryptedRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.UpdateReportBugsRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.AddFirebaseTokenResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.CaptchaResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.CaptchaVerifyResponse;
@@ -54,7 +55,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResponse
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResult;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.BlackListContact;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.MyselfResponse;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.SettingsEntity;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.SettingsResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.WhiteListContact;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.RecoverPasswordResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.SignInResponse;
@@ -187,6 +188,14 @@ public class UserRepository {
 
     public boolean isBlockExternalImagesEnabled() {
         return userStore.isBlockExternalImagesEnabled();
+    }
+
+    public void setReportBugsEnabled(boolean isEnabled) {
+        userStore.setReportBugsEnabled(isEnabled);
+    }
+
+    public boolean isReportBugsEnabled() {
+        return userStore.isReportBugsEnabled();
     }
 
     public void clearData() {
@@ -491,7 +500,7 @@ public class UserRepository {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<SettingsEntity> updateRecoveryEmail(
+    public Observable<SettingsResponse> updateRecoveryEmail(
             long settingId,
             RecoveryEmailRequest request
     ) {
@@ -500,7 +509,7 @@ public class UserRepository {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<SettingsEntity> updateSubjectEncrypted(
+    public Observable<SettingsResponse> updateSubjectEncrypted(
             long settingId,
             SubjectEncryptedRequest request
     ) {
@@ -509,7 +518,7 @@ public class UserRepository {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<SettingsEntity> updateContactsEncryption(
+    public Observable<SettingsResponse> updateContactsEncryption(
             long settingId,
             ContactsEncryptionRequest request
     ) {
@@ -518,7 +527,7 @@ public class UserRepository {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<SettingsEntity> updateAutoSaveEnabled(
+    public Observable<SettingsResponse> updateAutoSaveEnabled(
             long settingId,
             AutoSaveContactEnabledRequest request
     ) {
@@ -527,7 +536,7 @@ public class UserRepository {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<SettingsEntity> updateAntiPhishingPhrase(
+    public Observable<SettingsResponse> updateAntiPhishingPhrase(
             long settingId,
             AntiPhishingPhraseRequest request
     ) {
@@ -536,11 +545,20 @@ public class UserRepository {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<SettingsEntity> updateDisableLoadingImages(
+    public Observable<SettingsResponse> updateDisableLoadingImages(
             long settingId,
             DisableLoadingImagesRequest request
     ) {
         return service.updateDisableLoadingImages(settingId, request)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public Observable<SettingsResponse> updateReportBugs(
+            long settingId,
+            UpdateReportBugsRequest request
+    ) {
+        return service.updateReportBugs(settingId, request)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }

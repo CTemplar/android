@@ -32,6 +32,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.request.SignUpRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SignatureRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SubjectEncryptedRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.TokenRefreshRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.UpdateReportBugsRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.AddFirebaseTokenResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.CaptchaResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.CaptchaVerifyResponse;
@@ -52,7 +53,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResponse
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResult;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.BlackListContact;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.MyselfResponse;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.SettingsEntity;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.SettingsResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.WhiteListContact;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.RecoverPasswordResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.SignInResponse;
@@ -298,39 +299,45 @@ public interface RestService {
     Observable<WhiteListContact> addWhitelistContact(@Body WhiteListContact contact);
 
     @PATCH("users/settings/{id}/")
-    Observable<SettingsEntity> updateRecoveryEmail(
+    Observable<SettingsResponse> updateRecoveryEmail(
             @Path("id") long settingId,
             @Body RecoveryEmailRequest body
     );
 
     @PATCH("users/settings/{id}/")
-    Observable<SettingsEntity> updateSubjectEncrypted(
+    Observable<SettingsResponse> updateSubjectEncrypted(
             @Path("id") long settingId,
             @Body SubjectEncryptedRequest body
     );
 
     @PATCH("users/settings/{id}/")
-    Observable<SettingsEntity> updateContactsEncryption(
+    Observable<SettingsResponse> updateContactsEncryption(
             @Path("id") long settingId,
             @Body ContactsEncryptionRequest body
     );
 
     @PATCH("users/settings/{id}/")
-    Observable<SettingsEntity> updateAutoSaveEnabled(
+    Observable<SettingsResponse> updateAutoSaveEnabled(
             @Path("id") long settingId,
             @Body AutoSaveContactEnabledRequest request
     );
 
     @PATCH("users/settings/{id}/")
-    Observable<SettingsEntity> updateAntiPhishingPhrase(
+    Observable<SettingsResponse> updateAntiPhishingPhrase(
             @Path("id") long settingId,
             @Body AntiPhishingPhraseRequest request
     );
 
     @PATCH("users/settings/{id}/")
-    Observable<SettingsEntity> updateDisableLoadingImages(
+    Observable<SettingsResponse> updateDisableLoadingImages(
             @Path("id") long settingId,
             @Body DisableLoadingImagesRequest request
+    );
+
+    @PATCH("users/settings/{id}/")
+    Observable<SettingsResponse> updateReportBugs(
+            @Path("id") long settingId,
+            @Body UpdateReportBugsRequest request
     );
 
     @POST("users/app-token/")
