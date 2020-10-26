@@ -301,7 +301,7 @@ public class SettingsActivity extends BaseActivity {
                 reportBugsEnabledPreference.setOnPreferenceChangeListener((preference, newValue) -> {
                     userStore.setReportBugsEnabled((boolean) newValue);
                     settingsModel.updateReportBugs(settingId, (boolean) newValue);
-                    Toast.makeText(getActivity(), getString(R.string.toast_saved), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), getString(R.string.please_restart_app_to_apply_changes), Toast.LENGTH_SHORT).show();
                     return true;
                 });
             }

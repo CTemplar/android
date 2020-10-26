@@ -7,6 +7,7 @@ import com.ctemplar.app.fdroid.BuildConfig;
 import com.ctemplar.app.fdroid.CTemplarApp;
 import com.ctemplar.app.fdroid.net.response.Messages.MessagesResult;
 import com.ctemplar.app.fdroid.net.response.notification.NotificationMessageResponse;
+import com.ctemplar.app.fdroid.repository.entity.MessageEntity;
 import com.ctemplar.app.fdroid.repository.provider.MessageProvider;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -49,7 +50,9 @@ public class NotificationServiceWebSocket extends WebSocketListener {
         }
         MessagesResult mailResult = notificationMessageResponse.getMail();
         if (mailResult != null) {
-            MessageProvider messageProvider = MessageProvider.fromMessagesResult(mailResult);
+            MessageEntity messageEntity = MessageProvider.fromMessagesResultToEntity(mailResult);
+            MessageProvider messageProvider = MessageProvider.fromMessageEntity(messageEntity,
+                    false);
             callback.onNewMessage(messageProvider);
         }
     }
