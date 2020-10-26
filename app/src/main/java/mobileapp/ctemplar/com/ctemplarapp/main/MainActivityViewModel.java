@@ -613,12 +613,12 @@ public class MainActivityViewModel extends AndroidViewModel {
         userRepository.getMyselfInfo()
                 .subscribe(new Observer<MyselfResponse>() {
                     @Override
-                    public void onSubscribe(Disposable d) {
+                    public void onSubscribe(@NotNull Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(MyselfResponse myselfResponse) {
+                    public void onNext(@NotNull MyselfResponse myselfResponse) {
                         if (myselfResponse != null) {
                             MyselfResult myselfResult = myselfResponse.getResult()[0];
                             SettingsResponse settingsResponse = myselfResult.getSettings();
@@ -636,7 +636,7 @@ public class MainActivityViewModel extends AndroidViewModel {
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onError(@NotNull Throwable e) {
                         Timber.e(e);
                     }
 

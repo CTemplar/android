@@ -334,6 +334,7 @@
     <string name="settings_wb_list">Liste blanche / Liste noire</string>
     <string name="settings_dark_mode">Mode sombre</string>
     <string name="settings_block_external_images">Bloquer les images externes</string>
+    <string name="settings_report_bugs">Signaler les bogues</string>
     <string name="settings_folders">Dossier</string>
     <string name="settings_manage_folders">Gérer les dossiers</string>
     <string name="settings_mail">Mail</string>
@@ -356,6 +357,7 @@
     <string name="toast_contacts_encrypted">Contacts chiffrés</string>
     <string name="toast_contacts_decrypted">Contacts décryptés</string>
     <string name="toast_decryption_error">Une erreur est survenue lors du décryptage. Merci de bien vouloir essayer à nouveau.</string>
+    <string name="please_restart_app_to_apply_changes">Veuillez redémarrer l\'application pour appliquer les modifications</string>
 
     <!-- PREFERENCE KEYS -->
     <string name="change_password_reset_data">Supprimer les données</string>
