@@ -8,9 +8,10 @@ import android.os.Bundle;
 import androidx.multidex.MultiDexApplication;
 import androidx.room.Room;
 
+import org.jetbrains.annotations.NotNull;
+
+import io.sentry.android.core.SentryAndroid;
 import com.ctemplar.app.fdroid.net.RestClient;
-import com.ctemplar.app.fdroid.services.NotificationService;
-import com.ctemplar.app.fdroid.services.NotificationServiceBroadcastReceiver;
 import com.ctemplar.app.fdroid.repository.AppDatabase;
 import com.ctemplar.app.fdroid.repository.ContactsRepository;
 import com.ctemplar.app.fdroid.repository.ManageFoldersRepository;
@@ -18,6 +19,8 @@ import com.ctemplar.app.fdroid.repository.MessagesRepository;
 import com.ctemplar.app.fdroid.repository.UserRepository;
 import com.ctemplar.app.fdroid.repository.UserStore;
 import com.ctemplar.app.fdroid.repository.UserStoreImpl;
+import com.ctemplar.app.fdroid.services.NotificationService;
+import com.ctemplar.app.fdroid.services.NotificationServiceBroadcastReceiver;
 import com.ctemplar.app.fdroid.splash.PINLockActivity;
 import com.ctemplar.app.fdroid.splash.SplashActivity;
 import com.ctemplar.app.fdroid.utils.EditTextUtils;
@@ -38,20 +41,19 @@ public class CTemplarApp extends MultiDexApplication {
     private static WeakReference<Activity> currentActivityReference;
     private static NotificationServiceBroadcastReceiver notificationServiceBroadcastReceiver;
 
-    private ActivityLifecycleCallbacks activityLifecycleCallbacks = new ActivityLifecycleCallbacks() {
+    private final ActivityLifecycleCallbacks activityLifecycleCallbacks = new ActivityLifecycleCallbacks() {
         @Override
-        public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
+        public void onActivityCreated(@NotNull Activity activity, Bundle savedInstanceState) {
 
         }
 
         @Override
-        public void onActivityStarted(Activity activity) {
+        public void onActivityStarted(@NotNull Activity activity) {
 
         }
 
         @Override
-        public void onActivityResumed(Activity activity) {
-            currentActivityReference = new WeakReference<>(activity);
+        public void onActivityResumed(@NotNull Activity activity) {
             if (activity instanceof PINLockActivity) {
                 return;
             }
@@ -62,8 +64,7 @@ public class CTemplarApp extends MultiDexApplication {
         }
 
         @Override
-        public void onActivityPaused(Activity activity) {
-            currentActivityReference = null;
+        public void onActivityPaused(@NotNull Activity activity) {
             if (activity instanceof SplashActivity) {
                 return;
             }
@@ -73,31 +74,27 @@ public class CTemplarApp extends MultiDexApplication {
         }
 
         @Override
-        public void onActivityStopped(Activity activity) {
+        public void onActivityStopped(@NotNull Activity activity) {
 
         }
 
         @Override
-        public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
+        public void onActivitySaveInstanceState(@NotNull Activity activity, @NotNull Bundle outState) {
 
         }
 
         @Override
-        public void onActivityDestroyed(Activity activity) {
+        public void onActivityDestroyed(@NotNull Activity activity) {
 
         }
     };
-
-    public static MessagesRepository getMessagesRepository() {
-        return messagesRepository;
-    }
 
     @Override
     public void onCreate() {
         super.onCreate();
         instance = this;
-        Timber.plant(new Timber.DebugTree());
         installProviders(this);
+        installDebug(this);
         registerActivityLifecycleCallbacks(activityLifecycleCallbacks);
         notificationServiceBroadcastReceiver = new NotificationServiceBroadcastReceiver();
         notificationServiceBroadcastReceiver.register(this);
@@ -147,41 +144,45 @@ public class CTemplarApp extends MultiDexApplication {
         return manageFoldersRepository;
     }
 
+    public static MessagesRepository getMessagesRepository() {
+        return messagesRepository;
+    }
+
     public static AppDatabase getAppDatabase() {
         return appDatabase;
     }
 
     private static synchronized void installProviders(Application application) {
-
         if (restClient == null) {
             restClient = RestClient.instance();
         }
-
         if (userStore == null) {
             userStore = UserStoreImpl.getInstance(application);
         }
-
         if (userRepository == null) {
             userRepository = UserRepository.getInstance();
         }
-
         if (appDatabase == null) {
             appDatabase = Room.databaseBuilder(application, AppDatabase.class, "database")
                     .allowMainThreadQueries()
                     .fallbackToDestructiveMigration()
                     .build();
         }
-
         if (contactsRepository == null) {
             contactsRepository = new ContactsRepository();
         }
-
         if (manageFoldersRepository == null) {
             manageFoldersRepository = new ManageFoldersRepository();
         }
-
         if (messagesRepository == null) {
             messagesRepository = MessagesRepository.getInstance();
+        }
+    }
+
+    private static void installDebug(Application application) {
+        Timber.plant(new Timber.DebugTree());
+        if (userStore.isReportBugsEnabled()) {
+            SentryAndroid.init(application);
         }
     }
 

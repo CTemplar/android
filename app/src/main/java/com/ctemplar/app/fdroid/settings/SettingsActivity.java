@@ -41,7 +41,7 @@ import com.ctemplar.app.fdroid.mailboxes.MailboxesActivity;
 import com.ctemplar.app.fdroid.net.ResponseStatus;
 import com.ctemplar.app.fdroid.net.response.Myself.MyselfResponse;
 import com.ctemplar.app.fdroid.net.response.Myself.MyselfResult;
-import com.ctemplar.app.fdroid.net.response.Myself.SettingsEntity;
+import com.ctemplar.app.fdroid.net.response.Myself.SettingsResponse;
 import com.ctemplar.app.fdroid.repository.UserRepository;
 import com.ctemplar.app.fdroid.repository.UserStore;
 import com.ctemplar.app.fdroid.services.NotificationService;
@@ -291,6 +291,23 @@ public class SettingsActivity extends BaseActivity {
         }
     }
 
+    public static class ReportBugsFragment extends BasePreferenceFragment {
+        @Override
+        public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+            setPreferencesFromResource(R.xml.report_bugs_settings, rootKey);
+
+            SwitchPreference reportBugsEnabledPreference = findPreference(getString(R.string.report_bugs_enabled));
+            if (reportBugsEnabledPreference != null) {
+                reportBugsEnabledPreference.setOnPreferenceChangeListener((preference, newValue) -> {
+                    userStore.setReportBugsEnabled((boolean) newValue);
+                    settingsModel.updateReportBugs(settingId, (boolean) newValue);
+                    Toast.makeText(getActivity(), getString(R.string.toast_saved), Toast.LENGTH_SHORT).show();
+                    return true;
+                });
+            }
+        }
+    }
+
     public static class RecoveryEmailFragment extends BasePreferenceFragment {
         @Override
         public void onCreatePreferences(Bundle bundle, String rootKey) {
@@ -486,14 +503,16 @@ public class SettingsActivity extends BaseActivity {
     }
 
     private void saveData(MyselfResult myselfResult) {
-        SettingsEntity settingsEntity = myselfResult.getSettings();
-        settingId = settingsEntity.getId();
+        SettingsResponse settingsResponse = myselfResult.getSettings();
+        settingId = settingsResponse.getId();
         isPrimeUser = myselfResult.isPrime();
         setSettingId(settingId);
 
-        String usedStorage = AppUtils.memoryDisplay(settingsEntity.getUsedStorage());
-        String allocatedStorage = AppUtils.memoryDisplay(settingsEntity.getAllocatedStorage());
-        String recoveryEmail = settingsEntity.getRecoveryEmail();
+        String usedStorage = AppUtils.memoryDisplay(settingsResponse.getUsedStorage());
+        String allocatedStorage = AppUtils.memoryDisplay(settingsResponse.getAllocatedStorage());
+        String recoveryEmail = settingsResponse.getRecoveryEmail();
+        boolean isDisableLoadingImages = settingsResponse.isDisableLoadingImages();
+        boolean isEnableReportBugs = settingsResponse.isEnableReportBugs();
 
         if (storageLimitPreference != null) {
             storageLimitPreference.setSummary(getString(
@@ -503,16 +522,18 @@ public class SettingsActivity extends BaseActivity {
             ));
         }
         if (recoveryEmailPreferenceScreen != null) {
-            recoveryEmailPreferenceScreen.setSummary(settingsEntity.getRecoveryEmail());
+            recoveryEmailPreferenceScreen.setSummary(settingsResponse.getRecoveryEmail());
         }
+
         sharedPreferences.edit()
                 .putString(getString(R.string.recovery_email), recoveryEmail)
-                .putString(getString(R.string.anti_phishing_key), settingsEntity.getAntiPhishingPhrase())
+                .putBoolean(getString(R.string.anti_phishing_enabled), settingsResponse.isAntiPhishingEnabled())
+                .putString(getString(R.string.anti_phishing_key), settingsResponse.getAntiPhishingPhrase())
                 .putBoolean(getString(R.string.recovery_email_enabled), EditTextUtils.isNotEmpty(recoveryEmail))
-                .putBoolean(getString(R.string.auto_save_contacts_enabled), settingsEntity.isSaveContacts())
-                .putBoolean(getString(R.string.contacts_encryption_enabled), settingsEntity.isContactsEncrypted())
-                .putBoolean(getString(R.string.anti_phishing_enabled), settingsEntity.isAntiPhishingEnabled())
-                .putBoolean(getString(R.string.block_external_images_key), settingsEntity.isDisableLoadingImages())
+                .putBoolean(getString(R.string.auto_save_contacts_enabled), settingsResponse.isSaveContacts())
+                .putBoolean(getString(R.string.contacts_encryption_enabled), settingsResponse.isContactsEncrypted())
+                .putBoolean(getString(R.string.block_external_images_key), isDisableLoadingImages)
+                .putBoolean(getString(R.string.report_bugs_enabled), isEnableReportBugs)
                 .apply();
     }
 

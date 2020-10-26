@@ -21,7 +21,7 @@ import com.ctemplar.app.fdroid.net.response.Messages.MessagesResponse;
 import com.ctemplar.app.fdroid.net.response.Messages.MessagesResult;
 import com.ctemplar.app.fdroid.net.response.Myself.MyselfResponse;
 import com.ctemplar.app.fdroid.net.response.Myself.MyselfResult;
-import com.ctemplar.app.fdroid.net.response.Myself.SettingsEntity;
+import com.ctemplar.app.fdroid.net.response.Myself.SettingsResponse;
 import com.ctemplar.app.fdroid.net.response.ResponseMessagesData;
 import com.ctemplar.app.fdroid.net.response.SignInResponse;
 import com.ctemplar.app.fdroid.repository.ManageFoldersRepository;
@@ -587,28 +587,30 @@ public class MainActivityViewModel extends AndroidViewModel {
         userRepository.getMyselfInfo()
                 .subscribe(new Observer<MyselfResponse>() {
                     @Override
-                    public void onSubscribe(Disposable d) {
+                    public void onSubscribe(@NotNull Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(MyselfResponse myselfResponse) {
+                    public void onNext(@NotNull MyselfResponse myselfResponse) {
                         if (myselfResponse != null) {
                             MyselfResult myselfResult = myselfResponse.getResult()[0];
-                            SettingsEntity settingsEntity = myselfResult.getSettings();
+                            SettingsResponse settingsResponse = myselfResult.getSettings();
 
-                            String timezone = settingsEntity.getTimezone();
-                            boolean isContactsEncrypted = settingsEntity.isContactsEncrypted();
-                            boolean isDisableLoadingImages = settingsEntity.isDisableLoadingImages();
+                            String timezone = settingsResponse.getTimezone();
+                            boolean isContactsEncrypted = settingsResponse.isContactsEncrypted();
+                            boolean isDisableLoadingImages = settingsResponse.isDisableLoadingImages();
+                            boolean isReportBugsEnabled = settingsResponse.isEnableReportBugs();
 
                             userRepository.saveTimeZone(timezone);
                             userRepository.setContactsEncryptionEnabled(isContactsEncrypted);
                             userRepository.setBlockExternalImagesEnabled(isDisableLoadingImages);
+                            userRepository.setReportBugsEnabled(isReportBugsEnabled);
                         }
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onError(@NotNull Throwable e) {
                         Timber.e(e);
                     }
 

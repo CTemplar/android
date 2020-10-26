@@ -26,6 +26,7 @@ import com.ctemplar.app.fdroid.net.request.SignInRequest;
 import com.ctemplar.app.fdroid.net.request.SignUpRequest;
 import com.ctemplar.app.fdroid.net.request.SignatureRequest;
 import com.ctemplar.app.fdroid.net.request.SubjectEncryptedRequest;
+import com.ctemplar.app.fdroid.net.request.UpdateReportBugsRequest;
 import com.ctemplar.app.fdroid.net.response.AddAppTokenResponse;
 import com.ctemplar.app.fdroid.net.response.CaptchaResponse;
 import com.ctemplar.app.fdroid.net.response.CaptchaVerifyResponse;
@@ -42,7 +43,7 @@ import com.ctemplar.app.fdroid.net.response.Messages.MessagesResponse;
 import com.ctemplar.app.fdroid.net.response.Messages.MessagesResult;
 import com.ctemplar.app.fdroid.net.response.Myself.BlackListContact;
 import com.ctemplar.app.fdroid.net.response.Myself.MyselfResponse;
-import com.ctemplar.app.fdroid.net.response.Myself.SettingsEntity;
+import com.ctemplar.app.fdroid.net.response.Myself.SettingsResponse;
 import com.ctemplar.app.fdroid.net.response.Myself.WhiteListContact;
 import com.ctemplar.app.fdroid.net.response.RecoverPasswordResponse;
 import com.ctemplar.app.fdroid.net.response.SignInResponse;
@@ -175,6 +176,14 @@ public class UserRepository {
 
     public boolean isBlockExternalImagesEnabled() {
         return userStore.isBlockExternalImagesEnabled();
+    }
+
+    public void setReportBugsEnabled(boolean isEnabled) {
+        userStore.setReportBugsEnabled(isEnabled);
+    }
+
+    public boolean isReportBugsEnabled() {
+        return userStore.isReportBugsEnabled();
     }
 
     public void clearData() {
@@ -469,7 +478,7 @@ public class UserRepository {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<SettingsEntity> updateRecoveryEmail(
+    public Observable<SettingsResponse> updateRecoveryEmail(
             long settingId,
             RecoveryEmailRequest request
     ) {
@@ -478,7 +487,7 @@ public class UserRepository {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<SettingsEntity> updateSubjectEncrypted(
+    public Observable<SettingsResponse> updateSubjectEncrypted(
             long settingId,
             SubjectEncryptedRequest request
     ) {
@@ -487,7 +496,7 @@ public class UserRepository {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<SettingsEntity> updateContactsEncryption(
+    public Observable<SettingsResponse> updateContactsEncryption(
             long settingId,
             ContactsEncryptionRequest request
     ) {
@@ -496,7 +505,7 @@ public class UserRepository {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<SettingsEntity> updateAutoSaveEnabled(
+    public Observable<SettingsResponse> updateAutoSaveEnabled(
             long settingId,
             AutoSaveContactEnabledRequest request
     ) {
@@ -505,7 +514,7 @@ public class UserRepository {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<SettingsEntity> updateAntiPhishingPhrase(
+    public Observable<SettingsResponse> updateAntiPhishingPhrase(
             long settingId,
             AntiPhishingPhraseRequest request
     ) {
@@ -514,11 +523,20 @@ public class UserRepository {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<SettingsEntity> updateDisableLoadingImages(
+    public Observable<SettingsResponse> updateDisableLoadingImages(
             long settingId,
             DisableLoadingImagesRequest request
     ) {
         return service.updateDisableLoadingImages(settingId, request)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public Observable<SettingsResponse> updateReportBugs(
+            long settingId,
+            UpdateReportBugsRequest request
+    ) {
+        return service.updateReportBugs(settingId, request)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }

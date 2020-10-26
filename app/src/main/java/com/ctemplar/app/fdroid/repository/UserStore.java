@@ -45,6 +45,9 @@ public interface UserStore {
     void setBlockExternalImagesEnabled(boolean state);
     boolean isBlockExternalImagesEnabled();
 
+    void setReportBugsEnabled(boolean state);
+    boolean isReportBugsEnabled();
+
     void setPINLock(String pin);
     boolean checkPINLock(String pinCode);
 

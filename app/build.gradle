@@ -55,6 +55,7 @@ dependencies {
     implementation 'com.squareup.picasso:picasso:2.71828'
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
     implementation 'io.reactivex.rxjava2:rxjava:2.2.6'
+    implementation 'io.sentry:sentry-android:3.1.0'
 
     implementation 'com.google.android.material:material:1.2.1'
     implementation 'com.google.guava:guava:29.0-android'
