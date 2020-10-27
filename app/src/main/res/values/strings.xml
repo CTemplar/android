@@ -338,6 +338,7 @@
     <string name="settings_wb_list">Whitelist/Blacklist</string>
     <string name="settings_dark_mode">Dark mode</string>
     <string name="settings_block_external_images">Block external images</string>
+    <string name="settings_report_bugs">Report bugs</string>
     <string name="settings_folders">Folders</string>
     <string name="settings_manage_folders">Manage folders</string>
     <string name="settings_security">Security</string>
@@ -360,6 +361,7 @@
     <string name="toast_contacts_encrypted">Contacts are encrypted</string>
     <string name="toast_contacts_decrypted">Contacts are decrypted</string>
     <string name="toast_decryption_error">An error occurred while decrypting. Try again</string>
+    <string name="please_restart_app_to_apply_changes">Please, restart the app to apply changes</string>
 
     <!-- MAILBOXES -->
     <string name="addresses">Addresses</string>
@@ -412,6 +414,7 @@
     <string translatable="false" name="filters_key">filters_key</string>
     <string translatable="false" name="dark_mode_key">dark_mode_key</string>
     <string translatable="false" name="block_external_images_key">block_external_images_key</string>
+    <string translatable="false" name="report_bugs_enabled">report_bugs_enabled</string>
     <string translatable="false" name="white_black_list">white_black_list</string>
     <string translatable="false" name="manage_folders">manage_folders</string>
     <string translatable="false" name="push_notifications_enabled">push_notifications_enabled</string>

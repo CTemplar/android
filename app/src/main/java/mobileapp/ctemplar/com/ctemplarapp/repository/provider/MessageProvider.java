@@ -590,6 +590,10 @@ public class MessageProvider {
         return result;
     }
 
+    public static MessageEntity fromMessagesResultToEntity(MessagesResult message) {
+        return fromMessagesResultToEntity(message, "");
+    }
+
     public static List<MessageEntity> fromMessagesResultsToEntities(List<MessagesResult> messages) {
         return fromMessagesResultsToEntities(messages, "");
     }
