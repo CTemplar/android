@@ -128,6 +128,10 @@
         <activity android:name=".mailboxes.MailboxesActivity" />
         <activity android:name=".mailboxes.AddMailboxActivity" />
 
+        <meta-data
+            android:name="io.sentry.dsn"
+            android:value="https://9810665a34fd4e48b965ea67914587a2@o190614.ingest.sentry.io/5462074" />
+
     </application>
 
 </manifest>
