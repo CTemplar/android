@@ -130,7 +130,7 @@
 
         <meta-data
             android:name="io.sentry.dsn"
-            android:value="https://9810665a34fd4e48b965ea67914587a2@o190614.ingest.sentry.io/5462074" />
+            android:value="https://2da8beb6ecff462392f1198f48467e58@o462221.ingest.sentry.io/5496364" />
 
     </application>
 
