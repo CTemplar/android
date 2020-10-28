@@ -1,5 +1,7 @@
 package com.ctemplar.app.fdroid.repository.provider;
 
+import androidx.annotation.Nullable;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -590,11 +592,17 @@ public class MessageProvider {
         return result;
     }
 
-    public static MessageEntity fromMessagesResultToEntity(MessagesResult message) {
+    public static MessageEntity fromMessagesResultToEntity(@Nullable MessagesResult message) {
+        if (message == null) {
+            return new MessageEntity();
+        }
         return fromMessagesResultToEntity(message, "");
     }
 
-    public static List<MessageEntity> fromMessagesResultsToEntities(List<MessagesResult> messages) {
+    public static List<MessageEntity> fromMessagesResultsToEntities(@Nullable List<MessagesResult> messages) {
+        if (messages == null) {
+            return new ArrayList<>();
+        }
         return fromMessagesResultsToEntities(messages, "");
     }
 
