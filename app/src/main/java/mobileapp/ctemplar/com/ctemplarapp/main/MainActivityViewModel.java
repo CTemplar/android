@@ -19,10 +19,7 @@ import java.util.List;
 
 import io.reactivex.Observable;
 import io.reactivex.Observer;
-import io.reactivex.Single;
-import io.reactivex.SingleObserver;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.DialogState;
 import mobileapp.ctemplar.com.ctemplarapp.SingleLiveEvent;
@@ -221,47 +218,47 @@ public class MainActivityViewModel extends AndroidViewModel {
         if (TextUtils.isEmpty(folder)) {
             return;
         }
-        List<MessageEntity> localMessageEntities;
-        switch (folder) {
-            case MainFolderNames.STARRED:
-                localMessageEntities = messagesRepository.getStarredMessages();
-                break;
-            case MainFolderNames.ALL_MAILS:
-                localMessageEntities = messagesRepository.getAllMailsMessages();
-                break;
-            case MainFolderNames.UNREAD:
-                localMessageEntities = messagesRepository.getUnreadMessages();
-                break;
-            default:
-                localMessageEntities = messagesRepository.getMessagesByFolder(folder);
-                break;
-        }
-
-        Single.fromCallable(() -> MessageProvider.fromMessageEntities(localMessageEntities, false))
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.computation())
-                .subscribe(new SingleObserver<List<MessageProvider>>() {
-                    @Override
-                    public void onSubscribe(@io.reactivex.annotations.NonNull Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onSuccess(@io.reactivex.annotations.NonNull List<MessageProvider> messageProviders) {
-                        if (offset == 0) {
-                            ResponseMessagesData localMessagesData = new ResponseMessagesData(
-                                    messageProviders, offset, folder);
-                            if (localMessagesData.messages.size() > 0) {
-                                messagesResponse.postValue(localMessagesData);
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void onError(@io.reactivex.annotations.NonNull Throwable e) {
-                        Timber.e(e);
-                    }
-                });
+//        List<MessageEntity> localMessageEntities;
+//        switch (folder) {
+//            case MainFolderNames.STARRED:
+//                localMessageEntities = messagesRepository.getStarredMessages();
+//                break;
+//            case MainFolderNames.ALL_MAILS:
+//                localMessageEntities = messagesRepository.getAllMailsMessages();
+//                break;
+//            case MainFolderNames.UNREAD:
+//                localMessageEntities = messagesRepository.getUnreadMessages();
+//                break;
+//            default:
+//                localMessageEntities = messagesRepository.getMessagesByFolder(folder);
+//                break;
+//        }
+//
+//        Single.fromCallable(() -> MessageProvider.fromMessageEntities(localMessageEntities, false))
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(Schedulers.computation())
+//                .subscribe(new SingleObserver<List<MessageProvider>>() {
+//                    @Override
+//                    public void onSubscribe(@io.reactivex.annotations.NonNull Disposable d) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onSuccess(@io.reactivex.annotations.NonNull List<MessageProvider> messageProviders) {
+//                        if (offset == 0) {
+//                            ResponseMessagesData localMessagesData = new ResponseMessagesData(
+//                                    messageProviders, offset, folder);
+//                            if (localMessagesData.messages.size() > 0) {
+//                                messagesResponse.postValue(localMessagesData);
+//                            }
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onError(@io.reactivex.annotations.NonNull Throwable e) {
+//                        Timber.e(e);
+//                    }
+//                });
 
         Observable<MessagesResponse> messagesResponseObservable;
         if (MainFolderNames.STARRED.equals(folder)) {
@@ -308,10 +305,10 @@ public class MainActivityViewModel extends AndroidViewModel {
                                     break;
                             }
                             messageProviders = MessageProvider
-                                    .fromMessageEntities(localEntities, false);
+                                    .fromMessageEntities(localEntities, false, false);
                         } else {
                             messageProviders = MessageProvider
-                                    .fromMessageEntities(messageEntities, false);
+                                    .fromMessageEntities(messageEntities, false, false);
                         }
 
                         messagesResponse.postValue(new ResponseMessagesData(messageProviders,
@@ -349,7 +346,7 @@ public class MainActivityViewModel extends AndroidViewModel {
                         List<MessageEntity> messageEntities = MessageProvider
                                 .fromMessagesResultsToEntities(messages);
                         List<MessageProvider> messagesProvider = MessageProvider
-                                .fromMessageEntities(messageEntities, false);
+                                .fromMessageEntities(messageEntities, false, false);
                         searchMessagesResponse.postValue(new ResponseMessagesData(
                                 messagesProvider, offset));
                     }

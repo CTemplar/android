@@ -53,6 +53,7 @@ public class MessageProvider {
     private String lastActionThread;
     private long mailboxId;
     private String parent;
+    private boolean isSubjectDecrypted;
 
     public long getId() {
         return id;
@@ -343,6 +344,14 @@ public class MessageProvider {
     }
 //    private MessagesResult[] children;
 
+    public boolean isSubjectDecrypted() {
+        return isSubjectDecrypted;
+    }
+
+    public void setSubjectDecrypted(boolean subjectDecrypted) {
+        this.isSubjectDecrypted = subjectDecrypted;
+    }
+
     private static AttachmentProvider convertFromResponseMessageAttachmentToAttachmentProvider(MessageAttachment messageAttachment) {
         AttachmentProvider attachmentProvider = new AttachmentProvider();
         attachmentProvider.setId(messageAttachment.getId());
@@ -449,7 +458,7 @@ public class MessageProvider {
         return userDisplayProviderList;
     }
 
-    public static MessageProvider fromMessageEntity(MessageEntity message, boolean decryptContent) {
+    public static MessageProvider fromMessageEntity(MessageEntity message, boolean decryptContent, boolean decryptSubject) {
         MessageProvider result = new MessageProvider();
 
         result.id = message.getId();
@@ -464,8 +473,10 @@ public class MessageProvider {
         result.bccDisplayList = convertUserDisplayListFromEntityToProvider(message.getBccDisplayList());
         result.hasChildren = message.isHasChildren();
         result.childrenCount = message.getChildrenCount();
-        result.subject = EncryptUtils.decryptSubject(message.getSubject(), message.getMailboxId(), message.isSubjectEncrypted());
-        result.content = EncryptUtils.decryptContent(message.getContent(), message.getMailboxId(), decryptContent);
+        result.subject = EncryptUtils.decryptSubject(message.getSubject(), message.getMailboxId(),
+                message.isSubjectEncrypted() && decryptSubject);
+        result.content = EncryptUtils.decryptContent(message.getContent(), message.getMailboxId(),
+                decryptContent);
         result.receivers = listToArray(message.getReceivers());
         result.cc = listToArray(message.getCc());
         result.bcc = listToArray(message.getBcc());
@@ -492,10 +503,10 @@ public class MessageProvider {
         return result;
     }
 
-    public static List<MessageProvider> fromMessageEntities(List<MessageEntity> messages, boolean decryptContent) {
+    public static List<MessageProvider> fromMessageEntities(List<MessageEntity> messages, boolean decryptContent, boolean decryptSubject) {
         List<MessageProvider> result = new ArrayList<>(messages.size());
         for (MessageEntity message : messages) {
-            result.add(MessageProvider.fromMessageEntity(message, decryptContent));
+            result.add(MessageProvider.fromMessageEntity(message, decryptContent, decryptSubject));
         }
         return result;
     }

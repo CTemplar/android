@@ -206,9 +206,14 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesView
         }
 
         // check for subject
-        holder.txtSubject.setText(message.getSubject());
-        holder.txtSubject.setVisibility(View.VISIBLE);
-        holder.txtSubjectEncrypted.setVisibility(View.GONE);
+        if (!message.isSubjectEncrypted() || message.isSubjectDecrypted()) {
+            holder.txtSubject.setText(message.getSubject());
+            holder.txtSubject.setVisibility(View.VISIBLE);
+            holder.txtSubjectEncrypted.setVisibility(View.GONE);
+        } else {
+            holder.txtSubject.setVisibility(View.INVISIBLE);
+            holder.txtSubjectEncrypted.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -329,6 +334,14 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesView
             return "";
         }
         return str.toLowerCase();
+    }
+
+    public void onItemUpdated(MessageProvider message) {
+        int index = filteredList.indexOf(message);
+        if (index == -1) {
+            return;
+        }
+        notifyItemChanged(index);
     }
 
     public interface OnReachedBottomCallback {
