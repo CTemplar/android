@@ -210,9 +210,11 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesView
             holder.txtSubject.setText(message.getSubject());
             holder.txtSubject.setVisibility(View.VISIBLE);
             holder.txtSubjectEncrypted.setVisibility(View.GONE);
+            holder.decryptionProgressBar.setVisibility(View.GONE);
         } else {
             holder.txtSubject.setVisibility(View.INVISIBLE);
             holder.txtSubjectEncrypted.setVisibility(View.VISIBLE);
+            holder.decryptionProgressBar.setVisibility(View.VISIBLE);
         }
     }
 
