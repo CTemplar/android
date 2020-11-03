@@ -138,7 +138,7 @@ public class InboxFragment extends BaseFragment
     @BindView(R.id.fragment_inbox_fab_compose)
     FloatingActionButton fabCompose;
 
-    private FilterDialogFragment.OnApplyClickListener onFilterApplyClickListener
+    private final FilterDialogFragment.OnApplyClickListener onFilterApplyClickListener
             = new FilterDialogFragment.OnApplyClickListener() {
         @Override
         public void onApply(boolean isStarred, boolean isUnread, boolean withAttachment) {
@@ -182,17 +182,17 @@ public class InboxFragment extends BaseFragment
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new io.reactivex.Observer<Long>() {
                     @Override
-                    public void onSubscribe(Disposable d) {
+                    public void onSubscribe(@NotNull Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(Long parentId) {
+                    public void onNext(@NotNull Long parentId) {
                         startViewMessageActivity(parentId);
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onError(@NotNull Throwable e) {
                         Timber.e(e);
                     }
 

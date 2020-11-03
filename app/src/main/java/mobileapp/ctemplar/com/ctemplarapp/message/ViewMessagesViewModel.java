@@ -36,12 +36,12 @@ public class ViewMessagesViewModel extends ViewModel {
     private final MessagesRepository messagesRepository;
     private final ManageFoldersRepository manageFoldersRepository;
 
-    private MutableLiveData<ResponseStatus> responseStatus = new MutableLiveData<>();
-    private MutableLiveData<List<MessageProvider>> messagesResponse = new MutableLiveData<>();
-    private MutableLiveData<Boolean> starredResponse = new MutableLiveData<>();
-    private MutableLiveData<FoldersResponse> foldersResponse = new MutableLiveData<>();
-    private MutableLiveData<ResponseStatus> moveToFolderStatus = new MutableLiveData<>();
-    private MutableLiveData<ResponseStatus> addWhitelistStatus = new MutableLiveData<>();
+    private final MutableLiveData<ResponseStatus> responseStatus = new MutableLiveData<>();
+    private final MutableLiveData<List<MessageProvider>> messagesResponse = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> starredResponse = new MutableLiveData<>();
+    private final MutableLiveData<FoldersResponse> foldersResponse = new MutableLiveData<>();
+    private final MutableLiveData<ResponseStatus> moveToFolderStatus = new MutableLiveData<>();
+    private final MutableLiveData<ResponseStatus> addWhitelistStatus = new MutableLiveData<>();
 
     public ViewMessagesViewModel() {
         userRepository = UserRepository.getInstance();
