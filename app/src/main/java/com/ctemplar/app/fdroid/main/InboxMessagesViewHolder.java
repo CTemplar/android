@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.ctemplar.app.fdroid.R;
@@ -25,6 +26,7 @@ public class InboxMessagesViewHolder extends RecyclerView.ViewHolder{
     ImageView imgStarred;
     LinearLayout imgStarredLayout;
     ImageView imgAttachment;
+    ProgressBar decryptionProgressBar;
 
     InboxMessagesViewHolder(@NonNull View itemView) {
         super(itemView);
@@ -42,5 +44,6 @@ public class InboxMessagesViewHolder extends RecyclerView.ViewHolder{
         imgStarred = itemView.findViewById(R.id.message_holder_starred);
         imgStarredLayout = itemView.findViewById(R.id.message_holder_starred_layout);
         imgAttachment = itemView.findViewById(R.id.message_holder_attachment);
+        decryptionProgressBar = itemView.findViewById(R.id.decryption_progress_bar);
     }
 }

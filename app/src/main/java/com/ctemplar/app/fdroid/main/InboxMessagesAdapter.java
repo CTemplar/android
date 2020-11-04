@@ -12,6 +12,10 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import io.reactivex.subjects.PublishSubject;
 import com.ctemplar.app.fdroid.R;
 import com.ctemplar.app.fdroid.repository.constant.MainFolderNames;
 import com.ctemplar.app.fdroid.repository.constant.MessageActions;
@@ -19,11 +23,6 @@ import com.ctemplar.app.fdroid.repository.provider.MessageProvider;
 import com.ctemplar.app.fdroid.repository.provider.UserDisplayProvider;
 import com.ctemplar.app.fdroid.utils.AppUtils;
 import com.ctemplar.app.fdroid.utils.EditTextUtils;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import io.reactivex.subjects.PublishSubject;
 
 public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesViewHolder> {
     private final PublishSubject<Long> onClickSubject = PublishSubject.create();
@@ -207,9 +206,16 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesView
         }
 
         // check for subject
-        holder.txtSubject.setText(message.getSubject());
-        holder.txtSubject.setVisibility(View.VISIBLE);
-        holder.txtSubjectEncrypted.setVisibility(View.GONE);
+        if (!message.isSubjectEncrypted() || message.isSubjectDecrypted()) {
+            holder.txtSubject.setText(message.getSubject());
+            holder.txtSubject.setVisibility(View.VISIBLE);
+            holder.txtSubjectEncrypted.setVisibility(View.GONE);
+            holder.decryptionProgressBar.setVisibility(View.GONE);
+        } else {
+            holder.txtSubject.setVisibility(View.INVISIBLE);
+            holder.txtSubjectEncrypted.setVisibility(View.VISIBLE);
+            holder.decryptionProgressBar.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -330,6 +336,14 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesView
             return "";
         }
         return str.toLowerCase();
+    }
+
+    public void onItemUpdated(MessageProvider message) {
+        int index = filteredList.indexOf(message);
+        if (index == -1) {
+            return;
+        }
+        notifyItemChanged(index);
     }
 
     public interface OnReachedBottomCallback {

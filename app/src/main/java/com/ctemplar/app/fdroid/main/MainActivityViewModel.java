@@ -1,6 +1,9 @@
 package com.ctemplar.app.fdroid.main;
 
 import android.app.Application;
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
@@ -53,21 +56,21 @@ import timber.log.Timber;
 public class MainActivityViewModel extends AndroidViewModel {
     public static final String ANDROID = "android";
 
-    private UserRepository userRepository;
-    private MessagesRepository messagesRepository;
-    private ManageFoldersRepository manageFoldersRepository;
-    private MutableLiveData<MainActivityActions> actions = new SingleLiveEvent<>();
-    private MutableLiveData<DialogState> dialogState = new SingleLiveEvent<>();
-    private MutableLiveData<ResponseStatus> responseStatus = new MutableLiveData<>();
-    private MutableLiveData<ResponseMessagesData> messagesResponse = new MutableLiveData<>();
-    private MutableLiveData<ResponseMessagesData> searchMessagesResponse = new MutableLiveData<>();
-    private MutableLiveData<ResponseStatus> toFolderStatus = new MutableLiveData<>();
-    private MutableLiveData<ResponseStatus> deleteMessagesStatus = new MutableLiveData<>();
-    private MutableLiveData<ResponseStatus> emptyFolderStatus = new MutableLiveData<>();
-    private MutableLiveData<FoldersResponse> foldersResponse = new MutableLiveData<>();
-    private MutableLiveData<ResponseBody> unreadFoldersBody = new MutableLiveData<>();
-    private MutableLiveData<MyselfResponse> myselfResponse = new MutableLiveData<>();
-    private MutableLiveData<String> currentFolder = new MutableLiveData<>();
+    private final UserRepository userRepository;
+    private final MessagesRepository messagesRepository;
+    private final ManageFoldersRepository manageFoldersRepository;
+    private final MutableLiveData<MainActivityActions> actions = new SingleLiveEvent<>();
+    private final MutableLiveData<DialogState> dialogState = new SingleLiveEvent<>();
+    private final MutableLiveData<ResponseStatus> responseStatus = new MutableLiveData<>();
+    private final MutableLiveData<ResponseMessagesData> messagesResponse = new MutableLiveData<>();
+    private final MutableLiveData<ResponseMessagesData> searchMessagesResponse = new MutableLiveData<>();
+    private final MutableLiveData<ResponseStatus> toFolderStatus = new MutableLiveData<>();
+    private final MutableLiveData<ResponseStatus> deleteMessagesStatus = new MutableLiveData<>();
+    private final MutableLiveData<ResponseStatus> emptyFolderStatus = new MutableLiveData<>();
+    private final MutableLiveData<FoldersResponse> foldersResponse = new MutableLiveData<>();
+    private final MutableLiveData<ResponseBody> unreadFoldersBody = new MutableLiveData<>();
+    private final MutableLiveData<MyselfResponse> myselfResponse = new MutableLiveData<>();
+    private final MutableLiveData<String> currentFolder = new MutableLiveData<>();
 
     private final NotificationServiceListener notificationServiceListener = message
             -> getMessages(10, 0, currentFolder.getValue());
@@ -157,17 +160,17 @@ public class MainActivityViewModel extends AndroidViewModel {
                 .doFinally(this::clearUserData)
                 .subscribe(new Observer<Response<Void>>() {
                     @Override
-                    public void onSubscribe(Disposable d) {
+                    public void onSubscribe(@NotNull Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(Response<Void> voidResponse) {
+                    public void onNext(@NotNull Response<Void> voidResponse) {
 
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onError(@NotNull Throwable e) {
                         Timber.e(e, "logout");
                     }
 
@@ -176,8 +179,6 @@ public class MainActivityViewModel extends AndroidViewModel {
                         Timber.d("logout: onComplete");
                     }
                 });
-        clearUserData();
-        NotificationService.updateState(getApplication());
     }
 
     public void checkUserSession() {
@@ -195,47 +196,49 @@ public class MainActivityViewModel extends AndroidViewModel {
         if (TextUtils.isEmpty(folder)) {
             return;
         }
-        List<MessageEntity> localMessageEntities;
-        switch (folder) {
-            case MainFolderNames.STARRED:
-                localMessageEntities = messagesRepository.getStarredMessages();
-                break;
-            case MainFolderNames.ALL_MAILS:
-                localMessageEntities = messagesRepository.getAllMailsMessages();
-                break;
-            case MainFolderNames.UNREAD:
-                localMessageEntities = messagesRepository.getUnreadMessages();
-                break;
-            default:
-                localMessageEntities = messagesRepository.getMessagesByFolder(folder);
-                break;
-        }
+        if (noConnection()) {
+            List<MessageEntity> localMessageEntities;
+            switch (folder) {
+                case MainFolderNames.STARRED:
+                    localMessageEntities = messagesRepository.getStarredMessages();
+                    break;
+                case MainFolderNames.ALL_MAILS:
+                    localMessageEntities = messagesRepository.getAllMailsMessages();
+                    break;
+                case MainFolderNames.UNREAD:
+                    localMessageEntities = messagesRepository.getUnreadMessages();
+                    break;
+                default:
+                    localMessageEntities = messagesRepository.getMessagesByFolder(folder);
+                    break;
+            }
+            Single.fromCallable(() -> MessageProvider.fromMessageEntities(localMessageEntities,
+                    false, false))
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(Schedulers.computation())
+                    .subscribe(new SingleObserver<List<MessageProvider>>() {
+                        @Override
+                        public void onSubscribe(@io.reactivex.annotations.NonNull Disposable d) {
 
-        Single.fromCallable(() -> MessageProvider.fromMessageEntities(localMessageEntities, false))
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.computation())
-                .subscribe(new SingleObserver<List<MessageProvider>>() {
-                    @Override
-                    public void onSubscribe(@io.reactivex.annotations.NonNull Disposable d) {
+                        }
 
-                    }
-
-                    @Override
-                    public void onSuccess(@io.reactivex.annotations.NonNull List<MessageProvider> messageProviders) {
-                        if (offset == 0) {
-                            ResponseMessagesData localMessagesData = new ResponseMessagesData(
-                                    messageProviders, offset, folder);
-                            if (localMessagesData.messages.size() > 0) {
-                                messagesResponse.postValue(localMessagesData);
+                        @Override
+                        public void onSuccess(@io.reactivex.annotations.NonNull List<MessageProvider> messageProviders) {
+                            if (offset == 0) {
+                                ResponseMessagesData localMessagesData = new ResponseMessagesData(
+                                        messageProviders, offset, folder);
+                                if (localMessagesData.messages.size() > 0) {
+                                    messagesResponse.postValue(localMessagesData);
+                                }
                             }
                         }
-                    }
 
-                    @Override
-                    public void onError(@io.reactivex.annotations.NonNull Throwable e) {
-                        Timber.e(e);
-                    }
-                });
+                        @Override
+                        public void onError(@io.reactivex.annotations.NonNull Throwable e) {
+                            Timber.e(e);
+                        }
+                    });
+        }
 
         Observable<MessagesResponse> messagesResponseObservable;
         if (MainFolderNames.STARRED.equals(folder)) {
@@ -282,10 +285,10 @@ public class MainActivityViewModel extends AndroidViewModel {
                                     break;
                             }
                             messageProviders = MessageProvider
-                                    .fromMessageEntities(localEntities, false);
+                                    .fromMessageEntities(localEntities, false, false);
                         } else {
                             messageProviders = MessageProvider
-                                    .fromMessageEntities(messageEntities, false);
+                                    .fromMessageEntities(messageEntities, false, false);
                         }
 
                         messagesResponse.postValue(new ResponseMessagesData(messageProviders,
@@ -306,6 +309,15 @@ public class MainActivityViewModel extends AndroidViewModel {
                 });
     }
 
+    private boolean noConnection() {
+        ConnectivityManager connectivityManager =
+                (ConnectivityManager) getApplication().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        return networkInfo == null || !networkInfo.isConnected() ||
+                (networkInfo.getType() != ConnectivityManager.TYPE_WIFI
+                        && networkInfo.getType() != ConnectivityManager.TYPE_MOBILE);
+    }
+
     public void searchMessages(String query, int limit, int offset) {
         if (TextUtils.isEmpty(query)) {
             return;
@@ -323,7 +335,7 @@ public class MainActivityViewModel extends AndroidViewModel {
                         List<MessageEntity> messageEntities = MessageProvider
                                 .fromMessagesResultsToEntities(messages);
                         List<MessageProvider> messagesProvider = MessageProvider
-                                .fromMessageEntities(messageEntities, false);
+                                .fromMessageEntities(messageEntities, false, false);
                         searchMessagesResponse.postValue(new ResponseMessagesData(
                                 messagesProvider, offset));
                     }
@@ -346,12 +358,12 @@ public class MainActivityViewModel extends AndroidViewModel {
         userRepository.getMailboxesList(limit, offset)
                 .subscribe(new Observer<MailboxesResponse>() {
                     @Override
-                    public void onSubscribe(Disposable d) {
+                    public void onSubscribe(@NotNull Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(MailboxesResponse mailboxesResponse) {
+                    public void onNext(@NotNull MailboxesResponse mailboxesResponse) {
                         if (mailboxesResponse.getTotalCount() > 0) {
                             userRepository.saveMailboxes(mailboxesResponse.getMailboxesList());
                         }
@@ -359,7 +371,7 @@ public class MainActivityViewModel extends AndroidViewModel {
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onError(@NotNull Throwable e) {
                         if (e instanceof HttpException) {
                             int code = ((HttpException) e).code();
                             switch (code) {
@@ -391,7 +403,7 @@ public class MainActivityViewModel extends AndroidViewModel {
         userRepository.signIn(signInRequest)
                 .subscribe(new Observer<SignInResponse>() {
                     @Override
-                    public void onError(Throwable e) {
+                    public void onError(@NotNull Throwable e) {
                         if (e instanceof HttpException) {
                             HttpException exception = (HttpException) e;
                             switch (exception.code()) {
@@ -408,12 +420,12 @@ public class MainActivityViewModel extends AndroidViewModel {
                     }
 
                     @Override
-                    public void onSubscribe(Disposable d) {
+                    public void onSubscribe(@NotNull Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(SignInResponse signInResponse) {
+                    public void onNext(@NotNull SignInResponse signInResponse) {
                         userRepository.saveUserToken(signInResponse.getToken());
                     }
                 });
@@ -424,12 +436,12 @@ public class MainActivityViewModel extends AndroidViewModel {
         userRepository.deleteMessages(messageIdsString)
                 .subscribe(new Observer<Response<Void>>() {
                     @Override
-                    public void onSubscribe(Disposable d) {
+                    public void onSubscribe(@NotNull Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(Response<Void> response) {
+                    public void onNext(@NotNull Response<Void> response) {
                         for (long messageId : messageIds) {
                             messagesRepository.deleteMessageById(messageId);
                         }
@@ -437,7 +449,7 @@ public class MainActivityViewModel extends AndroidViewModel {
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onError(@NotNull Throwable e) {
                         deleteMessagesStatus.postValue(ResponseStatus.RESPONSE_ERROR);
                         Timber.e(e);
                     }
@@ -453,18 +465,18 @@ public class MainActivityViewModel extends AndroidViewModel {
         userRepository.emptyFolder(new EmptyFolderRequest(folder))
                 .subscribe(new Observer<EmptyFolderResponse>() {
                     @Override
-                    public void onSubscribe(Disposable d) {
+                    public void onSubscribe(@NotNull Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(EmptyFolderResponse emptyFolderResponse) {
+                    public void onNext(@NotNull EmptyFolderResponse emptyFolderResponse) {
                         messagesRepository.deleteMessagesByFolderName(folder);
                         emptyFolderStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onError(@NotNull Throwable e) {
                         emptyFolderStatus.postValue(ResponseStatus.RESPONSE_ERROR);
                         Timber.e(e);
                     }
@@ -480,18 +492,18 @@ public class MainActivityViewModel extends AndroidViewModel {
         userRepository.toFolder(messageId, folder)
                 .subscribe(new Observer<Response<Void>>() {
                     @Override
-                    public void onSubscribe(Disposable d) {
+                    public void onSubscribe(@NotNull Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(Response<Void> voidResponse) {
+                    public void onNext(@NotNull Response<Void> voidResponse) {
                         messagesRepository.updateMessageFolderName(messageId, folder);
                         toFolderStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onError(@NotNull Throwable e) {
                         toFolderStatus.postValue(ResponseStatus.RESPONSE_ERROR);
                         Timber.e(e);
                     }
@@ -507,12 +519,12 @@ public class MainActivityViewModel extends AndroidViewModel {
         userRepository.markMessageIsStarred(id, starred)
                 .subscribe(new Observer<Response<Void>>() {
                     @Override
-                    public void onSubscribe(Disposable d) {
+                    public void onSubscribe(@NotNull Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(Response<Void> messageResponse) {
+                    public void onNext(@NotNull Response<Void> messageResponse) {
                         int resultCode = messageResponse.code();
                         if (resultCode == 204) {
                             CTemplarApp.getAppDatabase().messageDao().updateIsStarred(id, starred);
@@ -520,7 +532,7 @@ public class MainActivityViewModel extends AndroidViewModel {
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onError(@NotNull Throwable e) {
                         Timber.e(e);
                     }
 
@@ -535,17 +547,17 @@ public class MainActivityViewModel extends AndroidViewModel {
         manageFoldersRepository.getFoldersList(limit, offset)
                 .subscribe(new Observer<FoldersResponse>() {
                     @Override
-                    public void onSubscribe(Disposable d) {
+                    public void onSubscribe(@NotNull Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(FoldersResponse response) {
+                    public void onNext(@NotNull FoldersResponse response) {
                         foldersResponse.postValue(response);
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onError(@NotNull Throwable e) {
                         responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
                         Timber.e(e.getCause());
                     }
@@ -561,17 +573,17 @@ public class MainActivityViewModel extends AndroidViewModel {
         manageFoldersRepository.getUnreadFoldersList()
                 .subscribe(new Observer<ResponseBody>() {
                     @Override
-                    public void onSubscribe(Disposable d) {
+                    public void onSubscribe(@NotNull Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(ResponseBody responseBody) {
+                    public void onNext(@NotNull ResponseBody responseBody) {
                         unreadFoldersBody.postValue(responseBody);
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onError(@NotNull Throwable e) {
                         responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
                         Timber.e(e.getCause());
                     }

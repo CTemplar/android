@@ -3,6 +3,7 @@ package com.ctemplar.app.fdroid.main;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Looper;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -28,6 +29,8 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.ctemplar.app.fdroid.BaseFragment;
 import com.ctemplar.app.fdroid.R;
+import com.ctemplar.app.fdroid.executor.HandlerExecutor;
+import com.ctemplar.app.fdroid.executor.QueuedExecutor;
 import com.ctemplar.app.fdroid.message.MoveDialogFragment;
 import com.ctemplar.app.fdroid.message.SendMessageActivity;
 import com.ctemplar.app.fdroid.message.SendMessageFragment;
@@ -37,6 +40,7 @@ import com.ctemplar.app.fdroid.net.ResponseStatus;
 import com.ctemplar.app.fdroid.net.response.ResponseMessagesData;
 import com.ctemplar.app.fdroid.repository.provider.MessageProvider;
 import com.ctemplar.app.fdroid.utils.EditTextUtils;
+import com.ctemplar.app.fdroid.utils.EncryptUtils;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -44,6 +48,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executor;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -72,6 +77,8 @@ public class InboxFragment extends BaseFragment
     private FilterDialogFragment dialogFragment;
     private SearchView searchView;
     private String currentFolder;
+    private QueuedExecutor executor;
+    private Executor mainThreadExecutor;
 
     private boolean filterIsStarred;
     private boolean filterIsUnread;
@@ -80,6 +87,7 @@ public class InboxFragment extends BaseFragment
 
     private int currentOffset = 0;
     private boolean isLoadingNewMessages = false;
+    private int decryptionExecuteCounter;
 
     @OnClick(R.id.fragment_inbox_send_layout)
     void onClickComposeLayout() {
@@ -126,7 +134,7 @@ public class InboxFragment extends BaseFragment
     @BindView(R.id.fragment_inbox_fab_compose)
     FloatingActionButton fabCompose;
 
-    private FilterDialogFragment.OnApplyClickListener onFilterApplyClickListener
+    private final FilterDialogFragment.OnApplyClickListener onFilterApplyClickListener
             = new FilterDialogFragment.OnApplyClickListener() {
         @Override
         public void onApply(boolean isStarred, boolean isUnread, boolean withAttachment) {
@@ -156,6 +164,8 @@ public class InboxFragment extends BaseFragment
         if (activity == null) {
             return;
         }
+        executor = new QueuedExecutor();
+        mainThreadExecutor = new HandlerExecutor(Looper.getMainLooper());
         mainModel = new ViewModelProvider(activity).get(MainActivityViewModel.class);
         currentFolder = mainModel.getCurrentFolder().getValue();
         if (currentFolder == null) {
@@ -168,17 +178,17 @@ public class InboxFragment extends BaseFragment
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new io.reactivex.Observer<Long>() {
                     @Override
-                    public void onSubscribe(Disposable d) {
+                    public void onSubscribe(@NotNull Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(Long parentId) {
+                    public void onNext(@NotNull Long parentId) {
                         startViewMessageActivity(parentId);
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onError(@NotNull Throwable e) {
                         Timber.e(e);
                     }
 
@@ -202,6 +212,7 @@ public class InboxFragment extends BaseFragment
         mainModel.getDeleteMessagesStatus().observe(getViewLifecycleOwner(), this::updateMessagesResponse);
         mainModel.getEmptyFolderStatus().observe(getViewLifecycleOwner(), this::updateMessagesResponse);
         mainModel.getCurrentFolder().observe(getViewLifecycleOwner(), folderName -> {
+            ++decryptionExecuteCounter;
             currentFolder = folderName;
             swipeRefreshLayout.setRefreshing(false);
             requestNewMessages();
@@ -556,22 +567,44 @@ public class InboxFragment extends BaseFragment
             messages = new ArrayList<>();
         }
         if (offset == 0) {
+            ++decryptionExecuteCounter;
             adapter.clear();
         }
         adapter.addMessages(messages);
         applyFiltersToMessages();
         showResultIfNotEmpty(false);
+        decryptSubjects(messages);
     }
 
     private void handleSearchMessagesList(ResponseMessagesData response) {
         List<MessageProvider> messages = response.getMessages();
         int offset = response.getOffset();
         if (offset == 0) {
+            ++decryptionExecuteCounter;
             adapter.clear();
         }
         adapter.addMessages(messages);
         applyFiltersToMessages();
         showResultIfNotEmpty(true);
+        decryptSubjects(messages);
+    }
+
+    private void decryptSubjects(List<MessageProvider> messages) {
+        final int currentExecutor = decryptionExecuteCounter;
+        executor.execute(() -> {
+            for (MessageProvider message : messages) {
+                if (currentExecutor != decryptionExecuteCounter) {
+                    return;
+                }
+                if (!message.isSubjectEncrypted()) {
+                    continue;
+                }
+                message.setSubject(EncryptUtils.decryptSubject(message.getSubject(),
+                        message.getMailboxId(), true));
+                message.setSubjectDecrypted(true);
+                mainThreadExecutor.execute(() -> adapter.onItemUpdated(message));
+            }
+        });
     }
 
     private void applyFiltersToMessages() {

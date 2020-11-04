@@ -52,7 +52,7 @@ public class NotificationServiceWebSocket extends WebSocketListener {
         if (mailResult != null) {
             MessageEntity messageEntity = MessageProvider.fromMessagesResultToEntity(mailResult);
             MessageProvider messageProvider = MessageProvider.fromMessageEntity(messageEntity,
-                    false);
+                    false, false);
             callback.onNewMessage(messageProvider);
         }
     }

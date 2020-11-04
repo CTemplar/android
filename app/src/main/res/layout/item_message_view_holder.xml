@@ -217,4 +217,14 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <ProgressBar
+        android:id="@+id/decryption_progress_bar"
+        android:layout_width="0dp"
+        android:layout_height="4dp"
+        android:indeterminate="true"
+        style="?android:progressBarStyleHorizontal"
+        app:layout_constraintTop_toTopOf="@id/item_message_view_holder_foreground"
+        app:layout_constraintLeft_toLeftOf="@id/item_message_view_holder_foreground"
+        app:layout_constraintRight_toRightOf="@id/item_message_view_holder_foreground" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
