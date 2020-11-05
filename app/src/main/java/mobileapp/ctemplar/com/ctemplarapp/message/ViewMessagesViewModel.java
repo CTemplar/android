@@ -36,12 +36,12 @@ public class ViewMessagesViewModel extends ViewModel {
     private final MessagesRepository messagesRepository;
     private final ManageFoldersRepository manageFoldersRepository;
 
-    private MutableLiveData<ResponseStatus> responseStatus = new MutableLiveData<>();
-    private MutableLiveData<List<MessageProvider>> messagesResponse = new MutableLiveData<>();
-    private MutableLiveData<Boolean> starredResponse = new MutableLiveData<>();
-    private MutableLiveData<FoldersResponse> foldersResponse = new MutableLiveData<>();
-    private MutableLiveData<ResponseStatus> moveToFolderStatus = new MutableLiveData<>();
-    private MutableLiveData<ResponseStatus> addWhitelistStatus = new MutableLiveData<>();
+    private final MutableLiveData<ResponseStatus> responseStatus = new MutableLiveData<>();
+    private final MutableLiveData<List<MessageProvider>> messagesResponse = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> starredResponse = new MutableLiveData<>();
+    private final MutableLiveData<FoldersResponse> foldersResponse = new MutableLiveData<>();
+    private final MutableLiveData<ResponseStatus> moveToFolderStatus = new MutableLiveData<>();
+    private final MutableLiveData<ResponseStatus> addWhitelistStatus = new MutableLiveData<>();
 
     public ViewMessagesViewModel() {
         userRepository = UserRepository.getInstance();
@@ -89,7 +89,7 @@ public class ViewMessagesViewModel extends ViewModel {
             allEntities.add(parentMessage);
             allEntities.addAll(childrenEntities);
 
-            Single.fromCallable(() -> MessageProvider.fromMessageEntities(allEntities, true))
+            Single.fromCallable(() -> MessageProvider.fromMessageEntities(allEntities, true, true))
                     .subscribeOn(Schedulers.io())
                     .observeOn(Schedulers.computation())
                     .subscribe(new SingleObserver<List<MessageProvider>>() {
@@ -131,13 +131,13 @@ public class ViewMessagesViewModel extends ViewModel {
                         MessageEntity parentEntity = MessageProvider
                                 .fromMessagesResultToEntity(parentMessageResult, requestFolder);
                         MessageProvider parentMessage = MessageProvider
-                                .fromMessageEntity(parentEntity, true);
+                                .fromMessageEntity(parentEntity, true, true);
 
                         MessagesResult[] childrenResult = parentMessageResult.getChildren();
                         List<MessageEntity> childrenEntities = MessageProvider
                                 .fromMessagesResultsToEntities(Arrays.asList(childrenResult));
                         List<MessageProvider> childrenMessages = MessageProvider
-                                .fromMessageEntities(childrenEntities, true);
+                                .fromMessageEntities(childrenEntities, true, false);
 
                         messagesRepository.deleteMessagesByParentId(parentEntity.getId());
                         messagesRepository.addMessageToDatabase(parentEntity);

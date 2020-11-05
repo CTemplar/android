@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Looper;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -27,6 +28,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.google.android.gms.common.util.concurrent.HandlerExecutor;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -35,6 +37,7 @@ import org.jetbrains.annotations.NotNull;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executor;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -43,6 +46,7 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import mobileapp.ctemplar.com.ctemplarapp.BaseFragment;
 import mobileapp.ctemplar.com.ctemplarapp.R;
+import mobileapp.ctemplar.com.ctemplarapp.executor.QueuedExecutor;
 import mobileapp.ctemplar.com.ctemplarapp.message.MoveDialogFragment;
 import mobileapp.ctemplar.com.ctemplarapp.message.SendMessageActivity;
 import mobileapp.ctemplar.com.ctemplarapp.message.SendMessageFragment;
@@ -52,6 +56,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.ResponseMessagesData;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageProvider;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
+import mobileapp.ctemplar.com.ctemplarapp.utils.EncryptUtils;
 import timber.log.Timber;
 
 import static mobileapp.ctemplar.com.ctemplarapp.message.SendMessageActivity.MESSAGE_ID;
@@ -76,6 +81,8 @@ public class InboxFragment extends BaseFragment
     private FilterDialogFragment dialogFragment;
     private SearchView searchView;
     private String currentFolder;
+    private QueuedExecutor executor;
+    private Executor mainThreadExecutor;
 
     private boolean filterIsStarred;
     private boolean filterIsUnread;
@@ -84,6 +91,7 @@ public class InboxFragment extends BaseFragment
 
     private int currentOffset = 0;
     private boolean isLoadingNewMessages = false;
+    private int decryptionExecuteCounter;
 
     @OnClick(R.id.fragment_inbox_send_layout)
     void onClickComposeLayout() {
@@ -130,7 +138,7 @@ public class InboxFragment extends BaseFragment
     @BindView(R.id.fragment_inbox_fab_compose)
     FloatingActionButton fabCompose;
 
-    private FilterDialogFragment.OnApplyClickListener onFilterApplyClickListener
+    private final FilterDialogFragment.OnApplyClickListener onFilterApplyClickListener
             = new FilterDialogFragment.OnApplyClickListener() {
         @Override
         public void onApply(boolean isStarred, boolean isUnread, boolean withAttachment) {
@@ -160,6 +168,8 @@ public class InboxFragment extends BaseFragment
         if (activity == null) {
             return;
         }
+        executor = new QueuedExecutor();
+        mainThreadExecutor = new HandlerExecutor(Looper.getMainLooper());
         mainModel = new ViewModelProvider(activity).get(MainActivityViewModel.class);
         currentFolder = mainModel.getCurrentFolder().getValue();
         if (currentFolder == null) {
@@ -172,17 +182,17 @@ public class InboxFragment extends BaseFragment
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new io.reactivex.Observer<Long>() {
                     @Override
-                    public void onSubscribe(Disposable d) {
+                    public void onSubscribe(@NotNull Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(Long parentId) {
+                    public void onNext(@NotNull Long parentId) {
                         startViewMessageActivity(parentId);
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onError(@NotNull Throwable e) {
                         Timber.e(e);
                     }
 
@@ -207,6 +217,7 @@ public class InboxFragment extends BaseFragment
         mainModel.getDeleteMessagesStatus().observe(getViewLifecycleOwner(), this::updateMessagesResponse);
         mainModel.getEmptyFolderStatus().observe(getViewLifecycleOwner(), this::updateMessagesResponse);
         mainModel.getCurrentFolder().observe(getViewLifecycleOwner(), folderName -> {
+            ++decryptionExecuteCounter;
             currentFolder = folderName;
             swipeRefreshLayout.setRefreshing(false);
             requestNewMessages();
@@ -561,22 +572,44 @@ public class InboxFragment extends BaseFragment
             messages = new ArrayList<>();
         }
         if (offset == 0) {
+            ++decryptionExecuteCounter;
             adapter.clear();
         }
         adapter.addMessages(messages);
         applyFiltersToMessages();
         showResultIfNotEmpty(false);
+        decryptSubjects(messages);
     }
 
     private void handleSearchMessagesList(ResponseMessagesData response) {
         List<MessageProvider> messages = response.getMessages();
         int offset = response.getOffset();
         if (offset == 0) {
+            ++decryptionExecuteCounter;
             adapter.clear();
         }
         adapter.addMessages(messages);
         applyFiltersToMessages();
         showResultIfNotEmpty(true);
+        decryptSubjects(messages);
+    }
+
+    private void decryptSubjects(List<MessageProvider> messages) {
+        final int currentExecutor = decryptionExecuteCounter;
+        executor.execute(() -> {
+            for (MessageProvider message : messages) {
+                if (currentExecutor != decryptionExecuteCounter) {
+                    return;
+                }
+                if (!message.isSubjectEncrypted()) {
+                    continue;
+                }
+                message.setSubject(EncryptUtils.decryptSubject(message.getSubject(),
+                        message.getMailboxId(), true));
+                message.setSubjectDecrypted(true);
+                mainThreadExecutor.execute(() -> adapter.onItemUpdated(message));
+            }
+        });
     }
 
     private void applyFiltersToMessages() {
