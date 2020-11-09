@@ -219,6 +219,42 @@ public class MainActivityViewModel extends AndroidViewModel {
         actions.postValue(MainActivityActions.ACTION_LOGOUT);
     }
 
+    public LiveData<MessageProvider> getMessage(long messageId, String folder) {
+        final MutableLiveData<MessageProvider> liveData = new MutableLiveData<>();
+        userRepository.getMessage(messageId).subscribe(new Observer<MessagesResponse>() {
+            @Override
+            public void onSubscribe(@io.reactivex.annotations.NonNull Disposable d) {
+
+            }
+
+            @Override
+            public void onNext(@io.reactivex.annotations.NonNull MessagesResponse messagesResponse) {
+                if (messagesResponse.getTotalCount() == 0) {
+                    Timber.w("getMessage count is 0");
+                    return;
+                }
+                MessagesResult messagesResult = messagesResponse.getMessagesList().get(0);
+                MessageEntity messageEntity = MessageProvider.fromMessagesResultToEntity(
+                        messagesResult, folder);
+                messagesRepository.saveMessage(messageEntity);
+                MessageProvider messageProvider = MessageProvider.fromMessageEntity(messageEntity,
+                        false, false);
+                liveData.postValue(messageProvider);
+            }
+
+            @Override
+            public void onError(@io.reactivex.annotations.NonNull Throwable e) {
+                Timber.e(e);
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
+        });
+        return liveData;
+    }
+
     public void getMessages(int limit, int offset, String folder) {
         if (TextUtils.isEmpty(folder)) {
             return;
