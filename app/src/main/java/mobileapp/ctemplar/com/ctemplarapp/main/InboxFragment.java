@@ -468,6 +468,12 @@ public class InboxFragment extends BaseFragment
                     }
                 });
         recyclerView.addOnItemTouchListener(touchListener);
+
+        mainModel.getMessageResponse().observe(getViewLifecycleOwner(), messageProvider -> {
+            adapter.addMessage(messageProvider);
+            recyclerView.scrollToPosition(0);
+            decryptSubject(messageProvider);
+        });
     }
 
     private void showRestoreSnackBar(String message, Runnable onUndoClick) {
@@ -653,16 +659,9 @@ public class InboxFragment extends BaseFragment
         if (activity == null || currentFolder == null) {
             return;
         }
-        if (!currentFolder.equals(folder)) {
-            return;
+        if (currentFolder.equals(folder)) {
+            mainModel.getMessage(messageId, folder);
         }
-        activity.runOnUiThread(() -> {
-            mainModel.getMessage(messageId, folder).observe(getViewLifecycleOwner(), messageProvider -> {
-                adapter.addMessage(messageProvider);
-                recyclerView.scrollToPosition(0);
-                decryptSubject(messageProvider);
-            });
-        });
     }
 
     private void showResultIfNotEmpty(boolean isServerSearchResult) {
