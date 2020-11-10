@@ -15,6 +15,8 @@ import androidx.core.app.NotificationCompat;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.lang.ref.WeakReference;
 import java.util.Map;
 import java.util.Random;
@@ -27,7 +29,7 @@ import mobileapp.ctemplar.com.ctemplarapp.main.InboxFragment;
 import mobileapp.ctemplar.com.ctemplarapp.main.MainActivityViewModel;
 import mobileapp.ctemplar.com.ctemplarapp.message.ViewMessagesActivity;
 import mobileapp.ctemplar.com.ctemplarapp.net.entity.RemoteMessageAction;
-import mobileapp.ctemplar.com.ctemplarapp.net.entity.RemoteMessageEntity;
+import mobileapp.ctemplar.com.ctemplarapp.net.entity.NotificationMessageEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
 import retrofit2.Response;
 import timber.log.Timber;
@@ -49,10 +51,11 @@ public class CloudMessagingService extends FirebaseMessagingService {
         if (remoteMessage.getData().size() > 0) {
             Timber.d("Message data payload: %s", remoteMessage.getData());
             Map<String, String> remoteMessageMap = remoteMessage.getData();
-            RemoteMessageEntity remoteMessageEntity = RemoteMessageEntity.getFromMap(remoteMessageMap);
+            NotificationMessageEntity notificationMessageEntity = NotificationMessageEntity
+                    .getFromMap(remoteMessageMap);
 
             if (RemoteMessageAction.CHANGE_PASSWORD.toString()
-                    .equals(remoteMessageEntity.getAction())
+                    .equals(notificationMessageEntity.getAction())
             ) {
                 onPasswordChanged();
                 return;
@@ -60,19 +63,20 @@ public class CloudMessagingService extends FirebaseMessagingService {
             boolean isNotificationsEnabled = CTemplarApp.getUserStore().isNotificationsEnabled();
             if (isNotificationsEnabled) {
                 showNotification(
-                        remoteMessageEntity.getSender(),
-                        remoteMessageEntity.getSubject(),
-                        remoteMessageEntity.getFolder(),
-                        remoteMessageEntity.getMessageID(),
-                        remoteMessageEntity.getParentID(),
-                        remoteMessageEntity.isSubjectEncrypted()
+                        notificationMessageEntity.getSender(),
+                        notificationMessageEntity.getSubject(),
+                        notificationMessageEntity.getFolder(),
+                        notificationMessageEntity.getMessageID(),
+                        notificationMessageEntity.getParentID(),
+                        notificationMessageEntity.isSubjectEncrypted()
                 );
             }
             WeakReference<InboxFragment> inboxFragmentReference = InboxFragment.instanceReference;
             if (inboxFragmentReference != null) {
                 InboxFragment inboxFragment = inboxFragmentReference.get();
                 if (inboxFragment != null && !inboxFragment.isRemoving()) {
-                    inboxFragment.onNewMessage(remoteMessageEntity.getMessageID());
+                    inboxFragment.onNewMessage(notificationMessageEntity.getMessageID(),
+                            notificationMessageEntity.getFolder());
                 }
             }
         }
@@ -139,17 +143,17 @@ public class CloudMessagingService extends FirebaseMessagingService {
         userRepository.signOut(MainActivityViewModel.ANDROID, token)
                 .subscribe(new Observer<Response<Void>>() {
                     @Override
-                    public void onSubscribe(Disposable d) {
+                    public void onSubscribe(@NotNull Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(Response<Void> voidResponse) {
+                    public void onNext(@NotNull Response<Void> voidResponse) {
                         postExit();
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onError(@NotNull Throwable e) {
                         postExit();
                         Timber.e(e);
                     }

@@ -468,6 +468,12 @@ public class InboxFragment extends BaseFragment
                     }
                 });
         recyclerView.addOnItemTouchListener(touchListener);
+
+        mainModel.getMessageResponse().observe(getViewLifecycleOwner(), messageProvider -> {
+            adapter.addMessage(messageProvider);
+            recyclerView.scrollToPosition(0);
+            decryptSubject(messageProvider);
+        });
     }
 
     private void showRestoreSnackBar(String message, Runnable onUndoClick) {
@@ -612,6 +618,18 @@ public class InboxFragment extends BaseFragment
         });
     }
 
+    private void decryptSubject(MessageProvider message) {
+        if (!message.isSubjectEncrypted()) {
+            return;
+        }
+        executor.execute(() -> {
+            message.setSubject(EncryptUtils.decryptSubject(message.getSubject(),
+                    message.getMailboxId(), true));
+            message.setSubjectDecrypted(true);
+            mainThreadExecutor.execute(() -> adapter.onItemUpdated(message));
+        });
+    }
+
     private void applyFiltersToMessages() {
         if (filterIsStarred || filterIsUnread || filterWithAttachment) {
             adapter.filter(filterIsStarred, filterIsUnread, filterWithAttachment);
@@ -636,12 +654,14 @@ public class InboxFragment extends BaseFragment
         }
     }
 
-    public void onNewMessage(long messageId) {
+    public void onNewMessage(long messageId, String folder) {
         Activity activity = getActivity();
-        if (activity == null) {
+        if (activity == null || currentFolder == null) {
             return;
         }
-        activity.runOnUiThread(this::requestNewMessages);
+        if (currentFolder.equals(folder)) {
+            mainModel.getMessage(messageId, folder);
+        }
     }
 
     private void showResultIfNotEmpty(boolean isServerSearchResult) {
