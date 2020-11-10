@@ -54,6 +54,7 @@ public class CTemplarApp extends MultiDexApplication {
 
         @Override
         public void onActivityResumed(@NotNull Activity activity) {
+            currentActivityReference = new WeakReference<>(activity);
             if (activity instanceof PINLockActivity) {
                 return;
             }
@@ -65,6 +66,7 @@ public class CTemplarApp extends MultiDexApplication {
 
         @Override
         public void onActivityPaused(@NotNull Activity activity) {
+            currentActivityReference = null;
             if (activity instanceof SplashActivity) {
                 return;
             }

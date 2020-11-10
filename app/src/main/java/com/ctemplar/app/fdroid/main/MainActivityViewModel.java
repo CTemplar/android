@@ -62,6 +62,7 @@ public class MainActivityViewModel extends AndroidViewModel {
     private final MutableLiveData<MainActivityActions> actions = new SingleLiveEvent<>();
     private final MutableLiveData<DialogState> dialogState = new SingleLiveEvent<>();
     private final MutableLiveData<ResponseStatus> responseStatus = new MutableLiveData<>();
+    private final MutableLiveData<MessageProvider> messageResponse = new MutableLiveData<>();
     private final MutableLiveData<ResponseMessagesData> messagesResponse = new MutableLiveData<>();
     private final MutableLiveData<ResponseMessagesData> searchMessagesResponse = new MutableLiveData<>();
     private final MutableLiveData<ResponseStatus> toFolderStatus = new MutableLiveData<>();
@@ -72,8 +73,12 @@ public class MainActivityViewModel extends AndroidViewModel {
     private final MutableLiveData<MyselfResponse> myselfResponse = new MutableLiveData<>();
     private final MutableLiveData<String> currentFolder = new MutableLiveData<>();
 
-    private final NotificationServiceListener notificationServiceListener = message
-            -> getMessages(10, 0, currentFolder.getValue());
+    private final NotificationServiceListener notificationServiceListener = message -> {
+        final String userFolderFinal = currentFolder.getValue();
+        if (userFolderFinal != null && userFolderFinal.equals(message.getFolderName())) {
+            getMessage(message.getId(), message.getFolderName());
+        }
+    };
 
     public MainActivityViewModel(@NonNull Application application) {
         super(application);
@@ -140,6 +145,10 @@ public class MainActivityViewModel extends AndroidViewModel {
         return currentFolder;
     }
 
+    public LiveData<MessageProvider> getMessageResponse() {
+        return messageResponse;
+    }
+
     public LiveData<ResponseMessagesData> getMessagesResponse() {
         return messagesResponse;
     }
@@ -190,6 +199,40 @@ public class MainActivityViewModel extends AndroidViewModel {
     public void clearUserData() {
         userRepository.clearData();
         actions.postValue(MainActivityActions.ACTION_LOGOUT);
+    }
+
+    public void getMessage(long messageId, String folder) {
+        userRepository.getMessage(messageId).subscribe(new Observer<MessagesResponse>() {
+            @Override
+            public void onSubscribe(@io.reactivex.annotations.NonNull Disposable d) {
+
+            }
+
+            @Override
+            public void onNext(@io.reactivex.annotations.NonNull MessagesResponse messagesResponse) {
+                if (messagesResponse.getTotalCount() == 0) {
+                    Timber.w("getMessage count is 0");
+                    return;
+                }
+                MessagesResult messagesResult = messagesResponse.getMessagesList().get(0);
+                MessageEntity messageEntity = MessageProvider.fromMessagesResultToEntity(
+                        messagesResult, folder);
+                messagesRepository.saveMessage(messageEntity);
+                MessageProvider messageProvider = MessageProvider.fromMessageEntity(messageEntity,
+                        false, false);
+                messageResponse.postValue(messageProvider);
+            }
+
+            @Override
+            public void onError(@io.reactivex.annotations.NonNull Throwable e) {
+                Timber.e(e);
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
+        });
     }
 
     public void getMessages(int limit, int offset, String folder) {

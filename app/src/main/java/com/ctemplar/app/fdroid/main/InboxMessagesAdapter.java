@@ -38,24 +38,6 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesView
         this.filteredList = new ArrayList<>();
     }
 
-    public void clear() {
-        messageList.clear();
-        filteredList.clear();
-        notifyDataSetChanged();
-    }
-
-    public void addMessages(List<MessageProvider> messages) {
-        messageList.addAll(messages);
-        int beforeCount = getItemCount();
-        for (MessageProvider message : messages) {
-            if (matchFiltering(message)) {
-                filteredList.add(message);
-            }
-        }
-        int afterCount = getItemCount();
-        notifyItemRangeInserted(beforeCount, afterCount - beforeCount);
-    }
-
     @NonNull
     @Override
     public InboxMessagesViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
@@ -336,6 +318,32 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesView
             return "";
         }
         return str.toLowerCase();
+    }
+
+    public void clear() {
+        messageList.clear();
+        filteredList.clear();
+        notifyDataSetChanged();
+    }
+
+    public void addMessages(List<MessageProvider> messages) {
+        messageList.addAll(messages);
+        int beforeCount = getItemCount();
+        for (MessageProvider message : messages) {
+            if (matchFiltering(message)) {
+                filteredList.add(message);
+            }
+        }
+        int afterCount = getItemCount();
+        notifyItemRangeInserted(beforeCount, afterCount - beforeCount);
+    }
+
+    public void addMessage(MessageProvider message) {
+        messageList.add(0, message);
+        if (matchFiltering(message)) {
+            filteredList.add(0, message);
+            notifyItemInserted(0);
+        }
     }
 
     public void onItemUpdated(MessageProvider message) {

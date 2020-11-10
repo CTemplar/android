@@ -35,6 +35,10 @@ public class MessagesRepository {
         return CTemplarApp.getAppDatabase().messageDao().getAllMails();
     }
 
+    public void saveMessage(MessageEntity entity) {
+        CTemplarApp.getAppDatabase().messageDao().save(entity);
+    }
+
     public void saveAllMessages(List<MessageEntity> entities) {
         CTemplarApp.getAppDatabase().messageDao().saveAll(entities);
     }
