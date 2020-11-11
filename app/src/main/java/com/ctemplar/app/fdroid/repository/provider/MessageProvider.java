@@ -1,22 +1,20 @@
 package com.ctemplar.app.fdroid.repository.provider;
 
-import com.ctemplar.app.fdroid.CTemplarApp;
-import com.ctemplar.app.fdroid.net.response.Messages.MessageAttachment;
-import com.ctemplar.app.fdroid.net.response.Messages.MessagesResult;
-import com.ctemplar.app.fdroid.net.response.Messages.UserDisplay;
-import com.ctemplar.app.fdroid.repository.MailboxDao;
-import com.ctemplar.app.fdroid.repository.UserStore;
-import com.ctemplar.app.fdroid.repository.constant.MainFolderNames;
-import com.ctemplar.app.fdroid.repository.entity.AttachmentEntity;
-import com.ctemplar.app.fdroid.repository.entity.MailboxEntity;
-import com.ctemplar.app.fdroid.repository.entity.MessageEntity;
-import com.ctemplar.app.fdroid.repository.entity.UserDisplayEntity;
-import com.ctemplar.app.fdroid.security.PGPManager;
+import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
+import com.ctemplar.app.fdroid.net.response.Messages.MessageAttachment;
+import com.ctemplar.app.fdroid.net.response.Messages.MessagesResult;
+import com.ctemplar.app.fdroid.net.response.Messages.UserDisplay;
+import com.ctemplar.app.fdroid.repository.constant.MainFolderNames;
+import com.ctemplar.app.fdroid.repository.entity.AttachmentEntity;
+import com.ctemplar.app.fdroid.repository.entity.MessageEntity;
+import com.ctemplar.app.fdroid.repository.entity.UserDisplayEntity;
+import com.ctemplar.app.fdroid.utils.EncryptUtils;
 
 public class MessageProvider {
     private long id;
@@ -55,6 +53,7 @@ public class MessageProvider {
     private String lastActionThread;
     private long mailboxId;
     private String parent;
+    private boolean isSubjectDecrypted;
 
     public long getId() {
         return id;
@@ -345,31 +344,12 @@ public class MessageProvider {
     }
 //    private MessagesResult[] children;
 
-    private static String decryptContent(String content, long mailboxId, boolean imgDisabled) {
-        if (content == null) {
-            return "";
-        }
-        UserStore userStore = CTemplarApp.getUserStore();
-        MailboxDao mailboxDao = CTemplarApp.getAppDatabase().mailboxDao();
-        MailboxEntity mailboxEntity = mailboxDao.getById(mailboxId);
-        String password = userStore.getUserPassword();
-        if (mailboxEntity != null) {
-            String privateKey = mailboxEntity.getPrivateKey();
-            content = PGPManager.decrypt(content, privateKey, password);
-        }
-        return imgDisabled ? content.replaceAll("<img.+?>", "") : content;
+    public boolean isSubjectDecrypted() {
+        return isSubjectDecrypted;
     }
 
-    private static String decryptContent(String content, long mailboxId) {
-        return decryptContent(content, mailboxId, false);
-    }
-
-    private static String decryptSubject(String subject, long mailboxId, boolean isEncrypted) {
-        if (isEncrypted) {
-            return decryptContent(subject, mailboxId, true);
-        } else {
-            return subject;
-        }
+    public void setSubjectDecrypted(boolean subjectDecrypted) {
+        this.isSubjectDecrypted = subjectDecrypted;
     }
 
     private static AttachmentProvider convertFromResponseMessageAttachmentToAttachmentProvider(MessageAttachment messageAttachment) {
@@ -416,60 +396,6 @@ public class MessageProvider {
         return userDisplayProviderList;
     }
 
-    public static MessageProvider fromMessagesResult(MessagesResult message) {
-        MessageProvider result = new MessageProvider();
-
-        result.id = message.getId();
-        result.encryption = ""; //TODO
-        result.sender = message.getSender();
-        result.hasAttachments = message.isHasAttachments();
-        result.attachments = convertResponseAttachmentsListToProviderList(message.getAttachments());
-        result.createdAt = message.getCreatedAt();
-        result.senderDisplay = convertUserDisplayFromResponseToProvider(message.getSenderDisplay());
-        result.receiverDisplayList = convertUserDisplayListFromResponseToProvider(message.getReceiverDisplay());
-        result.ccDisplayList = convertUserDisplayListFromResponseToProvider(message.getCcDisplay());
-        result.bccDisplayList = convertUserDisplayListFromResponseToProvider(message.getBccDisplay());
-        result.hasChildren = message.isHasChildren();
-        result.childrenCount = message.getChildrenCount();
-        result.subject = decryptSubject(message.getSubject(), message.getMailboxId(), message.isSubjectEncrypted());
-        result.content = decryptContent(message.getContent(), message.getMailboxId());
-        result.receivers = message.getReceivers();
-        result.cc = message.getCc();
-        result.bcc = message.getBcc();
-        result.folderName = message.getFolderName();
-        result.updated = message.getUpdated();
-        result.destructDate = message.getDestructDate();
-        result.delayedDelivery = message.getDelayedDelivery();
-        result.deadManDuration = message.getDeadManDuration();
-        result.isRead = message.isRead();
-        result.send = message.isSend();
-        result.isStarred = message.isStarred();
-        result.sentAt = message.getSentAt();
-        result.isEncrypted = message.isEncrypted();
-        result.isSubjectEncrypted = message.isSubjectEncrypted();
-        result.isProtected = message.isProtected();
-        result.isHtml = message.isHtml();
-        result.hash = message.getHash();
-        result.spamReason = message.getSpamReason();
-        result.lastAction = message.getLastAction();
-        result.lastActionThread = message.getLastActionThread();
-        result.mailboxId = message.getMailboxId();
-        result.parent = message.getParent();
-
-        return result;
-    }
-
-    public static List<MessageProvider> fromMessagesResults(List<MessagesResult> messages) {
-        if (messages == null || messages.isEmpty()) {
-            return Collections.emptyList();
-        }
-        List<MessageProvider> result = new ArrayList<>(messages.size());
-        for (MessagesResult message : messages) {
-            result.add(MessageProvider.fromMessagesResult(message));
-        }
-        return result;
-    }
-
     private static String[] listToArray(List<String> list) {
         if (list == null) {
             return new String[0];
@@ -485,7 +411,7 @@ public class MessageProvider {
         if (array == null) {
             return new ArrayList<>(0);
         }
-        return Arrays.asList(array);
+        return new ArrayList<>(Arrays.asList(array));
     }
 
     private static AttachmentProvider convertAttachmentFromEntityToProvider(AttachmentEntity attachmentEntity) {
@@ -532,7 +458,7 @@ public class MessageProvider {
         return userDisplayProviderList;
     }
 
-    public static MessageProvider fromMessageEntity(MessageEntity message) {
+    public static MessageProvider fromMessageEntity(MessageEntity message, boolean decryptContent, boolean decryptSubject) {
         MessageProvider result = new MessageProvider();
 
         result.id = message.getId();
@@ -547,8 +473,10 @@ public class MessageProvider {
         result.bccDisplayList = convertUserDisplayListFromEntityToProvider(message.getBccDisplayList());
         result.hasChildren = message.isHasChildren();
         result.childrenCount = message.getChildrenCount();
-        result.subject = message.getSubject();
-        result.content = message.getContent();
+        result.subject = EncryptUtils.decryptSubject(message.getSubject(), message.getMailboxId(),
+                message.isSubjectEncrypted() && decryptSubject);
+        result.content = EncryptUtils.decryptContent(message.getContent(), message.getMailboxId(),
+                decryptContent);
         result.receivers = listToArray(message.getReceivers());
         result.cc = listToArray(message.getCc());
         result.bcc = listToArray(message.getBcc());
@@ -575,10 +503,10 @@ public class MessageProvider {
         return result;
     }
 
-    public static List<MessageProvider> fromMessageEntities(List<MessageEntity> messages) {
+    public static List<MessageProvider> fromMessageEntities(List<MessageEntity> messages, boolean decryptContent, boolean decryptSubject) {
         List<MessageProvider> result = new ArrayList<>(messages.size());
         for (MessageEntity message : messages) {
-            result.add(MessageProvider.fromMessageEntity(message));
+            result.add(MessageProvider.fromMessageEntity(message, decryptContent, decryptSubject));
         }
         return result;
     }
@@ -641,8 +569,8 @@ public class MessageProvider {
         result.setBccDisplayList(convertUserDisplayListFromResponseToEntities(message.getBccDisplay()));
         result.setHasChildren(message.isHasChildren());
         result.setChildrenCount(message.getChildrenCount());
-        result.setSubject(decryptSubject(message.getSubject(), message.getMailboxId(), message.isSubjectEncrypted()));
-        result.setContent(decryptContent(message.getContent(), message.getMailboxId()));
+        result.setSubject(message.getSubject());
+        result.setContent(message.getContent());
         result.setReceivers(arrayToList(message.getReceivers()));
         result.setCc(arrayToList(message.getCc()));
         result.setBcc(arrayToList(message.getBcc()));
@@ -675,7 +603,17 @@ public class MessageProvider {
         return result;
     }
 
-    public static List<MessageEntity> fromMessagesResultsToEntities(List<MessagesResult> messages) {
+    public static MessageEntity fromMessagesResultToEntity(@Nullable MessagesResult message) {
+        if (message == null) {
+            return new MessageEntity();
+        }
+        return fromMessagesResultToEntity(message, "");
+    }
+
+    public static List<MessageEntity> fromMessagesResultsToEntities(@Nullable List<MessagesResult> messages) {
+        if (messages == null) {
+            return new ArrayList<>();
+        }
         return fromMessagesResultsToEntities(messages, "");
     }
 

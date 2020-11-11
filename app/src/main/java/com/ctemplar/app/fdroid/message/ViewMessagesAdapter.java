@@ -5,6 +5,7 @@ import android.app.DownloadManager;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +21,8 @@ import android.widget.Toast;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -37,6 +40,7 @@ import com.ctemplar.app.fdroid.repository.provider.MessageProvider;
 import com.ctemplar.app.fdroid.repository.provider.UserDisplayProvider;
 import com.ctemplar.app.fdroid.utils.AppUtils;
 import com.ctemplar.app.fdroid.utils.EditTextUtils;
+import com.ctemplar.app.fdroid.utils.EncryptUtils;
 import com.ctemplar.app.fdroid.utils.FileUtils;
 import com.ctemplar.app.fdroid.utils.HtmlUtils;
 import com.ctemplar.app.fdroid.utils.PermissionCheck;
@@ -47,10 +51,10 @@ import static android.content.Context.DOWNLOAD_SERVICE;
 import static com.ctemplar.app.fdroid.message.ViewMessagesFragment.ENCRYPTED_EXT;
 
 public class ViewMessagesAdapter extends BaseAdapter {
-    private List<MessageProvider> messageProviderList;
-    private OnAttachmentDownloading onAttachmentDownloading;
-    private UserStore userStore;
-    private Activity activity;
+    private final List<MessageProvider> messageProviderList;
+    private final OnAttachmentDownloading onAttachmentDownloading;
+    private final UserStore userStore;
+    private final Activity activity;
 
     ViewMessagesAdapter(
             List<MessageProvider> messageProviderList,
@@ -124,12 +128,12 @@ public class ViewMessagesAdapter extends BaseAdapter {
 
         String lastAction = messageData.getLastAction();
         String folderName = messageData.getFolderName();
-        String message = messageData.getContent();
+        String messageContent = messageData.getContent();
+        Spanned spannedMessageContent = HtmlUtils.fromHtml(messageContent);
         String messageDate = AppUtils.getDeliveryDate(messageData);
 
         boolean isHtml = messageData.isHtml();
-        boolean isHasAttachment = messageData.isHasAttachments()
-                || !messageData.getAttachments().isEmpty();
+        boolean isHasAttachment = messageData.isHasAttachments() || messageData.getAttachments().size() > 0;
 
         // VIEW COLLAPSED
         TextView collapsedSenderTextView = collapsedView.findViewById(R.id.item_message_view_collapsed_sender);
@@ -176,7 +180,7 @@ public class ViewMessagesAdapter extends BaseAdapter {
         });
 
         collapsedSenderTextView.setText(senderDisplay.getName());
-        collapsedContentTextView.setText(HtmlUtils.fromHtml(message));
+        collapsedContentTextView.setText(spannedMessageContent);
         collapsedShortDateTextView.setText(AppUtils.messageDate(messageDate));
 
         senderTextView.setText(senderDisplay.getName());
@@ -290,7 +294,7 @@ public class ViewMessagesAdapter extends BaseAdapter {
             webViewSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
             webViewSettings.setLoadsImagesAutomatically(!userStore.isBlockExternalImagesEnabled());
             contentWebView.clearCache(true);
-            contentWebView.loadData(HtmlUtils.formatHtml(message), "text/html", "UTF-8");
+            contentWebView.loadData(spannedMessageContent.toString(), "text/html", "UTF-8");
             ThemeUtils.setWebViewDarkTheme(view.getContext(), contentWebView);
             contentWebView.setWebViewClient(new WebViewClient() {
                 @Override
@@ -308,7 +312,7 @@ public class ViewMessagesAdapter extends BaseAdapter {
             });
         } else {
             progressBar.setVisibility(View.GONE);
-            contentText.setText(HtmlUtils.fromHtml(message));
+            contentText.setText(spannedMessageContent);
         }
 
         List<AttachmentProvider> attachmentList = messageData.getAttachments();
@@ -324,12 +328,12 @@ public class ViewMessagesAdapter extends BaseAdapter {
         attachmentsRecyclerView.setAdapter(messageAttachmentAdapter);
         messageAttachmentAdapter.getOnClickAttachmentLink().subscribe(new Observer<Integer>() {
             @Override
-            public void onSubscribe(Disposable d) {
+            public void onSubscribe(@NotNull Disposable d) {
 
             }
 
             @Override
-            public void onNext(Integer position) {
+            public void onNext(@NotNull Integer position) {
                 File externalStorageFile = Environment.getExternalStoragePublicDirectory(
                         Environment.DIRECTORY_DOWNLOADS);
                 AttachmentProvider attachmentProvider = messageAttachmentAdapter.getAttachment(position);
@@ -365,7 +369,7 @@ public class ViewMessagesAdapter extends BaseAdapter {
             }
 
             @Override
-            public void onError(Throwable e) {
+            public void onError(@NotNull Throwable e) {
                 Timber.e(e, "MessageAttachmentAdapter");
             }
 

@@ -144,7 +144,7 @@
             android:layout_marginLeft="16dp"
             android:layout_marginStart="16dp"
             android:padding="2dp"
-            android:text="@string/txt_encrypted_subject"
+            android:text="@string/encrypted_subject"
             android:ellipsize="end"
             android:gravity="center"
             android:textSize="22sp"
@@ -216,5 +216,15 @@
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ProgressBar
+        android:id="@+id/decryption_progress_bar"
+        android:layout_width="0dp"
+        android:layout_height="4dp"
+        android:indeterminate="true"
+        style="?android:progressBarStyleHorizontal"
+        app:layout_constraintTop_toTopOf="@id/item_message_view_holder_foreground"
+        app:layout_constraintLeft_toLeftOf="@id/item_message_view_holder_foreground"
+        app:layout_constraintRight_toRightOf="@id/item_message_view_holder_foreground" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -56,6 +56,7 @@
     <string name="menu_mark_as_unread">Mark as Unread</string>
 
     <!-- STRINGS -->
+    <string translatable="false" name="encrypted_subject">...</string>
     <string name="token_expired_title">Session expired</string>
     <string name="token_expired_message">Your session has expired, please log in to CTemplar again.</string>
     <string name="title_email">Email</string>
@@ -120,7 +121,6 @@
     <string name="username_is_available">Username is available</string>
     <string name="username_is_not_available">Username is not available</string>
     <string name="checking">Checking…</string>
-    <string translatable="false" name="txt_encrypted_subject">...</string>
 
     <!-- COMPOSE OPTIONS -->
     <string name="txt_left_time_destruct">Delete in %1$s</string>
@@ -329,7 +329,6 @@
     <string name="settings_language">Language</string>
     <string name="settings_notifications">Notifications</string>
     <string name="settings_enable_notifications">Enable push notifications</string>
-    <string name="settings_enable_subject_encryption">Subject encryption</string>
     <string name="settings_contacts_encryption">Contacts encryption</string>
     <string name="settings_encryption">Encryption</string>
     <string name="settings_phishing_protection">Phishing Protection</string>
@@ -341,6 +340,7 @@
     <string name="settings_wb_list">Whitelist/Blacklist</string>
     <string name="settings_dark_mode">Dark mode</string>
     <string name="settings_block_external_images">Block external images</string>
+    <string name="settings_report_bugs">Report bugs</string>
     <string name="settings_folders">Folders</string>
     <string name="settings_manage_folders">Manage folders</string>
     <string name="settings_security">Security</string>
@@ -363,6 +363,7 @@
     <string name="toast_contacts_encrypted">Contacts are encrypted</string>
     <string name="toast_contacts_decrypted">Contacts are decrypted</string>
     <string name="toast_decryption_error">An error occurred while decrypting. Try again</string>
+    <string name="please_restart_app_to_apply_changes">Please, restart the app to apply changes</string>
 
     <!-- MAILBOXES -->
     <string name="addresses">Addresses</string>
@@ -415,6 +416,7 @@
     <string translatable="false" name="filters_key">filters_key</string>
     <string translatable="false" name="dark_mode_key">dark_mode_key</string>
     <string translatable="false" name="block_external_images_key">block_external_images_key</string>
+    <string translatable="false" name="report_bugs_enabled">report_bugs_enabled</string>
     <string translatable="false" name="white_black_list">white_black_list</string>
     <string translatable="false" name="manage_folders">manage_folders</string>
     <string translatable="false" name="push_notifications_enabled">push_notifications_enabled</string>
@@ -428,8 +430,6 @@
     <string translatable="false" name="helpdesk_key">helpdesk_key</string>
     <string translatable="false" name="local_storage_limit">local_storage_limit</string>
     <string translatable="false" name="recovery_email_holder">recovery_email_holder</string>
-    <string translatable="false" name="subject_encryption">subject_encryption</string>
-    <string translatable="false" name="subject_encryption_enabled">subject_encryption_enabled</string>
     <string translatable="false" name="contacts_encryption_enabled">contacts_encryption_enabled</string>
     <string translatable="false" name="auto_save_contacts_enabled">auto_save_contacts_enabled</string>
     <string translatable="false" name="auto_save_drafts_enabled">auto_save_drafts_enabled</string>

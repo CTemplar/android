@@ -42,6 +42,7 @@ import java.util.List;
 
 import com.ctemplar.app.fdroid.ActivityInterface;
 import com.ctemplar.app.fdroid.R;
+import com.ctemplar.app.fdroid.contacts.ContactsViewModel;
 import com.ctemplar.app.fdroid.main.UpgradeToPrimeFragment;
 import com.ctemplar.app.fdroid.net.ResponseStatus;
 import com.ctemplar.app.fdroid.net.entity.AttachmentsEntity;
@@ -105,12 +106,11 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
     private ImageView sendMessageEncryptIco;
 
     private SendMessageActivityViewModel sendModel;
+    private ContactsViewModel contactsViewModel;
     private ProgressDialog sendingProgress;
     private ProgressDialog uploadProgress;
 
     private boolean userIsPrime;
-    private boolean isSubjectEncrypted;
-
     private long currentMessageId = -1;
     private Long parentId;
     private List<String> publicKeyList = new ArrayList<>();
@@ -316,6 +316,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         }
 
         sendModel = new ViewModelProvider(getActivity()).get(SendMessageActivityViewModel.class);
+        contactsViewModel = new ViewModelProvider(getActivity()).get(ContactsViewModel.class);
         if (currentMessageId == -1) {
             createMessage();
         } else {
@@ -336,8 +337,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
 
         boolean isSignatureEnabled = sendModel.isSignatureEnabled();
         if (isSignatureEnabled) {
-            MailboxEntity defaultMailbox = sendModel.getDefaultMailbox();
-            String signatureText = defaultMailbox.getSignature();
+            String signatureText = EncryptUtils.getDefaultMailbox().getSignature();
             addSignature(signatureText);
         }
         boolean isMobileSignatureEnabled = sendModel.isMobileSignatureEnabled();
@@ -532,12 +532,9 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
             return;
         }
         // Load contacts for autocomplete
-        sendModel.getContactsResponse().observe(getViewLifecycleOwner(), contactList -> {
-            if (contactList != null) {
-                handleContactsList(contactList);
-            }
-        });
-        sendModel.getContacts(200, 0);
+        contactsViewModel.getContactsResponse().observe(getViewLifecycleOwner(),
+                this::handleContactsList);
+        contactsViewModel.getContacts(200, 0);
         // Load keys before sending message
         sendModel.getKeyResponse().observe(getViewLifecycleOwner(), keyResponse -> {
             if (keyResponse != null && keyResponse.getKeyResult() != null && keyResponse.getKeyResult().length > 0) {
@@ -628,7 +625,6 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         sendModel.getMySelfResponse().observe(getViewLifecycleOwner(), myselfResponse -> {
             if (myselfResponse != null) {
                 MyselfResult myself = myselfResponse.getResult()[0];
-                isSubjectEncrypted = myself.settings.isSubjectEncrypted();
                 userIsPrime = myself.isPrime();
 //                        String joinedDate = myself.joinedDate;
 //                        boolean userTrial = AppUtils.twoWeeksTrial(joinedDate);
@@ -723,6 +719,9 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
     }
 
     private void handleContactsList(List<Contact> contactList) {
+        if (contactList == null || contactList.isEmpty()) {
+            return;
+        }
         RecipientsListAdapter recipientsAdapter = new RecipientsListAdapter(
                 getActivity(), R.layout.recipients_list_view_item, contactList
         );
@@ -759,7 +758,6 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         sendMessageRequest.setContent(HtmlUtils.toHtml(composeSpannable));
         sendMessageRequest.setMailbox(mailboxId);
         sendMessageRequest.setParent(parentId);
-        sendMessageRequest.setSubjectEncrypted(isSubjectEncrypted);
         sendMessageRequest.setLastAction(lastAction);
         sendMessageRequest.setHtml(true);
 

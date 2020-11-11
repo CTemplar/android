@@ -14,9 +14,8 @@ import com.ctemplar.app.fdroid.R;
 import com.ctemplar.app.fdroid.repository.entity.Contact;
 
 public class ContactsAdapter extends RecyclerView.Adapter<ContactViewHolder> {
-
-    private List<Contact> contactsList;
-    private List<Contact> filteredList;
+    private final List<Contact> contactsList;
+    private final List<Contact> filteredList;
     private final PublishSubject<Long> onClickSubject = PublishSubject.create();
 
     ContactsAdapter(List<Contact> contactsList) {

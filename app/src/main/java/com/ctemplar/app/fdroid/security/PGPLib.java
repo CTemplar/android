@@ -8,6 +8,7 @@ import org.bouncycastle.bcpg.sig.Features;
 import org.bouncycastle.bcpg.sig.KeyFlags;
 import org.bouncycastle.crypto.generators.RSAKeyPairGenerator;
 import org.bouncycastle.crypto.params.RSAKeyGenerationParameters;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openpgp.PGPCompressedData;
 import org.bouncycastle.openpgp.PGPCompressedDataGenerator;
 import org.bouncycastle.openpgp.PGPEncryptedData;
@@ -48,6 +49,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigInteger;
 import java.security.SecureRandom;
+import java.security.Security;
 import java.util.Date;
 import java.util.Iterator;
 
@@ -116,6 +118,9 @@ class PGPLib {
         if (pgpPublicKeyRings.length <= 0) {
             return new byte[0];
         }
+        if (Security.getProvider("BC") == null) {
+            Security.addProvider(new BouncyCastleProvider());
+        }
         ByteArrayOutputStream encOut = new ByteArrayOutputStream();
         OutputStream out = asciiArmor ? new ArmoredOutputStream(encOut) : encOut;
         ByteArrayOutputStream bOut = new ByteArrayOutputStream();
@@ -133,12 +138,14 @@ class PGPLib {
                 new JcePGPDataEncryptorBuilder(PGPEncryptedData.AES_256)
                         .setWithIntegrityPacket(true)
                         .setSecureRandom(new SecureRandom())
+                        .setProvider(new BouncyCastleProvider())
         );
 
         for (PGPPublicKeyRing pgpPublicKeyRing : pgpPublicKeyRings) {
             PGPPublicKey encKey = getPublicKey(pgpPublicKeyRing);
             if (encKey != null) {
-                encGen.addMethod(new JcePublicKeyKeyEncryptionMethodGenerator(encKey));
+                encGen.addMethod(new JcePublicKeyKeyEncryptionMethodGenerator(encKey)
+                        .setProvider(new BouncyCastleProvider()));
             }
         }
         byte[] encryptedBytes = bOut.toByteArray();

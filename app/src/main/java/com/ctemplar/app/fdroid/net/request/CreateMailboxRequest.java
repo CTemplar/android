@@ -3,7 +3,6 @@ package com.ctemplar.app.fdroid.net.request;
 import com.google.gson.annotations.SerializedName;
 
 public class CreateMailboxRequest {
-
     @SerializedName("email")
     private String email;
 
