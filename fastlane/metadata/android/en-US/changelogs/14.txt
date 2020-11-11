@@ -1,0 +1,6 @@
+* Subject encryption is now always active
+* Decryption of subjects in the message list
+* Support for encryption with ECC keys
+* Optional setting for enable bug reports sending
+* Enhancing the security of local storage
+* Other fixes and improvements
