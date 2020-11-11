@@ -412,7 +412,7 @@ public class MessagesResult {
     }
 
     public MessagesResult[] getChildren() {
-        return children;
+        return children == null ? new MessagesResult[0] : children;
     }
 
     public void setChildren(MessagesResult[] children) {
