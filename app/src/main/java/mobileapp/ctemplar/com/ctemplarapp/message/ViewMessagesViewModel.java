@@ -3,12 +3,18 @@ package mobileapp.ctemplar.com.ctemplarapp.message;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import io.reactivex.Observer;
+import io.reactivex.Single;
+import io.reactivex.SingleObserver;
+import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.MarkMessageAsReadRequest;
@@ -26,17 +32,16 @@ import retrofit2.Response;
 import timber.log.Timber;
 
 public class ViewMessagesViewModel extends ViewModel {
+    private final UserRepository userRepository;
+    private final MessagesRepository messagesRepository;
+    private final ManageFoldersRepository manageFoldersRepository;
 
-    private UserRepository userRepository;
-    private MessagesRepository messagesRepository;
-    private ManageFoldersRepository manageFoldersRepository;
-
-    private MutableLiveData<ResponseStatus> responseStatus = new MutableLiveData<>();
-    private MutableLiveData<List<MessageProvider>> messagesResponse = new MutableLiveData<>();
-    private MutableLiveData<Boolean> starredResponse = new MutableLiveData<>();
-    private MutableLiveData<FoldersResponse> foldersResponse = new MutableLiveData<>();
-    private MutableLiveData<ResponseStatus> moveToFolderStatus = new MutableLiveData<>();
-    private MutableLiveData<ResponseStatus> addWhitelistStatus = new MutableLiveData<>();
+    private final MutableLiveData<ResponseStatus> responseStatus = new MutableLiveData<>();
+    private final MutableLiveData<List<MessageProvider>> messagesResponse = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> starredResponse = new MutableLiveData<>();
+    private final MutableLiveData<FoldersResponse> foldersResponse = new MutableLiveData<>();
+    private final MutableLiveData<ResponseStatus> moveToFolderStatus = new MutableLiveData<>();
+    private final MutableLiveData<ResponseStatus> addWhitelistStatus = new MutableLiveData<>();
 
     public ViewMessagesViewModel() {
         userRepository = UserRepository.getInstance();
@@ -79,24 +84,41 @@ public class ViewMessagesViewModel extends ViewModel {
     public void getChainMessages(long id) {
         final MessageEntity parentMessage = messagesRepository.getLocalMessage(id);
         if (parentMessage != null) {
-            final List<MessageEntity> childrenEntities = messagesRepository.getChildMessages(parentMessage);
+            final List<MessageEntity> childrenEntities = messagesRepository.getChildMessages(parentMessage.getId());
             List<MessageEntity> allEntities = new ArrayList<>(childrenEntities.size() + 1);
             allEntities.add(parentMessage);
             allEntities.addAll(childrenEntities);
 
-            List<MessageProvider> messageProviders = MessageProvider.fromMessageEntities(allEntities);
-            messagesResponse.postValue(messageProviders);
+            Single.fromCallable(() -> MessageProvider.fromMessageEntities(allEntities, true, true))
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(Schedulers.computation())
+                    .subscribe(new SingleObserver<List<MessageProvider>>() {
+                        @Override
+                        public void onSubscribe(@NonNull Disposable d) {
+
+                        }
+
+                        @Override
+                        public void onSuccess(@NonNull List<MessageProvider> messageProviders) {
+                            messagesResponse.postValue(messageProviders);
+                        }
+
+                        @Override
+                        public void onError(@NonNull Throwable e) {
+                            Timber.e(e);
+                        }
+                    });
         }
 
         userRepository.getChainMessages(id)
                 .subscribe(new Observer<MessagesResponse>() {
                     @Override
-                    public void onSubscribe(Disposable d) {
+                    public void onSubscribe(@NotNull Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(MessagesResponse messagesResponse) {
+                    public void onNext(@NotNull MessagesResponse messagesResponse) {
                         List<MessagesResult> messagesResults = messagesResponse.getMessagesList();
                         if (messagesResults == null || messagesResults.isEmpty()) {
                             ViewMessagesViewModel.this.messagesResponse.postValue(null);
@@ -106,13 +128,16 @@ public class ViewMessagesViewModel extends ViewModel {
                         MessageEntity parentLocalMessage = messagesRepository.getLocalMessage(id);
                         String requestFolder = parentLocalMessage != null
                                 ? parentLocalMessage.getRequestFolder() : "";
-                        MessageEntity parentEntity = MessageProvider.fromMessagesResultToEntity(
-                                parentMessageResult, requestFolder);
-                        MessageProvider parentMessage = MessageProvider.fromMessageEntity(parentEntity);
+                        MessageEntity parentEntity = MessageProvider
+                                .fromMessagesResultToEntity(parentMessageResult, requestFolder);
+                        MessageProvider parentMessage = MessageProvider
+                                .fromMessageEntity(parentEntity, true, true);
 
                         MessagesResult[] childrenResult = parentMessageResult.getChildren();
-                        List<MessageEntity> childrenEntities = MessageProvider.fromMessagesResultsToEntities(Arrays.asList(childrenResult));
-                        List<MessageProvider> childrenMessages = MessageProvider.fromMessageEntities(childrenEntities);
+                        List<MessageEntity> childrenEntities = MessageProvider
+                                .fromMessagesResultsToEntities(Arrays.asList(childrenResult));
+                        List<MessageProvider> childrenMessages = MessageProvider
+                                .fromMessageEntities(childrenEntities, true, false);
 
                         messagesRepository.deleteMessagesByParentId(parentEntity.getId());
                         messagesRepository.addMessageToDatabase(parentEntity);
@@ -125,7 +150,7 @@ public class ViewMessagesViewModel extends ViewModel {
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onError(@NotNull Throwable e) {
                         Timber.e(e);
                     }
 

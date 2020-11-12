@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="mobileapp.ctemplar.com.ctemplarapp">
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -31,6 +32,12 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths" />
         </provider>
+
+        <provider
+            android:name="io.sentry.android.core.SentryInitProvider"
+            android:authorities="${applicationId}.SentryInitProvider"
+            tools:node="remove"
+            android:exported="false" />
 
         <service
             android:name=".services.CloudMessagingService"
@@ -111,6 +118,10 @@
         <activity android:name=".settings.HelpdeskActivity" />
         <activity android:name=".mailboxes.MailboxesActivity" />
         <activity android:name=".mailboxes.AddMailboxActivity" />
+
+        <meta-data
+            android:name="io.sentry.dsn"
+            android:value="https://cbe3a88ca12c41d7a1e220fbc12c1cf7@o462221.ingest.sentry.io/5496361" />
 
     </application>
 

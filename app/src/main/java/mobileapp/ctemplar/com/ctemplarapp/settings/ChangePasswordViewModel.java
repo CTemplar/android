@@ -22,7 +22,6 @@ import mobileapp.ctemplar.com.ctemplarapp.utils.EncodeUtils;
 import okhttp3.ResponseBody;
 
 public class ChangePasswordViewModel extends ViewModel {
-
     private UserRepository userRepository;
     private List<MailboxEntity> mailboxEntities;
     private MutableLiveData<ResponseStatus> responseStatus = new MutableLiveData<>();
@@ -41,7 +40,11 @@ public class ChangePasswordViewModel extends ViewModel {
         return responseStatus;
     }
 
-    void changePassword(String oldPassword, String password, boolean resetKeys) {
+    public String getUserPassword() {
+        return userRepository.getUserPassword();
+    }
+
+    public void changePassword(String oldPassword, String password, boolean resetKeys) {
         String username = userRepository.getUsername();
 
         String oldPasswordHash = EncodeUtils.generateHash(username, oldPassword);
@@ -51,7 +54,7 @@ public class ChangePasswordViewModel extends ViewModel {
                 oldPasswordHash, passwordHash, passwordHash, resetKeys
         );
 
-        EncodeUtils.generateMailboxKeys(username, oldPassword, password, resetKeys, mailboxEntities)
+        EncodeUtils.generateMailboxKeys(mailboxEntities, oldPassword, password, resetKeys)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.computation())
                 .flatMap((Function<List<MailboxKey>, Observable<ResponseBody>>) mailboxKeys -> {
@@ -80,7 +83,7 @@ public class ChangePasswordViewModel extends ViewModel {
         });
     }
 
-    void logout() {
+    public void logout() {
         if (userRepository != null) {
             userRepository.clearData();
         }

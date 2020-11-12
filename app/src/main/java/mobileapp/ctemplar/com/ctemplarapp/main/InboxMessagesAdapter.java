@@ -25,36 +25,17 @@ import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 
 public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesViewHolder> {
-
     private final PublishSubject<Long> onClickSubject = PublishSubject.create();
-    private List<MessageProvider> messageList;
-    private List<MessageProvider> filteredList;
+    private final List<MessageProvider> messageList;
+    private final List<MessageProvider> filteredList;
     private final MainActivityViewModel mainModel;
     private OnReachedBottomCallback onReachedBottomCallback;
     private Handler onReachedBottomCallbackHandler;
 
-    InboxMessagesAdapter(MainActivityViewModel mainModel) {
+    public InboxMessagesAdapter(MainActivityViewModel mainModel) {
         this.mainModel = mainModel;
         this.messageList = new ArrayList<>();
         this.filteredList = new ArrayList<>();
-    }
-
-    public void clear() {
-        messageList.clear();
-        filteredList.clear();
-        notifyDataSetChanged();
-    }
-
-    public void addMessages(List<MessageProvider> messages) {
-        messageList.addAll(messages);
-        int beforeCount = getItemCount();
-        for (MessageProvider message : messages) {
-            if (matchFiltering(message)) {
-                filteredList.add(message);
-            }
-        }
-        int afterCount = getItemCount();
-        notifyItemRangeInserted(beforeCount, afterCount - beforeCount);
     }
 
     @NonNull
@@ -207,15 +188,15 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesView
         }
 
         // check for subject
-        boolean isSubjectEncrypted = message.isSubjectEncrypted();
-        String subjectText = message.getSubject();
-        if (isSubjectEncrypted) {
-            holder.txtSubjectEncrypted.setVisibility(View.VISIBLE);
-            holder.txtSubject.setVisibility(View.INVISIBLE);
-        } else {
-            holder.txtSubject.setText(subjectText);
-            holder.txtSubjectEncrypted.setVisibility(View.GONE);
+        if (!message.isSubjectEncrypted() || message.isSubjectDecrypted()) {
+            holder.txtSubject.setText(message.getSubject());
             holder.txtSubject.setVisibility(View.VISIBLE);
+            holder.txtSubjectEncrypted.setVisibility(View.GONE);
+            holder.decryptionProgressBar.setVisibility(View.GONE);
+        } else {
+            holder.txtSubject.setVisibility(View.INVISIBLE);
+            holder.txtSubjectEncrypted.setVisibility(View.VISIBLE);
+            holder.decryptionProgressBar.setVisibility(View.VISIBLE);
         }
     }
 
@@ -337,6 +318,40 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesView
             return "";
         }
         return str.toLowerCase();
+    }
+
+    public void clear() {
+        messageList.clear();
+        filteredList.clear();
+        notifyDataSetChanged();
+    }
+
+    public void addMessages(List<MessageProvider> messages) {
+        messageList.addAll(messages);
+        int beforeCount = getItemCount();
+        for (MessageProvider message : messages) {
+            if (matchFiltering(message)) {
+                filteredList.add(message);
+            }
+        }
+        int afterCount = getItemCount();
+        notifyItemRangeInserted(beforeCount, afterCount - beforeCount);
+    }
+
+    public void addMessage(MessageProvider message) {
+        messageList.add(0, message);
+        if (matchFiltering(message)) {
+            filteredList.add(0, message);
+            notifyItemInserted(0);
+        }
+    }
+
+    public void onItemUpdated(MessageProvider message) {
+        int index = filteredList.indexOf(message);
+        if (index == -1) {
+            return;
+        }
+        notifyItemChanged(index);
     }
 
     public interface OnReachedBottomCallback {

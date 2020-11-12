@@ -15,6 +15,8 @@ import androidx.core.app.NotificationCompat;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.lang.ref.WeakReference;
 import java.util.Map;
 import java.util.Random;
@@ -27,7 +29,7 @@ import mobileapp.ctemplar.com.ctemplarapp.main.InboxFragment;
 import mobileapp.ctemplar.com.ctemplarapp.main.MainActivityViewModel;
 import mobileapp.ctemplar.com.ctemplarapp.message.ViewMessagesActivity;
 import mobileapp.ctemplar.com.ctemplarapp.net.entity.RemoteMessageAction;
-import mobileapp.ctemplar.com.ctemplarapp.net.entity.RemoteMessageEntity;
+import mobileapp.ctemplar.com.ctemplarapp.net.entity.NotificationMessageEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
 import retrofit2.Response;
 import timber.log.Timber;
@@ -49,73 +51,48 @@ public class CloudMessagingService extends FirebaseMessagingService {
         if (remoteMessage.getData().size() > 0) {
             Timber.d("Message data payload: %s", remoteMessage.getData());
             Map<String, String> remoteMessageMap = remoteMessage.getData();
-            RemoteMessageEntity remoteMessageEntity = RemoteMessageEntity.getFromMap(remoteMessageMap);
+            NotificationMessageEntity notificationMessageEntity = NotificationMessageEntity
+                    .getFromMap(remoteMessageMap);
 
             if (RemoteMessageAction.CHANGE_PASSWORD.toString()
-                    .equals(remoteMessageEntity.getAction())) {
+                    .equals(notificationMessageEntity.getAction())
+            ) {
                 onPasswordChanged();
                 return;
             }
             boolean isNotificationsEnabled = CTemplarApp.getUserStore().isNotificationsEnabled();
             if (isNotificationsEnabled) {
                 showNotification(
-                        remoteMessageEntity.getSender(),
-                        remoteMessageEntity.getSubject(),
-                        remoteMessageEntity.getFolder(),
-                        remoteMessageEntity.getMessageID(),
-                        remoteMessageEntity.getParentID(),
-                        remoteMessageEntity.isSubjectEncrypted()
+                        notificationMessageEntity.getSender(),
+                        notificationMessageEntity.getSubject(),
+                        notificationMessageEntity.getFolder(),
+                        notificationMessageEntity.getMessageID(),
+                        notificationMessageEntity.getParentID(),
+                        notificationMessageEntity.isSubjectEncrypted()
                 );
             }
             WeakReference<InboxFragment> inboxFragmentReference = InboxFragment.instanceReference;
             if (inboxFragmentReference != null) {
                 InboxFragment inboxFragment = inboxFragmentReference.get();
                 if (inboxFragment != null && !inboxFragment.isRemoving()) {
-                    inboxFragment.onNewMessage(remoteMessageEntity.getMessageID());
+                    inboxFragment.onNewMessage(notificationMessageEntity.getMessageID(),
+                            notificationMessageEntity.getFolder());
                 }
             }
         }
     }
 
-    private void onPasswordChanged() {
-        Timber.d("onPasswordChanged");
-        UserRepository userRepository = CTemplarApp.getUserRepository();
-        String token = userRepository.getFirebaseToken();
-        userRepository.signOut(MainActivityViewModel.ANDROID, token)
-                .subscribe(new Observer<Response<Void>>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(Response<Void> voidResponse) {
-                        postExit();
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        postExit();
-                        Timber.e(e);
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
-    }
-
-    private void postExit() {
-        Intent intent = new Intent(MainActivityViewModel.EXIT_BROADCAST_ACTION);
-        sendBroadcast(intent);
-    }
-
-    private void showNotification(String sender, String subject, String folder, long messageId,
-                                  long parentId, boolean isSubjectEncrypted) {
+    private void showNotification(
+            final String sender,
+            final String subject,
+            final String folder,
+            final long messageId,
+            final long parentId,
+            final boolean isSubjectEncrypted
+    ) {
         long id = (parentId == -1) ? messageId : parentId;
         int notificationID = (messageId == -1) ? new Random().nextInt(1000) : (int) messageId;
-        String content = (isSubjectEncrypted) ? getString(R.string.txt_encrypted_subject) : subject;
+        String content = (isSubjectEncrypted) ? getString(R.string.txt_new_message) : subject;
 
         Intent intent = new Intent(this, ViewMessagesActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -138,13 +115,15 @@ public class CloudMessagingService extends FirebaseMessagingService {
                 .setDefaults(NotificationCompat.DEFAULT_VIBRATE)
                 .setSmallIcon(R.mipmap.ic_launcher_small);
 
-        NotificationManager notificationManager = (NotificationManager)
-                getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        if (notificationManager == null) {
+            Timber.e("showNotification NotificationManager is null");
+            return;
+        }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel notificationChannel = new NotificationChannel(
-                    NOTIFICATION_CHANNEL_ID,
-                    getString(R.string.notification_channel_name),
+                    NOTIFICATION_CHANNEL_ID, getString(R.string.notification_channel_name),
                     NotificationManager.IMPORTANCE_HIGH
             );
             notificationChannel.setDescription(getString(R.string.notification_channel_description));
@@ -154,7 +133,40 @@ public class CloudMessagingService extends FirebaseMessagingService {
             notificationChannel.enableVibration(true);
             notificationManager.createNotificationChannel(notificationChannel);
         }
-
         notificationManager.notify(notificationID, notificationBuilder.build());
+    }
+
+    private void onPasswordChanged() {
+        Timber.d("onPasswordChanged");
+        UserRepository userRepository = CTemplarApp.getUserRepository();
+        String token = userRepository.getFirebaseToken();
+        userRepository.signOut(MainActivityViewModel.ANDROID, token)
+                .subscribe(new Observer<Response<Void>>() {
+                    @Override
+                    public void onSubscribe(@NotNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(@NotNull Response<Void> voidResponse) {
+                        postExit();
+                    }
+
+                    @Override
+                    public void onError(@NotNull Throwable e) {
+                        postExit();
+                        Timber.e(e);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    private void postExit() {
+        Intent intent = new Intent(MainActivityViewModel.EXIT_BROADCAST_ACTION);
+        sendBroadcast(intent);
     }
 }

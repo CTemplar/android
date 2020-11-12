@@ -5,7 +5,7 @@ import java.util.Map;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 import timber.log.Timber;
 
-public class RemoteMessageEntity {
+public class NotificationMessageEntity {
     private static final String DATA_ACTION = "action";
     private static final String DATA_SUBJECT = "subject";
     private static final String DATA_FOLDER = "folder";
@@ -14,15 +14,15 @@ public class RemoteMessageEntity {
     private static final String DATA_PARENT_ID = "parent_id";
     private static final String DATA_IS_SUBJECT_ENCRYPTED = "is_subject_encrypted";
 
-    private String action;
-    private String subject;
-    private String folder;
-    private String sender;
-    private long messageID;
-    private long parentID;
-    private boolean isSubjectEncrypted;
+    private final String action;
+    private final String subject;
+    private final String folder;
+    private final String sender;
+    private final long messageID;
+    private final long parentID;
+    private final boolean isSubjectEncrypted;
 
-    public RemoteMessageEntity(String action, String subject, String folder, String sender, long messageID, long parentID, boolean isSubjectEncrypted) {
+    public NotificationMessageEntity(String action, String subject, String folder, String sender, long messageID, long parentID, boolean isSubjectEncrypted) {
         this.action = action;
         this.subject = subject;
         this.folder = folder;
@@ -60,14 +60,16 @@ public class RemoteMessageEntity {
         return isSubjectEncrypted;
     }
 
-    public static RemoteMessageEntity getFromMap(Map<String, String> remoteMessageData) {
+    public static NotificationMessageEntity getFromMap(Map<String, String> remoteMessageData) {
         String action = remoteMessageData.get(DATA_ACTION);
         String subject = remoteMessageData.get(DATA_SUBJECT);
         String folder = remoteMessageData.get(DATA_FOLDER);
         String sender = remoteMessageData.get(DATA_SENDER);
-        boolean isSubjectEncrypted = Boolean.parseBoolean(remoteMessageData
-                .get(DATA_IS_SUBJECT_ENCRYPTED));
         String messageIDString = remoteMessageData.get(DATA_MESSAGE_ID);
+        String parentIDString = remoteMessageData.get(DATA_PARENT_ID);
+        boolean isSubjectEncrypted = Boolean.parseBoolean(
+                remoteMessageData.get(DATA_IS_SUBJECT_ENCRYPTED));
+
         long messageID = -1;
         if (EditTextUtils.isNotEmpty(messageIDString)) {
             try {
@@ -76,7 +78,6 @@ public class RemoteMessageEntity {
                 Timber.w(e);
             }
         }
-        String parentIDString = remoteMessageData.get(DATA_PARENT_ID);
         long parentID = -1;
         if (EditTextUtils.isNotEmpty(parentIDString)) {
             try {
@@ -85,12 +86,15 @@ public class RemoteMessageEntity {
                 Timber.w(e);
             }
         }
-        return new RemoteMessageEntity(
+
+        return new NotificationMessageEntity(
                 action == null ? "" : action,
                 subject == null ? "" : subject,
                 folder == null ? "" : folder,
                 sender == null ? "" : sender,
-                messageID, parentID, isSubjectEncrypted
+                messageID,
+                parentID,
+                isSubjectEncrypted
         );
     }
 }

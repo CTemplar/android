@@ -5,6 +5,8 @@ import androidx.lifecycle.ViewModel;
 
 import com.google.gson.Gson;
 
+import org.jetbrains.annotations.NotNull;
+
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
@@ -14,11 +16,13 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.EncryptContact;
 import mobileapp.ctemplar.com.ctemplarapp.repository.ContactsRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserStore;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.Contact;
+import mobileapp.ctemplar.com.ctemplarapp.repository.entity.ContactEntity;
+import mobileapp.ctemplar.com.ctemplarapp.utils.EncryptUtils;
 import timber.log.Timber;
 
 public class AddContactViewModel extends ViewModel {
-    private ContactsRepository contactsRepository;
-    private UserStore userStore;
+    private final ContactsRepository contactsRepository;
+    private final UserStore userStore;
 
     private MutableLiveData<ResponseStatus> responseStatus = new MutableLiveData<>();
 
@@ -31,7 +35,7 @@ public class AddContactViewModel extends ViewModel {
         return responseStatus;
     }
 
-    void saveContact(ContactData contactData) {
+    public void saveContact(ContactData contactData) {
         boolean contactsEncryption = userStore.isContactsEncryptionEnabled();
         if (contactsEncryption) {
             EncryptContact encryptContact = new EncryptContact();
@@ -52,27 +56,27 @@ public class AddContactViewModel extends ViewModel {
             contactData.setProvider(null);
             contactData.setEncrypted(true);
 
-            Gson gson = new Gson();
-            String contactString = gson.toJson(encryptContact);
-            String encryptedContactString = Contact.encryptData(contactString);
+            String contactString = new Gson().toJson(encryptContact);
+            String encryptedContactString = EncryptUtils.encryptData(contactString);
             contactData.setEncryptedData(encryptedContactString);
         }
 
         contactsRepository.createContact(contactData)
                 .subscribe(new Observer<ContactData>() {
                     @Override
-                    public void onSubscribe(Disposable d) {
+                    public void onSubscribe(@NotNull Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(ContactData contactData) {
-                        contactsRepository.saveLocalContact(contactData);
+                    public void onNext(@NotNull ContactData contactData) {
+                        ContactEntity contactEntity = Contact.fromContactDataToEntity(contactData);
+                        contactsRepository.saveContact(contactEntity);
                         responseStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onError(@NotNull Throwable e) {
                         responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
                         Timber.e(e);
                     }

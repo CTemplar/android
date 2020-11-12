@@ -3,9 +3,8 @@ package mobileapp.ctemplar.com.ctemplarapp.mailboxes;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
-import android.content.Context;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import io.reactivex.Observable;
@@ -189,10 +188,7 @@ public class MailboxesViewModel extends ViewModel {
     }
 
     void createMailbox(final String mailboxEmail) {
-        final String userPassword = CTemplarApp.getInstance()
-                .getSharedPreferences("pref_user", Context.MODE_PRIVATE)
-                .getString("key_password", null);
-
+        final String userPassword = userRepository.getUserPassword();
         final CreateMailboxRequest createMailboxRequest = new CreateMailboxRequest();
         createMailboxRequest.setEmail(mailboxEmail);
 
@@ -215,9 +211,7 @@ public class MailboxesViewModel extends ViewModel {
                 if (mailboxesResultResponse.code() == 201) {
                     createMailboxResponseStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
                     final MailboxesResult mailboxResponse = mailboxesResultResponse.body();
-                    List<MailboxesResult> mailboxEntityList = new ArrayList<MailboxesResult>() {{
-                        add(mailboxResponse);
-                    }};
+                    List<MailboxesResult> mailboxEntityList = Collections.singletonList(mailboxResponse);
                     userRepository.saveMailboxes(mailboxEntityList);
                 } else if (mailboxesResultResponse.code() == 400) {
                     createMailboxResponseStatus.postValue(ResponseStatus.RESPONSE_ERROR_PAID);

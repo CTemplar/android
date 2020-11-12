@@ -15,6 +15,9 @@ import mobileapp.ctemplar.com.ctemplarapp.utils.EncodeUtils;
 public class UserStoreImpl implements UserStore {
     private static UserStoreImpl instance;
 
+    private final SharedPreferences preferences;
+    private final SharedPreferences globalPreferences;
+
     private static final String PREF_USER = "pref_user";
     private static final String KEY_USER_TOKEN = "key_user_token";
     private static final String KEY_FIREBASE_TOKEN = "key_firebase_token";
@@ -32,14 +35,12 @@ public class UserStoreImpl implements UserStore {
     private static final String KEY_CONTACTS_ENCRYPTION_ENABLED = "key_contacts_encryption_enabled";
     private static final String KEY_DRAFTS_AUTO_SAVE_ENABLED = "key_drafts_auto_save_enabled";
     private static final String KEY_BLOCK_EXTERNAL_IMAGES_ENABLED = "key_block_external_images_enabled";
+    private static final String KEY_REPORT_BUGS_ENABLED = "key_report_bugs_enabled";
     private static final String KEY_PIN_LOCK = "key_pin_lock";
     private static final String KEY_AUTO_LOCK_TIME = "key_auto_lock_time";
     private static final String KEY_LAST_PAUSE_TIME = "key_last_pause_time";
     private static final String KEY_IS_LOCKED = "key_is_locked";
     private static final String KEY_DARK_MODE = "key_dark_mode";
-
-    private SharedPreferences preferences;
-    private SharedPreferences globalPreferences;
 
     public static UserStoreImpl getInstance(Context context) {
         if (instance == null) {
@@ -215,6 +216,16 @@ public class UserStoreImpl implements UserStore {
     @Override
     public boolean isBlockExternalImagesEnabled() {
         return globalPreferences.getBoolean(KEY_BLOCK_EXTERNAL_IMAGES_ENABLED, false);
+    }
+
+    @Override
+    public void setReportBugsEnabled(boolean state) {
+        preferences.edit().putBoolean(KEY_REPORT_BUGS_ENABLED, state).apply();
+    }
+
+    @Override
+    public boolean isReportBugsEnabled() {
+        return preferences.getBoolean(KEY_REPORT_BUGS_ENABLED, false);
     }
 
     @Override

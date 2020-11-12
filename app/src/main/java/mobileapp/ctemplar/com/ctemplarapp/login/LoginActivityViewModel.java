@@ -23,6 +23,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.AddFirebaseTokenResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.RecoverPasswordResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.SignInResponse;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
+import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EncodeUtils;
 import retrofit2.HttpException;
 import timber.log.Timber;
@@ -178,13 +179,13 @@ public class LoginActivityViewModel extends ViewModel {
         }
         String username = recoverPasswordRequest.getUsername();
         String password = recoverPasswordRequest.getPassword();
+        String emailAddress = EditTextUtils.formatUserEmail(username);
         userRepository.saveUsername(username);
         userRepository.saveUserPassword(password);
-        EncodeUtils.getPGPKeyObservable(password)
+        EncodeUtils.getPGPKeyObservable(emailAddress, password)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .flatMap((Function<PGPKeyEntity, Observable<RecoverPasswordResponse>>) pgpKeyEntity -> {
-
                     recoverPasswordRequest.setPrivateKey(pgpKeyEntity.getPrivateKey());
                     recoverPasswordRequest.setPublicKey(pgpKeyEntity.getPublicKey());
                     recoverPasswordRequest.setPassword(

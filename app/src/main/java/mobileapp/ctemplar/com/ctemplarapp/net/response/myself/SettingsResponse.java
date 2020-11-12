@@ -2,7 +2,7 @@ package mobileapp.ctemplar.com.ctemplarapp.net.response.Myself;
 
 import com.google.gson.annotations.SerializedName;
 
-public class SettingsEntity {
+public class SettingsResponse {
     @SerializedName("id")
     private Long id;
 
@@ -104,6 +104,9 @@ public class SettingsEntity {
 
     @SerializedName("is_html_disabled")
     private Boolean isHtmlDisabled;
+
+    @SerializedName("is_enable_report_bugs")
+    private boolean isEnableReportBugs;
 
     @SerializedName("notification_email")
     private String notificationEmail;
@@ -379,6 +382,14 @@ public class SettingsEntity {
 
     public void setHtmlDisabled(Boolean htmlDisabled) {
         isHtmlDisabled = htmlDisabled;
+    }
+
+    public boolean isEnableReportBugs() {
+        return isEnableReportBugs;
+    }
+
+    public void setEnableReportBugs(boolean enableReportBugs) {
+        isEnableReportBugs = enableReportBugs;
     }
 
     public String getNotificationEmail() {

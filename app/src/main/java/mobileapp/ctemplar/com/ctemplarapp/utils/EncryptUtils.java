@@ -8,6 +8,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.repository.MailboxDao;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserStore;
@@ -16,8 +18,53 @@ import mobileapp.ctemplar.com.ctemplarapp.security.PGPManager;
 import timber.log.Timber;
 
 public class EncryptUtils {
+    private static final MailboxDao mailboxDao = CTemplarApp.getAppDatabase().mailboxDao();
+    private static final UserStore userStore = CTemplarApp.getUserStore();
 
-    private static MailboxDao mailboxDao = CTemplarApp.getAppDatabase().mailboxDao();
+    public static String decryptContent(String content, long mailboxId, boolean decrypt) {
+        if (content == null || content.length() == 0) {
+            return "";
+        }
+        if (decrypt) {
+            MailboxEntity mailboxEntity = mailboxDao.getById(mailboxId);
+            String password = userStore.getUserPassword();
+            if (mailboxEntity == null || password == null || password.length() == 0) {
+                return "";
+            }
+            String privateKey = mailboxEntity.getPrivateKey();
+            content = PGPManager.decrypt(content, privateKey, password);
+        }
+        return content;
+    }
+
+    public static String decryptSubject(String subject, long mailboxId, boolean decrypt) {
+        return decryptContent(subject, mailboxId, decrypt).replaceAll("<img.+?>", "");
+    }
+
+    public static String encryptData(String content) {
+        if (content == null || content.length() == 0) {
+            return "";
+        }
+        MailboxEntity mailboxEntity = EncryptUtils.getDefaultMailbox();
+        if (mailboxEntity == null) {
+            return "";
+        }
+        String publicKey = mailboxEntity.getPublicKey();
+        return PGPManager.encrypt(content, new String[]{publicKey});
+    }
+
+    public static String decryptData(String content) {
+        if (content == null || content.length() == 0) {
+            return "";
+        }
+        MailboxEntity mailboxEntity = EncryptUtils.getDefaultMailbox();
+        String password = userStore.getUserPassword();
+        if (mailboxEntity == null || password == null || password.length() == 0) {
+            return "";
+        }
+        String privateKey = mailboxEntity.getPrivateKey();
+        return PGPManager.decrypt(content, privateKey, password);
+    }
 
     public static boolean encryptAttachment(File originalFile, File encryptedFile, List<String> publicKeyList) {
         int fileSize = (int) originalFile.length();
@@ -34,7 +81,7 @@ public class EncryptUtils {
         byte[] encryptedBytes = PGPManager.encrypt(
                 fileBytes,
                 publicKeyList.toArray(new String[0]),
-                false
+                true
         );
 
         try {
@@ -74,16 +121,17 @@ public class EncryptUtils {
         return true;
     }
 
+    @Nullable
     public static MailboxEntity getDefaultMailbox() {
-        if (mailboxDao.getDefault() != null) {
-            return mailboxDao.getDefault();
-        } else {
-            if (!mailboxDao.getAll().isEmpty()) {
+        if (mailboxDao.getDefault() == null) {
+            if (mailboxDao.getAll().size() > 0) {
                 return mailboxDao.getAll().get(0);
             } else {
                 Timber.e("Mailbox not found");
+                return null;
             }
+        } else {
+            return mailboxDao.getDefault();
         }
-        return null;
     }
 }

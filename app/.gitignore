@@ -1,3 +1,5 @@
 /build
-*.json
-src/development
+/development
+/production
+/src/development
+/src/production

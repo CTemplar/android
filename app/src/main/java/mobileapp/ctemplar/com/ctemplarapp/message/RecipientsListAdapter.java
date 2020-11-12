@@ -17,12 +17,10 @@ import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.Contact;
 
 public class RecipientsListAdapter extends ArrayAdapter<Contact> implements Filterable {
-
-    private Context context;
-
-    private List<Contact> contactList;
-    private List<Contact> tempContactList;
-    private List<Contact> suggestionList;
+    private final Context context;
+    private final List<Contact> contactList;
+    private final List<Contact> tempContactList;
+    private final List<Contact> suggestionList;
 
     RecipientsListAdapter(Context context, int textViewResourceId, List<Contact> contactList) {
         super(context, textViewResourceId, contactList);

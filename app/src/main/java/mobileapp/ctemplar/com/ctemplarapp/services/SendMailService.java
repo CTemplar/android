@@ -141,6 +141,10 @@ public class SendMailService extends IntentService {
         boolean isDraft = isDraft(sendMessageRequest);
         String title = isDraft ? getString(R.string.txt_saving_mail) : getString(R.string.txt_sending_mail);
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        if (notificationManager == null) {
+            Timber.e("sendMail notificationManager is null");
+            return;
+        }
         createSendMailNotificationChannel(notificationManager, title);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat
                 .Builder(this, SEND_MAIL_NOTIFICATION_CHANNEL_ID)
@@ -201,7 +205,8 @@ public class SendMailService extends IntentService {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(
                     SEND_MAIL_NOTIFICATION_CHANNEL_ID,
-                    title, NotificationManager.IMPORTANCE_LOW);
+                    title, NotificationManager.IMPORTANCE_LOW
+            );
             notificationManager.createNotificationChannel(channel);
         }
     }
@@ -213,22 +218,14 @@ public class SendMailService extends IntentService {
             final NotificationManager notificationManager,
             final NotificationCompat.Builder notificationBuilder
     ) {
-        String content = request.getContent();
-        String subject = request.getSubject();
-        boolean isSubjectEncrypted = request.isSubjectEncrypted();
-        boolean isEmptyReceiverKeys = receiverPublicKeys.isEmpty();
-
-        if (!isEmptyReceiverKeys) {
+        boolean isReceiverKeysNotEmpty = receiverPublicKeys.size() > 0;
+        if (isReceiverKeysNotEmpty) {
             String[] publicKeys = receiverPublicKeys.toArray(new String[0]);
-            content = PGPManager.encrypt(content, publicKeys);
-            if (isSubjectEncrypted && EditTextUtils.isNotEmpty(subject)) {
-                subject = PGPManager.encrypt(subject, publicKeys);
-            }
-            request.setContent(content);
-            request.setSubject(subject);
+            request.setSubject(PGPManager.encrypt(request.getSubject(), publicKeys));
+            request.setContent(PGPManager.encrypt(request.getContent(), publicKeys));
         }
-        request.setIsEncrypted(!isEmptyReceiverKeys);
-        request.setSubjectEncrypted(isSubjectEncrypted && !isEmptyReceiverKeys);
+        request.setIsEncrypted(isReceiverKeysNotEmpty);
+        request.setSubjectEncrypted(isReceiverKeysNotEmpty);
         request.setUpdatedAt(AppUtils.convertToServerDatePattern(new Date()));
 
         MessagesResult messagesResult;
@@ -250,8 +247,7 @@ public class SendMailService extends IntentService {
             final NotificationCompat.Builder notificationBuilder
     ) {
         Timber.e(e, "onFailedUpdateMessage, draft: %s", isDraft);
-        String errorMessage = isDraft ? getString(R.string.toast_not_saved)
-                : getString(R.string.toast_message_not_sent);
+        String errorMessage = isDraft ? getString(R.string.toast_not_saved) : getString(R.string.toast_message_not_sent);
         ToastUtils.showToast(getApplicationContext(), errorMessage);
         notificationBuilder.setContentText(errorMessage).setOngoing(false);
         notificationManager.notify((int) messageId, notificationBuilder.build());
@@ -264,9 +260,8 @@ public class SendMailService extends IntentService {
             final NotificationManager notificationManager,
             final NotificationCompat.Builder notificationBuilder
     ) {
-        Timber.i("onMessageSentSuccess");
-        String displayMessage = isDraft ? getString(R.string.toast_message_saved_as_draft)
-                : getString(R.string.toast_message_sent);
+        Timber.d("onMessageSentSuccess");
+        String displayMessage = isDraft ? getString(R.string.toast_message_saved_as_draft) : getString(R.string.toast_message_sent);
         ToastUtils.showLongToast(getApplicationContext(), displayMessage);
         notificationBuilder.setContentText(displayMessage).setOngoing(false);
         notificationManager.notify((int) messagesResult.getId(), notificationBuilder.build());

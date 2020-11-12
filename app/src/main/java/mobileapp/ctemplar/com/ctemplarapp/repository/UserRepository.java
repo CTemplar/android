@@ -38,6 +38,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.request.SignInRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SignUpRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SignatureRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SubjectEncryptedRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.UpdateReportBugsRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.AddFirebaseTokenResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.CaptchaResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.CaptchaVerifyResponse;
@@ -54,7 +55,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResponse
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResult;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.BlackListContact;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.MyselfResponse;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.SettingsEntity;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.SettingsResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.WhiteListContact;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.RecoverPasswordResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.SignInResponse;
@@ -70,8 +71,8 @@ import timber.log.Timber;
 @Singleton
 public class UserRepository {
     private static UserRepository instance = new UserRepository();
-    private RestService service;
-    private UserStore userStore;
+    private final RestService service;
+    private final UserStore userStore;
 
     public static UserRepository getInstance() {
         if (instance == null) {
@@ -165,20 +166,6 @@ public class UserRepository {
         return userStore.isDraftsAutoSaveEnabled();
     }
 
-    public MailboxEntity getDefaultMailbox() {
-        MailboxDao mailboxDao = CTemplarApp.getAppDatabase().mailboxDao();
-        if (mailboxDao.getDefault() == null) {
-            if (!mailboxDao.getAll().isEmpty()) {
-                return mailboxDao.getAll().get(0);
-            } else {
-                Timber.e("Mailbox not found");
-            }
-        } else {
-            return mailboxDao.getDefault();
-        }
-        return new MailboxEntity();
-    }
-
     public void setNotificationsEnabled(boolean isEnabled) {
         userStore.setNotificationsEnabled(isEnabled);
     }
@@ -201,6 +188,14 @@ public class UserRepository {
 
     public boolean isBlockExternalImagesEnabled() {
         return userStore.isBlockExternalImagesEnabled();
+    }
+
+    public void setReportBugsEnabled(boolean isEnabled) {
+        userStore.setReportBugsEnabled(isEnabled);
+    }
+
+    public boolean isReportBugsEnabled() {
+        return userStore.isReportBugsEnabled();
     }
 
     public void clearData() {
@@ -285,19 +280,19 @@ public class UserRepository {
     public Observable<MessagesResponse> getMessagesList(int limit, int offset, String folder) {
         return service.getMessages(limit, offset, folder)
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread());
+                .observeOn(Schedulers.computation());
     }
 
     public Observable<MessagesResponse> getStarredMessagesList(int limit, int offset) {
         return service.getStarredMessages(limit, offset, true)
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread());
+                .observeOn(Schedulers.computation());
     }
 
     public Observable<MessagesResponse> searchMessages(String query, int limit, int offset) {
         return service.searchMessages(query, limit, offset)
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread());
+                .observeOn(Schedulers.computation());
     }
 
     public Observable<MessagesResponse> getMessage(long id) {
@@ -505,7 +500,7 @@ public class UserRepository {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<SettingsEntity> updateRecoveryEmail(
+    public Observable<SettingsResponse> updateRecoveryEmail(
             long settingId,
             RecoveryEmailRequest request
     ) {
@@ -514,7 +509,7 @@ public class UserRepository {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<SettingsEntity> updateSubjectEncrypted(
+    public Observable<SettingsResponse> updateSubjectEncrypted(
             long settingId,
             SubjectEncryptedRequest request
     ) {
@@ -523,7 +518,7 @@ public class UserRepository {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<SettingsEntity> updateContactsEncryption(
+    public Observable<SettingsResponse> updateContactsEncryption(
             long settingId,
             ContactsEncryptionRequest request
     ) {
@@ -532,7 +527,7 @@ public class UserRepository {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<SettingsEntity> updateAutoSaveEnabled(
+    public Observable<SettingsResponse> updateAutoSaveEnabled(
             long settingId,
             AutoSaveContactEnabledRequest request
     ) {
@@ -541,7 +536,7 @@ public class UserRepository {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<SettingsEntity> updateAntiPhishingPhrase(
+    public Observable<SettingsResponse> updateAntiPhishingPhrase(
             long settingId,
             AntiPhishingPhraseRequest request
     ) {
@@ -550,11 +545,20 @@ public class UserRepository {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<SettingsEntity> updateDisableLoadingImages(
+    public Observable<SettingsResponse> updateDisableLoadingImages(
             long settingId,
             DisableLoadingImagesRequest request
     ) {
         return service.updateDisableLoadingImages(settingId, request)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public Observable<SettingsResponse> updateReportBugs(
+            long settingId,
+            UpdateReportBugsRequest request
+    ) {
+        return service.updateReportBugs(settingId, request)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }

@@ -29,6 +29,10 @@
             android:title="@string/settings_wb_list"
             android:key="@string/white_black_list" />
 
+        <PreferenceScreen
+            android:title="@string/settings_report_bugs"
+            android:fragment="mobileapp.ctemplar.com.ctemplarapp.settings.SettingsActivity$ReportBugsFragment" />
+
     </PreferenceCategory>
 
     <PreferenceCategory

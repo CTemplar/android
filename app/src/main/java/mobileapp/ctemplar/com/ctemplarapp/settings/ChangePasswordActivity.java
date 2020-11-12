@@ -1,6 +1,5 @@
 package mobileapp.ctemplar.com.ctemplarapp.settings;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -25,15 +24,12 @@ import butterknife.BindInt;
 import butterknife.BindView;
 import butterknife.OnClick;
 import mobileapp.ctemplar.com.ctemplarapp.BaseActivity;
-import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.login.LoginActivity;
 import mobileapp.ctemplar.com.ctemplarapp.main.MainActivityActions;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 
 public class ChangePasswordActivity extends BaseActivity {
-
-    private String userCurrentPassword;
     private ChangePasswordViewModel changePasswordModel;
 
     @BindInt(R.integer.restriction_password_min)
@@ -77,7 +73,6 @@ public class ChangePasswordActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
@@ -87,13 +82,8 @@ public class ChangePasswordActivity extends BaseActivity {
         }
 
         changePasswordModel = new ViewModelProvider(this).get(ChangePasswordViewModel.class);
-        userCurrentPassword = CTemplarApp.getInstance()
-                .getSharedPreferences("pref_user", Context.MODE_PRIVATE).getString("key_password", null);
-
         changePasswordModel.getResponseStatus().observe(this, this::handleResponse);
-
         changePasswordModel.getActionsStatus().observe(this, this::handleMainActions);
-
         setListeners();
     }
 
@@ -122,12 +112,13 @@ public class ChangePasswordActivity extends BaseActivity {
 
     @OnClick(R.id.activity_change_password_button)
     public void OnClickChange() {
+        final String userCurrentPassword = changePasswordModel.getUserPassword();
         final String currentPassword = editTextCurrentPassword.getText().toString();
         final String newPassword = editTextNewPassword.getText().toString();
         final String passwordConfirmation = editTextPasswordConfirmation.getText().toString();
         final boolean resetData = checkBoxResetData.isChecked();
 
-        if(!TextUtils.equals(userCurrentPassword, currentPassword)) {
+        if (!TextUtils.equals(userCurrentPassword, currentPassword)) {
             editTextCurrentPasswordLayout.setError(getString(R.string.error_current_password_not_match));
             return;
         }
@@ -139,20 +130,24 @@ public class ChangePasswordActivity extends BaseActivity {
             editTextNewPasswordLayout.setError(getString(R.string.error_password_big));
             return;
         }
-        if(!TextUtils.equals(newPassword, passwordConfirmation)) {
+        if (!TextUtils.equals(newPassword, passwordConfirmation)) {
             editTextPasswordConfirmationLayout.setError(getString(R.string.error_password_not_match));
             return;
         }
 
-        String alertMessage = getString(R.string.dialog_change_password_confirm);
-        if (resetData) {
-            alertMessage = getString(R.string.dialog_change_password_confirm_reset);
-        }
+        String alertMessage = resetData
+                ? getString(R.string.dialog_change_password_confirm_reset)
+                : getString(R.string.dialog_change_password_confirm);
+
         new AlertDialog.Builder(this)
                 .setTitle(getString(R.string.dialog_change_password))
                 .setMessage(alertMessage)
                 .setPositiveButton(getString(R.string.btn_change), (dialog, which) -> {
-                            changePasswordModel.changePassword(currentPassword, newPassword, resetData);
+                            changePasswordModel.changePassword(
+                                    currentPassword,
+                                    newPassword,
+                                    resetData
+                            );
                             dialogState(true);
                         }
                 )

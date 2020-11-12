@@ -13,7 +13,7 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.entity.ContactEntity;
 import okhttp3.ResponseBody;
 
 public class ContactsRepository {
-    private RestService service;
+    private final RestService service;
 
     private static ContactsRepository instance = new ContactsRepository();
 
@@ -75,25 +75,16 @@ public class ContactsRepository {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public void saveContacts(ContactData[] contacts) {
-        if(contacts != null && contacts.length > 0) {
-            for (ContactData contactData : contacts) {
-                ContactEntity entity = new ContactEntity();
+    public void saveContact(ContactEntity contactEntity) {
+        CTemplarApp.getAppDatabase().contactDao().save(contactEntity);
+    }
 
-                entity.setId(contactData.getId());
-                entity.setAddress(contactData.getAddress());
-                entity.setEmail(contactData.getEmail());
-                entity.setName(contactData.getName());
-                entity.setNote(contactData.getNote());
-                entity.setPhone(contactData.getPhone());
-                entity.setPhone2(contactData.getPhone2());
-                entity.setProvider(contactData.getProvider());
-                entity.setEncrypted(contactData.isEncrypted());
-                entity.setEncryptedData(contactData.getEncryptedData());
+    public void saveContacts(ContactEntity[] contactEntities) {
+        CTemplarApp.getAppDatabase().contactDao().saveAll(contactEntities);
+    }
 
-                CTemplarApp.getAppDatabase().contactDao().save(entity);
-            }
-        }
+    public ContactEntity getLocalContact(long id) {
+        return CTemplarApp.getAppDatabase().contactDao().getById(id);
     }
 
     public List<ContactEntity> getLocalContacts() {
@@ -102,26 +93,5 @@ public class ContactsRepository {
 
     public void deleteLocalContact(long id) {
         CTemplarApp.getAppDatabase().contactDao().delete(id);
-    }
-
-    public ContactEntity getLocalContact(long id) {
-        return CTemplarApp.getAppDatabase().contactDao().getById(id);
-    }
-
-    public void saveLocalContact(ContactData contactData) {
-        ContactEntity entity = new ContactEntity();
-
-        entity.setId(contactData.getId());
-        entity.setAddress(contactData.getAddress());
-        entity.setEmail(contactData.getEmail());
-        entity.setName(contactData.getName());
-        entity.setNote(contactData.getNote());
-        entity.setPhone(contactData.getPhone());
-        entity.setPhone2(contactData.getPhone2());
-        entity.setProvider(contactData.getProvider());
-        entity.setEncrypted(contactData.isEncrypted());
-        entity.setEncryptedData(contactData.getEncryptedData());
-
-        CTemplarApp.getAppDatabase().contactDao().save(entity);
     }
 }
