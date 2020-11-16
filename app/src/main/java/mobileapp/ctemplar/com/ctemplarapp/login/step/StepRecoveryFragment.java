@@ -68,6 +68,7 @@ public class StepRecoveryFragment extends BaseFragment {
         loginActivityModel = new ViewModelProvider(activity).get(LoginActivityViewModel.class);
         viewModel = new ViewModelProvider(viewModelStoreOwner).get(StepRegistrationViewModel.class);
         viewModel.getResponseStatus().observe(getViewLifecycleOwner(), this::handleResponseStatus);
+        viewModel.getResponseError().observe(getViewLifecycleOwner(), this::handleResponseError);
         setListeners();
     }
 
@@ -124,15 +125,14 @@ public class StepRecoveryFragment extends BaseFragment {
 
     private void handleResponseStatus(ResponseStatus status) {
         loginActivityModel.hideProgressDialog();
-        if (status != null) {
-            switch (status) {
-                case RESPONSE_ERROR:
-                    Toast.makeText(getActivity(), getString(R.string.error_server), Toast.LENGTH_LONG).show();
-                    break;
-                case RESPONSE_NEXT_STEP_EMAIL:
-                    loginActivityModel.changeAction(LoginActivityActions.CHANGE_ACTIVITY_MAIN);
-                    break;
-            }
+        if (status == ResponseStatus.RESPONSE_NEXT_STEP_EMAIL) {
+            loginActivityModel.changeAction(LoginActivityActions.CHANGE_ACTIVITY_MAIN);
+        }
+    }
+
+    private void handleResponseError(@Nullable String error) {
+        if (error != null) {
+            Toast.makeText(getActivity(), error, Toast.LENGTH_LONG).show();
         }
     }
 }
