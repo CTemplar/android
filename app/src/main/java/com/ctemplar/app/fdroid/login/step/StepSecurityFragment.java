@@ -180,8 +180,8 @@ public class StepSecurityFragment extends BaseFragment {
                 -> nextButton.setEnabled(isChecked && captchaState));
     }
 
-    private void handleResponseStatus(ResponseStatus status) {
-        if(status != null) {
+    private void handleResponseStatus(@Nullable ResponseStatus status) {
+        if (status != null) {
             loginActivityModel.hideProgressDialog();
             switch (status) {
                 case RESPONSE_ERROR:
