@@ -35,6 +35,7 @@ public class RestClient {
         httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
         OkHttpClient.Builder client = new OkHttpClient.Builder()
+                .addNetworkInterceptor(new UserAgentInterceptor())
 //                .addInterceptor(httpLoggingInterceptor)
                 .addInterceptor(new HttpTokenInterceptor())
                 .authenticator(new TokenAuthenticator())

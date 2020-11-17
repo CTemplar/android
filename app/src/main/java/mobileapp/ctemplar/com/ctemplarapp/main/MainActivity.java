@@ -451,9 +451,12 @@ public class MainActivity extends AppCompatActivity
             menuItem.setIcon(R.drawable.ic_manage_folders);
             Drawable itemIcon = menuItem.getIcon();
             itemIcon.mutate();
-            int folderColor = Color.parseColor(folderItem.getColor());
-            itemIcon.setColorFilter(folderColor, PorterDuff.Mode.SRC_IN);
-
+            try {
+                int folderColor = Color.parseColor(folderItem.getColor());
+                itemIcon.setColorFilter(folderColor, PorterDuff.Mode.SRC_IN);
+            } catch (IllegalArgumentException e) {
+                Timber.e(e, "Can't set folder color");
+            }
             menuItem.setActionView(R.layout.menu_message_counter);
             TextView actionView = (TextView) menuItem.getActionView();
             try {
