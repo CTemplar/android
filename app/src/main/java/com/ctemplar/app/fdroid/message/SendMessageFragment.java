@@ -324,13 +324,14 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         }
 
         int selectedAddress = 0;
+        int mailboxPosition = 0;
         List<MailboxEntity> mailboxEntities = sendModel.getMailboxes();
-        for (int position = 0; position < mailboxEntities.size(); position++) {
-            MailboxEntity mailboxEntity = mailboxEntities.get(position);
+        for (MailboxEntity mailboxEntity : mailboxEntities) {
             if (mailboxEntity.isEnabled()) {
                 mailboxAddresses.add(mailboxEntity.getEmail());
+                ++mailboxPosition;
                 if (mailboxEntity.isDefault()) {
-                    selectedAddress = position;
+                    selectedAddress = mailboxPosition;
                 }
             }
         }
