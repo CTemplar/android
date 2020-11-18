@@ -25,6 +25,7 @@ android {
         buildConfigField("String", "ORIGIN", "\"https://mail.ctemplar.com\"")
         buildConfigField("String", "BASE_URL", "\"https://api.ctemplar.com/\"")
         buildConfigField("String", "BASE_SOCKET_URL", "\"wss://api.ctemplar.com/\"")
+        buildConfigField("String", "USER_AGENT", "\"CTemplar F-Droid App v${versionName}\"")
     }
 
     compileOptions {
