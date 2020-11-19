@@ -51,13 +51,12 @@ import com.ctemplar.app.fdroid.net.request.SendMessageRequest;
 import com.ctemplar.app.fdroid.net.response.KeyResult;
 import com.ctemplar.app.fdroid.net.response.Messages.EncryptionMessage;
 import com.ctemplar.app.fdroid.net.response.Myself.MyselfResult;
-import com.ctemplar.app.fdroid.repository.entity.AttachmentEntity;
 import com.ctemplar.app.fdroid.repository.entity.Contact;
 import com.ctemplar.app.fdroid.repository.entity.MailboxEntity;
-import com.ctemplar.app.fdroid.repository.entity.MessageEntity;
 import com.ctemplar.app.fdroid.repository.provider.AttachmentProvider;
 import com.ctemplar.app.fdroid.repository.provider.EncryptionMessageProvider;
 import com.ctemplar.app.fdroid.repository.provider.MessageAttachmentProvider;
+import com.ctemplar.app.fdroid.repository.provider.MessageProvider;
 import com.ctemplar.app.fdroid.repository.provider.SendMessageRequestProvider;
 import com.ctemplar.app.fdroid.services.SendMailService;
 import com.ctemplar.app.fdroid.utils.AppUtils;
@@ -116,7 +115,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
     private List<String> publicKeyList = new ArrayList<>();
 
     // COMPOSE OPTIONS
-    private List<String> mailboxAddresses = new ArrayList<>();
+    private final List<String> mailboxAddresses = new ArrayList<>();
     private Long delayedDeliveryInMillis;
     private Long destructDeliveryInMillis;
     private Long deadDeliveryInHours;
@@ -129,14 +128,14 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
     private boolean draftMessage = true;
     private boolean attachmentsProcessingEnabled;
 
-    private DelayedDeliveryDialogFragment delayedDeliveryDialogFragment = new DelayedDeliveryDialogFragment();
-    private DestructTimerDialogFragment destructTimerDialogFragment = new DestructTimerDialogFragment();
-    private DeadMansDeliveryDialogFragment deadMansDeliveryDialogFragment = new DeadMansDeliveryDialogFragment();
-    private EncryptMessageDialogFragment encryptMessageDialogFragment = new EncryptMessageDialogFragment();
+    private final DelayedDeliveryDialogFragment delayedDeliveryDialogFragment = new DelayedDeliveryDialogFragment();
+    private final DestructTimerDialogFragment destructTimerDialogFragment = new DestructTimerDialogFragment();
+    private final DeadMansDeliveryDialogFragment deadMansDeliveryDialogFragment = new DeadMansDeliveryDialogFragment();
+    private final EncryptMessageDialogFragment encryptMessageDialogFragment = new EncryptMessageDialogFragment();
 
     private MessageSendAttachmentAdapter messageSendAttachmentAdapter;
 
-    private DelayedDeliveryDialogFragment.OnScheduleDelayedDelivery onScheduleDelayedDelivery
+    private final DelayedDeliveryDialogFragment.OnScheduleDelayedDelivery onScheduleDelayedDelivery
             = new DelayedDeliveryDialogFragment.OnScheduleDelayedDelivery() {
         @Override
         public void onSchedule(Long timeInMilliseconds) {
@@ -144,15 +143,11 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
             if (getActivity() == null) {
                 return;
             }
-            if (timeInMilliseconds == null) {
-                sendMessageDelayedIco.setSelected(false);
-            } else {
-                sendMessageDelayedIco.setSelected(true);
-            }
+            sendMessageDelayedIco.setSelected(timeInMilliseconds != null);
         }
     };
 
-    private DestructTimerDialogFragment.OnScheduleDestructTimerDelivery onScheduleDestructTimerDelivery
+    private final DestructTimerDialogFragment.OnScheduleDestructTimerDelivery onScheduleDestructTimerDelivery
             = new DestructTimerDialogFragment.OnScheduleDestructTimerDelivery() {
         @Override
         public void onSchedule(Long timeInMilliseconds) {
@@ -160,15 +155,11 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
                 return;
             }
             destructDeliveryInMillis = timeInMilliseconds;
-            if (timeInMilliseconds == null) {
-                sendMessageDestructIco.setSelected(false);
-            } else {
-                sendMessageDestructIco.setSelected(true);
-            }
+            sendMessageDestructIco.setSelected(timeInMilliseconds != null);
         }
     };
 
-    private DeadMansDeliveryDialogFragment.OnScheduleDeadMansDelivery onScheduleDeadMansDelivery
+    private final DeadMansDeliveryDialogFragment.OnScheduleDeadMansDelivery onScheduleDeadMansDelivery
             = new DeadMansDeliveryDialogFragment.OnScheduleDeadMansDelivery() {
         @Override
         public void onSchedule(Long timeInHours) {
@@ -176,15 +167,11 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
                 return;
             }
             deadDeliveryInHours = timeInHours;
-            if (timeInHours == null) {
-                sendMessageDeadIco.setSelected(false);
-            } else {
-                sendMessageDeadIco.setSelected(true);
-            }
+            sendMessageDeadIco.setSelected(timeInHours != null);
         }
     };
 
-    private EncryptMessageDialogFragment.OnSetEncryptMessagePassword onSetEncryptMessagePassword
+    private final EncryptMessageDialogFragment.OnSetEncryptMessagePassword onSetEncryptMessagePassword
             = new EncryptMessageDialogFragment.OnSetEncryptMessagePassword() {
         @Override
         public void onSet(String password, String passwordHint, Integer expireHours) {
@@ -329,16 +316,17 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         for (MailboxEntity mailboxEntity : mailboxEntities) {
             if (mailboxEntity.isEnabled()) {
                 mailboxAddresses.add(mailboxEntity.getEmail());
-                ++mailboxPosition;
                 if (mailboxEntity.isDefault()) {
                     selectedAddress = mailboxPosition;
                 }
+                ++mailboxPosition;
             }
         }
 
+        MailboxEntity defaultMailbox = EncryptUtils.getDefaultMailbox();
         boolean isSignatureEnabled = sendModel.isSignatureEnabled();
-        if (isSignatureEnabled) {
-            String signatureText = EncryptUtils.getDefaultMailbox().getSignature();
+        if (defaultMailbox != null && isSignatureEnabled) {
+            String signatureText = defaultMailbox.getSignature();
             addSignature(signatureText);
         }
         boolean isMobileSignatureEnabled = sendModel.isMobileSignatureEnabled();
@@ -358,10 +346,14 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         messageSendAttachmentAdapter = new MessageSendAttachmentAdapter(activity);
         messageAttachmentsRecycleView.setAdapter(messageSendAttachmentAdapter);
 
+        return root;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         initResponses();
         addListeners();
-
-        return root;
     }
 
     @Override
@@ -573,14 +565,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
                     }
                 });
 
-        sendModel.getOpenMessageResponse().observe(getViewLifecycleOwner(), messageEntity -> {
-            if (messageEntity != null) {
-                loadMessageHandler(messageEntity);
-            } else {
-                Toast.makeText(activity, getString(R.string.toast_message_not_loaded), Toast.LENGTH_SHORT).show();
-                finish();
-            }
-        });
+        sendModel.getOpenMessageResponse().observe(getViewLifecycleOwner(), this::loadMessageHandler);
 
         sendModel.getUploadAttachmentStatus()
                 .observe(getViewLifecycleOwner(), responseStatus -> {
@@ -658,30 +643,37 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         sendModel.mySelfData();
     }
 
-    private void loadMessageHandler(MessageEntity messageEntity) {
-        String messageSender = messageEntity.getSender();
-        List<String> messageReceivers = messageEntity.getReceivers();
-        List<String> messageCc = messageEntity.getCc();
-        List<String> messageBcc = messageEntity.getBcc();
-        String messageSubject = messageEntity.getSubject();
-        String messageContent = messageEntity.getContent();
-        String messageDestruct = messageEntity.getDestructDate();
-        String messageDelayed = messageEntity.getDelayedDelivery();
-        String messageDeadMan = messageEntity.getDeadManDuration();
-        List<AttachmentEntity> messageAttachmentList = messageEntity.getAttachments();
+    private void loadMessageHandler(@Nullable MessageProvider messageProvider) {
+        if (messageProvider == null) {
+            if (getActivity() != null) {
+                Toast.makeText(getActivity(), getString(R.string.toast_message_not_loaded), Toast.LENGTH_SHORT).show();
+                finish();
+            }
+            return;
+        }
+        String messageSender = messageProvider.getSender();
+        String[] messageReceivers = messageProvider.getReceivers();
+        String[] messageCc = messageProvider.getCc();
+        String[] messageBcc = messageProvider.getBcc();
+        String messageSubject = messageProvider.getSubject();
+        String messageContent = messageProvider.getContent();
+        String messageDestruct = messageProvider.getDestructDate();
+        String messageDelayed = messageProvider.getDelayedDelivery();
+        String messageDeadMan = messageProvider.getDeadManDuration();
+        List<AttachmentProvider> messageAttachmentList = messageProvider.getAttachments();
 
         if (messageSender != null && !messageSender.isEmpty()) {
             int senderPosition = mailboxAddresses.indexOf(messageSender);
             spinnerFrom.setSelection(senderPosition);
         }
-        if (messageReceivers != null && messageReceivers.size() > 0) {
+        if (messageReceivers != null && messageReceivers.length > 0) {
             toEmailTextView.setText(EditTextUtils.getStringFromList(messageReceivers));
         }
-        if (messageCc != null && messageCc.size() > 0) {
+        if (messageCc != null && messageCc.length > 0) {
             ccLayout.setVisibility(View.VISIBLE);
             ccTextView.setText(EditTextUtils.getStringFromList(messageCc));
         }
-        if (messageBcc != null && messageBcc.size() > 0) {
+        if (messageBcc != null && messageBcc.length > 0) {
             bccLayout.setVisibility(View.VISIBLE);
             bccTextView.setText(EditTextUtils.getStringFromList(messageBcc));
         }
@@ -705,12 +697,12 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
             deadDeliveryInHours = Long.parseLong(messageDeadMan);
         }
         if (messageAttachmentList != null) {
-            for (AttachmentEntity attachmentEntity : messageAttachmentList) {
+            for (AttachmentProvider attachmentProvider : messageAttachmentList) {
                 MessageAttachmentProvider messageAttachment = new MessageAttachmentProvider();
-                messageAttachment.setId(attachmentEntity.getId());
-                messageAttachment.setMessage(attachmentEntity.getMessage());
-                messageAttachment.setContentId(attachmentEntity.getContentId());
-                messageAttachment.setDocumentLink(attachmentEntity.getDocumentLink());
+                messageAttachment.setId(attachmentProvider.getId());
+                messageAttachment.setMessage(attachmentProvider.getMessage());
+                messageAttachment.setContentId(attachmentProvider.getContentId());
+                messageAttachment.setDocumentLink(attachmentProvider.getDocumentLink());
                 messageSendAttachmentAdapter.addAttachment(messageAttachment);
             }
         }

@@ -56,7 +56,7 @@ public class HtmlUtils {
             return new SpannableString("");
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            return Html.fromHtml(text, Html.FROM_HTML_MODE_LEGACY);
+            return Html.fromHtml(text, Html.FROM_HTML_MODE_LEGACY);//FROM_HTML_MODE_COMPACT
         } else {
             return Html.fromHtml(text);
         }

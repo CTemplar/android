@@ -294,7 +294,7 @@ public class ViewMessagesAdapter extends BaseAdapter {
             webViewSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
             webViewSettings.setLoadsImagesAutomatically(!userStore.isBlockExternalImagesEnabled());
             contentWebView.clearCache(true);
-            contentWebView.loadData(spannedMessageContent.toString(), "text/html", "UTF-8");
+            contentWebView.loadData(HtmlUtils.formatHtml(messageContent), "text/html", "UTF-8");
             ThemeUtils.setWebViewDarkTheme(view.getContext(), contentWebView);
             contentWebView.setWebViewClient(new WebViewClient() {
                 @Override
