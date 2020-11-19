@@ -562,8 +562,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
 
     private class DownloadCompleteReceiver extends BroadcastReceiver {
         public void onReceive(Context ctx, Intent intent) {
-            Toast.makeText(ctx, getString(R.string.toast_download_complete),
-                    Toast.LENGTH_SHORT).show();
+            Toast.makeText(ctx, getString(R.string.toast_download_complete), Toast.LENGTH_SHORT).show();
 
             try {
                 File externalStorageFile = Environment.getExternalStoragePublicDirectory(
@@ -571,8 +570,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
                 String fileName = attachmentProvider.getFileName();
 
                 if (attachmentProvider.isEncrypted()) {
-                    Toast.makeText(ctx, getString(R.string.attachment_decryption),
-                            Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ctx, getString(R.string.attachment_decryption), Toast.LENGTH_SHORT).show();
 
                     File encryptedFile = new File(externalStorageFile, fileName + ENCRYPTED_EXT);
                     File decryptedFile = new File(externalStorageFile, fileName);
