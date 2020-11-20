@@ -6,8 +6,8 @@ android {
         applicationId "com.ctemplar.app.fdroid"
         minSdkVersion 16
         targetSdkVersion 29
-        versionCode 14
-        versionName "1.4.0"
+        versionCode 15
+        versionName "1.4.1"
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -25,6 +25,7 @@ android {
         buildConfigField("String", "ORIGIN", "\"https://mail.ctemplar.com\"")
         buildConfigField("String", "BASE_URL", "\"https://api.ctemplar.com/\"")
         buildConfigField("String", "BASE_SOCKET_URL", "\"wss://api.ctemplar.com/\"")
+        buildConfigField("String", "USER_AGENT", "\"CTemplar F-Droid App v${versionName}\"")
     }
 
     compileOptions {
