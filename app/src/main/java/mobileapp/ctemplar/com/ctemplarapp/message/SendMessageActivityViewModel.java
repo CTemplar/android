@@ -6,6 +6,8 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -37,6 +39,7 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MessageEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.AttachmentProvider;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageAttachmentProvider;
+import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageProvider;
 import mobileapp.ctemplar.com.ctemplarapp.security.PGPManager;
 import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
@@ -65,7 +68,7 @@ public class SendMessageActivityViewModel extends ViewModel {
     private MutableLiveData<KeyResponse> keyResponse = new MutableLiveData<>();
     private MutableLiveData<MessagesResult> messageEncryptionResult = new MutableLiveData<>();
     private MutableLiveData<MyselfResponse> myselfResponse = new MutableLiveData<>();
-    private MutableLiveData<MessageEntity> openMessageResponse = new MutableLiveData<>();
+    private MutableLiveData<MessageProvider> openMessageResponse = new MutableLiveData<>();
 
     public SendMessageActivityViewModel() {
         messagesRepository = MessagesRepository.getInstance();
@@ -153,7 +156,7 @@ public class SendMessageActivityViewModel extends ViewModel {
         return myselfResponse;
     }
 
-    public LiveData<MessageEntity> getOpenMessageResponse() {
+    public LiveData<MessageProvider> getOpenMessageResponse() {
         return openMessageResponse;
     }
 
@@ -161,20 +164,20 @@ public class SendMessageActivityViewModel extends ViewModel {
         userRepository.sendMessage(request)
                 .subscribe(new Observer<MessagesResult>() {
                     @Override
-                    public void onSubscribe(Disposable d) {
+                    public void onSubscribe(@NotNull Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(MessagesResult messagesResult) {
+                    public void onNext(@NotNull MessagesResult messagesResult) {
                         createMessageStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
                         createMessageResponse.postValue(messagesResult);
                     }
 
                     @Override
-                    public void onError(Throwable e) {
-                        createMessageStatus.postValue(ResponseStatus.RESPONSE_ERROR);
+                    public void onError(@NotNull Throwable e) {
                         Timber.e(e);
+                        createMessageStatus.postValue(ResponseStatus.RESPONSE_ERROR);
                     }
 
                     @Override
@@ -186,7 +189,25 @@ public class SendMessageActivityViewModel extends ViewModel {
 
     public void openMessage(long id) {
         MessageEntity messageEntity = messagesRepository.getLocalMessage(id);
-        openMessageResponse.postValue(messageEntity);
+        Single.fromCallable(() -> MessageProvider.fromMessageEntity(messageEntity, true, true))
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.computation())
+                .subscribe(new SingleObserver<MessageProvider>() {
+                    @Override
+                    public void onSubscribe(@io.reactivex.annotations.NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onSuccess(@io.reactivex.annotations.NonNull MessageProvider messageProvider) {
+                        openMessageResponse.postValue(messageProvider);
+                    }
+
+                    @Override
+                    public void onError(@io.reactivex.annotations.NonNull Throwable e) {
+                        Timber.e(e);
+                    }
+                });
     }
 
     @Deprecated
@@ -211,18 +232,18 @@ public class SendMessageActivityViewModel extends ViewModel {
         userRepository.updateMessage(id, request)
                 .subscribe(new SingleObserver<MessagesResult>() {
                     @Override
-                    public void onSubscribe(Disposable d) {
+                    public void onSubscribe(@NotNull Disposable d) {
 
                     }
 
                     @Override
-                    public void onSuccess(MessagesResult result) {
+                    public void onSuccess(@NotNull MessagesResult result) {
                         messagesResult.postValue(result);
                         responseStatus.postValue(ResponseStatus.RESPONSE_NEXT_MESSAGES);
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onError(@NotNull Throwable e) {
                         messagesResult.postValue(null);
                         responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
                     }
@@ -233,17 +254,17 @@ public class SendMessageActivityViewModel extends ViewModel {
         userRepository.updateMessage(id, sendMessageRequest)
                 .subscribe(new SingleObserver<MessagesResult>() {
                     @Override
-                    public void onSubscribe(Disposable d) {
+                    public void onSubscribe(@NotNull Disposable d) {
 
                     }
 
                     @Override
-                    public void onSuccess(MessagesResult messagesResult) {
+                    public void onSuccess(@NotNull MessagesResult messagesResult) {
                         messageEncryptionResult.postValue(messagesResult);
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onError(@NotNull Throwable e) {
                         Timber.e(e.getCause());
                     }
                 });
@@ -253,17 +274,17 @@ public class SendMessageActivityViewModel extends ViewModel {
         userRepository.deleteMessages(String.valueOf(messageId))
                 .subscribe(new Observer<Response<Void>>() {
                     @Override
-                    public void onSubscribe(Disposable d) {
+                    public void onSubscribe(@NotNull Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(Response<Void> voidResponse) {
+                    public void onNext(@NotNull Response<Void> voidResponse) {
                         Timber.i("deleteMessage");
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onError(@NotNull Throwable e) {
                         Timber.e(e);
                     }
 
@@ -278,17 +299,17 @@ public class SendMessageActivityViewModel extends ViewModel {
         userRepository.getEmailPublicKeys(request)
                 .subscribe(new Observer<KeyResponse>() {
                     @Override
-                    public void onSubscribe(Disposable d) {
+                    public void onSubscribe(@NotNull Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(KeyResponse keyResponse) {
+                    public void onNext(@NotNull KeyResponse keyResponse) {
                         SendMessageActivityViewModel.this.keyResponse.postValue(keyResponse);
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onError(@NotNull Throwable e) {
                         responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
                         Timber.e(e);
                     }
@@ -309,12 +330,12 @@ public class SendMessageActivityViewModel extends ViewModel {
         userRepository.uploadAttachment(attachment, messageId, isEncrypted)
                 .subscribe(new Observer<MessageAttachment>() {
                     @Override
-                    public void onSubscribe(Disposable d) {
+                    public void onSubscribe(@NotNull Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(MessageAttachment messageAttachment) {
+                    public void onNext(@NotNull MessageAttachment messageAttachment) {
                         if (messageAttachment != null) {
                             MessageAttachmentProvider messageAttachmentProvider
                                     = MessageAttachmentProvider.fromResponse(messageAttachment);
@@ -327,7 +348,7 @@ public class SendMessageActivityViewModel extends ViewModel {
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onError(@NotNull Throwable e) {
                         if (e instanceof HttpException) {
                             if (((HttpException) e).code() == 413) {
                                 uploadAttachmentStatus.postValue(ResponseStatus.RESPONSE_ERROR_TOO_LARGE);
@@ -380,17 +401,17 @@ public class SendMessageActivityViewModel extends ViewModel {
         userRepository.updateAttachment(id, attachment, message, isEncrypted)
                 .subscribe(new SingleObserver<MessageAttachment>() {
                     @Override
-                    public void onSubscribe(Disposable d) {
+                    public void onSubscribe(@NotNull Disposable d) {
 
                     }
 
                     @Override
-                    public void onSuccess(MessageAttachment messageAttachment) {
+                    public void onSuccess(@NotNull MessageAttachment messageAttachment) {
                         updateAttachmentStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onError(@NotNull Throwable e) {
                         if(e instanceof HttpException) {
                             if (((HttpException)e).code() == 413) {
                                 updateAttachmentStatus.postValue(ResponseStatus.RESPONSE_ERROR_TOO_LARGE);
@@ -408,17 +429,17 @@ public class SendMessageActivityViewModel extends ViewModel {
         userRepository.deleteAttachment(id)
                 .subscribe(new Observer<Response<Void>>() {
                     @Override
-                    public void onSubscribe(Disposable d) {
+                    public void onSubscribe(@NotNull Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(Response<Void> voidResponse) {
+                    public void onNext(@NotNull Response<Void> voidResponse) {
                         deleteAttachmentStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onError(@NotNull Throwable e) {
                         deleteAttachmentStatus.postValue(ResponseStatus.RESPONSE_ERROR);
                         Timber.e(e);
                     }
@@ -434,17 +455,17 @@ public class SendMessageActivityViewModel extends ViewModel {
         userRepository.getMyselfInfo()
                 .subscribe(new Observer<MyselfResponse>() {
                     @Override
-                    public void onSubscribe(Disposable d) {
+                    public void onSubscribe(@NotNull Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(MyselfResponse response) {
+                    public void onNext(@NotNull MyselfResponse response) {
                         myselfResponse.postValue(response);
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onError(@NotNull Throwable e) {
                         Timber.e(e);
                     }
 

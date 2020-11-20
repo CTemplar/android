@@ -8,7 +8,7 @@ repositories {
 ext {
     versionMajor = 1
     versionMinor = 4
-    versionBuild = 0
+    versionBuild = 1
 }
 
 android {
@@ -17,7 +17,7 @@ android {
         applicationId "mobileapp.ctemplar.com.ctemplarapp"
         minSdkVersion 16
         targetSdkVersion 29
-        versionCode 49
+        versionCode 50
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -36,11 +36,12 @@ android {
     flavorDimensions "version"
     productFlavors {
         development {
-            versionName "${versionMajor}.${versionMinor}.${versionBuild}-${new Date().format('M.d.yyyy')}.dev"
+            versionName "${versionMajor}.${versionMinor}.${versionBuild}-${new Date().format('M.d.yyyy')}-dev"
             applicationIdSuffix '.development'
             buildConfigField("String", "DOMAIN", "\"dev.ctemplar.com\"")
             buildConfigField("String", "ORIGIN", "\"https://dev.ctemplar.net\"")
             buildConfigField("String", "BASE_URL", "\"https://devapi.ctemplar.net/\"")
+            buildConfigField("String", "USER_AGENT", "\"CTemplar App v${versionMajor}.${versionMinor}.${versionBuild}-dev\"")
         }
         production {
             versionName "${versionMajor}.${versionMinor}.${versionBuild}"
@@ -48,6 +49,7 @@ android {
             buildConfigField("String", "DOMAIN", "\"ctemplar.com\"")
             buildConfigField("String", "ORIGIN", "\"https://mail.ctemplar.com\"")
             buildConfigField("String", "BASE_URL", "\"https://api.ctemplar.com/\"")
+            buildConfigField("String", "USER_AGENT", "\"CTemplar App v${versionName}\"")
         }
     }
 
