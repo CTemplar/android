@@ -4,6 +4,8 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import org.jetbrains.annotations.NotNull;
+
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 import com.ctemplar.app.fdroid.CTemplarApp;
@@ -13,9 +15,8 @@ import com.ctemplar.app.fdroid.repository.ManageFoldersRepository;
 import okhttp3.ResponseBody;
 
 public class AddFolderViewModel extends ViewModel {
-
-    private ManageFoldersRepository manageFoldersRepository;
-    private MutableLiveData<ResponseStatus> responseStatus = new MutableLiveData<>();
+    private final ManageFoldersRepository manageFoldersRepository;
+    private final MutableLiveData<ResponseStatus> responseStatus = new MutableLiveData<>();
 
     public AddFolderViewModel() {
         manageFoldersRepository = CTemplarApp.getManageFoldersRepository();
@@ -30,17 +31,17 @@ public class AddFolderViewModel extends ViewModel {
         manageFoldersRepository.addFolder(addFolderRequest)
                 .subscribe(new Observer<ResponseBody>() {
                     @Override
-                    public void onSubscribe(Disposable d) {
+                    public void onSubscribe(@NotNull Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(ResponseBody responseBody) {
+                    public void onNext(@NotNull ResponseBody responseBody) {
                         responseStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onError(@NotNull Throwable e) {
                         responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
                     }
 
