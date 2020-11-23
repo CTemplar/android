@@ -11,6 +11,8 @@
     <integer name="restriction_username_max">64</integer>
     <integer name="restriction_password_min">1</integer>
     <integer name="restriction_password_max">255</integer>
+    <integer name="restriction_folder_name_min">1</integer>
+    <integer name="restriction_folder_name_max">30</integer>
     <integer name="typing_delay">1000</integer>
 
     <dimen name="passcode_dot_diameter">10dp</dimen>
