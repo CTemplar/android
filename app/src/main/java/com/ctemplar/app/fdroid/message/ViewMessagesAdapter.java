@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Environment;
 import android.text.Spanned;
 import android.text.TextUtils;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,7 +41,6 @@ import com.ctemplar.app.fdroid.repository.provider.MessageProvider;
 import com.ctemplar.app.fdroid.repository.provider.UserDisplayProvider;
 import com.ctemplar.app.fdroid.utils.AppUtils;
 import com.ctemplar.app.fdroid.utils.EditTextUtils;
-import com.ctemplar.app.fdroid.utils.EncryptUtils;
 import com.ctemplar.app.fdroid.utils.FileUtils;
 import com.ctemplar.app.fdroid.utils.HtmlUtils;
 import com.ctemplar.app.fdroid.utils.PermissionCheck;
@@ -287,6 +287,8 @@ public class ViewMessagesAdapter extends BaseAdapter {
 
         // display message
         if (isHtml) {
+            String encodedMessageContent = Base64.encodeToString(
+                    HtmlUtils.formatHtml(messageContent), Base64.NO_PADDING);
             WebSettings webViewSettings = contentWebView.getSettings();
             webViewSettings.setLoadWithOverviewMode(true);
             webViewSettings.setJavaScriptEnabled(false);
@@ -294,7 +296,7 @@ public class ViewMessagesAdapter extends BaseAdapter {
             webViewSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
             webViewSettings.setLoadsImagesAutomatically(!userStore.isBlockExternalImagesEnabled());
             contentWebView.clearCache(true);
-            contentWebView.loadData(HtmlUtils.formatHtml(messageContent), "text/html", "UTF-8");
+            contentWebView.loadData(encodedMessageContent, "text/html", "base64");
             ThemeUtils.setWebViewDarkTheme(view.getContext(), contentWebView);
             contentWebView.setWebViewClient(new WebViewClient() {
                 @Override
