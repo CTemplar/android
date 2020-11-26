@@ -1,0 +1,2 @@
+* Support for different languages in folder names
+* Fixed display of html layouts in the email content

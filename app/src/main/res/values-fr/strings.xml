@@ -198,7 +198,7 @@
     <string name="txt_folder_not_deleted">Dossier non supprimé</string>
     <string name="txt_folder_edited">Dossier modifié</string>
     <string name="txt_folder_not_edited">Dossier non modifié</string>
-    <string name="txt_folder_name_hint">Le nom de dossier doit contenir entre 4 et 30 caractères. Il peut être constitué de chiffres et de lettres.</string>
+    <string name="txt_folder_name_hint">Le nom de dossier doit contenir entre 1 et 30 caractères. Il peut être constitué de chiffres et de lettres.</string>
     <string name="title_folder_name">Nom dossier</string>
     <string name="title_choose_color">Couleur</string>
     <string name="txt_edit_folder">Modifier dossier</string>

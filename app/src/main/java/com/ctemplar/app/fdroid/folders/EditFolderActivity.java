@@ -10,6 +10,7 @@ import android.widget.Toast;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProvider;
 
+import butterknife.BindInt;
 import butterknife.BindView;
 import butterknife.OnClick;
 import com.ctemplar.app.fdroid.BaseActivity;
@@ -18,12 +19,6 @@ import com.ctemplar.app.fdroid.net.ResponseStatus;
 import com.ctemplar.app.fdroid.utils.EditTextUtils;
 
 public class EditFolderActivity extends BaseActivity {
-
-    private EditFolderViewModel editFolderModel;
-    public static final String ARG_ID = "id";
-    public static final String ARG_NAME = "name";
-    private int folderId = -1;
-
     @BindView(R.id.activity_edit_folder_input)
     EditText editTextNameFolder;
 
@@ -33,6 +28,18 @@ public class EditFolderActivity extends BaseActivity {
     @BindView(R.id.folder_color_1)
     RadioButton firstRadioButton;
 
+    @BindInt(R.integer.restriction_folder_name_min)
+    int FOLDER_NAME_MIN;
+
+    @BindInt(R.integer.restriction_folder_name_max)
+    int FOLDER_NAME_MAX;
+
+    public static final String ARG_ID = "id";
+    public static final String ARG_NAME = "name";
+
+    private EditFolderViewModel editFolderModel;
+    private int folderId = -1;
+
     @Override
     protected int getLayoutId() {
         return R.layout.activity_edit_folder;
@@ -41,7 +48,6 @@ public class EditFolderActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         Toolbar toolbar = findViewById(R.id.activity_edit_folder_toolbar);
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
@@ -60,16 +66,16 @@ public class EditFolderActivity extends BaseActivity {
         editFolderModel = new ViewModelProvider(this).get(EditFolderViewModel.class);
         editFolderModel.getDeletingStatus().observe(this, responseStatus -> {
             if (responseStatus == null || responseStatus == ResponseStatus.RESPONSE_ERROR) {
-                Toast.makeText(getApplicationContext(), getString(R.string.txt_folder_not_deleted), Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.txt_folder_not_deleted, Toast.LENGTH_SHORT).show();
             } else if (responseStatus == ResponseStatus.RESPONSE_COMPLETE) {
-                Toast.makeText(getApplicationContext(), getString(R.string.txt_folder_deleted), Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.txt_folder_deleted, Toast.LENGTH_SHORT).show();
             }
         });
         editFolderModel.getResponseStatus().observe(this, responseStatus -> {
             if (responseStatus == null || responseStatus == ResponseStatus.RESPONSE_ERROR) {
-                Toast.makeText(getApplicationContext(), getString(R.string.txt_folder_not_edited), Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.txt_folder_not_edited, Toast.LENGTH_SHORT).show();
             } else if (responseStatus == ResponseStatus.RESPONSE_COMPLETE) {
-                Toast.makeText(getApplicationContext(), getString(R.string.txt_folder_edited), Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.txt_folder_edited, Toast.LENGTH_SHORT).show();
             }
         });
         AddFolderActivity.fillPalette(this, radioGroupLayout);
@@ -77,20 +83,19 @@ public class EditFolderActivity extends BaseActivity {
     }
 
     private void editFolder() {
-        String folderName = editTextNameFolder.getText().toString();
+        String folderName = EditTextUtils.getText(editTextNameFolder);
         String folderColor = "";
 
         if (radioGroupLayout.getCheckedRadioButtonId() != -1) {
             int selectedColor = radioGroupLayout.getCheckedRadioButtonId();
             folderColor = AddFolderActivity.getPickerColor(selectedColor);
         }
-
-        if (EditTextUtils.isTextValid(folderName) && EditTextUtils.isTextLength(folderName, 4, 30)) {
+        if (EditTextUtils.isTextLength(folderName, FOLDER_NAME_MIN, FOLDER_NAME_MAX)) {
             editFolderModel.editFolder(folderId, folderName, folderColor);
             editTextNameFolder.setError(null);
             finish();
         } else {
-            editTextNameFolder.setError(getResources().getString(R.string.txt_folder_name_hint));
+            editTextNameFolder.setError(getString(R.string.txt_folder_name_hint));
         }
     }
 
