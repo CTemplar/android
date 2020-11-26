@@ -197,7 +197,7 @@
     <string name="txt_folder_not_deleted">A pasta não foi excluída</string>
     <string name="txt_folder_edited">Pasta editada</string>
     <string name="txt_folder_not_edited">A pasta não foi editada</string>
-    <string name="txt_folder_name_hint">O nome da pasta deve ter entre 4 e 30 letras e/ou dígitos</string>
+    <string name="txt_folder_name_hint">O nome da pasta deve ter entre 1 e 30 letras e/ou dígitos</string>
     <string name="title_folder_name">Nome da pasta</string>
     <string name="title_choose_color">Escolha uma cor</string>
     <string name="txt_edit_folder">Editar pasta</string>

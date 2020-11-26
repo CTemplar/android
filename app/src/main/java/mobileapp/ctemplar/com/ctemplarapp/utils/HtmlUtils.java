@@ -74,8 +74,9 @@ public class HtmlUtils {
         return htmlPolicyFactory.sanitize(untrustedHTML);
     }
 
-    public static String formatHtml(String plainHTML) {
-        return "<style type=\"text/css\">*{width:auto;max-width:100%;}</style>"
+    public static byte[] formatHtml(String plainHTML) {
+        String formattedHtml = "<style type=\"text/css\">*{width:auto;max-width:100%;}</style>"
                 + sanitizeHTML(plainHTML);
+        return formattedHtml.getBytes();
     }
 }
