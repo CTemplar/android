@@ -14,6 +14,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.request.CheckUsernameRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.ContactsEncryptionRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.CreateMailboxRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.CustomFilterRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.DarkModeRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.DefaultMailboxRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.DisableLoadingImagesRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.EditFolderRequest;
@@ -326,6 +327,12 @@ public interface RestService {
     Observable<SettingsResponse> updateAntiPhishingPhrase(
             @Path("id") long settingId,
             @Body AntiPhishingPhraseRequest request
+    );
+
+    @PATCH("users/settings/{id}/")
+    Observable<SettingsResponse> updateDarkMode(
+            @Path("id") long settingId,
+            @Body DarkModeRequest request
     );
 
     @PATCH("users/settings/{id}/")

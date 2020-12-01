@@ -27,10 +27,25 @@ public class ThemeUtils {
             activity.getWindow().setStatusBarColor(color);
         }
         UserStore userStore = CTemplarApp.getUserStore();
-        AppCompatDelegate.setDefaultNightMode(userStore.getDarkMode());
+        AppCompatDelegate.setDefaultNightMode(userStore.getDarkModeValue());
         if (userStore.isPINLockEnabled()) {
             activity.getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
                     WindowManager.LayoutParams.FLAG_SECURE);
+        }
+    }
+
+    public static void setDarkModeFromServer(boolean value, UserStore userStore) {
+        int darkModeValue = userStore.getDarkModeValue();
+        if (value) {
+            if (darkModeValue != AppCompatDelegate.MODE_NIGHT_YES) {
+                userStore.setDarkModeValue(AppCompatDelegate.MODE_NIGHT_YES);
+            }
+        } else {
+            if (darkModeValue != AppCompatDelegate.MODE_NIGHT_NO
+                    && darkModeValue != AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+            ) {
+                userStore.setDarkModeValue(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
+            }
         }
     }
 
@@ -48,6 +63,10 @@ public class ThemeUtils {
                         WebSettingsCompat.DARK_STRATEGY_PREFER_WEB_THEME_OVER_USER_AGENT_DARKENING);
             }
         }
+    }
+
+    public static boolean isModeNight(String key) {
+        return "on".equals(key);
     }
 
     public static float getDimension(Context context, @DimenRes int resourceId) {
