@@ -29,6 +29,8 @@ import androidx.preference.PreferenceManager;
 import androidx.preference.PreferenceScreen;
 import androidx.preference.SwitchPreference;
 
+import org.jetbrains.annotations.NotNull;
+
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 import mobileapp.ctemplar.com.ctemplarapp.BaseActivity;
@@ -48,6 +50,7 @@ import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EncodeUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.HtmlUtils;
+import mobileapp.ctemplar.com.ctemplarapp.utils.ThemeUtils;
 import mobileapp.ctemplar.com.ctemplarapp.wbl.WhiteBlackListActivity;
 import timber.log.Timber;
 
@@ -253,21 +256,12 @@ public class SettingsActivity extends BaseActivity {
                     if (!(newValue instanceof String)) {
                         return false;
                     }
-                    int mode;
-                    switch ((String) newValue) {
-                        case "on":
-                            mode = AppCompatDelegate.MODE_NIGHT_YES;
-                            break;
-                        case "off":
-                            mode = AppCompatDelegate.MODE_NIGHT_NO;
-                            break;
-                        default:
-                            mode = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM;
-                    }
-                    userStore.setDarkMode(mode);
-                    AppCompatDelegate.setDefaultNightMode(mode);
+                    String newValueKey = (String) newValue;
+                    settingsModel.updateDarkMode(settingId, ThemeUtils.isModeNight(newValueKey));
+                    userStore.setDarkModeKey(newValueKey);
                     return true;
                 });
+                darkModeListPreference.setValue(userStore.getDarkModeKey());
             }
         }
     }
@@ -476,20 +470,20 @@ public class SettingsActivity extends BaseActivity {
         userRepository.getMyselfInfo()
                 .subscribe(new Observer<MyselfResponse>() {
                     @Override
-                    public void onSubscribe(Disposable d) {
+                    public void onSubscribe(@NotNull Disposable d) {
                         Timber.i("Request myself info");
                     }
 
                     @Override
-                    public void onNext(MyselfResponse myselfResponse) {
-                        if (myselfResponse != null && myselfResponse.getResult() != null) {
+                    public void onNext(@NotNull MyselfResponse myselfResponse) {
+                        if (myselfResponse.getResult() != null) {
                             MyselfResult myselfResult = myselfResponse.getResult()[0];
                             saveData(myselfResult);
                         }
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onError(@NotNull Throwable e) {
                         Timber.e(e);
                     }
 

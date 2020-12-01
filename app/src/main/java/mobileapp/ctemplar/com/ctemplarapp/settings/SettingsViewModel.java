@@ -11,12 +11,14 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 import io.reactivex.Observer;
+import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.AntiPhishingPhraseRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.AutoSaveContactEnabledRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.ContactsEncryptionRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.DarkModeRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.DisableLoadingImagesRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.RecoveryEmailRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SignatureRequest;
@@ -107,6 +109,37 @@ public class SettingsViewModel extends ViewModel {
 
                     @Override
                     public void onError(@NotNull Throwable e) {
+                        Timber.e(e);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    public void updateDarkMode(long settingId, boolean isEnabled) {
+        if (settingId == -1) {
+            return;
+        }
+        userRepository.updateDarkMode(
+                settingId,
+                new DarkModeRequest(isEnabled)
+        )
+                .subscribe(new Observer<SettingsResponse>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(@NonNull SettingsResponse settingsResponse) {
+                        Timber.i("Dark mode state is changed");
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
                         Timber.e(e);
                     }
 

@@ -288,12 +288,43 @@ public class UserStoreImpl implements UserStore {
     }
 
     @Override
-    public void setDarkMode(int value) {
+    public void setDarkModeValue(int value) {
         preferences.edit().putInt(KEY_DARK_MODE, value).apply();
+        AppCompatDelegate.setDefaultNightMode(value);
     }
 
     @Override
-    public int getDarkMode() {
+    public int getDarkModeValue() {
         return preferences.getInt(KEY_DARK_MODE, AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
+    }
+
+    @Override
+    public void setDarkModeKey(String key) {
+        int value;
+        switch (key) {
+            case "on":
+                value = AppCompatDelegate.MODE_NIGHT_YES;
+                break;
+            case "off":
+                value = AppCompatDelegate.MODE_NIGHT_NO;
+                break;
+            default:
+                value = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM;
+        }
+        preferences.edit().putInt(KEY_DARK_MODE, value).apply();
+        AppCompatDelegate.setDefaultNightMode(value);
+    }
+
+    @Override
+    public String getDarkModeKey() {
+        int value = preferences.getInt(KEY_DARK_MODE, AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
+        switch (value) {
+            case AppCompatDelegate.MODE_NIGHT_YES:
+                return "on";
+            case AppCompatDelegate.MODE_NIGHT_NO:
+                return "off";
+            default:
+                return "auto";
+        }
     }
 }

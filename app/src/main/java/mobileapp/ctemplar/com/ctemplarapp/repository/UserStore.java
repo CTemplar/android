@@ -66,6 +66,9 @@ public interface UserStore {
     void setLocked(boolean locked);
     boolean isLocked();
 
-    void setDarkMode(int value);
-    int getDarkMode();
+    void setDarkModeValue(int value);
+    int getDarkModeValue();
+
+    void setDarkModeKey(String key);
+    String getDarkModeKey();
 }
