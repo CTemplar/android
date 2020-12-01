@@ -11,12 +11,14 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 import io.reactivex.Observer;
+import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
 import com.ctemplar.app.fdroid.CTemplarApp;
 import com.ctemplar.app.fdroid.net.ResponseStatus;
 import com.ctemplar.app.fdroid.net.request.AntiPhishingPhraseRequest;
 import com.ctemplar.app.fdroid.net.request.AutoSaveContactEnabledRequest;
 import com.ctemplar.app.fdroid.net.request.ContactsEncryptionRequest;
+import com.ctemplar.app.fdroid.net.request.DarkModeRequest;
 import com.ctemplar.app.fdroid.net.request.DisableLoadingImagesRequest;
 import com.ctemplar.app.fdroid.net.request.RecoveryEmailRequest;
 import com.ctemplar.app.fdroid.net.request.SignatureRequest;
@@ -107,6 +109,37 @@ public class SettingsViewModel extends ViewModel {
 
                     @Override
                     public void onError(@NotNull Throwable e) {
+                        Timber.e(e);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    public void updateDarkMode(long settingId, boolean isEnabled) {
+        if (settingId == -1) {
+            return;
+        }
+        userRepository.updateDarkMode(
+                settingId,
+                new DarkModeRequest(isEnabled)
+        )
+                .subscribe(new Observer<SettingsResponse>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(@NonNull SettingsResponse settingsResponse) {
+                        Timber.i("Dark mode state is changed");
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
                         Timber.e(e);
                     }
 

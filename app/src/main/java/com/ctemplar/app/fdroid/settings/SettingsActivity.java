@@ -14,7 +14,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -29,8 +28,6 @@ import androidx.preference.PreferenceManager;
 import androidx.preference.PreferenceScreen;
 import androidx.preference.SwitchPreference;
 
-import io.reactivex.Observer;
-import io.reactivex.disposables.Disposable;
 import com.ctemplar.app.fdroid.BaseActivity;
 import com.ctemplar.app.fdroid.BuildConfig;
 import com.ctemplar.app.fdroid.CTemplarApp;
@@ -49,7 +46,13 @@ import com.ctemplar.app.fdroid.utils.AppUtils;
 import com.ctemplar.app.fdroid.utils.EditTextUtils;
 import com.ctemplar.app.fdroid.utils.EncodeUtils;
 import com.ctemplar.app.fdroid.utils.HtmlUtils;
+import com.ctemplar.app.fdroid.utils.ThemeUtils;
 import com.ctemplar.app.fdroid.wbl.WhiteBlackListActivity;
+
+import org.jetbrains.annotations.NotNull;
+
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
 import timber.log.Timber;
 
 public class SettingsActivity extends BaseActivity {
@@ -255,21 +258,12 @@ public class SettingsActivity extends BaseActivity {
                     if (!(newValue instanceof String)) {
                         return false;
                     }
-                    int mode;
-                    switch ((String) newValue) {
-                        case "on":
-                            mode = AppCompatDelegate.MODE_NIGHT_YES;
-                            break;
-                        case "off":
-                            mode = AppCompatDelegate.MODE_NIGHT_NO;
-                            break;
-                        default:
-                            mode = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM;
-                    }
-                    userStore.setDarkMode(mode);
-                    AppCompatDelegate.setDefaultNightMode(mode);
+                    String newValueKey = (String) newValue;
+                    settingsModel.updateDarkMode(settingId, ThemeUtils.isModeNight(newValueKey));
+                    userStore.setDarkModeKey(newValueKey);
                     return true;
                 });
+                darkModeListPreference.setValue(userStore.getDarkModeKey());
             }
         }
     }
@@ -478,20 +472,20 @@ public class SettingsActivity extends BaseActivity {
         userRepository.getMyselfInfo()
                 .subscribe(new Observer<MyselfResponse>() {
                     @Override
-                    public void onSubscribe(Disposable d) {
+                    public void onSubscribe(@NotNull Disposable d) {
                         Timber.i("Request myself info");
                     }
 
                     @Override
-                    public void onNext(MyselfResponse myselfResponse) {
-                        if (myselfResponse != null && myselfResponse.getResult() != null) {
+                    public void onNext(@NotNull MyselfResponse myselfResponse) {
+                        if (myselfResponse.getResult() != null) {
                             MyselfResult myselfResult = myselfResponse.getResult()[0];
                             saveData(myselfResult);
                         }
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onError(@NotNull Throwable e) {
                         Timber.e(e);
                     }
 

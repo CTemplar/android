@@ -10,6 +10,7 @@ import com.ctemplar.app.fdroid.net.request.CheckUsernameRequest;
 import com.ctemplar.app.fdroid.net.request.ContactsEncryptionRequest;
 import com.ctemplar.app.fdroid.net.request.CreateMailboxRequest;
 import com.ctemplar.app.fdroid.net.request.CustomFilterRequest;
+import com.ctemplar.app.fdroid.net.request.DarkModeRequest;
 import com.ctemplar.app.fdroid.net.request.DefaultMailboxRequest;
 import com.ctemplar.app.fdroid.net.request.DisableLoadingImagesRequest;
 import com.ctemplar.app.fdroid.net.request.EditFolderRequest;
@@ -327,6 +328,12 @@ public interface RestService {
     Observable<SettingsResponse> updateAntiPhishingPhrase(
             @Path("id") long settingId,
             @Body AntiPhishingPhraseRequest request
+    );
+
+    @PATCH("users/settings/{id}/")
+    Observable<SettingsResponse> updateDarkMode(
+            @Path("id") long settingId,
+            @Body DarkModeRequest request
     );
 
     @PATCH("users/settings/{id}/")

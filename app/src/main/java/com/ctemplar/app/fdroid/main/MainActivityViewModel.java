@@ -36,6 +36,7 @@ import com.ctemplar.app.fdroid.repository.provider.MessageProvider;
 import com.ctemplar.app.fdroid.services.NotificationService;
 import com.ctemplar.app.fdroid.services.NotificationServiceListener;
 import com.ctemplar.app.fdroid.utils.EncodeUtils;
+import com.ctemplar.app.fdroid.utils.ThemeUtils;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -648,20 +649,23 @@ public class MainActivityViewModel extends AndroidViewModel {
 
                     @Override
                     public void onNext(@NotNull MyselfResponse myselfResponse) {
-                        if (myselfResponse != null) {
-                            MyselfResult myselfResult = myselfResponse.getResult()[0];
-                            SettingsResponse settingsResponse = myselfResult.getSettings();
+                        MyselfResult myselfResult = myselfResponse.getResult()[0];
+                        SettingsResponse settingsResponse = myselfResult.getSettings();
 
-                            String timezone = settingsResponse.getTimezone();
-                            boolean isContactsEncrypted = settingsResponse.isContactsEncrypted();
-                            boolean isDisableLoadingImages = settingsResponse.isDisableLoadingImages();
-                            boolean isReportBugsEnabled = settingsResponse.isEnableReportBugs();
+                        String timezone = settingsResponse.getTimezone();
+                        boolean isContactsEncrypted = settingsResponse.isContactsEncrypted();
+                        boolean isDisableLoadingImages = settingsResponse.isDisableLoadingImages();
+                        boolean isReportBugsEnabled = settingsResponse.isEnableReportBugs();
 
-                            userRepository.saveTimeZone(timezone);
-                            userRepository.setContactsEncryptionEnabled(isContactsEncrypted);
-                            userRepository.setBlockExternalImagesEnabled(isDisableLoadingImages);
-                            userRepository.setReportBugsEnabled(isReportBugsEnabled);
-                        }
+                        userRepository.saveTimeZone(timezone);
+                        userRepository.setContactsEncryptionEnabled(isContactsEncrypted);
+                        userRepository.setBlockExternalImagesEnabled(isDisableLoadingImages);
+                        userRepository.setReportBugsEnabled(isReportBugsEnabled);
+
+                        ThemeUtils.setDarkModeFromServer(
+                                settingsResponse.isNightMode(),
+                                userRepository.getUserStore()
+                        );
                     }
 
                     @Override

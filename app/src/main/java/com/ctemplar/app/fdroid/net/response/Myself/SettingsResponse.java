@@ -78,6 +78,9 @@ public class SettingsResponse {
     @SerializedName("anti_phishing_phrase")
     private String antiPhishingPhrase;
 
+    @SerializedName("is_night_mode")
+    private boolean isNightMode;
+
     @SerializedName("is_disable_loading_images")
     private boolean isDisableLoadingImages;
 
@@ -310,6 +313,14 @@ public class SettingsResponse {
 
     public void setAntiPhishingPhrase(String antiPhishingPhrase) {
         this.antiPhishingPhrase = antiPhishingPhrase;
+    }
+
+    public boolean isNightMode() {
+        return isNightMode;
+    }
+
+    public void setNightMode(boolean nightMode) {
+        isNightMode = nightMode;
     }
 
     public boolean isDisableLoadingImages() {

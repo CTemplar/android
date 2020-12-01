@@ -11,6 +11,7 @@ import com.ctemplar.app.fdroid.net.request.CheckUsernameRequest;
 import com.ctemplar.app.fdroid.net.request.ContactsEncryptionRequest;
 import com.ctemplar.app.fdroid.net.request.CreateMailboxRequest;
 import com.ctemplar.app.fdroid.net.request.CustomFilterRequest;
+import com.ctemplar.app.fdroid.net.request.DarkModeRequest;
 import com.ctemplar.app.fdroid.net.request.DefaultMailboxRequest;
 import com.ctemplar.app.fdroid.net.request.DisableLoadingImagesRequest;
 import com.ctemplar.app.fdroid.net.request.EmptyFolderRequest;
@@ -80,6 +81,10 @@ public class UserRepository {
     public UserRepository() {
         service = CTemplarApp.getRestClient().getRestService();
         userStore = CTemplarApp.getUserStore();
+    }
+
+    public UserStore getUserStore() {
+        return userStore;
     }
 
     public void clearToken() {
@@ -182,8 +187,8 @@ public class UserRepository {
         userStore.setReportBugsEnabled(isEnabled);
     }
 
-    public boolean isReportBugsEnabled() {
-        return userStore.isReportBugsEnabled();
+    public void setDarkModeValue(int value) {
+        userStore.setDarkModeValue(value);
     }
 
     public void clearData() {
@@ -519,6 +524,15 @@ public class UserRepository {
             AntiPhishingPhraseRequest request
     ) {
         return service.updateAntiPhishingPhrase(settingId, request)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public Observable<SettingsResponse> updateDarkMode(
+            long settingId,
+            DarkModeRequest request
+    ) {
+        return service.updateDarkMode(settingId, request)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
