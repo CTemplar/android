@@ -63,6 +63,7 @@
 
     <style name="PreferenceScreen" parent="AppTheme.NoActionBar">
         <item name="android:textColor">@color/preference_text_color</item>
+        <item name="android:textColorSecondary">@color/preference_summary_text_color</item>
         <item name="colorAccent">@color/colorAccentSettings</item>
     </style>
 
