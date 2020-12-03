@@ -23,6 +23,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.request.EnabledMailboxRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.MarkMessageAsReadRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.MarkMessageIsStarredRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.MoveToFolderRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.NotificationEmailRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.PublicKeysRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.RecoverPasswordRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.RecoveryEmailRequest;
@@ -303,6 +304,12 @@ public interface RestService {
     Observable<SettingsResponse> updateRecoveryEmail(
             @Path("id") long settingId,
             @Body RecoveryEmailRequest body
+    );
+
+    @PATCH("users/settings/{id}/")
+    Observable<SettingsResponse> updateNotificationEmail(
+            @Path("id") long settingId,
+            @Body NotificationEmailRequest body
     );
 
     @PATCH("users/settings/{id}/")

@@ -20,6 +20,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.request.AutoSaveContactEnabledRequ
 import mobileapp.ctemplar.com.ctemplarapp.net.request.ContactsEncryptionRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.DarkModeRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.DisableLoadingImagesRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.NotificationEmailRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.RecoveryEmailRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SignatureRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SubjectEncryptedRequest;
@@ -49,8 +50,8 @@ public class SettingsViewModel extends ViewModel {
         appDatabase = CTemplarApp.getAppDatabase();
     }
 
-    private MutableLiveData<ResponseStatus> decryptionStatus = new MutableLiveData<>();
-    private MutableLiveData<ResponseStatus> updateSignatureStatus = new MutableLiveData<>();
+    private final MutableLiveData<ResponseStatus> decryptionStatus = new MutableLiveData<>();
+    private final MutableLiveData<ResponseStatus> updateSignatureStatus = new MutableLiveData<>();
 
     MutableLiveData<ResponseStatus> getDecryptionStatus() {
         return decryptionStatus;
@@ -266,6 +267,37 @@ public class SettingsViewModel extends ViewModel {
 
                     @Override
                     public void onError(@NotNull Throwable e) {
+                        Timber.e(e);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    void updateNotificationEmail(long settingId, String emailAddress) {
+        if (settingId == -1) {
+            return;
+        }
+        userRepository.updateNotificationEmail(
+                settingId,
+                new NotificationEmailRequest(emailAddress)
+        )
+                .subscribe(new Observer<SettingsResponse>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(@NonNull SettingsResponse settingsResponse) {
+                        Timber.i("Notification email updated");
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
                         Timber.e(e);
                     }
 
