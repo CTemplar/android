@@ -314,10 +314,13 @@
     <string name="txt_panel_monospace">M</string>
     <string name="txt_panel_normal">Ordinaire</string>
 
+    <!-- SETTINGS -->
     <string name="settings_general">Paramètres</string>
     <string name="settings_recovery_email">Email de récupération</string>
     <string name="settings_enable_recovery_email">Activer email de récupération</string>
     <string name="settings_type_recovery_email">Saisir votre email de récupération</string>
+    <string name="settings_type_notification_email">Saisissez votre e-mail de notification</string>
+    <string name="settings_type_notification_email_description">Indiquer l\'adresse email sur laquelle vous souhaitez recevoir une notification quotidienne quand vous avez de nouveaux emails.</string>
     <string name="settings_enabled_anti_phishing">Anti hameçonnage</string>
     <string name="settings_type_anti_phishing_phrase">Tapez votre phrase anti-phishing</string>
     <string name="settings_subject_encryption">Objet chiffré</string>

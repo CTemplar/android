@@ -19,6 +19,7 @@ import com.ctemplar.app.fdroid.net.request.EnabledMailboxRequest;
 import com.ctemplar.app.fdroid.net.request.MarkMessageAsReadRequest;
 import com.ctemplar.app.fdroid.net.request.MarkMessageIsStarredRequest;
 import com.ctemplar.app.fdroid.net.request.MoveToFolderRequest;
+import com.ctemplar.app.fdroid.net.request.NotificationEmailRequest;
 import com.ctemplar.app.fdroid.net.request.PublicKeysRequest;
 import com.ctemplar.app.fdroid.net.request.RecoverPasswordRequest;
 import com.ctemplar.app.fdroid.net.request.RecoveryEmailRequest;
@@ -304,6 +305,12 @@ public interface RestService {
     Observable<SettingsResponse> updateRecoveryEmail(
             @Path("id") long settingId,
             @Body RecoveryEmailRequest body
+    );
+
+    @PATCH("users/settings/{id}/")
+    Observable<SettingsResponse> updateNotificationEmail(
+            @Path("id") long settingId,
+            @Body NotificationEmailRequest body
     );
 
     @PATCH("users/settings/{id}/")

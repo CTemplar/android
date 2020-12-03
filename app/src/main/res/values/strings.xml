@@ -322,6 +322,8 @@
     <string name="settings_recovery_email">Recovery email</string>
     <string name="settings_enable_recovery_email">Enable recovery email</string>
     <string name="settings_type_recovery_email">Type your recovery email</string>
+    <string name="settings_type_notification_email">Type your notification email</string>
+    <string name="settings_type_notification_email_description">Enter a notification email on which you would like to receive notification each day when you have new emails.</string>
     <string name="settings_enabled_anti_phishing">Anti-Phishing</string>
     <string name="settings_type_anti_phishing_phrase">Type your anti-phishing phrase</string>
     <string name="settings_subject_encryption">Subject encryption</string>
@@ -422,6 +424,7 @@
     <string translatable="false" name="push_notifications_enabled">push_notifications_enabled</string>
     <string translatable="false" name="recovery_email_enabled">recovery_email_enabled</string>
     <string translatable="false" name="recovery_email">recovery_email</string>
+    <string translatable="false" name="notification_email_key">notification_email_key</string>
     <string translatable="false" name="anti_phishing_enabled">anti_phishing_enabled</string>
     <string translatable="false" name="anti_phishing_key">anti_phishing_key</string>
     <string translatable="false" name="anti_phishing_description_key">anti_phishing_description_key</string>

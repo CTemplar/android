@@ -5,4 +5,9 @@
         android:title="@string/settings_enable_notifications"
         android:key="@string/push_notifications_enabled" />
 
+    <EditTextPreference
+        android:title="@string/settings_type_notification_email"
+        android:key="@string/notification_email_key"
+        android:summary="@string/settings_type_notification_email_description" />
+
 </PreferenceScreen>

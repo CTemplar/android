@@ -218,6 +218,29 @@ public class SettingsActivity extends BaseActivity {
                 boolean isNotificationsEnabled = userStore.isNotificationsEnabled();
                 switchPreferenceNotificationsEnabled.setChecked(isNotificationsEnabled);
             }
+
+            EditTextPreference preferenceNotificationEmail = findPreference(getString(R.string.notification_email_key));
+            if (preferenceNotificationEmail != null) {
+                preferenceNotificationEmail.setOnPreferenceChangeListener((preference, newValue) -> {
+                    String value = (String) newValue;
+                    if (EditTextUtils.isEmailListValid(value) || TextUtils.isEmpty(value)) {
+                        if (TextUtils.isEmpty(value)) {
+                            preferenceNotificationEmail.setTitle(R.string.settings_type_notification_email);
+                        } else {
+                            preferenceNotificationEmail.setTitle(value);
+                        }
+                        settingsModel.updateNotificationEmail(settingId, value);
+                        Toast.makeText(getActivity(), R.string.toast_saved, Toast.LENGTH_SHORT).show();
+                        return true;
+                    } else {
+                        Toast.makeText(getActivity(), R.string.toast_email_not_valid, Toast.LENGTH_SHORT).show();
+                        return false;
+                    }
+                });
+                if (EditTextUtils.isNotEmpty(preferenceNotificationEmail.getText())) {
+                    preferenceNotificationEmail.setTitle(preferenceNotificationEmail.getText());
+                }
+            }
         }
     }
 
@@ -523,6 +546,7 @@ public class SettingsActivity extends BaseActivity {
                 .putString(getString(R.string.recovery_email), recoveryEmail)
                 .putBoolean(getString(R.string.anti_phishing_enabled), settingsResponse.isAntiPhishingEnabled())
                 .putString(getString(R.string.anti_phishing_key), settingsResponse.getAntiPhishingPhrase())
+                .putString(getString(R.string.notification_email_key), settingsResponse.getNotificationEmail())
                 .putBoolean(getString(R.string.recovery_email_enabled), EditTextUtils.isNotEmpty(recoveryEmail))
                 .putBoolean(getString(R.string.auto_save_contacts_enabled), settingsResponse.isSaveContacts())
                 .putBoolean(getString(R.string.contacts_encryption_enabled), settingsResponse.isContactsEncrypted())

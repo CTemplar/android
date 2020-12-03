@@ -19,6 +19,7 @@ import com.ctemplar.app.fdroid.net.request.EnabledMailboxRequest;
 import com.ctemplar.app.fdroid.net.request.MarkMessageAsReadRequest;
 import com.ctemplar.app.fdroid.net.request.MarkMessageIsStarredRequest;
 import com.ctemplar.app.fdroid.net.request.MoveToFolderRequest;
+import com.ctemplar.app.fdroid.net.request.NotificationEmailRequest;
 import com.ctemplar.app.fdroid.net.request.PublicKeysRequest;
 import com.ctemplar.app.fdroid.net.request.RecoverPasswordRequest;
 import com.ctemplar.app.fdroid.net.request.RecoveryEmailRequest;
@@ -488,6 +489,15 @@ public class UserRepository {
             RecoveryEmailRequest request
     ) {
         return service.updateRecoveryEmail(settingId, request)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public Observable<SettingsResponse> updateNotificationEmail(
+            long settingId,
+            NotificationEmailRequest request
+    ) {
+        return service.updateNotificationEmail(settingId, request)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
