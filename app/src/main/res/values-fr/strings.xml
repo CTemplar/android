@@ -293,7 +293,6 @@
     <string name="txt_type_your_name">Tapez votre nom</string>
     <string name="txt_type_signature">Saisir signature</string>
     <string name="txt_signature_enabled">Signature activée</string>
-    <string name="txt_mobile_signature_enabled">Signature mobile activée</string>
 
     <!-- PIN LOCK -->
     <string name="pin_lock">Verrouillage PIN</string>
@@ -346,9 +345,7 @@
     <string name="settings_signature">Signature</string>
     <string name="settings_enable_signature">Activer signature</string>
     <string name="settings_type_signature">Saisir votre signature</string>
-    <string name="settings_mobile_signature">Signature mobile</string>
     <string name="settings_keys">Clés</string>
-    <string name="settings_enable_mobile_signature">Activer la signature mobile</string>
     <string name="settings_about">A propos</string>
     <string name="settings_helpdesk">Bureau d\'aide</string>
     <string name="settings_local_storage_limit">Espace de stockage utilisé :</string>

@@ -152,22 +152,6 @@ public class UserRepository {
         return userStore.isSignatureEnabled();
     }
 
-    public void setMobileSignatureEnabled(boolean isEnabled) {
-        userStore.setMobileSignatureEnabled(isEnabled);
-    }
-
-    public boolean isMobileSignatureEnabled() {
-        return userStore.isMobileSignatureEnabled();
-    }
-
-    public void setMobileSignature(String signatureText) {
-        userStore.saveMobileSignature(signatureText);
-    }
-
-    public String getMobileSignature() {
-        return userStore.getMobileSignature();
-    }
-
     public boolean isDraftsAutoSaveEnabled() {
         return userStore.isDraftsAutoSaveEnabled();
     }

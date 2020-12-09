@@ -329,11 +329,6 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
             String signatureText = defaultMailbox.getSignature();
             addSignature(signatureText);
         }
-        boolean isMobileSignatureEnabled = sendModel.isMobileSignatureEnabled();
-        if (isMobileSignatureEnabled) {
-            String mobileSignatureText = sendModel.getMobileSignature();
-            addSignature(mobileSignatureText);
-        }
 
         SpinnerAdapter adapter = new ArrayAdapter<>(
                 activity,
@@ -912,7 +907,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         Spanned signatureSpanned = HtmlUtils.fromHtml(signatureText);
         if (EditTextUtils.isNotEmpty(signatureSpanned)) {
             Editable compose = composeEditText.getText();
-            CharSequence signatureWithCompose = TextUtils.concat(compose, "\n", signatureSpanned);
+            CharSequence signatureWithCompose = TextUtils.concat(compose, "\n\n", signatureSpanned);
             composeEditText.setText(signatureWithCompose);
         }
     }

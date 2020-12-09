@@ -29,6 +29,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.ContactData;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.ContactsResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.EncryptContact;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Mailboxes.MailboxesResult;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.MyselfResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.SettingsResponse;
 import mobileapp.ctemplar.com.ctemplarapp.repository.AppDatabase;
 import mobileapp.ctemplar.com.ctemplarapp.repository.ContactsRepository;
@@ -52,6 +53,7 @@ public class SettingsViewModel extends ViewModel {
 
     private final MutableLiveData<ResponseStatus> decryptionStatus = new MutableLiveData<>();
     private final MutableLiveData<ResponseStatus> updateSignatureStatus = new MutableLiveData<>();
+    private final MutableLiveData<MyselfResponse> myselfResponse = new MutableLiveData<>();
 
     MutableLiveData<ResponseStatus> getDecryptionStatus() {
         return decryptionStatus;
@@ -59,6 +61,10 @@ public class SettingsViewModel extends ViewModel {
 
     LiveData<ResponseStatus> getUpdateSignatureStatus() {
         return updateSignatureStatus;
+    }
+
+    LiveData<MyselfResponse> getMySelfResponse() {
+        return myselfResponse;
     }
 
     List<MailboxEntity> getAllMailboxes() {
@@ -71,22 +77,6 @@ public class SettingsViewModel extends ViewModel {
 
     public boolean isSignatureEnabled() {
         return userRepository.isSignatureEnabled();
-    }
-
-    public void setMobileSignatureEnabled(boolean isEnabled) {
-        userRepository.setMobileSignatureEnabled(isEnabled);
-    }
-
-    public boolean isMobileSignatureEnabled() {
-        return userRepository.isMobileSignatureEnabled();
-    }
-
-    public void setMobileSignature(String signatureText) {
-        userRepository.setMobileSignature(signatureText);
-    }
-
-    public String getMobileSignature() {
-        return userRepository.getMobileSignature();
     }
 
     void updateAutoSaveContactsEnabled(long settingId, boolean isEnabled) {
@@ -425,6 +415,31 @@ public class SettingsViewModel extends ViewModel {
                     @Override
                     public void onError(@NotNull Throwable e) {
                         Timber.w(e);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    public void getMyselfInfo() {
+        userRepository.getMyselfInfo()
+                .subscribe(new Observer<MyselfResponse>() {
+                    @Override
+                    public void onSubscribe(@NotNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(@NotNull MyselfResponse response) {
+                        myselfResponse.postValue(response);
+                    }
+
+                    @Override
+                    public void onError(@NotNull Throwable e) {
+                        Timber.e(e);
                     }
 
                     @Override

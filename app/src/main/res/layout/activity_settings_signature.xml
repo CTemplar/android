@@ -27,7 +27,7 @@
         </com.google.android.material.appbar.AppBarLayout>
 
         <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/activity_settings_signature_enable_switch"
+            android:id="@+id/activity_settings_signature_switch"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
@@ -39,10 +39,11 @@
             android:text="@string/settings_enable_signature"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/app_bar_layout" />
+            app:layout_constraintTop_toBottomOf="@id/app_bar_layout"
+            android:enabled="false" />
 
         <androidx.appcompat.widget.LinearLayoutCompat
-            android:id="@+id/activity_settings_signature_linear_layout"
+            android:id="@+id/activity_settings_email_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -51,7 +52,7 @@
             android:layout_marginRight="16dp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/activity_settings_signature_enable_switch">
+            app:layout_constraintTop_toBottomOf="@id/activity_settings_signature_switch">
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/activity_settings_signature_email_text_view"
@@ -61,17 +62,13 @@
                 android:text="@string/email_address"
                 android:textColor="?android:textColorSecondary"
                 android:textStyle="bold"
-                android:textSize="16sp"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/activity_settings_signature_enable_switch" />
+                android:textSize="16sp" />
 
             <androidx.appcompat.widget.AppCompatSpinner
                 android:id="@+id/activity_settings_signature_address_spinner"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:listitem="@layout/item_domain_spinner"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/activity_settings_signature_email_text_view" />
+                tools:listitem="@layout/item_domain_spinner" />
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/activity_settings_signature_display_name_text_view"
@@ -82,17 +79,14 @@
                 android:text="@string/txt_display_name"
                 android:textColor="?android:textColorSecondary"
                 android:textStyle="bold"
-                android:textSize="16sp"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/activity_settings_signature_address_spinner" />
+                android:textSize="16sp" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/activity_settings_signature_display_name_input_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                app:hintEnabled="false"
-                app:layout_constraintTop_toBottomOf="@id/activity_settings_signature_display_name_text_view">
+                app:hintEnabled="false">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/activity_settings_signature_display_name_input"
@@ -111,11 +105,24 @@
                 <requestFocus />
             </com.google.android.material.textfield.TextInputLayout>
 
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/activity_settings_signature_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/activity_settings_email_layout">
+
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/activity_settings_keys_email_address_text_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="14dp"
                 android:fontFamily="@font/lato_regular"
                 android:text="@string/settings_signature"
                 android:textColor="?android:textColorSecondary"
@@ -207,14 +214,14 @@
             </androidx.appcompat.widget.LinearLayoutCompat>
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/fragment_send_message_compose_email_input_layout"
+                android:id="@+id/activity_settings_signature_text_input_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="?android:textColorPrimary"
                 app:hintEnabled="false">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/fragment_send_message_compose_email_input"
+                    android:id="@+id/activity_settings_signature_edit_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="12dp"
@@ -226,30 +233,31 @@
                     android:letterSpacing="0.05"
                     android:textColor="?android:textColorPrimary"
                     android:hint="@string/txt_type_signature"
-                    android:background="@drawable/text_input_field" />
+                    android:background="@drawable/text_input_field"
+                    android:focusable="false" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/activity_settings_signature_save_button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="16dp"
-                android:textAllCaps="false"
-                android:text="@string/menu_save"
-                android:fontFamily="@font/lato_regular"
-                android:textSize="18sp"
-                android:layout_alignParentBottom="true"
-                android:textColor="@android:color/white"
-                android:background="@drawable/selector_button_blue"
-                app:layout_constraintTop_toBottomOf="@id/activity_settings_signature_linear_layout"
-                app:layout_constraintBottom_toBottomOf="parent" />
-
         </androidx.appcompat.widget.LinearLayoutCompat>
 
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/activity_settings_signature_save_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:textAllCaps="false"
+            android:text="@string/menu_save"
+            android:fontFamily="@font/lato_regular"
+            android:textSize="18sp"
+            android:layout_alignParentBottom="true"
+            android:textColor="@android:color/white"
+            android:background="@drawable/selector_button_blue"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/activity_settings_signature_layout" />
+
         <androidx.core.widget.ContentLoadingProgressBar
-            android:id="@+id/activity_settings_signature_save_progress_bar"
+            android:id="@+id/activity_settings_signature_progress_bar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="parent"
