@@ -140,15 +140,6 @@ public class SettingsActivity extends BaseActivity {
                     return false;
                 });
             }
-            Preference mobileSignatureKey = findPreference(getString(R.string.mobile_signature_key));
-            if (mobileSignatureKey != null) {
-                mobileSignatureKey.setOnPreferenceClickListener(preference -> {
-                    Intent signatureActivity = new Intent(getActivity(), SignatureActivity.class);
-                    signatureActivity.putExtra(SignatureActivity.IS_MOBILE, true);
-                    startActivity(signatureActivity);
-                    return false;
-                });
-            }
             Preference mailboxKeys = findPreference(getString(R.string.setting_keys));
             if (mailboxKeys != null) {
                 mailboxKeys.setOnPreferenceClickListener(preference -> {

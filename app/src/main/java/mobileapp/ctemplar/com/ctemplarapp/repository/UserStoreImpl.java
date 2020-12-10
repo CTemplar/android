@@ -28,9 +28,7 @@ public class UserStoreImpl implements UserStore {
     private static final String KEY_PUBLIC_KEY = "key_public_key";
     private static final String KEY_PRIVATE_KEY = "key_private_key";
     private static final String KEY_TIMEZONE = "key_timezone";
-    private static final String KEY_MOBILE_SIGNATURE = "key_mobile_signature";
     private static final String KEY_SIGNATURE_ENABLED = "key_signature_enabled";
-    private static final String KEY_MOBILE_SIGNATURE_ENABLED = "key_mobile_signature_enabled";
     private static final String KEY_NOTIFICATIONS_ENABLED = "key_notifications_enabled";
     private static final String KEY_CONTACTS_ENCRYPTION_ENABLED = "key_contacts_encryption_enabled";
     private static final String KEY_DRAFTS_AUTO_SAVE_ENABLED = "key_drafts_auto_save_enabled";
@@ -149,16 +147,6 @@ public class UserStoreImpl implements UserStore {
     }
 
     @Override
-    public void saveMobileSignature(String signature) {
-        preferences.edit().putString(KEY_MOBILE_SIGNATURE, signature).apply();
-    }
-
-    @Override
-    public String getMobileSignature() {
-        return preferences.getString(KEY_MOBILE_SIGNATURE, "");
-    }
-
-    @Override
     public void setSignatureEnabled(boolean state) {
         preferences.edit().putBoolean(KEY_SIGNATURE_ENABLED, state).apply();
     }
@@ -166,16 +154,6 @@ public class UserStoreImpl implements UserStore {
     @Override
     public boolean isSignatureEnabled() {
         return preferences.getBoolean(KEY_SIGNATURE_ENABLED, true);
-    }
-
-    @Override
-    public void setMobileSignatureEnabled(boolean state) {
-        preferences.edit().putBoolean(KEY_MOBILE_SIGNATURE_ENABLED, state).apply();
-    }
-
-    @Override
-    public boolean isMobileSignatureEnabled() {
-        return preferences.getBoolean(KEY_MOBILE_SIGNATURE_ENABLED, false);
     }
 
     @Override

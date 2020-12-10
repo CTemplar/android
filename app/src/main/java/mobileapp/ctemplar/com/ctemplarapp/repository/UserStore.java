@@ -27,14 +27,8 @@ public interface UserStore {
     void saveTimeZone(String timezone);
     String getTimeZone();
 
-    void saveMobileSignature(String signature);
-    String getMobileSignature();
-
     void setSignatureEnabled(boolean state);
     boolean isSignatureEnabled();
-
-    void setMobileSignatureEnabled(boolean state);
-    boolean isMobileSignatureEnabled();
 
     void setNotificationsEnabled(boolean state);
     boolean isNotificationsEnabled();

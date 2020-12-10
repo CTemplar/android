@@ -548,7 +548,7 @@ public class InboxFragment extends BaseFragment
                     // Toast.makeText(getActivity(), getString(R.string.error_messages), Toast.LENGTH_SHORT).show();
                     break;
                 case RESPONSE_NEXT_MESSAGES:
-                    Timber.e("handleResponseStatus: RESPONSE_NEXT_MESSAGES");
+                    Timber.d("handleResponseStatus: RESPONSE_NEXT_MESSAGES");
                     // adapter = new InboxMessagesAdapter(mainModel.getMessagesResponse().getValue().getMessagesList());
                     // recyclerView.setAdapter(adapter);
                     break;

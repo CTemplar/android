@@ -296,7 +296,6 @@
     <string name="txt_type_your_name">Type your name</string>
     <string name="txt_type_signature">Type your signature</string>
     <string name="txt_signature_enabled">Signature enabled</string>
-    <string name="txt_mobile_signature_enabled">Mobile signature enabled</string>
 
     <!-- PIN LOCK -->
     <string name="pin_lock">PIN Lock</string>
@@ -349,9 +348,7 @@
     <string name="settings_signature">Signature</string>
     <string name="settings_enable_signature">Enable signature</string>
     <string name="settings_type_signature">Type your signature</string>
-    <string name="settings_mobile_signature">Mobile signature</string>
     <string name="settings_keys">Keys</string>
-    <string name="settings_enable_mobile_signature">Enable mobile signature</string>
     <string name="settings_about">About</string>
     <string name="settings_helpdesk">Helpdesk</string>
     <string name="settings_local_storage_limit">Local storage limit</string>
@@ -412,7 +409,6 @@
     <string translatable="false" name="password_key">password_key</string>
     <string translatable="false" name="pin_lock_key">pin_lock_key</string>
     <string translatable="false" name="signature_key">signature_key</string>
-    <string translatable="false" name="mobile_signature_key">mobile_signature_key</string>
     <string translatable="false" name="filters_key">filters_key</string>
     <string translatable="false" name="dark_mode_key">dark_mode_key</string>
     <string translatable="false" name="block_external_images_key">block_external_images_key</string>
