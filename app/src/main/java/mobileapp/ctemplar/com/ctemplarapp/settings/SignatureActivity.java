@@ -170,7 +170,9 @@ public class SignatureActivity extends BaseActivity {
                     String signatureText = mailboxEntity.getSignature();
                     displayNameEditText.setText(displayName);
                     signatureEditText.setText(HtmlUtils.fromHtml(signatureText));
-                    displayNameEditText.setSelection(displayName.length());
+                    if (displayName != null) {
+                        displayNameEditText.setSelection(displayName.length());
+                    }
                 }
             }
 
