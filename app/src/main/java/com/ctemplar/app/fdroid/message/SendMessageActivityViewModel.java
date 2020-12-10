@@ -92,14 +92,6 @@ public class SendMessageActivityViewModel extends ViewModel {
         return userRepository.isSignatureEnabled();
     }
 
-    public boolean isMobileSignatureEnabled() {
-        return userRepository.isMobileSignatureEnabled();
-    }
-
-    public String getMobileSignature() {
-        return userRepository.getMobileSignature();
-    }
-
     public String getUserPassword() {
         return userRepository.getUserPassword();
     }

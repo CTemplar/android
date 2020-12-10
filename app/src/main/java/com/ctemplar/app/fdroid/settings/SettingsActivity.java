@@ -28,6 +28,10 @@ import androidx.preference.PreferenceManager;
 import androidx.preference.PreferenceScreen;
 import androidx.preference.SwitchPreference;
 
+import org.jetbrains.annotations.NotNull;
+
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
 import com.ctemplar.app.fdroid.BaseActivity;
 import com.ctemplar.app.fdroid.BuildConfig;
 import com.ctemplar.app.fdroid.CTemplarApp;
@@ -48,11 +52,6 @@ import com.ctemplar.app.fdroid.utils.EncodeUtils;
 import com.ctemplar.app.fdroid.utils.HtmlUtils;
 import com.ctemplar.app.fdroid.utils.ThemeUtils;
 import com.ctemplar.app.fdroid.wbl.WhiteBlackListActivity;
-
-import org.jetbrains.annotations.NotNull;
-
-import io.reactivex.Observer;
-import io.reactivex.disposables.Disposable;
 import timber.log.Timber;
 
 public class SettingsActivity extends BaseActivity {
@@ -138,15 +137,6 @@ public class SettingsActivity extends BaseActivity {
             if (signatureKey != null) {
                 signatureKey.setOnPreferenceClickListener(preference -> {
                     Intent signatureActivity = new Intent(getActivity(), SignatureActivity.class);
-                    startActivity(signatureActivity);
-                    return false;
-                });
-            }
-            Preference mobileSignatureKey = findPreference(getString(R.string.mobile_signature_key));
-            if (mobileSignatureKey != null) {
-                mobileSignatureKey.setOnPreferenceClickListener(preference -> {
-                    Intent signatureActivity = new Intent(getActivity(), SignatureActivity.class);
-                    signatureActivity.putExtra(SignatureActivity.IS_MOBILE, true);
                     startActivity(signatureActivity);
                     return false;
                 });

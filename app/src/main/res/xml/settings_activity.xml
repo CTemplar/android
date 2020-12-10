@@ -81,10 +81,6 @@
             android:title="@string/settings_signature"
             android:key="@string/signature_key" />
 
-        <Preference
-            android:title="@string/settings_mobile_signature"
-            android:key="@string/mobile_signature_key" />
-
         <PreferenceScreen
             android:title="@string/settings_keys"
             android:key="@string/setting_keys" />

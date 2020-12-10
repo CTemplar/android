@@ -295,7 +295,6 @@
     <string name="txt_type_your_name">Digite seu nome</string>
     <string name="txt_type_signature">Digite sua assinatura</string>
     <string name="txt_signature_enabled">Assinatura ativada</string>
-    <string name="txt_mobile_signature_enabled">Assinatura móvel ativada</string>
 
     <!-- PIN LOCK -->
     <string name="pin_lock">Bloqueio de PIN</string>
@@ -348,9 +347,7 @@
     <string name="settings_signature">Assinatura</string>
     <string name="settings_enable_signature">Ativar assinatura</string>
     <string name="settings_type_signature">Digite sua assinatura</string>
-    <string name="settings_mobile_signature">Assinatura para celular</string>
     <string name="settings_keys">Chaves</string>
-    <string name="settings_enable_mobile_signature">Ativar assinatura móvel</string>
     <string name="settings_about">Sobre</string>
     <string name="settings_helpdesk">Central de Ajuda</string>
     <string name="settings_local_storage_limit">Limite de armazenamento local</string>
