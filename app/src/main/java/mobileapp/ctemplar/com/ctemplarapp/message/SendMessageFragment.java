@@ -41,6 +41,7 @@ import java.util.Collections;
 import java.util.List;
 
 import mobileapp.ctemplar.com.ctemplarapp.ActivityInterface;
+import mobileapp.ctemplar.com.ctemplarapp.BuildConfig;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.contacts.ContactsViewModel;
 import mobileapp.ctemplar.com.ctemplarapp.main.UpgradeToPrimeFragment;
@@ -406,41 +407,49 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
                     activity.onBackPressed();
                 }
                 break;
-            case R.id.fragment_send_message_delayed_layout:
-                if (delayedDeliveryDialogFragment.isAdded()) {
-                    return;
+            case R.id.fragment_send_message_encrypt_layout:
+                if (encryptMessageDialogFragment.isAdded()) {
+                    break;
                 }
-                if (userIsPrime) {
-                    delayedDeliveryDialogFragment.show(getParentFragmentManager(), "DelayedDeliveryDialogFragment");
-                    delayedDeliveryDialogFragment.setOnScheduleDelayedDelivery(onScheduleDelayedDelivery);
-                } else {
-                    upgradeToPrimeDialog();
-                }
+                encryptMessageDialogFragment.show(getParentFragmentManager(), "EncryptMessageDialogFragment");
+                encryptMessageDialogFragment.setEncryptMessagePassword(onSetEncryptMessagePassword);
                 break;
             case R.id.fragment_send_message_destruct_layout:
                 if (destructTimerDialogFragment.isAdded()) {
-                    return;
+                    break;
+                }
+                if (!userIsPrime) {
+                    showUpgradeToPrimeDialog();
+                    break;
+                }
+                if (!isCTemplarRecipients()) {
+                    showOnlyCTemplarRecipientsAlert();
+                    break;
                 }
                 destructTimerDialogFragment.show(getParentFragmentManager(), "DestructTimerDialogFragment");
                 destructTimerDialogFragment.setOnScheduleDestructTimerDelivery(onScheduleDestructTimerDelivery);
                 break;
+            case R.id.fragment_send_message_delayed_layout:
+                if (delayedDeliveryDialogFragment.isAdded()) {
+                    break;
+                }
+                if (!userIsPrime) {
+                    showUpgradeToPrimeDialog();
+                    break;
+                }
+                delayedDeliveryDialogFragment.show(getParentFragmentManager(), "DelayedDeliveryDialogFragment");
+                delayedDeliveryDialogFragment.setOnScheduleDelayedDelivery(onScheduleDelayedDelivery);
+                break;
             case R.id.fragment_send_message_dead_layout:
                 if (deadMansDeliveryDialogFragment.isAdded()) {
-                    return;
+                    break;
                 }
-                if (userIsPrime) {
-                    deadMansDeliveryDialogFragment.show(getParentFragmentManager(), "DeadMansDialogFragment");
-                    deadMansDeliveryDialogFragment.setOnScheduleDeadMansDelivery(onScheduleDeadMansDelivery);
-                } else {
-                    upgradeToPrimeDialog();
+                if (!userIsPrime) {
+                    showUpgradeToPrimeDialog();
+                    break;
                 }
-                break;
-            case R.id.fragment_send_message_encrypt_layout:
-                if (encryptMessageDialogFragment.isAdded()) {
-                    return;
-                }
-                encryptMessageDialogFragment.show(getParentFragmentManager(), "EncryptMessageDialogFragment");
-                encryptMessageDialogFragment.setEncryptMessagePassword(onSetEncryptMessagePassword);
+                deadMansDeliveryDialogFragment.show(getParentFragmentManager(), "DeadMansDialogFragment");
+                deadMansDeliveryDialogFragment.setOnScheduleDeadMansDelivery(onScheduleDeadMansDelivery);
                 break;
         }
     }
@@ -934,9 +943,24 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
                 && compose.equals(startupBodyContent);
     }
 
-    private void upgradeToPrimeDialog() {
+    private boolean isCTemplarRecipients() {
+        String toEmail = EditTextUtils.getText(toEmailTextView);
+        String ccEmail = EditTextUtils.getText(ccTextView);
+        String bccEmail = EditTextUtils.getText(bccTextView);
+        String domain = BuildConfig.DOMAIN;
+        return toEmail.contains(domain) || ccEmail.contains(domain) || bccEmail.contains(domain);
+    }
+
+    private void showUpgradeToPrimeDialog() {
         UpgradeToPrimeFragment upgradeToPrimeFragment = new UpgradeToPrimeFragment();
         upgradeToPrimeFragment.show(getParentFragmentManager(), "UpgradeToPrimeFragment");
+    }
+
+    private void showOnlyCTemplarRecipientsAlert() {
+        new AlertDialog.Builder(getActivity())
+                .setMessage(R.string.txt_destruct_timer_hint)
+                .setPositiveButton(android.R.string.ok, null)
+                .show();
     }
 
     private void addListeners() {

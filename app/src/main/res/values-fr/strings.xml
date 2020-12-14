@@ -125,6 +125,7 @@
     <string name="txt_left_time_dead_mans_timer">Dead mans dans %1$s</string>
     <string name="txt_encrypt_message_title">Mot de passe</string>
     <string name="txt_destruct_message_title">Auto destruction</string>
+    <string name="txt_destruct_timer_hint">Self Destruction est uniquement pour les destinataires CTemplar. Veuillez ajouter des destinataires CTemplar pour la fonction d\'autodestruction</string>
     <string name="txt_dead_mans_title">Dead Man\'s Timer</string>
     <string name="txt_delayed_message_title">Programmer l\'envoi</string>
     <string name="txt_encrypt_message_summary">Email crypté pour les contacts non CTemplar</string>
