@@ -125,6 +125,7 @@
     <string name="txt_left_time_dead_mans_timer">Dead mans em %1$s</string>
     <string name="txt_encrypt_message_title">Configurar senha</string>
     <string name="txt_destruct_message_title">Temporizador de autodestruição</string>
+    <string name="txt_destruct_timer_hint">Self Destruction é apenas para destinatários CTemplar. Adicione destinatários CTemplar para recurso de autodestruição</string>
     <string name="txt_dead_mans_title">Temporizador do Dead Man\'s</string>
     <string name="txt_delayed_message_title">Envio programado</string>
     <string name="txt_encrypt_message_summary">Criptografar para não usuários do CTemplar</string>
