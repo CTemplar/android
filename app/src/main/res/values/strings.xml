@@ -436,11 +436,11 @@
     <!-- ERRORS -->
     <string name="error_field_cannot_be_empty">This field cannot be empty.</string>
     <string name="error_invalid_email">Please  select a valid email or select unrecoverable account.</string>
-    <string name="error_username_small">Minimum 4 symbols</string>
-    <string name="error_username_small_two">Minimum 2 symbols</string>
-    <string name="error_username_big">Maximum 64 symbols</string>
-    <string name="error_password_small">Minimum 1 symbol</string>
-    <string name="error_password_big">Maximum 255 symbols</string>
+    <string name="error_username_small">Minimum 4 characters</string>
+    <string name="error_username_small_two">Minimum 2 characters</string>
+    <string name="error_username_big">Maximum 64 characters</string>
+    <string name="error_password_small">Minimum 1 character</string>
+    <string name="error_password_big">Maximum 255 characters</string>
     <string name="error_username_incorrect">The username must start with a letter and can contain only a–z, A–Z, 0–9 or ._-</string>
     <string name="error_username_exists">Email already exists!</string>
     <string name="error_password_not_match">Passwords do not match.</string>
