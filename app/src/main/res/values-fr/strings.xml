@@ -404,11 +404,11 @@
     <!-- ERRORS -->
     <string name="error_field_cannot_be_empty">Ce champ ne peut pas être vide</string>
     <string name="error_invalid_email">Veuillez sélectionner une adresse email valide ou sélectionner un email de récupération.</string>
-    <string name="error_username_small">Minimum 4 symboles</string>
-    <string name="error_username_small_two">Minimum 2 symboles</string>
-    <string name="error_username_big">Maximum 64 symboles</string>
-    <string name="error_password_small">Minimum 1 symbole</string>
-    <string name="error_password_big">Maximum 255 symboles</string>
+    <string name="error_username_small">Minimum 4 caractères</string>
+    <string name="error_username_small_two">Minimum 2 caractères</string>
+    <string name="error_username_big">Maximum 64 caractères</string>
+    <string name="error_password_small">Minimum 1 caractère</string>
+    <string name="error_password_big">Maximum 255 caractères</string>
     <string name="error_username_incorrect">Le nom d\'utilisateur doit commencer par une lettre et peut contenir uniquement a–z, A–Z, 0–9 ou ._-</string>
     <string name="error_username_exists">L\'email existe déjà.</string>
     <string name="error_password_not_match">Les mots de passe doivent être identiques</string>
