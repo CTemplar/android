@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 import java.util.List;
 
 import mobileapp.ctemplar.com.ctemplarapp.R;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Filters.FilterResult;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.filters.FilterResult;
 
 public class FiltersAdapter extends RecyclerView.Adapter<FiltersViewHolder> {
     private List<FilterResult> filterList;

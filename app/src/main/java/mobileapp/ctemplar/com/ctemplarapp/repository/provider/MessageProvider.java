@@ -5,11 +5,12 @@ import androidx.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessageAttachment;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResult;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.UserDisplay;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.MessageAttachment;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.MessagesResult;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.UserDisplayResponse;
 import mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.AttachmentEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MessageEntity;
@@ -22,7 +23,7 @@ public class MessageProvider {
     private String sender;
     private boolean hasAttachments;
     private List<AttachmentProvider> attachments;
-    private String createdAt;
+    private Date createdAt;
     private UserDisplayProvider senderDisplay;
     private List<UserDisplayProvider> receiverDisplayList;
     private List<UserDisplayProvider> ccDisplayList;
@@ -35,14 +36,14 @@ public class MessageProvider {
     private String[] cc;
     private String[] bcc;
     private String folderName;
-    private String updated;
-    private String destructDate;
-    private String delayedDelivery;
+    private Date updated;
+    private Date destructDate;
+    private Date delayedDelivery;
     private String deadManDuration;
     private boolean isRead;
     private boolean send;
     private boolean isStarred;
-    private String sentAt;
+    private Date sentAt;
     private boolean isEncrypted;
     private boolean isSubjectEncrypted;
     private boolean isProtected;
@@ -54,6 +55,50 @@ public class MessageProvider {
     private long mailboxId;
     private String parent;
     private boolean isSubjectDecrypted;
+
+    public MessageProvider() {
+
+    }
+
+    public MessageProvider(long id, String encryption, String sender, boolean hasAttachments, List<AttachmentProvider> attachments, Date createdAt, UserDisplayProvider senderDisplay, List<UserDisplayProvider> receiverDisplayList, List<UserDisplayProvider> ccDisplayList, List<UserDisplayProvider> bccDisplayList, boolean hasChildren, int childrenCount, String subject, String content, String[] receivers, String[] cc, String[] bcc, String folderName, Date updated, Date destructDate, Date delayedDelivery, String deadManDuration, boolean isRead, boolean send, boolean isStarred, Date sentAt, boolean isEncrypted, boolean isSubjectEncrypted, boolean isProtected, boolean isHtml, String hash, List<String> spamReason, String lastAction, String lastActionThread, long mailboxId, String parent, boolean isSubjectDecrypted) {
+        this.id = id;
+        this.encryption = encryption;
+        this.sender = sender;
+        this.hasAttachments = hasAttachments;
+        this.attachments = attachments;
+        this.createdAt = createdAt;
+        this.senderDisplay = senderDisplay;
+        this.receiverDisplayList = receiverDisplayList;
+        this.ccDisplayList = ccDisplayList;
+        this.bccDisplayList = bccDisplayList;
+        this.hasChildren = hasChildren;
+        this.childrenCount = childrenCount;
+        this.subject = subject;
+        this.content = content;
+        this.receivers = receivers;
+        this.cc = cc;
+        this.bcc = bcc;
+        this.folderName = folderName;
+        this.updated = updated;
+        this.destructDate = destructDate;
+        this.delayedDelivery = delayedDelivery;
+        this.deadManDuration = deadManDuration;
+        this.isRead = isRead;
+        this.send = send;
+        this.isStarred = isStarred;
+        this.sentAt = sentAt;
+        this.isEncrypted = isEncrypted;
+        this.isSubjectEncrypted = isSubjectEncrypted;
+        this.isProtected = isProtected;
+        this.isHtml = isHtml;
+        this.hash = hash;
+        this.spamReason = spamReason;
+        this.lastAction = lastAction;
+        this.lastActionThread = lastActionThread;
+        this.mailboxId = mailboxId;
+        this.parent = parent;
+        this.isSubjectDecrypted = isSubjectDecrypted;
+    }
 
     public long getId() {
         return id;
@@ -95,11 +140,11 @@ public class MessageProvider {
         this.attachments = attachments;
     }
 
-    public String getCreatedAt() {
+    public Date getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(String createdAt) {
+    public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
     }
 
@@ -199,27 +244,27 @@ public class MessageProvider {
         this.folderName = folderName;
     }
 
-    public String getUpdated() {
+    public Date getUpdated() {
         return updated;
     }
 
-    public void setUpdated(String updated) {
+    public void setUpdated(Date updated) {
         this.updated = updated;
     }
 
-    public String getDestructDate() {
+    public Date getDestructDate() {
         return destructDate;
     }
 
-    public void setDestructDate(String destructDate) {
+    public void setDestructDate(Date destructDate) {
         this.destructDate = destructDate;
     }
 
-    public String getDelayedDelivery() {
+    public Date getDelayedDelivery() {
         return delayedDelivery;
     }
 
-    public void setDelayedDelivery(String delayedDelivery) {
+    public void setDelayedDelivery(Date delayedDelivery) {
         this.delayedDelivery = delayedDelivery;
     }
 
@@ -255,11 +300,11 @@ public class MessageProvider {
         isStarred = starred;
     }
 
-    public String getSentAt() {
+    public Date getSentAt() {
         return sentAt;
     }
 
-    public void setSentAt(String sentAt) {
+    public void setSentAt(Date sentAt) {
         this.sentAt = sentAt;
     }
 
@@ -342,14 +387,13 @@ public class MessageProvider {
     public void setParent(String parent) {
         this.parent = parent;
     }
-//    private MessagesResult[] children;
 
     public boolean isSubjectDecrypted() {
         return isSubjectDecrypted;
     }
 
     public void setSubjectDecrypted(boolean subjectDecrypted) {
-        this.isSubjectDecrypted = subjectDecrypted;
+        isSubjectDecrypted = subjectDecrypted;
     }
 
     private static AttachmentProvider convertFromResponseMessageAttachmentToAttachmentProvider(MessageAttachment messageAttachment) {
@@ -375,23 +419,23 @@ public class MessageProvider {
         return attachmentProviders;
     }
 
-    private static UserDisplayProvider convertUserDisplayFromResponseToProvider(UserDisplay userDisplay) {
+    private static UserDisplayProvider convertUserDisplayFromResponseToProvider(UserDisplayResponse userDisplayResponse) {
         UserDisplayProvider userDisplayProvider = new UserDisplayProvider();
-        if (userDisplay != null) {
-            userDisplayProvider.setEmail(userDisplay.getEmail());
-            userDisplayProvider.setName(userDisplay.getName());
-            userDisplayProvider.setEncrypted(userDisplay.isEncrypted());
+        if (userDisplayResponse != null) {
+            userDisplayProvider.setEmail(userDisplayResponse.getEmail());
+            userDisplayProvider.setName(userDisplayResponse.getName());
+            userDisplayProvider.setEncrypted(userDisplayResponse.isEncrypted());
         }
         return userDisplayProvider;
     }
 
-    public static List<UserDisplayProvider> convertUserDisplayListFromResponseToProvider(List<UserDisplay> userDisplayList) {
-        if (userDisplayList == null || userDisplayList.isEmpty()) {
+    public static List<UserDisplayProvider> convertUserDisplayListFromResponseToProvider(List<UserDisplayResponse> userDisplayResponseList) {
+        if (userDisplayResponseList == null || userDisplayResponseList.isEmpty()) {
             return Collections.emptyList();
         }
-        List<UserDisplayProvider> userDisplayProviderList = new ArrayList<>(userDisplayList.size());
-        for (UserDisplay userDisplay : userDisplayList) {
-            userDisplayProviderList.add(convertUserDisplayFromResponseToProvider(userDisplay));
+        List<UserDisplayProvider> userDisplayProviderList = new ArrayList<>(userDisplayResponseList.size());
+        for (UserDisplayResponse userDisplayResponse : userDisplayResponseList) {
+            userDisplayProviderList.add(convertUserDisplayFromResponseToProvider(userDisplayResponse));
         }
         return userDisplayProviderList;
     }
@@ -401,7 +445,7 @@ public class MessageProvider {
             return new String[0];
         }
         String[] array = new String[list.size()];
-        for(int i = 0; i < list.size(); i++) {
+        for (int i = 0; i < list.size(); i++) {
             array[i] = list.get(i);
         }
         return array;
@@ -533,23 +577,23 @@ public class MessageProvider {
         return attachmentEntities;
     }
 
-    private static UserDisplayEntity convertUserDisplayFromResponseToEntity(UserDisplay userDisplay) {
+    private static UserDisplayEntity convertUserDisplayFromResponseToEntity(UserDisplayResponse userDisplayResponse) {
         UserDisplayEntity userDisplayEntity = new UserDisplayEntity();
-        if (userDisplay != null) {
-            userDisplayEntity.setEmail(userDisplay.getEmail());
-            userDisplayEntity.setName(userDisplay.getName());
-            userDisplayEntity.setEncrypted(userDisplay.isEncrypted());
+        if (userDisplayResponse != null) {
+            userDisplayEntity.setEmail(userDisplayResponse.getEmail());
+            userDisplayEntity.setName(userDisplayResponse.getName());
+            userDisplayEntity.setEncrypted(userDisplayResponse.isEncrypted());
         }
         return userDisplayEntity;
     }
 
-    private static List<UserDisplayEntity> convertUserDisplayListFromResponseToEntities(List<UserDisplay> userDisplayList) {
-        if (userDisplayList == null || userDisplayList.isEmpty()) {
+    private static List<UserDisplayEntity> convertUserDisplayListFromResponseToEntities(List<UserDisplayResponse> userDisplayResponseList) {
+        if (userDisplayResponseList == null || userDisplayResponseList.isEmpty()) {
             return Collections.emptyList();
         }
         List<UserDisplayEntity> userDisplayEntityList = new ArrayList<>();
-        for (UserDisplay userDisplay : userDisplayList) {
-            userDisplayEntityList.add(convertUserDisplayFromResponseToEntity(userDisplay));
+        for (UserDisplayResponse userDisplayResponse : userDisplayResponseList) {
+            userDisplayEntityList.add(convertUserDisplayFromResponseToEntity(userDisplayResponse));
         }
         return userDisplayEntityList;
     }

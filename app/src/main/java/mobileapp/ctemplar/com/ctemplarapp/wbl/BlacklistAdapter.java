@@ -12,11 +12,11 @@ import java.util.Arrays;
 import java.util.List;
 
 import mobileapp.ctemplar.com.ctemplarapp.R;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.BlackListContact;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.BlackListContact;
 
 public class BlacklistAdapter extends RecyclerView.Adapter<BlacklistAdapter.DataViewHolder> {
-    private List<BlackListContact> contactsList;
-    private List<BlackListContact> filteredList;
+    private final List<BlackListContact> contactsList;
+    private final List<BlackListContact> filteredList;
 
     public BlacklistAdapter(List<BlackListContact> contacts) {
         contactsList = new ArrayList<>();
@@ -44,13 +44,13 @@ public class BlacklistAdapter extends RecyclerView.Adapter<BlacklistAdapter.Data
     @Override
     public void onBindViewHolder(@NonNull DataViewHolder dataViewHolder, int i) {
         BlackListContact contact = getItem(i);
-        dataViewHolder.emailView.setText(contact.email);
-        dataViewHolder.nameView.setText(contact.name);
+        dataViewHolder.emailView.setText(contact.getEmail());
+        dataViewHolder.nameView.setText(contact.getName());
     }
 
     @Override
     public long getItemId(int position) {
-        return getItem(position).id;
+        return getItem(position).getId();
     }
 
     @Override
@@ -62,7 +62,7 @@ public class BlacklistAdapter extends RecyclerView.Adapter<BlacklistAdapter.Data
     public void filter(CharSequence s) {
         filteredList.clear();
         for (BlackListContact contact : contactsList) {
-            if (contact.name.contains(s) || contact.email.contains(s)) {
+            if (contact.getName().contains(s) || contact.getEmail().contains(s)) {
                 filteredList.add(contact);
             }
         }
@@ -85,7 +85,7 @@ public class BlacklistAdapter extends RecyclerView.Adapter<BlacklistAdapter.Data
         notifyItemInserted(position);
     }
 
-    class DataViewHolder extends RecyclerView.ViewHolder {
+    static class DataViewHolder extends RecyclerView.ViewHolder {
         TextView nameView;
         TextView emailView;
 

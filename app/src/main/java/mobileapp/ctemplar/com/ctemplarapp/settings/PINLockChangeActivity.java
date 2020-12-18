@@ -13,7 +13,7 @@ import mobileapp.ctemplar.com.ctemplarapp.BaseActivity;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserStore;
-import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
+import mobileapp.ctemplar.com.ctemplarapp.utils.DateUtils;
 import mobileapp.ctemplar.com.ctemplarapp.view.pinlock.KeypadAdapter;
 import mobileapp.ctemplar.com.ctemplarapp.view.pinlock.KeypadView;
 import mobileapp.ctemplar.com.ctemplarapp.view.pinlock.PasscodeView;
@@ -103,6 +103,6 @@ public class PINLockChangeActivity extends BaseActivity {
         Timber.d("notifyWrongPIN");
         keypadView.resetKeypadView();
         Toast.makeText(this, getString(R.string.pins_dont_match), Toast.LENGTH_SHORT).show();
-        AppUtils.vibrate(getBaseContext(), 500);
+        DateUtils.vibrate(getBaseContext(), 500);
     }
 }

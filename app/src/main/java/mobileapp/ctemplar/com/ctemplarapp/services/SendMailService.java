@@ -34,14 +34,14 @@ import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.net.entity.PGPKeyEntity;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SendMessageRequest;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessageAttachment;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResult;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.MessageAttachment;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.MessagesResult;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.EncryptionMessageProvider;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageAttachmentProvider;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.SendMessageRequestProvider;
 import mobileapp.ctemplar.com.ctemplarapp.security.PGPManager;
-import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
+import mobileapp.ctemplar.com.ctemplarapp.utils.DateUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EncryptUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.FileUtils;
@@ -224,9 +224,9 @@ public class SendMailService extends IntentService {
             request.setSubject(PGPManager.encrypt(request.getSubject(), publicKeys));
             request.setContent(PGPManager.encrypt(request.getContent(), publicKeys));
         }
-        request.setIsEncrypted(isReceiverKeysNotEmpty);
+        request.setEncrypted(isReceiverKeysNotEmpty);
         request.setSubjectEncrypted(isReceiverKeysNotEmpty);
-        request.setUpdatedAt(AppUtils.convertToServerDatePattern(new Date()));
+        request.setUpdatedAt(DateUtils.convertToServerDatePattern(new Date()));
 
         MessagesResult messagesResult;
         boolean isDraft = isDraft(request);
@@ -358,11 +358,11 @@ public class SendMailService extends IntentService {
         }
 
         String documentLink = attachmentProvider.getDocumentLink();
-        String type = AppUtils.getMimeType(documentLink);
+        String type = DateUtils.getMimeType(documentLink);
         if (type == null) {
             type = "";
         }
-        String fileName = AppUtils.getFileNameFromURL(documentLink);
+        String fileName = DateUtils.getFileNameFromURL(documentLink);
         MediaType mediaType = MediaType.parse(type);
 
         File encryptedFile;

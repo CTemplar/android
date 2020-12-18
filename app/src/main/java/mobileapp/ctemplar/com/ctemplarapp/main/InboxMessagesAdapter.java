@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import io.reactivex.subjects.PublishSubject;
@@ -21,7 +22,7 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames;
 import mobileapp.ctemplar.com.ctemplarapp.repository.constant.MessageActions;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageProvider;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.UserDisplayProvider;
-import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
+import mobileapp.ctemplar.com.ctemplarapp.utils.DateUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 
 public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesViewHolder> {
@@ -138,8 +139,8 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesView
         holder.imgEncrypted.setSelected(message.isProtected());
 
         // check for status (delivery in, delete in, dead mans in)
-        if (EditTextUtils.isNotEmpty(message.getDelayedDelivery())) {
-            String leftTime = AppUtils.elapsedTime(message.getDelayedDelivery());
+        if (message.getDelayedDelivery() != null) {
+            String leftTime = DateUtils.elapsedTime(message.getDelayedDelivery());
             if (leftTime != null) {
                 holder.txtStatus.setText(holder.root.getResources().getString(R.string.txt_left_time_delay_delivery, leftTime));
                 holder.txtStatus.setBackgroundColor(ctx.getResources().getColor(R.color.colorDarkGreen));
@@ -147,8 +148,8 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesView
             } else {
                 holder.txtStatus.setVisibility(View.GONE);
             }
-        } else if (EditTextUtils.isNotEmpty(message.getDestructDate())) {
-            String leftTime = AppUtils.elapsedTime(message.getDestructDate());
+        } else if (message.getDestructDate() != null) {
+            String leftTime = DateUtils.elapsedTime(message.getDestructDate());
             if (leftTime != null) {
                 holder.txtStatus.setText(holder.root.getResources().getString(R.string.txt_left_time_destruct, leftTime));
                 holder.txtStatus.setVisibility(View.VISIBLE);
@@ -156,7 +157,7 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesView
                 holder.txtStatus.setVisibility(View.GONE);
             }
         } else if (EditTextUtils.isNotEmpty(message.getDeadManDuration())) {
-            String leftTime = AppUtils.deadMansTime(Long.parseLong(message.getDeadManDuration()));
+            String leftTime = DateUtils.deadMansTime(Long.parseLong(message.getDeadManDuration()));
             if (leftTime != null) {
                 holder.txtStatus.setText(holder.root.getResources().getString(R.string.txt_left_time_dead_mans_timer, leftTime));
                 holder.txtStatus.setBackgroundColor(ctx.getResources().getColor(R.color.colorRed0));
@@ -168,8 +169,8 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesView
             holder.txtStatus.setVisibility(View.GONE);
         }
 
-        String messageDate = AppUtils.getDeliveryDate(message);
-        holder.txtDate.setText(AppUtils.messageDate(messageDate));
+        Date messageDate = DateUtils.getDeliveryDate(message);
+        holder.txtDate.setText(DateUtils.messageDate(messageDate));
 
         holder.imgStarredLayout.setOnClickListener(v -> {
             boolean isStarred = !message.isStarred();

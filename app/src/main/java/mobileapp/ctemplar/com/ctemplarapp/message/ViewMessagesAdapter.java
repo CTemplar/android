@@ -28,6 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import io.reactivex.Observer;
@@ -39,7 +40,7 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.constant.MessageActions;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.AttachmentProvider;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageProvider;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.UserDisplayProvider;
-import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
+import mobileapp.ctemplar.com.ctemplarapp.utils.DateUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.FileUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.HtmlUtils;
@@ -130,7 +131,7 @@ public class ViewMessagesAdapter extends BaseAdapter {
         String folderName = messageData.getFolderName();
         String messageContent = messageData.getContent();
         Spanned spannedMessageContent = HtmlUtils.fromHtml(messageContent);
-        String messageDate = AppUtils.getDeliveryDate(messageData);
+        Date messageDate = DateUtils.getDeliveryDate(messageData);
 
         boolean isHtml = messageData.isHtml();
         boolean isHasAttachment = messageData.isHasAttachments() || messageData.getAttachments().size() > 0;
@@ -181,13 +182,13 @@ public class ViewMessagesAdapter extends BaseAdapter {
 
         collapsedSenderTextView.setText(senderDisplay.getName());
         collapsedContentTextView.setText(spannedMessageContent);
-        collapsedShortDateTextView.setText(AppUtils.messageDate(messageDate));
+        collapsedShortDateTextView.setText(DateUtils.messageDate(messageDate));
 
         senderTextView.setText(senderDisplay.getName());
         receiverTextView.setText(userDisplayListToNamesString(receiverDisplayList));
-        shortDateTextView.setText(AppUtils.messageDate(messageDate));
+        shortDateTextView.setText(DateUtils.messageDate(messageDate));
         fullDateEmailTextView.setText(view.getResources().getString(R.string.txt_date_format,
-                AppUtils.messageFullDate(messageDate)));
+                DateUtils.messageFullDate(messageDate)));
 
         // check for folder
         if (EditTextUtils.isNotEmpty(folderName)) {
@@ -196,23 +197,23 @@ public class ViewMessagesAdapter extends BaseAdapter {
         }
 
         // check for status (time delete, delayed delivery)
-        if (EditTextUtils.isNotEmpty(messageData.getDelayedDelivery())) {
-            String leftTime = AppUtils.elapsedTime(messageData.getDelayedDelivery());
+        if (messageData.getDelayedDelivery() != null) {
+            String leftTime = DateUtils.elapsedTime(messageData.getDelayedDelivery());
             if (leftTime != null) {
                 statusTextView.setText(view.getResources().getString(R.string.txt_left_time_delay_delivery, leftTime));
                 statusTextView.setBackgroundColor(view.getResources().getColor(R.color.colorDarkGreen));
             } else {
                 statusTextView.setVisibility(View.GONE);
             }
-        } else if (EditTextUtils.isNotEmpty(messageData.getDestructDate())) {
-            String leftTime = AppUtils.elapsedTime(messageData.getDestructDate());
+        } else if (messageData.getDestructDate() != null) {
+            String leftTime = DateUtils.elapsedTime(messageData.getDestructDate());
             if (leftTime != null) {
                 statusTextView.setText(view.getResources().getString(R.string.txt_left_time_destruct, leftTime));
             } else {
                 statusTextView.setVisibility(View.GONE);
             }
         } else if (EditTextUtils.isNotEmpty(messageData.getDeadManDuration())) {
-            String leftTime = AppUtils.deadMansTime(Long.parseLong(messageData.getDeadManDuration()));
+            String leftTime = DateUtils.deadMansTime(Long.parseLong(messageData.getDeadManDuration()));
             if (leftTime != null) {
                 statusTextView.setText(view.getResources().getString(R.string.txt_left_time_dead_mans_timer, leftTime));
                 statusTextView.setBackgroundColor(view.getResources().getColor(R.color.colorRed0));
@@ -346,7 +347,7 @@ public class ViewMessagesAdapter extends BaseAdapter {
                     return;
                 }
 
-                String originalFileName = AppUtils.getFileNameFromURL(documentLink);
+                String originalFileName = DateUtils.getFileNameFromURL(documentLink);
                 File generatedFile = FileUtils.generateFileName(originalFileName, externalStorageFile);
                 String fileName = generatedFile == null ? originalFileName : generatedFile.getName();
 

@@ -18,11 +18,11 @@ import android.widget.Toast;
 import java.util.Calendar;
 
 import mobileapp.ctemplar.com.ctemplarapp.R;
-import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
+import mobileapp.ctemplar.com.ctemplarapp.utils.DateUtils;
 
 public class DestructTimerDialogFragment extends DialogFragment {
 
-    private Calendar calendar = Calendar.getInstance(AppUtils.getTimeZone());
+    private Calendar calendar = Calendar.getInstance(DateUtils.getTimeZone());
 
     interface OnScheduleDestructTimerDelivery {
         void onSchedule(Long timeInMilliseconds);
@@ -62,7 +62,7 @@ public class DestructTimerDialogFragment extends DialogFragment {
             if (validate()) {
                 Calendar timezoneCalendar = Calendar.getInstance();
                 timezoneCalendar.setTimeInMillis(
-                        calendar.getTimeInMillis() - AppUtils.timezoneOffsetInMillis()
+                        calendar.getTimeInMillis() - DateUtils.timezoneOffsetInMillis()
                 );
                 onScheduleDestructTimerDelivery.onSchedule(timezoneCalendar.getTimeInMillis());
                 dismiss();
@@ -72,8 +72,8 @@ public class DestructTimerDialogFragment extends DialogFragment {
         final TextView dateTextView = view.findViewById(R.id.fragment_destruct_message_dialog_input_date);
         final TextView timeTextView = view.findViewById(R.id.fragment_destruct_message_dialog_input_time);
 
-        dateTextView.setText(AppUtils.dateFormat(calendar.getTimeInMillis()));
-        timeTextView.setText(AppUtils.timeFormat(calendar.getTimeInMillis()));
+        dateTextView.setText(DateUtils.dateFormat(calendar.getTimeInMillis()));
+        timeTextView.setText(DateUtils.timeFormat(calendar.getTimeInMillis()));
 
         final int currentYear = calendar.get(Calendar.YEAR);
         final int currentMonth = calendar.get(Calendar.MONTH);
@@ -84,7 +84,7 @@ public class DestructTimerDialogFragment extends DialogFragment {
         dateTextView.setOnClickListener(v -> {
             final DatePickerDialog datePickerDialog = new DatePickerDialog(getActivity(), 0, (view12, year, month, dayOfMonth) -> {
                 calendar.set(year, month, dayOfMonth);
-                dateTextView.setText(AppUtils.dateFormat(calendar.getTimeInMillis()));
+                dateTextView.setText(DateUtils.dateFormat(calendar.getTimeInMillis()));
                 validate();
             }, currentYear, currentMonth, currentDayOfMonth);
             datePickerDialog.show();
@@ -97,7 +97,7 @@ public class DestructTimerDialogFragment extends DialogFragment {
                 int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
 
                 calendar.set(year, month, dayOfMonth, hourOfDay, minute);
-                timeTextView.setText(AppUtils.timeFormat(calendar.getTimeInMillis()));
+                timeTextView.setText(DateUtils.timeFormat(calendar.getTimeInMillis()));
                 validate();
             }, currentHoursOfDay, currentMinute, false);
             timePickerDialog.show();
@@ -107,7 +107,7 @@ public class DestructTimerDialogFragment extends DialogFragment {
     }
 
     private boolean validate() {
-        Calendar nowCalendar = Calendar.getInstance(AppUtils.getTimeZone());
+        Calendar nowCalendar = Calendar.getInstance(DateUtils.getTimeZone());
         if (calendar.getTimeInMillis() < nowCalendar.getTimeInMillis()) {
             calendar = nowCalendar;
             Toast.makeText(getActivity(), getString(R.string.txt_selected_datetime_is_past), Toast.LENGTH_SHORT).show();

@@ -12,7 +12,7 @@ import android.view.ViewGroup;
 import java.util.List;
 
 import mobileapp.ctemplar.com.ctemplarapp.R;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Folders.FoldersResult;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.folders.FoldersResult;
 
 public class ManageFoldersAdapter extends RecyclerView.Adapter<ManageFoldersViewHolder> {
 

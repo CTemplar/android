@@ -1,11 +1,8 @@
-package mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts;
+package mobileapp.ctemplar.com.ctemplarapp.net.response.contacts;
 
 import com.google.gson.annotations.SerializedName;
 
-import org.jetbrains.annotations.NotNull;
-
 public class ContactData {
-
     @SerializedName("id")
     private long id;
 
@@ -31,19 +28,13 @@ public class ContactData {
     private String provider;
 
     @SerializedName("is_encrypted")
-    private Boolean isEncrypted;
+    private boolean isEncrypted;
 
     @SerializedName("encrypted_data")
     private String encryptedData;
 
     public ContactData() {
 
-    }
-
-    @NotNull
-    @Override
-    public String toString() {
-        return email;
     }
 
     public long getId() {
@@ -110,11 +101,11 @@ public class ContactData {
         this.provider = provider;
     }
 
-    public Boolean isEncrypted() {
+    public boolean isEncrypted() {
         return isEncrypted;
     }
 
-    public void setEncrypted(Boolean encrypted) {
+    public void setEncrypted(boolean encrypted) {
         isEncrypted = encrypted;
     }
 

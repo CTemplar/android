@@ -1,7 +1,6 @@
 package mobileapp.ctemplar.com.ctemplarapp.repository.entity;
 
 public class UserDisplayEntity {
-
     private String email;
     private String name;
     private boolean isEncrypted;

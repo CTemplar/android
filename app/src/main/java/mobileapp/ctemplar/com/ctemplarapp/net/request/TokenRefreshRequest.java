@@ -3,7 +3,6 @@ package mobileapp.ctemplar.com.ctemplarapp.net.request;
 import com.google.gson.annotations.SerializedName;
 
 public class TokenRefreshRequest {
-
     @SerializedName("token")
     private String token;
 

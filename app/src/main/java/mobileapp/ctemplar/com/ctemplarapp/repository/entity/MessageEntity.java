@@ -3,18 +3,18 @@ package mobileapp.ctemplar.com.ctemplarapp.repository.entity;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+import java.util.Date;
 import java.util.List;
 
 @Entity(tableName = "messages")
 public class MessageEntity {
-
     @PrimaryKey
     private long id;
     private String encryption;
     private String sender;
     private boolean hasAttachments;
     private List<AttachmentEntity> attachments;
-    private String createdAt;
+    private Date createdAt;
     private UserDisplayEntity senderDisplay;
     private List<UserDisplayEntity> receiverDisplayList;
     private List<UserDisplayEntity> ccDisplayList;
@@ -28,14 +28,14 @@ public class MessageEntity {
     private List<String> bcc;
     private String folderName;
     private String requestFolder;
-    private String updated;
-    private String destructDate;
-    private String delayedDelivery;
+    private Date updated;
+    private Date destructDate;
+    private Date delayedDelivery;
     private String deadManDuration;
     private boolean isRead;
     private boolean send;
     private boolean isStarred;
-    private String sentAt;
+    private Date sentAt;
     private boolean isEncrypted;
     private boolean isSubjectEncrypted;
     private boolean isProtected;
@@ -46,6 +46,50 @@ public class MessageEntity {
     private String lastActionThread;
     private long mailboxId;
     private String parent;
+
+    public MessageEntity() {
+
+    }
+
+    public MessageEntity(long id, String encryption, String sender, boolean hasAttachments, List<AttachmentEntity> attachments, Date createdAt, UserDisplayEntity senderDisplay, List<UserDisplayEntity> receiverDisplayList, List<UserDisplayEntity> ccDisplayList, List<UserDisplayEntity> bccDisplayList, boolean hasChildren, int childrenCount, String subject, String content, List<String> receivers, List<String> cc, List<String> bcc, String folderName, String requestFolder, Date updated, Date destructDate, Date delayedDelivery, String deadManDuration, boolean isRead, boolean send, boolean isStarred, Date sentAt, boolean isEncrypted, boolean isSubjectEncrypted, boolean isProtected, boolean isHtml, String hash, List<String> spamReason, String lastAction, String lastActionThread, long mailboxId, String parent) {
+        this.id = id;
+        this.encryption = encryption;
+        this.sender = sender;
+        this.hasAttachments = hasAttachments;
+        this.attachments = attachments;
+        this.createdAt = createdAt;
+        this.senderDisplay = senderDisplay;
+        this.receiverDisplayList = receiverDisplayList;
+        this.ccDisplayList = ccDisplayList;
+        this.bccDisplayList = bccDisplayList;
+        this.hasChildren = hasChildren;
+        this.childrenCount = childrenCount;
+        this.subject = subject;
+        this.content = content;
+        this.receivers = receivers;
+        this.cc = cc;
+        this.bcc = bcc;
+        this.folderName = folderName;
+        this.requestFolder = requestFolder;
+        this.updated = updated;
+        this.destructDate = destructDate;
+        this.delayedDelivery = delayedDelivery;
+        this.deadManDuration = deadManDuration;
+        this.isRead = isRead;
+        this.send = send;
+        this.isStarred = isStarred;
+        this.sentAt = sentAt;
+        this.isEncrypted = isEncrypted;
+        this.isSubjectEncrypted = isSubjectEncrypted;
+        this.isProtected = isProtected;
+        this.isHtml = isHtml;
+        this.hash = hash;
+        this.spamReason = spamReason;
+        this.lastAction = lastAction;
+        this.lastActionThread = lastActionThread;
+        this.mailboxId = mailboxId;
+        this.parent = parent;
+    }
 
     public long getId() {
         return id;
@@ -71,11 +115,27 @@ public class MessageEntity {
         this.sender = sender;
     }
 
-    public String getCreatedAt() {
+    public boolean isHasAttachments() {
+        return hasAttachments;
+    }
+
+    public void setHasAttachments(boolean hasAttachments) {
+        this.hasAttachments = hasAttachments;
+    }
+
+    public List<AttachmentEntity> getAttachments() {
+        return attachments;
+    }
+
+    public void setAttachments(List<AttachmentEntity> attachments) {
+        this.attachments = attachments;
+    }
+
+    public Date getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(String createdAt) {
+    public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
     }
 
@@ -183,27 +243,27 @@ public class MessageEntity {
         this.requestFolder = requestFolder;
     }
 
-    public String getUpdated() {
+    public Date getUpdated() {
         return updated;
     }
 
-    public void setUpdated(String updated) {
+    public void setUpdated(Date updated) {
         this.updated = updated;
     }
 
-    public String getDestructDate() {
+    public Date getDestructDate() {
         return destructDate;
     }
 
-    public void setDestructDate(String destructDate) {
+    public void setDestructDate(Date destructDate) {
         this.destructDate = destructDate;
     }
 
-    public String getDelayedDelivery() {
+    public Date getDelayedDelivery() {
         return delayedDelivery;
     }
 
-    public void setDelayedDelivery(String delayedDelivery) {
+    public void setDelayedDelivery(Date delayedDelivery) {
         this.delayedDelivery = delayedDelivery;
     }
 
@@ -239,11 +299,11 @@ public class MessageEntity {
         isStarred = starred;
     }
 
-    public String getSentAt() {
+    public Date getSentAt() {
         return sentAt;
     }
 
-    public void setSentAt(String sentAt) {
+    public void setSentAt(Date sentAt) {
         this.sentAt = sentAt;
     }
 
@@ -325,21 +385,5 @@ public class MessageEntity {
 
     public void setParent(String parent) {
         this.parent = parent;
-    }
-
-    public boolean isHasAttachments() {
-        return hasAttachments;
-    }
-
-    public void setHasAttachments(boolean hasAttachments) {
-        this.hasAttachments = hasAttachments;
-    }
-
-    public List<AttachmentEntity> getAttachments() {
-        return attachments;
-    }
-
-    public void setAttachments(List<AttachmentEntity> attachments) {
-        this.attachments = attachments;
     }
 }

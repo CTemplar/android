@@ -28,7 +28,7 @@ import mobileapp.ctemplar.com.ctemplarapp.BaseActivity;
 import mobileapp.ctemplar.com.ctemplarapp.BuildConfig;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Domains.DomainsResults;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.domains.DomainsResults;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 
 public class AddMailboxActivity extends BaseActivity {

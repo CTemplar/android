@@ -29,9 +29,9 @@ import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.PublicKeysRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SendMessageRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.KeyResponse;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessageAttachment;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResult;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.MyselfResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.MessageAttachment;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.MessagesResult;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.MyselfResponse;
 import mobileapp.ctemplar.com.ctemplarapp.repository.MailboxDao;
 import mobileapp.ctemplar.com.ctemplarapp.repository.MessagesRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
@@ -41,7 +41,7 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.provider.AttachmentProvider
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageAttachmentProvider;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageProvider;
 import mobileapp.ctemplar.com.ctemplarapp.security.PGPManager;
-import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
+import mobileapp.ctemplar.com.ctemplarapp.utils.DateUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.FileUtils;
 import okhttp3.MediaType;
@@ -218,7 +218,7 @@ public class SendMessageActivityViewModel extends ViewModel {
             request.setContent(content);
             request.setSubject(subject);
         }
-        request.setIsEncrypted(!isEmptyReceiverKeys);
+        request.setEncrypted(!isEmptyReceiverKeys);
         request.setSubjectEncrypted(isSubjectEncrypted && !isEmptyReceiverKeys);
 
         userRepository.updateMessage(id, request)
@@ -550,8 +550,8 @@ public class SendMessageActivityViewModel extends ViewModel {
             }
         }
         String documentLink = attachmentProvider.getDocumentLink();
-        String fileName = AppUtils.getFileNameFromURL(documentLink);
-        String type = AppUtils.getMimeType(documentLink);
+        String fileName = DateUtils.getFileNameFromURL(documentLink);
+        String type = DateUtils.getMimeType(documentLink);
         if (type == null) {
             type = "";
         }

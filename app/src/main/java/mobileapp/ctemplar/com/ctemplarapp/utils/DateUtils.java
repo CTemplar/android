@@ -27,7 +27,7 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.UserStore;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageProvider;
 import timber.log.Timber;
 
-public class AppUtils {
+public class DateUtils {
     private static UserStore userStore = CTemplarApp.getUserStore();
 
     public static final String MAIN_DATE_PATTERN = "yyyy-MM-dd'T'HH:mm:ss'Z'";
@@ -38,95 +38,126 @@ public class AppUtils {
     private static final String ELAPSED_TIME_FORMAT = "%2dd %02d:%02d";
     private static final String ELAPSED_TIME_SHORT_FORMAT = "%02d:%02d";
 
-    public static String elapsedTime(@Nullable String stringDate) {
-        if (TextUtils.isEmpty(stringDate)) {
+    public static String elapsedTime(@Nullable Date date) {
+        if (date == null) {
             return "";
         }
+        long stringTimeInMillis = date.getTime();
         Calendar nowCalendar = Calendar.getInstance(getTimeZone());
-        nowCalendar.setTimeInMillis(
-                nowCalendar.getTimeInMillis() - timezoneOffsetInMillis()
-        );
-
-        DateFormat parseFormat = new SimpleDateFormat(MAIN_DATE_PATTERN, Locale.getDefault());
-        parseFormat.setTimeZone(getTimeZone());
-        try {
-            Date parseDate = parseFormat.parse(stringDate);
-            long stringTimeInMillis = parseDate.getTime();
-            long diffInMillis = stringTimeInMillis - nowCalendar.getTimeInMillis();
-            if (diffInMillis < 0) {
-                return null;
-            }
-
-            long seconds = diffInMillis / 1000;
-            long minutes = seconds / 60;
-            long hours = minutes / 60;
-            long days = hours / 24;
-            minutes %= 60;
-            hours %= 24;
-
-            if (days <= 0) {
-                return String.format(Locale.getDefault(), ELAPSED_TIME_SHORT_FORMAT, hours, minutes);
-            } else {
-                return String.format(Locale.getDefault(), ELAPSED_TIME_FORMAT, days, hours, minutes);
-            }
-        } catch (ParseException e) {
-            Timber.e(e);
+        nowCalendar.setTimeInMillis(nowCalendar.getTimeInMillis() - timezoneOffsetInMillis());
+        long diffInMillis = stringTimeInMillis - nowCalendar.getTimeInMillis();
+        if (diffInMillis < 0) {
+            return null;
         }
-        return "";
+
+        long seconds = diffInMillis / 1000;
+        long minutes = seconds / 60;
+        long hours = minutes / 60;
+        long days = hours / 24;
+        minutes %= 60;
+        hours %= 24;
+
+        if (days <= 0) {
+            return String.format(Locale.getDefault(), ELAPSED_TIME_SHORT_FORMAT, hours, minutes);
+        } else {
+            return String.format(Locale.getDefault(), ELAPSED_TIME_FORMAT, days, hours, minutes);
+        }
+//        Calendar nowCalendar = Calendar.getInstance(getTimeZone());
+//        nowCalendar.setTimeInMillis(
+//                nowCalendar.getTimeInMillis() - timezoneOffsetInMillis()
+//        );
+
+//        DateFormat parseFormat = new SimpleDateFormat(MAIN_DATE_PATTERN, Locale.getDefault());
+//        parseFormat.setTimeZone(getTimeZone());
+//        try {
+//            Date parseDate = parseFormat.parse(stringDate);
+//            long stringTimeInMillis = parseDate.getTime();
+//            long diffInMillis = stringTimeInMillis - nowCalendar.getTimeInMillis();
+//            if (diffInMillis < 0) {
+//                return null;
+//            }
+//
+//            long seconds = diffInMillis / 1000;
+//            long minutes = seconds / 60;
+//            long hours = minutes / 60;
+//            long days = hours / 24;
+//            minutes %= 60;
+//            hours %= 24;
+//
+//            if (days <= 0) {
+//                return String.format(Locale.getDefault(), ELAPSED_TIME_SHORT_FORMAT, hours, minutes);
+//            } else {
+//                return String.format(Locale.getDefault(), ELAPSED_TIME_FORMAT, days, hours, minutes);
+//            }
+//        } catch (ParseException e) {
+//            Timber.e(e);
+//        }
+//        return "";
     }
 
-    public static String messageDate(@Nullable String stringDate) {
-        if (TextUtils.isEmpty(stringDate)) {
+    public static String messageDate(@Nullable Date date) {
+        if (date == null) {
             return "";
         }
+//        Date nowDate = new Date();
         Calendar nowCalendar = Calendar.getInstance(getTimeZone());
-        DateFormat parseFormat = new SimpleDateFormat(DATE_PATTERN, Locale.getDefault());
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+//        DateFormat parseFormat = new SimpleDateFormat(DATE_PATTERN, Locale.getDefault());
         DateFormat timeFormat = new SimpleDateFormat("h:mm aa", Locale.getDefault());
         DateFormat monthFormat = new SimpleDateFormat("MMM d", Locale.getDefault());
         DateFormat yearFormat = new SimpleDateFormat("MMM d, yyyy", Locale.getDefault());
 
-        try {
-            Date date = parseFormat.parse(stringDate);
-            Calendar parseCalendar = parseFormat.getCalendar();
-            date.setTime(date.getTime() + timezoneOffsetInMillis());
-
-            if (nowCalendar.get(Calendar.YEAR) == parseCalendar.get(Calendar.YEAR)) {
-                if (nowCalendar.get(Calendar.DATE) == parseCalendar.get(Calendar.DATE)) {
-                    return timeFormat.format(date);
-                } else if (nowCalendar.get(Calendar.DATE) - parseCalendar.get(Calendar.DATE) == 1) {
-                    return "Yesterday";
-                } else {
-                    return monthFormat.format(date);
-                }
-            } else {
-                return yearFormat.format(date);
+        if (nowCalendar.get(Calendar.YEAR) == calendar.get(Calendar.YEAR)) {
+            if (nowCalendar.get(Calendar.DATE) == calendar.get(Calendar.DATE)) {
+                return timeFormat.format(date);
+            } else if (nowCalendar.get(Calendar.DATE) - calendar.get(Calendar.DATE) == 1) {
+                return "Yesterday";
             }
-        } catch (ParseException e) {
-            Timber.e(e);
         }
-        return "";
+        return monthFormat.format(date);
+//        try {
+//            Date date = parseFormat.parse(stringDate);
+//            Calendar parseCalendar = parseFormat.getCalendar();
+//
+//            if (nowCalendar.get(Calendar.YEAR) == parseCalendar.get(Calendar.YEAR)) {
+//                if (nowCalendar.get(Calendar.DATE) == parseCalendar.get(Calendar.DATE)) {
+//                    return timeFormat.format(date);
+//                } else if (nowCalendar.get(Calendar.DATE) - parseCalendar.get(Calendar.DATE) == 1) {
+//                    return "Yesterday";
+//                } else {
+//                    return monthFormat.format(date);
+//                }
+//            } else {
+//                return yearFormat.format(date);
+//            }
+//        } catch (ParseException e) {
+//            Timber.e(e);
+//        }
+//        return "";
     }
 
-    public static String messageFullDate(String stringDate) {
-        if (TextUtils.isEmpty(stringDate)) {
+    public static String messageFullDate(@Nullable Date date) {
+        if (date == null) {
             return "";
         }
-        DateFormat parseFormat = new SimpleDateFormat(DATE_PATTERN, Locale.getDefault());
+//        DateFormat parseFormat = new SimpleDateFormat(DATE_PATTERN, Locale.getDefault());
         DateFormat viewFormat = new SimpleDateFormat(VIEW_DATE_PATTERN, Locale.getDefault());
-        try {
-            Date date = parseFormat.parse(stringDate);
-            date.setTime(date.getTime() + timezoneOffsetInMillis());
-            return viewFormat.format(date);
-        } catch (ParseException e) {
-            Timber.e(e);
-        }
-        return "";
+        return viewFormat.format(date);
+//        try {
+//            Date date = parseFormat.parse(stringDate);
+//            date.setTime(date.getTime() + timezoneOffsetInMillis());
+//            return viewFormat.format(date);
+//        } catch (ParseException e) {
+//            Timber.e(e);
+//        }
+//        return "";
     }
 
     @Nullable
-    public static String getDeliveryDate(@Nullable MessageProvider messageProvider) {
+    public static Date getDeliveryDate(@Nullable MessageProvider messageProvider) {
         if (messageProvider == null) {
-            return "";
+            return null;
         }
         return messageProvider.isSend() ? messageProvider.getSentAt() : messageProvider.getCreatedAt();
     }
@@ -161,6 +192,7 @@ public class AppUtils {
         }
     }
 
+    @Deprecated
     public static boolean twoWeeksTrial(String stringDate) {
         if (!TextUtils.isEmpty(stringDate)) {
             DateFormat parseFormat = new SimpleDateFormat(DATE_PATTERN, Locale.getDefault());
@@ -238,7 +270,7 @@ public class AppUtils {
             if (host.length() > 0 && url.endsWith(host)) {
                 return "";
             }
-        }  catch(MalformedURLException e) {
+        } catch (MalformedURLException e) {
             Timber.e(e);
             return "";
         }
@@ -273,23 +305,27 @@ public class AppUtils {
         return type;
     }
 
-    public static String getStringDate(String stringDate) {
-        if (TextUtils.isEmpty(stringDate)) {
+    public static String getStringDate(@Nullable Date date) {
+        if (date == null) {
             return "";
         }
         DateFormat parseFormat = new SimpleDateFormat(DATE_PATTERN, Locale.getDefault());
         DateFormat viewFormat = new SimpleDateFormat(EMAIL_PATTERN, Locale.getDefault());
-        try {
-            Date date = parseFormat.parse(stringDate);
-            return viewFormat.format(date);
-        } catch (ParseException e) {
-            Timber.e("DateParse error: %s", e.getMessage());
-        }
-        return "";
+        return viewFormat.format(date);
+//        try {
+//            Date date = parseFormat.parse(stringDate);
+//            return viewFormat.format(date);
+//        } catch (ParseException e) {
+//            Timber.e("DateParse error: %s", e.getMessage());
+//        }
+//        return "";
     }
 
     public static void vibrate(Context context, long milliseconds) {
         Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+        if (vibrator == null) {
+            return;
+        }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             vibrator.vibrate(VibrationEffect.createOneShot(milliseconds,
                     VibrationEffect.DEFAULT_AMPLITUDE));

@@ -230,7 +230,7 @@ public class SendMessageRequestProvider {
         request.setDelayedDelivery(getDelayedDelivery());
         request.setDeadManDuration(getDeadManDuration());
         request.setSend(isSend());
-        request.setIsEncrypted(getIsEncrypted());
+        request.setEncrypted(getIsEncrypted());
         request.setHtml(isHtml());
         request.setSubjectEncrypted(isSubjectEncrypted());
         request.setMailbox(getMailbox());

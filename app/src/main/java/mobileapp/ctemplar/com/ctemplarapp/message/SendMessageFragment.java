@@ -38,6 +38,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import mobileapp.ctemplar.com.ctemplarapp.ActivityInterface;
@@ -50,8 +51,8 @@ import mobileapp.ctemplar.com.ctemplarapp.net.entity.AttachmentsEntity;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.PublicKeysRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SendMessageRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.KeyResult;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.EncryptionMessage;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.MyselfResult;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.EncryptionMessage;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.MyselfResult;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.Contact;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.AttachmentProvider;
@@ -60,7 +61,7 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageAttachmentP
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageProvider;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.SendMessageRequestProvider;
 import mobileapp.ctemplar.com.ctemplarapp.services.SendMailService;
-import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
+import mobileapp.ctemplar.com.ctemplarapp.utils.DateUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EncryptUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.FileUtils;
@@ -661,8 +662,8 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         String[] messageBcc = messageProvider.getBcc();
         String messageSubject = messageProvider.getSubject();
         String messageContent = messageProvider.getContent();
-        String messageDestruct = messageProvider.getDestructDate();
-        String messageDelayed = messageProvider.getDelayedDelivery();
+        Date messageDestruct = messageProvider.getDestructDate();
+        Date messageDelayed = messageProvider.getDelayedDelivery();
         String messageDeadMan = messageProvider.getDeadManDuration();
         List<AttachmentProvider> messageAttachmentList = messageProvider.getAttachments();
 
@@ -688,13 +689,13 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
             Spanned messageSpanned = HtmlUtils.fromHtml(messageContent);
             composeEditText.setText(messageSpanned);
         }
-        if (messageDestruct != null && !messageDestruct.isEmpty()) {
+        if (messageDestruct != null) {
             sendMessageDestructIco.setSelected(true);
-            destructDeliveryInMillis = AppUtils.millisFromServer(messageDestruct);
+            destructDeliveryInMillis = messageDestruct.getTime();
         }
-        if (messageDelayed != null && !messageDelayed.isEmpty()) {
+        if (messageDelayed != null) {
             sendMessageDelayedIco.setSelected(true);
-            delayedDeliveryInMillis = AppUtils.millisFromServer(messageDelayed);
+            delayedDeliveryInMillis = messageDelayed.getTime();
         }
         if (messageDeadMan != null && !messageDeadMan.isEmpty()) {
             sendMessageDeadIco.setSelected(true);
@@ -762,10 +763,10 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         sendMessageRequest.setFolder(SENT);
 
         if (destructDeliveryInMillis != null) {
-            sendMessageRequest.setDestructDate(AppUtils.millisToServer(destructDeliveryInMillis));
+            sendMessageRequest.setDestructDate(DateUtils.millisToServer(destructDeliveryInMillis));
         }
         if (delayedDeliveryInMillis != null) {
-            sendMessageRequest.setDelayedDelivery(AppUtils.millisToServer(delayedDeliveryInMillis));
+            sendMessageRequest.setDelayedDelivery(DateUtils.millisToServer(delayedDeliveryInMillis));
             sendMessageRequest.setSend(false);
             sendMessageRequest.setFolder(OUTBOX);
         }

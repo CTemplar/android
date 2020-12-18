@@ -45,25 +45,25 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.AddFirebaseTokenResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.CaptchaResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.CaptchaVerifyResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.CheckUsernameResponse;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Domains.DomainsResponse;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Filters.FilterResult;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Filters.FiltersResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.domains.DomainsResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.filters.FilterResult;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.filters.FiltersResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.KeyResponse;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Mailboxes.MailboxesResponse;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Mailboxes.MailboxesResult;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.EmptyFolderResponse;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessageAttachment;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResponse;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResult;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.BlackListContact;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.MyselfResponse;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.SettingsResponse;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.WhiteListContact;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.mailboxes.MailboxesResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.mailboxes.MailboxesResult;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.EmptyFolderResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.MessageAttachment;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.MessagesResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.MessagesResult;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.BlackListContact;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.MyselfResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.SettingsResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.WhiteListContact;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.RecoverPasswordResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.SignInResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.SignUpResponse;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.WhiteBlackLists.BlackListResponse;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.WhiteBlackLists.WhiteListResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.whiteBlackList.BlackListResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.whiteBlackList.WhiteListResponse;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
@@ -425,13 +425,13 @@ public class UserRepository {
     }
 
     public Observable<ResponseBody> deleteBlacklistContact(BlackListContact contact) {
-        return service.deleteBlacklistContact(contact.id)
+        return service.deleteBlacklistContact(contact.getId())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
     public Observable<ResponseBody> deleteWhitelistContact(WhiteListContact contact) {
-        return service.deleteWhitelistContact(contact.id)
+        return service.deleteWhitelistContact(contact.getId())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }

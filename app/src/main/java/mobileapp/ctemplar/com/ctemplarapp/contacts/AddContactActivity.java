@@ -14,7 +14,7 @@ import butterknife.BindView;
 import mobileapp.ctemplar.com.ctemplarapp.BaseActivity;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.ContactData;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.contacts.ContactData;
 
 public class AddContactActivity extends BaseActivity {
     private AddContactViewModel viewModel;

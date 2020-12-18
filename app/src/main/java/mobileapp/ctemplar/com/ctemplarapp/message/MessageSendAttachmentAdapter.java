@@ -14,7 +14,7 @@ import java.util.List;
 
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageAttachmentProvider;
-import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
+import mobileapp.ctemplar.com.ctemplarapp.utils.DateUtils;
 
 public class MessageSendAttachmentAdapter extends RecyclerView.Adapter<MessageSendAttachmentHolder> {
 
@@ -41,7 +41,7 @@ public class MessageSendAttachmentAdapter extends RecyclerView.Adapter<MessageSe
     public void onBindViewHolder(@NonNull MessageSendAttachmentHolder holder, int position) {
         final MessageAttachmentProvider messageAttachment = attachmentList.get(position);
         final String documentLink = messageAttachment.getDocumentLink();
-        final String fileName = AppUtils.getFileNameFromURL(documentLink);
+        final String fileName = DateUtils.getFileNameFromURL(documentLink);
 
         holder.txtName.setText(fileName);
         holder.imgDelete.setOnClickListener(v -> deleteAttachment(messageAttachment));
