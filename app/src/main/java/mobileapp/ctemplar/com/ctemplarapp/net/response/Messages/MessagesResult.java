@@ -64,7 +64,7 @@ public class MessagesResult {
     private String folderName;
 
     @SerializedName("updated")
-    private Date updated;
+    private Date updatedAt;
 
     @SerializedName("destruct_date")
     private Date destructDate;
@@ -200,8 +200,8 @@ public class MessagesResult {
         return folderName;
     }
 
-    public Date getUpdated() {
-        return updated;
+    public Date getUpdatedAt() {
+        return updatedAt;
     }
 
     public Date getDestructDate() {

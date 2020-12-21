@@ -41,6 +41,7 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.provider.AttachmentProvider
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageAttachmentProvider;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageProvider;
 import mobileapp.ctemplar.com.ctemplarapp.security.PGPManager;
+import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.DateUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.FileUtils;
@@ -550,8 +551,8 @@ public class SendMessageActivityViewModel extends ViewModel {
             }
         }
         String documentLink = attachmentProvider.getDocumentLink();
-        String fileName = DateUtils.getFileNameFromURL(documentLink);
-        String type = DateUtils.getMimeType(documentLink);
+        String fileName = AppUtils.getFileNameFromURL(documentLink);
+        String type = AppUtils.getMimeType(documentLink);
         if (type == null) {
             type = "";
         }

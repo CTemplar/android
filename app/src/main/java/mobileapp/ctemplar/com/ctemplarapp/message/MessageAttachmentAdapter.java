@@ -11,6 +11,7 @@ import java.util.List;
 import io.reactivex.subjects.PublishSubject;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.AttachmentProvider;
+import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.DateUtils;
 
 public class MessageAttachmentAdapter extends RecyclerView.Adapter<MessageAttachmentHolder> {
@@ -55,7 +56,7 @@ public class MessageAttachmentAdapter extends RecyclerView.Adapter<MessageAttach
     public void onBindViewHolder(@NonNull final MessageAttachmentHolder holder, int position) {
         final AttachmentProvider messageAttachment = attachmentList.get(position);
         final String documentLink = messageAttachment.getDocumentLink();
-        final String fileName = DateUtils.getFileNameFromURL(documentLink);
+        final String fileName = AppUtils.getFileNameFromURL(documentLink);
         final int attachmentPosition = position;
 
         holder.txtName.setText(fileName);

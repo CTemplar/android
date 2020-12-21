@@ -3,6 +3,7 @@ package mobileapp.ctemplar.com.ctemplarapp.net.request;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.EncryptionMessage;
@@ -34,10 +35,10 @@ public class SendMessageRequest {
     private String folder;
 
     @SerializedName("destruct_date")
-    private String destructDate;
+    private Date destructDate;
 
     @SerializedName("delayed_delivery")
-    private String delayedDelivery;
+    private Date delayedDelivery;
 
     @SerializedName("dead_man_duration")
     private Long deadManDuration;
@@ -67,13 +68,19 @@ public class SendMessageRequest {
     private List<MessageAttachment> attachments;
 
     @SerializedName("updated")
-    private String updatedAt;
+    private Date updatedAt;
 
     public SendMessageRequest() {
 
     }
 
-    public SendMessageRequest(String sender, String content, ArrayList<String> receivers, ArrayList<String> cc, ArrayList<String> bcc, String folder, long mailbox) {
+    public SendMessageRequest(String sender,
+                              String content,
+                              ArrayList<String> receivers,
+                              ArrayList<String> cc,
+                              ArrayList<String> bcc,
+                              String folder,
+                              long mailbox) {
         this.sender = sender;
         this.content = content;
         this.receivers = receivers;
@@ -83,12 +90,12 @@ public class SendMessageRequest {
         this.mailbox = mailbox;
     }
 
-    public void setEncryptionMessage(EncryptionMessage encryptionMessage) {
-        this.encryptionMessage = encryptionMessage;
-    }
-
     public EncryptionMessage getEncryptionMessage() {
         return encryptionMessage;
+    }
+
+    public void setEncryptionMessage(EncryptionMessage encryptionMessage) {
+        this.encryptionMessage = encryptionMessage;
     }
 
     public String getSender() {
@@ -147,19 +154,19 @@ public class SendMessageRequest {
         this.folder = folder;
     }
 
-    public String getDestructDate() {
+    public Date getDestructDate() {
         return destructDate;
     }
 
-    public void setDestructDate(String destructDate) {
+    public void setDestructDate(Date destructDate) {
         this.destructDate = destructDate;
     }
 
-    public String getDelayedDelivery() {
+    public Date getDelayedDelivery() {
         return delayedDelivery;
     }
 
-    public void setDelayedDelivery(String delayedDelivery) {
+    public void setDelayedDelivery(Date delayedDelivery) {
         this.delayedDelivery = delayedDelivery;
     }
 
@@ -235,11 +242,11 @@ public class SendMessageRequest {
         this.attachments = attachments;
     }
 
-    public String getUpdatedAt() {
+    public Date getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(String updatedAt) {
+    public void setUpdatedAt(Date updatedAt) {
         this.updatedAt = updatedAt;
     }
 }

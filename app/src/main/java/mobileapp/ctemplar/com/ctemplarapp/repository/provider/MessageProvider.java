@@ -36,7 +36,7 @@ public class MessageProvider {
     private String[] cc;
     private String[] bcc;
     private String folderName;
-    private Date updated;
+    private Date updatedAt;
     private Date destructDate;
     private Date delayedDelivery;
     private String deadManDuration;
@@ -60,7 +60,7 @@ public class MessageProvider {
 
     }
 
-    public MessageProvider(long id, String encryption, String sender, boolean hasAttachments, List<AttachmentProvider> attachments, Date createdAt, UserDisplayProvider senderDisplay, List<UserDisplayProvider> receiverDisplayList, List<UserDisplayProvider> ccDisplayList, List<UserDisplayProvider> bccDisplayList, boolean hasChildren, int childrenCount, String subject, String content, String[] receivers, String[] cc, String[] bcc, String folderName, Date updated, Date destructDate, Date delayedDelivery, String deadManDuration, boolean isRead, boolean send, boolean isStarred, Date sentAt, boolean isEncrypted, boolean isSubjectEncrypted, boolean isProtected, boolean isHtml, String hash, List<String> spamReason, String lastAction, String lastActionThread, long mailboxId, String parent, boolean isSubjectDecrypted) {
+    public MessageProvider(long id, String encryption, String sender, boolean hasAttachments, List<AttachmentProvider> attachments, Date createdAt, UserDisplayProvider senderDisplay, List<UserDisplayProvider> receiverDisplayList, List<UserDisplayProvider> ccDisplayList, List<UserDisplayProvider> bccDisplayList, boolean hasChildren, int childrenCount, String subject, String content, String[] receivers, String[] cc, String[] bcc, String folderName, Date updatedAt, Date destructDate, Date delayedDelivery, String deadManDuration, boolean isRead, boolean send, boolean isStarred, Date sentAt, boolean isEncrypted, boolean isSubjectEncrypted, boolean isProtected, boolean isHtml, String hash, List<String> spamReason, String lastAction, String lastActionThread, long mailboxId, String parent, boolean isSubjectDecrypted) {
         this.id = id;
         this.encryption = encryption;
         this.sender = sender;
@@ -79,7 +79,7 @@ public class MessageProvider {
         this.cc = cc;
         this.bcc = bcc;
         this.folderName = folderName;
-        this.updated = updated;
+        this.updatedAt = updatedAt;
         this.destructDate = destructDate;
         this.delayedDelivery = delayedDelivery;
         this.deadManDuration = deadManDuration;
@@ -244,12 +244,12 @@ public class MessageProvider {
         this.folderName = folderName;
     }
 
-    public Date getUpdated() {
-        return updated;
+    public Date getUpdatedAt() {
+        return updatedAt;
     }
 
-    public void setUpdated(Date updated) {
-        this.updated = updated;
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
     public Date getDestructDate() {
@@ -525,7 +525,7 @@ public class MessageProvider {
         result.cc = listToArray(message.getCc());
         result.bcc = listToArray(message.getBcc());
         result.folderName = message.getFolderName();
-        result.updated = message.getUpdated();
+        result.updatedAt = message.getUpdatedAt();
         result.destructDate = message.getDestructDate();
         result.delayedDelivery = message.getDelayedDelivery();
         result.deadManDuration = message.getDeadManDuration();
@@ -619,7 +619,7 @@ public class MessageProvider {
         result.setCc(arrayToList(message.getCc()));
         result.setBcc(arrayToList(message.getBcc()));
         result.setFolderName(message.getFolderName());
-        result.setUpdated(message.getUpdated());
+        result.setUpdatedAt(message.getUpdatedAt());
         result.setDestructDate(message.getDestructDate());
         result.setDelayedDelivery(message.getDelayedDelivery());
         result.setDeadManDuration(message.getDeadManDuration());

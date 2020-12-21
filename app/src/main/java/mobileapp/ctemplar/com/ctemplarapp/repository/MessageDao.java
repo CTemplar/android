@@ -17,16 +17,16 @@ public interface MessageDao {
     @Query("SELECT * FROM messages")
     List<MessageEntity> getAll();
 
-    @Query("SELECT * FROM messages WHERE requestFolder=:folderName ORDER BY updated DESC")
+    @Query("SELECT * FROM messages WHERE requestFolder=:folderName ORDER BY updatedAt DESC")
     List<MessageEntity> getAllByFolder(String folderName);
 
-    @Query("SELECT * FROM messages WHERE isStarred=1 ORDER BY updated DESC")
+    @Query("SELECT * FROM messages WHERE isStarred=1 ORDER BY updatedAt DESC")
     List<MessageEntity> getAllStarred();
 
-    @Query("SELECT * FROM messages WHERE isRead=0 AND folderName<>'spam' ORDER BY updated DESC")
+    @Query("SELECT * FROM messages WHERE isRead=0 AND folderName<>'spam' ORDER BY updatedAt DESC")
     List<MessageEntity> getAllUnread();
 
-    @Query("SELECT * FROM messages WHERE folderName<>'spam' AND folderName<>'trash' ORDER BY updated DESC")
+    @Query("SELECT * FROM messages WHERE folderName<>'spam' AND folderName<>'trash' ORDER BY updatedAt DESC")
     List<MessageEntity> getAllMails();
 
     @Insert(onConflict = REPLACE)

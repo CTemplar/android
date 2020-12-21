@@ -5,7 +5,6 @@ import com.google.gson.annotations.SerializedName;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.EncryptionMessage;
 
 public class EncryptionMessageProvider {
-
     @SerializedName("id")
     private long id;
 

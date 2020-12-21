@@ -41,6 +41,7 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.provider.EncryptionMessageP
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageAttachmentProvider;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.SendMessageRequestProvider;
 import mobileapp.ctemplar.com.ctemplarapp.security.PGPManager;
+import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.DateUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EncryptUtils;
@@ -67,7 +68,7 @@ public class SendMailService extends IntentService {
     private static final String ATTACHMENTS_EXTRA_KEY = "attachments";
     private static final String EXTERNAL_ENCRYPTION_EXTRA_KEY = "external_encryption";
 
-    private static Gson GSON = new Gson();
+    private static final Gson GSON = new Gson();
 
     public SendMailService() {
         super(TAG);
@@ -226,7 +227,7 @@ public class SendMailService extends IntentService {
         }
         request.setEncrypted(isReceiverKeysNotEmpty);
         request.setSubjectEncrypted(isReceiverKeysNotEmpty);
-        request.setUpdatedAt(DateUtils.convertToServerDatePattern(new Date()));
+        request.setUpdatedAt(new Date());
 
         MessagesResult messagesResult;
         boolean isDraft = isDraft(request);
@@ -358,11 +359,11 @@ public class SendMailService extends IntentService {
         }
 
         String documentLink = attachmentProvider.getDocumentLink();
-        String type = DateUtils.getMimeType(documentLink);
+        String type = AppUtils.getMimeType(documentLink);
         if (type == null) {
             type = "";
         }
-        String fileName = DateUtils.getFileNameFromURL(documentLink);
+        String fileName = AppUtils.getFileNameFromURL(documentLink);
         MediaType mediaType = MediaType.parse(type);
 
         File encryptedFile;

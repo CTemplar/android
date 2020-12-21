@@ -118,8 +118,8 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
 
     // COMPOSE OPTIONS
     private final List<String> mailboxAddresses = new ArrayList<>();
-    private Long delayedDeliveryInMillis;
-    private Long destructDeliveryInMillis;
+    private Date delayedDeliveryDate;
+    private Date destructDeliveryDate;
     private Long deadDeliveryInHours;
     private String lastAction;
     private EncryptionMessage messageEncryptionResult;
@@ -140,24 +140,24 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
     private final DelayedDeliveryDialogFragment.OnScheduleDelayedDelivery onScheduleDelayedDelivery
             = new DelayedDeliveryDialogFragment.OnScheduleDelayedDelivery() {
         @Override
-        public void onSchedule(Long timeInMilliseconds) {
-            delayedDeliveryInMillis = timeInMilliseconds;
+        public void onSchedule(Date date) {
+            delayedDeliveryDate = date;
             if (getActivity() == null) {
                 return;
             }
-            sendMessageDelayedIco.setSelected(timeInMilliseconds != null);
+            sendMessageDelayedIco.setSelected(date != null);
         }
     };
 
     private final DestructTimerDialogFragment.OnScheduleDestructTimerDelivery onScheduleDestructTimerDelivery
             = new DestructTimerDialogFragment.OnScheduleDestructTimerDelivery() {
         @Override
-        public void onSchedule(Long timeInMilliseconds) {
+        public void onSchedule(Date date) {
             if (getActivity() == null) {
                 return;
             }
-            destructDeliveryInMillis = timeInMilliseconds;
-            sendMessageDestructIco.setSelected(timeInMilliseconds != null);
+            destructDeliveryDate = date;
+            sendMessageDestructIco.setSelected(date != null);
         }
     };
 
@@ -691,11 +691,11 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         }
         if (messageDestruct != null) {
             sendMessageDestructIco.setSelected(true);
-            destructDeliveryInMillis = messageDestruct.getTime();
+            destructDeliveryDate = messageDestruct;
         }
         if (messageDelayed != null) {
             sendMessageDelayedIco.setSelected(true);
-            delayedDeliveryInMillis = messageDelayed.getTime();
+            delayedDeliveryDate = messageDelayed;
         }
         if (messageDeadMan != null && !messageDeadMan.isEmpty()) {
             sendMessageDeadIco.setSelected(true);
@@ -762,11 +762,11 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         sendMessageRequest.setSend(true);
         sendMessageRequest.setFolder(SENT);
 
-        if (destructDeliveryInMillis != null) {
-            sendMessageRequest.setDestructDate(DateUtils.millisToServer(destructDeliveryInMillis));
+        if (destructDeliveryDate != null) {
+            sendMessageRequest.setDestructDate(destructDeliveryDate);
         }
-        if (delayedDeliveryInMillis != null) {
-            sendMessageRequest.setDelayedDelivery(DateUtils.millisToServer(delayedDeliveryInMillis));
+        if (delayedDeliveryDate != null) {
+            sendMessageRequest.setDelayedDelivery(delayedDeliveryDate);
             sendMessageRequest.setSend(false);
             sendMessageRequest.setFolder(OUTBOX);
         }

@@ -40,6 +40,7 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.constant.MessageActions;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.AttachmentProvider;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageProvider;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.UserDisplayProvider;
+import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.DateUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.FileUtils;
@@ -347,7 +348,7 @@ public class ViewMessagesAdapter extends BaseAdapter {
                     return;
                 }
 
-                String originalFileName = DateUtils.getFileNameFromURL(documentLink);
+                String originalFileName = AppUtils.getFileNameFromURL(documentLink);
                 File generatedFile = FileUtils.generateFileName(originalFileName, externalStorageFile);
                 String fileName = generatedFile == null ? originalFileName : generatedFile.getName();
 

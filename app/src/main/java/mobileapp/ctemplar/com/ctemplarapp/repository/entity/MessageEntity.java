@@ -28,7 +28,7 @@ public class MessageEntity {
     private List<String> bcc;
     private String folderName;
     private String requestFolder;
-    private Date updated;
+    private Date updatedAt;
     private Date destructDate;
     private Date delayedDelivery;
     private String deadManDuration;
@@ -51,7 +51,7 @@ public class MessageEntity {
 
     }
 
-    public MessageEntity(long id, String encryption, String sender, boolean hasAttachments, List<AttachmentEntity> attachments, Date createdAt, UserDisplayEntity senderDisplay, List<UserDisplayEntity> receiverDisplayList, List<UserDisplayEntity> ccDisplayList, List<UserDisplayEntity> bccDisplayList, boolean hasChildren, int childrenCount, String subject, String content, List<String> receivers, List<String> cc, List<String> bcc, String folderName, String requestFolder, Date updated, Date destructDate, Date delayedDelivery, String deadManDuration, boolean isRead, boolean send, boolean isStarred, Date sentAt, boolean isEncrypted, boolean isSubjectEncrypted, boolean isProtected, boolean isHtml, String hash, List<String> spamReason, String lastAction, String lastActionThread, long mailboxId, String parent) {
+    public MessageEntity(long id, String encryption, String sender, boolean hasAttachments, List<AttachmentEntity> attachments, Date createdAt, UserDisplayEntity senderDisplay, List<UserDisplayEntity> receiverDisplayList, List<UserDisplayEntity> ccDisplayList, List<UserDisplayEntity> bccDisplayList, boolean hasChildren, int childrenCount, String subject, String content, List<String> receivers, List<String> cc, List<String> bcc, String folderName, String requestFolder, Date updatedAt, Date destructDate, Date delayedDelivery, String deadManDuration, boolean isRead, boolean send, boolean isStarred, Date sentAt, boolean isEncrypted, boolean isSubjectEncrypted, boolean isProtected, boolean isHtml, String hash, List<String> spamReason, String lastAction, String lastActionThread, long mailboxId, String parent) {
         this.id = id;
         this.encryption = encryption;
         this.sender = sender;
@@ -71,7 +71,7 @@ public class MessageEntity {
         this.bcc = bcc;
         this.folderName = folderName;
         this.requestFolder = requestFolder;
-        this.updated = updated;
+        this.updatedAt = updatedAt;
         this.destructDate = destructDate;
         this.delayedDelivery = delayedDelivery;
         this.deadManDuration = deadManDuration;
@@ -243,12 +243,12 @@ public class MessageEntity {
         this.requestFolder = requestFolder;
     }
 
-    public Date getUpdated() {
-        return updated;
+    public Date getUpdatedAt() {
+        return updatedAt;
     }
 
-    public void setUpdated(Date updated) {
-        this.updated = updated;
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
     public Date getDestructDate() {
