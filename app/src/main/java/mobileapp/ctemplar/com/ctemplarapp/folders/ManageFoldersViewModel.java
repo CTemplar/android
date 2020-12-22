@@ -17,7 +17,6 @@ import retrofit2.Response;
 import timber.log.Timber;
 
 public class ManageFoldersViewModel extends ViewModel {
-
     private ManageFoldersRepository manageFoldersRepository;
     private UserRepository userRepository;
     private MutableLiveData<ResponseStatus> responseStatus = new MutableLiveData<>();

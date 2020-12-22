@@ -16,16 +16,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Calendar;
+import java.util.Date;
 
 import mobileapp.ctemplar.com.ctemplarapp.R;
-import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
+import mobileapp.ctemplar.com.ctemplarapp.utils.DateUtils;
 
 public class DelayedDeliveryDialogFragment extends DialogFragment {
-
-    private Calendar calendar = Calendar.getInstance(AppUtils.getTimeZone());
+    private Calendar calendar = Calendar.getInstance();
 
     interface OnScheduleDelayedDelivery {
-        void onSchedule(Long timeInMilliseconds);
+        void onSchedule(Date date);
     }
 
     private OnScheduleDelayedDelivery onScheduleDelayedDelivery;
@@ -51,20 +51,16 @@ public class DelayedDeliveryDialogFragment extends DialogFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_delayed_message_dialog, container, false);
 
-        ImageView closeDialog = view.findViewById(R.id.fragment_delayed_message_dialog_close);
+        final ImageView closeDialog = view.findViewById(R.id.fragment_delayed_message_dialog_close);
         closeDialog.setOnClickListener(v -> {
             onScheduleDelayedDelivery.onSchedule(null);
             dismiss();
         });
 
-        Button scheduleButton = view.findViewById(R.id.fragment_delayed_message_dialog_schedule);
+        final Button scheduleButton = view.findViewById(R.id.fragment_delayed_message_dialog_schedule);
         scheduleButton.setOnClickListener(v -> {
             if (validate()) {
-                Calendar timezoneCalendar = Calendar.getInstance();
-                timezoneCalendar.setTimeInMillis(
-                        calendar.getTimeInMillis() - AppUtils.timezoneOffsetInMillis()
-                );
-                onScheduleDelayedDelivery.onSchedule(timezoneCalendar.getTimeInMillis());
+                onScheduleDelayedDelivery.onSchedule(calendar.getTime());
                 dismiss();
             }
         });
@@ -72,8 +68,8 @@ public class DelayedDeliveryDialogFragment extends DialogFragment {
         final TextView dateTextView = view.findViewById(R.id.fragment_delayed_message_dialog_input_date);
         final TextView timeTextView = view.findViewById(R.id.fragment_delayed_message_dialog_input_time);
 
-        dateTextView.setText(AppUtils.dateFormat(calendar.getTimeInMillis()));
-        timeTextView.setText(AppUtils.timeFormat(calendar.getTimeInMillis()));
+        dateTextView.setText(DateUtils.dateFormat(calendar.getTimeInMillis()));
+        timeTextView.setText(DateUtils.timeFormat(calendar.getTimeInMillis()));
 
         final int currentYear = calendar.get(Calendar.YEAR);
         final int currentMonth = calendar.get(Calendar.MONTH);
@@ -84,7 +80,7 @@ public class DelayedDeliveryDialogFragment extends DialogFragment {
         dateTextView.setOnClickListener(v -> {
             final DatePickerDialog datePickerDialog = new DatePickerDialog(getActivity(), 0, (view12, year, month, dayOfMonth) -> {
                 calendar.set(year, month, dayOfMonth);
-                dateTextView.setText(AppUtils.dateFormat(calendar.getTimeInMillis()));
+                dateTextView.setText(DateUtils.dateFormat(calendar.getTimeInMillis()));
                 validate();
             }, currentYear, currentMonth, currentDayOfMonth);
             datePickerDialog.show();
@@ -97,7 +93,7 @@ public class DelayedDeliveryDialogFragment extends DialogFragment {
                 int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
 
                 calendar.set(year, month, dayOfMonth, hourOfDay, minute);
-                timeTextView.setText(AppUtils.timeFormat(calendar.getTimeInMillis()));
+                timeTextView.setText(DateUtils.timeFormat(calendar.getTimeInMillis()));
                 validate();
             }, currentHoursOfDay, currentMinute, false);
             timePickerDialog.show();
@@ -107,10 +103,10 @@ public class DelayedDeliveryDialogFragment extends DialogFragment {
     }
 
     private boolean validate() {
-        Calendar nowCalendar = Calendar.getInstance(AppUtils.getTimeZone());
+        Calendar nowCalendar = Calendar.getInstance();
         if (calendar.getTimeInMillis() < nowCalendar.getTimeInMillis()) {
             calendar = nowCalendar;
-            Toast.makeText(getActivity(), getString(R.string.txt_selected_datetime_is_past), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), R.string.txt_selected_datetime_is_past, Toast.LENGTH_SHORT).show();
             return false;
         } else {
             return true;

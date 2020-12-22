@@ -1,10 +1,9 @@
 package mobileapp.ctemplar.com.ctemplarapp.repository.entity;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.google.gson.Gson;
-
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -123,7 +122,7 @@ public class Contact {
         this.encryptedData = encryptedData;
     }
 
-    @NotNull
+    @NonNull
     public static Contact fromContactData(@Nullable ContactData contactData) {
         if (contactData == null) {
             return new Contact();
@@ -142,7 +141,7 @@ public class Contact {
         return contact;
     }
 
-    @NotNull
+    @NonNull
     public static Contact fromEntity(ContactEntity entity) {
         if (entity == null) {
             return new Contact();
@@ -178,7 +177,7 @@ public class Contact {
         return contact;
     }
 
-    @NotNull
+    @NonNull
     public static ContactEntity fromContactDataToEntity(@Nullable ContactData contactData) {
         if (contactData == null) {
             return new ContactEntity();
@@ -197,7 +196,7 @@ public class Contact {
         return contactEntity;
     }
 
-    @NotNull
+    @NonNull
     public static List<Contact> fromContactData(@Nullable ContactData[] contactData) {
         if (contactData == null || contactData.length == 0) {
             return new ArrayList<>();
@@ -209,7 +208,7 @@ public class Contact {
         return contactDataList;
     }
 
-    @NotNull
+    @NonNull
     public static List<Contact> fromEntities(@Nullable List<ContactEntity> contactEntityList) {
         if (contactEntityList == null || contactEntityList.isEmpty()) {
             return new ArrayList<>();
@@ -221,7 +220,7 @@ public class Contact {
         return contactList;
     }
 
-    @NotNull
+    @NonNull
     public static ContactEntity[] fromContactDataToEntities(@Nullable ContactData[] contactData) {
         if (contactData == null || contactData.length == 0) {
             return new ContactEntity[0];

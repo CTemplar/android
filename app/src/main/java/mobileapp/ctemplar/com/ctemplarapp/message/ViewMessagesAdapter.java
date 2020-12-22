@@ -3,6 +3,7 @@ package mobileapp.ctemplar.com.ctemplarapp.message;
 import android.app.Activity;
 import android.app.DownloadManager;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Environment;
 import android.text.Spanned;
@@ -114,6 +115,7 @@ public class ViewMessagesAdapter extends BaseAdapter {
     }
 
     private View getViewByFlag(LayoutInflater inflater, ViewGroup parent, MessageProvider messageData, boolean isLast) {
+        final Resources resources = parent.getResources();
         final ViewGroup view = (ViewGroup) inflater.inflate(R.layout.item_message_view_selector, parent, false);
 
         final View collapsedView = inflater.inflate(R.layout.item_message_view_collapsed, view, false);
@@ -173,22 +175,22 @@ public class ViewMessagesAdapter extends BaseAdapter {
             if (detailsVisibility == View.VISIBLE) {
                 expandedCredentialsLayout.setVisibility(View.GONE);
                 credentialsDivider.setVisibility(View.GONE);
-                detailsTextView.setText(view.getResources().getText(R.string.txt_more_details));
+                detailsTextView.setText(resources.getText(R.string.txt_more_details));
             } else {
                 expandedCredentialsLayout.setVisibility(View.VISIBLE);
                 credentialsDivider.setVisibility(View.VISIBLE);
-                detailsTextView.setText(view.getResources().getText(R.string.txt_less_details));
+                detailsTextView.setText(resources.getText(R.string.txt_less_details));
             }
         });
 
         collapsedSenderTextView.setText(senderDisplay.getName());
         collapsedContentTextView.setText(spannedMessageContent);
-        collapsedShortDateTextView.setText(DateUtils.messageDate(messageDate));
+        collapsedShortDateTextView.setText(DateUtils.messageDate(messageDate, resources));
 
         senderTextView.setText(senderDisplay.getName());
         receiverTextView.setText(userDisplayListToNamesString(receiverDisplayList));
-        shortDateTextView.setText(DateUtils.messageDate(messageDate));
-        fullDateEmailTextView.setText(view.getResources().getString(R.string.txt_date_format,
+        shortDateTextView.setText(DateUtils.messageDate(messageDate, resources));
+        fullDateEmailTextView.setText(resources.getString(R.string.txt_date_format,
                 DateUtils.messageFullDate(messageDate)));
 
         // check for folder
@@ -201,23 +203,23 @@ public class ViewMessagesAdapter extends BaseAdapter {
         if (messageData.getDelayedDelivery() != null) {
             String leftTime = DateUtils.elapsedTime(messageData.getDelayedDelivery());
             if (leftTime != null) {
-                statusTextView.setText(view.getResources().getString(R.string.txt_left_time_delay_delivery, leftTime));
-                statusTextView.setBackgroundColor(view.getResources().getColor(R.color.colorDarkGreen));
+                statusTextView.setText(resources.getString(R.string.txt_left_time_delay_delivery, leftTime));
+                statusTextView.setBackgroundColor(resources.getColor(R.color.colorDarkGreen));
             } else {
                 statusTextView.setVisibility(View.GONE);
             }
         } else if (messageData.getDestructDate() != null) {
             String leftTime = DateUtils.elapsedTime(messageData.getDestructDate());
             if (leftTime != null) {
-                statusTextView.setText(view.getResources().getString(R.string.txt_left_time_destruct, leftTime));
+                statusTextView.setText(resources.getString(R.string.txt_left_time_destruct, leftTime));
             } else {
                 statusTextView.setVisibility(View.GONE);
             }
-        } else if (EditTextUtils.isNotEmpty(messageData.getDeadManDuration())) {
-            String leftTime = DateUtils.deadMansTime(Long.parseLong(messageData.getDeadManDuration()));
+        } else if (messageData.getDeadManDuration() != null) {
+            String leftTime = DateUtils.deadMansTime(messageData.getDeadManDuration());
             if (leftTime != null) {
-                statusTextView.setText(view.getResources().getString(R.string.txt_left_time_dead_mans_timer, leftTime));
-                statusTextView.setBackgroundColor(view.getResources().getColor(R.color.colorRed0));
+                statusTextView.setText(resources.getString(R.string.txt_left_time_dead_mans_timer, leftTime));
+                statusTextView.setBackgroundColor(resources.getColor(R.color.colorRed0));
             } else {
                 statusTextView.setVisibility(View.GONE);
             }

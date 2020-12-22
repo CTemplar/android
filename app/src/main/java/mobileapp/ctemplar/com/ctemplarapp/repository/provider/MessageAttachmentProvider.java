@@ -7,7 +7,6 @@ import com.google.gson.annotations.SerializedName;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.MessageAttachment;
 
 public class MessageAttachmentProvider {
-
     @SerializedName("id")
     private long id;
 

@@ -34,7 +34,6 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.folders.FoldersResult;
 import mobileapp.ctemplar.com.ctemplarapp.utils.AccountTypeManager;
 
 public class ManageFoldersActivity extends BaseActivity {
-
     private ManageFoldersViewModel manageFoldersModel;
     private ManageFoldersAdapter manageFoldersAdapter;
     private boolean isPrime = false;

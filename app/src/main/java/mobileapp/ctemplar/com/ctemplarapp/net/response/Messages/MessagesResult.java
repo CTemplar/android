@@ -73,7 +73,7 @@ public class MessagesResult {
     private Date delayedDelivery;
 
     @SerializedName("dead_man_duration")
-    private String deadManDuration;
+    private Long deadManDuration;
 
     @SerializedName("read")
     private boolean isRead;
@@ -212,7 +212,7 @@ public class MessagesResult {
         return delayedDelivery;
     }
 
-    public String getDeadManDuration() {
+    public Long getDeadManDuration() {
         return deadManDuration;
     }
 

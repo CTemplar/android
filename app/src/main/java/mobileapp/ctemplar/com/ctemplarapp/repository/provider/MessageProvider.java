@@ -39,7 +39,7 @@ public class MessageProvider {
     private Date updatedAt;
     private Date destructDate;
     private Date delayedDelivery;
-    private String deadManDuration;
+    private Long deadManDuration;
     private boolean isRead;
     private boolean send;
     private boolean isStarred;
@@ -60,7 +60,7 @@ public class MessageProvider {
 
     }
 
-    public MessageProvider(long id, String encryption, String sender, boolean hasAttachments, List<AttachmentProvider> attachments, Date createdAt, UserDisplayProvider senderDisplay, List<UserDisplayProvider> receiverDisplayList, List<UserDisplayProvider> ccDisplayList, List<UserDisplayProvider> bccDisplayList, boolean hasChildren, int childrenCount, String subject, String content, String[] receivers, String[] cc, String[] bcc, String folderName, Date updatedAt, Date destructDate, Date delayedDelivery, String deadManDuration, boolean isRead, boolean send, boolean isStarred, Date sentAt, boolean isEncrypted, boolean isSubjectEncrypted, boolean isProtected, boolean isHtml, String hash, List<String> spamReason, String lastAction, String lastActionThread, long mailboxId, String parent, boolean isSubjectDecrypted) {
+    public MessageProvider(long id, String encryption, String sender, boolean hasAttachments, List<AttachmentProvider> attachments, Date createdAt, UserDisplayProvider senderDisplay, List<UserDisplayProvider> receiverDisplayList, List<UserDisplayProvider> ccDisplayList, List<UserDisplayProvider> bccDisplayList, boolean hasChildren, int childrenCount, String subject, String content, String[] receivers, String[] cc, String[] bcc, String folderName, Date updatedAt, Date destructDate, Date delayedDelivery, Long deadManDuration, boolean isRead, boolean send, boolean isStarred, Date sentAt, boolean isEncrypted, boolean isSubjectEncrypted, boolean isProtected, boolean isHtml, String hash, List<String> spamReason, String lastAction, String lastActionThread, long mailboxId, String parent, boolean isSubjectDecrypted) {
         this.id = id;
         this.encryption = encryption;
         this.sender = sender;
@@ -268,11 +268,11 @@ public class MessageProvider {
         this.delayedDelivery = delayedDelivery;
     }
 
-    public String getDeadManDuration() {
+    public Long getDeadManDuration() {
         return deadManDuration;
     }
 
-    public void setDeadManDuration(String deadManDuration) {
+    public void setDeadManDuration(Long deadManDuration) {
         this.deadManDuration = deadManDuration;
     }
 

@@ -664,7 +664,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         String messageContent = messageProvider.getContent();
         Date messageDestruct = messageProvider.getDestructDate();
         Date messageDelayed = messageProvider.getDelayedDelivery();
-        String messageDeadMan = messageProvider.getDeadManDuration();
+        Long messageDeadMan = messageProvider.getDeadManDuration();
         List<AttachmentProvider> messageAttachmentList = messageProvider.getAttachments();
 
         if (messageSender != null && !messageSender.isEmpty()) {
@@ -697,9 +697,9 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
             sendMessageDelayedIco.setSelected(true);
             delayedDeliveryDate = messageDelayed;
         }
-        if (messageDeadMan != null && !messageDeadMan.isEmpty()) {
+        if (messageDeadMan != null) {
             sendMessageDeadIco.setSelected(true);
-            deadDeliveryInHours = Long.parseLong(messageDeadMan);
+            deadDeliveryInHours = messageDeadMan;
         }
         if (messageAttachmentList != null) {
             for (AttachmentProvider attachmentProvider : messageAttachmentList) {

@@ -14,7 +14,7 @@ import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.filters.FilterResult;
 
 public class FiltersAdapter extends RecyclerView.Adapter<FiltersViewHolder> {
-    private List<FilterResult> filterList;
+    private final List<FilterResult> filterList;
 
     FiltersAdapter(List<FilterResult> filterList) {
         this.filterList = filterList;

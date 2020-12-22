@@ -15,12 +15,10 @@ import java.util.List;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageAttachmentProvider;
 import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
-import mobileapp.ctemplar.com.ctemplarapp.utils.DateUtils;
 
 public class MessageSendAttachmentAdapter extends RecyclerView.Adapter<MessageSendAttachmentHolder> {
-
-    private List<MessageAttachmentProvider> attachmentList = new ArrayList<>();
     private SendMessageActivityViewModel sendMessageActivityViewModel;
+    private final List<MessageAttachmentProvider> attachmentList = new ArrayList<>();
 
     public MessageSendAttachmentAdapter(FragmentActivity fragmentActivity) {
         sendMessageActivityViewModel = new ViewModelProvider(fragmentActivity).get(SendMessageActivityViewModel.class);

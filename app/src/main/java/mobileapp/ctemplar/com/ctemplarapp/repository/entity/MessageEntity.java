@@ -31,7 +31,7 @@ public class MessageEntity {
     private Date updatedAt;
     private Date destructDate;
     private Date delayedDelivery;
-    private String deadManDuration;
+    private Long deadManDuration;
     private boolean isRead;
     private boolean send;
     private boolean isStarred;
@@ -51,7 +51,7 @@ public class MessageEntity {
 
     }
 
-    public MessageEntity(long id, String encryption, String sender, boolean hasAttachments, List<AttachmentEntity> attachments, Date createdAt, UserDisplayEntity senderDisplay, List<UserDisplayEntity> receiverDisplayList, List<UserDisplayEntity> ccDisplayList, List<UserDisplayEntity> bccDisplayList, boolean hasChildren, int childrenCount, String subject, String content, List<String> receivers, List<String> cc, List<String> bcc, String folderName, String requestFolder, Date updatedAt, Date destructDate, Date delayedDelivery, String deadManDuration, boolean isRead, boolean send, boolean isStarred, Date sentAt, boolean isEncrypted, boolean isSubjectEncrypted, boolean isProtected, boolean isHtml, String hash, List<String> spamReason, String lastAction, String lastActionThread, long mailboxId, String parent) {
+    public MessageEntity(long id, String encryption, String sender, boolean hasAttachments, List<AttachmentEntity> attachments, Date createdAt, UserDisplayEntity senderDisplay, List<UserDisplayEntity> receiverDisplayList, List<UserDisplayEntity> ccDisplayList, List<UserDisplayEntity> bccDisplayList, boolean hasChildren, int childrenCount, String subject, String content, List<String> receivers, List<String> cc, List<String> bcc, String folderName, String requestFolder, Date updatedAt, Date destructDate, Date delayedDelivery, Long deadManDuration, boolean isRead, boolean send, boolean isStarred, Date sentAt, boolean isEncrypted, boolean isSubjectEncrypted, boolean isProtected, boolean isHtml, String hash, List<String> spamReason, String lastAction, String lastActionThread, long mailboxId, String parent) {
         this.id = id;
         this.encryption = encryption;
         this.sender = sender;
@@ -267,11 +267,11 @@ public class MessageEntity {
         this.delayedDelivery = delayedDelivery;
     }
 
-    public String getDeadManDuration() {
+    public Long getDeadManDuration() {
         return deadManDuration;
     }
 
-    public void setDeadManDuration(String deadManDuration) {
+    public void setDeadManDuration(Long deadManDuration) {
         this.deadManDuration = deadManDuration;
     }
 

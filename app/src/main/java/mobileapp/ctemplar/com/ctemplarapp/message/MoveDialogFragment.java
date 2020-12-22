@@ -33,7 +33,6 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.folders.FoldersResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.folders.FoldersResult;
 
 public class MoveDialogFragment extends DialogFragment {
-
     private ViewMessagesViewModel viewMessagesModel;
     private List<FoldersResult> customFoldersList;
     private OnMoveListener callback;
