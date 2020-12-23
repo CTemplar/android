@@ -3,7 +3,6 @@ package com.ctemplar.app.fdroid.net.request;
 import com.google.gson.annotations.SerializedName;
 
 public class DefaultMailboxRequest {
-
     @SerializedName("is_default")
     private boolean isDefault;
 
@@ -13,10 +12,6 @@ public class DefaultMailboxRequest {
 
     public DefaultMailboxRequest(boolean isDefault) {
         this.isDefault = isDefault;
-    }
-
-    public boolean isDefault() {
-        return isDefault;
     }
 
     public void setDefault(boolean aDefault) {

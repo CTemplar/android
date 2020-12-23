@@ -11,10 +11,10 @@ import android.view.ViewGroup;
 import java.util.List;
 
 import com.ctemplar.app.fdroid.R;
-import com.ctemplar.app.fdroid.net.response.Filters.FilterResult;
+import com.ctemplar.app.fdroid.net.response.filters.FilterResult;
 
 public class FiltersAdapter extends RecyclerView.Adapter<FiltersViewHolder> {
-    private List<FilterResult> filterList;
+    private final List<FilterResult> filterList;
 
     FiltersAdapter(List<FilterResult> filterList) {
         this.filterList = filterList;

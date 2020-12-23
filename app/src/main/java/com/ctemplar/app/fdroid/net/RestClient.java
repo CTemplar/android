@@ -15,6 +15,8 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 import timber.log.Timber;
 
+import static com.ctemplar.app.fdroid.utils.DateUtils.GENERAL_GSON;
+
 public class RestClient {
     private static final RestClient instance = new RestClient();
     private final RestService services;
@@ -24,7 +26,7 @@ public class RestClient {
                 .baseUrl(BuildConfig.BASE_URL)
                 .client(logLevel())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .addConverterFactory(GsonConverterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create(GENERAL_GSON))
                 .build();
 
         services = retrofit.create(RestService.class);
@@ -36,7 +38,7 @@ public class RestClient {
 
         OkHttpClient.Builder client = new OkHttpClient.Builder()
                 .addNetworkInterceptor(new UserAgentInterceptor())
-//                .addInterceptor(httpLoggingInterceptor)
+                .addInterceptor(httpLoggingInterceptor)
                 .addInterceptor(new HttpTokenInterceptor())
                 .authenticator(new TokenAuthenticator())
                 .readTimeout(30, TimeUnit.SECONDS)

@@ -17,9 +17,8 @@ import com.ctemplar.app.fdroid.repository.provider.MessageAttachmentProvider;
 import com.ctemplar.app.fdroid.utils.AppUtils;
 
 public class MessageSendAttachmentAdapter extends RecyclerView.Adapter<MessageSendAttachmentHolder> {
-
-    private List<MessageAttachmentProvider> attachmentList = new ArrayList<>();
     private SendMessageActivityViewModel sendMessageActivityViewModel;
+    private final List<MessageAttachmentProvider> attachmentList = new ArrayList<>();
 
     public MessageSendAttachmentAdapter(FragmentActivity fragmentActivity) {
         sendMessageActivityViewModel = new ViewModelProvider(fragmentActivity).get(SendMessageActivityViewModel.class);

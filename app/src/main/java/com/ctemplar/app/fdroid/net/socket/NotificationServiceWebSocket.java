@@ -5,7 +5,7 @@ import android.os.Looper;
 
 import com.ctemplar.app.fdroid.BuildConfig;
 import com.ctemplar.app.fdroid.CTemplarApp;
-import com.ctemplar.app.fdroid.net.response.Messages.MessagesResult;
+import com.ctemplar.app.fdroid.net.response.messages.MessagesResult;
 import com.ctemplar.app.fdroid.net.response.notification.NotificationMessageResponse;
 import com.ctemplar.app.fdroid.repository.entity.MessageEntity;
 import com.ctemplar.app.fdroid.repository.provider.MessageProvider;

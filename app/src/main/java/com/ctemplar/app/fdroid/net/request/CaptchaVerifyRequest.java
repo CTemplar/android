@@ -3,7 +3,6 @@ package com.ctemplar.app.fdroid.net.request;
 import com.google.gson.annotations.SerializedName;
 
 public class CaptchaVerifyRequest {
-
     @SerializedName("key")
     private String key;
 
@@ -15,16 +14,8 @@ public class CaptchaVerifyRequest {
         this.value = value;
     }
 
-    public String getKey() {
-        return key;
-    }
-
     public void setKey(String key) {
         this.key = key;
-    }
-
-    public String getValue() {
-        return value;
     }
 
     public void setValue(String value) {

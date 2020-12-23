@@ -9,6 +9,7 @@ public class HttpErrorResponse {
     @SerializedName("error")
     private ErrorResponse error;
 
+
     public String[] getDetail() {
         return detail;
     }

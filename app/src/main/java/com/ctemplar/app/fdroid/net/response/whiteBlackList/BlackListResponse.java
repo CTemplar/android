@@ -1,11 +1,10 @@
-package com.ctemplar.app.fdroid.net.response.WhiteBlackLists;
+package com.ctemplar.app.fdroid.net.response.whiteBlackList;
 
 import com.google.gson.annotations.SerializedName;
 
-import com.ctemplar.app.fdroid.net.response.Myself.WhiteListContact;
+import com.ctemplar.app.fdroid.net.response.myself.BlackListContact;
 
-public class WhiteListResponse {
-
+public class BlackListResponse {
     @SerializedName("total_count")
     private long totalCount;
 
@@ -13,7 +12,7 @@ public class WhiteListResponse {
     private long pageCount;
 
     @SerializedName("results")
-    private WhiteListContact[] results;
+    private BlackListContact[] results;
 
     public long getTotalCount() {
         return totalCount;
@@ -23,7 +22,7 @@ public class WhiteListResponse {
         return pageCount;
     }
 
-    public WhiteListContact[] getResults() {
+    public BlackListContact[] getResults() {
         return results;
     }
 }

@@ -5,7 +5,6 @@ import androidx.annotation.Nullable;
 import com.google.gson.annotations.SerializedName;
 
 public class CheckUsernameRequest {
-
     @SerializedName("username")
     private String username;
 
@@ -15,9 +14,5 @@ public class CheckUsernameRequest {
 
     public void setUsername(@Nullable String username) {
         this.username = username;
-    }
-
-    public String getUsername() {
-        return username;
     }
 }

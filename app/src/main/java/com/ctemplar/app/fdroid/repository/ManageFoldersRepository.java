@@ -6,8 +6,8 @@ import com.ctemplar.app.fdroid.CTemplarApp;
 import com.ctemplar.app.fdroid.net.RestService;
 import com.ctemplar.app.fdroid.net.request.AddFolderRequest;
 import com.ctemplar.app.fdroid.net.request.EditFolderRequest;
-import com.ctemplar.app.fdroid.net.response.Folders.FoldersResponse;
-import com.ctemplar.app.fdroid.net.response.Folders.FoldersResult;
+import com.ctemplar.app.fdroid.net.response.folders.FoldersResponse;
+import com.ctemplar.app.fdroid.net.response.folders.FoldersResult;
 import okhttp3.ResponseBody;
 import retrofit2.Response;
 

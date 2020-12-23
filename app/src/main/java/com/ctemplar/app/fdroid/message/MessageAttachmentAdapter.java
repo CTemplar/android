@@ -1,10 +1,11 @@
 package com.ctemplar.app.fdroid.message;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
@@ -14,7 +15,6 @@ import com.ctemplar.app.fdroid.repository.provider.AttachmentProvider;
 import com.ctemplar.app.fdroid.utils.AppUtils;
 
 public class MessageAttachmentAdapter extends RecyclerView.Adapter<MessageAttachmentHolder> {
-
     private static final String PDF = "PDF";
     private static final String DOC = "DOC";
     private static final String PNG = "PNG";

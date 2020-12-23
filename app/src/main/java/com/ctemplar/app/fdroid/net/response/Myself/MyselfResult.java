@@ -1,43 +1,45 @@
-package com.ctemplar.app.fdroid.net.response.Myself;
+package com.ctemplar.app.fdroid.net.response.myself;
 
 import com.google.gson.annotations.SerializedName;
 
-import com.ctemplar.app.fdroid.net.response.Mailboxes.MailboxesResult;
+import java.util.Date;
+
+import com.ctemplar.app.fdroid.net.response.mailboxes.MailboxesResult;
 
 public class MyselfResult {
-
     @SerializedName("id")
-    public long id;
+    private long id;
 
     @SerializedName("username")
-    public String username;
+    private String username;
 
     @SerializedName("is_prime")
-    public boolean isPrime;
+    private boolean isPrime;
 
     @SerializedName("is_locked")
-    public boolean isLocked;
+    private boolean isLocked;
 
     @SerializedName("is_trial")
-    public boolean isTrial;
+    private boolean isTrial;
 
     @SerializedName("is_deleted")
-    public boolean isDeleted;
+    private boolean isDeleted;
 
     @SerializedName("joined_date")
-    public String joinedDate;
+    private Date joinedDate;
 
     @SerializedName("settings")
-    public SettingsResponse settings;
+    private SettingsResponse settings;
 
     @SerializedName("mailboxes")
-    public MailboxesResult[] mailboxes;
+    private MailboxesResult[] mailboxes;
 
     @SerializedName("blacklist")
-    public BlackListContact[] blacklist;
+    private BlackListContact[] blacklist;
 
     @SerializedName("whitelist")
-    public WhiteListContact[] whitelist;
+    private WhiteListContact[] whitelist;
+
 
     public long getId() {
         return id;
@@ -51,6 +53,10 @@ public class MyselfResult {
         return isPrime;
     }
 
+    public boolean isLocked() {
+        return isLocked;
+    }
+
     public boolean isTrial() {
         return isTrial;
     }
@@ -59,11 +65,7 @@ public class MyselfResult {
         return isDeleted;
     }
 
-    public boolean isLocked() {
-        return isLocked;
-    }
-
-    public String getJoinedDate() {
+    public Date getJoinedDate() {
         return joinedDate;
     }
 

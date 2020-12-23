@@ -40,13 +40,13 @@ import com.ctemplar.app.fdroid.filters.FiltersActivity;
 import com.ctemplar.app.fdroid.folders.ManageFoldersActivity;
 import com.ctemplar.app.fdroid.mailboxes.MailboxesActivity;
 import com.ctemplar.app.fdroid.net.ResponseStatus;
-import com.ctemplar.app.fdroid.net.response.Myself.MyselfResponse;
-import com.ctemplar.app.fdroid.net.response.Myself.MyselfResult;
-import com.ctemplar.app.fdroid.net.response.Myself.SettingsResponse;
+import com.ctemplar.app.fdroid.net.response.myself.MyselfResponse;
+import com.ctemplar.app.fdroid.net.response.myself.MyselfResult;
+import com.ctemplar.app.fdroid.net.response.myself.SettingsResponse;
 import com.ctemplar.app.fdroid.repository.UserRepository;
 import com.ctemplar.app.fdroid.repository.UserStore;
 import com.ctemplar.app.fdroid.services.NotificationService;
-import com.ctemplar.app.fdroid.utils.AppUtils;
+import com.ctemplar.app.fdroid.utils.DateUtils;
 import com.ctemplar.app.fdroid.utils.EditTextUtils;
 import com.ctemplar.app.fdroid.utils.EncodeUtils;
 import com.ctemplar.app.fdroid.utils.HtmlUtils;
@@ -515,8 +515,8 @@ public class SettingsActivity extends BaseActivity {
         isPrimeUser = myselfResult.isPrime();
         setSettingId(settingId);
 
-        String usedStorage = AppUtils.memoryDisplay(settingsResponse.getUsedStorage());
-        String allocatedStorage = AppUtils.memoryDisplay(settingsResponse.getAllocatedStorage());
+        String usedStorage = DateUtils.memoryDisplay(settingsResponse.getUsedStorage());
+        String allocatedStorage = DateUtils.memoryDisplay(settingsResponse.getAllocatedStorage());
         String recoveryEmail = settingsResponse.getRecoveryEmail();
         boolean isDisableLoadingImages = settingsResponse.isDisableLoadingImages();
         boolean isEnableReportBugs = settingsResponse.isEnableReportBugs();

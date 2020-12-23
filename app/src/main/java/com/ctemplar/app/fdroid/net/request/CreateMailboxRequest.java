@@ -18,40 +18,32 @@ public class CreateMailboxRequest {
     @SerializedName("fingerprint")
     private String fingerprint;
 
-    public String getEmail() {
-        return email;
+    public CreateMailboxRequest() {
+
+    }
+
+    public CreateMailboxRequest(String email, String displayName, String privateKey, String publicKey, String fingerprint) {
+        this.email = email;
+        this.displayName = displayName;
+        this.privateKey = privateKey;
+        this.publicKey = publicKey;
+        this.fingerprint = fingerprint;
     }
 
     public void setEmail(String email) {
         this.email = email;
     }
 
-    public String getDisplayName() {
-        return displayName;
-    }
-
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
-    }
-
-    public String getPrivateKey() {
-        return privateKey;
     }
 
     public void setPrivateKey(String privateKey) {
         this.privateKey = privateKey;
     }
 
-    public String getPublicKey() {
-        return publicKey;
-    }
-
     public void setPublicKey(String publicKey) {
         this.publicKey = publicKey;
-    }
-
-    public String getFingerprint() {
-        return fingerprint;
     }
 
     public void setFingerprint(String fingerprint) {

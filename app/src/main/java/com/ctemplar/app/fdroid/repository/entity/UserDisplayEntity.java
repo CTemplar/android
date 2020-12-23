@@ -1,7 +1,6 @@
 package com.ctemplar.app.fdroid.repository.entity;
 
 public class UserDisplayEntity {
-
     private String email;
     private String name;
     private boolean isEncrypted;

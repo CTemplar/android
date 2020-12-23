@@ -29,12 +29,11 @@ import com.ctemplar.app.fdroid.BaseActivity;
 import com.ctemplar.app.fdroid.R;
 import com.ctemplar.app.fdroid.main.RecycleDeleteSwiper;
 import com.ctemplar.app.fdroid.net.ResponseStatus;
-import com.ctemplar.app.fdroid.net.response.Folders.FoldersResponse;
-import com.ctemplar.app.fdroid.net.response.Folders.FoldersResult;
+import com.ctemplar.app.fdroid.net.response.folders.FoldersResponse;
+import com.ctemplar.app.fdroid.net.response.folders.FoldersResult;
 import com.ctemplar.app.fdroid.utils.AccountTypeManager;
 
 public class ManageFoldersActivity extends BaseActivity {
-
     private ManageFoldersViewModel manageFoldersModel;
     private ManageFoldersAdapter manageFoldersAdapter;
     private boolean isPrime = false;

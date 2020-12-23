@@ -10,7 +10,7 @@ import io.reactivex.disposables.Disposable;
 import com.ctemplar.app.fdroid.CTemplarApp;
 import com.ctemplar.app.fdroid.net.ResponseStatus;
 import com.ctemplar.app.fdroid.net.request.EditFolderRequest;
-import com.ctemplar.app.fdroid.net.response.Folders.FoldersResult;
+import com.ctemplar.app.fdroid.net.response.folders.FoldersResult;
 import com.ctemplar.app.fdroid.repository.ManageFoldersRepository;
 import retrofit2.Response;
 

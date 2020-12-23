@@ -4,7 +4,7 @@ import androidx.annotation.Nullable;
 
 import com.google.gson.annotations.SerializedName;
 
-import com.ctemplar.app.fdroid.net.response.Messages.MessageAttachment;
+import com.ctemplar.app.fdroid.net.response.messages.MessageAttachment;
 
 public class MessageAttachmentProvider {
 

@@ -3,18 +3,17 @@ package com.ctemplar.app.fdroid.net.response;
 import com.google.gson.annotations.SerializedName;
 
 public class CreateAttachmentResponse {
-
     @SerializedName("id")
     private long id;
 
     @SerializedName("content_id")
-    private long content_id;
+    private long contentId;
 
     @SerializedName("document")
     private String document;
 
     @SerializedName("is_inline")
-    private boolean is_inline;
+    private boolean isInline;
 
     @SerializedName("message")
     private long message;
@@ -23,16 +22,16 @@ public class CreateAttachmentResponse {
         return id;
     }
 
-    public long getContent_id() {
-        return content_id;
+    public long getContentId() {
+        return contentId;
     }
 
     public String getDocument() {
         return document;
     }
 
-    public boolean isIs_inline() {
-        return is_inline;
+    public boolean isInline() {
+        return isInline;
     }
 
     public long getMessage() {

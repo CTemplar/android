@@ -1,9 +1,8 @@
-package com.ctemplar.app.fdroid.net.response.Messages;
+package com.ctemplar.app.fdroid.net.response.messages;
 
 import com.google.gson.annotations.SerializedName;
 
 public class EncryptionMessage {
-
     @SerializedName("id")
     private long id;
 
@@ -33,6 +32,10 @@ public class EncryptionMessage {
 
     @SerializedName("message")
     private long message;
+
+    public EncryptionMessage() {
+
+    }
 
     public long getId() {
         return id;

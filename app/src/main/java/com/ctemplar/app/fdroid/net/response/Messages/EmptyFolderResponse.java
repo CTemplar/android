@@ -1,9 +1,8 @@
-package com.ctemplar.app.fdroid.net.response.Messages;
+package com.ctemplar.app.fdroid.net.response.messages;
 
 import com.google.gson.annotations.SerializedName;
 
 public class EmptyFolderResponse {
-
     @SerializedName("detail")
     private String detail;
 
@@ -14,15 +13,7 @@ public class EmptyFolderResponse {
         return detail;
     }
 
-    public void setDetail(String detail) {
-        this.detail = detail;
-    }
-
     public String getMessage() {
         return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
     }
 }

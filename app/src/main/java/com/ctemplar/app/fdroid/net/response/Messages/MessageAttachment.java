@@ -1,9 +1,8 @@
-package com.ctemplar.app.fdroid.net.response.Messages;
+package com.ctemplar.app.fdroid.net.response.messages;
 
 import com.google.gson.annotations.SerializedName;
 
 public class MessageAttachment {
-
     @SerializedName("id")
     private long id;
 
@@ -21,6 +20,10 @@ public class MessageAttachment {
 
     @SerializedName("message")
     private long message;
+
+    public MessageAttachment() {
+
+    }
 
     public long getId() {
         return id;

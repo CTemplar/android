@@ -1,11 +1,10 @@
-package com.ctemplar.app.fdroid.net.response.Mailboxes;
+package com.ctemplar.app.fdroid.net.response.mailboxes;
 
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
 public class MailboxesResponse {
-
     @SerializedName("total_count")
     private int totalCount;
 
@@ -20,6 +19,7 @@ public class MailboxesResponse {
 
     @SerializedName("results")
     private List<MailboxesResult> mailboxesList;
+
 
     public int getTotalCount() {
         return totalCount;

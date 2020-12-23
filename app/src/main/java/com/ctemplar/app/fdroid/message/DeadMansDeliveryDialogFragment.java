@@ -14,10 +14,10 @@ import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.ctemplar.app.fdroid.R;
+import com.ctemplar.app.fdroid.utils.EditTextUtils;
 import timber.log.Timber;
 
 public class DeadMansDeliveryDialogFragment extends DialogFragment {
-
     private OnScheduleDeadMansDelivery onScheduleDeadMansDelivery;
 
     interface OnScheduleDeadMansDelivery {
@@ -63,8 +63,8 @@ public class DeadMansDeliveryDialogFragment extends DialogFragment {
 
         Button scheduleButton = view.findViewById(R.id.fragment_dead_mans_dialog_schedule);
         scheduleButton.setOnClickListener(v -> {
-            String daysString = daysEditText.getText().toString();
-            String hoursString = hoursEditText.getText().toString();
+            String daysString = EditTextUtils.getText(daysEditText);
+            String hoursString = EditTextUtils.getText(hoursEditText);
             long timer = getHours(daysString, hoursString);
 
             onScheduleDeadMansDelivery.onSchedule(timer);
@@ -78,16 +78,15 @@ public class DeadMansDeliveryDialogFragment extends DialogFragment {
         int days = 0;
         int hours = 0;
         try {
-            if (!daysString.isEmpty()) {
-                days = Integer.valueOf(daysString);
+            if (daysString.length() > 0) {
+                days = Integer.parseInt(daysString);
             }
-            if (!hoursString.isEmpty()) {
-                hours = Integer.valueOf(hoursString);
+            if (hoursString.length() > 0) {
+                hours = Integer.parseInt(hoursString);
             }
         } catch (NumberFormatException e) {
             Timber.e(e);
         }
-
         return 24 * days + hours;
     }
 }

@@ -134,7 +134,7 @@ public class LoginActivityViewModel extends AndroidViewModel {
 
     public void recoverPassword() {
         if (recoverPasswordRequest != null) {
-            recoverPassword(recoverPasswordRequest.getUsername(), recoverPasswordRequest.getEmail());
+            recoverPassword(recoverPasswordRequest.getUsername(), recoverPasswordRequest.getRecoveryEmail());
         }
     }
 

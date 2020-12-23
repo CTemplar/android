@@ -41,6 +41,7 @@ import com.google.android.material.snackbar.Snackbar;
 
 import java.io.File;
 import java.util.Collections;
+import java.util.Date;
 
 import com.ctemplar.app.fdroid.ActivityInterface;
 import com.ctemplar.app.fdroid.BuildConfig;
@@ -54,7 +55,7 @@ import com.ctemplar.app.fdroid.repository.entity.MailboxEntity;
 import com.ctemplar.app.fdroid.repository.provider.AttachmentProvider;
 import com.ctemplar.app.fdroid.repository.provider.MessageProvider;
 import com.ctemplar.app.fdroid.repository.provider.UserDisplayProvider;
-import com.ctemplar.app.fdroid.utils.AppUtils;
+import com.ctemplar.app.fdroid.utils.DateUtils;
 import com.ctemplar.app.fdroid.utils.EncryptUtils;
 import com.ctemplar.app.fdroid.utils.HtmlUtils;
 import timber.log.Timber;
@@ -416,10 +417,9 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
     }
 
     private String replyHead() {
-        String messageDate = AppUtils.getDeliveryDate(lastMessage);
-
+        Date messageDate = DateUtils.getDeliveryDate(lastMessage);
         return getString(R.string.txt_user_wrote,
-                AppUtils.getStringDate(messageDate), "<" + lastMessage.getSender() + ">");
+                DateUtils.getStringDate(messageDate), "<" + lastMessage.getSender() + ">");
     }
 
     private String addQuotesToNames(String[] names) {
@@ -432,11 +432,10 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
     }
 
     private String forwardHead() {
-        String messageDate = AppUtils.getDeliveryDate(lastMessage);
-
+        Date messageDate = DateUtils.getDeliveryDate(lastMessage);
         return "\n\n---------- " + getString(R.string.txt_forwarded_message) + "----------\n" +
                 getString(R.string.txt_from) + " <" + lastMessage.getSender() + ">\n" +
-                getString(R.string.txt_date) + ": " + AppUtils.getStringDate(messageDate) + "\n" +
+                getString(R.string.txt_date) + ": " + DateUtils.getStringDate(messageDate) + "\n" +
                 getString(R.string.txt_subject) + ": " + lastMessage.getSubject() + "\n" +
                 getString(R.string.txt_to) + " " + addQuotesToNames(lastMessage.getReceivers()) + "\n\n";
     }

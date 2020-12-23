@@ -1,11 +1,10 @@
-package com.ctemplar.app.fdroid.net.response.Messages;
+package com.ctemplar.app.fdroid.net.response.messages;
 
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
 public class MessagesResponse {
-
     @SerializedName("total_count")
     private int totalCount;
 
@@ -20,6 +19,7 @@ public class MessagesResponse {
 
     @SerializedName("results")
     private List<MessagesResult> messagesList;
+
 
     public int getTotalCount() {
         return totalCount;

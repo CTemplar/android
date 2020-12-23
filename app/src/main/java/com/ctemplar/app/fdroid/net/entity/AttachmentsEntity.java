@@ -6,7 +6,6 @@ import java.util.List;
 import com.ctemplar.app.fdroid.repository.provider.AttachmentProvider;
 
 public class AttachmentsEntity implements Serializable {
-
     private List<AttachmentProvider> attachmentProviderList;
 
     public AttachmentsEntity(List<AttachmentProvider> attachmentProviderList) {

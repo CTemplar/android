@@ -34,14 +34,15 @@ import com.ctemplar.app.fdroid.CTemplarApp;
 import com.ctemplar.app.fdroid.R;
 import com.ctemplar.app.fdroid.net.entity.PGPKeyEntity;
 import com.ctemplar.app.fdroid.net.request.SendMessageRequest;
-import com.ctemplar.app.fdroid.net.response.Messages.MessageAttachment;
-import com.ctemplar.app.fdroid.net.response.Messages.MessagesResult;
+import com.ctemplar.app.fdroid.net.response.messages.MessageAttachment;
+import com.ctemplar.app.fdroid.net.response.messages.MessagesResult;
 import com.ctemplar.app.fdroid.repository.entity.MailboxEntity;
 import com.ctemplar.app.fdroid.repository.provider.EncryptionMessageProvider;
 import com.ctemplar.app.fdroid.repository.provider.MessageAttachmentProvider;
 import com.ctemplar.app.fdroid.repository.provider.SendMessageRequestProvider;
 import com.ctemplar.app.fdroid.security.PGPManager;
 import com.ctemplar.app.fdroid.utils.AppUtils;
+import com.ctemplar.app.fdroid.utils.DateUtils;
 import com.ctemplar.app.fdroid.utils.EditTextUtils;
 import com.ctemplar.app.fdroid.utils.EncryptUtils;
 import com.ctemplar.app.fdroid.utils.FileUtils;
@@ -67,7 +68,7 @@ public class SendMailService extends IntentService {
     private static final String ATTACHMENTS_EXTRA_KEY = "attachments";
     private static final String EXTERNAL_ENCRYPTION_EXTRA_KEY = "external_encryption";
 
-    private static Gson GSON = new Gson();
+    private static final Gson GSON = new Gson();
 
     public SendMailService() {
         super(TAG);
@@ -224,9 +225,9 @@ public class SendMailService extends IntentService {
             request.setSubject(PGPManager.encrypt(request.getSubject(), publicKeys));
             request.setContent(PGPManager.encrypt(request.getContent(), publicKeys));
         }
-        request.setIsEncrypted(isReceiverKeysNotEmpty);
+        request.setEncrypted(isReceiverKeysNotEmpty);
         request.setSubjectEncrypted(isReceiverKeysNotEmpty);
-        request.setUpdatedAt(AppUtils.convertToServerDatePattern(new Date()));
+        request.setUpdatedAt(new Date());
 
         MessagesResult messagesResult;
         boolean isDraft = isDraft(request);

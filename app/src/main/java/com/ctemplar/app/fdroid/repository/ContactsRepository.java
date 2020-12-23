@@ -7,8 +7,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import com.ctemplar.app.fdroid.CTemplarApp;
 import com.ctemplar.app.fdroid.net.RestService;
-import com.ctemplar.app.fdroid.net.response.Contacts.ContactData;
-import com.ctemplar.app.fdroid.net.response.Contacts.ContactsResponse;
+import com.ctemplar.app.fdroid.net.response.contacts.ContactData;
+import com.ctemplar.app.fdroid.net.response.contacts.ContactsResponse;
 import com.ctemplar.app.fdroid.repository.entity.ContactEntity;
 import okhttp3.ResponseBody;
 

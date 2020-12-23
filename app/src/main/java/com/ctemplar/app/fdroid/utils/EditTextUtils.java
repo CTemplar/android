@@ -5,9 +5,8 @@ import android.text.TextUtils;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.List;
@@ -57,14 +56,14 @@ public class EditTextUtils {
         return username + "@" + BuildConfig.DOMAIN;
     }
 
-    @NotNull
-    public static String getText(@NotNull EditText editText) {
+    @NonNull
+    public static String getText(@NonNull EditText editText) {
         Editable editable = editText.getText();
         return editable == null ? "" : editable.toString();
     }
 
-    @NotNull
-    public static String getText(@NotNull TextView textView) {
+    @NonNull
+    public static String getText(@NonNull TextView textView) {
         CharSequence text = textView.getText();
         return text == null ? "" : text.toString();
     }
