@@ -5,7 +5,6 @@ import androidx.room.PrimaryKey;
 
 @Entity(tableName = "contacts")
 public class ContactEntity {
-
     @PrimaryKey
     public long id;
     public String email;
@@ -15,8 +14,25 @@ public class ContactEntity {
     public String phone;
     public String phone2;
     public String provider;
-    public Boolean isEncrypted;
+    public boolean isEncrypted;
     public String encryptedData;
+
+    public ContactEntity() {
+
+    }
+
+    public ContactEntity(long id, String email, String name, String address, String note, String phone, String phone2, String provider, boolean isEncrypted, String encryptedData) {
+        this.id = id;
+        this.email = email;
+        this.name = name;
+        this.address = address;
+        this.note = note;
+        this.phone = phone;
+        this.phone2 = phone2;
+        this.provider = provider;
+        this.isEncrypted = isEncrypted;
+        this.encryptedData = encryptedData;
+    }
 
     public long getId() {
         return id;
@@ -82,12 +98,12 @@ public class ContactEntity {
         this.provider = provider;
     }
 
-    public Boolean isEncrypted() {
+    public boolean isEncrypted() {
         return isEncrypted;
     }
 
-    public void setEncrypted(Boolean isEncrypted) {
-        this.isEncrypted = isEncrypted;
+    public void setEncrypted(boolean encrypted) {
+        isEncrypted = encrypted;
     }
 
     public String getEncryptedData() {

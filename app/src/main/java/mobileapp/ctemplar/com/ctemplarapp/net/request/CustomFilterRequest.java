@@ -3,7 +3,6 @@ package mobileapp.ctemplar.com.ctemplarapp.net.request;
 import com.google.gson.annotations.SerializedName;
 
 public class CustomFilterRequest {
-
     @SerializedName("name")
     private String name;
 
@@ -27,6 +26,21 @@ public class CustomFilterRequest {
 
     @SerializedName("mark_as_starred")
     private boolean markAsStarred;
+
+    public CustomFilterRequest() {
+
+    }
+
+    public CustomFilterRequest(String name, String parameter, String condition, String filterText, boolean moveTo, String folder, boolean markAsRead, boolean markAsStarred) {
+        this.name = name;
+        this.parameter = parameter;
+        this.condition = condition;
+        this.filterText = filterText;
+        this.moveTo = moveTo;
+        this.folder = folder;
+        this.markAsRead = markAsRead;
+        this.markAsStarred = markAsStarred;
+    }
 
     public String getName() {
         return name;

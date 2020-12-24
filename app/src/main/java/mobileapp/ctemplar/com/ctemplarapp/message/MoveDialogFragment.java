@@ -25,16 +25,14 @@ import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import java.util.List;
-import java.util.Objects;
 
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.folders.AddFolderActivity;
 import mobileapp.ctemplar.com.ctemplarapp.folders.ManageFoldersActivity;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Folders.FoldersResponse;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Folders.FoldersResult;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.folders.FoldersResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.folders.FoldersResult;
 
 public class MoveDialogFragment extends DialogFragment {
-
     private ViewMessagesViewModel viewMessagesModel;
     private List<FoldersResult> customFoldersList;
     private OnMoveListener callback;

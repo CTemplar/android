@@ -34,14 +34,15 @@ import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.net.entity.PGPKeyEntity;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SendMessageRequest;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessageAttachment;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResult;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.MessageAttachment;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.MessagesResult;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.EncryptionMessageProvider;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageAttachmentProvider;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.SendMessageRequestProvider;
 import mobileapp.ctemplar.com.ctemplarapp.security.PGPManager;
 import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
+import mobileapp.ctemplar.com.ctemplarapp.utils.DateUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EncryptUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.FileUtils;
@@ -67,7 +68,7 @@ public class SendMailService extends IntentService {
     private static final String ATTACHMENTS_EXTRA_KEY = "attachments";
     private static final String EXTERNAL_ENCRYPTION_EXTRA_KEY = "external_encryption";
 
-    private static Gson GSON = new Gson();
+    private static final Gson GSON = new Gson();
 
     public SendMailService() {
         super(TAG);
@@ -224,9 +225,9 @@ public class SendMailService extends IntentService {
             request.setSubject(PGPManager.encrypt(request.getSubject(), publicKeys));
             request.setContent(PGPManager.encrypt(request.getContent(), publicKeys));
         }
-        request.setIsEncrypted(isReceiverKeysNotEmpty);
+        request.setEncrypted(isReceiverKeysNotEmpty);
         request.setSubjectEncrypted(isReceiverKeysNotEmpty);
-        request.setUpdatedAt(AppUtils.convertToServerDatePattern(new Date()));
+        request.setUpdatedAt(new Date());
 
         MessagesResult messagesResult;
         boolean isDraft = isDraft(request);

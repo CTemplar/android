@@ -2,10 +2,9 @@ package mobileapp.ctemplar.com.ctemplarapp.repository.provider;
 
 import com.google.gson.annotations.SerializedName;
 
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.EncryptionMessage;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.EncryptionMessage;
 
 public class EncryptionMessageProvider {
-
     @SerializedName("id")
     private long id;
 

@@ -6,11 +6,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.EncryptionMessage;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessageAttachment;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.EncryptionMessage;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.MessageAttachment;
 
 public class SendMessageRequest {
-
     @SerializedName("encryption")
     private EncryptionMessage encryptionMessage;
 
@@ -36,10 +35,10 @@ public class SendMessageRequest {
     private String folder;
 
     @SerializedName("destruct_date")
-    private String destructDate;
+    private Date destructDate;
 
     @SerializedName("delayed_delivery")
-    private String delayedDelivery;
+    private Date delayedDelivery;
 
     @SerializedName("dead_man_duration")
     private Long deadManDuration;
@@ -69,7 +68,7 @@ public class SendMessageRequest {
     private List<MessageAttachment> attachments;
 
     @SerializedName("updated")
-    private String updatedAt;
+    private Date updatedAt;
 
     public SendMessageRequest() {
 
@@ -91,6 +90,22 @@ public class SendMessageRequest {
         this.mailbox = mailbox;
     }
 
+    public EncryptionMessage getEncryptionMessage() {
+        return encryptionMessage;
+    }
+
+    public void setEncryptionMessage(EncryptionMessage encryptionMessage) {
+        this.encryptionMessage = encryptionMessage;
+    }
+
+    public String getSender() {
+        return sender;
+    }
+
+    public void setSender(String sender) {
+        this.sender = sender;
+    }
+
     public String getSubject() {
         return subject;
     }
@@ -107,92 +122,12 @@ public class SendMessageRequest {
         this.content = content;
     }
 
-    public String getFolder() {
-        return folder;
-    }
-
-    public void setFolder(String folder) {
-        this.folder = folder;
-    }
-
-    public long getMailbox() {
-        return mailbox;
-    }
-
-    public void setMailbox(long mailbox) {
-        this.mailbox = mailbox;
-    }
-
     public List<String> getReceivers() {
         return receivers;
     }
 
     public void setReceivers(List<String> receivers) {
         this.receivers = receivers;
-    }
-
-    public boolean getIsEncrypted() {
-        return isEncrypted;
-    }
-
-    public void setIsEncrypted(boolean isEncrypted) {
-        this.isEncrypted = isEncrypted;
-    }
-
-    public boolean isHtml() {
-        return isHtml;
-    }
-
-    public void setHtml(boolean html) {
-        isHtml = html;
-    }
-
-    public boolean isSubjectEncrypted() {
-        return isSubjectEncrypted;
-    }
-
-    public void setSubjectEncrypted(boolean subjectEncrypted) {
-        isSubjectEncrypted = subjectEncrypted;
-    }
-
-    public boolean isSend() {
-        return send;
-    }
-
-    public void setSend(boolean send) {
-        this.send = send;
-    }
-
-    public String getLastAction() {
-        return lastAction;
-    }
-
-    public void setLastAction(String lastAction) {
-        this.lastAction = lastAction;
-    }
-
-    public Long getParent() {
-        return parent;
-    }
-
-    public void setParent(Long parent) {
-        this.parent = parent;
-    }
-
-    public String getSender() {
-        return sender;
-    }
-
-    public void setSender(String sender) {
-        this.sender = sender;
-    }
-
-    public List<MessageAttachment> getAttachments() {
-        return attachments;
-    }
-
-    public void setAttachments(List<MessageAttachment> attachments) {
-        this.attachments = attachments;
     }
 
     public List<String> getCc() {
@@ -211,20 +146,28 @@ public class SendMessageRequest {
         this.bcc = bcc;
     }
 
-    public String getDelayedDelivery() {
-        return delayedDelivery;
+    public String getFolder() {
+        return folder;
     }
 
-    public void setDelayedDelivery(String delayedDelivery) {
-        this.delayedDelivery = delayedDelivery;
+    public void setFolder(String folder) {
+        this.folder = folder;
     }
 
-    public String getDestructDate() {
+    public Date getDestructDate() {
         return destructDate;
     }
 
-    public void setDestructDate(String destructDate) {
+    public void setDestructDate(Date destructDate) {
         this.destructDate = destructDate;
+    }
+
+    public Date getDelayedDelivery() {
+        return delayedDelivery;
+    }
+
+    public void setDelayedDelivery(Date delayedDelivery) {
+        this.delayedDelivery = delayedDelivery;
     }
 
     public Long getDeadManDuration() {
@@ -235,19 +178,75 @@ public class SendMessageRequest {
         this.deadManDuration = deadManDuration;
     }
 
-    public EncryptionMessage getEncryptionMessage() {
-        return encryptionMessage;
+    public boolean isSend() {
+        return send;
     }
 
-    public void setEncryptionMessage(EncryptionMessage encryptionMessage) {
-        this.encryptionMessage = encryptionMessage;
+    public void setSend(boolean send) {
+        this.send = send;
     }
 
-    public String getUpdatedAt() {
+    public boolean isEncrypted() {
+        return isEncrypted;
+    }
+
+    public void setEncrypted(boolean encrypted) {
+        isEncrypted = encrypted;
+    }
+
+    public boolean isHtml() {
+        return isHtml;
+    }
+
+    public void setHtml(boolean html) {
+        isHtml = html;
+    }
+
+    public boolean isSubjectEncrypted() {
+        return isSubjectEncrypted;
+    }
+
+    public void setSubjectEncrypted(boolean subjectEncrypted) {
+        isSubjectEncrypted = subjectEncrypted;
+    }
+
+    public long getMailbox() {
+        return mailbox;
+    }
+
+    public void setMailbox(long mailbox) {
+        this.mailbox = mailbox;
+    }
+
+    public String getLastAction() {
+        return lastAction;
+    }
+
+    public void setLastAction(String lastAction) {
+        this.lastAction = lastAction;
+    }
+
+    public Long getParent() {
+        return parent;
+    }
+
+    public void setParent(Long parent) {
+        this.parent = parent;
+    }
+
+    public List<MessageAttachment> getAttachments() {
+        return attachments;
+    }
+
+    public void setAttachments(List<MessageAttachment> attachments) {
+        this.attachments = attachments;
+    }
+
+    public Date getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(String updatedAt) {
+    public void setUpdatedAt(Date updatedAt) {
         this.updatedAt = updatedAt;
     }
 }

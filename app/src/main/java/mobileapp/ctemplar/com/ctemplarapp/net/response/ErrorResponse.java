@@ -15,6 +15,7 @@ public class ErrorResponse {
     @SerializedName("error")
     private String error;
 
+
     public String getStatusCode() {
         return statusCode;
     }

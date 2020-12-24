@@ -16,7 +16,7 @@ import butterknife.BindView;
 import mobileapp.ctemplar.com.ctemplarapp.BaseActivity;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.ContactData;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.contacts.ContactData;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.Contact;
 import timber.log.Timber;
 

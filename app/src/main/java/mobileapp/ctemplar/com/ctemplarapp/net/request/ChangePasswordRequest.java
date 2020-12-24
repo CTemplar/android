@@ -5,7 +5,6 @@ import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
 public class ChangePasswordRequest {
-
     @SerializedName("old_password")
     private String oldPassword;
 
@@ -21,10 +20,6 @@ public class ChangePasswordRequest {
     @SerializedName("new_keys")
     private List<MailboxKey> mailboxesKeys;
 
-    public ChangePasswordRequest() {
-
-    }
-
     public ChangePasswordRequest(String oldPassword, String password, String confirmPassword, Boolean deleteData) {
         this.oldPassword = oldPassword;
         this.password = password;
@@ -32,40 +27,20 @@ public class ChangePasswordRequest {
         this.deleteData = deleteData;
     }
 
-    public String getOldPassword() {
-        return oldPassword;
-    }
-
     public void setOldPassword(String oldPassword) {
         this.oldPassword = oldPassword;
-    }
-
-    public String getPassword() {
-        return password;
     }
 
     public void setPassword(String password) {
         this.password = password;
     }
 
-    public String getConfirmPassword() {
-        return confirmPassword;
-    }
-
     public void setConfirmPassword(String confirmPassword) {
         this.confirmPassword = confirmPassword;
     }
 
-    public boolean isDeleteData() {
-        return deleteData;
-    }
-
     public void setDeleteData(boolean deleteData) {
         this.deleteData = deleteData;
-    }
-
-    public List<MailboxKey> getMailboxesKeys() {
-        return mailboxesKeys;
     }
 
     public void setMailboxesKeys(List<MailboxKey> mailboxesKeys) {

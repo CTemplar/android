@@ -1,9 +1,8 @@
-package mobileapp.ctemplar.com.ctemplarapp.net.response.Filters;
+package mobileapp.ctemplar.com.ctemplarapp.net.response.filters;
 
 import com.google.gson.annotations.SerializedName;
 
 public class FilterResult {
-
     @SerializedName("id")
     private long id;
 
@@ -30,6 +29,7 @@ public class FilterResult {
 
     @SerializedName("mark_as_starred")
     private boolean markAsStarred;
+
 
     public long getId() {
         return id;

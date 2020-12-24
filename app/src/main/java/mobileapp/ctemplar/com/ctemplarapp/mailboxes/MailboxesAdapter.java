@@ -13,9 +13,8 @@ import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 
 public class MailboxesAdapter extends RecyclerView.Adapter<MailboxesViewHolder> {
-
-    private MailboxesViewModel mailboxesModel;
-    private List<MailboxEntity> mailboxEntityList;
+    private final MailboxesViewModel mailboxesModel;
+    private final List<MailboxEntity> mailboxEntityList;
     private MailboxesViewHolder lastSelectedHolder;
     private long lastSelectedMailboxId;
 

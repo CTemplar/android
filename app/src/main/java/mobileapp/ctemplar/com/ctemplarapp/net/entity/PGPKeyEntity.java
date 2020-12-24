@@ -1,7 +1,6 @@
 package mobileapp.ctemplar.com.ctemplarapp.net.entity;
 
 public class PGPKeyEntity {
-
     private String publicKey;
     private String privateKey;
     private String fingerprint;

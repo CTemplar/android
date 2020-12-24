@@ -1,9 +1,8 @@
-package mobileapp.ctemplar.com.ctemplarapp.net.response.Messages;
+package mobileapp.ctemplar.com.ctemplarapp.net.response.messages;
 
 import com.google.gson.annotations.SerializedName;
 
 public class MessageAttachment {
-
     @SerializedName("id")
     private long id;
 
@@ -21,6 +20,10 @@ public class MessageAttachment {
 
     @SerializedName("message")
     private long message;
+
+    public MessageAttachment() {
+
+    }
 
     public long getId() {
         return id;

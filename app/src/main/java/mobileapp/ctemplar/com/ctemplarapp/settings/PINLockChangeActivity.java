@@ -20,7 +20,6 @@ import mobileapp.ctemplar.com.ctemplarapp.view.pinlock.PasscodeView;
 import timber.log.Timber;
 
 public class PINLockChangeActivity extends BaseActivity {
-
     @BindView(R.id.activity_pin_lock_pass_code_view)
     PasscodeView passcodeView;
 
