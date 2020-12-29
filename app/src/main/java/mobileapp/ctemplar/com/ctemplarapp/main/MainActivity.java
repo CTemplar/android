@@ -1,5 +1,6 @@
 package mobileapp.ctemplar.com.ctemplarapp.main;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -53,6 +54,7 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import mobileapp.ctemplar.com.ctemplarapp.settings.SettingsActivity;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EncryptUtils;
+import mobileapp.ctemplar.com.ctemplarapp.utils.LocaleUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.ThemeUtils;
 import mobileapp.ctemplar.com.ctemplarapp.view.ResizeAnimation;
 import timber.log.Timber;
@@ -95,10 +97,16 @@ public class MainActivity extends AppCompatActivity
     private Handler handler = new Handler();
 
     @Override
+    protected void attachBaseContext(Context newBase) {
+        Context context = LocaleUtils.getContextWrapper(newBase);
+        super.attachBaseContext(context);
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
         ThemeUtils.setTheme(this);
+        setContentView(R.layout.activity_main);
 
         drawer = findViewById(R.id.drawer_layout);
         contentContainer = findViewById(R.id.content_container);

@@ -4,8 +4,6 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.google.gson.Gson;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -39,6 +37,8 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.entity.ContactEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EncryptUtils;
 import timber.log.Timber;
+
+import static mobileapp.ctemplar.com.ctemplarapp.utils.DateUtils.GENERAL_GSON;
 
 public class SettingsViewModel extends ViewModel {
     private final ContactsRepository contactsRepository;
@@ -455,7 +455,7 @@ public class SettingsViewModel extends ViewModel {
         }
         String encryptedData = contactData.getEncryptedData();
         String decryptedData = EncryptUtils.decryptData(encryptedData);
-        EncryptContact decryptedContact = new Gson().fromJson(decryptedData, EncryptContact.class);
+        EncryptContact decryptedContact = GENERAL_GSON.fromJson(decryptedData, EncryptContact.class);
         if (decryptedContact == null) {
             return;
         }

@@ -2,7 +2,6 @@ package mobileapp.ctemplar.com.ctemplarapp.repository;
 
 import androidx.room.TypeConverter;
 
-import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
@@ -12,52 +11,54 @@ import java.util.List;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.AttachmentEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.UserDisplayEntity;
 
+import static mobileapp.ctemplar.com.ctemplarapp.utils.DateUtils.GENERAL_GSON;
+
 public class Converters {
     @TypeConverter
     public static List<String> fromString(String value) {
         Type listType = new TypeToken<List<String>>() {}.getType();
-        return new Gson().fromJson(value, listType);
+        return GENERAL_GSON.fromJson(value, listType);
     }
 
     @TypeConverter
     public static String fromList(List<String> list) {
-        return new Gson().toJson(list);
+        return GENERAL_GSON.toJson(list);
     }
 
     @TypeConverter
     public static List<AttachmentEntity> stringToAttachments(String json) {
         Type type = new TypeToken<List<AttachmentEntity>>() {}.getType();
-        return new Gson().fromJson(json, type);
+        return GENERAL_GSON.fromJson(json, type);
     }
 
     @TypeConverter
     public static String attachmentsToString(List<AttachmentEntity> list) {
         Type type = new TypeToken<List<AttachmentEntity>>() {}.getType();
-        return new Gson().toJson(list, type);
+        return GENERAL_GSON.toJson(list, type);
     }
 
     @TypeConverter
     public static UserDisplayEntity stringToUserDisplay(String json) {
         Type type = new TypeToken<UserDisplayEntity>() {}.getType();
-        return new Gson().fromJson(json, type);
+        return GENERAL_GSON.fromJson(json, type);
     }
 
     @TypeConverter
     public static String userDisplayToString(UserDisplayEntity userDisplay) {
         Type type = new TypeToken<UserDisplayEntity>() {}.getType();
-        return new Gson().toJson(userDisplay, type);
+        return GENERAL_GSON.toJson(userDisplay, type);
     }
 
     @TypeConverter
     public static List<UserDisplayEntity> stringToUserDisplayList(String json) {
         Type type = new TypeToken<List<UserDisplayEntity>>() {}.getType();
-        return new Gson().fromJson(json, type);
+        return GENERAL_GSON.fromJson(json, type);
     }
 
     @TypeConverter
     public static String userDisplayListToString(List<UserDisplayEntity> list) {
         Type type = new TypeToken<List<UserDisplayEntity>>() {}.getType();
-        return new Gson().toJson(list, type);
+        return GENERAL_GSON.toJson(list, type);
     }
 
     @TypeConverter

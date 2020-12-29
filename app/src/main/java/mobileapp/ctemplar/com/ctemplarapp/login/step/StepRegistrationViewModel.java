@@ -4,8 +4,6 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.google.gson.Gson;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -34,6 +32,8 @@ import mobileapp.ctemplar.com.ctemplarapp.utils.EncodeUtils;
 import retrofit2.HttpException;
 import retrofit2.Response;
 import timber.log.Timber;
+
+import static mobileapp.ctemplar.com.ctemplarapp.utils.DateUtils.GENERAL_GSON;
 
 public class StepRegistrationViewModel extends ViewModel {
     private final UserRepository userRepository = CTemplarApp.getUserRepository();
@@ -175,7 +175,7 @@ public class StepRegistrationViewModel extends ViewModel {
                     if (errorResponse != null && errorResponse.errorBody() != null) {
                         try {
                             String errorBody = errorResponse.errorBody().string();
-                            HttpErrorResponse httpErrorResponse = new Gson()
+                            HttpErrorResponse httpErrorResponse = GENERAL_GSON
                                     .fromJson(errorBody, HttpErrorResponse.class);
                             responseError.postValue(httpErrorResponse.getError().getError());
                         } catch (IOException ex) {
