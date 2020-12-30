@@ -20,32 +20,39 @@ public class LocaleUtils extends ContextWrapper {
     public static ContextWrapper getContextWrapper(Context context) {
         UserStore userStore = CTemplarApp.getUserStore();
         String languageKey = userStore.getLanguageKey();
-        if ("auto".equals(languageKey)) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O || "auto".equals(languageKey)) {
             return new ContextWrapper(context);
         }
         Locale newLocale = new Locale(languageKey);
+        Resources resources = context.getResources();
+        Configuration configuration = resources.getConfiguration();
+        configuration.setLocale(newLocale);
 
+        LocaleList localeList = new LocaleList(newLocale);
+        LocaleList.setDefault(localeList);
+        configuration.setLocales(localeList);
+
+        context = context.createConfigurationContext(configuration);
+
+        return new ContextWrapper(context);
+    }
+
+    public static void setLocale(Context context) {
+        UserStore userStore = CTemplarApp.getUserStore();
+        String languageKey = userStore.getLanguageKey();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O || "auto".equals(languageKey)) {
+            return;
+        }
+        Locale newLocale = new Locale(languageKey);
         Resources resources = context.getResources();
         Configuration configuration = resources.getConfiguration();
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+        Locale.setDefault(newLocale);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
             configuration.setLocale(newLocale);
-
-            LocaleList localeList = new LocaleList(newLocale);
-            LocaleList.setDefault(localeList);
-            configuration.setLocales(localeList);
-
-            context = context.createConfigurationContext(configuration);
-
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            configuration.setLocale(newLocale);
-            context = context.createConfigurationContext(configuration);
-
         } else {
             configuration.locale = newLocale;
-            resources.updateConfiguration(configuration, resources.getDisplayMetrics());
         }
-
-        return new ContextWrapper(context);
+        resources.updateConfiguration(configuration, resources.getDisplayMetrics());
     }
 }

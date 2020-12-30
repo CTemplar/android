@@ -31,6 +31,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        LocaleUtils.setLocale(this);
         ThemeUtils.setTheme(this);
         setContentView(getLayoutId());
         mUnbinder = ButterKnife.bind(this);
