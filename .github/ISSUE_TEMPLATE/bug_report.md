@@ -1,32 +1,25 @@
 ---
 name: Bug report
-about: Create a report to help us improve
+about: Report here if you found something isn't working as expected.
 title: ''
 labels: ''
 assignees: ''
-
 ---
 
-**Describe the bug**
-A clear and concise description of what the bug is.
+### Your environment
 
-**To Reproduce**
-Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error
+Include, at least, the app version and your operative system and/or device model.
 
-**Expected behavior**
-A clear and concise description of what you expected to happen.
+### Steps to reproduce
 
-**Screenshots**
-If applicable, add screenshots to help explain your problem.
+Tell us how to reproduce this issue, step by step.
 
-**Smartphone (please complete the following information):**
- - Device: [e.g. Samsung S8/iPhone6]
- - OS: [e.g. Android 6/ iOS8.1]
- - Version [e.g. 22]
+You can include media content like images or videos.
 
-**Additional context**
-Add any other context about the problem here.
+### Expected behavior
+
+Tell us what should happen.
+
+### Actual behavior
+
+Tell us what happens instead.
