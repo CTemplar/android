@@ -24,6 +24,8 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.appcompat.app.BaseContextWrapperDelegate;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -95,17 +97,31 @@ public class MainActivity extends AppCompatActivity
 
     private MainFragment mainFragment;
     private Handler handler = new Handler();
+    private AppCompatDelegate baseContextWrappingDelegate;
+
+//    @Override
+//    protected void attachBaseContext(Context newBase) {
+//        Context context = LocaleUtils.getContextWrapper(newBase);
+//        super.attachBaseContext(context);
+//    }
+
+    @NonNull
+    @Override
+    public AppCompatDelegate getDelegate() {
+        return baseContextWrappingDelegate != null ?
+                baseContextWrappingDelegate :
+                (baseContextWrappingDelegate = new BaseContextWrapperDelegate(super.getDelegate()));
+    }
 
     @Override
-    protected void attachBaseContext(Context newBase) {
-        Context context = LocaleUtils.getContextWrapper(newBase);
-        super.attachBaseContext(context);
+    public Context createConfigurationContext(Configuration overrideConfiguration) {
+        Context context = super.createConfigurationContext(overrideConfiguration);
+        return LocaleUtils.getContextWrapper(context);
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        LocaleUtils.setLocale(this);
         ThemeUtils.setTheme(this);
         setContentView(R.layout.activity_main);
 
@@ -191,6 +207,12 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        loadFolders();
+    }
+
+    @Override
     public void onBackPressed() {
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
@@ -247,12 +269,6 @@ public class MainActivity extends AppCompatActivity
             return true;
         }
         return false;
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        loadFolders();
     }
 
     @Override

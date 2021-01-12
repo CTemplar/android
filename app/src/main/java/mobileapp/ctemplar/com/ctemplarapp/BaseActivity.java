@@ -1,9 +1,13 @@
 package mobileapp.ctemplar.com.ctemplarapp;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.appcompat.app.BaseContextWrapperDelegate;
 
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
@@ -21,17 +25,31 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected boolean mRegisterForUserTokenExpiry = true;
     private boolean mExpiredDialogShowing = false;
     private CompositeDisposable mSubscriptions = new CompositeDisposable();
+    private AppCompatDelegate baseContextWrappingDelegate;
+
+//    @Override
+//    protected void attachBaseContext(Context newBase) {
+//        Context context = LocaleUtils.getContextWrapper(newBase);
+//        super.attachBaseContext(context);
+//    }
+
+    @NonNull
+    @Override
+    public AppCompatDelegate getDelegate() {
+        return baseContextWrappingDelegate != null ?
+                baseContextWrappingDelegate :
+                (baseContextWrappingDelegate = new BaseContextWrapperDelegate(super.getDelegate()));
+    }
 
     @Override
-    protected void attachBaseContext(Context newBase) {
-        Context context = LocaleUtils.getContextWrapper(newBase);
-        super.attachBaseContext(context);
+    public Context createConfigurationContext(Configuration overrideConfiguration) {
+        Context context = super.createConfigurationContext(overrideConfiguration);
+        return LocaleUtils.getContextWrapper(context);
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        LocaleUtils.setLocale(this);
         ThemeUtils.setTheme(this);
         setContentView(getLayoutId());
         mUnbinder = ButterKnife.bind(this);
