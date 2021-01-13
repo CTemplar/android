@@ -35,6 +35,8 @@ import retrofit2.HttpException;
 import retrofit2.Response;
 import timber.log.Timber;
 
+import static com.ctemplar.app.fdroid.utils.DateUtils.GENERAL_GSON;
+
 public class StepRegistrationViewModel extends ViewModel {
     private final UserRepository userRepository = CTemplarApp.getUserRepository();
 
@@ -175,7 +177,7 @@ public class StepRegistrationViewModel extends ViewModel {
                     if (errorResponse != null && errorResponse.errorBody() != null) {
                         try {
                             String errorBody = errorResponse.errorBody().string();
-                            HttpErrorResponse httpErrorResponse = new Gson()
+                            HttpErrorResponse httpErrorResponse = GENERAL_GSON
                                     .fromJson(errorBody, HttpErrorResponse.class);
                             responseError.postValue(httpErrorResponse.getError().getError());
                         } catch (IOException ex) {

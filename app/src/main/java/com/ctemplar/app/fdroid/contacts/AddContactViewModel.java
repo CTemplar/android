@@ -20,6 +20,8 @@ import com.ctemplar.app.fdroid.repository.entity.ContactEntity;
 import com.ctemplar.app.fdroid.utils.EncryptUtils;
 import timber.log.Timber;
 
+import static com.ctemplar.app.fdroid.utils.DateUtils.GENERAL_GSON;
+
 public class AddContactViewModel extends ViewModel {
     private final ContactsRepository contactsRepository;
     private final UserStore userStore;
@@ -56,7 +58,7 @@ public class AddContactViewModel extends ViewModel {
             contactData.setProvider(null);
             contactData.setEncrypted(true);
 
-            String contactString = new Gson().toJson(encryptContact);
+            String contactString = GENERAL_GSON.toJson(encryptContact);
             String encryptedContactString = EncryptUtils.encryptData(contactString);
             contactData.setEncryptedData(encryptedContactString);
         }

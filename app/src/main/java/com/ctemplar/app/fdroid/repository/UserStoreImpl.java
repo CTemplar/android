@@ -38,6 +38,7 @@ public class UserStoreImpl implements UserStore {
     private static final String KEY_LAST_PAUSE_TIME = "key_last_pause_time";
     private static final String KEY_IS_LOCKED = "key_is_locked";
     private static final String KEY_DARK_MODE = "key_dark_mode";
+    private static final String KEY_LANGUAGE = "key_language";
 
     public static UserStoreImpl getInstance(Context context) {
         if (instance == null) {
@@ -293,5 +294,15 @@ public class UserStoreImpl implements UserStore {
             default:
                 return "auto";
         }
+    }
+
+    @Override
+    public void setLanguageKey(String key) {
+        preferences.edit().putString(KEY_LANGUAGE, key).apply();
+    }
+
+    @Override
+    public String getLanguageKey() {
+        return preferences.getString(KEY_LANGUAGE, "auto");
     }
 }

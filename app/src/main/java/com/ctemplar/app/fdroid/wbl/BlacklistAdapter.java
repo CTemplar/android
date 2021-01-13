@@ -85,7 +85,7 @@ public class BlacklistAdapter extends RecyclerView.Adapter<BlacklistAdapter.Data
         notifyItemInserted(position);
     }
 
-    class DataViewHolder extends RecyclerView.ViewHolder {
+    static class DataViewHolder extends RecyclerView.ViewHolder {
         TextView nameView;
         TextView emailView;
 

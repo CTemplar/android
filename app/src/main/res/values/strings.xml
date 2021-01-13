@@ -414,6 +414,7 @@
     <string translatable="false" name="signature_key">signature_key</string>
     <string translatable="false" name="filters_key">filters_key</string>
     <string translatable="false" name="dark_mode_key">dark_mode_key</string>
+    <string translatable="false" name="language_key">language_key</string>
     <string translatable="false" name="block_external_images_key">block_external_images_key</string>
     <string translatable="false" name="report_bugs_enabled">report_bugs_enabled</string>
     <string translatable="false" name="white_black_list">white_black_list</string>
@@ -497,5 +498,19 @@
         <item>auto</item>
         <item>on</item>
         <item>off</item>
+    </string-array>
+
+    <string-array name="language_entries">
+        <item>Auto (detect)</item>
+        <item>English</item>
+        <item>Français</item>
+        <item>Português</item>
+    </string-array>
+
+    <string-array name="language_values">
+        <item>auto</item>
+        <item>en</item>
+        <item>fr</item>
+        <item>pt</item>
     </string-array>
 </resources>

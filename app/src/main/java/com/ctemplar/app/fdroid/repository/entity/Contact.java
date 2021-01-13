@@ -13,6 +13,8 @@ import com.ctemplar.app.fdroid.net.response.contacts.ContactData;
 import com.ctemplar.app.fdroid.net.response.contacts.EncryptContact;
 import com.ctemplar.app.fdroid.utils.EncryptUtils;
 
+import static com.ctemplar.app.fdroid.utils.DateUtils.GENERAL_GSON;
+
 public class Contact {
     private long id;
     private String email;
@@ -152,7 +154,8 @@ public class Contact {
         if (entity.isEncrypted) {
             String encryptedData = entity.getEncryptedData();
             String decryptedData = EncryptUtils.decryptData(encryptedData);
-            EncryptContact decryptedContact = new Gson().fromJson(decryptedData, EncryptContact.class);
+            EncryptContact decryptedContact = GENERAL_GSON.fromJson(decryptedData,
+                    EncryptContact.class);
             if (decryptedContact == null) {
                 return contact;
             }

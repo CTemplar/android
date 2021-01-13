@@ -55,6 +55,7 @@ import retrofit2.HttpException;
 import timber.log.Timber;
 
 import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.DRAFT;
+import static com.ctemplar.app.fdroid.utils.DateUtils.GENERAL_GSON;
 
 public class SendMailService extends IntentService {
     private static final String TAG = "SendMailService";
@@ -67,8 +68,6 @@ public class SendMailService extends IntentService {
     private static final String PUBLIC_KEYS_EXTRA_KEY = "public_keys";
     private static final String ATTACHMENTS_EXTRA_KEY = "attachments";
     private static final String EXTERNAL_ENCRYPTION_EXTRA_KEY = "external_encryption";
-
-    private static final Gson GSON = new Gson();
 
     public SendMailService() {
         super(TAG);
@@ -97,7 +96,7 @@ public class SendMailService extends IntentService {
                 }
                 SendMessageRequestProvider sendMessageRequestProvider;
                 try {
-                    sendMessageRequestProvider = GSON.fromJson(messageProviderString, SendMessageRequestProvider.class);
+                    sendMessageRequestProvider = GENERAL_GSON.fromJson(messageProviderString, SendMessageRequestProvider.class);
                 } catch (JsonSyntaxException e) {
                     Timber.e(e, "Cannot parse message provider");
                     return;
@@ -113,7 +112,7 @@ public class SendMailService extends IntentService {
                 MessageAttachmentProvider[] attachmentProviders = new MessageAttachmentProvider[attachmentsStringArray.length];
                 for (int i = 0; i < attachmentProviders.length; ++i) {
                     try {
-                        attachmentProviders[i] = GSON.fromJson(attachmentsStringArray[i], MessageAttachmentProvider.class);
+                        attachmentProviders[i] = GENERAL_GSON.fromJson(attachmentsStringArray[i], MessageAttachmentProvider.class);
                     } catch (JsonSyntaxException e) {
                         Timber.e(e, "Cannot parse attachment provider");
                     }
@@ -122,7 +121,7 @@ public class SendMailService extends IntentService {
                 EncryptionMessageProvider encryptionMessageProvider = null;
                 if (externalEncryptionMessageString != null) {
                     try {
-                        encryptionMessageProvider = GSON.fromJson(externalEncryptionMessageString, EncryptionMessageProvider.class);
+                        encryptionMessageProvider = GENERAL_GSON.fromJson(externalEncryptionMessageString, EncryptionMessageProvider.class);
                     } catch (JsonSyntaxException e) {
                         Timber.e(e, "Cannot parse external encryption provider");
                     }
@@ -428,16 +427,16 @@ public class SendMailService extends IntentService {
         Intent intent = new Intent(SEND_MAIL_ACTION);
         intent.setComponent(new ComponentName(context, SendMailService.class));
         intent.putExtra(MESSAGE_ID_EXTRA_KEY, messageId);
-        intent.putExtra(MESSAGE_PROVIDER_EXTRA_KEY, GSON.toJson(sendMessageRequestProvider));
+        intent.putExtra(MESSAGE_PROVIDER_EXTRA_KEY, GENERAL_GSON.toJson(sendMessageRequestProvider));
         intent.putExtra(PUBLIC_KEYS_EXTRA_KEY, publicKeyList);
         String[] attachmentsStringArray = new String[attachmentProviderList.length];
         for (int i = 0, count = attachmentProviderList.length; i < count; ++i) {
             MessageAttachmentProvider attachmentProvider = attachmentProviderList[i];
-            attachmentsStringArray[i] = GSON.toJson(attachmentProvider);
+            attachmentsStringArray[i] = GENERAL_GSON.toJson(attachmentProvider);
         }
         intent.putExtra(ATTACHMENTS_EXTRA_KEY, attachmentsStringArray);
         if (encryptionMessageProvider != null) {
-            intent.putExtra(EXTERNAL_ENCRYPTION_EXTRA_KEY, GSON.toJson(encryptionMessageProvider));
+            intent.putExtra(EXTERNAL_ENCRYPTION_EXTRA_KEY, GENERAL_GSON.toJson(encryptionMessageProvider));
         }
         LaunchUtils.launchService(context, intent);
     }

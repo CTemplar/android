@@ -28,6 +28,8 @@ import com.ctemplar.app.fdroid.utils.EncryptUtils;
 import okhttp3.ResponseBody;
 import timber.log.Timber;
 
+import static com.ctemplar.app.fdroid.utils.DateUtils.GENERAL_GSON;
+
 public class ContactsViewModel extends ViewModel {
     private final ContactsRepository contactsRepository;
     private final UserStore userStore;
@@ -179,7 +181,7 @@ public class ContactsViewModel extends ViewModel {
             contactData.setProvider(null);
             contactData.setEncrypted(true);
 
-            String contactString = new Gson().toJson(encryptContact);
+            String contactString = GENERAL_GSON.toJson(encryptContact);
             String encryptedContactString = EncryptUtils.encryptData(contactString);
             contactData.setEncryptedData(encryptedContactString);
         }

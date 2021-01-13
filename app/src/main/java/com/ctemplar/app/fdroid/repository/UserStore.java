@@ -62,4 +62,7 @@ public interface UserStore {
 
     void setDarkModeKey(String key);
     String getDarkModeKey();
+
+    void setLanguageKey(String key);
+    String getLanguageKey();
 }

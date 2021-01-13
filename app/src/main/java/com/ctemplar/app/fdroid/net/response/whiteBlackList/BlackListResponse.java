@@ -14,6 +14,7 @@ public class BlackListResponse {
     @SerializedName("results")
     private BlackListContact[] results;
 
+
     public long getTotalCount() {
         return totalCount;
     }

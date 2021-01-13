@@ -40,6 +40,8 @@ import com.ctemplar.app.fdroid.repository.entity.MailboxEntity;
 import com.ctemplar.app.fdroid.utils.EncryptUtils;
 import timber.log.Timber;
 
+import static com.ctemplar.app.fdroid.utils.DateUtils.GENERAL_GSON;
+
 public class SettingsViewModel extends ViewModel {
     private final ContactsRepository contactsRepository;
     private final UserRepository userRepository;
@@ -455,7 +457,7 @@ public class SettingsViewModel extends ViewModel {
         }
         String encryptedData = contactData.getEncryptedData();
         String decryptedData = EncryptUtils.decryptData(encryptedData);
-        EncryptContact decryptedContact = new Gson().fromJson(decryptedData, EncryptContact.class);
+        EncryptContact decryptedContact = GENERAL_GSON.fromJson(decryptedData, EncryptContact.class);
         if (decryptedContact == null) {
             return;
         }
