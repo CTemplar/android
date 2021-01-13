@@ -3,8 +3,6 @@ package mobileapp.ctemplar.com.ctemplarapp.repository.entity;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.google.gson.Gson;
-
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -12,6 +10,8 @@ import java.util.List;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.contacts.ContactData;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.contacts.EncryptContact;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EncryptUtils;
+
+import static mobileapp.ctemplar.com.ctemplarapp.utils.DateUtils.GENERAL_GSON;
 
 public class Contact {
     private long id;
@@ -152,7 +152,8 @@ public class Contact {
         if (entity.isEncrypted) {
             String encryptedData = entity.getEncryptedData();
             String decryptedData = EncryptUtils.decryptData(encryptedData);
-            EncryptContact decryptedContact = new Gson().fromJson(decryptedData, EncryptContact.class);
+            EncryptContact decryptedContact = GENERAL_GSON.fromJson(decryptedData,
+                    EncryptContact.class);
             if (decryptedContact == null) {
                 return contact;
             }

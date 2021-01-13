@@ -279,6 +279,26 @@ public class SettingsActivity extends BaseActivity {
         }
     }
 
+    public static class LanguagesFragment extends BasePreferenceFragment {
+        @Override
+        public void onCreatePreferences(Bundle bundle, String rootKey) {
+            setPreferencesFromResource(R.xml.language_settings, rootKey);
+
+            ListPreference languageListPreference = findPreference(getString(R.string.language_key));
+            if (languageListPreference != null) {
+                languageListPreference.setOnPreferenceChangeListener((preference, newValue) -> {
+                    if (!(newValue instanceof String)) {
+                        return false;
+                    }
+                    userStore.setLanguageKey((String) newValue);
+                    Toast.makeText(getActivity(), getString(R.string.please_restart_app_to_apply_changes), Toast.LENGTH_SHORT).show();
+                    return true;
+                });
+                languageListPreference.setValue(userStore.getLanguageKey());
+            }
+        }
+    }
+
     public static class BlockExternalImagesFragment extends BasePreferenceFragment {
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {

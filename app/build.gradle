@@ -89,9 +89,7 @@ dependencies {
     implementation 'com.google.dagger:dagger:2.27'
     implementation 'com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer:20200713.1'
 
-    implementation ('com.google.firebase:firebase-messaging:20.3.0') {
-        exclude group: 'com.google.firebase', module: 'firebase-measurement-connector'
-    }
+    implementation 'com.google.firebase:firebase-messaging:21.0.1'
 
     implementation 'org.bouncycastle:bcpg-jdk15on:1.66'
 
