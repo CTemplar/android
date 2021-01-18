@@ -1,226 +1,226 @@
 <resources>
-    <string name="navigation_drawer_open">Gaveta de navegação aberta</string>
-    <string name="navigation_drawer_close">Fechar gaveta de navegação</string>
-    <string name="nav_header_desc">Cabeçalho de navegação</string>
+    <string name="navigation_drawer_open">Abrir Menu de Navegação</string>
+    <string name="navigation_drawer_close">Fechar Menu de Navegação</string>
+    <string name="nav_header_desc">Barra de Navegação</string>
     <string name="action_settings">Definições</string>
-    <string name="action_undo">DESFAZER</string>
+    <string name="action_undo">Anular Introdução</string>
 
     <!-- MAIN -->
     <string name="dialog_log_out">Sair</string>
-    <string name="dialog_log_out_confirm">"Tem certeza que deseja sair?"</string>
+    <string name="dialog_log_out_confirm">"Tem certeza que quer sair?"</string>
     <string name="btn_log_out">SAIR</string>
 
     <!-- NAVIGATION DRAWER -->
-    <string name="nav_drawer_inbox">Caixa de entrada</string>
+    <string name="nav_drawer_inbox">Caixa de Entrada</string>
     <string name="nav_drawer_draft">Rascunhos</string>
-    <string name="nav_drawer_sent">Enviados</string>
-    <string name="nav_drawer_outbox">Caixa de saída</string>
-    <string name="nav_drawer_starred">Favoritos</string>
-    <string name="nav_drawer_archive">Arquivados</string>
+    <string name="nav_drawer_sent">Enviado</string>
+    <string name="nav_drawer_outbox">Caixa de Saída</string>
+    <string name="nav_drawer_starred">Sinalizadas</string>
+    <string name="nav_drawer_archive">Arquivo</string>
     <string name="nav_drawer_spam">Spam</string>
-    <string name="nav_drawer_trash">Lixeira</string>
-    <string name="nav_drawer_all_mails">Todos os e-mails</string>
+    <string name="nav_drawer_trash">Lixo</string>
+    <string name="nav_drawer_all_mails">Todos os Emails</string>
     <string name="nav_drawer_unread">Não lidos</string>
-    <string name="nav_drawer_add_folder">Adicionar pasta</string>
-    <string name="nav_drawer_add_label">Adicionar etiqueta</string>
-    <string name="nav_drawer_contact">Contatos</string>
-    <string name="nav_drawer_settings">Configurações</string>
+    <string name="nav_drawer_add_folder">Adicionar Pasta</string>
+    <string name="nav_drawer_add_label">Adicionar Etiqueta</string>
+    <string name="nav_drawer_contact">Contactos</string>
+    <string name="nav_drawer_settings">Definições</string>
     <string name="nav_drawer_help">Ajuda</string>
     <string name="nav_drawer_logout">Sair</string>
-    <string name="nav_drawer_manage_folders">Gerenciar pastas</string>
-    <string name="nav_drawer_manage_folders_param">Gerenciar pastas (%1$d)</string>
+    <string name="nav_drawer_manage_folders">Gerir as Pastas</string>
+    <string name="nav_drawer_manage_folders_param">Gerir as Pastas (%1$d)</string>
     <string name="nav_drawer_folders_show_more">Mostrar mais 10 pastas</string>
 
     <!-- TOOLBAR -->
-    <string name="action_search">Pesquisar</string>
-    <string name="action_filter">Filtro</string>
-    <string name="action_search_hint">Pesquisar por e-mails</string>
-    <string name="action_empty_folder">Pasta vazia</string>
-    <string name="action_spam">1 denunciado como spam</string>
+    <string name="action_search">Procurar</string>
+    <string name="action_filter">Filtrar</string>
+    <string name="action_search_hint">Procurar</string>
+    <string name="action_empty_folder">Esvaziar pasta</string>
+    <string name="action_spam">1 reportado como spam</string>
     <string name="action_archived">1 arquivado</string>
     <string name="action_moved_to_inbox">1 movido para a caixa de entrada</string>
-    <string name="action_reported_as_spam">1 denunciado como spam</string>
-    <string name="action_reported_as_not_spam">1 denunciado como não sendo spam</string>
+    <string name="action_reported_as_spam">1 reportado como spam</string>
+    <string name="action_reported_as_not_spam">1 reportado como não sendo spam</string>
     <string name="action_message_removed">1 mensagem removida</string>
 
-    <!-- MENU -->    
-    <string name="menu_save">Salvar</string>
+    <!-- MENU -->
+    <string name="menu_save">Guardar</string>
     <string name="menu_spam">Spam</string>
-    <string name="menu_not_spam">Marcar como não spam</string>
+    <string name="menu_not_spam">Marcar Como Não Sendo Spam</string>
     <string name="menu_move">Mover</string>
-    <string name="menu_trash">Lixeira</string>
-    <string name="menu_move_to_inbox">Mover para a caixa de entrada</string>
-    <string name="menu_move_to_archive">Arquivar</string>
-    <string name="menu_mark_as_unread">Marcar como não lido</string>
+    <string name="menu_trash">Lixo</string>
+    <string name="menu_move_to_inbox">Mover para a Caixa de Entrada</string>
+    <string name="menu_move_to_archive">Mover para o Arquivo</string>
+    <string name="menu_mark_as_unread">Marcar como Não Lido</string>
 
-    <!-- STRINGS -->    
-    <string name="token_expired_title">Sessão expirada</string>
-    <string name="token_expired_message">Sua sessão expirou, faça login no CTemplar novamente.</string>
-    <string name="title_email">E-mail</string>
+    <!-- STRINGS -->
+    <string name="token_expired_title">Session expirada</string>
+    <string name="token_expired_message">A sua sessão expirou, por favor entre no CTemplar de novo.</string>
+    <string name="title_email">Email</string>
     <string name="title_next">Próximo</string>
-    <string name="title_next_no_email">Próximo (nenhum e-mail)</string>
-    <string name="title_password">Senha</string>
-    <string name="title_username">Nome do usuário</string>
-    <string name="title_2fa">AUTENTICAÇÃO DE DOIS FATORES</string>
-    <string name="title_2fa_code">Digite o código gerado pelo aplicativo.</string>
-    <string name="title_captcha">CAPTCHA</string>
+    <string name="title_next_no_email">Próximo (Sem Email)</string>
+    <string name="title_password">Palavra-passe</string>
+    <string name="title_username">Nome de Utilizador</string>
+    <string name="title_2fa">2 AUTENTICAÇÃO POR FATORES</string>
+    <string name="title_2fa_code">Insira o Código gerado pela app.</string>
+    <string name="title_captcha">Captcha</string>
     <string name="title_ctemplar">CTEMPLAR</string>
-    <string name="title_forgot_password">Esqueceu a senha</string>
-    <string name="title_forgot_password_hint">Enviaremos o link de redefinição para o seu e-mail de recuperação.</string>
-    <string name="title_choose_password">Escolha uma senha</string>
-    <string name="title_confirm_password">Confirme a Senha</string>
-    <string name="title_ctemplar_username">Nome de usuário CTemplar</string>
-    <string name="title_recovery_email">E-mail de recuperação</string>
-    <string name="title_security_check">Verificação de segurança</string>
-    <string name="title_recovery_email_optional">E-mail de recuperação (opcional)</string>
-    <string name="title_reset_password">Redefinir a senha</string>
-    <string name="title_reset_code">Gerar um novo código</string>
+    <string name="title_forgot_password">Esqueci-me da palavra-passe</string>
+    <string name="title_forgot_password_hint">Iremos enviar um link para que que possa redefinir a sua senha para o email que designou para recuperação.</string>
+    <string name="title_choose_password">Escolha uma palavra-passe</string>
+    <string name="title_confirm_password">Confirme a palavra-passe </string>
+    <string name="title_ctemplar_username">Redefinir o nome de Utilizador no CTemplar</string>
+    <string name="title_recovery_email">Email de Recuperação</string>
+    <string name="title_security_check">Verificação de Segurança </string>
+    <string name="title_recovery_email_optional">Email de recuperação(Opcional)</string>
+    <string name="title_reset_password">Redefinir palavra-passe</string>
+    <string name="title_reset_code">Redefinir código</string>
     <string name="title_confirm">Confirmar</string>
-    <string name="title_confirm_reset_password">Confirmar redefinição de senha</string>
-    <string name="title_invitation_code">Código do convite</string>
-    <string name="title_further_question_hint">Se você tiver alguma dúvida, por favor, envie um e-mail para <![CDATA[<u><a href="mailto:support@ctemplar.com">support@ctemplar.com</a></u>]]></string>
-    <string name="title_confirm_reset_password_hint">A sua chave de criptografia está ligada à sua senha. Por causa disso, <![CDATA[<font color="#e74c3c">não será possível descriptografar as mensagens antigas, anexos e contatos</font>]]> se você resetar sua senha.</string>
-    <string name="title_confirm_reset_password_hint2">Tem certeza que deseja resetar sua senha?</string>
-    <string name="title_reset_code_hint">Nós enviamos um código para o seu <![CDATA[<u><a href="mailto:%1$s">e-mail de recuperação</a></u>]]> para resetar sua senha.</string>
-    <string name="title_reset_code_hint2">Insira ele abaixo para confirmar.</string>
-    <string name="title_new_password_hint">Não esqueça essa senha! Ela não pode ser recuperada.</string>
-    <string name="title_forgot_username_underlined"><u>Esqueceu seu nome de usuário?</u></string>
-    <string name="title_keep_me_logged_in">Mantenha essa seção ativa</string>
-    <string name="title_forgot_username">Esqueceu seu nome de usuário?</string>
-    <string name="title_forgot_username_hint">Digite seu endereço de e-mail e nós lhe enviaremos seu nome de usuário.</string>
-    <string name="title_email_my_username">Envie-me meu nome de usuário</string>
-    <string name="title_username_and_domain">Nome de usuário e domínio</string>
-    <string name="title_step_username_hint">Este será o seu novo endereço de e-mail do CTemplar.</string>
-    <string name="title_step_password_hint">Sua senha deve ter pelo menos 10 caracteres. A senha pode conter apenas letras latinas e não pode conter símbolos como «-! @. etc.</string>
-    <string name="hint_step_email_recovery_long">Ao marcar a caixa de seleção, você entende que, caso perca sua senha e não tenha definido um e-mail de recuperação, os dados da sua conta NÃO serão recuperáveis. Sua senha está conectada à sua chave de criptografia, portanto, alterar a senha atual também altera sua chave de criptografia (uma nova será criada) e TODO o conteúdo da sua conta será perdido (exceto seu endereço de e-mail).<![CDATA[<u><font color="blue">Menos</font></u>]]></string>
-    <string name="hint_step_email_recovery_short">Ao marcar a caixa de seleção, você entende que, caso perca sua senha e não tenha definido um e-mail de recuperação, os dados da sua conta NÃO serão recuperáveis. <![CDATA[<u><font color="blue">Mais informações</font></u>]]></string>
-    <string name="title_step_email_hint">Ele será usado para recuperar sua conta se você esquecer sua senha.</string>
-    <string name="title_step_email_check_hint">Por favor, marque a caixa de verificação se você concorda em cumprir nossos <![CDATA[<u><a href="https://ctemplar.com/terms">Termos e Condições.</a></u>]]></string>
-    <string name="title_step_invitation_code_hint">Você pode obter o código de convite de qualquer cliente pago existente ou solicitar um de nós. Por que convidar códigos e como obter um? <![CDATA[<u><a href="https://ctemplar.com/email-creation-restriction/">Saiba mais</a></u>]]></string>
-    <string name="title_more_info_link"><u>Mais informações</u></string>
-    <string name="title_empty_inbox">Caixa  de entrada vazia.</string>
-    <string name="title_empty_messages">Nenhuma mensagem na %1$s</string>
-    <string name="title_empty_contacts">Você não tem contatos ainda</string>
-    <string name="title_empty_folders">Você não tem pastas.</string>
-    <string name="btn_login">Entrar</string>
+    <string name="title_confirm_reset_password">Confirmar Redefinição de Palavra-passe</string>
+    <string name="title_invitation_code">Código de Convite</string>
+    <string name="title_further_question_hint">Se tiver mais questões por favor envie email para <![CDATA[<u><a href="mailto:support@ctemplar.com">support@ctemplar.com</a></u>]]></string>
+    <string name="title_confirm_reset_password_hint">A sua chave de encriptação está ligada à sua palavra-passe. Porque causa disso <![CDATA[<font color="#e74c3c">não poderá desencriptar mensagens antigas, anexos ou contactos </font>]]> se redefinir a sua palavra-passe.</string>
+    <string name="title_confirm_reset_password_hint2">Tem a Certeza que quer redefinir a sua palavra-passe?</string>
+    <string name="title_reset_code_hint">Nós enviamos um código para <![CDATA[<u><a href="mailto:%1$s">recovery email</a></u>]]> para que possa redefinir a sua palavra-passe.</string>
+    <string name="title_reset_code_hint2">Insira-a abaixo para confirmar.</string>
+    <string name="title_new_password_hint">Não se esqueça desta palavra-passe, ela não pode ser recuperada.</string>
+    <string name="title_forgot_username_underlined"><u>Esqueceu-se do seu nome de utilizador?</u></string>
+    <string name="title_keep_me_logged_in">Manter a sessão iniciada</string>
+    <string name="title_forgot_username">Esqueceu-se do nome de utilizador?</string>
+    <string name="title_forgot_username_hint">Insira o seu endereço de email e iremos enviar-lhe o seu nome de utilizador.</string>
+    <string name="title_email_my_username">Enviem-me um email com o meu endereço de email</string>
+    <string name="title_username_and_domain">Nome de utilizador e domínio</string>
+    <string name="title_step_username_hint">Este será o seu novo endereço de email do CTemplar.</string>
+    <string name="title_step_password_hint">A sua palavra-passe tem de ter no mínimo 10 caracteres. A palavra chave só pode conter caracteres do Latim e não pode conter símbolos como «-+!@. etc.</string>
+    <string name="hint_step_email_recovery_long"> Ao marcar esta Caixa de verificação você compreende que se perder a sua palavra-passe e não designar um email de recuperação, não será possível recuperar a sua conta. A sua palavra-passe está ligada à sua chave de encriptação, se alterar a sua palavra-passe irá lhe ser atribuída uma nova chave de encriptação e TODOS os conteúdos da sua conta serão perdidos exceto o seu email. <![CDATA[<u><font color="blue">Less</font></u>]]></string>
+    <string name="hint_step_email_recovery_short">Ao marcar esta Caixa de verificação você compreende que se perder a sua palavra-passe e ao não designar um email de recuperação, não será possível recuperar a sua conta.<![CDATA[<u><font color="blue">More info</font></u>]]></string>
+    <string name="title_step_email_hint">Isto é utilizado para recuperar a sua conta caso se esqueça da sua palavra-passe.</string>
+    <string name="title_step_email_check_hint">Por favor marque esta Caixa para concordar com os nossos <![CDATA[<u><a href="https://ctemplar.com/terms">Termos e Condições.</a></u>]]></string>
+    <string name="title_step_invitation_code_hint">Pode obter um código de convite através de qualquer cliente que esteja a pagar ou então poderá pedir-nos um convite. Porque é que se utilizam códigos de convite e como é que se pode obter um? <![CDATA[<u><a href="https://ctemplar.com/email-creation-restriction/">Learn more</a></u>]]></string>
+    <string name="title_more_info_link"><u>Mais Informação</u></string>
+    <string name="title_empty_inbox">Não tem mensagens na sua caixa de entrada</string>
+    <string name="title_empty_messages">Não tem %1$s mensagens</string>
+    <string name="title_empty_contacts">Ainda não tem contactos</string>
+    <string name="title_empty_folders">Não tem pastas</string>
+    <string name="btn_login">Entrar </string>
     <string name="btn_compose">Compor</string>
     <string name="btn_add_folder">Adicionar pasta</string>
-    <string name="hint_captcha">Escreva o texto da imagem/hora do relógio. Por exemplo: 04:23</string>
-    <string name="txt_forgot_pass">Esqueceu sua senha?</string>
-    <string name="txt_create_acc"><u>Criar uma conta</u></string>
-    <string name="txt_loading">Carregando…</string>
-    <string name="txt_add_contact">Adicionar contato</string>
-    <string name="txt_edit_contact">Editar Contato</string>
-    <string name="txt_enter_valid_captcha">Digite um captcha válido</string>
+    <string name="hint_captcha">Escrever um texto através de imagem / Exibir tempo no relógio (hh:mm) e.g.: 04:23</string>
+    <string name="txt_forgot_pass">Esqueceu-se da Palavra-passe?</string>
+    <string name="txt_create_acc"><u>Criar conta</u></string>
+    <string name="txt_loading">A carregar…</string>
+    <string name="txt_add_contact">Adicionar contacto</string>
+    <string name="txt_edit_contact">Editar contacto</string>
+    <string name="txt_enter_valid_captcha">Insira um captcha válido</string>
     <string name="btn_confirm">CONFIRMAR</string>
-    <string name="title_clear_folder">Limpar pasta</string>
-    <string name="txt_clear_folder">Tem certeza de que deseja excluir todas as mensagens da pasta?</string>
-    <string name="username_is_available">Nome de usuário está disponível</string>
-    <string name="username_is_not_available">Nome de usuário não está disponível</string>
-    <string name="checking">Verificando…</string>
+    <string name="title_clear_folder">Limpar Pasta</string>
+    <string name="txt_clear_folder">Tem a certeza que deseja apagar todas as mensagens desta pasta?</string>
+    <string name="username_is_available">Este Nome de Utilizador está disponível</string>
+    <string name="username_is_not_available">Este Nome de Utilizador não está disponível</string>
+    <string name="checking">A verificar…</string>
 
     <!-- COMPOSE OPTIONS -->
-    <string name="txt_left_time_destruct">Será excluído em %1$s</string>
-    <string name="txt_left_time_delay_delivery">Será enviado em %1$s</string>
-    <string name="txt_left_time_dead_mans_timer">Dead mans em %1$s</string>
-    <string name="txt_encrypt_message_title">Configurar senha</string>
-    <string name="txt_destruct_message_title">Temporizador de autodestruição</string>
+    <string name="txt_left_time_destruct">A apagar em %1$s</string>
+    <string name="txt_left_time_delay_delivery">Entrega em %1$s</string>
+    <string name="txt_left_time_dead_mans_timer">Homem Morto em %1$s</string>
+    <string name="txt_encrypt_message_title">Definir palavra-passe </string>
+    <string name="txt_destruct_message_title">Temporizador para autodestruição</string>
     <string name="txt_destruct_timer_hint">Self Destruction é apenas para destinatários CTemplar. Adicione destinatários CTemplar para recurso de autodestruição</string>
-    <string name="txt_dead_mans_title">Temporizador do Dead Man\'s</string>
-    <string name="txt_delayed_message_title">Envio programado</string>
-    <string name="txt_encrypt_message_summary">Criptografar para não usuários do CTemplar</string>
-    <string name="txt_delayed_message_summary">O e-mail será enviado automaticamente no dia e hora selecionados.</string>
-    <string name="txt_destruct_message_summary">O e-mail será excluído automaticamente da conta do destinatário após</string>
-    <string name="txt_dead_mans_summary">Se você não acessar sua conta antes da data e hora definida aqui, esse e-mail será enviado</string>
-    <string name="txt_schedule">Agendar</string>
-    <string name="txt_encrypt">Criptografar</string>
-    <string name="txt_selected_datetime_is_past">A data e hora selecionadas estão no passado</string>
+    <string name="txt_dead_mans_title">O Temporizador do Homem Morto</string>
+    <string name="txt_delayed_message_title">Entrega atrasada</string>
+    <string name="txt_encrypt_message_summary">Encriptar para utilizadores que não usem email CTemplar</string>
+    <string name="txt_delayed_message_summary">O email será enviado automaticamente no tempo que designou.</string>
+    <string name="txt_destruct_message_summary">Este email apaga-se automaticamente na conta de quem o recebeu depois</string>
+    <string name="txt_dead_mans_summary">Se não entrar na tua conta depois do tempo que designou, o email será enviado depois</string>
+    <string name="txt_schedule">Agenda</string>
+    <string name="txt_encrypt">Encriptar</string>
+    <string name="txt_selected_datetime_is_past">A data que escolheu é no passado</string>
     <string name="txt_yesterday">Ontem</string>
-    <string name="txt_attachments_in_processing">Processando anexos…</string>
+    <string name="txt_attachments_in_processing">A processar anexos…</string>
 
     <!-- VIEW MESSAGES -->
-    <string name="txt_more_details">Mostrar detalhes</string>
-    <string name="txt_less_details">Ocultar detalhes</string>
+    <string name="txt_more_details">Mais detalhes</string>
+    <string name="txt_less_details">Menos detalhes</string>
     <string name="toast_message_marked_unread">Mensagem marcada como não lida</string>
     <string name="toast_message_moved_to">Mensagem movida para %1$s</string>
-    <string name="toast_messages_doesnt_exist">As mensagens não existem</string>
-    <string name="toast_download_started">Download iniciado</string>
-    <string name="toast_download_complete">Download completo</string>
-    <string name="txt_user_wrote">\n\n-----------------------------------------------------------------------------------------------\Na %1$s %2$s escreveu:\n\n</string>
-    <string name="txt_forwarded_message">Mensagem encaminhada</string>
-    <string name="txt_from">De: &#160;</string>
+    <string name="toast_messages_doesnt_exist">Mensagens não existentes </string>
+    <string name="toast_download_started">O Download começou </string>
+    <string name="toast_download_complete">O Download terminou</string>
+    <string name="txt_user_wrote">\n\n-----------------------------------------------------------------------------------------------\nOn %1$s %2$s escreveu:\n\n</string>
+    <string name="txt_forwarded_message">Mensagem Reencaminhada</string>
+    <string name="txt_from">De:&#160;</string>
     <string name="txt_date">Data</string>
     <string name="txt_subject">Assunto</string>
     <string name="txt_to">Para:&#160;</string>
-    <string name="txt_reply_all">Responder todos</string>
-    <string name="attachment_decryption">Descriptografia de anexo…</string>
-    <string name="no_results_found">Nenhum resultado encontrado</string>
+    <string name="txt_reply_all">Responder a Todos</string>
+    <string name="attachment_decryption">Desencriptação dos Anexos …</string>
+    <string name="no_results_found">Não foram encontrados resultados </string>
 
     <!-- CHANGE PASSWORD -->
-    <string name="toast_password_changed">Senha alterada</string>
-    <string name="toast_password_not_changed">A senha não foi alterada</string>
-    <string name="dialog_change_password">Mudar senha</string>
-    <string name="title_current_password">Senha atual</string>
-    <string name="title_new_password">Nova senha</string>
-    <string name="title_new_password_confirm">Confirme sua nova senha</string>
-    <string name="dialog_change_password_confirm">Tem certeza de que deseja alterar a senha?</string>
-    <string name="dialog_change_password_confirm_reset">Tem certeza de que deseja alterar a senha? Todos os seus dados serão perdidos.</string>
-    <string name="btn_change">MUDAR</string>
-    <string name="btn_change_lowercase">Mudar</string>
-    <string name="title_message_password">Senha da mensagem</string>
-    <string name="title_message_password_confirm">Confirme a senha</string>
-    <string name="title_message_password_hint">Dica da senha</string>
+    <string name="toast_password_changed">Palavra-passe alterada</string>
+    <string name="toast_password_not_changed">A Palavra-passe não foi alterada</string>
+    <string name="dialog_change_password">Mudar palavra-passe</string>
+    <string name="title_current_password">Palavra-passe atual</string>
+    <string name="title_new_password">Nova palavra-passe </string>
+    <string name="title_new_password_confirm">Confirmar a nova palavra-passe</string>
+    <string name="dialog_change_password_confirm">Tem a certeza que quer alterar a sua palavra-passe?</string>
+    <string name="dialog_change_password_confirm_reset">Tem a certeza que quer alterar a sua palavra-passe? Todos os dados serão perdidos.</string>
+    <string name="btn_change">ALTERAR</string>
+    <string name="btn_change_lowercase">Alterar</string>
+    <string name="title_message_password">Enviar Palavra-passe </string>
+    <string name="title_message_password_confirm">Confirmar Palavra-passe</string>
+    <string name="title_message_password_hint">Dica para a Palavra-passe </string>
     <string name="title_message_password_expire_days">Dias</string>
     <string name="title_message_password_expire_hours">Horas</string>
-    <string name="txt_encrypt_message_password_expiration">Validade do e-mail</string>
+    <string name="txt_encrypt_message_password_expiration">Hora de expiração</string>
 
     <!-- CONTACT -->
-    <string name="toast_not_saved">O contato não foi salvo</string>
-    <string name="txt_enter_name">Insira o nome</string>
-    <string name="txt_enter_valid_email">Digite um endereço de e-mail válido</string>
+    <string name="toast_not_saved">Não guardado</string>
+    <string name="txt_enter_name">Inserir Nome</string>
+    <string name="txt_enter_valid_email">Insira um endereço de email válido</string>
     <string name="txt_name_removed">%1$s removido!</string>
-    <string name="txt_contact_loading_error">Erro de carregamento do contato</string>
-    <string name="txt_delete_folder_quest_title">Excluir pasta?</string>
-    <string name="txt_delete_folder_quest_message">"Tem certeza de que deseja excluir a pasta?</string>
-    <string name="btn_contact_delete">EXCLUIR</string>
+    <string name="txt_contact_loading_error">Erro ao carregar os contactos</string>
+    <string name="txt_delete_folder_quest_title">Eliminar a pasta?</string>
+    <string name="txt_delete_folder_quest_message">"Tem a certeza que quer eliminar esta pasta?</string>
+    <string name="btn_contact_delete">ELIMINAR</string>
     <string name="btn_cancel">CANCELAR</string>
-    <string name="title_email_address">E-mail</string>
-    <string name="title_phone_number">Celular</string>
-    <string name="title_phone_number_second">2.º Celular</string>
+    <string name="title_email_address">Email</string>
+    <string name="title_phone_number">Número de Telemóvel</string>
+    <string name="title_phone_number_second">Número de telemóvel 2</string>
     <string name="title_address">Endereço</string>
     <string name="title_note">Nota</string>
-    <string name="txt_contacts_empty">Nenhum contato foi criado até agora</string>
+    <string name="txt_contacts_empty">Os Contactos estão vazios</string>
 
     <!-- FOLDERS -->
     <string name="toast_folder_created">Pasta criada</string>
-    <string name="toast_folder_not_created">Já existe uma pasta com esse nome.</string>
-    <string name="txt_folder_deleted">Pasta excluída</string>
-    <string name="txt_folder_not_deleted">A pasta não foi excluída</string>
+    <string name="toast_folder_not_created">Uma pasta com o mesmo nome já existe.</string>
+    <string name="txt_folder_deleted">Pasta eliminada</string>
+    <string name="txt_folder_not_deleted">A pasta não foi eliminada </string>
     <string name="txt_folder_edited">Pasta editada</string>
-    <string name="txt_folder_not_edited">A pasta não foi editada</string>
-    <string name="txt_folder_name_hint">O nome da pasta deve ter entre 1 e 30 letras e/ou dígitos</string>
-    <string name="title_folder_name">Nome da pasta</string>
-    <string name="title_choose_color">Escolha uma cor</string>
+    <string name="txt_folder_not_edited">Pasta não editada</string>
+    <string name="txt_folder_name_hint">O nome da pasta tem de ter entre 4 e 30 letras e dígitos</string>
+    <string name="title_folder_name">Nome da Pasta</string>
+    <string name="title_choose_color">Mudar cor</string>
     <string name="txt_edit_folder">Editar pasta</string>
-    <string name="txt_delete_folder">Excluir pasta</string>
-    <string name="txt_manage_folders">Gerenciar pastas</string>
-    <string name="txt_folders_empty">Pastas vazias</string>
-    <string name="txt_create_folder_free_error">Usuários gratuitos podem criar, no máximo, 5 pastas.</string>
+    <string name="txt_delete_folder">Eliminar pasta</string>
+    <string name="txt_manage_folders">Gerir pastas</string>
+    <string name="txt_folders_empty">As Pastas estão vazias</string>
+    <string name="txt_create_folder_free_error">Utilizadores da versão gratuita só podem criar até 5 pastas.</string>
 
     <!-- SEND MESSAGE -->
-    <string name="toast_message_sent">Mail enviado</string>
-    <string name="toast_message_not_sent">O mail não foi enviado</string>
-    <string name="toast_message_saved_as_draft">Correio salvo como rascunho</string>
-    <string name="toast_message_not_created">Correio não criado</string>
-    <string name="toast_message_not_loaded">Correio não carregado</string>
-    <string name="toast_attachment_unable_read_file">Não foi possível ler o arquivo no caminho selecionado</string>
-    <string name="toast_attachment_unable_read_path">"Não foi possível ler o caminho selecionado"</string>
-    <string name="txt_sending_mail">Enviando mail…</string>
-    <string name="txt_saving_mail">Salvando correio…</string>
-    <string name="txt_uploading">Enviando…</string>
-    <string name="dialog_discard_mail">Descartar o mail</string>
-    <string name="dialog_discard_confirm">Tem certeza de que deseja descartar este mail?</string>
-    <string name="dialog_save_in_drafts">Salvar nos rascunhos</string>
+    <string name="toast_message_sent">Email enviado</string>
+    <string name="toast_message_not_sent">Email não enviado</string>
+    <string name="toast_message_saved_as_draft">Email guardado como rascunho</string>
+    <string name="toast_message_not_created">A mensagem não foi criada</string>
+    <string name="toast_message_not_loaded">A mensagem não foi carregada</string>
+    <string name="toast_attachment_unable_read_file">Não foi possível ler o ficheiro no diretório selecionado</string>
+    <string name="toast_attachment_unable_read_path">"Não foi possível ler o diretório selecionado"</string>
+    <string name="txt_sending_mail">A enviar o email…</string>
+    <string name="txt_saving_mail">A guardar o email…</string>
+    <string name="txt_uploading">A carregar…</string>
+    <string name="dialog_discard_mail">Descartar email</string>
+    <string name="dialog_discard_confirm">Tem a certeza que quer descartar este mail?</string>
+    <string name="dialog_save_in_drafts">Guardar nos rascunhos</string>
     <string name="action_discard">Descartar</string>
     <string name="action_cancel">Cancelar</string>
     <string name="btn_add">Adicionar</string>
@@ -228,83 +228,85 @@
     <string name="txt_cc">Cc: &#160;</string>g>
     <string name="txt_bcc">Bcc: &#160;</string>
     <string name="txt_date_format">Data: %1$s</string>
-    <string name="hint_compose">Escrever um e-mail</string>
+    <string name="hint_compose">Compor email</string>
 
     <!-- NOTIFICATION SERVICE -->
     <string name="notification_channel_name">CTemplar</string>
-    <string name="notification_channel_description">Novo mail</string>
+    <string name="notification_channel_description">Nova mensagem</string>
+    <string name="title_notification_service">Serviço de Notificações </string>
+    <string name="title_service_running">O serviço está em execução </string>
 
     <!-- CUSTOM FILTERS -->
     <string name="txt_filters_title">Filtros</string>
-    <string name="title_add_custom_filter">Adicionar filtro personalizado</string>
-    <string name="title_edit_custom_filter">Editar filtro</string>
+    <string name="title_add_custom_filter">Adicionar um filtro personalizado</string>
+    <string name="title_edit_custom_filter">Editar filtro personalizado</string>
     <string name="btn_add_custom_filter">Adicionar filtro personalizado</string>
-    <string name="txt_filter_name">Nome do filtro</string>
+    <string name="txt_filter_name">Filtrar o nome</string>
     <string name="txt_filter_conditions">Condições</string>
     <string name="txt_filter_actions">Ações</string>
     <string name="txt_filter_move_to">Mover para</string>
     <string name="txt_filter_mark_as_read">Marcar como lido</string>
-    <string name="txt_filter_mark_as_starred">Marcar como favorito</string>
-    <string name="btn_submit">Enviar</string>
-    <string name="toast_filter_not_created">Um filtro com o mesmo nome já existe</string>
-    <string name="toast_filter_created">Filtro criado</string>
-    <string name="txt_filter_name_hint">O nome do filtro deve ter entre 4 e 30 letras</string>
-    <string name="txt_filter_text_hint">O texto do filtro deve ter entre 1 e 30 letras</string>
-    <string name="txt_filter_not_deleted">O filtro não foi excluído</string>
-    <string name="txt_filter_deleted">Filtro excluído</string>
-    <string name="txt_filter_not_edited">O filtro não foi editado</string>
+    <string name="txt_filter_mark_as_starred">Sinalizar</string>
+    <string name="btn_submit">Submeter</string>
+    <string name="toast_filter_not_created">Filtrar com o mesmo nome que já existe</string>
+    <string name="toast_filter_created">Filtrar criados</string>
+    <string name="txt_filter_name_hint">Filtrar por nome, tem de ter entre 4 e 30 letras</string>
+    <string name="txt_filter_text_hint">Filtrar texto, tem de ter entre 1 e 30 letras</string>
+    <string name="txt_filter_not_deleted">O filtro não foi eliminado</string>
+    <string name="txt_filter_deleted">Filtro eliminado</string>
+    <string name="txt_filter_not_edited">Filtro não editado</string>
     <string name="txt_filter_edited">Filtro editado</string>
-    <string name="txt_delete_filter_quest_title">Excluir filtro?</string>
-    <string name="txt_delete_filter_quest_message">"Tem certeza de que deseja excluir o filtro?</string>
-    <string name="txt_delete_filter">Excluir filtro</string>
+    <string name="txt_delete_filter_quest_title">Eliminar filtro?</string>
+    <string name="txt_delete_filter_quest_message">"Tem a certeza que quer eliminar este filtro?</string>
+    <string name="txt_delete_filter">Eliminar filtro</string>
 
     <!-- WHITE-BLACK LIST -->
-    <string name="adding_blacklist_contact_error">Erro ao adicionar o contato à lista negra</string>
-    <string name="adding_whitelist_contact_error">Erro ao adicionar o contato à lista de branca</string>
-    <string name="added_to_whitelist">E-mail adicionado à lista branca</string>
-    <string name="title_contact_name">Nome de contato</string>
-    <string name="title_contact_email">E-mail de contato</string>
-    <string name="title_add_to_blacklist">Adicionar à lista negra</string>
+    <string name="adding_blacklist_contact_error">Erro ao adicionar contacto à lista negra</string>
+    <string name="adding_whitelist_contact_error">Erro ao adicionar contacto à lista branca</string>
+    <string name="added_to_whitelist">Email adicionar à lista branca</string>
+    <string name="title_contact_name">Nome do contacto</string>
+    <string name="title_contact_email">Email do contacto</string>
+    <string name="title_add_to_blacklist">Adicionar à lista negra </string>
     <string name="title_add_to_whitelist">Adicionar à lista branca</string>
     <string name="title_white_black_list">Lista branca / Lista negra</string>
-    <string name="txt_add_blacklist_contact">Adicionar contato na lista negra</string>
-    <string name="txt_add_whitelist_contact">Adicionar contato na lista branca</string>
+    <string name="txt_add_blacklist_contact">Adicionar contacto à lista negra</string>
+    <string name="txt_add_whitelist_contact">Adicionar contacto à lista branca</string>
 
     <!-- FILTER DIALOG -->
     <string name="filtered">Filtrado</string>
     <string name="txt_filters">Filtros</string>
-    <string name="txt_clear_all">Limpar tudo</string>
-    <string name="txt_select_filters">Filtros selecionados</string>
-    <string name="txt_starred">Favoritas</string>
-    <string name="txt_unread">Não lida</string>
-    <string name="txt_with_attachments">Com anexos</string>
+    <string name="txt_clear_all">Limpar todos</string>
+    <string name="txt_select_filters">Selecionar filtros</string>
+    <string name="txt_starred">Sinalizadas</string>
+    <string name="txt_unread">Não lidas</string>
+    <string name="txt_with_attachments">Com Anexos</string>
     <string name="btn_apply">Aplicar</string>
 
     <!-- MOVE TO -->
-    <string name="txt_move_to">Mover para…</string>
-    <string name="txt_select_folder">Selecione uma pasta</string>
-    <string name="forward_attachments">Confirmar encaminhamento de anexos</string>
-    <string name="forward_attachments_description">Deseja encaminhar anexos dessa mensagem?</string>
+    <string name="txt_move_to">Mover para …</string>
+    <string name="txt_select_folder">Selecionar pasta</string>
+    <string name="forward_attachments">Confirmar o Reencaminhamento dos Anexos</string>
+    <string name="forward_attachments_description">Quer reencaminhar os anexos desta mensagem?</string>
     <string name="yes">Sim</string>
     <string name="no">Não</string>
 
     <!-- SETTINGS -->
-    <string name="txt_settings">Configurações</string>
-    <string name="txt_display_name">Nome exibido</string>
-    <string name="txt_type_your_name">Digite seu nome</string>
-    <string name="txt_type_signature">Digite sua assinatura</string>
+    <string name="txt_settings">Definições</string>
+    <string name="txt_display_name">Nome a apresentar</string>
+    <string name="txt_type_your_name">Escreva o seu nome</string>
+    <string name="txt_type_signature">Escreva a sua assinatura</string>
     <string name="txt_signature_enabled">Assinatura ativada</string>
 
     <!-- PIN LOCK -->
-    <string name="pin_lock">Bloqueio de PIN</string>
-    <string name="pin_lock_enable">Ativar bloqueio de PIN</string>
-    <string name="change_pin">Alterar PIN</string>
+    <string name="pin_lock">Bloqueio por PIN</string>
+    <string name="pin_lock_enable">Ativar Bloqueio por PIN</string>
+    <string name="change_pin">Mudar PIN</string>
     <string name="auto_lock">Bloqueio automático</string>
-    <string name="choose_pin">Digite um PIN de 4 dígitos</string>
-    <string name="confirm_pin">Confirme seu PIN</string>
+    <string name="choose_pin">Insira um PIN de 4 dígitos</string>
+    <string name="confirm_pin">Confirme o seu PIN</string>
     <string name="invalid_pin">PIN inválido</string>
-    <string name="pins_dont_match">PINs não correspondem</string>
-    
+    <string name="pins_dont_match">Os PINS não são iguais</string>
+
     <!-- SIGNATURE EDIT BAR -->
     <string name="txt_panel_bold">B</string>
     <string name="txt_panel_italic">I</string>
@@ -313,66 +315,61 @@
     <string name="txt_panel_normal">Normal</string>
 
     <!-- SETTINGS -->
-    <string name="settings_general">Configurações Gerais</string>
-    <string name="settings_recovery_email">E-mail de recuperação</string>
-    <string name="settings_enable_recovery_email">Ativar e-mail de recuperação</string>
-    <string name="settings_type_recovery_email">Digite seu e-mail de recuperação</string>
-    <string name="settings_type_notification_email">Digite sua notificação por email</string>
-    <string name="settings_type_notification_email_description">Insira um email de notificação no qual você gostaria de receber notificações diárias quando houver novos emails.</string>
+    <string name="settings_general">Definições gerais</string>
+    <string name="settings_recovery_email">Email de Recuperação</string>
+    <string name="settings_enable_recovery_email">Ativar email de recuperação</string>
+    <string name="settings_type_notification_email">Digite seu e-mail de notificação</string>
+    <string name="settings_type_notification_email_description">Insira um e-mail de notificação sobre o qual deseja receber uma notificação todos os dias quando houver novos e-mails.</string>
+    <string name="settings_type_recovery_email">Escreva o seu email de recuperação</string>
     <string name="settings_enabled_anti_phishing">Anti-Phishing</string>
-    <string name="settings_type_anti_phishing_phrase">Insira sua frase Anti-Phishing</string>
-    <string name="settings_subject_encryption">Criptografia do assunto</string>
-    <string name="settings_password">Senha</string>
-    <string name="settings_language">Idioma</string>
+    <string name="settings_type_anti_phishing_phrase">Escreva a sua frase anti-phishing</string>
+    <string name="settings_subject_encryption">Encriptação do assunto</string>
+    <string name="settings_password">Palavra-passe</string>
+    <string name="settings_language">Língua</string>
     <string name="settings_notifications">Notificações</string>
-    <string name="settings_enable_notifications">Ativar notificações push</string>
-    <string name="settings_contacts_encryption">Criptografia dos contatos</string>
-    <string name="settings_encryption">Criptografia</string>
-    <string name="settings_phishing_protection">Phishing Protection</string>
-    <string name="settings_phishing_protection_description"><![CDATA[<font color="#939191">A frase Anti-Phishing permite que os usuários vinculem uma palavra ou frase personalizada de sua escolha à sua conta CTemplar. Portanto, se você fizer login no webmail e sua frase anti-phishing estiver faltando ou incorreta, você pode estar sendo vítima de phishing. Verifique imediatamente se está acessando a URL correta: </font> <font color="#4d92e2"><u>https://mail.ctemplar.com</u></font> <font color="#939191">Se não estiver, então um site malicioso pode estar tentando roubar as suas credenciais. Para evitar danos à sua conta, você deve ir até</font> <font color="#4d92e2"><u>https://mail.ctemplar.com"></u></font> <font color="#939191">e mudar sua senha.<br><br>Atente-se que a frase Anti-Phishing somente será exibida quando você acessar a versão web.</font>]]></string>
-    <string name="settings_auto_save">Salvamento automático</string>
-    <string name="settings_auto_save_contacts">Salvar contatos automaticamente</string>
-    <string name="settings_auto_save_drafts">Salvar rascunhos automaticamente</string>
+    <string name="settings_enable_notifications">Permitir notificações ‘push’</string>
+    <string name="settings_contacts_encryption">Encriptação dos contactos </string>
+    <string name="settings_encryption">Encriptação</string>
+    <string name="settings_phishing_protection">Proteção contra Phishing</string>
+    <string name="settings_phishing_protection_description"><![CDATA[<font color="#939191">A frase Anti-phishing permite que os utilizadores liguem uma palavra ou frase personalizada à sua conta CTemplar. Depois de a definir, se alguma vez entrar no seu webmail e a sua conta de Anti-phishing tiver desaparecido ou incorreta, talvez esteja a ser uma vítima de phishing. Deve imediatamente confirmar que está a visitar </font> <font color="#4d92e2"><u>https://mail.ctemplar.com</u></font> <font color="#939191">Se não tiver, então um site malicioso poderá ter os seus credenciais para entrar na conta. Para impedir qualquer dano à sua conta, deve visitar imediatamente </font> <font color="#4d92e2"><u>https://mail.ctemplar.com</u></font> <font color="#939191">e mudar a sua palavra-passe.<br><br>Note que a frase de Anti-phishing será apenas exibida quando entrar na web. </font>]]></string>
+    <string name="settings_auto_save">Guardar automaticamente</string>
+    <string name="settings_auto_save_contacts">Guardar automaticamente os contactos</string>
+    <string name="settings_auto_save_drafts">Gravar automaticamente os rascunhos</string>
     <string name="settings_filters">Filtros</string>
-    <string name="settings_wb_list">Lista branca / Lista negra</string>
-    <string name="settings_dark_mode">Modo escuro</string>
+    <string name="settings_wb_list">Lista branca/Lista negra</string>
+    <string name="settings_dark_mode">Modo Escuro</string>
     <string name="settings_block_external_images">Bloquear imagens externas</string>
     <string name="settings_report_bugs">Reportar bugs</string>
     <string name="settings_folders">Pastas</string>
-    <string name="settings_manage_folders">Gerenciar pastas</string>
+    <string name="settings_manage_folders">Gerir pastas</string>
     <string name="settings_security">Segurança</string>
-    <string name="settings_mail">E-mail</string>
+    <string name="settings_mail">Correio</string>
     <string name="settings_addresses">Endereços</string>
     <string name="settings_signature">Assinatura</string>
     <string name="settings_enable_signature">Ativar assinatura</string>
-    <string name="settings_type_signature">Digite sua assinatura</string>
+    <string name="settings_type_signature">Escreva a sua assinatura</string>
     <string name="settings_keys">Chaves</string>
     <string name="settings_about">Sobre</string>
-    <string name="settings_helpdesk">Central de Ajuda</string>
+    <string name="settings_helpdesk">Serviço de Apoio</string>
     <string name="settings_local_storage_limit">Limite de armazenamento local</string>
-    <string name="settings_app_version">Versão do aplicativo</string>
-    <string name="settings_disable_contacts_encryption">Tem certeza de que deseja desativar a criptografia dos contatos?</string>
-    <string name="settings_disable_contacts_encryption_note">Desativar a criptografia pode levar vários minutos; isso vai depender do número de contatos existentes. Depois de confirmar, todos eles serão descriptografados dentro do seu dispositivo e salvos no nosso servidor.</string>
-    <string name="txt_contact_decryption">Descriptografando contatos…</string>
-    <string name="toast_saved">Salvo</string>
-    <string name="toast_contacts_encrypted">Os contatos estão criptografados</string>
-    <string name="toast_contacts_decrypted">Os contatos estão descriptografados</string>
-    <string name="toast_decryption_error">Ocorreu um erro ao tentar descriptografar. Tente novamente</string>
+    <string name="settings_app_version">Versão da App</string>
+    <string name="settings_disable_contacts_encryption">Tem a certeza que quer desligar a encriptação dos contactos?</string>
+    <string name="settings_disable_contacts_encryption_note">Desativar a encriptação dos contactos pode demorar alguns minutos dependendo do número de contactos que tem. Após confirmar, todos os seus contactos serão desencriptados no seu dispositivo e serão guardados no servidor.</string>
+    <string name="txt_contact_decryption">Desencriptação de contactos…</string>
+    <string name="toast_saved">Guardado</string>
+    <string name="toast_contacts_encrypted">Os contactos estão encriptados</string>
+    <string name="toast_contacts_decrypted">Os contactos estão desencriptados</string>
+    <string name="toast_decryption_error">Um erro ocorreu durante a desencriptação. Tente de novo.</string>
     <string name="please_restart_app_to_apply_changes">Por favor, reinicie o aplicativo para aplicar as alterações</string>
-
-    <!-- PREFERENCE KEYS -->
-    <string name="change_password_reset_data">Excluir dados</string>
-    <string name="toast_email_not_valid">E-mail inválido</string>
-    <string name="storage_limit_info">%1$s de %2$s</string>
 
     <!-- MAILBOXES -->
     <string name="addresses">Endereços</string>
     <string name="add_address">Adicionar endereço</string>
-    <string name="select_default_address">Selecionar endereço padrão</string>
+    <string name="select_default_address">Selecionar o endereço predefinido</string>
     <string name="mailbox_add_address">Adicionar endereço</string>
-    <string name="mailbox_enable">Habilitar</string>
+    <string name="mailbox_enable">Ativar</string>
     <string name="mailbox_disable">Desativar</string>
-    <string name="mailbox_add_title">Escolha um nome de usuário e um domínio</string>
+    <string name="mailbox_add_title">Escolha o nome de utilizador e o domínio</string>
     <string name="mailbox_create">Criar endereço</string>
     <string name="mailbox_alias_exists">Este alias de e-mail já existe.</string>
     <string name="mailbox_alias_creation_success">Alias de e-mail criado com sucesso</string>
@@ -400,6 +397,11 @@
     <string name="txt_dead_mans_timer">Dead Mans Timer</string>
     <string name="txt_and_more_features">e mais recursos</string>
     <string name="txt_not_now">Agora não</string>
+
+    <!-- PREFERENCE KEYS -->
+    <string name="change_password_reset_data">Excluir dados</string>
+    <string name="toast_email_not_valid">E-mail inválido</string>
+    <string name="storage_limit_info">%1$s de %2$s</string>
 
     <!-- ERRORS -->
     <string name="error_field_cannot_be_empty">Este campo não pode ficar vazio.</string>
@@ -454,8 +456,8 @@
     </string-array>
 
     <string-array name="dark_mode_entries">
-        <item>Auto (detectar)</item>
-        <item>Em</item>
-        <item>Fora</item>
+        <item>Detetar automaticamente</item>
+        <item>Ligado</item>
+        <item>Desligado</item>
     </string-array>
 </resources>
