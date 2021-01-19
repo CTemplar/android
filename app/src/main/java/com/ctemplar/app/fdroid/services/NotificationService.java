@@ -129,12 +129,12 @@ public class NotificationService extends Service {
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         NotificationCompat.Builder builder = new NotificationCompat
                 .Builder(this, FOREGROUND_NOTIFICATION_CHANNEL_ID)
+                .setSmallIcon(R.mipmap.ic_launcher_small)
+                .setContentTitle(getString(R.string.title_notification_service))
+                .setContentText(getString(R.string.title_service_running))
                 .setPriority(NotificationCompat.PRIORITY_LOW)
                 .setOngoing(true)
                 .setWhen(0)
-                .setContentTitle(getString(R.string.title_notification_service))
-                .setContentText(getString(R.string.title_service_running))
-                .setSmallIcon(R.mipmap.ic_launcher_small)
                 .setContentIntent(PendingIntent.getActivity(getApplicationContext(),
                         0, intent, PendingIntent.FLAG_CANCEL_CURRENT));
         startForeground(FOREGROUND_NOTIFICATION_ID, builder.build());
@@ -148,6 +148,7 @@ public class NotificationService extends Service {
                     NotificationManager.IMPORTANCE_LOW
             );
             channel.setDescription(getString(R.string.title_service_running));
+            channel.setShowBadge(false);
             NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             if (notificationManager == null) {
                 Timber.e("createForegroundNotificationChannel NotificationManager is null");
@@ -192,16 +193,16 @@ public class NotificationService extends Service {
 
         NotificationCompat.Builder notificationBuilder = new NotificationCompat
                 .Builder(this, NOTIFICATION_CHANNEL_ID)
+                .setSmallIcon(R.mipmap.ic_launcher_small)
 //                .setGroup(String.valueOf(parentId))
                 .setContentTitle(sender)
                 .setContentText(content)
+                .setContentInfo(sender)
+                .setContentIntent(pendingIntent)
                 .setAutoCancel(true)
                 .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
-                .setContentIntent(pendingIntent)
-                .setContentInfo(sender)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setDefaults(NotificationCompat.DEFAULT_VIBRATE)
-                .setSmallIcon(R.mipmap.ic_launcher_small);
+                .setDefaults(NotificationCompat.DEFAULT_VIBRATE);
 
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         if (notificationManager == null) {

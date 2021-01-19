@@ -505,6 +505,11 @@
         <item>English</item>
         <item>Français</item>
         <item>Português</item>
+        <item>Deutsche</item>
+        <item>عربى</item>
+        <item>中文</item>
+        <item>Русский</item>
+        <item>Українська</item>
     </string-array>
 
     <string-array name="language_values">
@@ -512,5 +517,10 @@
         <item>en</item>
         <item>fr</item>
         <item>pt</item>
+        <item>de</item>
+        <item>ar</item>
+        <item>zh</item>
+        <item>ru</item>
+        <item>uk</item>
     </string-array>
 </resources>
