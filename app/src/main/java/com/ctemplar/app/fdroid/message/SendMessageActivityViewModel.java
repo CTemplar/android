@@ -29,9 +29,9 @@ import com.ctemplar.app.fdroid.net.ResponseStatus;
 import com.ctemplar.app.fdroid.net.request.PublicKeysRequest;
 import com.ctemplar.app.fdroid.net.request.SendMessageRequest;
 import com.ctemplar.app.fdroid.net.response.KeyResponse;
-import com.ctemplar.app.fdroid.net.response.Messages.MessageAttachment;
-import com.ctemplar.app.fdroid.net.response.Messages.MessagesResult;
-import com.ctemplar.app.fdroid.net.response.Myself.MyselfResponse;
+import com.ctemplar.app.fdroid.net.response.messages.MessageAttachment;
+import com.ctemplar.app.fdroid.net.response.messages.MessagesResult;
+import com.ctemplar.app.fdroid.net.response.myself.MyselfResponse;
 import com.ctemplar.app.fdroid.repository.MailboxDao;
 import com.ctemplar.app.fdroid.repository.MessagesRepository;
 import com.ctemplar.app.fdroid.repository.UserRepository;
@@ -42,6 +42,7 @@ import com.ctemplar.app.fdroid.repository.provider.MessageAttachmentProvider;
 import com.ctemplar.app.fdroid.repository.provider.MessageProvider;
 import com.ctemplar.app.fdroid.security.PGPManager;
 import com.ctemplar.app.fdroid.utils.AppUtils;
+import com.ctemplar.app.fdroid.utils.DateUtils;
 import com.ctemplar.app.fdroid.utils.EditTextUtils;
 import com.ctemplar.app.fdroid.utils.FileUtils;
 import okhttp3.MediaType;
@@ -90,14 +91,6 @@ public class SendMessageActivityViewModel extends ViewModel {
 
     public boolean isSignatureEnabled() {
         return userRepository.isSignatureEnabled();
-    }
-
-    public boolean isMobileSignatureEnabled() {
-        return userRepository.isMobileSignatureEnabled();
-    }
-
-    public String getMobileSignature() {
-        return userRepository.getMobileSignature();
     }
 
     public String getUserPassword() {
@@ -226,7 +219,7 @@ public class SendMessageActivityViewModel extends ViewModel {
             request.setContent(content);
             request.setSubject(subject);
         }
-        request.setIsEncrypted(!isEmptyReceiverKeys);
+        request.setEncrypted(!isEmptyReceiverKeys);
         request.setSubjectEncrypted(isSubjectEncrypted && !isEmptyReceiverKeys);
 
         userRepository.updateMessage(id, request)

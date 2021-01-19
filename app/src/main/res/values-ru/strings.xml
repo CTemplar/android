@@ -1,0 +1,463 @@
+<resources>
+    <string name="navigation_drawer_open">Открыть Панель Навигации</string>
+    <string name="navigation_drawer_close">Закрыть Панель Навигации</string>
+    <string name="nav_header_desc">Заголовок Навигации</string>
+    <string name="action_settings">Настройки</string>
+    <string name="action_undo">ОТМЕНА</string>
+
+    <!-- MAIN -->
+    <string name="dialog_log_out">Выйти</string>
+    <string name="dialog_log_out_confirm">"Вы уверены, что хотите выйти из учетной записи?"</string>
+    <string name="btn_log_out">ВЫЙТИ</string>
+
+    <!-- NAVIGATION DRAWER -->
+    <string name="nav_drawer_inbox">Входящие</string>
+    <string name="nav_drawer_draft">Черновики</string>
+    <string name="nav_drawer_sent">Отправленные</string>
+    <string name="nav_drawer_outbox">Исходящие</string>
+    <string name="nav_drawer_starred">Отмеченные</string>
+    <string name="nav_drawer_archive">Архив</string>
+    <string name="nav_drawer_spam">Спам</string>
+    <string name="nav_drawer_trash">Корзина</string>
+    <string name="nav_drawer_all_mails">Вся почта</string>
+    <string name="nav_drawer_unread">Непрочитанное</string>
+    <string name="nav_drawer_add_folder">Добавить папку</string>
+    <string name="nav_drawer_add_label">Добавить ярлык</string>
+    <string name="nav_drawer_contact">Контакты</string>
+    <string name="nav_drawer_settings">Настройки</string>
+    <string name="nav_drawer_help">Помощь</string>
+    <string name="nav_drawer_logout">Выйти</string>
+    <string name="nav_drawer_manage_folders">Управление папками</string>
+    <string name="nav_drawer_manage_folders_param">Управление папками (%1$d)</string>
+    <string name="nav_drawer_folders_show_more">Показать еще 10 папок</string>
+
+    <!-- TOOLBAR -->
+    <string name="action_search">Поиск</string>
+    <string name="action_filter">Фильтр</string>
+    <string name="action_search_hint">Искать письмо</string>
+    <string name="action_empty_folder">Пустая папка</string>
+    <string name="action_spam">1 отмечено как спам</string>
+    <string name="action_archived">1 заархивировано</string>
+    <string name="action_moved_to_inbox">1 перемещено во входящие</string>
+    <string name="action_reported_as_spam">1 отмечено как спам</string>
+    <string name="action_reported_as_not_spam">1 отмечено как не спам</string>
+    <string name="action_message_removed">1 сообщение удалено</string>
+
+    <!-- MENU -->
+    <string name="menu_save">Сохранить</string>
+    <string name="menu_spam">Спам</string>
+    <string name="menu_not_spam">Отметить как не спам</string>
+    <string name="menu_move">Переместить</string>
+    <string name="menu_trash">Корзина</string>
+    <string name="menu_move_to_inbox">Переместить во Входящие</string>
+    <string name="menu_move_to_archive">Переместить в Архив</string>
+    <string name="menu_mark_as_unread">Отметить как Непрочитанное</string>
+
+    <!-- STRINGS -->
+    <string name="token_expired_title">Время сессии истекло</string>
+    <string name="token_expired_message">Время вашей сессии истекло, пожалуйста, войдите в вашу учетную запись CTemplar снова.</string>
+    <string name="title_email">Имейл</string>
+    <string name="title_next">Далее</string>
+    <string name="title_next_no_email">Далее (Нет Имейлов)</string>
+    <string name="title_password">Пароль</string>
+    <string name="title_username">Имя пользователя</string>
+    <string name="title_2fa">ДВУХФАКТОРНАЯ АУТЕНТИФИКАЦИЯ</string>
+    <string name="title_2fa_code">Введите код, созданный приложением.</string>
+    <string name="title_captcha">Код проверки</string>
+    <string name="title_ctemplar">CTEMPLAR</string>
+    <string name="title_forgot_password">Забыли пароль?</string>
+    <string name="title_forgot_password_hint">Мы отправим ссылку для восстановления на ваш резервный имейл.</string>
+    <string name="title_choose_password">Введите пароль</string>
+    <string name="title_confirm_password">Подтвердите пароль</string>
+    <string name="title_ctemplar_username">Сбросить имя пользователя CTemplar</string>
+    <string name="title_recovery_email">Резервный имейл</string>
+    <string name="title_security_check">Проверка безопасности</string>
+    <string name="title_recovery_email_optional">Резервный имейл (Необязательно)</string>
+    <string name="title_reset_password">Сбросить пароль</string>
+    <string name="title_reset_code">Сбросить код</string>
+    <string name="title_confirm">Подтвердить</string>
+    <string name="title_confirm_reset_password">Подтвердить Сброс Пароля</string>
+    <string name="title_invitation_code">Пригласительный код</string>
+    <string name="title_further_question_hint">Если у вас остались вопросы, пожалуйста, напишите на имейл <![CDATA[<u><a href="mailto:support@ctemplar.com">support@ctemplar.com</a></u>]]></string>
+    <string name="title_confirm_reset_password_hint"> Ваш ключ шифрования связан с вашим паролем. Из-за этого <![CDATA[<font color="#e74c3c">вы не сможете расшифровать старые сообщения, вложения и контакты, </font>]]> если сбросите ваш пароль.</string>
+    <string name="title_confirm_reset_password_hint2">Вы уверены, что хотите сбросить пароль?</string>
+    <string name="title_reset_code_hint">Мы отправили код для сброса на ваш <![CDATA[<u><a href="mailto:%1$s">резервный имейл</a></u>]]> чтобы сбросить пароль.</string>
+    <string name="title_reset_code_hint2">Введите его ниже для подтверждения.</string>
+    <string name="title_new_password_hint">Не забудьте этот пароль, его невозможно будет возобновить</string>
+    <string name="title_forgot_username_underlined"><u>Забыли имя пользователя?</u></string>
+    <string name="title_keep_me_logged_in">Оставить учетную запись открытой</string>
+    <string name="title_forgot_username">Забыли имя пользователя?</string>
+    <string name="title_forgot_username_hint">Введите ваш имейл и мы отправим ваше имя пользователя.</string>
+    <string name="title_email_my_username">Отправить мне на имейл мое имя пользователя</string>
+    <string name="title_username_and_domain">Имя пользователя и домен</string>
+    <string name="title_step_username_hint">Это будет вашим новым CTemplar имейл-адресом</string>
+    <string name="title_step_password_hint">Ваш пароль должен состоять минимум из 10 знаков. Можно использовать только буквы латинского алфавита и нельзя использовать символы, например «-+!@. и т.д.</string>
+    <string name="hint_step_email_recovery_long">Поставив здесь отметку вы подтверждаете, что если вы потеряете пароль и не укажете адрес резервного имейла, ваша учетная запись не будет восстановлена. Ваш пароль связан с вашим ключом шифрования, поэтому если вы измените пароль, вам будет выдан новый ключ шифрования, а ВСЕ содержимое вашей учетной записи будет потеряно, кроме адреса вашей электронной почты.<![CDATA[<u><font color="blue">Less</font></u>]]></string>
+    <string name="hint_step_email_recovery_short"> Поставив здесь отметку вы подтверждаете, что если вы потеряете пароль и не укажете адрес резервного имейла, ваша учетная запись не будет восстановлена. <![CDATA[<u><font color="blue">More info</font></u>]]></string>
+    <string name="title_step_email_hint">Используется для восстановления вашей учетной записи, если вы забудете пароль.</string>
+    <string name="title_step_email_check_hint">Пожалуйста, подтвердите, что вы согласны соблюдать наши <![CDATA[<u><a href="https://ctemplar.com/terms">Условия и Положения.</a></u>]]></string>
+    <string name="title_step_invitation_code_hint"> Вы можете получить пригласительный код от любого зарегистрированного пользователя платной учетной записи или запросить код приглашения у нас. Зачем нужны пригласительные коды и как их получить? <![CDATA[<u><a href="https://ctemplar.com/email-creation-restriction/">Узнать больше</a></u>]]></string>
+    <string name="title_more_info_link"><u>Больше информации</u></string>
+    <string name="title_empty_inbox">У вас нет входящих сообщений</string>
+    <string name="title_empty_messages">У вас нет %1$s сообщений</string>
+    <string name="title_empty_contacts">У вас еще нет контактов</string>
+    <string name="title_empty_folders">У вас нет папок</string>
+    <string name="btn_login">Войти</string>
+    <string name="btn_compose">Написать</string>
+    <string name="btn_add_folder">Добавить папку</string>
+    <string name="hint_captcha">Напишите текст с изображения/Время на часах (чч:мм), например: 04:23</string>
+    <string name="txt_forgot_pass">Забыли пароль?</string>
+    <string name="txt_create_acc"><u>Создать учетную запись</u></string>
+    <string name="txt_loading">Загрузка…</string>
+    <string name="txt_add_contact">Добавить контакт</string>
+    <string name="txt_edit_contact">Редактировать контакт</string>
+    <string name="txt_enter_valid_captcha">Введите действительный код проверки</string>
+    <string name="btn_confirm">ПОДТВЕРДИТЬ</string>
+    <string name="title_clear_folder">Очистить папку</string>
+    <string name="txt_clear_folder">Вы уверены, что хотите удалить все сообщения из этой папки?</string>
+    <string name="username_is_available">Имя пользователя доступно</string>
+    <string name="username_is_not_available">Имя пользователя не доступно</string>
+    <string name="checking">Проверка…</string>
+
+    <!-- COMPOSE OPTIONS -->
+    <string name="txt_left_time_destruct">Удаление через %1$s</string>
+    <string name="txt_left_time_delay_delivery">Отправление через %1$s</string>
+    <string name="txt_left_time_dead_mans_timer">Таймер мертвеца через %1$s</string>
+    <string name="txt_encrypt_message_title">Установка пароля</string>
+    <string name="txt_destruct_message_title">Таймер самоудаления</string>
+    <string name="txt_destruct_timer_hint">Самоуничтожение предназначено только для получателей CTemplar. Добавьте получателей CTemplar для работы функции самоуничтожения</string>
+    <string name="txt_dead_mans_title">Таймер мертвеца</string>
+    <string name="txt_delayed_message_title">Отложенная отправка</string>
+    <string name="txt_encrypt_message_summary">Зашифровать для пользователей других почтовых сервисов, не CTemplar </string>
+    <string name="txt_delayed_message_summary">Письмо будет отправлено автоматически в установленное время.</string>
+    <string name="txt_destruct_message_summary">Это письмо будет удалено из учетной записи получателя после</string>
+    <string name="txt_dead_mans_summary">Если вы не войдете в вашу учетную запись после установленного времени, письмо будет отправлено после</string>
+    <string name="txt_schedule">Расписание</string>
+    <string name="txt_encrypt">Зашифровать</string>
+    <string name="txt_selected_datetime_is_past">Выбранная дата/время в прошлом</string>
+    <string name="txt_yesterday">Вчера</string>
+    <string name="txt_attachments_in_processing">Вложения в обработке…</string>
+
+    <!-- VIEW MESSAGES -->
+    <string name="txt_more_details">Больше информации</string>
+    <string name="txt_less_details">Меньше информации</string>
+    <string name="toast_message_marked_unread">Сообщение отмечено как непрочитанное</string>
+    <string name="toast_message_moved_to">Сообщение перемещено в %1$s</string>
+    <string name="toast_messages_doesnt_exist">Сообщения не существуют</string>
+    <string name="toast_download_started">Загрузка началась</string>
+    <string name="toast_download_complete">Загрузка завершена</string>
+    <string name="txt_user_wrote">\n\n-----------------------------------------------------------------------------------------------\nOn %1$s %2$s wrote:\n\n</string>
+    <string name="txt_forwarded_message">Пересланное сообщение</string>
+    <string name="txt_from">От:&#160;</string>
+    <string name="txt_date">Дата</string>
+    <string name="txt_subject">Тема</string>
+    <string name="txt_to">Кому:&#160;</string>
+    <string name="txt_reply_all">Ответить на все</string>
+    <string name="attachment_decryption">Расшифровка вложений…</string>
+    <string name="no_results_found">Ничего не найдено</string>
+
+    <!-- CHANGE PASSWORD -->
+    <string name="toast_password_changed">Пароль изменен</string>
+    <string name="toast_password_not_changed">Пароль не изменен</string>
+    <string name="dialog_change_password">Изменить пароль</string>
+    <string name="title_current_password">Действующий пароль</string>
+    <string name="title_new_password">Новый пароль</string>
+    <string name="title_new_password_confirm">Подтвердить новый пароль</string>
+    <string name="dialog_change_password_confirm">Вы уверены, что хотите поменять пароль?</string>
+    <string name="dialog_change_password_confirm_reset">Вы уверены, что хотите поменять пароль? Все данные будут утеряны.</string>
+    <string name="btn_change">ПОМЕНЯТЬ</string>
+    <string name="btn_change_lowercase">Поменять</string>
+    <string name="title_message_password">Пароль Сообщения</string>
+    <string name="title_message_password_confirm">Подтвердить пароль</string>
+    <string name="title_message_password_hint">Подсказка пароля</string>
+    <string name="title_message_password_expire_days">Дней</string>
+    <string name="title_message_password_expire_hours">Часов</string>
+    <string name="txt_encrypt_message_password_expiration">Время истечения срока действия</string>
+
+    <!-- CONTACT -->
+    <string name="toast_not_saved">Не сохранено</string>
+    <string name="txt_enter_name">Введите имя</string>
+    <string name="txt_enter_valid_email">Введите действительный Имейл-адрес</string>
+    <string name="txt_name_removed">%1$sудалено!</string>
+    <string name="txt_contact_loading_error">Ошибка загрузки контакта</string>
+    <string name="txt_delete_folder_quest_title">Удалить папку?</string>
+    <string name="txt_delete_folder_quest_message">"Вы уверены, что хотите удалить папку?</string>
+    <string name="btn_contact_delete">УДАЛИТЬ</string>
+    <string name="btn_cancel">ОТМЕНИТЬ</string>
+    <string name="title_email_address">Имейл-адрес</string>
+    <string name="title_phone_number">Телефон</string>
+    <string name="title_phone_number_second">Телефон2</string>
+    <string name="title_address">Адрес</string>
+    <string name="title_note">Заметка</string>
+    <string name="txt_contacts_empty">Контакты пусты</string>
+
+    <!-- FOLDERS -->
+    <string name="toast_folder_created">Папка создана</string>
+    <string name="toast_folder_not_created">Папка с таким именем уже существует.</string>
+    <string name="txt_folder_deleted">Папка удалена</string>
+    <string name="txt_folder_not_deleted">Папка не удалена</string>
+    <string name="txt_folder_edited">Папка отредактирована</string>
+    <string name="txt_folder_not_edited">Папка не отредактирована</string>
+    <string name="txt_folder_name_hint">Имя папки должно включать от 4 до 30 букв и цифр</string>
+    <string name="title_folder_name">Имя папки</string>
+    <string name="title_choose_color">Выберите цвет</string>
+    <string name="txt_edit_folder">Редактировать папку</string>
+    <string name="txt_delete_folder">Удалить папку</string>
+    <string name="txt_manage_folders">Управление папками</string>
+    <string name="txt_folders_empty">Папки пусты</string>
+    <string name="txt_create_folder_free_error">Пользователи с бесплатными учетными записями могут создавать максимум 5 папок.</string>
+
+    <!-- SEND MESSAGE -->
+    <string name="toast_message_sent">Письмо отправлено</string>
+    <string name="toast_message_not_sent">Письмо не отправлено</string>
+    <string name="toast_message_saved_as_draft">Письмо сохранено как черновик</string>
+    <string name="toast_message_not_created">Письмо не создано</string>
+    <string name="toast_message_not_loaded">Почта не загружена</string>
+    <string name="toast_attachment_unable_read_file">Невозможно открыть файл по выбранному пути</string>
+    <string name="toast_attachment_unable_read_path">"Невозможно обработать выбранный путь"</string>
+    <string name="txt_sending_mail">Отправка письма…</string>
+    <string name="txt_saving_mail">Отправка письма…</string>
+    <string name="txt_uploading">Загрузка …</string>
+    <string name="dialog_discard_mail">Отклонить письма</string>
+    <string name="dialog_discard_confirm">Вы уверены, что хотите отклонить эти письма?</string>
+    <string name="dialog_save_in_drafts">Сохранить в черновиках</string>
+    <string name="action_discard">Отклонить</string>
+    <string name="action_cancel">Отмена</string>
+    <string name="btn_add">Добавить</string>
+    <string name="txt_new_message">Новое сообщение</string>
+    <string name="txt_cc">Копия: &#160;</string>g>
+    <string name="txt_bcc">Скрытая копия: &#160;</string>
+    <string name="txt_date_format">Дата: %1$s</string>
+    <string name="hint_compose">Написать письмо</string>
+
+    <!-- NOTIFICATION SERVICE -->
+    <string name="notification_channel_name">CTemplar</string>
+    <string name="notification_channel_description">Новое письмо</string>
+    <string name="title_notification_service">Сервис уведомлений</string>
+    <string name="title_service_running">Сервис работает</string>
+
+    <!-- CUSTOM FILTERS -->
+    <string name="txt_filters_title">Фильтры</string>
+    <string name="title_add_custom_filter">Добавить фильтр пользователя</string>
+    <string name="title_edit_custom_filter">Редактировать фильтр пользователя</string>
+    <string name="btn_add_custom_filter">Добавить фильтр пользователя</string>
+    <string name="txt_filter_name">Название фильтра</string>
+    <string name="txt_filter_conditions">Условия</string>
+    <string name="txt_filter_actions">Действия</string>
+    <string name="txt_filter_move_to">Переместить</string>
+    <string name="txt_filter_mark_as_read">Отметить как прочитанное</string>
+    <string name="txt_filter_mark_as_starred">Отметить</string>
+    <string name="btn_submit">Включить</string>
+    <string name="toast_filter_not_created">Фильтр с таким названием уже существует</string>
+    <string name="toast_filter_created">Фильтр создан</string>
+    <string name="txt_filter_name_hint">Название фильтра должно включать от 4 до 30 букв</string>
+    <string name="txt_filter_text_hint">Текст фильтра должен включать от 1 до 30 букв</string>
+    <string name="txt_filter_not_deleted">Фильтр не удален</string>
+    <string name="txt_filter_deleted">Фильтр удален</string>
+    <string name="txt_filter_not_edited">Фильтр не отредактирован</string>
+    <string name="txt_filter_edited">Фильтр отредактирован</string>
+    <string name="txt_delete_filter_quest_title">Удалить фильтр?</string>
+    <string name="txt_delete_filter_quest_message">"Вы уверены, что хотите удалить фильтр?</string>
+    <string name="txt_delete_filter">Удалить фильтр</string>
+
+    <!-- WHITE-BLACK LIST -->
+    <string name="adding_blacklist_contact_error">Ошибка при добавлении контакта в черный список</string>
+    <string name="adding_whitelist_contact_error">Ошибка при добавлении контакта в белый список </string>
+    <string name="added_to_whitelist">Имейл добавлен в белый список</string>
+    <string name="title_contact_name">Имя контакта</string>
+    <string name="title_contact_email">Имейл контакта</string>
+    <string name="title_add_to_blacklist">Добавить в черный список</string>
+    <string name="title_add_to_whitelist">Добавить в белый список</string>
+    <string name="title_white_black_list">Белый список/Черный список</string>
+    <string name="txt_add_blacklist_contact">Добавить контакт из черного списка</string>
+    <string name="txt_add_whitelist_contact">Добавить контакт из белого списка</string>
+
+    <!-- FILTER DIALOG -->
+    <string name="filtered">Результаты фильтра</string>
+    <string name="txt_filters">Фильтры</string>
+    <string name="txt_clear_all">Очистить все</string>
+    <string name="txt_select_filters">Выбрать фильтры</string>
+    <string name="txt_starred">Отмеченные</string>
+    <string name="txt_unread">Непрочитанные</string>
+    <string name="txt_with_attachments">С Вложениями</string>
+    <string name="btn_apply">Применить</string>
+
+    <!-- MOVE TO -->
+    <string name="txt_move_to">Переместить в…</string>
+    <string name="txt_select_folder">Выберите папку</string>
+    <string name="forward_attachments">Подтвердить пересылку вложений</string>
+    <string name="forward_attachments_description">Вы хотите переслать вложения этого сообщения?</string>
+    <string name="yes">Да</string>
+    <string name="no">Нет</string>
+
+    <!-- SETTINGS -->
+    <string name="txt_settings">Настройки</string>
+    <string name="txt_display_name">Отображать имя</string>
+    <string name="txt_type_your_name">Введите имя</string>
+    <string name="txt_type_signature">Введите вашу подпись</string>
+    <string name="txt_signature_enabled">Подпись включена</string>
+
+    <!-- PIN LOCK -->
+    <string name="pin_lock">ПИН-код</string>
+    <string name="pin_lock_enable">Включить запрос ПИН-кода</string>
+    <string name="change_pin">Изменить ПИН-код</string>
+    <string name="auto_lock">Автоматическая блокировка</string>
+    <string name="choose_pin">Введите 4-значный ПИН-код</string>
+    <string name="confirm_pin">Подтвердите ваш ПИН-код</string>
+    <string name="invalid_pin">Недействительный ПИН-код</string>
+    <string name="pins_dont_match">ПИН-коды не совпадают</string>
+
+    <!-- SIGNATURE EDIT BAR -->
+    <string name="txt_panel_bold">Ж</string>
+    <string name="txt_panel_italic">К</string>
+    <string name="txt_panel_underline">Ч</string>
+    <string name="txt_panel_monospace">Р</string>
+    <string name="txt_panel_normal">Нормальный</string>
+
+    <!-- SETTINGS -->
+    <string name="settings_general">Общие настройки</string>
+    <string name="settings_recovery_email">Резервный имейл</string>
+    <string name="settings_enable_recovery_email">Включить резерный имейл</string>
+    <string name="settings_type_recovery_email">Введите ваш резервный имейл</string>
+    <string name="settings_type_notification_email">Введите адрес электронной почты с уведомлением</string>
+    <string name="settings_type_notification_email_description">Введите письмо с уведомлением, на которое вы хотите получать уведомления каждый день, когда у вас появляются новые электронные письма.</string>
+    <string name="settings_enabled_anti_phishing">Анти-Фишинг</string>
+    <string name="settings_type_anti_phishing_phrase">Введите свою антифишинговую фразу</string>
+    <string name="settings_subject_encryption">Шифрование темы</string>
+    <string name="settings_password">Пароль</string>
+    <string name="settings_language">Язык</string>
+    <string name="settings_notifications">Уведомления</string>
+    <string name="settings_enable_notifications">Включить push-уведомления</string>
+    <string name="settings_contacts_encryption">Шифрование контактов</string>
+    <string name="settings_encryption">Шифрование</string>
+    <string name="settings_phishing_protection">Защита от фишинга</string>
+    <string name="settings_phishing_protection_description"><![CDATA[<font color="#939191">Антифишинговая фраза позволяет пользователям связать произвольное слово или фразу по вашему выбору с учетной записью CTemplar. Если после установки фразы при входе на страничку вашего почтового сервиса данная фраза отсутствует или неверна, вы рискуете стать жертвой фишинга. Вам следует немедленно убедится, что вы посещаете</font> <font color="#4d92e2"><u>https://mail.ctemplar.com</u></font> <font color="#939191">В противном случае вредоносный сайт может завладеть данными для входа в вашу учетную запись CTemplar. Чтобы не подвергать угрозе вашу учетную запись, вам следует немедленно посетить</font> <font color="#4d92e2"><u>https://mail.ctemplar.com</u></font> <font color="#939191">и поменять ваш пароль.<br><br>Обратите внимание, что антифишинговая фраза будет отображаться только при веб-входе.</font>]]></string>
+    <string name="settings_auto_save">Автосохранение</string>
+    <string name="settings_auto_save_contacts">Автоматически сохранять контакты</string>
+    <string name="settings_auto_save_drafts">Автоматически сохранять черновики</string>
+    <string name="settings_filters">Фильтры</string>
+    <string name="settings_wb_list">Белый список/Черный список</string>
+    <string name="settings_dark_mode">Ночной режим</string>
+    <string name="settings_block_external_images">Блокировать внешние изображения</string>
+    <string name="settings_report_bugs">Сообщать об ошибках</string>
+    <string name="settings_folders">Папки</string>
+    <string name="settings_manage_folders">Управления папками</string>
+    <string name="settings_security">Безопасность</string>
+    <string name="settings_mail">Почта</string>
+    <string name="settings_addresses">Адреса</string>
+    <string name="settings_signature">Подпись</string>
+    <string name="settings_enable_signature">Включить подпись</string>
+    <string name="settings_type_signature">Введите свою подпись</string>
+    <string name="settings_keys">Ключи</string>
+    <string name="settings_about">Подробнее</string>
+    <string name="settings_helpdesk">Помощь</string>
+    <string name="settings_local_storage_limit">Лимит локального хранилища</string>
+    <string name="settings_app_version">Приложение</string>
+    <string name="settings_disable_contacts_encryption">Вы уверены, что хотите отключить шифрование контактов?</string>
+    <string name="settings_disable_contacts_encryption_note">Отключение шифрования контактов может занять несколько минут в зависимости от количества ваших контактов. После подтверждения все ваши контакты будут расшифрованы на вашем устройстве и сохранены на сервере.</string>
+    <string name="txt_contact_decryption">Расшифровка контактов.</string>
+    <string name="toast_saved">Сохранено</string>
+    <string name="toast_contacts_encrypted">Контакты зашифрованы</string>
+    <string name="toast_contacts_decrypted">Контакты расшифрованы</string>
+    <string name="toast_decryption_error">Произошла ошибка при расшифровке. Попробуйте еще раз</string>
+    <string name="please_restart_app_to_apply_changes">Пожалуйста, перезапустите приложение, чтобы изменения вступили в силу</string>
+
+    <!-- MAILBOXES -->
+    <string name="addresses">Адреса</string>
+    <string name="add_address">Добавить адрес</string>
+    <string name="select_default_address">Выберите адрес по умолчанию</string>
+    <string name="mailbox_add_address">Добавить адрес</string>
+    <string name="mailbox_enable">Включить</string>
+    <string name="mailbox_disable">Отключить</string>
+    <string name="mailbox_add_title">Выберите имя пользователя и домен</string>
+    <string name="mailbox_create">Создать адрес</string>
+    <string name="mailbox_alias_exists">Псевдоним имейла уже существует.</string>
+    <string name="mailbox_alias_creation_success">Псевдоним имейла успешно создан</string>
+    <string name="mailbox_alias_creation_paid">Чтобы создать больше адресов, пожалуйста, купите их.</string>
+    <string name="mailbox_alias_creation_failed">Не удалось создать псевдоним имейла</string>
+    <string name="mailbox_alias_creation_progress">Псевдоним имейла создается</string>
+
+    <!-- KEYS -->
+    <string name="email_address">Имейл-адрес</string>
+    <string name="fingerprint">Отпечаток пальца</string>
+    <string name="keys">Ключи</string>
+    <string name="download_public_key">Скачать публичный ключ (4096Бит)</string>
+    <string name="download_private_key">Скачать приватный ключ (4096 Бит)</string>
+    <string name="your_public_key_saved">Ваш публичный PGP ключ сохранен в Загрузках</string>
+    <string name="your_private_key_saved">Ваш приватный PGP ключ сохранен в Загрузках</string>
+
+    <!-- UPGRADE TO PRIME -->
+    <string name="title_upgrade_to_prime">Перейти на Премиум</string>
+    <string name="txt_one_user">1 Пользователь</string>
+    <string name="txt_from_five_gb_storage">Хранилище от 5 Гб</string>
+    <string name="txt_from_three_email_addresses">от 10 Имейл-адресов</string>
+    <string name="txt_from_one_custom_domain">от 1 Пользовательского домена</string>
+    <string name="txt_thousand_messages_per_day">2000 Сообщений в День</string>
+    <string name="txt_five_hundred_folders">500 Папок</string>
+    <string name="txt_dead_mans_timer">Таймер Мертвеца</string>
+    <string name="txt_and_more_features">и другие возможности</string>
+    <string name="txt_not_now">Не сейчас</string>
+
+    <!-- PREFERENCE KEYS -->
+    <string name="change_password_reset_data">Удалить данные</string>
+    <string name="toast_email_not_valid">Имейл недействителен</string>
+    <string name="storage_limit_info">%1$s из %2$s</string>
+
+    <!-- ERRORS -->
+    <string name="error_field_cannot_be_empty">Это поле не должно оставаться пустым.</string>
+    <string name="error_invalid_email">Пожалуйста, выберите действующий имейл-адрес или выберите невосстановимую учетную запись.</string>
+    <string name="error_username_small">Минимум 4 символа</string>
+    <string name="error_username_small_two">Минимум 2 символа</string>
+    <string name="error_username_big">Максимум 64 символа</string>
+    <string name="error_password_small">Минимум 1 символ</string>
+    <string name="error_password_big">Максимум 255 символов</string>
+    <string name="error_username_incorrect">Имя пользователя должно начинаться с буквы и состоять только из символов a–z, A–Z, 0–9 или ._</string>
+    <string name="error_username_exists">Имейл уже существует!</string>
+    <string name="error_password_not_match">Пароль не совпадает.</string>
+    <string name="error_current_password_not_match">Неправильный старый пароль!</string>
+    <string name="error_empty_email">Пустой имейл</string>
+    <string name="error_empty_password">Пустой пароль</string>
+    <string name="error_enter_old_password">Пожалуйста, введите ваш старый пароль.</string>
+    <string name="error_authentication_failed">Невозможно войти в систему с предоставленными учетными данными.</string>
+    <string name="error_server">Ошибка сервера</string>
+    <string name="error_connection">Ошибка соединения</string>
+    <string name="error_messages">Ошибка при получении сообщений</string>
+    <string name="error_sign_in">Ошибка входа</string>
+    <string name="error_change_password">Ошибка смены пароля</string>
+    <string name="error_reset_password">Ошибка сброса пароля</string>
+    <string name="error_recover_password">Неправильное имя пользователя или резервный имейл.</string>
+    <string name="error_upload_attachment">Не удалось загрузить вложение</string>
+    <string name="error_attachment_url">URL прикрепленного файла пуст</string>
+    <string name="error_upload_attachment_too_large">Файл слишком большой</string>
+    <string name="error_too_many_requests">Слишком много запросов. Пожалуйста, подождите.</string>
+    <string name="title_activity_white_black_list">Белый Черный Список</string>
+    <string name="section_format">Привет из раздела: %1$d</string>
+    <string name="toast_undefined_error">Неопределенная ошибка</string>
+    <string name="whitelist">Белый список</string>
+    <string name="blacklist">Черный список</string>
+
+    <string-array name="filter_parameter_list">
+        <item>тема</item>
+        <item>отправитель</item>
+    </string-array>
+
+    <string-array name="filter_condition_list">
+        <item>содержит</item>
+        <item>начинается с</item>
+    </string-array>
+
+    <string-array name="auto_lock_time">
+        <item>Немедленно</item>
+        <item>1 минута</item>
+        <item>5 минут</item>
+        <item>10 минут</item>
+        <item>1 час</item>
+        <item>24 часа</item>
+    </string-array>
+
+    <string-array name="dark_mode_entries">
+        <item>Автоматическое определение</item>
+        <item>Вкл</item>
+        <item>Выкл</item>
+    </string-array>
+</resources>

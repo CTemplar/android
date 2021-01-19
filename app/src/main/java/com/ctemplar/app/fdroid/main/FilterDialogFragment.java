@@ -16,7 +16,6 @@ import android.widget.TextView;
 import com.ctemplar.app.fdroid.R;
 
 public class FilterDialogFragment extends DialogFragment {
-
     private OnApplyClickListener onApplyClickListener;
 
     interface OnApplyClickListener {
@@ -76,6 +75,6 @@ public class FilterDialogFragment extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        return new Dialog(this.getActivity(), R.style.DialogAnimation);
+        return new Dialog(getActivity(), R.style.DialogAnimation);
     }
 }

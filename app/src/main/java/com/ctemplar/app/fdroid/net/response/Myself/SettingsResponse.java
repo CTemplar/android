@@ -1,10 +1,10 @@
-package com.ctemplar.app.fdroid.net.response.Myself;
+package com.ctemplar.app.fdroid.net.response.myself;
 
 import com.google.gson.annotations.SerializedName;
 
 public class SettingsResponse {
     @SerializedName("id")
-    private Long id;
+    private long id;
 
     @SerializedName("timezone")
     private String timezone;
@@ -13,16 +13,16 @@ public class SettingsResponse {
     private String language;
 
     @SerializedName("autoresponder")
-    private Boolean isAutoResponder;
+    private boolean isAutoResponder;
 
     @SerializedName("email_count")
-    private Integer emailsCount;
+    private int emailsCount;
 
     @SerializedName("emails_per_page")
-    private Integer emailsPerPage;
+    private int emailsPerPage;
 
     @SerializedName("domain_count")
-    private Integer domainCount;
+    private int domainCount;
 
     @SerializedName("embed_content")
     private boolean isEmbedContent;
@@ -78,6 +78,9 @@ public class SettingsResponse {
     @SerializedName("anti_phishing_phrase")
     private String antiPhishingPhrase;
 
+    @SerializedName("is_night_mode")
+    private boolean isNightMode;
+
     @SerializedName("is_disable_loading_images")
     private boolean isDisableLoadingImages;
 
@@ -85,25 +88,25 @@ public class SettingsResponse {
     private String attachmentSizeError;
 
     @SerializedName("attachment_size_limit")
-    private Integer attachmentSizeLimit;
+    private int attachmentSizeLimit;
 
     @SerializedName("default_font")
     private String defaultFont;
 
     @SerializedName("e2ee_nonct")
-    private Boolean e2nonct;
+    private boolean e2nonct;
 
     @SerializedName("enable_2fa")
-    private Boolean enable2FA;
+    private boolean enable2FA;
 
     @SerializedName("enable_forwarding")
-    private Boolean enableForwarding;
+    private boolean enableForwarding;
 
     @SerializedName("forwarding_address")
     private String forwardingAddress;
 
     @SerializedName("is_html_disabled")
-    private Boolean isHtmlDisabled;
+    private boolean isHtmlDisabled;
 
     @SerializedName("is_enable_report_bugs")
     private boolean isEnableReportBugs;
@@ -112,291 +115,151 @@ public class SettingsResponse {
     private String notificationEmail;
 
 
-    public Long getId() {
+    public long getId() {
         return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getTimezone() {
         return timezone;
     }
 
-    public void setTimezone(String timezone) {
-        this.timezone = timezone;
-    }
-
     public String getLanguage() {
         return language;
     }
 
-    public void setLanguage(String language) {
-        this.language = language;
-    }
-
-    public Boolean getAutoResponder() {
+    public boolean isAutoResponder() {
         return isAutoResponder;
     }
 
-    public void setAutoResponder(Boolean autoResponder) {
-        isAutoResponder = autoResponder;
-    }
-
-    public Integer getEmailsCount() {
+    public int getEmailsCount() {
         return emailsCount;
     }
 
-    public void setEmailsCount(Integer emailsCount) {
-        this.emailsCount = emailsCount;
-    }
-
-    public Integer getEmailsPerPage() {
+    public int getEmailsPerPage() {
         return emailsPerPage;
     }
 
-    public void setEmailsPerPage(Integer emailsPerPage) {
-        this.emailsPerPage = emailsPerPage;
-    }
-
-    public Integer getDomainCount() {
+    public int getDomainCount() {
         return domainCount;
-    }
-
-    public void setDomainCount(Integer domainCount) {
-        this.domainCount = domainCount;
     }
 
     public boolean isEmbedContent() {
         return isEmbedContent;
     }
 
-    public void setEmbedContent(boolean embedContent) {
-        isEmbedContent = embedContent;
-    }
-
     public boolean isNewsletter() {
         return isNewsletter;
-    }
-
-    public void setNewsletter(boolean newsletter) {
-        isNewsletter = newsletter;
     }
 
     public String getRecoveryEmail() {
         return recoveryEmail;
     }
 
-    public void setRecoveryEmail(String recoveryEmail) {
-        this.recoveryEmail = recoveryEmail;
-    }
-
     public boolean isSaveContacts() {
         return saveContacts;
-    }
-
-    public void setSaveContacts(boolean saveContacts) {
-        this.saveContacts = saveContacts;
     }
 
     public boolean isShowSnippets() {
         return showSnippets;
     }
 
-    public void setShowSnippets(boolean showSnippets) {
-        this.showSnippets = showSnippets;
-    }
-
     public String getDisplayName() {
         return displayName;
-    }
-
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
     }
 
     public String getFromAddress() {
         return fromAddress;
     }
 
-    public void setFromAddress(String fromAddress) {
-        this.fromAddress = fromAddress;
-    }
-
     public String getRedeemCode() {
         return redeemCode;
-    }
-
-    public void setRedeemCode(String redeemCode) {
-        this.redeemCode = redeemCode;
     }
 
     public boolean isPendingPayment() {
         return isPendingPayment;
     }
 
-    public void setPendingPayment(boolean pendingPayment) {
-        isPendingPayment = pendingPayment;
-    }
-
     public String getPlanType() {
         return planType;
-    }
-
-    public void setPlanType(String planType) {
-        this.planType = planType;
     }
 
     public boolean isSubjectEncrypted() {
         return isSubjectEncrypted;
     }
 
-    public void setSubjectEncrypted(boolean subjectEncrypted) {
-        isSubjectEncrypted = subjectEncrypted;
-    }
-
     public boolean isContactsEncrypted() {
         return isContactsEncrypted;
-    }
-
-    public void setContactsEncrypted(boolean contactsEncrypted) {
-        isContactsEncrypted = contactsEncrypted;
     }
 
     public String getStripeCustomerCode() {
         return stripeCustomerCode;
     }
 
-    public void setStripeCustomerCode(String stripeCustomerCode) {
-        this.stripeCustomerCode = stripeCustomerCode;
-    }
-
     public long getAllocatedStorage() {
         return allocatedStorage;
-    }
-
-    public void setAllocatedStorage(long allocatedStorage) {
-        this.allocatedStorage = allocatedStorage;
     }
 
     public long getUsedStorage() {
         return usedStorage;
     }
 
-    public void setUsedStorage(long usedStorage) {
-        this.usedStorage = usedStorage;
-    }
-
     public boolean isRecurrenceBilling() {
         return recurrenceBilling;
-    }
-
-    public void setRecurrenceBilling(boolean recurrenceBilling) {
-        this.recurrenceBilling = recurrenceBilling;
     }
 
     public boolean isAntiPhishingEnabled() {
         return antiPhishingEnabled;
     }
 
-    public void setAntiPhishingEnabled(boolean antiPhishingEnabled) {
-        this.antiPhishingEnabled = antiPhishingEnabled;
-    }
-
     public String getAntiPhishingPhrase() {
         return antiPhishingPhrase;
     }
 
-    public void setAntiPhishingPhrase(String antiPhishingPhrase) {
-        this.antiPhishingPhrase = antiPhishingPhrase;
+    public boolean isNightMode() {
+        return isNightMode;
     }
 
     public boolean isDisableLoadingImages() {
         return isDisableLoadingImages;
     }
 
-    public void setDisableLoadingImages(boolean disableLoadingImages) {
-        isDisableLoadingImages = disableLoadingImages;
-    }
-
     public String getAttachmentSizeError() {
         return attachmentSizeError;
     }
 
-    public void setAttachmentSizeError(String attachmentSizeError) {
-        this.attachmentSizeError = attachmentSizeError;
-    }
-
-    public Integer getAttachmentSizeLimit() {
+    public int getAttachmentSizeLimit() {
         return attachmentSizeLimit;
-    }
-
-    public void setAttachmentSizeLimit(Integer attachmentSizeLimit) {
-        this.attachmentSizeLimit = attachmentSizeLimit;
     }
 
     public String getDefaultFont() {
         return defaultFont;
     }
 
-    public void setDefaultFont(String defaultFont) {
-        this.defaultFont = defaultFont;
-    }
-
-    public Boolean getE2nonct() {
+    public boolean isE2nonct() {
         return e2nonct;
     }
 
-    public void setE2nonct(Boolean e2nonct) {
-        this.e2nonct = e2nonct;
-    }
-
-    public Boolean getEnable2FA() {
+    public boolean isEnable2FA() {
         return enable2FA;
     }
 
-    public void setEnable2FA(Boolean enable2FA) {
-        this.enable2FA = enable2FA;
-    }
-
-    public Boolean getEnableForwarding() {
+    public boolean isEnableForwarding() {
         return enableForwarding;
-    }
-
-    public void setEnableForwarding(Boolean enableForwarding) {
-        this.enableForwarding = enableForwarding;
     }
 
     public String getForwardingAddress() {
         return forwardingAddress;
     }
 
-    public void setForwardingAddress(String forwardingAddress) {
-        this.forwardingAddress = forwardingAddress;
-    }
-
-    public Boolean getHtmlDisabled() {
+    public boolean isHtmlDisabled() {
         return isHtmlDisabled;
-    }
-
-    public void setHtmlDisabled(Boolean htmlDisabled) {
-        isHtmlDisabled = htmlDisabled;
     }
 
     public boolean isEnableReportBugs() {
         return isEnableReportBugs;
     }
 
-    public void setEnableReportBugs(boolean enableReportBugs) {
-        isEnableReportBugs = enableReportBugs;
-    }
-
     public String getNotificationEmail() {
         return notificationEmail;
-    }
-
-    public void setNotificationEmail(String notificationEmail) {
-        this.notificationEmail = notificationEmail;
     }
 }

@@ -5,7 +5,6 @@ import androidx.room.PrimaryKey;
 
 @Entity(tableName = "mailboxes")
 public class MailboxEntity {
-
     @PrimaryKey
     public long id;
     public String email;
@@ -16,6 +15,22 @@ public class MailboxEntity {
     public String publicKey;
     public String fingerprint;
     public String signature;
+
+    public MailboxEntity() {
+
+    }
+
+    public MailboxEntity(long id, String email, String displayName, boolean isDefault, boolean isEnabled, String privateKey, String publicKey, String fingerprint, String signature) {
+        this.id = id;
+        this.email = email;
+        this.displayName = displayName;
+        this.isDefault = isDefault;
+        this.isEnabled = isEnabled;
+        this.privateKey = privateKey;
+        this.publicKey = publicKey;
+        this.fingerprint = fingerprint;
+        this.signature = signature;
+    }
 
     public long getId() {
         return id;
@@ -45,24 +60,16 @@ public class MailboxEntity {
         return isDefault;
     }
 
-    public void setDefault(boolean isDefault) {
-        this.isDefault = isDefault;
+    public void setDefault(boolean aDefault) {
+        isDefault = aDefault;
     }
 
     public boolean isEnabled() {
         return isEnabled;
     }
 
-    public void setEnabled(boolean isEnabled) {
-        this.isEnabled = isEnabled;
-    }
-
-    public String getPublicKey() {
-        return publicKey;
-    }
-
-    public void setPublicKey(String publicKey) {
-        this.publicKey = publicKey;
+    public void setEnabled(boolean enabled) {
+        isEnabled = enabled;
     }
 
     public String getPrivateKey() {
@@ -71,6 +78,14 @@ public class MailboxEntity {
 
     public void setPrivateKey(String privateKey) {
         this.privateKey = privateKey;
+    }
+
+    public String getPublicKey() {
+        return publicKey;
+    }
+
+    public void setPublicKey(String publicKey) {
+        this.publicKey = publicKey;
     }
 
     public String getFingerprint() {

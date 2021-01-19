@@ -24,8 +24,8 @@ import com.ctemplar.app.fdroid.BaseActivity;
 import com.ctemplar.app.fdroid.R;
 import com.ctemplar.app.fdroid.main.RecycleDeleteSwiper;
 import com.ctemplar.app.fdroid.net.ResponseStatus;
-import com.ctemplar.app.fdroid.net.response.Filters.FilterResult;
-import com.ctemplar.app.fdroid.net.response.Filters.FiltersResponse;
+import com.ctemplar.app.fdroid.net.response.filters.FilterResult;
+import com.ctemplar.app.fdroid.net.response.filters.FiltersResponse;
 
 public class FiltersActivity extends BaseActivity {
     private FiltersViewModel filtersModel;

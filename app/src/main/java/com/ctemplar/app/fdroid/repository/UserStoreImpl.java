@@ -27,9 +27,7 @@ public class UserStoreImpl implements UserStore {
     private static final String KEY_PUBLIC_KEY = "key_public_key";
     private static final String KEY_PRIVATE_KEY = "key_private_key";
     private static final String KEY_TIMEZONE = "key_timezone";
-    private static final String KEY_MOBILE_SIGNATURE = "key_mobile_signature";
     private static final String KEY_SIGNATURE_ENABLED = "key_signature_enabled";
-    private static final String KEY_MOBILE_SIGNATURE_ENABLED = "key_mobile_signature_enabled";
     private static final String KEY_NOTIFICATIONS_ENABLED = "key_notifications_enabled";
     private static final String KEY_CONTACTS_ENCRYPTION_ENABLED = "key_contacts_encryption_enabled";
     private static final String KEY_DRAFTS_AUTO_SAVE_ENABLED = "key_drafts_auto_save_enabled";
@@ -40,6 +38,7 @@ public class UserStoreImpl implements UserStore {
     private static final String KEY_LAST_PAUSE_TIME = "key_last_pause_time";
     private static final String KEY_IS_LOCKED = "key_is_locked";
     private static final String KEY_DARK_MODE = "key_dark_mode";
+    private static final String KEY_LANGUAGE = "key_language";
 
     public static UserStoreImpl getInstance(Context context) {
         if (instance == null) {
@@ -138,16 +137,6 @@ public class UserStoreImpl implements UserStore {
     }
 
     @Override
-    public void saveMobileSignature(String signature) {
-        preferences.edit().putString(KEY_MOBILE_SIGNATURE, signature).apply();
-    }
-
-    @Override
-    public String getMobileSignature() {
-        return preferences.getString(KEY_MOBILE_SIGNATURE, "");
-    }
-
-    @Override
     public void setSignatureEnabled(boolean state) {
         preferences.edit().putBoolean(KEY_SIGNATURE_ENABLED, state).apply();
     }
@@ -155,16 +144,6 @@ public class UserStoreImpl implements UserStore {
     @Override
     public boolean isSignatureEnabled() {
         return preferences.getBoolean(KEY_SIGNATURE_ENABLED, true);
-    }
-
-    @Override
-    public void setMobileSignatureEnabled(boolean state) {
-        preferences.edit().putBoolean(KEY_MOBILE_SIGNATURE_ENABLED, state).apply();
-    }
-
-    @Override
-    public boolean isMobileSignatureEnabled() {
-        return preferences.getBoolean(KEY_MOBILE_SIGNATURE_ENABLED, false);
     }
 
     @Override
@@ -277,12 +256,53 @@ public class UserStoreImpl implements UserStore {
     }
 
     @Override
-    public void setDarkMode(int value) {
+    public void setDarkModeValue(int value) {
         preferences.edit().putInt(KEY_DARK_MODE, value).apply();
+        AppCompatDelegate.setDefaultNightMode(value);
     }
 
     @Override
-    public int getDarkMode() {
+    public int getDarkModeValue() {
         return preferences.getInt(KEY_DARK_MODE, AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
+    }
+
+    @Override
+    public void setDarkModeKey(String key) {
+        int value;
+        switch (key) {
+            case "on":
+                value = AppCompatDelegate.MODE_NIGHT_YES;
+                break;
+            case "off":
+                value = AppCompatDelegate.MODE_NIGHT_NO;
+                break;
+            default:
+                value = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM;
+        }
+        preferences.edit().putInt(KEY_DARK_MODE, value).apply();
+        AppCompatDelegate.setDefaultNightMode(value);
+    }
+
+    @Override
+    public String getDarkModeKey() {
+        int value = preferences.getInt(KEY_DARK_MODE, AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
+        switch (value) {
+            case AppCompatDelegate.MODE_NIGHT_YES:
+                return "on";
+            case AppCompatDelegate.MODE_NIGHT_NO:
+                return "off";
+            default:
+                return "auto";
+        }
+    }
+
+    @Override
+    public void setLanguageKey(String key) {
+        preferences.edit().putString(KEY_LANGUAGE, key).apply();
+    }
+
+    @Override
+    public String getLanguageKey() {
+        return preferences.getString(KEY_LANGUAGE, "auto");
     }
 }

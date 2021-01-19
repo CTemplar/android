@@ -1,6 +1,6 @@
 package com.ctemplar.app.fdroid.net.response.notification;
 
-import com.ctemplar.app.fdroid.net.response.Messages.MessagesResult;
+import com.ctemplar.app.fdroid.net.response.messages.MessagesResult;
 import com.google.gson.annotations.SerializedName;
 
 public class NotificationMessageResponse {

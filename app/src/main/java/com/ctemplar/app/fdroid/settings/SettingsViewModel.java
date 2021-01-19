@@ -11,22 +11,26 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 import io.reactivex.Observer;
+import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
 import com.ctemplar.app.fdroid.CTemplarApp;
 import com.ctemplar.app.fdroid.net.ResponseStatus;
 import com.ctemplar.app.fdroid.net.request.AntiPhishingPhraseRequest;
 import com.ctemplar.app.fdroid.net.request.AutoSaveContactEnabledRequest;
 import com.ctemplar.app.fdroid.net.request.ContactsEncryptionRequest;
+import com.ctemplar.app.fdroid.net.request.DarkModeRequest;
 import com.ctemplar.app.fdroid.net.request.DisableLoadingImagesRequest;
+import com.ctemplar.app.fdroid.net.request.NotificationEmailRequest;
 import com.ctemplar.app.fdroid.net.request.RecoveryEmailRequest;
 import com.ctemplar.app.fdroid.net.request.SignatureRequest;
 import com.ctemplar.app.fdroid.net.request.SubjectEncryptedRequest;
 import com.ctemplar.app.fdroid.net.request.UpdateReportBugsRequest;
-import com.ctemplar.app.fdroid.net.response.Contacts.ContactData;
-import com.ctemplar.app.fdroid.net.response.Contacts.ContactsResponse;
-import com.ctemplar.app.fdroid.net.response.Contacts.EncryptContact;
-import com.ctemplar.app.fdroid.net.response.Mailboxes.MailboxesResult;
-import com.ctemplar.app.fdroid.net.response.Myself.SettingsResponse;
+import com.ctemplar.app.fdroid.net.response.contacts.ContactData;
+import com.ctemplar.app.fdroid.net.response.contacts.ContactsResponse;
+import com.ctemplar.app.fdroid.net.response.contacts.EncryptContact;
+import com.ctemplar.app.fdroid.net.response.mailboxes.MailboxesResult;
+import com.ctemplar.app.fdroid.net.response.myself.MyselfResponse;
+import com.ctemplar.app.fdroid.net.response.myself.SettingsResponse;
 import com.ctemplar.app.fdroid.repository.AppDatabase;
 import com.ctemplar.app.fdroid.repository.ContactsRepository;
 import com.ctemplar.app.fdroid.repository.UserRepository;
@@ -35,6 +39,8 @@ import com.ctemplar.app.fdroid.repository.entity.ContactEntity;
 import com.ctemplar.app.fdroid.repository.entity.MailboxEntity;
 import com.ctemplar.app.fdroid.utils.EncryptUtils;
 import timber.log.Timber;
+
+import static com.ctemplar.app.fdroid.utils.DateUtils.GENERAL_GSON;
 
 public class SettingsViewModel extends ViewModel {
     private final ContactsRepository contactsRepository;
@@ -47,8 +53,9 @@ public class SettingsViewModel extends ViewModel {
         appDatabase = CTemplarApp.getAppDatabase();
     }
 
-    private MutableLiveData<ResponseStatus> decryptionStatus = new MutableLiveData<>();
-    private MutableLiveData<ResponseStatus> updateSignatureStatus = new MutableLiveData<>();
+    private final MutableLiveData<ResponseStatus> decryptionStatus = new MutableLiveData<>();
+    private final MutableLiveData<ResponseStatus> updateSignatureStatus = new MutableLiveData<>();
+    private final MutableLiveData<MyselfResponse> myselfResponse = new MutableLiveData<>();
 
     MutableLiveData<ResponseStatus> getDecryptionStatus() {
         return decryptionStatus;
@@ -56,6 +63,10 @@ public class SettingsViewModel extends ViewModel {
 
     LiveData<ResponseStatus> getUpdateSignatureStatus() {
         return updateSignatureStatus;
+    }
+
+    LiveData<MyselfResponse> getMySelfResponse() {
+        return myselfResponse;
     }
 
     List<MailboxEntity> getAllMailboxes() {
@@ -68,22 +79,6 @@ public class SettingsViewModel extends ViewModel {
 
     public boolean isSignatureEnabled() {
         return userRepository.isSignatureEnabled();
-    }
-
-    public void setMobileSignatureEnabled(boolean isEnabled) {
-        userRepository.setMobileSignatureEnabled(isEnabled);
-    }
-
-    public boolean isMobileSignatureEnabled() {
-        return userRepository.isMobileSignatureEnabled();
-    }
-
-    public void setMobileSignature(String signatureText) {
-        userRepository.setMobileSignature(signatureText);
-    }
-
-    public String getMobileSignature() {
-        return userRepository.getMobileSignature();
     }
 
     void updateAutoSaveContactsEnabled(long settingId, boolean isEnabled) {
@@ -107,6 +102,37 @@ public class SettingsViewModel extends ViewModel {
 
                     @Override
                     public void onError(@NotNull Throwable e) {
+                        Timber.e(e);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    public void updateDarkMode(long settingId, boolean isEnabled) {
+        if (settingId == -1) {
+            return;
+        }
+        userRepository.updateDarkMode(
+                settingId,
+                new DarkModeRequest(isEnabled)
+        )
+                .subscribe(new Observer<SettingsResponse>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(@NonNull SettingsResponse settingsResponse) {
+                        Timber.i("Dark mode state is changed");
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
                         Timber.e(e);
                     }
 
@@ -243,6 +269,37 @@ public class SettingsViewModel extends ViewModel {
                 });
     }
 
+    void updateNotificationEmail(long settingId, String emailAddress) {
+        if (settingId == -1) {
+            return;
+        }
+        userRepository.updateNotificationEmail(
+                settingId,
+                new NotificationEmailRequest(emailAddress)
+        )
+                .subscribe(new Observer<SettingsResponse>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(@NonNull SettingsResponse settingsResponse) {
+                        Timber.i("Notification email updated");
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        Timber.e(e);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
     void updateSubjectEncryption(long settingId, boolean isSubjectEncryption) {
         if (settingId == -1) {
             return;
@@ -369,13 +426,38 @@ public class SettingsViewModel extends ViewModel {
                 });
     }
 
+    public void getMyselfInfo() {
+        userRepository.getMyselfInfo()
+                .subscribe(new Observer<MyselfResponse>() {
+                    @Override
+                    public void onSubscribe(@NotNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(@NotNull MyselfResponse response) {
+                        myselfResponse.postValue(response);
+                    }
+
+                    @Override
+                    public void onError(@NotNull Throwable e) {
+                        Timber.e(e);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
     private void decryptContact(ContactData contactData) {
         if (!contactData.isEncrypted()) {
             return;
         }
         String encryptedData = contactData.getEncryptedData();
         String decryptedData = EncryptUtils.decryptData(encryptedData);
-        EncryptContact decryptedContact = new Gson().fromJson(decryptedData, EncryptContact.class);
+        EncryptContact decryptedContact = GENERAL_GSON.fromJson(decryptedData, EncryptContact.class);
         if (decryptedContact == null) {
             return;
         }

@@ -1,0 +1,5 @@
+* Dark mode sync with the account
+* Notification email settings
+* Manual language selection
+* Arabic, Chinese, German, Russian and Ukrainian translations
+* Other improvements and fixes

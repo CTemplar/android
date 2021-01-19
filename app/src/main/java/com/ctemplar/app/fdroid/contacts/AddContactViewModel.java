@@ -11,14 +11,16 @@ import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 import com.ctemplar.app.fdroid.CTemplarApp;
 import com.ctemplar.app.fdroid.net.ResponseStatus;
-import com.ctemplar.app.fdroid.net.response.Contacts.ContactData;
-import com.ctemplar.app.fdroid.net.response.Contacts.EncryptContact;
+import com.ctemplar.app.fdroid.net.response.contacts.ContactData;
+import com.ctemplar.app.fdroid.net.response.contacts.EncryptContact;
 import com.ctemplar.app.fdroid.repository.ContactsRepository;
 import com.ctemplar.app.fdroid.repository.UserStore;
 import com.ctemplar.app.fdroid.repository.entity.Contact;
 import com.ctemplar.app.fdroid.repository.entity.ContactEntity;
 import com.ctemplar.app.fdroid.utils.EncryptUtils;
 import timber.log.Timber;
+
+import static com.ctemplar.app.fdroid.utils.DateUtils.GENERAL_GSON;
 
 public class AddContactViewModel extends ViewModel {
     private final ContactsRepository contactsRepository;
@@ -56,7 +58,7 @@ public class AddContactViewModel extends ViewModel {
             contactData.setProvider(null);
             contactData.setEncrypted(true);
 
-            String contactString = new Gson().toJson(encryptContact);
+            String contactString = GENERAL_GSON.toJson(encryptContact);
             String encryptedContactString = EncryptUtils.encryptData(contactString);
             contactData.setEncryptedData(encryptedContactString);
         }

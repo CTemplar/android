@@ -2,7 +2,7 @@ package com.ctemplar.app.fdroid.repository.provider;
 
 import com.google.gson.annotations.SerializedName;
 
-import com.ctemplar.app.fdroid.net.response.Messages.EncryptionMessage;
+import com.ctemplar.app.fdroid.net.response.messages.EncryptionMessage;
 
 public class EncryptionMessageProvider {
 

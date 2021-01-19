@@ -1,9 +1,8 @@
-package com.ctemplar.app.fdroid.net.response.Mailboxes;
+package com.ctemplar.app.fdroid.net.response.mailboxes;
 
 import com.google.gson.annotations.SerializedName;
 
 public class MailboxesResult {
-
     @SerializedName("id")
     private long id;
 
@@ -30,6 +29,7 @@ public class MailboxesResult {
 
     @SerializedName("signature")
     private String signature;
+
 
     public long getId() {
         return id;
@@ -66,5 +66,4 @@ public class MailboxesResult {
     public String getSignature() {
         return signature;
     }
-
 }

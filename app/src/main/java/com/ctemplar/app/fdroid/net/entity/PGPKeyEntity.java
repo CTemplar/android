@@ -1,7 +1,6 @@
 package com.ctemplar.app.fdroid.net.entity;
 
 public class PGPKeyEntity {
-
     private String publicKey;
     private String privateKey;
     private String fingerprint;

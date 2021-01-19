@@ -28,7 +28,7 @@ import com.ctemplar.app.fdroid.BaseActivity;
 import com.ctemplar.app.fdroid.BuildConfig;
 import com.ctemplar.app.fdroid.R;
 import com.ctemplar.app.fdroid.net.ResponseStatus;
-import com.ctemplar.app.fdroid.net.response.Domains.DomainsResults;
+import com.ctemplar.app.fdroid.net.response.domains.DomainsResults;
 import com.ctemplar.app.fdroid.utils.EditTextUtils;
 
 public class AddMailboxActivity extends BaseActivity {

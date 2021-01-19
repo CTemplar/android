@@ -1,9 +1,8 @@
-package com.ctemplar.app.fdroid.net.response.Folders;
+package com.ctemplar.app.fdroid.net.response.folders;
 
 import com.google.gson.annotations.SerializedName;
 
 public class FoldersResult {
-
     @SerializedName("id")
     private int id;
 
@@ -15,6 +14,7 @@ public class FoldersResult {
 
     @SerializedName("sort_order")
     private int sortOrder;
+
 
     public int getId() {
         return id;

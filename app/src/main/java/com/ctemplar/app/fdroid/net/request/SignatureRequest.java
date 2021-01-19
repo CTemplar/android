@@ -3,7 +3,6 @@ package com.ctemplar.app.fdroid.net.request;
 import com.google.gson.annotations.SerializedName;
 
 public class SignatureRequest {
-
     @SerializedName("display_name")
     private String displayName;
 

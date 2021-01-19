@@ -128,6 +128,7 @@
     <string name="txt_left_time_dead_mans_timer">Dead Man\'s in %1$s</string>
     <string name="txt_encrypt_message_title">Set Password</string>
     <string name="txt_destruct_message_title">Self-destructing Timer</string>
+    <string name="txt_destruct_timer_hint">Self Destruction is only for CTemplar recipients. Please add CTemplar recipients for self destruction feature</string>
     <string name="txt_dead_mans_title">Dead Man\'s Timer</string>
     <string name="txt_delayed_message_title">Delayed delivery</string>
     <string name="txt_encrypt_message_summary">Encrypt for non-CTemplar Mail Users</string>
@@ -298,7 +299,6 @@
     <string name="txt_type_your_name">Type your name</string>
     <string name="txt_type_signature">Type your signature</string>
     <string name="txt_signature_enabled">Signature enabled</string>
-    <string name="txt_mobile_signature_enabled">Mobile signature enabled</string>
 
     <!-- PIN LOCK -->
     <string name="pin_lock">PIN Lock</string>
@@ -322,6 +322,8 @@
     <string name="settings_recovery_email">Recovery email</string>
     <string name="settings_enable_recovery_email">Enable recovery email</string>
     <string name="settings_type_recovery_email">Type your recovery email</string>
+    <string name="settings_type_notification_email">Type your notification email</string>
+    <string name="settings_type_notification_email_description">Enter a notification email on which you would like to receive notification each day when you have new emails.</string>
     <string name="settings_enabled_anti_phishing">Anti-Phishing</string>
     <string name="settings_type_anti_phishing_phrase">Type your anti-phishing phrase</string>
     <string name="settings_subject_encryption">Subject encryption</string>
@@ -349,9 +351,7 @@
     <string name="settings_signature">Signature</string>
     <string name="settings_enable_signature">Enable signature</string>
     <string name="settings_type_signature">Type your signature</string>
-    <string name="settings_mobile_signature">Mobile signature</string>
     <string name="settings_keys">Keys</string>
-    <string name="settings_enable_mobile_signature">Enable mobile signature</string>
     <string name="settings_about">About</string>
     <string name="settings_helpdesk">Helpdesk</string>
     <string name="settings_local_storage_limit">Local storage limit</string>
@@ -412,9 +412,9 @@
     <string translatable="false" name="password_key">password_key</string>
     <string translatable="false" name="pin_lock_key">pin_lock_key</string>
     <string translatable="false" name="signature_key">signature_key</string>
-    <string translatable="false" name="mobile_signature_key">mobile_signature_key</string>
     <string translatable="false" name="filters_key">filters_key</string>
     <string translatable="false" name="dark_mode_key">dark_mode_key</string>
+    <string translatable="false" name="language_key">language_key</string>
     <string translatable="false" name="block_external_images_key">block_external_images_key</string>
     <string translatable="false" name="report_bugs_enabled">report_bugs_enabled</string>
     <string translatable="false" name="white_black_list">white_black_list</string>
@@ -422,6 +422,7 @@
     <string translatable="false" name="push_notifications_enabled">push_notifications_enabled</string>
     <string translatable="false" name="recovery_email_enabled">recovery_email_enabled</string>
     <string translatable="false" name="recovery_email">recovery_email</string>
+    <string translatable="false" name="notification_email_key">notification_email_key</string>
     <string translatable="false" name="anti_phishing_enabled">anti_phishing_enabled</string>
     <string translatable="false" name="anti_phishing_key">anti_phishing_key</string>
     <string translatable="false" name="anti_phishing_description_key">anti_phishing_description_key</string>
@@ -438,11 +439,11 @@
     <!-- ERRORS -->
     <string name="error_field_cannot_be_empty">This field cannot be empty.</string>
     <string name="error_invalid_email">Please  select a valid email or select unrecoverable account.</string>
-    <string name="error_username_small">Minimum 4 symbols</string>
-    <string name="error_username_small_two">Minimum 2 symbols</string>
-    <string name="error_username_big">Maximum 64 symbols</string>
-    <string name="error_password_small">Minimum 1 symbol</string>
-    <string name="error_password_big">Maximum 255 symbols</string>
+    <string name="error_username_small">Minimum 4 characters</string>
+    <string name="error_username_small_two">Minimum 2 characters</string>
+    <string name="error_username_big">Maximum 64 characters</string>
+    <string name="error_password_small">Minimum 1 character</string>
+    <string name="error_password_big">Maximum 255 characters</string>
     <string name="error_username_incorrect">The username must start with a letter and can contain only a–z, A–Z, 0–9 or ._-</string>
     <string name="error_username_exists">Email already exists!</string>
     <string name="error_password_not_match">Passwords do not match.</string>
@@ -497,5 +498,29 @@
         <item>auto</item>
         <item>on</item>
         <item>off</item>
+    </string-array>
+
+    <string-array name="language_entries">
+        <item>Auto (detect)</item>
+        <item>English</item>
+        <item>Français</item>
+        <item>Português</item>
+        <item>Deutsche</item>
+        <item>عربى</item>
+        <item>中文</item>
+        <item>Русский</item>
+        <item>Українська</item>
+    </string-array>
+
+    <string-array name="language_values">
+        <item>auto</item>
+        <item>en</item>
+        <item>fr</item>
+        <item>pt</item>
+        <item>de</item>
+        <item>ar</item>
+        <item>zh</item>
+        <item>ru</item>
+        <item>uk</item>
     </string-array>
 </resources>

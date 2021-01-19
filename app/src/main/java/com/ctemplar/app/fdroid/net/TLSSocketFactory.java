@@ -19,7 +19,6 @@ import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
 public class TLSSocketFactory extends SSLSocketFactory {
-
     private SSLSocketFactory delegate;
     private TrustManager[] trustManagers;
 

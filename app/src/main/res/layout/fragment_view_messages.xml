@@ -51,7 +51,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/selector_encrypted"
-            android:tint="?android:textColorSecondary"
+            app:tint="?android:textColorSecondary"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintRight_toLeftOf="@id/activity_view_messages_subject_star_image_layout"/>
@@ -118,9 +118,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_reply"
-                android:tint="?android:textColorSecondary"
                 android:layout_centerInParent="true"
-                android:contentDescription="Reply"/>
+                app:tint="?android:textColorSecondary"
+                android:contentDescription="Reply" />
 
         </RelativeLayout>
 
@@ -142,11 +142,11 @@
                 android:layout_height="15dp"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="?android:textColorSecondary"
                 android:src="@drawable/ic_reply_all"
-                android:tint="?android:textColorSecondary"
                 android:layout_centerInParent="true"
-                android:contentDescription="@string/txt_reply_all"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:contentDescription="@string/txt_reply_all"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -178,9 +178,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_forward"
-                android:tint="?android:textColorSecondary"
                 android:layout_centerInParent="true"
-                android:contentDescription="Forward"/>
+                app:tint="?android:textColorSecondary"
+                android:contentDescription="Forward" />
 
         </RelativeLayout>
 
@@ -196,7 +196,7 @@
             android:id="@+id/activity_view_messages_progress_background"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/colorGreyLight"/>
+            android:background="@color/colorPrimary" />
 
         <ProgressBar
             android:id="@+id/activity_view_messages_progress_bar"

@@ -14,7 +14,7 @@ import butterknife.BindView;
 import com.ctemplar.app.fdroid.BaseActivity;
 import com.ctemplar.app.fdroid.R;
 import com.ctemplar.app.fdroid.net.ResponseStatus;
-import com.ctemplar.app.fdroid.net.response.Contacts.ContactData;
+import com.ctemplar.app.fdroid.net.response.contacts.ContactData;
 
 public class AddContactActivity extends BaseActivity {
     private AddContactViewModel viewModel;

@@ -1,5 +1,9 @@
 package com.ctemplar.app.fdroid.net;
 
+import javax.inject.Singleton;
+
+import io.reactivex.Observable;
+import io.reactivex.Single;
 import com.ctemplar.app.fdroid.net.request.AddAppTokenRequest;
 import com.ctemplar.app.fdroid.net.request.AddFolderRequest;
 import com.ctemplar.app.fdroid.net.request.AntiPhishingPhraseRequest;
@@ -10,6 +14,7 @@ import com.ctemplar.app.fdroid.net.request.CheckUsernameRequest;
 import com.ctemplar.app.fdroid.net.request.ContactsEncryptionRequest;
 import com.ctemplar.app.fdroid.net.request.CreateMailboxRequest;
 import com.ctemplar.app.fdroid.net.request.CustomFilterRequest;
+import com.ctemplar.app.fdroid.net.request.DarkModeRequest;
 import com.ctemplar.app.fdroid.net.request.DefaultMailboxRequest;
 import com.ctemplar.app.fdroid.net.request.DisableLoadingImagesRequest;
 import com.ctemplar.app.fdroid.net.request.EditFolderRequest;
@@ -18,6 +23,7 @@ import com.ctemplar.app.fdroid.net.request.EnabledMailboxRequest;
 import com.ctemplar.app.fdroid.net.request.MarkMessageAsReadRequest;
 import com.ctemplar.app.fdroid.net.request.MarkMessageIsStarredRequest;
 import com.ctemplar.app.fdroid.net.request.MoveToFolderRequest;
+import com.ctemplar.app.fdroid.net.request.NotificationEmailRequest;
 import com.ctemplar.app.fdroid.net.request.PublicKeysRequest;
 import com.ctemplar.app.fdroid.net.request.RecoverPasswordRequest;
 import com.ctemplar.app.fdroid.net.request.RecoveryEmailRequest;
@@ -33,34 +39,29 @@ import com.ctemplar.app.fdroid.net.response.AddAppTokenResponse;
 import com.ctemplar.app.fdroid.net.response.CaptchaResponse;
 import com.ctemplar.app.fdroid.net.response.CaptchaVerifyResponse;
 import com.ctemplar.app.fdroid.net.response.CheckUsernameResponse;
-import com.ctemplar.app.fdroid.net.response.Contacts.ContactData;
-import com.ctemplar.app.fdroid.net.response.Contacts.ContactsResponse;
-import com.ctemplar.app.fdroid.net.response.Domains.DomainsResponse;
-import com.ctemplar.app.fdroid.net.response.Filters.FilterResult;
-import com.ctemplar.app.fdroid.net.response.Filters.FiltersResponse;
-import com.ctemplar.app.fdroid.net.response.Folders.FoldersResponse;
-import com.ctemplar.app.fdroid.net.response.Folders.FoldersResult;
+import com.ctemplar.app.fdroid.net.response.contacts.ContactData;
+import com.ctemplar.app.fdroid.net.response.contacts.ContactsResponse;
+import com.ctemplar.app.fdroid.net.response.domains.DomainsResponse;
+import com.ctemplar.app.fdroid.net.response.filters.FilterResult;
+import com.ctemplar.app.fdroid.net.response.filters.FiltersResponse;
+import com.ctemplar.app.fdroid.net.response.folders.FoldersResponse;
+import com.ctemplar.app.fdroid.net.response.folders.FoldersResult;
 import com.ctemplar.app.fdroid.net.response.KeyResponse;
-import com.ctemplar.app.fdroid.net.response.Mailboxes.MailboxesResponse;
-import com.ctemplar.app.fdroid.net.response.Mailboxes.MailboxesResult;
-import com.ctemplar.app.fdroid.net.response.Messages.EmptyFolderResponse;
-import com.ctemplar.app.fdroid.net.response.Messages.MessageAttachment;
-import com.ctemplar.app.fdroid.net.response.Messages.MessagesResponse;
-import com.ctemplar.app.fdroid.net.response.Messages.MessagesResult;
-import com.ctemplar.app.fdroid.net.response.Myself.BlackListContact;
-import com.ctemplar.app.fdroid.net.response.Myself.MyselfResponse;
-import com.ctemplar.app.fdroid.net.response.Myself.SettingsResponse;
-import com.ctemplar.app.fdroid.net.response.Myself.WhiteListContact;
+import com.ctemplar.app.fdroid.net.response.mailboxes.MailboxesResponse;
+import com.ctemplar.app.fdroid.net.response.mailboxes.MailboxesResult;
+import com.ctemplar.app.fdroid.net.response.messages.EmptyFolderResponse;
+import com.ctemplar.app.fdroid.net.response.messages.MessageAttachment;
+import com.ctemplar.app.fdroid.net.response.messages.MessagesResponse;
+import com.ctemplar.app.fdroid.net.response.messages.MessagesResult;
+import com.ctemplar.app.fdroid.net.response.myself.BlackListContact;
+import com.ctemplar.app.fdroid.net.response.myself.MyselfResponse;
+import com.ctemplar.app.fdroid.net.response.myself.SettingsResponse;
+import com.ctemplar.app.fdroid.net.response.myself.WhiteListContact;
 import com.ctemplar.app.fdroid.net.response.RecoverPasswordResponse;
 import com.ctemplar.app.fdroid.net.response.SignInResponse;
 import com.ctemplar.app.fdroid.net.response.SignUpResponse;
-import com.ctemplar.app.fdroid.net.response.WhiteBlackLists.BlackListResponse;
-import com.ctemplar.app.fdroid.net.response.WhiteBlackLists.WhiteListResponse;
-
-import javax.inject.Singleton;
-
-import io.reactivex.Observable;
-import io.reactivex.Single;
+import com.ctemplar.app.fdroid.net.response.whiteBlackList.BlackListResponse;
+import com.ctemplar.app.fdroid.net.response.whiteBlackList.WhiteListResponse;
 import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -306,6 +307,12 @@ public interface RestService {
     );
 
     @PATCH("users/settings/{id}/")
+    Observable<SettingsResponse> updateNotificationEmail(
+            @Path("id") long settingId,
+            @Body NotificationEmailRequest body
+    );
+
+    @PATCH("users/settings/{id}/")
     Observable<SettingsResponse> updateSubjectEncrypted(
             @Path("id") long settingId,
             @Body SubjectEncryptedRequest body
@@ -327,6 +334,12 @@ public interface RestService {
     Observable<SettingsResponse> updateAntiPhishingPhrase(
             @Path("id") long settingId,
             @Body AntiPhishingPhraseRequest request
+    );
+
+    @PATCH("users/settings/{id}/")
+    Observable<SettingsResponse> updateDarkMode(
+            @Path("id") long settingId,
+            @Body DarkModeRequest request
     );
 
     @PATCH("users/settings/{id}/")

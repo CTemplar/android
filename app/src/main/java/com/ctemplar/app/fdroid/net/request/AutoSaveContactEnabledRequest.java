@@ -9,4 +9,8 @@ public class AutoSaveContactEnabledRequest {
     public AutoSaveContactEnabledRequest(boolean saveContacts) {
         this.saveContacts = saveContacts;
     }
+
+    public void setSaveContacts(boolean saveContacts) {
+        this.saveContacts = saveContacts;
+    }
 }

@@ -13,9 +13,8 @@ import com.ctemplar.app.fdroid.R;
 import com.ctemplar.app.fdroid.repository.entity.MailboxEntity;
 
 public class MailboxesAdapter extends RecyclerView.Adapter<MailboxesViewHolder> {
-
-    private MailboxesViewModel mailboxesModel;
-    private List<MailboxEntity> mailboxEntityList;
+    private final MailboxesViewModel mailboxesModel;
+    private final List<MailboxEntity> mailboxEntityList;
     private MailboxesViewHolder lastSelectedHolder;
     private long lastSelectedMailboxId;
 

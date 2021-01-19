@@ -1,11 +1,10 @@
-package com.ctemplar.app.fdroid.net.response.Contacts;
+package com.ctemplar.app.fdroid.net.response.contacts;
 
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
 public class EncryptContact {
-
     @SerializedName("address")
     private String address;
 

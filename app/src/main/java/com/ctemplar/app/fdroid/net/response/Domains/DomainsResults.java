@@ -1,9 +1,8 @@
-package com.ctemplar.app.fdroid.net.response.Domains;
+package com.ctemplar.app.fdroid.net.response.domains;
 
 import com.google.gson.annotations.SerializedName;
 
 public class DomainsResults {
-
     @SerializedName("id")
     private int id;
 
@@ -14,15 +13,7 @@ public class DomainsResults {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public String getDomain() {
         return domain;
-    }
-
-    public void setDomain(String domain) {
-        this.domain = domain;
     }
 }

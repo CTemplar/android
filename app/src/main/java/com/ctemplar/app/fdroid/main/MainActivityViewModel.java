@@ -17,14 +17,14 @@ import com.ctemplar.app.fdroid.SingleLiveEvent;
 import com.ctemplar.app.fdroid.net.ResponseStatus;
 import com.ctemplar.app.fdroid.net.request.EmptyFolderRequest;
 import com.ctemplar.app.fdroid.net.request.SignInRequest;
-import com.ctemplar.app.fdroid.net.response.Folders.FoldersResponse;
-import com.ctemplar.app.fdroid.net.response.Mailboxes.MailboxesResponse;
-import com.ctemplar.app.fdroid.net.response.Messages.EmptyFolderResponse;
-import com.ctemplar.app.fdroid.net.response.Messages.MessagesResponse;
-import com.ctemplar.app.fdroid.net.response.Messages.MessagesResult;
-import com.ctemplar.app.fdroid.net.response.Myself.MyselfResponse;
-import com.ctemplar.app.fdroid.net.response.Myself.MyselfResult;
-import com.ctemplar.app.fdroid.net.response.Myself.SettingsResponse;
+import com.ctemplar.app.fdroid.net.response.folders.FoldersResponse;
+import com.ctemplar.app.fdroid.net.response.mailboxes.MailboxesResponse;
+import com.ctemplar.app.fdroid.net.response.messages.EmptyFolderResponse;
+import com.ctemplar.app.fdroid.net.response.messages.MessagesResponse;
+import com.ctemplar.app.fdroid.net.response.messages.MessagesResult;
+import com.ctemplar.app.fdroid.net.response.myself.MyselfResponse;
+import com.ctemplar.app.fdroid.net.response.myself.MyselfResult;
+import com.ctemplar.app.fdroid.net.response.myself.SettingsResponse;
 import com.ctemplar.app.fdroid.net.response.ResponseMessagesData;
 import com.ctemplar.app.fdroid.net.response.SignInResponse;
 import com.ctemplar.app.fdroid.repository.ManageFoldersRepository;
@@ -36,6 +36,7 @@ import com.ctemplar.app.fdroid.repository.provider.MessageProvider;
 import com.ctemplar.app.fdroid.services.NotificationService;
 import com.ctemplar.app.fdroid.services.NotificationServiceListener;
 import com.ctemplar.app.fdroid.utils.EncodeUtils;
+import com.ctemplar.app.fdroid.utils.ThemeUtils;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -648,20 +649,23 @@ public class MainActivityViewModel extends AndroidViewModel {
 
                     @Override
                     public void onNext(@NotNull MyselfResponse myselfResponse) {
-                        if (myselfResponse != null) {
-                            MyselfResult myselfResult = myselfResponse.getResult()[0];
-                            SettingsResponse settingsResponse = myselfResult.getSettings();
+                        MyselfResult myselfResult = myselfResponse.getResult()[0];
+                        SettingsResponse settingsResponse = myselfResult.getSettings();
 
-                            String timezone = settingsResponse.getTimezone();
-                            boolean isContactsEncrypted = settingsResponse.isContactsEncrypted();
-                            boolean isDisableLoadingImages = settingsResponse.isDisableLoadingImages();
-                            boolean isReportBugsEnabled = settingsResponse.isEnableReportBugs();
+                        String timezone = settingsResponse.getTimezone();
+                        boolean isContactsEncrypted = settingsResponse.isContactsEncrypted();
+                        boolean isDisableLoadingImages = settingsResponse.isDisableLoadingImages();
+                        boolean isReportBugsEnabled = settingsResponse.isEnableReportBugs();
 
-                            userRepository.saveTimeZone(timezone);
-                            userRepository.setContactsEncryptionEnabled(isContactsEncrypted);
-                            userRepository.setBlockExternalImagesEnabled(isDisableLoadingImages);
-                            userRepository.setReportBugsEnabled(isReportBugsEnabled);
-                        }
+                        userRepository.saveTimeZone(timezone);
+                        userRepository.setContactsEncryptionEnabled(isContactsEncrypted);
+                        userRepository.setBlockExternalImagesEnabled(isDisableLoadingImages);
+                        userRepository.setReportBugsEnabled(isReportBugsEnabled);
+
+                        ThemeUtils.setDarkModeFromServer(
+                                settingsResponse.isNightMode(),
+                                userRepository.getUserStore()
+                        );
                     }
 
                     @Override

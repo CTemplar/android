@@ -1,21 +1,47 @@
-package com.ctemplar.app.fdroid.net.response.Myself;
+package com.ctemplar.app.fdroid.net.response.myself;
 
 import com.google.gson.annotations.SerializedName;
 
 public class WhiteListContact {
     @SerializedName("id")
-    public int id;
+    private int id;
 
     @SerializedName("email")
-    public String email;
+    private String email;
 
     @SerializedName("name")
-    public String name;
+    private String name;
 
-    public WhiteListContact() {}
+    public WhiteListContact() {
+
+    }
 
     public WhiteListContact(String name, String email) {
         this.name = name;
         this.email = email;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

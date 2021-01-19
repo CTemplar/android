@@ -1,11 +1,10 @@
-package com.ctemplar.app.fdroid.net.response.Filters;
+package com.ctemplar.app.fdroid.net.response.filters;
 
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
 public class FiltersResponse {
-
     @SerializedName("total_count")
     private int totalCount;
 
@@ -20,6 +19,7 @@ public class FiltersResponse {
 
     @SerializedName("results")
     private List<FilterResult> filterResultList;
+
 
     public int getTotalCount() {
         return totalCount;

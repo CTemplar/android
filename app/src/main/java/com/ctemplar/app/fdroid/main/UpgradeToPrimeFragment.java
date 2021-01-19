@@ -16,10 +16,12 @@ import android.widget.TextView;
 import com.ctemplar.app.fdroid.R;
 
 public class UpgradeToPrimeFragment extends DialogFragment {
-
     @Override
     public void onResume() {
         super.onResume();
+        if (getDialog() == null || getDialog().getWindow() == null) {
+            return;
+        }
         getDialog().getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
     }
 

@@ -32,8 +32,8 @@ import org.jetbrains.annotations.NotNull;
 import com.ctemplar.app.fdroid.BaseActivity;
 import com.ctemplar.app.fdroid.R;
 import com.ctemplar.app.fdroid.main.RecycleDeleteSwiper;
-import com.ctemplar.app.fdroid.net.response.Myself.BlackListContact;
-import com.ctemplar.app.fdroid.net.response.Myself.WhiteListContact;
+import com.ctemplar.app.fdroid.net.response.myself.BlackListContact;
+import com.ctemplar.app.fdroid.net.response.myself.WhiteListContact;
 
 public class WhiteBlackListActivity extends BaseActivity {
 
@@ -179,7 +179,7 @@ public class WhiteBlackListActivity extends BaseActivity {
                     }
                     final int deletedIndex = viewHolder.getAdapterPosition();
                     final WhiteListContact deletedContact = adapter.removeAt(deletedIndex);
-                    final String name = deletedContact.name;
+                    final String name = deletedContact.getName();
 
                     View view = getView();
                     if(view == null) return;
@@ -275,7 +275,7 @@ public class WhiteBlackListActivity extends BaseActivity {
                     }
                     final int deletedIndex = viewHolder.getAdapterPosition();
                     final BlackListContact deletedContact = adapter.removeAt(deletedIndex);
-                    final String name = deletedContact.name;
+                    final String name = deletedContact.getName();
 
                     View view = getView();
                     if(view == null) return;

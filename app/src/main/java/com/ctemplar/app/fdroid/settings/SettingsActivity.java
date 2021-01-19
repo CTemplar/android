@@ -14,7 +14,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -29,6 +28,8 @@ import androidx.preference.PreferenceManager;
 import androidx.preference.PreferenceScreen;
 import androidx.preference.SwitchPreference;
 
+import org.jetbrains.annotations.NotNull;
+
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 import com.ctemplar.app.fdroid.BaseActivity;
@@ -39,16 +40,17 @@ import com.ctemplar.app.fdroid.filters.FiltersActivity;
 import com.ctemplar.app.fdroid.folders.ManageFoldersActivity;
 import com.ctemplar.app.fdroid.mailboxes.MailboxesActivity;
 import com.ctemplar.app.fdroid.net.ResponseStatus;
-import com.ctemplar.app.fdroid.net.response.Myself.MyselfResponse;
-import com.ctemplar.app.fdroid.net.response.Myself.MyselfResult;
-import com.ctemplar.app.fdroid.net.response.Myself.SettingsResponse;
+import com.ctemplar.app.fdroid.net.response.myself.MyselfResponse;
+import com.ctemplar.app.fdroid.net.response.myself.MyselfResult;
+import com.ctemplar.app.fdroid.net.response.myself.SettingsResponse;
 import com.ctemplar.app.fdroid.repository.UserRepository;
 import com.ctemplar.app.fdroid.repository.UserStore;
 import com.ctemplar.app.fdroid.services.NotificationService;
-import com.ctemplar.app.fdroid.utils.AppUtils;
+import com.ctemplar.app.fdroid.utils.DateUtils;
 import com.ctemplar.app.fdroid.utils.EditTextUtils;
 import com.ctemplar.app.fdroid.utils.EncodeUtils;
 import com.ctemplar.app.fdroid.utils.HtmlUtils;
+import com.ctemplar.app.fdroid.utils.ThemeUtils;
 import com.ctemplar.app.fdroid.wbl.WhiteBlackListActivity;
 import timber.log.Timber;
 
@@ -139,15 +141,6 @@ public class SettingsActivity extends BaseActivity {
                     return false;
                 });
             }
-            Preference mobileSignatureKey = findPreference(getString(R.string.mobile_signature_key));
-            if (mobileSignatureKey != null) {
-                mobileSignatureKey.setOnPreferenceClickListener(preference -> {
-                    Intent signatureActivity = new Intent(getActivity(), SignatureActivity.class);
-                    signatureActivity.putExtra(SignatureActivity.IS_MOBILE, true);
-                    startActivity(signatureActivity);
-                    return false;
-                });
-            }
             Preference mailboxKeys = findPreference(getString(R.string.setting_keys));
             if (mailboxKeys != null) {
                 mailboxKeys.setOnPreferenceClickListener(preference -> {
@@ -215,6 +208,29 @@ public class SettingsActivity extends BaseActivity {
                 boolean isNotificationsEnabled = userStore.isNotificationsEnabled();
                 switchPreferenceNotificationsEnabled.setChecked(isNotificationsEnabled);
             }
+
+            EditTextPreference preferenceNotificationEmail = findPreference(getString(R.string.notification_email_key));
+            if (preferenceNotificationEmail != null) {
+                preferenceNotificationEmail.setOnPreferenceChangeListener((preference, newValue) -> {
+                    String value = (String) newValue;
+                    if (EditTextUtils.isEmailListValid(value) || TextUtils.isEmpty(value)) {
+                        if (TextUtils.isEmpty(value)) {
+                            preferenceNotificationEmail.setTitle(R.string.settings_type_notification_email);
+                        } else {
+                            preferenceNotificationEmail.setTitle(value);
+                        }
+                        settingsModel.updateNotificationEmail(settingId, value);
+                        Toast.makeText(getActivity(), R.string.toast_saved, Toast.LENGTH_SHORT).show();
+                        return true;
+                    } else {
+                        Toast.makeText(getActivity(), R.string.toast_email_not_valid, Toast.LENGTH_SHORT).show();
+                        return false;
+                    }
+                });
+                if (EditTextUtils.isNotEmpty(preferenceNotificationEmail.getText())) {
+                    preferenceNotificationEmail.setTitle(preferenceNotificationEmail.getText());
+                }
+            }
         }
     }
 
@@ -255,21 +271,32 @@ public class SettingsActivity extends BaseActivity {
                     if (!(newValue instanceof String)) {
                         return false;
                     }
-                    int mode;
-                    switch ((String) newValue) {
-                        case "on":
-                            mode = AppCompatDelegate.MODE_NIGHT_YES;
-                            break;
-                        case "off":
-                            mode = AppCompatDelegate.MODE_NIGHT_NO;
-                            break;
-                        default:
-                            mode = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM;
-                    }
-                    userStore.setDarkMode(mode);
-                    AppCompatDelegate.setDefaultNightMode(mode);
+                    String newValueKey = (String) newValue;
+                    settingsModel.updateDarkMode(settingId, ThemeUtils.isModeNight(newValueKey));
+                    userStore.setDarkModeKey(newValueKey);
                     return true;
                 });
+                darkModeListPreference.setValue(userStore.getDarkModeKey());
+            }
+        }
+    }
+
+    public static class LanguagesFragment extends BasePreferenceFragment {
+        @Override
+        public void onCreatePreferences(Bundle bundle, String rootKey) {
+            setPreferencesFromResource(R.xml.language_settings, rootKey);
+
+            ListPreference languageListPreference = findPreference(getString(R.string.language_key));
+            if (languageListPreference != null) {
+                languageListPreference.setOnPreferenceChangeListener((preference, newValue) -> {
+                    if (!(newValue instanceof String)) {
+                        return false;
+                    }
+                    userStore.setLanguageKey((String) newValue);
+                    Toast.makeText(getActivity(), getString(R.string.please_restart_app_to_apply_changes), Toast.LENGTH_SHORT).show();
+                    return true;
+                });
+                languageListPreference.setValue(userStore.getLanguageKey());
             }
         }
     }
@@ -478,20 +505,20 @@ public class SettingsActivity extends BaseActivity {
         userRepository.getMyselfInfo()
                 .subscribe(new Observer<MyselfResponse>() {
                     @Override
-                    public void onSubscribe(Disposable d) {
+                    public void onSubscribe(@NotNull Disposable d) {
                         Timber.i("Request myself info");
                     }
 
                     @Override
-                    public void onNext(MyselfResponse myselfResponse) {
-                        if (myselfResponse != null && myselfResponse.getResult() != null) {
+                    public void onNext(@NotNull MyselfResponse myselfResponse) {
+                        if (myselfResponse.getResult() != null) {
                             MyselfResult myselfResult = myselfResponse.getResult()[0];
                             saveData(myselfResult);
                         }
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onError(@NotNull Throwable e) {
                         Timber.e(e);
                     }
 
@@ -508,8 +535,8 @@ public class SettingsActivity extends BaseActivity {
         isPrimeUser = myselfResult.isPrime();
         setSettingId(settingId);
 
-        String usedStorage = AppUtils.memoryDisplay(settingsResponse.getUsedStorage());
-        String allocatedStorage = AppUtils.memoryDisplay(settingsResponse.getAllocatedStorage());
+        String usedStorage = DateUtils.memoryDisplay(settingsResponse.getUsedStorage());
+        String allocatedStorage = DateUtils.memoryDisplay(settingsResponse.getAllocatedStorage());
         String recoveryEmail = settingsResponse.getRecoveryEmail();
         boolean isDisableLoadingImages = settingsResponse.isDisableLoadingImages();
         boolean isEnableReportBugs = settingsResponse.isEnableReportBugs();
@@ -529,6 +556,7 @@ public class SettingsActivity extends BaseActivity {
                 .putString(getString(R.string.recovery_email), recoveryEmail)
                 .putBoolean(getString(R.string.anti_phishing_enabled), settingsResponse.isAntiPhishingEnabled())
                 .putString(getString(R.string.anti_phishing_key), settingsResponse.getAntiPhishingPhrase())
+                .putString(getString(R.string.notification_email_key), settingsResponse.getNotificationEmail())
                 .putBoolean(getString(R.string.recovery_email_enabled), EditTextUtils.isNotEmpty(recoveryEmail))
                 .putBoolean(getString(R.string.auto_save_contacts_enabled), settingsResponse.isSaveContacts())
                 .putBoolean(getString(R.string.contacts_encryption_enabled), settingsResponse.isContactsEncrypted())

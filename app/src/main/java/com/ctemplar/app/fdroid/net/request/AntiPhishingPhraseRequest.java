@@ -3,7 +3,6 @@ package com.ctemplar.app.fdroid.net.request;
 import com.google.gson.annotations.SerializedName;
 
 public class AntiPhishingPhraseRequest {
-
     @SerializedName("is_anti_phishing_enabled")
     private boolean antiPhishingEnabled;
 

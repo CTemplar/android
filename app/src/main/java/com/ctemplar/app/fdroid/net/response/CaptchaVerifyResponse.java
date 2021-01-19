@@ -1,7 +1,9 @@
 package com.ctemplar.app.fdroid.net.response;
 
-public class CaptchaVerifyResponse {
+import com.google.gson.annotations.SerializedName;
 
+public class CaptchaVerifyResponse {
+    @SerializedName("status")
     private boolean status;
 
     public boolean getStatus() {

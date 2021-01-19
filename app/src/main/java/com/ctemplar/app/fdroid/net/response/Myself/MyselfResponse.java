@@ -1,9 +1,8 @@
-package com.ctemplar.app.fdroid.net.response.Myself;
+package com.ctemplar.app.fdroid.net.response.myself;
 
 import com.google.gson.annotations.SerializedName;
 
 public class MyselfResponse {
-
     @SerializedName("total_count")
     private int totalCount;
 
@@ -13,27 +12,16 @@ public class MyselfResponse {
     @SerializedName("results")
     private MyselfResult[] result;
 
+
     public int getTotalCount() {
         return totalCount;
-    }
-
-    public void setTotalCount(int totalCount) {
-        this.totalCount = totalCount;
     }
 
     public int getPageCount() {
         return pageCount;
     }
 
-    public void setPageCount(int pageCount) {
-        this.pageCount = pageCount;
-    }
-
     public MyselfResult[] getResult() {
         return result;
-    }
-
-    public void setResult(MyselfResult[] result) {
-        this.result = result;
     }
 }

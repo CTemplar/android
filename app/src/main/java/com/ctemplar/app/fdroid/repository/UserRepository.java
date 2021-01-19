@@ -11,6 +11,7 @@ import com.ctemplar.app.fdroid.net.request.CheckUsernameRequest;
 import com.ctemplar.app.fdroid.net.request.ContactsEncryptionRequest;
 import com.ctemplar.app.fdroid.net.request.CreateMailboxRequest;
 import com.ctemplar.app.fdroid.net.request.CustomFilterRequest;
+import com.ctemplar.app.fdroid.net.request.DarkModeRequest;
 import com.ctemplar.app.fdroid.net.request.DefaultMailboxRequest;
 import com.ctemplar.app.fdroid.net.request.DisableLoadingImagesRequest;
 import com.ctemplar.app.fdroid.net.request.EmptyFolderRequest;
@@ -18,6 +19,7 @@ import com.ctemplar.app.fdroid.net.request.EnabledMailboxRequest;
 import com.ctemplar.app.fdroid.net.request.MarkMessageAsReadRequest;
 import com.ctemplar.app.fdroid.net.request.MarkMessageIsStarredRequest;
 import com.ctemplar.app.fdroid.net.request.MoveToFolderRequest;
+import com.ctemplar.app.fdroid.net.request.NotificationEmailRequest;
 import com.ctemplar.app.fdroid.net.request.PublicKeysRequest;
 import com.ctemplar.app.fdroid.net.request.RecoverPasswordRequest;
 import com.ctemplar.app.fdroid.net.request.RecoveryEmailRequest;
@@ -31,25 +33,25 @@ import com.ctemplar.app.fdroid.net.response.AddAppTokenResponse;
 import com.ctemplar.app.fdroid.net.response.CaptchaResponse;
 import com.ctemplar.app.fdroid.net.response.CaptchaVerifyResponse;
 import com.ctemplar.app.fdroid.net.response.CheckUsernameResponse;
-import com.ctemplar.app.fdroid.net.response.Domains.DomainsResponse;
-import com.ctemplar.app.fdroid.net.response.Filters.FilterResult;
-import com.ctemplar.app.fdroid.net.response.Filters.FiltersResponse;
+import com.ctemplar.app.fdroid.net.response.domains.DomainsResponse;
+import com.ctemplar.app.fdroid.net.response.filters.FilterResult;
+import com.ctemplar.app.fdroid.net.response.filters.FiltersResponse;
 import com.ctemplar.app.fdroid.net.response.KeyResponse;
-import com.ctemplar.app.fdroid.net.response.Mailboxes.MailboxesResponse;
-import com.ctemplar.app.fdroid.net.response.Mailboxes.MailboxesResult;
-import com.ctemplar.app.fdroid.net.response.Messages.EmptyFolderResponse;
-import com.ctemplar.app.fdroid.net.response.Messages.MessageAttachment;
-import com.ctemplar.app.fdroid.net.response.Messages.MessagesResponse;
-import com.ctemplar.app.fdroid.net.response.Messages.MessagesResult;
-import com.ctemplar.app.fdroid.net.response.Myself.BlackListContact;
-import com.ctemplar.app.fdroid.net.response.Myself.MyselfResponse;
-import com.ctemplar.app.fdroid.net.response.Myself.SettingsResponse;
-import com.ctemplar.app.fdroid.net.response.Myself.WhiteListContact;
+import com.ctemplar.app.fdroid.net.response.mailboxes.MailboxesResponse;
+import com.ctemplar.app.fdroid.net.response.mailboxes.MailboxesResult;
+import com.ctemplar.app.fdroid.net.response.messages.EmptyFolderResponse;
+import com.ctemplar.app.fdroid.net.response.messages.MessageAttachment;
+import com.ctemplar.app.fdroid.net.response.messages.MessagesResponse;
+import com.ctemplar.app.fdroid.net.response.messages.MessagesResult;
+import com.ctemplar.app.fdroid.net.response.myself.BlackListContact;
+import com.ctemplar.app.fdroid.net.response.myself.MyselfResponse;
+import com.ctemplar.app.fdroid.net.response.myself.SettingsResponse;
+import com.ctemplar.app.fdroid.net.response.myself.WhiteListContact;
 import com.ctemplar.app.fdroid.net.response.RecoverPasswordResponse;
 import com.ctemplar.app.fdroid.net.response.SignInResponse;
 import com.ctemplar.app.fdroid.net.response.SignUpResponse;
-import com.ctemplar.app.fdroid.net.response.WhiteBlackLists.BlackListResponse;
-import com.ctemplar.app.fdroid.net.response.WhiteBlackLists.WhiteListResponse;
+import com.ctemplar.app.fdroid.net.response.whiteBlackList.BlackListResponse;
+import com.ctemplar.app.fdroid.net.response.whiteBlackList.WhiteListResponse;
 import com.ctemplar.app.fdroid.repository.entity.MailboxEntity;
 
 import java.util.List;
@@ -80,6 +82,10 @@ public class UserRepository {
     public UserRepository() {
         service = CTemplarApp.getRestClient().getRestService();
         userStore = CTemplarApp.getUserStore();
+    }
+
+    public UserStore getUserStore() {
+        return userStore;
     }
 
     public void clearToken() {
@@ -134,22 +140,6 @@ public class UserRepository {
         return userStore.isSignatureEnabled();
     }
 
-    public void setMobileSignatureEnabled(boolean isEnabled) {
-        userStore.setMobileSignatureEnabled(isEnabled);
-    }
-
-    public boolean isMobileSignatureEnabled() {
-        return userStore.isMobileSignatureEnabled();
-    }
-
-    public void setMobileSignature(String signatureText) {
-        userStore.saveMobileSignature(signatureText);
-    }
-
-    public String getMobileSignature() {
-        return userStore.getMobileSignature();
-    }
-
     public boolean isDraftsAutoSaveEnabled() {
         return userStore.isDraftsAutoSaveEnabled();
     }
@@ -182,8 +172,8 @@ public class UserRepository {
         userStore.setReportBugsEnabled(isEnabled);
     }
 
-    public boolean isReportBugsEnabled() {
-        return userStore.isReportBugsEnabled();
+    public void setDarkModeValue(int value) {
+        userStore.setDarkModeValue(value);
     }
 
     public void clearData() {
@@ -413,13 +403,13 @@ public class UserRepository {
     }
 
     public Observable<ResponseBody> deleteBlacklistContact(BlackListContact contact) {
-        return service.deleteBlacklistContact(contact.id)
+        return service.deleteBlacklistContact(contact.getId())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
     public Observable<ResponseBody> deleteWhitelistContact(WhiteListContact contact) {
-        return service.deleteWhitelistContact(contact.id)
+        return service.deleteWhitelistContact(contact.getId())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
@@ -487,6 +477,15 @@ public class UserRepository {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
+    public Observable<SettingsResponse> updateNotificationEmail(
+            long settingId,
+            NotificationEmailRequest request
+    ) {
+        return service.updateNotificationEmail(settingId, request)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
     public Observable<SettingsResponse> updateSubjectEncrypted(
             long settingId,
             SubjectEncryptedRequest request
@@ -519,6 +518,15 @@ public class UserRepository {
             AntiPhishingPhraseRequest request
     ) {
         return service.updateAntiPhishingPhrase(settingId, request)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public Observable<SettingsResponse> updateDarkMode(
+            long settingId,
+            DarkModeRequest request
+    ) {
+        return service.updateDarkMode(settingId, request)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }

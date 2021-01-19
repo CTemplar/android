@@ -81,7 +81,8 @@ public class ResetCodeFragment extends BaseFragment {
     }
 
     private void setListeners() {
-        txtHint.setText(HtmlUtils.fromHtml(getString(R.string.title_reset_code_hint, loginActivityModel.getRecoverPasswordRequest().getEmail())));
+        txtHint.setText(HtmlUtils.fromHtml(getString(R.string.title_reset_code_hint,
+                loginActivityModel.getRecoverPasswordRequest().getRecoveryEmail())));
         txtHint.setLinkTextColor(getResources().getColor(R.color.colorLinkBlue));
         txtHint.setMovementMethod(LinkMovementMethod.getInstance());
         txtHint.setAutoLinkMask(Linkify.EMAIL_ADDRESSES);
