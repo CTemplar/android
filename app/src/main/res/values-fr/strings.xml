@@ -233,6 +233,8 @@
     <!-- NOTIFICATION SERVICE -->
     <string name="notification_channel_name">CTemplar</string>
     <string name="notification_channel_description">Nouveau mail</string>
+    <string name="title_notification_service">Service de notification</string>
+    <string name="title_service_running">Le service est en cours d\'exécutiong</string>
 
     <!-- CUSTOM FILTERS -->
     <string name="txt_filters_title">Filtres</string>

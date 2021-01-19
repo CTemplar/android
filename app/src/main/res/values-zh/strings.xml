@@ -1,0 +1,463 @@
+<resources>
+    <string name="navigation_drawer_open">打开侧滑导航栏</string>
+    <string name="navigation_drawer_close">关闭侧滑导航栏</string>
+    <string name="nav_header_desc">导航页眉</string>
+    <string name="action_settings">设置</string>
+    <string name="action_undo">撤消</string>
+
+    <!-- MAIN -->
+    <string name="dialog_log_out">登出</string>
+    <string name="dialog_log_out_confirm">"您确定要登出？"</string>
+    <string name="btn_log_out">登出</string>
+
+    <!-- NAVIGATION DRAWER -->
+    <string name="nav_drawer_inbox">收件箱</string>
+    <string name="nav_drawer_draft">草稿</string>
+    <string name="nav_drawer_sent">已发送</string>
+    <string name="nav_drawer_outbox">发件箱</string>
+    <string name="nav_drawer_starred">已标记星号</string>
+    <string name="nav_drawer_archive">存档</string>
+    <string name="nav_drawer_spam">垃圾邮件</string>
+    <string name="nav_drawer_trash">垃圾桶</string>
+    <string name="nav_drawer_all_mails">所有邮件</string>
+    <string name="nav_drawer_unread">未读</string>
+    <string name="nav_drawer_add_folder">添加文件夹</string>
+    <string name="nav_drawer_add_label">添加标签</string>
+    <string name="nav_drawer_contact">联系人</string>
+    <string name="nav_drawer_settings">设置</string>
+    <string name="nav_drawer_help">帮助</string>
+    <string name="nav_drawer_logout">登出</string>
+    <string name="nav_drawer_manage_folders">管理文件夹</string>
+    <string name="nav_drawer_manage_folders_param">管理文件夹 (%1$d)</string>
+    <string name="nav_drawer_folders_show_more">再显示10个文件夹</string>
+
+    <!-- TOOLBAR -->
+    <string name="action_search">搜索</string>
+    <string name="action_filter">过滤</string>
+    <string name="action_search_hint">搜索邮件</string>
+    <string name="action_empty_folder">清空文件夹</string>
+    <string name="action_spam">1被举报为垃圾邮件</string>
+    <string name="action_archived">1已存档</string>
+    <string name="action_moved_to_inbox">1已移至收件箱</string>
+    <string name="action_reported_as_spam">1被举报为垃圾邮件</string>
+    <string name="action_reported_as_not_spam">1被举报为非垃圾邮件</string>
+    <string name="action_message_removed">1条消息被移除</string>
+
+    <!-- MENU -->
+    <string name="menu_save">保存</string>
+    <string name="menu_spam">垃圾邮件</string>
+    <string name="menu_not_spam">标记为非垃圾邮件</string>
+    <string name="menu_move">移动</string>
+    <string name="menu_trash">垃圾桶</string>
+    <string name="menu_move_to_inbox">移至收件箱</string>
+    <string name="menu_move_to_archive">移至存档</string>
+    <string name="menu_mark_as_unread">标记为未读</string>
+
+    <!-- STRINGS -->
+    <string name="token_expired_title">会话已过期</string>
+    <string name="token_expired_message">您的会话已过期，请再次登录CTemplar。</string>
+    <string name="title_email">邮件</string>
+    <string name="title_next">下一个</string>
+    <string name="title_next_no_email">下一个（没有邮件）</string>
+    <string name="title_password">密码</string>
+    <string name="title_username">用户名</string>
+    <string name="title_2fa">双因素认证</string>
+    <string name="title_2fa_code">输入应用程序生成的代码。</string>
+    <string name="title_captcha">验证码</string>
+    <string name="title_ctemplar">CTEMPLAR</string>
+    <string name="title_forgot_password">忘记密码</string>
+    <string name="title_forgot_password_hint">我们将发送一条重置链接到您的辅助邮箱。</string>
+    <string name="title_choose_password">选择密码</string>
+    <string name="title_confirm_password">确认密码</string>
+    <string name="title_ctemplar_username">要重置的CTemplar用户名</string>
+    <string name="title_recovery_email">辅助邮箱</string>
+    <string name="title_security_check">安全检查</string>
+    <string name="title_recovery_email_optional">辅助邮箱（可选）</string>
+    <string name="title_reset_password">重置密码</string>
+    <string name="title_reset_code">重置码</string>
+    <string name="title_confirm">确认</string>
+    <string name="title_confirm_reset_password">确认重置密码</string>
+    <string name="title_invitation_code">邀请码</string>
+    <string name="title_further_question_hint">如果您有其他疑问，请发送邮件至<![CDATA[<u><a href="mailto:support@ctemplar.com">support@ctemplar.com</a></u>]]></string>
+    <string name="title_confirm_reset_password_hint">您的加密密钥和您的密码相连。因此，如果您重置密码，<![CDATA[<font color="#e74c3c">您将无法解密旧消息、附件以及联系人。</font>]]></string>
+    <string name="title_confirm_reset_password_hint2">您确定要重置密码？ </string>
+    <string name="title_reset_code_hint">我们已将重置码发送至您的<![CDATA[<u><a href="mailto:%1$s">辅助邮箱</a></u>]]>以重置密码。</string>
+    <string name="title_reset_code_hint2">请在下面输入以确认。</string>
+    <string name="title_new_password_hint">不要忘记此密码，它无法恢复。</string>
+    <string name="title_forgot_username_underlined"><u>忘记您的用户名？</u></string>
+    <string name="title_keep_me_logged_in">保持登录状态</string>
+    <string name="title_forgot_username">忘记您的用户名？</string>
+    <string name="title_forgot_username_hint">请输入您的邮箱地址，我们将向您发送您的用户名。</string>
+    <string name="title_email_my_username">请将我的用户名通过邮件发送给我</string>
+    <string name="title_username_and_domain">用户名和域名</string>
+    <string name="title_step_username_hint">这将是您的新CTemplar邮箱地址。</string>
+    <string name="title_step_password_hint">您的密码必须至少有10个字符。密码只能包含拉丁字母，不可包含如«-+!@.等符号。</string>
+    <string name="hint_step_email_recovery_long">通过勾选此框，您了解如果您丢失了密码，并且没有设置辅助邮箱，您的账户将无法恢复。您的密码与您的加密密钥相连，如果您更改了密码，您将得到一个新的加密密钥，除了您的邮箱地址外，您账户的所有内容都将丢失。<![CDATA[<u><font color="blue">Less</font></u>]]></string>
+    <string name="hint_step_email_recovery_short">通过勾选此框，您了解如果您丢失了密码，并且没有设置辅助邮箱，您的账户将无法恢复。<![CDATA[<u><font color="blue">更多信息</font></u>]]></string>
+    <string name="title_step_email_hint">如果您忘记了密码，这是用于恢复您的账户的。</string>
+    <string name="title_step_email_check_hint">请勾选此框，如果您同意遵守我们的<![CDATA[<u><a href="https://ctemplar.com/terms">条款和条件。</a></u>]]></string>
+    <string name="title_step_invitation_code_hint">您可以从任何现有的付费客户那里获得邀请码，也可以向我们申请邀请码。为什么要有邀请码，如何获得邀请码？<![CDATA[<u><a href="https://ctemplar.com/email-creation-restriction/">了解详情</a></u>]]></string>
+    <string name="title_more_info_link"><u>更多信息</u></string>
+    <string name="title_empty_inbox">您没有收件箱消息</string>
+    <string name="title_empty_messages">您没有%1$s消息</string>
+    <string name="title_empty_contacts">您还没有联系人</string>
+    <string name="title_empty_folders">您没有文件夹</string>
+    <string name="btn_login">登录</string>
+    <string name="btn_compose">撰写</string>
+    <string name="btn_add_folder">添加文件夹</string>
+    <string name="hint_captcha">在图像中加入文字/在时钟上显示时间（时时:分分），例如：04:23</string>
+    <string name="txt_forgot_pass">忘记密码？</string>
+    <string name="txt_create_acc"><u>创建账户</u></string>
+    <string name="txt_loading">正在加载……</string>
+    <string name="txt_add_contact">添加联系人</string>
+    <string name="txt_edit_contact">编辑联系人</string>
+    <string name="txt_enter_valid_captcha">输入有效验证码</string>
+    <string name="btn_confirm">确认</string>
+    <string name="title_clear_folder">清除文件夹</string>
+    <string name="txt_clear_folder">您确定要删除文件夹中的所有消息吗？ </string>
+    <string name="username_is_available">用户名可用</string>
+    <string name="username_is_not_available">用户名不可用</string>
+    <string name="checking">正在检查……</string>
+
+    <!-- COMPOSE OPTIONS -->
+    <string name="txt_left_time_destruct">在%1$s删除</string>
+    <string name="txt_left_time_delay_delivery">在%1$s递送</string>
+    <string name="txt_left_time_dead_mans_timer">Dead Man在%1$s</string>
+    <string name="txt_encrypt_message_title">设置密码</string>
+    <string name="txt_destruct_message_title">自毁定时器</string>
+    <string name="txt_destruct_timer_hint">自我毁灭仅适用于CTemplar接收者。 请添加CTemplar收件人以实现自毁功能</string>
+    <string name="txt_dead_mans_title">Dead Man定时器</string>
+    <string name="txt_delayed_message_title">延迟递送</string>
+    <string name="txt_encrypt_message_summary">对非CTemplar邮箱用户加密</string>
+    <string name="txt_delayed_message_summary">邮件将在设定的时间自动发送。</string>
+    <string name="txt_destruct_message_summary">该邮件将在送达收件人账户指定时间后自动删除，时间是</string>
+    <string name="txt_dead_mans_summary">如果您在设定的时间后没有登录您的账户，邮件将会在指定时间后发送，时间是</string>
+    <string name="txt_schedule">时间安排</string>
+    <string name="txt_encrypt">加密</string>
+    <string name="txt_selected_datetime_is_past">选定的日期时间为过去时间</string>
+    <string name="txt_yesterday">昨天</string>
+    <string name="txt_attachments_in_processing">附件正在处理中……</string>
+
+    <!-- VIEW MESSAGES -->
+    <string name="txt_more_details">更多详情</string>
+    <string name="txt_less_details">更少详情</string>
+    <string name="toast_message_marked_unread">消息标记为未读</string>
+    <string name="toast_message_moved_to">消息已移至%1$s</string>
+    <string name="toast_messages_doesnt_exist">消息不存在</string>
+    <string name="toast_download_started">下载已开始</string>
+    <string name="toast_download_complete">下载完成</string>
+    <string name="txt_user_wrote">\n\n-----------------------------------------------------------------------------------------------\nOn %1$s %2$s wrote:\n\n</string>
+    <string name="txt_forwarded_message">转发消息</string>
+    <string name="txt_from">发自：&#160;</string>
+    <string name="txt_date">日期</string>
+    <string name="txt_subject">主题</string>
+    <string name="txt_to">发给：&#160;</string>
+    <string name="txt_reply_all">回复所有</string>
+    <string name="attachment_decryption">附件解密中……</string>
+    <string name="no_results_found">找不到结果</string>
+
+    <!-- CHANGE PASSWORD -->
+    <string name="toast_password_changed">密码已更改</string>
+    <string name="toast_password_not_changed">密码未更改</string>
+    <string name="dialog_change_password">更改密码</string>
+    <string name="title_current_password">当前密码</string>
+    <string name="title_new_password">新密码</string>
+    <string name="title_new_password_confirm">确认新密码</string>
+    <string name="dialog_change_password_confirm">您确定要更改密码？ </string>
+    <string name="dialog_change_password_confirm_reset">您确定要更改密码？所有数据都将丢失。</string>
+    <string name="btn_change">更改</string>
+    <string name="btn_change_lowercase">更改</string>
+    <string name="title_message_password">消息密码</string>
+    <string name="title_message_password_confirm">确认密码</string>
+    <string name="title_message_password_hint">密码提示</string>
+    <string name="title_message_password_expire_days">天</string>
+    <string name="title_message_password_expire_hours">小时</string>
+    <string name="txt_encrypt_message_password_expiration">过期时间</string>
+
+    <!-- CONTACT -->
+    <string name="toast_not_saved">未保存</string>
+    <string name="txt_enter_name">输入名字</string>
+    <string name="txt_enter_valid_email">输入有效邮箱地址</string>
+    <string name="txt_name_removed">%1$s已移除！</string>
+    <string name="txt_contact_loading_error">联系人加载错误</string>
+    <string name="txt_delete_folder_quest_title">删除文件夹？</string>
+    <string name="txt_delete_folder_quest_message">"您确定要删除文件夹吗？ </string>
+    <string name="btn_contact_delete">删除</string>
+    <string name="btn_cancel">取消</string>
+    <string name="title_email_address">邮箱</string>
+    <string name="title_phone_number">电话</string>
+    <string name="title_phone_number_second">电话2</string>
+    <string name="title_address">地址</string>
+    <string name="title_note">备注</string>
+    <string name="txt_contacts_empty">联系人为空</string>
+
+    <!-- FOLDERS -->
+    <string name="toast_folder_created">文件夹已创建</string>
+    <string name="toast_folder_not_created">相同名称的文件夹已存在。</string>
+    <string name="txt_folder_deleted">文件夹已删除</string>
+    <string name="txt_folder_not_deleted">文件夹未删除</string>
+    <string name="txt_folder_edited">文件夹已编辑</string>
+    <string name="txt_folder_not_edited">文件夹未编辑</string>
+    <string name="txt_folder_name_hint">文件夹名称必须在4-30个字母和数字之间</string>
+    <string name="title_folder_name">文件夹名称</string>
+    <string name="title_choose_color">选择颜色</string>
+    <string name="txt_edit_folder">编辑文件夹</string>
+    <string name="txt_delete_folder">删除文件夹</string>
+    <string name="txt_manage_folders">管理文件夹</string>
+    <string name="txt_folders_empty">文件夹为空</string>
+    <string name="txt_create_folder_free_error">免费用户只能创建最多5个文件夹。</string>
+
+    <!-- SEND MESSAGE -->
+    <string name="toast_message_sent">邮件已发送</string>
+    <string name="toast_message_not_sent">邮件未发送</string>
+    <string name="toast_message_saved_as_draft">邮件已保存为草稿</string>
+    <string name="toast_message_not_created">邮件未创建</string>
+    <string name="toast_message_not_loaded">邮件未加载</string>
+    <string name="toast_attachment_unable_read_file">无法在所选路径读取文件</string>
+    <string name="toast_attachment_unable_read_path">"无法读取所选路径"</string>
+    <string name="txt_sending_mail">正在发送邮件……</string>
+    <string name="txt_saving_mail">正在保存邮件……</string>
+    <string name="txt_uploading">正在上传……</string>
+    <string name="dialog_discard_mail">放弃邮件</string>
+    <string name="dialog_discard_confirm">您确定要放弃此邮件？ </string>
+    <string name="dialog_save_in_drafts">保存到草稿</string>
+    <string name="action_discard">放弃</string>
+    <string name="action_cancel">取消</string>
+    <string name="btn_add">添加</string>
+    <string name="txt_new_message">新消息</string>
+    <string name="txt_cc">抄送：&#160;</string>g>
+    <string name="txt_bcc">密送：&#160;</string>
+    <string name="txt_date_format">日期：%1$s</string>
+    <string name="hint_compose">撰写邮件</string>
+
+    <!-- NOTIFICATION SERVICE -->
+    <string name="notification_channel_name">CTemplar</string>
+    <string name="notification_channel_description">新邮件</string>
+    <string name="title_notification_service">通知服务</string>
+    <string name="title_service_running">服务正在运行</string>
+
+    <!-- CUSTOM FILTERS -->
+    <string name="txt_filters_title">过滤器</string>
+    <string name="title_add_custom_filter">添加自定义过滤器</string>
+    <string name="title_edit_custom_filter">编辑自定义过滤器</string>
+    <string name="btn_add_custom_filter">添加自定义过滤器</string>
+    <string name="txt_filter_name">过滤器名称</string>
+    <string name="txt_filter_conditions">条件</string>
+    <string name="txt_filter_actions">操作</string>
+    <string name="txt_filter_move_to">移至</string>
+    <string name="txt_filter_mark_as_read">标记为已读</string>
+    <string name="txt_filter_mark_as_starred">标记为星号</string>
+    <string name="btn_submit">提交</string>
+    <string name="toast_filter_not_created">相同名称的过滤器已存在</string>
+    <string name="toast_filter_created">过滤器已创建</string>
+    <string name="txt_filter_name_hint">过滤器名称必须是4-30个字母之间</string>
+    <string name="txt_filter_text_hint">过滤器文本必须是1-30个字母之间</string>
+    <string name="txt_filter_not_deleted">过滤器未删除</string>
+    <string name="txt_filter_deleted">过滤器已删除</string>
+    <string name="txt_filter_not_edited">过滤器未编辑</string>
+    <string name="txt_filter_edited">过滤器已编辑</string>
+    <string name="txt_delete_filter_quest_title">删除过滤器？</string>
+    <string name="txt_delete_filter_quest_message">"您确定要删除过滤器？ </string>
+    <string name="txt_delete_filter">删除过滤器</string>
+
+    <!-- WHITE-BLACK LIST -->
+    <string name="adding_blacklist_contact_error">添加联系人到黑名单时出现错误</string>
+    <string name="adding_whitelist_contact_error">添加联系人到白名单时出现错误</string>
+    <string name="added_to_whitelist">邮箱已添加到白名单</string>
+    <string name="title_contact_name">联系人姓名</string>
+    <string name="title_contact_email">联系人邮箱</string>
+    <string name="title_add_to_blacklist">添加到黑名单</string>
+    <string name="title_add_to_whitelist">添加到白名单</string>
+    <string name="title_white_black_list">白名单/黑名单</string>
+    <string name="txt_add_blacklist_contact">添加黑名单联系人</string>
+    <string name="txt_add_whitelist_contact">添加白名单联系人</string>
+
+    <!-- FILTER DIALOG -->
+    <string name="filtered">已过滤</string>
+    <string name="txt_filters">过滤器</string>
+    <string name="txt_clear_all">清除所有</string>
+    <string name="txt_select_filters">选择过滤器</string>
+    <string name="txt_starred">已标记星号</string>
+    <string name="txt_unread">未读</string>
+    <string name="txt_with_attachments">带附件</string>
+    <string name="btn_apply">应用</string>
+
+    <!-- MOVE TO -->
+    <string name="txt_move_to">移至……</string>
+    <string name="txt_select_folder">选择文件夹</string>
+    <string name="forward_attachments">确认转发附件</string>
+    <string name="forward_attachments_description">您想要转发此消息的附件吗？ </string>
+    <string name="yes">是</string>
+    <string name="no">否</string>
+
+    <!-- SETTINGS -->
+    <string name="txt_settings">设置</string>
+    <string name="txt_display_name">显示名称</string>
+    <string name="txt_type_your_name">输入您的名字</string>
+    <string name="txt_type_signature">输入您的签名</string>
+    <string name="txt_signature_enabled">签名已启用</string>
+
+    <!-- PIN LOCK -->
+    <string name="pin_lock">PIN锁</string>
+    <string name="pin_lock_enable">启用PIN锁</string>
+    <string name="change_pin">更改PIN码</string>
+    <string name="auto_lock">自动锁定</string>
+    <string name="choose_pin">输入4位PIN码</string>
+    <string name="confirm_pin">确认您的PIN码</string>
+    <string name="invalid_pin">无效PIN码</string>
+    <string name="pins_dont_match">PIN码不匹配</string>
+
+    <!-- SIGNATURE EDIT BAR -->
+    <string name="txt_panel_bold">B</string>
+    <string name="txt_panel_italic">I</string>
+    <string name="txt_panel_underline">U</string>
+    <string name="txt_panel_monospace">M</string>
+    <string name="txt_panel_normal">正常</string>
+
+    <!-- SETTINGS -->
+    <string name="settings_general">一般设置</string>
+    <string name="settings_recovery_email">辅助邮箱</string>
+    <string name="settings_enable_recovery_email">启用辅助邮箱</string>
+    <string name="settings_type_recovery_email">输入您的辅助邮箱</string>
+    <string name="settings_type_notification_email">输入您的通知电子邮件</string>
+    <string name="settings_type_notification_email_description">输入一个通知电子邮件，当您收到新电子邮件时，您希望每天在该电子邮件上接收通知。</string>
+    <string name="settings_enabled_anti_phishing">反网络钓鱼</string>
+    <string name="settings_type_anti_phishing_phrase">输入您的反网络钓鱼短语</string>
+    <string name="settings_subject_encryption">主题加密</string>
+    <string name="settings_password">密码</string>
+    <string name="settings_language">语言</string>
+    <string name="settings_notifications">通知</string>
+    <string name="settings_enable_notifications">启用推送通知</string>
+    <string name="settings_contacts_encryption">联系人加密</string>
+    <string name="settings_encryption">加密</string>
+    <string name="settings_phishing_protection">网络钓鱼保护</string>
+    <string name="settings_phishing_protection_description"><![CDATA[<font color="#939191">反网络钓鱼短语允许将您选择的自定义单词或短语链接到您的CTemplar帐户。一旦设置好，如果您登录到您的网页邮箱，而您的反钓鱼短语丢失或不正确，您可能会成为网络钓鱼的受害者。您应该立即确认您正在访问</font> <font color="#4d92e2"><u>https://mail.ctemplar.com</u></font> <font color="#939191">如果您不是正在访问该网站，那么恶意网站可能拥有您的CTemplar帐户的登录凭证了。为了防止您的帐户受到损害，您应该立即访问</font> <font color="#4d92e2"><u>https://mail.ctemplar.com</u></font> <font color="#939191">并更改您的密码。<br><br>请注意，只有当您在网页上登录邮箱时会显示防网络钓鱼短语。</font>]]></string>
+    <string name="settings_auto_save">自动保存</string>
+    <string name="settings_auto_save_contacts">自动保存联系人</string>
+    <string name="settings_auto_save_drafts">自动保存草稿</string>
+    <string name="settings_filters">过滤器</string>
+    <string name="settings_wb_list">白名单/黑名单</string>
+    <string name="settings_dark_mode">夜间模式</string>
+    <string name="settings_block_external_images">屏蔽外部图像</string>
+    <string name="settings_report_bugs">报告错误</string>
+    <string name="settings_folders">文件夹</string>
+    <string name="settings_manage_folders">管理文件夹</string>
+    <string name="settings_security">安全性</string>
+    <string name="settings_mail">邮件</string>
+    <string name="settings_addresses">地址</string>
+    <string name="settings_signature">签名</string>
+    <string name="settings_enable_signature">启动签名</string>
+    <string name="settings_type_signature">输入您的签名</string>
+    <string name="settings_keys">密钥</string>
+    <string name="settings_about">关于</string>
+    <string name="settings_helpdesk">帮助台</string>
+    <string name="settings_local_storage_limit">本地存储限制</string>
+    <string name="settings_app_version">应用程序版本</string>
+    <string name="settings_disable_contacts_encryption">您确定要禁用联系人加密吗？</string>
+    <string name="settings_disable_contacts_encryption_note">禁用联系人加密可能需要几分钟的时间，这取决于您拥有的联系人的数量。在您确认之后，您的所有联系人将在您的设备上解密并保存到服务器上。</string>
+    <string name="txt_contact_decryption">联系人解密中……</string>
+    <string name="toast_saved">已保存</string>
+    <string name="toast_contacts_encrypted">联系人已加密</string>
+    <string name="toast_contacts_decrypted">联系人已解密</string>
+    <string name="toast_decryption_error">解密时发生错误。请重试</string>
+    <string name="please_restart_app_to_apply_changes">请重新启动应用以应用更改</string>
+
+    <!-- MAILBOXES -->
+    <string name="addresses">地址</string>
+    <string name="add_address">添加地址</string>
+    <string name="select_default_address">选择默认地址</string>
+    <string name="mailbox_add_address">添加地址</string>
+    <string name="mailbox_enable">启用</string>
+    <string name="mailbox_disable">禁用</string>
+    <string name="mailbox_add_title">选择用户名和域名</string>
+    <string name="mailbox_create">创建地址</string>
+    <string name="mailbox_alias_exists">邮箱别名已经存在。</string>
+    <string name="mailbox_alias_creation_success">邮箱别名已成功创建</string>
+    <string name="mailbox_alias_creation_paid">请购买更多的邮箱地址，以创建更多！ </string>
+    <string name="mailbox_alias_creation_failed">无法创建邮箱别名</string>
+    <string name="mailbox_alias_creation_progress">邮箱别名正在创建中</string>
+
+    <!-- KEYS -->
+    <string name="email_address">邮箱地址</string>
+    <string name="fingerprint">指纹</string>
+    <string name="keys">密钥</string>
+    <string name="download_public_key">下载公共密钥（4096位）</string>
+    <string name="download_private_key">下载个人密钥（4096位）</string>
+    <string name="your_public_key_saved">您的PGP公共密钥已保存至下载内容</string>
+    <string name="your_private_key_saved">您的PGP个人密钥已保存至下载内容</string>
+
+    <!-- UPGRADE TO PRIME -->
+    <string name="title_upgrade_to_prime">升级到高级版</string>
+    <string name="txt_one_user">1名用户</string>
+    <string name="txt_from_five_gb_storage">5Gb储存量起</string>
+    <string name="txt_from_three_email_addresses"> 10个邮箱地址起</string>
+    <string name="txt_from_one_custom_domain">1个自定义域起</string>
+    <string name="txt_thousand_messages_per_day">每天2000条消息</string>
+    <string name="txt_five_hundred_folders">500个文件夹</string>
+    <string name="txt_dead_mans_timer">Dead Man定时器</string>
+    <string name="txt_and_more_features">以及更多功能</string>
+    <string name="txt_not_now">现在不了</string>
+
+    <!-- PREFERENCE KEYS -->
+    <string name="change_password_reset_data">删除数据</string>
+    <string name="toast_email_not_valid">邮件无效</string>
+    <string name="storage_limit_info">%1$s/%2$s</string>
+
+    <!-- ERRORS -->
+    <string name="error_field_cannot_be_empty">此字段不能为空。</string>
+    <string name="error_invalid_email">请选择一个有效的邮箱或选择不可恢复的帐户。</string>
+    <string name="error_username_small">最少4个符号</string>
+    <string name="error_username_small_two">最少2个符号</string>
+    <string name="error_username_big">最多64个符号</string>
+    <string name="error_password_small">最少1个符号</string>
+    <string name="error_password_big">最多255个符号</string>
+    <string name="error_username_incorrect">用户名必须以字母开头，并且只能包含a-z、A-Z、0-9或._- </string>
+    <string name="error_username_exists">邮箱已经存在！</string>
+    <string name="error_password_not_match">密码不匹配。</string>
+    <string name="error_current_password_not_match">旧密码不正确！ </string>
+    <string name="error_empty_email">空白邮件</string>
+    <string name="error_empty_password">空白密码</string>
+    <string name="error_enter_old_password">请输入您的旧密码。</string>
+    <string name="error_authentication_failed">无法使用所提供的凭证登录。</string>
+    <string name="error_server">服务器错误</string>
+    <string name="error_connection">连接错误</string>
+    <string name="error_messages">错误接收消息</string>
+    <string name="error_sign_in">登录错误</string>
+    <string name="error_change_password">密码更改错误</string>
+    <string name="error_reset_password">密码重置错误</string>
+    <string name="error_recover_password">用户名或辅助邮箱不正确。</string>
+    <string name="error_upload_attachment">上传附件失败</string>
+    <string name="error_attachment_url">附件url为空</string>
+    <string name="error_upload_attachment_too_large">文件太大</string>
+    <string name="error_too_many_requests">请求太多。请等待。</string>
+    <string name="title_activity_white_black_list">白黑名单</string>
+    <string name="section_format">来自节的Hello World：%1$d</string>
+    <string name="toast_undefined_error">未定义的错误</string>
+    <string name="whitelist">白名单</string>
+    <string name="blacklist">黑名单</string>
+
+    <string-array name="filter_parameter_list">
+        <item>主题</item>
+        <item>发送人</item>
+    </string-array>
+
+    <string-array name="filter_condition_list">
+        <item>包含</item>
+        <item>开始于</item>
+    </string-array>
+
+    <string-array name="auto_lock_time">
+        <item>立即</item>
+        <item>1分钟</item>
+        <item>5分钟</item>
+        <item>10分钟</item>
+        <item>1小时</item>
+        <item>24小时</item>
+    </string-array>
+
+    <string-array name="dark_mode_entries">
+        <item>自动（检测）</item>
+        <item>开</item>
+        <item>关</item>
+    </string-array>
+</resources>
