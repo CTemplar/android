@@ -8,7 +8,7 @@ repositories {
 ext {
     versionMajor = 1
     versionMinor = 4
-    versionBuild = 2
+    versionBuild = 4
 }
 
 android {
@@ -17,7 +17,7 @@ android {
         applicationId "mobileapp.ctemplar.com.ctemplarapp"
         minSdkVersion 16
         targetSdkVersion 29
-        versionCode 51
+        versionCode 53
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -69,10 +69,10 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.vectordrawable:vectordrawable:1.1.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.2'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'androidx.preference:preference:1.1.1'
-    implementation 'androidx.webkit:webkit:1.3.0'
+    implementation 'androidx.webkit:webkit:1.4.0'
 
     implementation 'com.squareup.okhttp3:okhttp:3.12.12'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.12.12'
@@ -89,9 +89,7 @@ dependencies {
     implementation 'com.google.dagger:dagger:2.27'
     implementation 'com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer:20200713.1'
 
-    implementation ('com.google.firebase:firebase-messaging:20.3.0') {
-        exclude group: 'com.google.firebase', module: 'firebase-measurement-connector'
-    }
+    implementation 'com.google.firebase:firebase-messaging:21.0.1'
 
     implementation 'org.bouncycastle:bcpg-jdk15on:1.66'
 

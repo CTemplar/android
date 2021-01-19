@@ -3,19 +3,14 @@ package mobileapp.ctemplar.com.ctemplarapp.net.request;
 import com.google.gson.annotations.SerializedName;
 
 public class MarkMessageAsReadRequest {
-
     @SerializedName("read")
-    private boolean isRead;
+    private boolean read;
 
-    public MarkMessageAsReadRequest(boolean isRead) {
-        this.isRead = isRead;
+    public MarkMessageAsReadRequest(boolean read) {
+        this.read = read;
     }
 
-    public boolean isRead() {
-        return isRead;
-    }
-
-    public void setRead(boolean isRead) {
-        this.isRead = isRead;
+    public void setRead(boolean read) {
+        this.read = read;
     }
 }

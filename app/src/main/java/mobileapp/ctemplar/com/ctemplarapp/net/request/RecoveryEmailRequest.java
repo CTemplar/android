@@ -9,4 +9,8 @@ public class RecoveryEmailRequest {
     public RecoveryEmailRequest(String recoveryEmail) {
         this.recoveryEmail = recoveryEmail;
     }
+
+    public void setRecoveryEmail(String recoveryEmail) {
+        this.recoveryEmail = recoveryEmail;
+    }
 }

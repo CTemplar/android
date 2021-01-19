@@ -1,5 +1,6 @@
 package mobileapp.ctemplar.com.ctemplarapp.main;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -23,6 +24,8 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.appcompat.app.BaseContextWrapperDelegate;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -47,12 +50,13 @@ import mobileapp.ctemplar.com.ctemplarapp.message.SendMessageActivity;
 import mobileapp.ctemplar.com.ctemplarapp.message.SendMessageFragment;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.net.entity.AttachmentsEntity;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Folders.FoldersResponse;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Folders.FoldersResult;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.folders.FoldersResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.folders.FoldersResult;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import mobileapp.ctemplar.com.ctemplarapp.settings.SettingsActivity;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EncryptUtils;
+import mobileapp.ctemplar.com.ctemplarapp.utils.LocaleUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.ThemeUtils;
 import mobileapp.ctemplar.com.ctemplarapp.view.ResizeAnimation;
 import timber.log.Timber;
@@ -93,12 +97,33 @@ public class MainActivity extends AppCompatActivity
 
     private MainFragment mainFragment;
     private Handler handler = new Handler();
+    private AppCompatDelegate baseContextWrappingDelegate;
+
+//    @Override
+//    protected void attachBaseContext(Context newBase) {
+//        Context context = LocaleUtils.getContextWrapper(newBase);
+//        super.attachBaseContext(context);
+//    }
+
+    @NonNull
+    @Override
+    public AppCompatDelegate getDelegate() {
+        return baseContextWrappingDelegate != null ?
+                baseContextWrappingDelegate :
+                (baseContextWrappingDelegate = new BaseContextWrapperDelegate(super.getDelegate()));
+    }
+
+    @Override
+    public Context createConfigurationContext(Configuration overrideConfiguration) {
+        Context context = super.createConfigurationContext(overrideConfiguration);
+        return LocaleUtils.getContextWrapper(context);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
         ThemeUtils.setTheme(this);
+        setContentView(R.layout.activity_main);
 
         drawer = findViewById(R.id.drawer_layout);
         contentContainer = findViewById(R.id.content_container);
@@ -182,6 +207,12 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        loadFolders();
+    }
+
+    @Override
     public void onBackPressed() {
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
@@ -238,12 +269,6 @@ public class MainActivity extends AppCompatActivity
             return true;
         }
         return false;
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        loadFolders();
     }
 
     @Override

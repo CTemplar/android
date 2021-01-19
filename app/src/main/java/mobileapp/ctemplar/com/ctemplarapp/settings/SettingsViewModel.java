@@ -4,29 +4,31 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.google.gson.Gson;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 import io.reactivex.Observer;
+import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.AntiPhishingPhraseRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.AutoSaveContactEnabledRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.ContactsEncryptionRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.DarkModeRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.DisableLoadingImagesRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.NotificationEmailRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.RecoveryEmailRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SignatureRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SubjectEncryptedRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.UpdateReportBugsRequest;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.ContactData;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.ContactsResponse;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.EncryptContact;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Mailboxes.MailboxesResult;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.SettingsResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.contacts.ContactData;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.contacts.ContactsResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.contacts.EncryptContact;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.mailboxes.MailboxesResult;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.MyselfResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.SettingsResponse;
 import mobileapp.ctemplar.com.ctemplarapp.repository.AppDatabase;
 import mobileapp.ctemplar.com.ctemplarapp.repository.ContactsRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
@@ -35,6 +37,8 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.entity.ContactEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EncryptUtils;
 import timber.log.Timber;
+
+import static mobileapp.ctemplar.com.ctemplarapp.utils.DateUtils.GENERAL_GSON;
 
 public class SettingsViewModel extends ViewModel {
     private final ContactsRepository contactsRepository;
@@ -47,8 +51,9 @@ public class SettingsViewModel extends ViewModel {
         appDatabase = CTemplarApp.getAppDatabase();
     }
 
-    private MutableLiveData<ResponseStatus> decryptionStatus = new MutableLiveData<>();
-    private MutableLiveData<ResponseStatus> updateSignatureStatus = new MutableLiveData<>();
+    private final MutableLiveData<ResponseStatus> decryptionStatus = new MutableLiveData<>();
+    private final MutableLiveData<ResponseStatus> updateSignatureStatus = new MutableLiveData<>();
+    private final MutableLiveData<MyselfResponse> myselfResponse = new MutableLiveData<>();
 
     MutableLiveData<ResponseStatus> getDecryptionStatus() {
         return decryptionStatus;
@@ -56,6 +61,10 @@ public class SettingsViewModel extends ViewModel {
 
     LiveData<ResponseStatus> getUpdateSignatureStatus() {
         return updateSignatureStatus;
+    }
+
+    LiveData<MyselfResponse> getMySelfResponse() {
+        return myselfResponse;
     }
 
     List<MailboxEntity> getAllMailboxes() {
@@ -68,22 +77,6 @@ public class SettingsViewModel extends ViewModel {
 
     public boolean isSignatureEnabled() {
         return userRepository.isSignatureEnabled();
-    }
-
-    public void setMobileSignatureEnabled(boolean isEnabled) {
-        userRepository.setMobileSignatureEnabled(isEnabled);
-    }
-
-    public boolean isMobileSignatureEnabled() {
-        return userRepository.isMobileSignatureEnabled();
-    }
-
-    public void setMobileSignature(String signatureText) {
-        userRepository.setMobileSignature(signatureText);
-    }
-
-    public String getMobileSignature() {
-        return userRepository.getMobileSignature();
     }
 
     void updateAutoSaveContactsEnabled(long settingId, boolean isEnabled) {
@@ -107,6 +100,37 @@ public class SettingsViewModel extends ViewModel {
 
                     @Override
                     public void onError(@NotNull Throwable e) {
+                        Timber.e(e);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    public void updateDarkMode(long settingId, boolean isEnabled) {
+        if (settingId == -1) {
+            return;
+        }
+        userRepository.updateDarkMode(
+                settingId,
+                new DarkModeRequest(isEnabled)
+        )
+                .subscribe(new Observer<SettingsResponse>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(@NonNull SettingsResponse settingsResponse) {
+                        Timber.i("Dark mode state is changed");
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
                         Timber.e(e);
                     }
 
@@ -243,6 +267,37 @@ public class SettingsViewModel extends ViewModel {
                 });
     }
 
+    void updateNotificationEmail(long settingId, String emailAddress) {
+        if (settingId == -1) {
+            return;
+        }
+        userRepository.updateNotificationEmail(
+                settingId,
+                new NotificationEmailRequest(emailAddress)
+        )
+                .subscribe(new Observer<SettingsResponse>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(@NonNull SettingsResponse settingsResponse) {
+                        Timber.i("Notification email updated");
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        Timber.e(e);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
     void updateSubjectEncryption(long settingId, boolean isSubjectEncryption) {
         if (settingId == -1) {
             return;
@@ -369,13 +424,38 @@ public class SettingsViewModel extends ViewModel {
                 });
     }
 
+    public void getMyselfInfo() {
+        userRepository.getMyselfInfo()
+                .subscribe(new Observer<MyselfResponse>() {
+                    @Override
+                    public void onSubscribe(@NotNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(@NotNull MyselfResponse response) {
+                        myselfResponse.postValue(response);
+                    }
+
+                    @Override
+                    public void onError(@NotNull Throwable e) {
+                        Timber.e(e);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
     private void decryptContact(ContactData contactData) {
         if (!contactData.isEncrypted()) {
             return;
         }
         String encryptedData = contactData.getEncryptedData();
         String decryptedData = EncryptUtils.decryptData(encryptedData);
-        EncryptContact decryptedContact = new Gson().fromJson(decryptedData, EncryptContact.class);
+        EncryptContact decryptedContact = GENERAL_GSON.fromJson(decryptedData, EncryptContact.class);
         if (decryptedContact == null) {
             return;
         }

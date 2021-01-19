@@ -1,11 +1,10 @@
-package mobileapp.ctemplar.com.ctemplarapp.net.response.Messages;
+package mobileapp.ctemplar.com.ctemplarapp.net.response.messages;
 
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
 public class MessagesResponse {
-
     @SerializedName("total_count")
     private int totalCount;
 
@@ -20,6 +19,7 @@ public class MessagesResponse {
 
     @SerializedName("results")
     private List<MessagesResult> messagesList;
+
 
     public int getTotalCount() {
         return totalCount;

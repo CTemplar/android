@@ -3,8 +3,6 @@ package mobileapp.ctemplar.com.ctemplarapp.contacts;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.google.gson.Gson;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -17,9 +15,9 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.ContactData;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.ContactsResponse;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.EncryptContact;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.contacts.ContactData;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.contacts.ContactsResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.contacts.EncryptContact;
 import mobileapp.ctemplar.com.ctemplarapp.repository.ContactsRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserStore;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.Contact;
@@ -27,6 +25,8 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.entity.ContactEntity;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EncryptUtils;
 import okhttp3.ResponseBody;
 import timber.log.Timber;
+
+import static mobileapp.ctemplar.com.ctemplarapp.utils.DateUtils.GENERAL_GSON;
 
 public class ContactsViewModel extends ViewModel {
     private final ContactsRepository contactsRepository;
@@ -179,7 +179,7 @@ public class ContactsViewModel extends ViewModel {
             contactData.setProvider(null);
             contactData.setEncrypted(true);
 
-            String contactString = new Gson().toJson(encryptContact);
+            String contactString = GENERAL_GSON.toJson(encryptContact);
             String encryptedContactString = EncryptUtils.encryptData(contactString);
             contactData.setEncryptedData(encryptedContactString);
         }

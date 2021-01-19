@@ -1,14 +1,17 @@
 package mobileapp.ctemplar.com.ctemplarapp.repository.entity;
 
-import com.google.gson.Gson;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.ContactData;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Contacts.EncryptContact;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.contacts.ContactData;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.contacts.EncryptContact;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EncryptUtils;
+
+import static mobileapp.ctemplar.com.ctemplarapp.utils.DateUtils.GENERAL_GSON;
 
 public class Contact {
     private long id;
@@ -19,8 +22,25 @@ public class Contact {
     private String phone;
     private String phone2;
     private String provider;
-    private Boolean isEncrypted;
+    private boolean isEncrypted;
     private String encryptedData;
+
+    public Contact() {
+
+    }
+
+    public Contact(long id, String email, String name, String address, String note, String phone, String phone2, String provider, boolean isEncrypted, String encryptedData) {
+        this.id = id;
+        this.email = email;
+        this.name = name;
+        this.address = address;
+        this.note = note;
+        this.phone = phone;
+        this.phone2 = phone2;
+        this.provider = provider;
+        this.isEncrypted = isEncrypted;
+        this.encryptedData = encryptedData;
+    }
 
     public long getId() {
         return id;
@@ -86,11 +106,11 @@ public class Contact {
         this.provider = provider;
     }
 
-    public Boolean isEncrypted() {
+    public boolean isEncrypted() {
         return isEncrypted;
     }
 
-    public void setEncrypted(Boolean isEncrypted) {
+    public void setEncrypted(boolean isEncrypted) {
         this.isEncrypted = isEncrypted;
     }
 
@@ -102,7 +122,8 @@ public class Contact {
         this.encryptedData = encryptedData;
     }
 
-    public static Contact fromContactData(ContactData contactData) {
+    @NonNull
+    public static Contact fromContactData(@Nullable ContactData contactData) {
         if (contactData == null) {
             return new Contact();
         }
@@ -120,6 +141,7 @@ public class Contact {
         return contact;
     }
 
+    @NonNull
     public static Contact fromEntity(ContactEntity entity) {
         if (entity == null) {
             return new Contact();
@@ -130,7 +152,8 @@ public class Contact {
         if (entity.isEncrypted) {
             String encryptedData = entity.getEncryptedData();
             String decryptedData = EncryptUtils.decryptData(encryptedData);
-            EncryptContact decryptedContact = new Gson().fromJson(decryptedData, EncryptContact.class);
+            EncryptContact decryptedContact = GENERAL_GSON.fromJson(decryptedData,
+                    EncryptContact.class);
             if (decryptedContact == null) {
                 return contact;
             }
@@ -155,7 +178,8 @@ public class Contact {
         return contact;
     }
 
-    public static ContactEntity fromContactDataToEntity(ContactData contactData) {
+    @NonNull
+    public static ContactEntity fromContactDataToEntity(@Nullable ContactData contactData) {
         if (contactData == null) {
             return new ContactEntity();
         }
@@ -173,7 +197,8 @@ public class Contact {
         return contactEntity;
     }
 
-    public static List<Contact> fromContactData(ContactData[] contactData) {
+    @NonNull
+    public static List<Contact> fromContactData(@Nullable ContactData[] contactData) {
         if (contactData == null || contactData.length == 0) {
             return new ArrayList<>();
         }
@@ -184,7 +209,8 @@ public class Contact {
         return contactDataList;
     }
 
-    public static List<Contact> fromEntities(List<ContactEntity> contactEntityList) {
+    @NonNull
+    public static List<Contact> fromEntities(@Nullable List<ContactEntity> contactEntityList) {
         if (contactEntityList == null || contactEntityList.isEmpty()) {
             return new ArrayList<>();
         }
@@ -195,7 +221,8 @@ public class Contact {
         return contactList;
     }
 
-    public static ContactEntity[] fromContactDataToEntities(ContactData[] contactData) {
+    @NonNull
+    public static ContactEntity[] fromContactDataToEntities(@Nullable ContactData[] contactData) {
         if (contactData == null || contactData.length == 0) {
             return new ContactEntity[0];
         }

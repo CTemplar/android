@@ -31,14 +31,14 @@ import mobileapp.ctemplar.com.ctemplarapp.SingleLiveEvent;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.EmptyFolderRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SignInRequest;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Folders.FoldersResponse;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Mailboxes.MailboxesResponse;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.EmptyFolderResponse;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResponse;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResult;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.MyselfResponse;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.MyselfResult;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.SettingsResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.folders.FoldersResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.mailboxes.MailboxesResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.EmptyFolderResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.MessagesResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.MessagesResult;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.MyselfResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.MyselfResult;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.SettingsResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.ResponseMessagesData;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.SignInResponse;
 import mobileapp.ctemplar.com.ctemplarapp.repository.ManageFoldersRepository;
@@ -48,6 +48,7 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MessageEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageProvider;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EncodeUtils;
+import mobileapp.ctemplar.com.ctemplarapp.utils.ThemeUtils;
 import okhttp3.ResponseBody;
 import retrofit2.HttpException;
 import retrofit2.Response;
@@ -671,20 +672,23 @@ public class MainActivityViewModel extends AndroidViewModel {
 
                     @Override
                     public void onNext(@NotNull MyselfResponse myselfResponse) {
-                        if (myselfResponse != null) {
-                            MyselfResult myselfResult = myselfResponse.getResult()[0];
-                            SettingsResponse settingsResponse = myselfResult.getSettings();
+                        MyselfResult myselfResult = myselfResponse.getResult()[0];
+                        SettingsResponse settingsResponse = myselfResult.getSettings();
 
-                            String timezone = settingsResponse.getTimezone();
-                            boolean isContactsEncrypted = settingsResponse.isContactsEncrypted();
-                            boolean isDisableLoadingImages = settingsResponse.isDisableLoadingImages();
-                            boolean isReportBugsEnabled = settingsResponse.isEnableReportBugs();
+                        String timezone = settingsResponse.getTimezone();
+                        boolean isContactsEncrypted = settingsResponse.isContactsEncrypted();
+                        boolean isDisableLoadingImages = settingsResponse.isDisableLoadingImages();
+                        boolean isReportBugsEnabled = settingsResponse.isEnableReportBugs();
 
-                            userRepository.saveTimeZone(timezone);
-                            userRepository.setContactsEncryptionEnabled(isContactsEncrypted);
-                            userRepository.setBlockExternalImagesEnabled(isDisableLoadingImages);
-                            userRepository.setReportBugsEnabled(isReportBugsEnabled);
-                        }
+                        userRepository.saveTimeZone(timezone);
+                        userRepository.setContactsEncryptionEnabled(isContactsEncrypted);
+                        userRepository.setBlockExternalImagesEnabled(isDisableLoadingImages);
+                        userRepository.setReportBugsEnabled(isReportBugsEnabled);
+
+                        ThemeUtils.setDarkModeFromServer(
+                                settingsResponse.isNightMode(),
+                                userRepository.getUserStore()
+                        );
                     }
 
                     @Override

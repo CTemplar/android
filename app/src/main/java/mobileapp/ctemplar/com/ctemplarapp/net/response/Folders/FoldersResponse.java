@@ -1,11 +1,10 @@
-package mobileapp.ctemplar.com.ctemplarapp.net.response.Folders;
+package mobileapp.ctemplar.com.ctemplarapp.net.response.folders;
 
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
 public class FoldersResponse {
-
     @SerializedName("total_count")
     private int totalCount;
 
@@ -20,6 +19,7 @@ public class FoldersResponse {
 
     @SerializedName("results")
     private List<FoldersResult> foldersList;
+
 
     public int getTotalCount() {
         return totalCount;

@@ -3,7 +3,6 @@ package mobileapp.ctemplar.com.ctemplarapp.net.request;
 import com.google.gson.annotations.SerializedName;
 
 public class EditFolderRequest {
-
     @SerializedName("id")
     private long id;
 
@@ -19,27 +18,15 @@ public class EditFolderRequest {
         this.color = color;
     }
 
-    public String getName() {
-        return name;
+    public void setId(long id) {
+        this.id = id;
     }
 
     public void setName(String name) {
         this.name = name;
     }
 
-    public String getColor() {
-        return color;
-    }
-
     public void setColor(String color) {
         this.color = color;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
     }
 }

@@ -24,8 +24,8 @@ import mobileapp.ctemplar.com.ctemplarapp.BaseActivity;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.main.RecycleDeleteSwiper;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Filters.FilterResult;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Filters.FiltersResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.filters.FilterResult;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.filters.FiltersResponse;
 
 public class FiltersActivity extends BaseActivity {
     private FiltersViewModel filtersModel;

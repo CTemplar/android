@@ -38,9 +38,11 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import mobileapp.ctemplar.com.ctemplarapp.ActivityInterface;
+import mobileapp.ctemplar.com.ctemplarapp.BuildConfig;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.contacts.ContactsViewModel;
 import mobileapp.ctemplar.com.ctemplarapp.main.UpgradeToPrimeFragment;
@@ -49,8 +51,8 @@ import mobileapp.ctemplar.com.ctemplarapp.net.entity.AttachmentsEntity;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.PublicKeysRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SendMessageRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.KeyResult;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.EncryptionMessage;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Myself.MyselfResult;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.EncryptionMessage;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.MyselfResult;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.Contact;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.AttachmentProvider;
@@ -59,7 +61,7 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageAttachmentP
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageProvider;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.SendMessageRequestProvider;
 import mobileapp.ctemplar.com.ctemplarapp.services.SendMailService;
-import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
+import mobileapp.ctemplar.com.ctemplarapp.utils.DateUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EncryptUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.FileUtils;
@@ -116,8 +118,8 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
 
     // COMPOSE OPTIONS
     private final List<String> mailboxAddresses = new ArrayList<>();
-    private Long delayedDeliveryInMillis;
-    private Long destructDeliveryInMillis;
+    private Date delayedDeliveryDate;
+    private Date destructDeliveryDate;
     private Long deadDeliveryInHours;
     private String lastAction;
     private EncryptionMessage messageEncryptionResult;
@@ -138,24 +140,24 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
     private final DelayedDeliveryDialogFragment.OnScheduleDelayedDelivery onScheduleDelayedDelivery
             = new DelayedDeliveryDialogFragment.OnScheduleDelayedDelivery() {
         @Override
-        public void onSchedule(Long timeInMilliseconds) {
-            delayedDeliveryInMillis = timeInMilliseconds;
+        public void onSchedule(Date date) {
+            delayedDeliveryDate = date;
             if (getActivity() == null) {
                 return;
             }
-            sendMessageDelayedIco.setSelected(timeInMilliseconds != null);
+            sendMessageDelayedIco.setSelected(date != null);
         }
     };
 
     private final DestructTimerDialogFragment.OnScheduleDestructTimerDelivery onScheduleDestructTimerDelivery
             = new DestructTimerDialogFragment.OnScheduleDestructTimerDelivery() {
         @Override
-        public void onSchedule(Long timeInMilliseconds) {
+        public void onSchedule(Date date) {
             if (getActivity() == null) {
                 return;
             }
-            destructDeliveryInMillis = timeInMilliseconds;
-            sendMessageDestructIco.setSelected(timeInMilliseconds != null);
+            destructDeliveryDate = date;
+            sendMessageDestructIco.setSelected(date != null);
         }
     };
 
@@ -329,11 +331,6 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
             String signatureText = defaultMailbox.getSignature();
             addSignature(signatureText);
         }
-        boolean isMobileSignatureEnabled = sendModel.isMobileSignatureEnabled();
-        if (isMobileSignatureEnabled) {
-            String mobileSignatureText = sendModel.getMobileSignature();
-            addSignature(mobileSignatureText);
-        }
 
         SpinnerAdapter adapter = new ArrayAdapter<>(
                 activity,
@@ -411,41 +408,49 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
                     activity.onBackPressed();
                 }
                 break;
-            case R.id.fragment_send_message_delayed_layout:
-                if (delayedDeliveryDialogFragment.isAdded()) {
-                    return;
+            case R.id.fragment_send_message_encrypt_layout:
+                if (encryptMessageDialogFragment.isAdded()) {
+                    break;
                 }
-                if (userIsPrime) {
-                    delayedDeliveryDialogFragment.show(getParentFragmentManager(), "DelayedDeliveryDialogFragment");
-                    delayedDeliveryDialogFragment.setOnScheduleDelayedDelivery(onScheduleDelayedDelivery);
-                } else {
-                    upgradeToPrimeDialog();
-                }
+                encryptMessageDialogFragment.show(getParentFragmentManager(), "EncryptMessageDialogFragment");
+                encryptMessageDialogFragment.setEncryptMessagePassword(onSetEncryptMessagePassword);
                 break;
             case R.id.fragment_send_message_destruct_layout:
                 if (destructTimerDialogFragment.isAdded()) {
-                    return;
+                    break;
+                }
+                if (!userIsPrime) {
+                    showUpgradeToPrimeDialog();
+                    break;
+                }
+                if (!isCTemplarRecipients()) {
+                    showOnlyCTemplarRecipientsAlert();
+                    break;
                 }
                 destructTimerDialogFragment.show(getParentFragmentManager(), "DestructTimerDialogFragment");
                 destructTimerDialogFragment.setOnScheduleDestructTimerDelivery(onScheduleDestructTimerDelivery);
                 break;
+            case R.id.fragment_send_message_delayed_layout:
+                if (delayedDeliveryDialogFragment.isAdded()) {
+                    break;
+                }
+                if (!userIsPrime) {
+                    showUpgradeToPrimeDialog();
+                    break;
+                }
+                delayedDeliveryDialogFragment.show(getParentFragmentManager(), "DelayedDeliveryDialogFragment");
+                delayedDeliveryDialogFragment.setOnScheduleDelayedDelivery(onScheduleDelayedDelivery);
+                break;
             case R.id.fragment_send_message_dead_layout:
                 if (deadMansDeliveryDialogFragment.isAdded()) {
-                    return;
+                    break;
                 }
-                if (userIsPrime) {
-                    deadMansDeliveryDialogFragment.show(getParentFragmentManager(), "DeadMansDialogFragment");
-                    deadMansDeliveryDialogFragment.setOnScheduleDeadMansDelivery(onScheduleDeadMansDelivery);
-                } else {
-                    upgradeToPrimeDialog();
+                if (!userIsPrime) {
+                    showUpgradeToPrimeDialog();
+                    break;
                 }
-                break;
-            case R.id.fragment_send_message_encrypt_layout:
-                if (encryptMessageDialogFragment.isAdded()) {
-                    return;
-                }
-                encryptMessageDialogFragment.show(getParentFragmentManager(), "EncryptMessageDialogFragment");
-                encryptMessageDialogFragment.setEncryptMessagePassword(onSetEncryptMessagePassword);
+                deadMansDeliveryDialogFragment.show(getParentFragmentManager(), "DeadMansDialogFragment");
+                deadMansDeliveryDialogFragment.setOnScheduleDeadMansDelivery(onScheduleDeadMansDelivery);
                 break;
         }
     }
@@ -657,9 +662,9 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         String[] messageBcc = messageProvider.getBcc();
         String messageSubject = messageProvider.getSubject();
         String messageContent = messageProvider.getContent();
-        String messageDestruct = messageProvider.getDestructDate();
-        String messageDelayed = messageProvider.getDelayedDelivery();
-        String messageDeadMan = messageProvider.getDeadManDuration();
+        Date messageDestruct = messageProvider.getDestructDate();
+        Date messageDelayed = messageProvider.getDelayedDelivery();
+        Long messageDeadMan = messageProvider.getDeadManDuration();
         List<AttachmentProvider> messageAttachmentList = messageProvider.getAttachments();
 
         if (messageSender != null && !messageSender.isEmpty()) {
@@ -684,17 +689,17 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
             Spanned messageSpanned = HtmlUtils.fromHtml(messageContent);
             composeEditText.setText(messageSpanned);
         }
-        if (messageDestruct != null && !messageDestruct.isEmpty()) {
+        if (messageDestruct != null) {
             sendMessageDestructIco.setSelected(true);
-            destructDeliveryInMillis = AppUtils.millisFromServer(messageDestruct);
+            destructDeliveryDate = messageDestruct;
         }
-        if (messageDelayed != null && !messageDelayed.isEmpty()) {
+        if (messageDelayed != null) {
             sendMessageDelayedIco.setSelected(true);
-            delayedDeliveryInMillis = AppUtils.millisFromServer(messageDelayed);
+            delayedDeliveryDate = messageDelayed;
         }
-        if (messageDeadMan != null && !messageDeadMan.isEmpty()) {
+        if (messageDeadMan != null) {
             sendMessageDeadIco.setSelected(true);
-            deadDeliveryInHours = Long.parseLong(messageDeadMan);
+            deadDeliveryInHours = messageDeadMan;
         }
         if (messageAttachmentList != null) {
             for (AttachmentProvider attachmentProvider : messageAttachmentList) {
@@ -757,11 +762,11 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         sendMessageRequest.setSend(true);
         sendMessageRequest.setFolder(SENT);
 
-        if (destructDeliveryInMillis != null) {
-            sendMessageRequest.setDestructDate(AppUtils.millisToServer(destructDeliveryInMillis));
+        if (destructDeliveryDate != null) {
+            sendMessageRequest.setDestructDate(destructDeliveryDate);
         }
-        if (delayedDeliveryInMillis != null) {
-            sendMessageRequest.setDelayedDelivery(AppUtils.millisToServer(delayedDeliveryInMillis));
+        if (delayedDeliveryDate != null) {
+            sendMessageRequest.setDelayedDelivery(delayedDeliveryDate);
             sendMessageRequest.setSend(false);
             sendMessageRequest.setFolder(OUTBOX);
         }
@@ -912,7 +917,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         Spanned signatureSpanned = HtmlUtils.fromHtml(signatureText);
         if (EditTextUtils.isNotEmpty(signatureSpanned)) {
             Editable compose = composeEditText.getText();
-            CharSequence signatureWithCompose = TextUtils.concat(compose, "\n", signatureSpanned);
+            CharSequence signatureWithCompose = TextUtils.concat(compose, "\n\n", signatureSpanned);
             composeEditText.setText(signatureWithCompose);
         }
     }
@@ -939,9 +944,24 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
                 && compose.equals(startupBodyContent);
     }
 
-    private void upgradeToPrimeDialog() {
+    private boolean isCTemplarRecipients() {
+        String toEmail = EditTextUtils.getText(toEmailTextView);
+        String ccEmail = EditTextUtils.getText(ccTextView);
+        String bccEmail = EditTextUtils.getText(bccTextView);
+        String domain = BuildConfig.DOMAIN;
+        return toEmail.contains(domain) || ccEmail.contains(domain) || bccEmail.contains(domain);
+    }
+
+    private void showUpgradeToPrimeDialog() {
         UpgradeToPrimeFragment upgradeToPrimeFragment = new UpgradeToPrimeFragment();
         upgradeToPrimeFragment.show(getParentFragmentManager(), "UpgradeToPrimeFragment");
+    }
+
+    private void showOnlyCTemplarRecipientsAlert() {
+        new AlertDialog.Builder(getActivity())
+                .setMessage(R.string.txt_destruct_timer_hint)
+                .setPositiveButton(android.R.string.ok, null)
+                .show();
     }
 
     private void addListeners() {

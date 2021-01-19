@@ -27,14 +27,8 @@ public interface UserStore {
     void saveTimeZone(String timezone);
     String getTimeZone();
 
-    void saveMobileSignature(String signature);
-    String getMobileSignature();
-
     void setSignatureEnabled(boolean state);
     boolean isSignatureEnabled();
-
-    void setMobileSignatureEnabled(boolean state);
-    boolean isMobileSignatureEnabled();
 
     void setNotificationsEnabled(boolean state);
     boolean isNotificationsEnabled();
@@ -66,6 +60,12 @@ public interface UserStore {
     void setLocked(boolean locked);
     boolean isLocked();
 
-    void setDarkMode(int value);
-    int getDarkMode();
+    void setDarkModeValue(int value);
+    int getDarkModeValue();
+
+    void setDarkModeKey(String key);
+    String getDarkModeKey();
+
+    void setLanguageKey(String key);
+    String getLanguageKey();
 }

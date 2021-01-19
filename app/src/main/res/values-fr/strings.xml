@@ -125,6 +125,7 @@
     <string name="txt_left_time_dead_mans_timer">Dead mans dans %1$s</string>
     <string name="txt_encrypt_message_title">Mot de passe</string>
     <string name="txt_destruct_message_title">Auto destruction</string>
+    <string name="txt_destruct_timer_hint">Self Destruction est uniquement pour les destinataires CTemplar. Veuillez ajouter des destinataires CTemplar pour la fonction d\'autodestruction</string>
     <string name="txt_dead_mans_title">Dead Man\'s Timer</string>
     <string name="txt_delayed_message_title">Programmer l\'envoi</string>
     <string name="txt_encrypt_message_summary">Email crypté pour les contacts non CTemplar</string>
@@ -232,6 +233,8 @@
     <!-- NOTIFICATION SERVICE -->
     <string name="notification_channel_name">CTemplar</string>
     <string name="notification_channel_description">Nouveau mail</string>
+    <string name="title_notification_service">Service de notification</string>
+    <string name="title_service_running">Le service est en cours d\'exécutiong</string>
 
     <!-- CUSTOM FILTERS -->
     <string name="txt_filters_title">Filtres</string>
@@ -293,7 +296,6 @@
     <string name="txt_type_your_name">Tapez votre nom</string>
     <string name="txt_type_signature">Saisir signature</string>
     <string name="txt_signature_enabled">Signature activée</string>
-    <string name="txt_mobile_signature_enabled">Signature mobile activée</string>
 
     <!-- PIN LOCK -->
     <string name="pin_lock">Verrouillage PIN</string>
@@ -312,10 +314,13 @@
     <string name="txt_panel_monospace">M</string>
     <string name="txt_panel_normal">Ordinaire</string>
 
+    <!-- SETTINGS -->
     <string name="settings_general">Paramètres</string>
     <string name="settings_recovery_email">Email de récupération</string>
     <string name="settings_enable_recovery_email">Activer email de récupération</string>
     <string name="settings_type_recovery_email">Saisir votre email de récupération</string>
+    <string name="settings_type_notification_email">Saisissez votre e-mail de notification</string>
+    <string name="settings_type_notification_email_description">Indiquer l\'adresse email sur laquelle vous souhaitez recevoir une notification quotidienne quand vous avez de nouveaux emails.</string>
     <string name="settings_enabled_anti_phishing">Anti hameçonnage</string>
     <string name="settings_type_anti_phishing_phrase">Tapez votre phrase anti-phishing</string>
     <string name="settings_subject_encryption">Objet chiffré</string>
@@ -343,9 +348,7 @@
     <string name="settings_signature">Signature</string>
     <string name="settings_enable_signature">Activer signature</string>
     <string name="settings_type_signature">Saisir votre signature</string>
-    <string name="settings_mobile_signature">Signature mobile</string>
     <string name="settings_keys">Clés</string>
-    <string name="settings_enable_mobile_signature">Activer la signature mobile</string>
     <string name="settings_about">A propos</string>
     <string name="settings_helpdesk">Bureau d\'aide</string>
     <string name="settings_local_storage_limit">Espace de stockage utilisé :</string>
@@ -403,11 +406,11 @@
     <!-- ERRORS -->
     <string name="error_field_cannot_be_empty">Ce champ ne peut pas être vide</string>
     <string name="error_invalid_email">Veuillez sélectionner une adresse email valide ou sélectionner un email de récupération.</string>
-    <string name="error_username_small">Minimum 4 symboles</string>
-    <string name="error_username_small_two">Minimum 2 symboles</string>
-    <string name="error_username_big">Maximum 64 symboles</string>
-    <string name="error_password_small">Minimum 1 symbole</string>
-    <string name="error_password_big">Maximum 255 symboles</string>
+    <string name="error_username_small">Minimum 4 caractères</string>
+    <string name="error_username_small_two">Minimum 2 caractères</string>
+    <string name="error_username_big">Maximum 64 caractères</string>
+    <string name="error_password_small">Minimum 1 caractère</string>
+    <string name="error_password_big">Maximum 255 caractères</string>
     <string name="error_username_incorrect">Le nom d\'utilisateur doit commencer par une lettre et peut contenir uniquement a–z, A–Z, 0–9 ou ._-</string>
     <string name="error_username_exists">L\'email existe déjà.</string>
     <string name="error_password_not_match">Les mots de passe doivent être identiques</string>

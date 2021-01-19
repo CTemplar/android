@@ -6,7 +6,6 @@ import java.util.List;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.AttachmentProvider;
 
 public class AttachmentsEntity implements Serializable {
-
     private List<AttachmentProvider> attachmentProviderList;
 
     public AttachmentsEntity(List<AttachmentProvider> attachmentProviderList) {

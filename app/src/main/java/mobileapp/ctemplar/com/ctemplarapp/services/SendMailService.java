@@ -12,7 +12,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
 import java.io.BufferedInputStream;
@@ -34,8 +33,8 @@ import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.net.entity.PGPKeyEntity;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SendMessageRequest;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessageAttachment;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.Messages.MessagesResult;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.MessageAttachment;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.MessagesResult;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.EncryptionMessageProvider;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageAttachmentProvider;
@@ -54,6 +53,7 @@ import retrofit2.HttpException;
 import timber.log.Timber;
 
 import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.DRAFT;
+import static mobileapp.ctemplar.com.ctemplarapp.utils.DateUtils.GENERAL_GSON;
 
 public class SendMailService extends IntentService {
     private static final String TAG = "SendMailService";
@@ -66,8 +66,6 @@ public class SendMailService extends IntentService {
     private static final String PUBLIC_KEYS_EXTRA_KEY = "public_keys";
     private static final String ATTACHMENTS_EXTRA_KEY = "attachments";
     private static final String EXTERNAL_ENCRYPTION_EXTRA_KEY = "external_encryption";
-
-    private static Gson GSON = new Gson();
 
     public SendMailService() {
         super(TAG);
@@ -96,7 +94,7 @@ public class SendMailService extends IntentService {
                 }
                 SendMessageRequestProvider sendMessageRequestProvider;
                 try {
-                    sendMessageRequestProvider = GSON.fromJson(messageProviderString, SendMessageRequestProvider.class);
+                    sendMessageRequestProvider = GENERAL_GSON.fromJson(messageProviderString, SendMessageRequestProvider.class);
                 } catch (JsonSyntaxException e) {
                     Timber.e(e, "Cannot parse message provider");
                     return;
@@ -112,7 +110,7 @@ public class SendMailService extends IntentService {
                 MessageAttachmentProvider[] attachmentProviders = new MessageAttachmentProvider[attachmentsStringArray.length];
                 for (int i = 0; i < attachmentProviders.length; ++i) {
                     try {
-                        attachmentProviders[i] = GSON.fromJson(attachmentsStringArray[i], MessageAttachmentProvider.class);
+                        attachmentProviders[i] = GENERAL_GSON.fromJson(attachmentsStringArray[i], MessageAttachmentProvider.class);
                     } catch (JsonSyntaxException e) {
                         Timber.e(e, "Cannot parse attachment provider");
                     }
@@ -121,7 +119,7 @@ public class SendMailService extends IntentService {
                 EncryptionMessageProvider encryptionMessageProvider = null;
                 if (externalEncryptionMessageString != null) {
                     try {
-                        encryptionMessageProvider = GSON.fromJson(externalEncryptionMessageString, EncryptionMessageProvider.class);
+                        encryptionMessageProvider = GENERAL_GSON.fromJson(externalEncryptionMessageString, EncryptionMessageProvider.class);
                     } catch (JsonSyntaxException e) {
                         Timber.e(e, "Cannot parse external encryption provider");
                     }
@@ -224,9 +222,9 @@ public class SendMailService extends IntentService {
             request.setSubject(PGPManager.encrypt(request.getSubject(), publicKeys));
             request.setContent(PGPManager.encrypt(request.getContent(), publicKeys));
         }
-        request.setIsEncrypted(isReceiverKeysNotEmpty);
+        request.setEncrypted(isReceiverKeysNotEmpty);
         request.setSubjectEncrypted(isReceiverKeysNotEmpty);
-        request.setUpdatedAt(AppUtils.convertToServerDatePattern(new Date()));
+        request.setUpdatedAt(new Date());
 
         MessagesResult messagesResult;
         boolean isDraft = isDraft(request);
@@ -427,16 +425,16 @@ public class SendMailService extends IntentService {
         Intent intent = new Intent(SEND_MAIL_ACTION);
         intent.setComponent(new ComponentName(context, SendMailService.class));
         intent.putExtra(MESSAGE_ID_EXTRA_KEY, messageId);
-        intent.putExtra(MESSAGE_PROVIDER_EXTRA_KEY, GSON.toJson(sendMessageRequestProvider));
+        intent.putExtra(MESSAGE_PROVIDER_EXTRA_KEY, GENERAL_GSON.toJson(sendMessageRequestProvider));
         intent.putExtra(PUBLIC_KEYS_EXTRA_KEY, publicKeyList);
         String[] attachmentsStringArray = new String[attachmentProviderList.length];
         for (int i = 0, count = attachmentProviderList.length; i < count; ++i) {
             MessageAttachmentProvider attachmentProvider = attachmentProviderList[i];
-            attachmentsStringArray[i] = GSON.toJson(attachmentProvider);
+            attachmentsStringArray[i] = GENERAL_GSON.toJson(attachmentProvider);
         }
         intent.putExtra(ATTACHMENTS_EXTRA_KEY, attachmentsStringArray);
         if (encryptionMessageProvider != null) {
-            intent.putExtra(EXTERNAL_ENCRYPTION_EXTRA_KEY, GSON.toJson(encryptionMessageProvider));
+            intent.putExtra(EXTERNAL_ENCRYPTION_EXTRA_KEY, GENERAL_GSON.toJson(encryptionMessageProvider));
         }
         LaunchUtils.launchService(context, intent);
     }

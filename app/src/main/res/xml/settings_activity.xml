@@ -18,6 +18,10 @@
             android:fragment="mobileapp.ctemplar.com.ctemplarapp.settings.SettingsActivity$DarkModeFragment" />
 
         <PreferenceScreen
+            android:title="@string/settings_language"
+            android:fragment="mobileapp.ctemplar.com.ctemplarapp.settings.SettingsActivity$LanguagesFragment" />
+
+        <PreferenceScreen
             android:title="@string/settings_block_external_images"
             android:fragment="mobileapp.ctemplar.com.ctemplarapp.settings.SettingsActivity$BlockExternalImagesFragment" />
 
@@ -80,10 +84,6 @@
         <Preference
             android:title="@string/settings_signature"
             android:key="@string/signature_key" />
-
-        <Preference
-            android:title="@string/settings_mobile_signature"
-            android:key="@string/mobile_signature_key" />
 
         <PreferenceScreen
             android:title="@string/settings_keys"
