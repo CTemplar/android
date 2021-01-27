@@ -14,6 +14,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.ctemplar.app.fdroid.CTemplarApp;
 import com.ctemplar.app.fdroid.DialogState;
 import com.ctemplar.app.fdroid.SingleLiveEvent;
+import com.ctemplar.app.fdroid.executor.QueuedExecutor;
 import com.ctemplar.app.fdroid.net.ResponseStatus;
 import com.ctemplar.app.fdroid.net.request.EmptyFolderRequest;
 import com.ctemplar.app.fdroid.net.request.SignInRequest;
@@ -30,16 +31,19 @@ import com.ctemplar.app.fdroid.net.response.SignInResponse;
 import com.ctemplar.app.fdroid.repository.ManageFoldersRepository;
 import com.ctemplar.app.fdroid.repository.MessagesRepository;
 import com.ctemplar.app.fdroid.repository.UserRepository;
+import com.ctemplar.app.fdroid.repository.cache.MessageCacheProvider;
 import com.ctemplar.app.fdroid.repository.constant.MainFolderNames;
 import com.ctemplar.app.fdroid.repository.entity.MessageEntity;
 import com.ctemplar.app.fdroid.repository.provider.MessageProvider;
 import com.ctemplar.app.fdroid.services.NotificationService;
 import com.ctemplar.app.fdroid.services.NotificationServiceListener;
 import com.ctemplar.app.fdroid.utils.EncodeUtils;
+import com.ctemplar.app.fdroid.utils.EncryptUtils;
 import com.ctemplar.app.fdroid.utils.ThemeUtils;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -73,6 +77,41 @@ public class MainActivityViewModel extends AndroidViewModel {
     private final MutableLiveData<ResponseBody> unreadFoldersBody = new MutableLiveData<>();
     private final MutableLiveData<MyselfResponse> myselfResponse = new MutableLiveData<>();
     private final MutableLiveData<String> currentFolder = new MutableLiveData<>();
+    private final QueuedExecutor executor;
+
+    public interface OnDecryptFinishedCallback {
+        void onDecryptFinished(MessageProvider message);
+    }
+
+    public void decryptSubjects(List<MessageProvider> messages, OnDecryptFinishedCallback callback) {
+        MessageCacheProvider messageCacheProvider = MessageCacheProvider.instance;
+        List<MessageProvider> messagesToDecrypt = new ArrayList<>();
+        for (MessageProvider message : messages) {
+            if (!message.isSubjectEncrypted()) {
+                continue;
+            }
+            String cached = messageCacheProvider.getMessageDecryptedSubject(message);
+            if (cached != null) {
+                message.setSubject(cached);
+                message.setSubjectDecrypted(true);
+                continue;
+            }
+            messagesToDecrypt.add(message);
+        }
+        if (messagesToDecrypt.isEmpty()) {
+            return;
+        }
+        executor.execute(() -> {
+            for (MessageProvider message : messagesToDecrypt) {
+                String decrypted = EncryptUtils.decryptSubject(message.getSubject(),
+                        message.getMailboxId(), true);
+                message.setSubject(decrypted);
+                message.setSubjectDecrypted(true);
+                messageCacheProvider.setMessageDecryptedSubject(message);
+                callback.onDecryptFinished(message);
+            }
+        });
+    }
 
     private final NotificationServiceListener notificationServiceListener = message -> {
         final String userFolderFinal = currentFolder.getValue();
@@ -86,6 +125,7 @@ public class MainActivityViewModel extends AndroidViewModel {
         userRepository = CTemplarApp.getUserRepository();
         messagesRepository = CTemplarApp.getMessagesRepository();
         manageFoldersRepository = CTemplarApp.getManageFoldersRepository();
+        executor = new QueuedExecutor();
         NotificationService.bind(application, notificationServiceListener);
     }
 
