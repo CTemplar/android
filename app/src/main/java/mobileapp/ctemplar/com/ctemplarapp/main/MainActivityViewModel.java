@@ -18,6 +18,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import io.reactivex.Observable;
@@ -33,8 +34,6 @@ import mobileapp.ctemplar.com.ctemplarapp.executor.QueuedExecutor;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.EmptyFolderRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SignInRequest;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.ResponseMessagesData;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.SignInResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.folders.FoldersResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.mailboxes.MailboxesResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.EmptyFolderResponse;
@@ -43,6 +42,8 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.MessagesResult;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.MyselfResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.MyselfResult;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.SettingsResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.ResponseMessagesData;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.SignInResponse;
 import mobileapp.ctemplar.com.ctemplarapp.repository.ManageFoldersRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.MessagesRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
@@ -299,7 +300,7 @@ public class MainActivityViewModel extends AndroidViewModel {
         });
     }
 
-    public void getMessages(int limit, int offset, String folder) {
+    public void getMessages(int limit, int offset, String folder, Date lastMessageUpdateTime) {
         if (TextUtils.isEmpty(folder)) {
             return;
         }
@@ -381,6 +382,7 @@ public class MainActivityViewModel extends AndroidViewModel {
                                     localEntities = messagesRepository.getUnreadMessages();
                                     break;
                                 case MainFolderNames.ALL_MAILS:
+//                                    localEntities = messagesRepository.updateMessages(messageEntities, lastMessageUpdateTime); TODO
                                     messagesRepository.deleteAllMails();
                                     messagesRepository.saveAllMessagesWithIgnore(messageEntities);
                                     localEntities = messagesRepository.getAllMailsMessages();

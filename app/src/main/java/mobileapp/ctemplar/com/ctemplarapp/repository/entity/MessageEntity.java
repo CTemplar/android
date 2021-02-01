@@ -386,4 +386,8 @@ public class MessageEntity {
     public void setParent(String parent) {
         this.parent = parent;
     }
+
+    public boolean hasUpdate(MessageEntity entity) {
+        return !entity.getUpdatedAt().equals(updatedAt) || entity.isStarred != isStarred;
+    }
 }

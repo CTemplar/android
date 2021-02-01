@@ -5,6 +5,7 @@ import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
 
+import java.util.Date;
 import java.util.List;
 
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MessageEntity;
@@ -29,6 +30,9 @@ public interface MessageDao {
     @Query("SELECT * FROM messages WHERE folderName<>'spam' AND folderName<>'trash' ORDER BY updatedAt DESC")
     List<MessageEntity> getAllMails();
 
+    @Query("SELECT * FROM messages WHERE folderName<>'spam' AND folderName<>'trash' ORDER BY updatedAt DESC LIMIT :limit OFFSET :offset")
+    List<MessageEntity> getAllEmails(int offset, int limit);
+
     @Insert(onConflict = REPLACE)
     void save(MessageEntity messageEntity);
 
@@ -40,6 +44,12 @@ public interface MessageDao {
 
     @Delete
     void delete(MessageEntity mailbox);
+
+    @Delete
+    void delete(List<MessageEntity> messages);
+
+    @Query("DELETE FROM messages WHERE updatedAt > :from AND updatedAt < :to AND folderName<>'spam' AND folderName<>'trash'")
+    int deleteAllEmailsInPeriod(Date from, Date to);
 
     @Query("DELETE FROM messages")
     void deleteAll();

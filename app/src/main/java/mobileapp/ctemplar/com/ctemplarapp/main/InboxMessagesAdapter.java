@@ -215,6 +215,10 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesView
         return filteredList.get(position);
     }
 
+    public MessageProvider getLast() {
+        return messageList.isEmpty() ? null : messageList.get(messageList.size() - 1);
+    }
+
     void restoreMessage(MessageProvider deletedMessage, int position) {
         filteredList.add(position, deletedMessage);
         notifyItemInserted(position);

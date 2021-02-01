@@ -1,10 +1,13 @@
 package mobileapp.ctemplar.com.ctemplarapp.repository;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.net.RestService;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MessageEntity;
+import timber.log.Timber;
 
 public class MessagesRepository {
     private static MessagesRepository instance = new MessagesRepository();
@@ -14,9 +17,11 @@ public class MessagesRepository {
     }
 
     private RestService service;
+    private final MessageDao messageDao;
 
     private MessagesRepository() {
         service = CTemplarApp.getRestClient().getRestService();
+        messageDao = CTemplarApp.getAppDatabase().messageDao();
     }
 
     public List<MessageEntity> getMessagesByFolder(String folder) {
@@ -33,6 +38,40 @@ public class MessagesRepository {
 
     public List<MessageEntity> getAllMailsMessages() {
         return CTemplarApp.getAppDatabase().messageDao().getAllMails();
+    }
+
+    public List<MessageEntity> updateMessages(List<MessageEntity> entities, Date previousMessageUpdateTime) {
+        if (entities.isEmpty()) {
+            if (previousMessageUpdateTime != null) {
+                messageDao.deleteAllEmailsInPeriod(new Date(0), previousMessageUpdateTime);
+            }
+            return new ArrayList<>();
+        }
+        List<MessageEntity> result = new ArrayList<>();
+        for (int i = 0; i < entities.size(); i++) {
+            MessageEntity entity = entities.get(i);
+            int deletedCount = messageDao.deleteAllEmailsInPeriod(entity.getUpdatedAt(), previousMessageUpdateTime);
+            if (deletedCount > 0) {
+                Timber.i("Deleted %d", deletedCount);
+            }
+            previousMessageUpdateTime = entity.getUpdatedAt();
+            MessageEntity entityFromDb = messageDao.getById(entity.getId());
+            if (entityFromDb == null) {
+                Timber.i("Save");
+                messageDao.save(entity);
+                result.add(messageDao.getById(entity.getId()));
+                continue;
+            }
+            if (entityFromDb.hasUpdate(entity)) {
+                Timber.i("Update");
+                messageDao.save(entity);
+                result.add(messageDao.getById(entity.getId()));
+                continue;
+            }
+            result.add(entityFromDb);
+            Timber.i("Normal state");
+        }
+        return result;
     }
 
     public void saveMessage(MessageEntity entity) {
