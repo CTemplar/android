@@ -308,16 +308,16 @@ public class MainActivityViewModel extends AndroidViewModel {
             List<MessageEntity> localMessageEntities;
             switch (folder) {
                 case MainFolderNames.STARRED:
-                    localMessageEntities = messagesRepository.getStarredMessages();
+                    localMessageEntities = messagesRepository.getStarredMessages(limit, offset);
                     break;
                 case MainFolderNames.ALL_MAILS:
-                    localMessageEntities = messagesRepository.getAllMailsMessages();
+                    localMessageEntities = messagesRepository.getAllMailsMessages(limit, offset);
                     break;
                 case MainFolderNames.UNREAD:
-                    localMessageEntities = messagesRepository.getUnreadMessages();
+                    localMessageEntities = messagesRepository.getUnreadMessages(limit, offset);
                     break;
                 default:
-                    localMessageEntities = messagesRepository.getMessagesByFolder(folder);
+                    localMessageEntities = messagesRepository.getMessagesByFolder(folder, limit, offset);
                     break;
             }
             Single.fromCallable(() -> MessageProvider.fromMessageEntities(localMessageEntities,
@@ -348,6 +348,60 @@ public class MainActivityViewModel extends AndroidViewModel {
                     });
         }
 
+        boolean[] loaded = new boolean[]{false};
+        Single.fromCallable(() -> {
+            List<MessageEntity> localMessageEntities;
+            switch (folder) {
+                case MainFolderNames.STARRED:
+                    localMessageEntities = messagesRepository.getStarredMessages(limit, offset);
+                    break;
+                case MainFolderNames.ALL_MAILS:
+                    localMessageEntities = messagesRepository.getAllMailsMessages(limit, offset);
+                    break;
+                case MainFolderNames.UNREAD:
+                    localMessageEntities = messagesRepository.getUnreadMessages(limit, offset);
+                    break;
+                case MainFolderNames.SENT:
+                    localMessageEntities = messagesRepository.getSentMessages(limit, offset);
+                    break;
+                case MainFolderNames.INBOX:
+                    localMessageEntities = messagesRepository.getInboxMessages(limit, offset);
+                    break;
+                default:
+                    localMessageEntities = messagesRepository.getMessagesByFolder(folder, limit, offset);
+                    break;
+            }
+            return MessageProvider.fromMessageEntities(localMessageEntities,
+                    false, false);
+        })
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.computation())
+                .subscribe(new SingleObserver<List<MessageProvider>>() {
+                    @Override
+                    public void onSubscribe(@io.reactivex.annotations.NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onSuccess(@io.reactivex.annotations.NonNull List<MessageProvider> messageProviders) {
+                        if (loaded[0]) {
+                            return;
+                        }
+                        ResponseMessagesData localMessagesData = new ResponseMessagesData(
+                                messageProviders, offset, folder);
+                        if (localMessagesData.messages.size() > 0) {
+                            Timber.i("Loaded from DB: %s", System.currentTimeMillis() % 10000);
+                            messagesResponse.postValue(localMessagesData);
+                        }
+                        responseStatus.postValue(ResponseStatus.RESPONSE_NEXT_MESSAGES);
+                    }
+
+                    @Override
+                    public void onError(@io.reactivex.annotations.NonNull Throwable e) {
+                        Timber.e(e);
+                    }
+                });
+
         Observable<MessagesResponse> messagesResponseObservable;
         if (MainFolderNames.STARRED.equals(folder)) {
             messagesResponseObservable = userRepository.getStarredMessagesList(limit, offset);
@@ -368,38 +422,29 @@ public class MainActivityViewModel extends AndroidViewModel {
                                 = MessageProvider.fromMessagesResultsToEntities(messages, folder);
 
                         List<MessageProvider> messageProviders;
-                        if (offset == 0) {
-                            List<MessageEntity> localEntities;
-                            switch (folder) {
-                                case MainFolderNames.STARRED:
-                                    messagesRepository.deleteStarred();
-                                    messagesRepository.saveAllMessagesWithIgnore(messageEntities);
-                                    localEntities = messagesRepository.getStarredMessages();
-                                    break;
-                                case MainFolderNames.UNREAD:
-                                    messagesRepository.deleteUnread();
-                                    messagesRepository.saveAllMessagesWithIgnore(messageEntities);
-                                    localEntities = messagesRepository.getUnreadMessages();
-                                    break;
-                                case MainFolderNames.ALL_MAILS:
-//                                    localEntities = messagesRepository.updateMessages(messageEntities, lastMessageUpdateTime); TODO
-                                    messagesRepository.deleteAllMails();
-                                    messagesRepository.saveAllMessagesWithIgnore(messageEntities);
-                                    localEntities = messagesRepository.getAllMailsMessages();
-                                    break;
-                                default:
-                                    messagesRepository.deleteMessagesByFolderName(folder);
-                                    messagesRepository.saveAllMessages(messageEntities);
-                                    localEntities = messagesRepository.getMessagesByFolder(folder);
-                                    break;
-                            }
-                            messageProviders = MessageProvider
-                                    .fromMessageEntities(localEntities, false, false);
-                        } else {
-                            messageProviders = MessageProvider
-                                    .fromMessageEntities(messageEntities, false, false);
+                        List<MessageEntity> localEntities;
+                        switch (folder) {
+                            case MainFolderNames.STARRED:
+                                localEntities = messagesRepository.updateStarred(messageEntities, lastMessageUpdateTime);
+                                break;
+                            case MainFolderNames.UNREAD:
+                                localEntities = messagesRepository.updateUnread(messageEntities, lastMessageUpdateTime);
+                                break;
+                            case MainFolderNames.ALL_MAILS:
+                                localEntities = messagesRepository.updateAllMails(messageEntities, lastMessageUpdateTime);
+                                break;
+                            case MainFolderNames.SENT:
+                                localEntities = messagesRepository.updateFolder(folder, messageEntities, lastMessageUpdateTime);
+                                break;
+                            default:
+                                localEntities = messagesRepository.updateFolder(folder, messageEntities, lastMessageUpdateTime);
+                                break;
                         }
+                        messageProviders = MessageProvider
+                                .fromMessageEntities(localEntities, false, false);
 
+                        loaded[0] = true;
+                        Timber.i("Loaded from Network: %s", System.currentTimeMillis() % 10000);
                         messagesResponse.postValue(new ResponseMessagesData(messageProviders,
                                 offset, folder));
                         responseStatus.postValue(ResponseStatus.RESPONSE_NEXT_MESSAGES);

@@ -18,20 +18,26 @@ public interface MessageDao {
     @Query("SELECT * FROM messages")
     List<MessageEntity> getAll();
 
-    @Query("SELECT * FROM messages WHERE requestFolder=:folderName ORDER BY updatedAt DESC")
-    List<MessageEntity> getAllByFolder(String folderName);
+    @Query("SELECT * FROM messages WHERE folderName=:folderName AND parent IS NULL ORDER BY updatedAt DESC LIMIT :limit OFFSET :offset")
+    List<MessageEntity> getAllByFolder(String folderName, int limit, int offset);
 
-    @Query("SELECT * FROM messages WHERE isStarred=1 ORDER BY updatedAt DESC")
-    List<MessageEntity> getAllStarred();
+    @Query("SELECT * FROM messages WHERE folderName=:folderName AND parent IS NULL ORDER BY createdAt DESC LIMIT :limit OFFSET :offset")
+    List<MessageEntity> getAllByFolderAndCreatedAt(String folderName, int limit, int offset);
 
-    @Query("SELECT * FROM messages WHERE isRead=0 AND folderName<>'spam' ORDER BY updatedAt DESC")
-    List<MessageEntity> getAllUnread();
+    @Query("SELECT * FROM messages WHERE (folderName='sent' OR send=1) AND parent IS NULL ORDER BY updatedAt DESC LIMIT :limit OFFSET :offset")//  CASE WHEN updatedAt >= createdAt THEN updatedAt WHEN updatedAt < createdAt THEN createdAt END
+    List<MessageEntity> getSent(int limit, int offset);
 
-    @Query("SELECT * FROM messages WHERE folderName<>'spam' AND folderName<>'trash' ORDER BY updatedAt DESC")
-    List<MessageEntity> getAllMails();
+    @Query("SELECT * FROM messages WHERE (folderName='inbox') AND parent IS NULL ORDER BY updatedAt DESC LIMIT :limit OFFSET :offset")//  CASE WHEN updatedAt >= createdAt THEN updatedAt WHEN updatedAt < createdAt THEN createdAt END
+    List<MessageEntity> getInbox(int limit, int offset);
 
-    @Query("SELECT * FROM messages WHERE folderName<>'spam' AND folderName<>'trash' ORDER BY updatedAt DESC LIMIT :limit OFFSET :offset")
-    List<MessageEntity> getAllEmails(int offset, int limit);
+    @Query("SELECT * FROM messages WHERE isStarred=1 ORDER BY createdAt DESC LIMIT :limit OFFSET :offset")
+    List<MessageEntity> getAllStarred(int limit, int offset);
+
+    @Query("SELECT * FROM messages WHERE isRead=0 AND folderName<>'spam' AND parent IS NULL ORDER BY updatedAt DESC LIMIT :limit OFFSET :offset")
+    List<MessageEntity> getAllUnread(int limit, int offset);
+
+    @Query("SELECT * FROM messages WHERE folderName<>'spam' AND folderName<>'trash' AND parent IS NULL ORDER BY updatedAt DESC LIMIT :limit OFFSET :offset")
+    List<MessageEntity> getAllMails(int limit, int offset);
 
     @Insert(onConflict = REPLACE)
     void save(MessageEntity messageEntity);
@@ -48,8 +54,20 @@ public interface MessageDao {
     @Delete
     void delete(List<MessageEntity> messages);
 
-    @Query("DELETE FROM messages WHERE updatedAt > :from AND updatedAt < :to AND folderName<>'spam' AND folderName<>'trash'")
+    @Query("DELETE FROM messages WHERE updatedAt > :from AND updatedAt < :to AND folderName<>'spam' AND folderName<>'trash' AND parent IS NULL")
     int deleteAllEmailsInPeriod(Date from, Date to);
+
+    @Query("DELETE FROM messages WHERE updatedAt > :from AND updatedAt < :to AND folderName=:folder AND parent IS NULL")
+    int deleteByFolderInPeriod(String folder, Date from, Date to);
+
+    @Query("DELETE FROM messages WHERE createdAt > :from AND createdAt < :to AND folderName=:folder AND parent IS NULL")
+    int deleteByFolderInPeriodByCreatedAt(String folder, Date from, Date to);
+
+    @Query("UPDATE messages SET isRead=1 WHERE updatedAt > :from AND updatedAt < :to AND isRead=0 AND folderName<>'spam' AND parent IS NULL")
+    int markUnreadAsReadInPeriod(Date from, Date to);
+
+    @Query("UPDATE messages SET isStarred=0 WHERE createdAt > :from AND createdAt < :to AND isStarred=1 AND parent IS NULL")
+    int markStarredAsUnstarredInPeriod(Date from, Date to);
 
     @Query("DELETE FROM messages")
     void deleteAll();
@@ -63,7 +81,7 @@ public interface MessageDao {
     @Query("UPDATE messages SET isRead=:isRead WHERE id=:id")
     void updateIsRead(long id, boolean isRead);
 
-    @Query("DELETE FROM messages WHERE requestFolder=:folderName")
+    @Query("DELETE FROM messages WHERE folderName=:folderName")
     void deleteAllByFolder(String folderName);
 
     @Query("DELETE FROM messages WHERE isStarred=1")
@@ -84,6 +102,6 @@ public interface MessageDao {
     @Query("SELECT * FROM messages WHERE parent=:id")
     List<MessageEntity> getByParentId(String id);
 
-    @Query("UPDATE messages SET requestFolder=folderName=:newFolderName WHERE id=:messageId")
+    @Query("UPDATE messages SET folderName=:newFolderName WHERE id=:messageId")
     void updateFolderName(long messageId, String newFolderName);
 }

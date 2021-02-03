@@ -388,6 +388,6 @@ public class MessageEntity {
     }
 
     public boolean hasUpdate(MessageEntity entity) {
-        return !entity.getUpdatedAt().equals(updatedAt) || entity.isStarred != isStarred;
+        return updatedAt.before(entity.updatedAt) || entity.isStarred != isStarred || entity.isRead != isRead || entity.childrenCount != childrenCount;
     }
 }

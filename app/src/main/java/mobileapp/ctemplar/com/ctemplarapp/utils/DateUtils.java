@@ -36,7 +36,7 @@ public class DateUtils {
             .create();
 
     @NonNull
-    public static String messageDate(@Nullable Date date, Resources resources) {
+    public static String displayMessageDate(@Nullable Date date, Resources resources) {
         if (date == null) {
             return "";
         }

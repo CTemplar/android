@@ -169,7 +169,7 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesView
         }
 
         Date messageDate = DateUtils.getDeliveryDate(message);
-        holder.txtDate.setText(DateUtils.messageDate(messageDate, resources));
+        holder.txtDate.setText(DateUtils.displayMessageDate(messageDate, resources));
 
         holder.imgStarredLayout.setOnClickListener(v -> {
             boolean isStarred = !message.isStarred();

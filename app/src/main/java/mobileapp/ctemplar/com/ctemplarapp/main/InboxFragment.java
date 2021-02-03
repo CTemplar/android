@@ -362,7 +362,6 @@ public class InboxFragment extends BaseFragment
         if (isSearch) {
             mainModel.searchMessages(filterText, REQUEST_MESSAGES_COUNT, currentOffset);
         } else {
-            // TODO
             Date lastMessageUpdateTime;
             MessageProvider messageProvider = adapter.getLast();
             if (currentOffset == 0 || messageProvider == null) {
