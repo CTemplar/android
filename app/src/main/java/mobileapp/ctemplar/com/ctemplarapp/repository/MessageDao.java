@@ -24,10 +24,10 @@ public interface MessageDao {
     @Query("SELECT * FROM messages WHERE folderName=:folderName AND parent IS NULL ORDER BY createdAt DESC LIMIT :limit OFFSET :offset")
     List<MessageEntity> getAllByFolderAndCreatedAt(String folderName, int limit, int offset);
 
-    @Query("SELECT * FROM messages WHERE (folderName='sent' OR send=1) AND parent IS NULL ORDER BY updatedAt DESC LIMIT :limit OFFSET :offset")//  CASE WHEN updatedAt >= createdAt THEN updatedAt WHEN updatedAt < createdAt THEN createdAt END
+    @Query("SELECT * FROM messages WHERE (folderName='sent' OR send=1 OR hasSentChild=1) AND parent IS NULL ORDER BY updatedAt DESC LIMIT :limit OFFSET :offset")//  CASE WHEN updatedAt >= createdAt THEN updatedAt WHEN updatedAt < createdAt THEN createdAt END
     List<MessageEntity> getSent(int limit, int offset);
 
-    @Query("SELECT * FROM messages WHERE (folderName='inbox') AND parent IS NULL ORDER BY updatedAt DESC LIMIT :limit OFFSET :offset")//  CASE WHEN updatedAt >= createdAt THEN updatedAt WHEN updatedAt < createdAt THEN createdAt END
+    @Query("SELECT * FROM messages WHERE (folderName='inbox' OR hasInboxChild=1) AND parent IS NULL ORDER BY updatedAt DESC LIMIT :limit OFFSET :offset")//  CASE WHEN updatedAt >= createdAt THEN updatedAt WHEN updatedAt < createdAt THEN createdAt END
     List<MessageEntity> getInbox(int limit, int offset);
 
     @Query("SELECT * FROM messages WHERE isStarred=1 ORDER BY createdAt DESC LIMIT :limit OFFSET :offset")
@@ -104,4 +104,10 @@ public interface MessageDao {
 
     @Query("UPDATE messages SET folderName=:newFolderName WHERE id=:messageId")
     void updateFolderName(long messageId, String newFolderName);
+
+    @Query("UPDATE messages SET decryptedSubject=:decryptedSubject WHERE id=:messageId")
+    void updateDecryptedSubject(long messageId, String decryptedSubject);
+
+    @Query("UPDATE messages SET decryptedSubject=NULL")
+    void clearAllDecryptedMessages();
 }

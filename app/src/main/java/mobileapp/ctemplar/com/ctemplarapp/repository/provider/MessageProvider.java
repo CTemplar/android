@@ -56,11 +56,13 @@ public class MessageProvider {
     private String parent;
     private boolean isSubjectDecrypted;
 
+    private String decryptedSubject;
+
     public MessageProvider() {
 
     }
 
-    public MessageProvider(long id, String encryption, String sender, boolean hasAttachments, List<AttachmentProvider> attachments, Date createdAt, UserDisplayProvider senderDisplay, List<UserDisplayProvider> receiverDisplayList, List<UserDisplayProvider> ccDisplayList, List<UserDisplayProvider> bccDisplayList, boolean hasChildren, int childrenCount, String subject, String content, String[] receivers, String[] cc, String[] bcc, String folderName, Date updatedAt, Date destructDate, Date delayedDelivery, Long deadManDuration, boolean isRead, boolean send, boolean isStarred, Date sentAt, boolean isEncrypted, boolean isSubjectEncrypted, boolean isProtected, boolean isHtml, String hash, List<String> spamReason, String lastAction, String lastActionThread, long mailboxId, String parent, boolean isSubjectDecrypted) {
+    public MessageProvider(long id, String encryption, String sender, boolean hasAttachments, List<AttachmentProvider> attachments, Date createdAt, UserDisplayProvider senderDisplay, List<UserDisplayProvider> receiverDisplayList, List<UserDisplayProvider> ccDisplayList, List<UserDisplayProvider> bccDisplayList, boolean hasChildren, int childrenCount, String subject, String content, String[] receivers, String[] cc, String[] bcc, String folderName, Date updatedAt, Date destructDate, Date delayedDelivery, Long deadManDuration, boolean isRead, boolean send, boolean isStarred, Date sentAt, boolean isEncrypted, boolean isSubjectEncrypted, boolean isProtected, boolean isHtml, String hash, List<String> spamReason, String lastAction, String lastActionThread, long mailboxId, String parent, boolean isSubjectDecrypted, String decryptedSubject) {
         this.id = id;
         this.encryption = encryption;
         this.sender = sender;
@@ -98,6 +100,8 @@ public class MessageProvider {
         this.mailboxId = mailboxId;
         this.parent = parent;
         this.isSubjectDecrypted = isSubjectDecrypted;
+
+        this.decryptedSubject = decryptedSubject;
     }
 
     public long getId() {
@@ -396,6 +400,14 @@ public class MessageProvider {
         isSubjectDecrypted = subjectDecrypted;
     }
 
+    public String getDecryptedSubject() {
+        return decryptedSubject;
+    }
+
+    public void setDecryptedSubject(String decryptedSubject) {
+        this.decryptedSubject = decryptedSubject;
+    }
+
     private static AttachmentProvider convertFromResponseMessageAttachmentToAttachmentProvider(MessageAttachment messageAttachment) {
         AttachmentProvider attachmentProvider = new AttachmentProvider();
         attachmentProvider.setId(messageAttachment.getId());
@@ -517,8 +529,15 @@ public class MessageProvider {
         result.bccDisplayList = convertUserDisplayListFromEntityToProvider(message.getBccDisplayList());
         result.hasChildren = message.isHasChildren();
         result.childrenCount = message.getChildrenCount();
-        result.subject = EncryptUtils.decryptSubject(message.getSubject(), message.getMailboxId(),
-                message.isSubjectEncrypted() && decryptSubject);
+        if (!decryptSubject) {
+            result.subject = message.getSubject();
+        } else if (!message.isSubjectEncrypted()) {
+            result.subject = message.getSubject();
+        } else if (message.getDecryptedSubject() != null) {
+            result.subject = message.getDecryptedSubject();
+        } else {
+            result.subject = EncryptUtils.decryptSubject(message.getSubject(), message.getMailboxId());
+        }
         result.content = EncryptUtils.decryptContent(message.getContent(), message.getMailboxId(),
                 decryptContent);
         result.receivers = listToArray(message.getReceivers());
@@ -543,6 +562,8 @@ public class MessageProvider {
         result.lastActionThread = message.getLastActionThread();
         result.mailboxId = message.getMailboxId();
         result.parent = message.getParent();
+
+        result.decryptedSubject = message.getDecryptedSubject();
 
         return result;
     }
@@ -619,7 +640,7 @@ public class MessageProvider {
         result.setCc(arrayToList(message.getCc()));
         result.setBcc(arrayToList(message.getBcc()));
         result.setFolderName(message.getFolderName());
-        result.setUpdatedAt(message.getUpdatedAt());
+        result.setUpdatedAt(message.getUpdatedAt().after(message.getCreatedAt()) ? message.getUpdatedAt() : message.getCreatedAt());
         result.setDestructDate(message.getDestructDate());
         result.setDelayedDelivery(message.getDelayedDelivery());
         result.setDeadManDuration(message.getDeadManDuration());
@@ -638,10 +659,15 @@ public class MessageProvider {
         result.setMailboxId(message.getMailboxId());
         result.setParent(message.getParent());
 
-        if (!(MainFolderNames.STARRED.equals(requestFolder)
-                || MainFolderNames.UNREAD.equals(requestFolder)
-                || MainFolderNames.ALL_MAILS.equals(requestFolder))) {
-            result.setRequestFolder(requestFolder);
+        if (MainFolderNames.SENT.equals(requestFolder)) {
+            if (!message.isSend() && message.getChildrenCount() > 0) {
+                result.setHasSentChild(true);
+            }
+        }
+        if (MainFolderNames.INBOX.equals(requestFolder)) {
+            if (message.isSend() && message.getChildrenCount() > 0) {
+                result.setHasInboxChild(true);
+            }
         }
 
         return result;

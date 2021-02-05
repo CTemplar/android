@@ -93,11 +93,11 @@ public class DateUtils {
     }
 
     @Nullable
-    public static Date getDeliveryDate(@Nullable MessageProvider messageProvider) {
-        if (messageProvider == null) {
+    public static Date getDeliveryDate(@Nullable MessageProvider message) {
+        if (message == null) {
             return null;
         }
-        return messageProvider.isSend() ? messageProvider.getSentAt() : messageProvider.getCreatedAt();
+        return message.getUpdatedAt().after(message.getCreatedAt()) ? message.getUpdatedAt() : message.getCreatedAt();
     }
 
     @Nullable

@@ -36,6 +36,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Executor;
@@ -82,7 +83,6 @@ public class InboxFragment extends BaseFragment
     private FilterDialogFragment dialogFragment;
     private SearchView searchView;
     private String currentFolder;
-    private QueuedExecutor executor;
     private Executor mainThreadExecutor;
 
     private boolean filterIsStarred;
@@ -168,7 +168,6 @@ public class InboxFragment extends BaseFragment
         if (activity == null) {
             return;
         }
-        executor = new QueuedExecutor();
         mainThreadExecutor = new HandlerExecutor(Looper.getMainLooper());
         mainModel = new ViewModelProvider(activity).get(MainActivityViewModel.class);
         currentFolder = mainModel.getCurrentFolder().getValue();
@@ -610,15 +609,7 @@ public class InboxFragment extends BaseFragment
     }
 
     private void decryptSubject(MessageProvider message) {
-        if (!message.isSubjectEncrypted()) {
-            return;
-        }
-        executor.execute(() -> {
-            message.setSubject(EncryptUtils.decryptSubject(message.getSubject(),
-                    message.getMailboxId(), true));
-            message.setSubjectDecrypted(true);
-            mainThreadExecutor.execute(() -> adapter.onItemUpdated(message));
-        });
+        decryptSubjects(Collections.singletonList(message));
     }
 
     private void applyFiltersToMessages() {

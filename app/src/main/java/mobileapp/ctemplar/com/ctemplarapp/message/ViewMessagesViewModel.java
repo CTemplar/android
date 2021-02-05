@@ -125,11 +125,8 @@ public class ViewMessagesViewModel extends ViewModel {
                             return;
                         }
                         MessagesResult parentMessageResult = messagesResults.get(0);
-                        MessageEntity parentLocalMessage = messagesRepository.getLocalMessage(id);
-                        String requestFolder = parentLocalMessage != null
-                                ? parentLocalMessage.getRequestFolder() : "";
                         MessageEntity parentEntity = MessageProvider
-                                .fromMessagesResultToEntity(parentMessageResult, requestFolder);
+                                .fromMessagesResultToEntity(parentMessageResult, null);
                         MessageProvider parentMessage = MessageProvider
                                 .fromMessageEntity(parentEntity, true, true);
 
@@ -140,7 +137,7 @@ public class ViewMessagesViewModel extends ViewModel {
                                 .fromMessageEntities(childrenEntities, true, false);
 
                         messagesRepository.deleteMessagesByParentId(parentEntity.getId());
-                        messagesRepository.addMessageToDatabase(parentEntity);
+//                        messagesRepository.addMessageToDatabase(parentEntity);
                         messagesRepository.saveAllMessages(childrenEntities);
 
                         List<MessageProvider> resultList = new ArrayList<>(1 + childrenResult.length);

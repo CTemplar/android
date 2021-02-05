@@ -5,8 +5,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
@@ -20,6 +18,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 import io.reactivex.Observable;
 import io.reactivex.Observer;
@@ -34,6 +34,8 @@ import mobileapp.ctemplar.com.ctemplarapp.executor.QueuedExecutor;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.EmptyFolderRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SignInRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.ResponseMessagesData;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.SignInResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.folders.FoldersResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.mailboxes.MailboxesResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.EmptyFolderResponse;
@@ -42,8 +44,6 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.MessagesResult;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.MyselfResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.MyselfResult;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.SettingsResponse;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.ResponseMessagesData;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.SignInResponse;
 import mobileapp.ctemplar.com.ctemplarapp.repository.ManageFoldersRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.MessagesRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
@@ -92,6 +92,9 @@ public class MainActivityViewModel extends AndroidViewModel {
             if (!message.isSubjectEncrypted()) {
                 continue;
             }
+            if (message.getDecryptedSubject() != null) {
+                continue;
+            }
             String cached = messageCacheProvider.getMessageDecryptedSubject(message);
             if (cached != null) {
                 message.setSubject(cached);
@@ -104,13 +107,18 @@ public class MainActivityViewModel extends AndroidViewModel {
             return;
         }
         executor.execute(() -> {
+            boolean keepDecryptedSubjects = true;
             for (MessageProvider message : messagesToDecrypt) {
                 String decrypted = EncryptUtils.decryptSubject(message.getSubject(),
-                        message.getMailboxId(), true);
+                        message.getMailboxId());
                 message.setSubject(decrypted);
                 message.setSubjectDecrypted(true);
                 messageCacheProvider.setMessageDecryptedSubject(message);
                 callback.onDecryptFinished(message);
+                if (keepDecryptedSubjects) {
+                    message.setDecryptedSubject(decrypted);
+                    messagesRepository.updateDecryptedSubject(message.getId(), decrypted);
+                }
             }
         });
     }
@@ -304,49 +312,6 @@ public class MainActivityViewModel extends AndroidViewModel {
         if (TextUtils.isEmpty(folder)) {
             return;
         }
-        if (noConnection()) {
-            List<MessageEntity> localMessageEntities;
-            switch (folder) {
-                case MainFolderNames.STARRED:
-                    localMessageEntities = messagesRepository.getStarredMessages(limit, offset);
-                    break;
-                case MainFolderNames.ALL_MAILS:
-                    localMessageEntities = messagesRepository.getAllMailsMessages(limit, offset);
-                    break;
-                case MainFolderNames.UNREAD:
-                    localMessageEntities = messagesRepository.getUnreadMessages(limit, offset);
-                    break;
-                default:
-                    localMessageEntities = messagesRepository.getMessagesByFolder(folder, limit, offset);
-                    break;
-            }
-            Single.fromCallable(() -> MessageProvider.fromMessageEntities(localMessageEntities,
-                    false, false))
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(Schedulers.computation())
-                    .subscribe(new SingleObserver<List<MessageProvider>>() {
-                        @Override
-                        public void onSubscribe(@io.reactivex.annotations.NonNull Disposable d) {
-
-                        }
-
-                        @Override
-                        public void onSuccess(@io.reactivex.annotations.NonNull List<MessageProvider> messageProviders) {
-                            if (offset == 0) {
-                                ResponseMessagesData localMessagesData = new ResponseMessagesData(
-                                        messageProviders, offset, folder);
-                                if (localMessagesData.messages.size() > 0) {
-                                    messagesResponse.postValue(localMessagesData);
-                                }
-                            }
-                        }
-
-                        @Override
-                        public void onError(@io.reactivex.annotations.NonNull Throwable e) {
-                            Timber.e(e);
-                        }
-                    });
-        }
 
         boolean[] loaded = new boolean[]{false};
         Single.fromCallable(() -> {
@@ -461,15 +426,6 @@ public class MainActivityViewModel extends AndroidViewModel {
 
                     }
                 });
-    }
-
-    private boolean noConnection() {
-        ConnectivityManager connectivityManager =
-                (ConnectivityManager) getApplication().getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-        return networkInfo == null || !networkInfo.isConnected() ||
-                (networkInfo.getType() != ConnectivityManager.TYPE_WIFI
-                        && networkInfo.getType() != ConnectivityManager.TYPE_MOBILE);
     }
 
     public void searchMessages(String query, int limit, int offset) {

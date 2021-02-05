@@ -1,5 +1,6 @@
 package mobileapp.ctemplar.com.ctemplarapp.repository.entity;
 
+import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
@@ -27,7 +28,6 @@ public class MessageEntity {
     private List<String> cc;
     private List<String> bcc;
     private String folderName;
-    private String requestFolder;
     private Date updatedAt;
     private Date destructDate;
     private Date delayedDelivery;
@@ -47,11 +47,19 @@ public class MessageEntity {
     private long mailboxId;
     private String parent;
 
+    private String decryptedSubject;
+
+    @ColumnInfo(defaultValue = "0")
+    private boolean hasSentChild;
+
+    @ColumnInfo(defaultValue = "0")
+    private boolean hasInboxChild;
+
     public MessageEntity() {
 
     }
 
-    public MessageEntity(long id, String encryption, String sender, boolean hasAttachments, List<AttachmentEntity> attachments, Date createdAt, UserDisplayEntity senderDisplay, List<UserDisplayEntity> receiverDisplayList, List<UserDisplayEntity> ccDisplayList, List<UserDisplayEntity> bccDisplayList, boolean hasChildren, int childrenCount, String subject, String content, List<String> receivers, List<String> cc, List<String> bcc, String folderName, String requestFolder, Date updatedAt, Date destructDate, Date delayedDelivery, Long deadManDuration, boolean isRead, boolean send, boolean isStarred, Date sentAt, boolean isEncrypted, boolean isSubjectEncrypted, boolean isProtected, boolean isHtml, String hash, List<String> spamReason, String lastAction, String lastActionThread, long mailboxId, String parent) {
+    public MessageEntity(long id, String encryption, String sender, boolean hasAttachments, List<AttachmentEntity> attachments, Date createdAt, UserDisplayEntity senderDisplay, List<UserDisplayEntity> receiverDisplayList, List<UserDisplayEntity> ccDisplayList, List<UserDisplayEntity> bccDisplayList, boolean hasChildren, int childrenCount, String subject, String content, List<String> receivers, List<String> cc, List<String> bcc, String folderName, Date updatedAt, Date destructDate, Date delayedDelivery, Long deadManDuration, boolean isRead, boolean send, boolean isStarred, Date sentAt, boolean isEncrypted, boolean isSubjectEncrypted, boolean isProtected, boolean isHtml, String hash, List<String> spamReason, String lastAction, String lastActionThread, long mailboxId, String parent, String decryptedSubject, boolean hasSentChild, boolean hasInboxChild) {
         this.id = id;
         this.encryption = encryption;
         this.sender = sender;
@@ -70,7 +78,6 @@ public class MessageEntity {
         this.cc = cc;
         this.bcc = bcc;
         this.folderName = folderName;
-        this.requestFolder = requestFolder;
         this.updatedAt = updatedAt;
         this.destructDate = destructDate;
         this.delayedDelivery = delayedDelivery;
@@ -89,6 +96,10 @@ public class MessageEntity {
         this.lastActionThread = lastActionThread;
         this.mailboxId = mailboxId;
         this.parent = parent;
+
+        this.decryptedSubject = decryptedSubject;
+        this.hasSentChild = hasSentChild;
+        this.hasInboxChild = hasInboxChild;
     }
 
     public long getId() {
@@ -235,14 +246,6 @@ public class MessageEntity {
         this.folderName = folderName;
     }
 
-    public String getRequestFolder() {
-        return requestFolder;
-    }
-
-    public void setRequestFolder(String requestFolder) {
-        this.requestFolder = requestFolder;
-    }
-
     public Date getUpdatedAt() {
         return updatedAt;
     }
@@ -387,7 +390,31 @@ public class MessageEntity {
         this.parent = parent;
     }
 
+    public String getDecryptedSubject() {
+        return decryptedSubject;
+    }
+
+    public void setDecryptedSubject(String decryptedSubject) {
+        this.decryptedSubject = decryptedSubject;
+    }
+
+    public boolean isHasSentChild() {
+        return hasSentChild;
+    }
+
+    public void setHasSentChild(boolean hasSentChild) {
+        this.hasSentChild = hasSentChild;
+    }
+
+    public boolean isHasInboxChild() {
+        return hasInboxChild;
+    }
+
+    public void setHasInboxChild(boolean hasInboxChild) {
+        this.hasInboxChild = hasInboxChild;
+    }
+
     public boolean hasUpdate(MessageEntity entity) {
-        return updatedAt.before(entity.updatedAt) || entity.isStarred != isStarred || entity.isRead != isRead || entity.childrenCount != childrenCount;
+        return updatedAt.before(entity.updatedAt) || entity.isStarred != isStarred || entity.isRead != isRead || entity.hasSentChild != hasSentChild || entity.childrenCount != childrenCount || entity.hasInboxChild != hasInboxChild;
     }
 }
