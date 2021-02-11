@@ -9,8 +9,11 @@ public interface UserStore {
     void clearToken();
     void logout();
 
-    void saveToken(String token);
-    String getToken();
+    void saveUserToken(String token);
+    String getUserToken();
+
+    void updateLastForceRefreshTokenAttemptTime();
+    long getLastForceRefreshTokenAttemptTime();
 
     void saveUsername(String username);
     String getUsername();

@@ -18,6 +18,8 @@ import com.ctemplar.app.fdroid.executor.QueuedExecutor;
 import com.ctemplar.app.fdroid.net.ResponseStatus;
 import com.ctemplar.app.fdroid.net.request.EmptyFolderRequest;
 import com.ctemplar.app.fdroid.net.request.SignInRequest;
+import com.ctemplar.app.fdroid.net.response.ResponseMessagesData;
+import com.ctemplar.app.fdroid.net.response.SignInResponse;
 import com.ctemplar.app.fdroid.net.response.folders.FoldersResponse;
 import com.ctemplar.app.fdroid.net.response.mailboxes.MailboxesResponse;
 import com.ctemplar.app.fdroid.net.response.messages.EmptyFolderResponse;
@@ -26,8 +28,6 @@ import com.ctemplar.app.fdroid.net.response.messages.MessagesResult;
 import com.ctemplar.app.fdroid.net.response.myself.MyselfResponse;
 import com.ctemplar.app.fdroid.net.response.myself.MyselfResult;
 import com.ctemplar.app.fdroid.net.response.myself.SettingsResponse;
-import com.ctemplar.app.fdroid.net.response.ResponseMessagesData;
-import com.ctemplar.app.fdroid.net.response.SignInResponse;
 import com.ctemplar.app.fdroid.repository.ManageFoldersRepository;
 import com.ctemplar.app.fdroid.repository.MessagesRepository;
 import com.ctemplar.app.fdroid.repository.UserRepository;
@@ -40,6 +40,7 @@ import com.ctemplar.app.fdroid.services.NotificationServiceListener;
 import com.ctemplar.app.fdroid.utils.EncodeUtils;
 import com.ctemplar.app.fdroid.utils.EncryptUtils;
 import com.ctemplar.app.fdroid.utils.ThemeUtils;
+import com.ctemplar.app.fdroid.workers.WorkersHelper;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -239,6 +240,7 @@ public class MainActivityViewModel extends AndroidViewModel {
 
     public void clearUserData() {
         userRepository.clearData();
+        WorkersHelper.cancelAllWork(getApplication());
         actions.postValue(MainActivityActions.ACTION_LOGOUT);
     }
 

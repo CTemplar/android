@@ -20,6 +20,7 @@ public class UserStoreImpl implements UserStore {
 
     private static final String PREF_USER = "pref_user";
     private static final String KEY_USER_TOKEN = "key_user_token";
+    private static final String KEY_USER_LAST_FORCE_REFRESH_TOKEN_TIME = "key_user_last_force_refresh_token_attempt_time";
     private static final String KEY_USERNAME = "key_username";
     private static final String KEY_PASSWORD = "key_password";
     private static final String KEY_PASSWORD_HASHED = "key_password_hashed";
@@ -53,13 +54,23 @@ public class UserStoreImpl implements UserStore {
     }
 
     @Override
-    public void saveToken(String token) {
+    public void saveUserToken(String token) {
         preferences.edit().putString(KEY_USER_TOKEN, token).apply();
     }
 
     @Override
-    public String getToken() {
+    public String getUserToken() {
         return preferences.getString(KEY_USER_TOKEN, "");
+    }
+
+    @Override
+    public void updateLastForceRefreshTokenAttemptTime() {
+        preferences.edit().putLong(KEY_USER_LAST_FORCE_REFRESH_TOKEN_TIME, System.currentTimeMillis()).apply();
+    }
+
+    @Override
+    public long getLastForceRefreshTokenAttemptTime() {
+        return preferences.getLong(KEY_USER_LAST_FORCE_REFRESH_TOKEN_TIME, 0);
     }
 
     @Override
