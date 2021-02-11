@@ -24,6 +24,10 @@ public class SplashActivityModel extends ViewModel {
         userRepository = CTemplarApp.getUserRepository();
     }
 
+    public boolean isAuthorized() {
+        return userRepository.isAuthorized();
+    }
+
     public String getUserToken() {
         return userRepository.getUserToken();
     }
