@@ -33,10 +33,13 @@ import com.ctemplar.app.fdroid.net.response.AddAppTokenResponse;
 import com.ctemplar.app.fdroid.net.response.CaptchaResponse;
 import com.ctemplar.app.fdroid.net.response.CaptchaVerifyResponse;
 import com.ctemplar.app.fdroid.net.response.CheckUsernameResponse;
+import com.ctemplar.app.fdroid.net.response.KeyResponse;
+import com.ctemplar.app.fdroid.net.response.RecoverPasswordResponse;
+import com.ctemplar.app.fdroid.net.response.SignInResponse;
+import com.ctemplar.app.fdroid.net.response.SignUpResponse;
 import com.ctemplar.app.fdroid.net.response.domains.DomainsResponse;
 import com.ctemplar.app.fdroid.net.response.filters.FilterResult;
 import com.ctemplar.app.fdroid.net.response.filters.FiltersResponse;
-import com.ctemplar.app.fdroid.net.response.KeyResponse;
 import com.ctemplar.app.fdroid.net.response.mailboxes.MailboxesResponse;
 import com.ctemplar.app.fdroid.net.response.mailboxes.MailboxesResult;
 import com.ctemplar.app.fdroid.net.response.messages.EmptyFolderResponse;
@@ -47,12 +50,10 @@ import com.ctemplar.app.fdroid.net.response.myself.BlackListContact;
 import com.ctemplar.app.fdroid.net.response.myself.MyselfResponse;
 import com.ctemplar.app.fdroid.net.response.myself.SettingsResponse;
 import com.ctemplar.app.fdroid.net.response.myself.WhiteListContact;
-import com.ctemplar.app.fdroid.net.response.RecoverPasswordResponse;
-import com.ctemplar.app.fdroid.net.response.SignInResponse;
-import com.ctemplar.app.fdroid.net.response.SignUpResponse;
 import com.ctemplar.app.fdroid.net.response.whiteBlackList.BlackListResponse;
 import com.ctemplar.app.fdroid.net.response.whiteBlackList.WhiteListResponse;
 import com.ctemplar.app.fdroid.repository.entity.MailboxEntity;
+import com.ctemplar.app.fdroid.utils.EditTextUtils;
 
 import java.util.List;
 
@@ -84,6 +85,10 @@ public class UserRepository {
         userStore = CTemplarApp.getUserStore();
     }
 
+    public RestService getRestService() {
+        return service;
+    }
+
     public UserStore getUserStore() {
         return userStore;
     }
@@ -93,11 +98,15 @@ public class UserRepository {
     }
 
     public void saveUserToken(String token) {
-        userStore.saveToken(token);
+        userStore.saveUserToken(token);
     }
 
     public String getUserToken() {
-        return userStore.getToken();
+        return userStore.getUserToken();
+    }
+
+    public boolean isAuthorized() {
+        return EditTextUtils.isNotEmpty(userStore.getUserToken());
     }
 
     public void saveUserPassword(String password) {

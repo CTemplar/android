@@ -2,6 +2,7 @@ package com.ctemplar.app.fdroid.net.socket;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.text.TextUtils;
 
 import com.ctemplar.app.fdroid.BuildConfig;
 import com.ctemplar.app.fdroid.CTemplarApp;
@@ -12,6 +13,8 @@ import com.ctemplar.app.fdroid.repository.provider.MessageProvider;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.TimeUnit;
 
@@ -29,7 +32,7 @@ public class NotificationServiceWebSocket extends WebSocketListener {
     private OkHttpClient client;
     private NotificationServiceWebSocketCallback callback;
     private boolean safeShutDown;
-    private Handler handler;
+    private final Handler handler;
 
     private NotificationServiceWebSocket() {
         if (Looper.myLooper() != null) {
@@ -40,7 +43,7 @@ public class NotificationServiceWebSocket extends WebSocketListener {
     }
 
     @Override
-    public void onMessage(WebSocket webSocket, String text) {
+    public void onMessage(@NotNull WebSocket webSocket, @NotNull String text) {
         NotificationMessageResponse notificationMessageResponse;
         try {
             notificationMessageResponse = gson.fromJson(text, NotificationMessageResponse.class);
@@ -58,30 +61,27 @@ public class NotificationServiceWebSocket extends WebSocketListener {
     }
 
     @Override
-    public void onOpen(WebSocket webSocket, Response response) {
-        Timber.i("NotificationServiceWebSocket is started");
+    public void onOpen(@NotNull WebSocket webSocket, @NotNull Response response) {
+        Timber.i("is started");
     }
 
     @Override
-    public void onClosing(WebSocket webSocket, int code, String reason) {
-        Timber.i("NotificationServiceWebSocket is closed");
-        if (!safeShutDown) {
-            reconnect();
+    public void onClosing(@NotNull WebSocket webSocket, int code, @NotNull String reason) {
+        Timber.i("is closed");
+        if (safeShutDown) {
+            webSocket.close(1000, null);
+            return;
         }
-//        webSocket.close(1000, null);
+        reconnect();
     }
 
     @Override
-    public void onFailure(WebSocket webSocket, Throwable t, Response response) {
-        Timber.e(t, "NotificationServiceWebSocket failure");
+    public void onFailure(@NotNull WebSocket webSocket, @NotNull Throwable t, Response response) {
+        Timber.e(t, "failure");
         if (safeShutDown) {
             return;
         }
-        handler.postDelayed(() -> {
-            if (!safeShutDown) {
-                reconnect();
-            }
-        }, 30_000);
+        reconnect();
     }
 
     public void start(NotificationServiceWebSocketCallback callback) {
@@ -92,13 +92,20 @@ public class NotificationServiceWebSocket extends WebSocketListener {
     }
 
     private void reconnect() {
+        Timber.i("reconnect");
         if (client != null) {
             client.dispatcher().executorService().shutdown();
+            client = null;
         }
-        run();
+        handler.postDelayed(() -> {
+            if (!safeShutDown) {
+                run();
+            }
+        }, 30_000);
     }
 
     public void shutdown() {
+        Timber.i("shutdown");
         safeShutDown = true;
         if (client == null) {
             return;
@@ -109,15 +116,23 @@ public class NotificationServiceWebSocket extends WebSocketListener {
     }
 
     private void run() {
+        Timber.i("run");
+
+        String token = CTemplarApp.getUserRepository().getUserToken();
+        if (TextUtils.isEmpty(token)) {
+            Timber.e("User token is null");
+            return;
+        }
+
         client = new OkHttpClient.Builder()
                 .readTimeout(0,  TimeUnit.MILLISECONDS)
                 .build();
 
-        String token = CTemplarApp.getUserRepository().getUserToken();
         Request request = new Request.Builder()
                 .url(BuildConfig.BASE_SOCKET_URL + "connect/?token=" + token)
                 .addHeader("Origin", BuildConfig.ORIGIN)
                 .build();
+
         client.newWebSocket(request, this);
     }
 

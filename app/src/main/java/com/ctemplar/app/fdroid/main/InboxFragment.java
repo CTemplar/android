@@ -576,10 +576,10 @@ public class InboxFragment extends BaseFragment
             ++decryptionExecuteCounter;
             adapter.clear();
         }
+        decryptSubjects(messages);
         adapter.addMessages(messages);
         applyFiltersToMessages();
         showResultIfNotEmpty(false);
-        decryptSubjects(messages);
     }
 
     private void handleSearchMessagesList(ResponseMessagesData response) {
@@ -589,27 +589,19 @@ public class InboxFragment extends BaseFragment
             ++decryptionExecuteCounter;
             adapter.clear();
         }
+        decryptSubjects(messages);
         adapter.addMessages(messages);
         applyFiltersToMessages();
         showResultIfNotEmpty(true);
-        decryptSubjects(messages);
     }
 
     private void decryptSubjects(List<MessageProvider> messages) {
-        final int currentExecutor = decryptionExecuteCounter;
-        executor.execute(() -> {
-            for (MessageProvider message : messages) {
-                if (currentExecutor != decryptionExecuteCounter) {
-                    return;
-                }
-                if (!message.isSubjectEncrypted()) {
-                    continue;
-                }
-                message.setSubject(EncryptUtils.decryptSubject(message.getSubject(),
-                        message.getMailboxId(), true));
-                message.setSubjectDecrypted(true);
-                mainThreadExecutor.execute(() -> adapter.onItemUpdated(message));
-            }
+//        final int currentExecutor = decryptionExecuteCounter;
+        mainModel.decryptSubjects(messages, (message) -> {
+//            if (currentExecutor != decryptionExecuteCounter) {
+//                return;
+//            }
+            mainThreadExecutor.execute(() -> adapter.onItemUpdated(message));
         });
     }
 

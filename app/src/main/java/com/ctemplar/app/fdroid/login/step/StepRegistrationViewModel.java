@@ -1,10 +1,11 @@
 package com.ctemplar.app.fdroid.login.step;
 
+import android.app.Application;
+
+import androidx.annotation.NonNull;
+import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
-
-import com.google.gson.Gson;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -31,13 +32,14 @@ import com.ctemplar.app.fdroid.net.response.SignUpResponse;
 import com.ctemplar.app.fdroid.repository.UserRepository;
 import com.ctemplar.app.fdroid.utils.EditTextUtils;
 import com.ctemplar.app.fdroid.utils.EncodeUtils;
+import com.ctemplar.app.fdroid.workers.WorkersHelper;
 import retrofit2.HttpException;
 import retrofit2.Response;
 import timber.log.Timber;
 
 import static com.ctemplar.app.fdroid.utils.DateUtils.GENERAL_GSON;
 
-public class StepRegistrationViewModel extends ViewModel {
+public class StepRegistrationViewModel extends AndroidViewModel {
     private final UserRepository userRepository = CTemplarApp.getUserRepository();
 
     private final SignUpRequest signUpRequest = new SignUpRequest();
@@ -46,6 +48,10 @@ public class StepRegistrationViewModel extends ViewModel {
     private final MutableLiveData<String> responseError = new SingleLiveEvent<>();
     private final MutableLiveData<CaptchaResponse> captchaResponse = new MutableLiveData<>();
     private final MutableLiveData<CaptchaVerifyResponse> captchaVerifyResponse = new MutableLiveData<>();
+
+    public StepRegistrationViewModel(@NonNull Application application) {
+        super(application);
+    }
 
     public String getUsername() {
         return signUpRequest.getUsername();
@@ -167,6 +173,7 @@ public class StepRegistrationViewModel extends ViewModel {
                 userRepository.saveUserToken(signUpResponse.getToken());
                 userRepository.saveUserPassword(signUpRequest.getPassword());
                 responseStatus.postValue(ResponseStatus.RESPONSE_NEXT_STEP_EMAIL);
+                WorkersHelper.setupForceRefreshTokenWork(getApplication());
             }
 
             @Override

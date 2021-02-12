@@ -20,6 +20,9 @@ import com.ctemplar.app.fdroid.services.NotificationService;
 import com.ctemplar.app.fdroid.repository.UserRepository;
 import com.ctemplar.app.fdroid.utils.EditTextUtils;
 import com.ctemplar.app.fdroid.utils.EncodeUtils;
+import com.ctemplar.app.fdroid.workers.WorkersHelper;
+
+import org.jetbrains.annotations.NotNull;
 
 import io.reactivex.Observable;
 import io.reactivex.Observer;
@@ -30,13 +33,13 @@ import io.reactivex.schedulers.Schedulers;
 import retrofit2.HttpException;
 
 public class LoginActivityViewModel extends AndroidViewModel {
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
     private RecoverPasswordRequest recoverPasswordRequest;
 
-    private MutableLiveData<LoginActivityActions> actions = new SingleLiveEvent<>();
-    private MutableLiveData<DialogState> dialogState = new SingleLiveEvent<>();
-    private MutableLiveData<ResponseStatus> responseStatus = new MutableLiveData<>();
-    private MutableLiveData<ResponseStatus> addAppTokenStatus = new MutableLiveData<>();
+    private final MutableLiveData<LoginActivityActions> actions = new SingleLiveEvent<>();
+    private final MutableLiveData<DialogState> dialogState = new SingleLiveEvent<>();
+    private final MutableLiveData<ResponseStatus> responseStatus = new MutableLiveData<>();
+    private final MutableLiveData<ResponseStatus> addAppTokenStatus = new MutableLiveData<>();
 
     public LoginActivityViewModel(Application application) {
         super(application);
@@ -94,7 +97,7 @@ public class LoginActivityViewModel extends AndroidViewModel {
         userRepository.signIn(signInRequest)
                 .subscribe(new Observer<SignInResponse>() {
                     @Override
-                    public void onError(Throwable e) {
+                    public void onError(@NotNull Throwable e) {
                         if (e instanceof HttpException) {
                             HttpException exception = (HttpException) e;
                             if (exception.code() == 400) {
@@ -113,12 +116,12 @@ public class LoginActivityViewModel extends AndroidViewModel {
                     }
 
                     @Override
-                    public void onSubscribe(Disposable d) {
+                    public void onSubscribe(@NotNull Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(SignInResponse signInResponse) {
+                    public void onNext(@NotNull SignInResponse signInResponse) {
                         String token = signInResponse.getToken();
                         boolean is2FA = signInResponse.is2FAEnabled();
                         if (token == null && is2FA) {
@@ -127,6 +130,7 @@ public class LoginActivityViewModel extends AndroidViewModel {
                             userRepository.saveUserToken(signInResponse.getToken());
                             NotificationService.updateState(getApplication());
                             responseStatus.postValue(ResponseStatus.RESPONSE_NEXT);
+                            WorkersHelper.setupForceRefreshTokenWork(getApplication());
                         }
                     }
                 });
@@ -142,17 +146,17 @@ public class LoginActivityViewModel extends AndroidViewModel {
         userRepository.recoverPassword(new RecoverPasswordRequest(username, email))
                 .subscribe(new Observer<RecoverPasswordResponse>() {
                     @Override
-                    public void onSubscribe(Disposable d) {
+                    public void onSubscribe(@NotNull Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(RecoverPasswordResponse recoverPasswordResponse) {
+                    public void onNext(@NotNull RecoverPasswordResponse recoverPasswordResponse) {
                         responseStatus.postValue(ResponseStatus.RESPONSE_NEXT_RECOVER_PASSWORD);
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onError(@NotNull Throwable e) {
                         if (e instanceof HttpException) {
                             HttpException exception = (HttpException) e;
                             if (exception.code() == 400) {
@@ -195,18 +199,18 @@ public class LoginActivityViewModel extends AndroidViewModel {
                 }).subscribe(new Observer<RecoverPasswordResponse>() {
 
             @Override
-            public void onSubscribe(Disposable d) {
+            public void onSubscribe(@NotNull Disposable d) {
 
             }
 
             @Override
-            public void onNext(RecoverPasswordResponse recoverPasswordResponse) {
+            public void onNext(@NotNull RecoverPasswordResponse recoverPasswordResponse) {
                 userRepository.saveUserToken(recoverPasswordResponse.getToken());
                 responseStatus.postValue(ResponseStatus.RESPONSE_NEXT_NEW_PASSWORD);
             }
 
             @Override
-            public void onError(Throwable e) {
+            public void onError(@NotNull Throwable e) {
                 if (e instanceof HttpException) {
                     HttpException exception = (HttpException) e;
                     if (exception.code() == 400) {

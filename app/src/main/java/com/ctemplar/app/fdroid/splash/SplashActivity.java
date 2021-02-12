@@ -3,7 +3,6 @@ package com.ctemplar.app.fdroid.splash;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.text.TextUtils;
 
 import androidx.lifecycle.ViewModelProvider;
 
@@ -14,15 +13,15 @@ import com.ctemplar.app.fdroid.main.MainActivity;
 
 public class SplashActivity extends BaseActivity {
     private SplashActivityModel viewModel;
-    private Handler handler = new Handler();
+    private final Handler handler = new Handler();
 
-    private Runnable run = new Runnable() {
+    private final Runnable run = new Runnable() {
         @Override
         public void run() {
-            if (TextUtils.isEmpty(viewModel.getToken())) {
-                startSignInActivity();
-            } else {
+            if (viewModel.isAuthorized()) {
                 startMainActivity();
+            } else {
+                startSignInActivity();
             }
         }
     };

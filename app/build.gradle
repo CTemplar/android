@@ -6,8 +6,8 @@ android {
         applicationId "com.ctemplar.app.fdroid"
         minSdkVersion 16
         targetSdkVersion 29
-        versionCode 17
-        versionName "1.4.4"
+        versionCode 18
+        versionName "1.4.5"
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -48,6 +48,8 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'androidx.preference:preference:1.1.1'
     implementation 'androidx.webkit:webkit:1.4.0'
+    implementation "androidx.work:work-runtime:2.5.0"
+    implementation "androidx.work:work-rxjava2:2.5.0"
 
     implementation 'com.squareup.okhttp3:okhttp:3.12.12'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.12.12'

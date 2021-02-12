@@ -1,0 +1,3 @@
+* Compacting upper section on message compose for small devices
+* Improved movement between folders by storing already decrypted subjects in temp memory
+* Background session refresh to avoid false sign-outs

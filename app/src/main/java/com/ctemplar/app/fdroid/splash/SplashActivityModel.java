@@ -6,14 +6,17 @@ import com.ctemplar.app.fdroid.CTemplarApp;
 import com.ctemplar.app.fdroid.repository.UserRepository;
 
 public class SplashActivityModel extends ViewModel {
-
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     public SplashActivityModel() {
         userRepository = CTemplarApp.getUserRepository();
     }
 
-    public String getToken() {
+    public boolean isAuthorized() {
+        return userRepository.isAuthorized();
+    }
+
+    public String getUserToken() {
         return userRepository.getUserToken();
     }
 }

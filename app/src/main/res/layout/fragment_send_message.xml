@@ -22,8 +22,8 @@
             android:layout_marginStart="12dp"
             android:padding="4dp"
             android:src="@drawable/icon_back"
-            android:tint="?android:textColorSecondary"
             android:background="@drawable/state_pressed_ripple"
+            app:tint="?android:textColorSecondary"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -49,14 +49,14 @@
             android:layout_height="wrap_content"
             android:padding="4dp"
             android:src="@drawable/icon_message_send"
-            android:tint="?android:textColorSecondary"
             android:background="@drawable/state_pressed_ripple"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
             android:layout_marginRight="12dp"
             android:layout_marginEnd="12dp"
-            android:contentDescription="Send message" />
+            android:contentDescription="Send message"
+            app:tint="?android:textColorSecondary"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -69,428 +69,434 @@
         app:layout_constraintLeft_toLeftOf="@+id/fragment_send_message_title_bar"
         app:layout_constraintRight_toRightOf="@+id/fragment_send_message_title_bar" />
 
-    <RelativeLayout
-        android:id="@+id/fragment_send_message_from_input_layout"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:textColorHint="?android:textColorSecondary"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/spacerFieldFrom"
-        android:minHeight="44dp">
-
-        <TextView android:id="@+id/fragment_send_message_from_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/txt_from"
-            android:textSize="14sp"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="15dp"
-            android:layout_marginStart="15dp" />
-
-        <Spinner
-            android:id="@+id/fragment_send_message_from_input_spinner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/lato_regular"
-            tools:listitem="@layout/fragment_send_message_spinner"
-            android:layout_toRightOf="@id/fragment_send_message_from_text"
-            android:layout_toEndOf="@id/fragment_send_message_from_text"
-            android:inputType="textEmailAddress"
-            android:letterSpacing="0.05"
-            android:background="@drawable/spinner_background"
-            android:textColor="?android:textColorSecondary"
-            android:textSize="14sp"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="16dp"
-            android:layout_marginEnd="16dp" />
-
-    </RelativeLayout>
-
-    <View
-        android:id="@+id/spacerFieldTo"
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:background="@color/colorDivider"
-        app:layout_constraintTop_toBottomOf="@+id/fragment_send_message_from_input_layout"
-        app:layout_constraintLeft_toLeftOf="@+id/fragment_send_message_from_input_layout"
-        app:layout_constraintRight_toRightOf="@+id/fragment_send_message_from_input_layout" />
-
-    <RelativeLayout
-        android:id="@+id/fragment_send_message_to_input_layout"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:textColorHint="?android:textColorSecondary"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/spacerFieldTo"
-        android:minHeight="44dp">
-
-        <TextView android:id="@+id/fragment_send_message_to_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/txt_to"
-            android:textSize="14sp"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="15dp"
-            android:layout_marginStart="15dp" />
-
-        <androidx.appcompat.widget.AppCompatMultiAutoCompleteTextView
-            android:id="@+id/fragment_send_message_to_input"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="15dp"
-            android:fontFamily="@font/lato_regular"
-            android:completionThreshold="1"
-            android:layout_toRightOf="@id/fragment_send_message_to_text"
-            android:layout_toEndOf="@id/fragment_send_message_to_text"
-            android:inputType="textEmailAddress"
-            android:letterSpacing="0.05"
-            android:background="@android:color/transparent"
-            android:textColor="?android:textColorSecondary"
-            android:textSize="14sp"
-            android:layout_centerVertical="true"
-            android:imeOptions="actionNext"
-            android:nextFocusForward="@id/fragment_send_message_subject_input"
-            android:layout_toLeftOf="@id/fragment_send_message_to_add_button"
-            android:layout_toStartOf="@id/fragment_send_message_to_add_button" />
-
-        <ImageView
-            android:id="@+id/fragment_send_message_to_add_button"
-            android:layout_width="44dp"
-            android:layout_height="44dp"
-            android:layout_marginEnd="5dp"
-            android:layout_marginRight="5dp"
-            android:src="@drawable/ic_add_active"
-            android:tint="?android:textColorSecondary"
-            android:clickable="true"
-            android:focusable="true"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true" />
-
-    </RelativeLayout>
-
-    <View
-        android:id="@+id/spacerFieldCc"
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:background="@color/colorDivider"
-        app:layout_constraintTop_toBottomOf="@+id/fragment_send_message_to_input_layout"
-        app:layout_constraintLeft_toLeftOf="@+id/fragment_send_message_to_input_layout"
-        app:layout_constraintRight_toRightOf="@+id/fragment_send_message_to_input_layout" />
-
-    <RelativeLayout
-        android:id="@+id/fragment_send_message_cc_layout"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:textColorHint="?android:textColorSecondary"
-        android:layout_marginTop="-1dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/spacerFieldCc"
-        android:minHeight="44dp"
-        android:visibility="gone">
-
-        <TextView android:id="@+id/fragment_send_message_cc_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/txt_cc"
-            android:textSize="14sp"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="15dp"
-            android:layout_marginStart="15dp" />
-
-        <androidx.appcompat.widget.AppCompatMultiAutoCompleteTextView
-            android:id="@+id/fragment_send_message_cc_input"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/lato_regular"
-            android:completionThreshold="1"
-            android:inputType="textEmailAddress"
-            android:letterSpacing="0.05"
-            android:background="@android:color/transparent"
-            android:textColor="?android:textColorSecondary"
-            android:textSize="14sp"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="15dp"
-            android:imeOptions="actionNext"
-            android:nextFocusForward="@id/fragment_send_message_bcc_input"
-            android:layout_toRightOf="@id/fragment_send_message_cc_text"
-            android:layout_toEndOf="@id/fragment_send_message_cc_text" />
-
-    </RelativeLayout>
-
-    <View
-        android:id="@+id/spacerFieldBcc"
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:background="@color/colorDivider"
-        app:layout_constraintTop_toBottomOf="@+id/fragment_send_message_cc_layout"
-        app:layout_constraintLeft_toLeftOf="@+id/fragment_send_message_cc_layout"
-        app:layout_constraintRight_toRightOf="@+id/fragment_send_message_cc_layout" />
-
-    <RelativeLayout
-        android:id="@+id/fragment_send_message_bcc_layout"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:textColorHint="?android:textColorSecondary"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/spacerFieldBcc"
-        android:minHeight="44dp"
-        android:visibility="gone">
-
-        <TextView android:id="@+id/fragment_send_message_bcc_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/txt_bcc"
-            android:textSize="14sp"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="15dp"
-            android:layout_marginStart="15dp" />
-
-        <androidx.appcompat.widget.AppCompatMultiAutoCompleteTextView
-            android:id="@+id/fragment_send_message_bcc_input"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/lato_regular"
-            android:completionThreshold="1"
-            android:inputType="textEmailAddress"
-            android:letterSpacing="0.05"
-            android:background="@android:color/transparent"
-            android:textColor="?android:textColorSecondary"
-            android:textSize="14sp"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="15dp"
-            android:imeOptions="actionNext"
-            android:nextFocusForward="@id/fragment_send_message_subject_input"
-            android:layout_toRightOf="@id/fragment_send_message_bcc_text"
-            android:layout_toEndOf="@id/fragment_send_message_bcc_text" />
-
-    </RelativeLayout>
-
-    <View
-        android:id="@+id/spacerFieldSubject"
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:background="@color/colorDivider"
-        app:layout_constraintTop_toBottomOf="@+id/fragment_send_message_bcc_layout"
-        app:layout_constraintLeft_toLeftOf="@+id/fragment_send_message_bcc_layout"
-        app:layout_constraintRight_toRightOf="@+id/fragment_send_message_bcc_layout" />
-
-    <RelativeLayout
-        android:id="@+id/fragment_send_message_subject_input_layout"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:textColorHint="?android:textColorSecondary"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/spacerFieldSubject"
-        android:minHeight="44dp">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/fragment_send_message_subject_input"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/lato_regular"
-            android:inputType="text"
-            android:layout_marginLeft="15dp"
-            android:hint="@string/txt_subject"
-            android:letterSpacing="0.05"
-            android:background="@android:color/transparent"
-            android:textColor="?android:textColorSecondary"
-            android:textSize="16sp"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="15dp"
-            android:imeOptions="actionNext"
-            android:nextFocusForward="@id/fragment_send_message_compose_email_input" />
-
-    </RelativeLayout>
-
-    <View
-        android:id="@+id/spacerFieldActions"
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:background="@color/colorDivider"
-        app:layout_constraintTop_toBottomOf="@+id/fragment_send_message_subject_input_layout"
-        app:layout_constraintLeft_toLeftOf="@+id/fragment_send_message_subject_input_layout"
-        app:layout_constraintRight_toRightOf="@+id/fragment_send_message_subject_input_layout" />
-
-    <LinearLayout android:id="@+id/fragment_send_message_email_actions_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintTop_toBottomOf="@id/spacerFieldActions"
-        android:minHeight="50dp">
-
-        <RelativeLayout
-            android:id="@+id/fragment_send_message_attachment_layout"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="match_parent">
-
-            <ImageView
-                android:id="@+id/fragment_send_message_attachment_ico"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_message_attachment_selector"
-                android:tint="?android:textColorSecondary"
-                android:layout_centerInParent="true"
-                android:background="@drawable/state_pressed_ripple"
-                android:contentDescription="Attachment" />
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/fragment_send_message_encrypt_layout"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="match_parent">
-
-            <ImageView
-                android:id="@+id/fragment_send_message_encrypt_ico"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:src="@drawable/ic_encrypt_message_selector"
-                android:tint="?android:textColorSecondary"
-                android:background="@drawable/state_pressed_ripple"
-                android:contentDescription="Secure email" />
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/fragment_send_message_destruct_layout"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="match_parent">
-
-            <ImageView
-                android:id="@+id/fragment_send_message_destruct_ico"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_destruct_timer_selector"
-                android:tint="?android:textColorSecondary"
-                android:layout_centerInParent="true"
-                android:background="@drawable/state_pressed_ripple"
-                android:contentDescription="Delete" />
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/fragment_send_message_delayed_layout"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="match_parent">
-
-            <ImageView
-                android:id="@+id/fragment_send_message_delayed_ico"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_delayed_delivery_selector"
-                android:tint="?android:textColorSecondary"
-                android:layout_centerInParent="true"
-                android:background="@drawable/state_pressed_ripple"
-                android:contentDescription="Delayed delivery" />
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/fragment_send_message_dead_layout"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="match_parent">
-
-            <ImageView
-                android:id="@+id/fragment_send_message_dead_ico"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_dead_mans_selector"
-                android:tint="?android:textColorSecondary"
-                android:layout_centerInParent="true"
-                android:background="@drawable/state_pressed_ripple"
-                android:contentDescription="Dead man's timer" />
-
-        </RelativeLayout>
-
-    </LinearLayout>
-
-    <View
-        android:id="@+id/spacerFieldCompose"
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:background="@color/colorDivider"
-        app:layout_constraintTop_toBottomOf="@+id/fragment_send_message_email_actions_layout"
-        app:layout_constraintLeft_toLeftOf="@+id/fragment_send_message_email_actions_layout"
-        app:layout_constraintRight_toRightOf="@+id/fragment_send_message_email_actions_layout" />
-
     <ScrollView
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:orientation="vertical"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/spacerFieldCompose"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/spacerFieldFrom">
 
-        <RelativeLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/fragment_send_message_compose_email_input_layout"
-                android:layout_width="match_parent"
+            <RelativeLayout
+                android:id="@+id/fragment_send_message_from_input_layout"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:textColorHint="?android:textColorSecondary"
-                app:hintEnabled="false"
-                android:padding="12dp">
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:minHeight="44dp">
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/fragment_send_message_compose_email_input"
+                <TextView android:id="@+id/fragment_send_message_from_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/txt_from"
+                    android:textSize="14sp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginStart="15dp" />
+
+                <Spinner
+                    android:id="@+id/fragment_send_message_from_input_spinner"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="top"
                     android:fontFamily="@font/lato_regular"
-                    android:hint="@string/hint_compose"
-                    android:inputType="textMultiLine"
+                    tools:listitem="@layout/fragment_send_message_spinner"
+                    android:layout_toRightOf="@id/fragment_send_message_from_text"
+                    android:layout_toEndOf="@id/fragment_send_message_from_text"
+                    android:inputType="textEmailAddress"
                     android:letterSpacing="0.05"
-                    android:textColor="?android:textColorPrimary"
+                    android:background="@drawable/spinner_background"
+                    android:textColor="?android:textColorSecondary"
+                    android:textSize="14sp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginEnd="16dp" />
+
+            </RelativeLayout>
+
+            <View
+                android:id="@+id/spacerFieldTo"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:background="@color/colorDivider"
+                app:layout_constraintTop_toBottomOf="@+id/fragment_send_message_from_input_layout"
+                app:layout_constraintLeft_toLeftOf="@+id/fragment_send_message_from_input_layout"
+                app:layout_constraintRight_toRightOf="@+id/fragment_send_message_from_input_layout" />
+
+            <RelativeLayout
+                android:id="@+id/fragment_send_message_to_input_layout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textColorHint="?android:textColorSecondary"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/spacerFieldTo"
+                android:minHeight="44dp">
+
+                <TextView android:id="@+id/fragment_send_message_to_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/txt_to"
+                    android:textSize="14sp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginStart="15dp" />
+
+                <androidx.appcompat.widget.AppCompatMultiAutoCompleteTextView
+                    android:id="@+id/fragment_send_message_to_input"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="15dp"
+                    android:fontFamily="@font/lato_regular"
+                    android:completionThreshold="1"
+                    android:layout_toRightOf="@id/fragment_send_message_to_text"
+                    android:layout_toEndOf="@id/fragment_send_message_to_text"
+                    android:inputType="textEmailAddress"
+                    android:letterSpacing="0.05"
+                    android:background="@android:color/transparent"
+                    android:textColor="?android:textColorSecondary"
+                    android:textSize="14sp"
+                    android:layout_centerVertical="true"
+                    android:imeOptions="actionNext"
+                    android:nextFocusForward="@id/fragment_send_message_subject_input"
+                    android:layout_toLeftOf="@id/fragment_send_message_to_add_button"
+                    android:layout_toStartOf="@id/fragment_send_message_to_add_button" />
+
+                <ImageView
+                    android:id="@+id/fragment_send_message_to_add_button"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginRight="5dp"
+                    android:src="@drawable/ic_add_active"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    app:tint="?android:textColorSecondary" />
+
+            </RelativeLayout>
+
+            <View
+                android:id="@+id/spacerFieldCc"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:background="@color/colorDivider"
+                app:layout_constraintTop_toBottomOf="@+id/fragment_send_message_to_input_layout"
+                app:layout_constraintLeft_toLeftOf="@+id/fragment_send_message_to_input_layout"
+                app:layout_constraintRight_toRightOf="@+id/fragment_send_message_to_input_layout" />
+
+            <RelativeLayout
+                android:id="@+id/fragment_send_message_cc_layout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textColorHint="?android:textColorSecondary"
+                android:layout_marginTop="-1dp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/spacerFieldCc"
+                android:minHeight="44dp"
+                android:visibility="gone">
+
+                <TextView android:id="@+id/fragment_send_message_cc_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/txt_cc"
+                    android:textSize="14sp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginStart="15dp" />
+
+                <androidx.appcompat.widget.AppCompatMultiAutoCompleteTextView
+                    android:id="@+id/fragment_send_message_cc_input"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/lato_regular"
+                    android:completionThreshold="1"
+                    android:inputType="textEmailAddress"
+                    android:letterSpacing="0.05"
+                    android:background="@android:color/transparent"
+                    android:textColor="?android:textColorSecondary"
+                    android:textSize="14sp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="15dp"
+                    android:imeOptions="actionNext"
+                    android:nextFocusForward="@id/fragment_send_message_bcc_input"
+                    android:layout_toRightOf="@id/fragment_send_message_cc_text"
+                    android:layout_toEndOf="@id/fragment_send_message_cc_text" />
+
+            </RelativeLayout>
+
+            <View
+                android:id="@+id/spacerFieldBcc"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:background="@color/colorDivider"
+                app:layout_constraintTop_toBottomOf="@+id/fragment_send_message_cc_layout"
+                app:layout_constraintLeft_toLeftOf="@+id/fragment_send_message_cc_layout"
+                app:layout_constraintRight_toRightOf="@+id/fragment_send_message_cc_layout" />
+
+            <RelativeLayout
+                android:id="@+id/fragment_send_message_bcc_layout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textColorHint="?android:textColorSecondary"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/spacerFieldBcc"
+                android:minHeight="44dp"
+                android:visibility="gone">
+
+                <TextView android:id="@+id/fragment_send_message_bcc_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/txt_bcc"
+                    android:textSize="14sp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginStart="15dp" />
+
+                <androidx.appcompat.widget.AppCompatMultiAutoCompleteTextView
+                    android:id="@+id/fragment_send_message_bcc_input"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/lato_regular"
+                    android:completionThreshold="1"
+                    android:inputType="textEmailAddress"
+                    android:letterSpacing="0.05"
+                    android:background="@android:color/transparent"
+                    android:textColor="?android:textColorSecondary"
+                    android:textSize="14sp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="15dp"
+                    android:imeOptions="actionNext"
+                    android:nextFocusForward="@id/fragment_send_message_subject_input"
+                    android:layout_toRightOf="@id/fragment_send_message_bcc_text"
+                    android:layout_toEndOf="@id/fragment_send_message_bcc_text" />
+
+            </RelativeLayout>
+
+            <View
+                android:id="@+id/spacerFieldSubject"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:background="@color/colorDivider"
+                app:layout_constraintTop_toBottomOf="@+id/fragment_send_message_bcc_layout"
+                app:layout_constraintLeft_toLeftOf="@+id/fragment_send_message_bcc_layout"
+                app:layout_constraintRight_toRightOf="@+id/fragment_send_message_bcc_layout" />
+
+            <RelativeLayout
+                android:id="@+id/fragment_send_message_subject_input_layout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textColorHint="?android:textColorSecondary"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/spacerFieldSubject"
+                android:minHeight="44dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/fragment_send_message_subject_input"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/lato_regular"
+                    android:inputType="text"
+                    android:layout_marginLeft="15dp"
+                    android:hint="@string/txt_subject"
+                    android:letterSpacing="0.05"
+                    android:background="@android:color/transparent"
+                    android:textColor="?android:textColorSecondary"
                     android:textSize="16sp"
-                    android:background="@android:color/transparent" />
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="15dp"
+                    android:imeOptions="actionNext"
+                    android:nextFocusForward="@id/fragment_send_message_compose_email_input" />
 
-            </com.google.android.material.textfield.TextInputLayout>
+            </RelativeLayout>
 
-            <TextView
-                android:id="@+id/fragment_send_message_attachments_processing_text_view"
+            <View
+                android:id="@+id/spacerFieldActions"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:background="@color/colorDivider"
+                app:layout_constraintTop_toBottomOf="@+id/fragment_send_message_subject_input_layout"
+                app:layout_constraintLeft_toLeftOf="@+id/fragment_send_message_subject_input_layout"
+                app:layout_constraintRight_toRightOf="@+id/fragment_send_message_subject_input_layout" />
+
+            <LinearLayout android:id="@+id/fragment_send_message_email_actions_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="5dp"
-                android:paddingStart="14dp"
-                android:paddingLeft="14dp"
-                android:paddingRight="14dp"
-                android:paddingEnd="14dp"
-                android:visibility="gone"
-                android:layout_below="@id/fragment_send_message_compose_email_input_layout"
-                android:textColor="?android:textColorPrimary"
-                android:text="@string/txt_attachments_in_processing" />
+                android:orientation="horizontal"
+                app:layout_constraintTop_toBottomOf="@id/spacerFieldActions"
+                android:minHeight="50dp">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/fragment_send_message_attachments"
-                android:paddingLeft="12dp"
-                android:paddingRight="12dp"
-                android:paddingTop="4dp"
-                android:paddingBottom="12dp"
-                android:orientation="vertical"
-                android:layout_below="@id/fragment_send_message_attachments_processing_text_view"
+                <RelativeLayout
+                    android:id="@+id/fragment_send_message_attachment_layout"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="match_parent">
+
+                    <ImageView
+                        android:id="@+id/fragment_send_message_attachment_ico"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_message_attachment_selector"
+                        android:layout_centerInParent="true"
+                        android:background="@drawable/state_pressed_ripple"
+                        android:contentDescription="Attachment"
+                        app:tint="?android:textColorSecondary" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/fragment_send_message_encrypt_layout"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="match_parent">
+
+                    <ImageView
+                        android:id="@+id/fragment_send_message_encrypt_ico"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:src="@drawable/ic_encrypt_message_selector"
+                        android:background="@drawable/state_pressed_ripple"
+                        android:contentDescription="Secure email"
+                        app:tint="?android:textColorSecondary" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/fragment_send_message_destruct_layout"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="match_parent">
+
+                    <ImageView
+                        android:id="@+id/fragment_send_message_destruct_ico"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_destruct_timer_selector"
+                        android:layout_centerInParent="true"
+                        android:background="@drawable/state_pressed_ripple"
+                        android:contentDescription="Delete"
+                        app:tint="?android:textColorSecondary" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/fragment_send_message_delayed_layout"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="match_parent">
+
+                    <ImageView
+                        android:id="@+id/fragment_send_message_delayed_ico"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_delayed_delivery_selector"
+                        android:layout_centerInParent="true"
+                        android:background="@drawable/state_pressed_ripple"
+                        android:contentDescription="Delayed delivery"
+                        app:tint="?android:textColorSecondary" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/fragment_send_message_dead_layout"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="match_parent">
+
+                    <ImageView
+                        android:id="@+id/fragment_send_message_dead_ico"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_dead_mans_selector"
+                        android:layout_centerInParent="true"
+                        android:background="@drawable/state_pressed_ripple"
+                        android:contentDescription="Dead man's timer"
+                        app:tint="?android:textColorSecondary" />
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
+            <View
+                android:id="@+id/spacerFieldCompose"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:background="@color/colorDivider"
+                app:layout_constraintTop_toBottomOf="@+id/fragment_send_message_email_actions_layout"
+                app:layout_constraintLeft_toLeftOf="@+id/fragment_send_message_email_actions_layout"
+                app:layout_constraintRight_toRightOf="@+id/fragment_send_message_email_actions_layout" />
+
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                tools:listitem="@layout/item_message_attachment_send"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager">
+                app:layout_constraintTop_toBottomOf="@id/spacerFieldCompose">
 
-            </androidx.recyclerview.widget.RecyclerView>
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/fragment_send_message_compose_email_input_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColorHint="?android:textColorSecondary"
+                    app:hintEnabled="false"
+                    android:padding="12dp">
 
-        </RelativeLayout>
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/fragment_send_message_compose_email_input"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="top"
+                        android:fontFamily="@font/lato_regular"
+                        android:hint="@string/hint_compose"
+                        android:inputType="textMultiLine"
+                        android:letterSpacing="0.05"
+                        android:textColor="?android:textColorPrimary"
+                        android:textSize="16sp"
+                        android:background="@android:color/transparent" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <TextView
+                    android:id="@+id/fragment_send_message_attachments_processing_text_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="5dp"
+                    android:paddingStart="14dp"
+                    android:paddingLeft="14dp"
+                    android:paddingRight="14dp"
+                    android:paddingEnd="14dp"
+                    android:visibility="gone"
+                    android:layout_below="@id/fragment_send_message_compose_email_input_layout"
+                    android:textColor="?android:textColorPrimary"
+                    android:text="@string/txt_attachments_in_processing" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/fragment_send_message_attachments"
+                    android:paddingLeft="12dp"
+                    android:paddingRight="12dp"
+                    android:paddingTop="4dp"
+                    android:paddingBottom="12dp"
+                    android:orientation="vertical"
+                    android:layout_below="@id/fragment_send_message_attachments_processing_text_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    tools:listitem="@layout/item_message_attachment_send"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager">
+
+                </androidx.recyclerview.widget.RecyclerView>
+
+            </RelativeLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </ScrollView>
 
