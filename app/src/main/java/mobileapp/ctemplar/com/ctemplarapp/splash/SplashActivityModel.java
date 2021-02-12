@@ -3,6 +3,8 @@ package mobileapp.ctemplar.com.ctemplarapp.splash;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import org.jetbrains.annotations.NotNull;
+
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
@@ -14,11 +16,10 @@ import retrofit2.Response;
 import timber.log.Timber;
 
 public class SplashActivityModel extends ViewModel {
+    private final UserRepository userRepository;
 
-    private UserRepository userRepository;
-
-    private MutableLiveData<AddFirebaseTokenResponse> addFirebaseTokenResponse = new MutableLiveData<>();
-    private MutableLiveData<ResponseStatus> deleteFirebaseTokenStatus = new MutableLiveData<>();
+    private final MutableLiveData<AddFirebaseTokenResponse> addFirebaseTokenResponse = new MutableLiveData<>();
+    private final MutableLiveData<ResponseStatus> deleteFirebaseTokenStatus = new MutableLiveData<>();
 
     public SplashActivityModel() {
         userRepository = CTemplarApp.getUserRepository();
@@ -52,17 +53,17 @@ public class SplashActivityModel extends ViewModel {
         userRepository.addFirebaseToken(new AddFirebaseTokenRequest(token, platform))
                 .subscribe(new Observer<AddFirebaseTokenResponse>() {
                     @Override
-                    public void onSubscribe(Disposable d) {
+                    public void onSubscribe(@NotNull Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(AddFirebaseTokenResponse response) {
+                    public void onNext(@NotNull AddFirebaseTokenResponse response) {
                         addFirebaseTokenResponse.postValue(response);
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onError(@NotNull Throwable e) {
                         Timber.e(e);
                     }
 
@@ -77,17 +78,17 @@ public class SplashActivityModel extends ViewModel {
         userRepository.deleteFirebaseToken(token)
                 .subscribe(new Observer<Response<Void>>() {
                     @Override
-                    public void onSubscribe(Disposable d) {
+                    public void onSubscribe(@NotNull Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(Response<Void> voidResponse) {
+                    public void onNext(@NotNull Response<Void> voidResponse) {
                         deleteFirebaseTokenStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onError(@NotNull Throwable e) {
                         Timber.e(e);
                     }
 
