@@ -93,6 +93,9 @@ public interface RestService {
     @POST("auth/refresh/")
     Call<SignInResponse> refreshToken(@Body TokenRefreshRequest request);
 
+    @POST("auth/refresh/")
+    Single<SignInResponse> refreshTokenSingle(@Body TokenRefreshRequest request);
+
     @POST("auth/check-username/")
     Observable<CheckUsernameResponse> checkUsername(@Body CheckUsernameRequest request);
 

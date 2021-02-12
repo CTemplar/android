@@ -17,15 +17,15 @@ import mobileapp.ctemplar.com.ctemplarapp.main.MainActivityViewModel;
 
 public class SplashActivity extends BaseActivity {
     private SplashActivityModel viewModel;
-    private Handler handler = new Handler();
+    private final Handler handler = new Handler();
 
-    private Runnable run = new Runnable() {
+    private final Runnable run = new Runnable() {
         @Override
         public void run() {
-            if (TextUtils.isEmpty(viewModel.getUserToken())) {
-                startSignInActivity();
-            } else {
+            if (viewModel.isAuthorized()) {
                 startMainActivity();
+            } else {
+                startSignInActivity();
             }
         }
     };

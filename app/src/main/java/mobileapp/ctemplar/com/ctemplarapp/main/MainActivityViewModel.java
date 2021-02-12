@@ -16,6 +16,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -28,9 +29,12 @@ import io.reactivex.schedulers.Schedulers;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.DialogState;
 import mobileapp.ctemplar.com.ctemplarapp.SingleLiveEvent;
+import mobileapp.ctemplar.com.ctemplarapp.executor.QueuedExecutor;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.EmptyFolderRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SignInRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.ResponseMessagesData;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.SignInResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.folders.FoldersResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.mailboxes.MailboxesResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.EmptyFolderResponse;
@@ -39,16 +43,17 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.MessagesResult;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.MyselfResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.MyselfResult;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.SettingsResponse;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.ResponseMessagesData;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.SignInResponse;
 import mobileapp.ctemplar.com.ctemplarapp.repository.ManageFoldersRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.MessagesRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
+import mobileapp.ctemplar.com.ctemplarapp.repository.cache.MessageCacheProvider;
 import mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MessageEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageProvider;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EncodeUtils;
+import mobileapp.ctemplar.com.ctemplarapp.utils.EncryptUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.ThemeUtils;
+import mobileapp.ctemplar.com.ctemplarapp.workers.WorkersHelper;
 import okhttp3.ResponseBody;
 import retrofit2.HttpException;
 import retrofit2.Response;
@@ -74,6 +79,41 @@ public class MainActivityViewModel extends AndroidViewModel {
     private final MutableLiveData<ResponseBody> unreadFoldersBody = new MutableLiveData<>();
     private final MutableLiveData<MyselfResponse> myselfResponse = new MutableLiveData<>();
     private final MutableLiveData<String> currentFolder = new MutableLiveData<>();
+    private final QueuedExecutor executor;
+
+    public interface OnDecryptFinishedCallback {
+        void onDecryptFinished(MessageProvider message);
+    }
+
+    public void decryptSubjects(List<MessageProvider> messages, OnDecryptFinishedCallback callback) {
+        MessageCacheProvider messageCacheProvider = MessageCacheProvider.instance;
+        List<MessageProvider> messagesToDecrypt = new ArrayList<>();
+        for (MessageProvider message : messages) {
+            if (!message.isSubjectEncrypted()) {
+                continue;
+            }
+            String cached = messageCacheProvider.getMessageDecryptedSubject(message);
+            if (cached != null) {
+                message.setSubject(cached);
+                message.setSubjectDecrypted(true);
+                continue;
+            }
+            messagesToDecrypt.add(message);
+        }
+        if (messagesToDecrypt.isEmpty()) {
+            return;
+        }
+        executor.execute(() -> {
+            for (MessageProvider message : messagesToDecrypt) {
+                String decrypted = EncryptUtils.decryptSubject(message.getSubject(),
+                        message.getMailboxId(), true);
+                message.setSubject(decrypted);
+                message.setSubjectDecrypted(true);
+                messageCacheProvider.setMessageDecryptedSubject(message);
+                callback.onDecryptFinished(message);
+            }
+        });
+    }
 
     private class ExitBroadcastReceiver extends BroadcastReceiver {
         @Override
@@ -104,6 +144,7 @@ public class MainActivityViewModel extends AndroidViewModel {
         userRepository = CTemplarApp.getUserRepository();
         messagesRepository = CTemplarApp.getMessagesRepository();
         manageFoldersRepository = CTemplarApp.getManageFoldersRepository();
+        executor = new QueuedExecutor();
         exitBroadcastReceiver = new ExitBroadcastReceiver();
         exitBroadcastReceiver.register(application);
     }
@@ -192,26 +233,26 @@ public class MainActivityViewModel extends AndroidViewModel {
         )
                 .doFinally(this::clearUserData)
                 .subscribe(new Observer<Response<Void>>() {
-            @Override
-            public void onSubscribe(@NotNull Disposable d) {
+                    @Override
+                    public void onSubscribe(@NotNull Disposable d) {
 
-            }
+                    }
 
-            @Override
-            public void onNext(@NotNull Response<Void> voidResponse) {
+                    @Override
+                    public void onNext(@NotNull Response<Void> voidResponse) {
 
-            }
+                    }
 
-            @Override
-            public void onError(@NotNull Throwable e) {
-                Timber.e(e, "logout");
-            }
+                    @Override
+                    public void onError(@NotNull Throwable e) {
+                        Timber.e(e, "logout");
+                    }
 
-            @Override
-            public void onComplete() {
-                Timber.d("logout: onComplete");
-            }
-        });
+                    @Override
+                    public void onComplete() {
+                        Timber.d("logout: onComplete");
+                    }
+                });
     }
 
     public void checkUserSession() {
@@ -222,6 +263,7 @@ public class MainActivityViewModel extends AndroidViewModel {
 
     public void clearUserData() {
         userRepository.clearData();
+        WorkersHelper.cancelAllWork(getApplication());
         actions.postValue(MainActivityActions.ACTION_LOGOUT);
     }
 
