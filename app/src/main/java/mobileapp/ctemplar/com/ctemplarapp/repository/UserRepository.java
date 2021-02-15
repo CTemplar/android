@@ -65,6 +65,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.SignUpResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.whiteBlackList.BlackListResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.whiteBlackList.WhiteListResponse;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
+import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
 import retrofit2.Response;
@@ -88,6 +89,10 @@ public class UserRepository {
         userStore = CTemplarApp.getUserStore();
     }
 
+    public RestService getRestService() {
+        return service;
+    }
+
     public UserStore getUserStore() {
         return userStore;
     }
@@ -97,11 +102,15 @@ public class UserRepository {
     }
 
     public void saveUserToken(String token) {
-        userStore.saveToken(token);
+        userStore.saveUserToken(token);
     }
 
     public String getUserToken() {
-        return userStore.getToken();
+        return userStore.getUserToken();
+    }
+
+    public boolean isAuthorized() {
+        return EditTextUtils.isNotEmpty(userStore.getUserToken());
     }
 
     public void saveFirebaseToken(String token) {

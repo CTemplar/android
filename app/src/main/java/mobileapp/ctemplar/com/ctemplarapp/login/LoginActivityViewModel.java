@@ -1,8 +1,13 @@
 package mobileapp.ctemplar.com.ctemplarapp.login;
 
+import android.app.Application;
+
+import androidx.annotation.NonNull;
+import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
+
+import org.jetbrains.annotations.NotNull;
 
 import io.reactivex.Observable;
 import io.reactivex.Observer;
@@ -25,19 +30,21 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.SignInResponse;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EncodeUtils;
+import mobileapp.ctemplar.com.ctemplarapp.workers.WorkersHelper;
 import retrofit2.HttpException;
 import timber.log.Timber;
 
-public class LoginActivityViewModel extends ViewModel {
-    private UserRepository userRepository;
+public class LoginActivityViewModel extends AndroidViewModel {
+    private final UserRepository userRepository;
     private RecoverPasswordRequest recoverPasswordRequest;
 
-    private MutableLiveData<LoginActivityActions> actions = new SingleLiveEvent<>();
-    private MutableLiveData<DialogState> dialogState = new SingleLiveEvent<>();
-    private MutableLiveData<ResponseStatus> responseStatus = new MutableLiveData<>();
-    private MutableLiveData<ResponseStatus> addFirebaseTokenStatus = new MutableLiveData<>();
+    private final MutableLiveData<LoginActivityActions> actions = new SingleLiveEvent<>();
+    private final MutableLiveData<DialogState> dialogState = new SingleLiveEvent<>();
+    private final MutableLiveData<ResponseStatus> responseStatus = new MutableLiveData<>();
+    private final MutableLiveData<ResponseStatus> addFirebaseTokenStatus = new MutableLiveData<>();
 
-    public LoginActivityViewModel() {
+    public LoginActivityViewModel(@NonNull Application application) {
+        super(application);
         userRepository = CTemplarApp.getUserRepository();
     }
 
@@ -96,7 +103,7 @@ public class LoginActivityViewModel extends ViewModel {
         userRepository.signIn(signInRequest)
                 .subscribe(new Observer<SignInResponse>() {
                     @Override
-                    public void onError(Throwable e) {
+                    public void onError(@NotNull Throwable e) {
                         if (e instanceof HttpException) {
                             HttpException exception = (HttpException) e;
                             if (exception.code() == 400) {
@@ -115,12 +122,12 @@ public class LoginActivityViewModel extends ViewModel {
                     }
 
                     @Override
-                    public void onSubscribe(Disposable d) {
+                    public void onSubscribe(@NotNull Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(SignInResponse signInResponse) {
+                    public void onNext(@NotNull SignInResponse signInResponse) {
                         String token = signInResponse.getToken();
                         boolean is2FA = signInResponse.is2FAEnabled();
                         if (token == null && is2FA) {
@@ -128,6 +135,7 @@ public class LoginActivityViewModel extends ViewModel {
                         } else {
                             userRepository.saveUserToken(signInResponse.getToken());
                             responseStatus.postValue(ResponseStatus.RESPONSE_NEXT);
+                            WorkersHelper.setupForceRefreshTokenWork(getApplication());
                         }
                     }
                 });
@@ -143,17 +151,17 @@ public class LoginActivityViewModel extends ViewModel {
         userRepository.recoverPassword(new RecoverPasswordRequest(username, email))
                 .subscribe(new Observer<RecoverPasswordResponse>() {
                     @Override
-                    public void onSubscribe(Disposable d) {
+                    public void onSubscribe(@NotNull Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(RecoverPasswordResponse recoverPasswordResponse) {
+                    public void onNext(@NotNull RecoverPasswordResponse recoverPasswordResponse) {
                         responseStatus.postValue(ResponseStatus.RESPONSE_NEXT_RECOVER_PASSWORD);
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onError(@NotNull Throwable e) {
                         if (e instanceof HttpException) {
                             HttpException exception = (HttpException) e;
                             if (exception.code() == 400) {
@@ -196,18 +204,18 @@ public class LoginActivityViewModel extends ViewModel {
                 }).subscribe(new Observer<RecoverPasswordResponse>() {
 
             @Override
-            public void onSubscribe(Disposable d) {
+            public void onSubscribe(@NotNull Disposable d) {
 
             }
 
             @Override
-            public void onNext(RecoverPasswordResponse recoverPasswordResponse) {
+            public void onNext(@NotNull RecoverPasswordResponse recoverPasswordResponse) {
                 userRepository.saveUserToken(recoverPasswordResponse.getToken());
                 responseStatus.postValue(ResponseStatus.RESPONSE_NEXT_NEW_PASSWORD);
             }
 
             @Override
-            public void onError(Throwable e) {
+            public void onError(@NotNull Throwable e) {
                 if (e instanceof HttpException) {
                     HttpException exception = (HttpException) e;
                     if (exception.code() == 400) {
@@ -231,18 +239,18 @@ public class LoginActivityViewModel extends ViewModel {
         userRepository.addFirebaseToken(new AddFirebaseTokenRequest(token, platform))
                 .subscribe(new Observer<AddFirebaseTokenResponse>() {
                     @Override
-                    public void onSubscribe(Disposable d) {
+                    public void onSubscribe(@NotNull Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(AddFirebaseTokenResponse response) {
+                    public void onNext(@NotNull AddFirebaseTokenResponse response) {
                         userRepository.saveFirebaseToken(response.getToken());
                         addFirebaseTokenStatus.postValue(ResponseStatus.RESPONSE_NEXT);
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onError(@NotNull Throwable e) {
                         Timber.e(e);
                         addFirebaseTokenStatus.postValue(ResponseStatus.RESPONSE_NEXT);
                     }
