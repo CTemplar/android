@@ -252,4 +252,8 @@ public class MessagesRepository {
     public void updateDecryptedSubject(long messageId, String decryptedSubject) {
         messageDao.updateDecryptedSubject(messageId, decryptedSubject);
     }
+
+    public void clearAllDecryptedSubjects() {
+        messageDao.clearAllDecryptedSubjects();
+    }
 }

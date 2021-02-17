@@ -109,5 +109,5 @@ public interface MessageDao {
     void updateDecryptedSubject(long messageId, String decryptedSubject);
 
     @Query("UPDATE messages SET decryptedSubject=NULL")
-    void clearAllDecryptedMessages();
+    void clearAllDecryptedSubjects();
 }

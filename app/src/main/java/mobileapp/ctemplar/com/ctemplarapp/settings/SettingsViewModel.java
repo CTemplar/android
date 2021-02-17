@@ -31,6 +31,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.MyselfResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.SettingsResponse;
 import mobileapp.ctemplar.com.ctemplarapp.repository.AppDatabase;
 import mobileapp.ctemplar.com.ctemplarapp.repository.ContactsRepository;
+import mobileapp.ctemplar.com.ctemplarapp.repository.MessagesRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.Contact;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.ContactEntity;
@@ -43,11 +44,13 @@ import static mobileapp.ctemplar.com.ctemplarapp.utils.DateUtils.GENERAL_GSON;
 public class SettingsViewModel extends ViewModel {
     private final ContactsRepository contactsRepository;
     private final UserRepository userRepository;
+    private final MessagesRepository messagesRepository;
     private final AppDatabase appDatabase;
 
     public SettingsViewModel() {
         contactsRepository = CTemplarApp.getContactsRepository();
         userRepository = CTemplarApp.getUserRepository();
+        messagesRepository = CTemplarApp.getMessagesRepository();
         appDatabase = CTemplarApp.getAppDatabase();
     }
 
@@ -77,6 +80,10 @@ public class SettingsViewModel extends ViewModel {
 
     public boolean isSignatureEnabled() {
         return userRepository.isSignatureEnabled();
+    }
+
+    public void clearAllDecryptedSubjects() {
+        messagesRepository.clearAllDecryptedSubjects();
     }
 
     void updateAutoSaveContactsEnabled(long settingId, boolean isEnabled) {

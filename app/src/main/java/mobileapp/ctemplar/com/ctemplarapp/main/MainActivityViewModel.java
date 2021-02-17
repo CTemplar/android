@@ -106,7 +106,7 @@ public class MainActivityViewModel extends AndroidViewModel {
             return;
         }
         executor.execute(() -> {
-            boolean keepDecryptedSubjects = true;
+            boolean keepDecryptedSubjects = userRepository.isKeepDecryptedSubjectsEnabled();
             for (MessageProvider message : messagesToDecrypt) {
                 String decrypted = EncryptUtils.decryptSubject(message.getSubject(),
                         message.getMailboxId());
