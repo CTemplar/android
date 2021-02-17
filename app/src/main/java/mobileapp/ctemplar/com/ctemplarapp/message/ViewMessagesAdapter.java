@@ -185,11 +185,11 @@ public class ViewMessagesAdapter extends BaseAdapter {
 
         collapsedSenderTextView.setText(senderDisplay.getName());
         collapsedContentTextView.setText(spannedMessageContent);
-        collapsedShortDateTextView.setText(DateUtils.messageDate(messageDate, resources));
+        collapsedShortDateTextView.setText(DateUtils.displayMessageDate(messageDate, resources));
 
         senderTextView.setText(senderDisplay.getName());
         receiverTextView.setText(userDisplayListToNamesString(receiverDisplayList));
-        shortDateTextView.setText(DateUtils.messageDate(messageDate, resources));
+        shortDateTextView.setText(DateUtils.displayMessageDate(messageDate, resources));
         fullDateEmailTextView.setText(resources.getString(R.string.txt_date_format,
                 DateUtils.messageFullDate(messageDate)));
 

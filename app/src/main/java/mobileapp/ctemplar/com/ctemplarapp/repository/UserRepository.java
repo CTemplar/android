@@ -45,13 +45,10 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.AddFirebaseTokenResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.CaptchaResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.CaptchaVerifyResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.CheckUsernameResponse;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.KeyResponse;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.RecoverPasswordResponse;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.SignInResponse;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.SignUpResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.domains.DomainsResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.filters.FilterResult;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.filters.FiltersResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.KeyResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.mailboxes.MailboxesResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.mailboxes.MailboxesResult;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.EmptyFolderResponse;
@@ -62,6 +59,9 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.BlackListContact;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.MyselfResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.SettingsResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.WhiteListContact;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.RecoverPasswordResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.SignInResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.SignUpResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.whiteBlackList.BlackListResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.whiteBlackList.WhiteListResponse;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
@@ -195,6 +195,10 @@ public class UserRepository {
 
     public void setDarkModeValue(int value) {
         userStore.setDarkModeValue(value);
+    }
+
+    public boolean isKeepDecryptedSubjectsEnabled() {
+        return userStore.isKeepDecryptedSubjectsEnabled();
     }
 
     public void clearData() {
