@@ -397,12 +397,27 @@ public class SettingsActivity extends BaseActivity {
                         userStore.setContactsEncryptionEnabled(true);
                         settingsModel.updateContactsEncryption(settingId, true);
                         Toast.makeText(getActivity(), getString(R.string.toast_contacts_encrypted), Toast.LENGTH_SHORT).show();
+                        return true;
                     } else {
                         disableContactsEncryption();
                         return false;
                     }
+                });
+            }
+
+            SwitchPreference keepDecryptedSubjectsSwitchPreference = findPreference(getString(R.string.keep_decrypted_subjects_enabled));
+            if (keepDecryptedSubjectsSwitchPreference != null) {
+                keepDecryptedSubjectsSwitchPreference.setOnPreferenceChangeListener((preference, newValue) -> {
+                    boolean value = (boolean) newValue;
+                    userStore.setKeepDecryptedSubjectsEnabled(value);
+                    if (!value) {
+                        settingsModel.clearAllDecryptedSubjects();
+                    }
+                    Toast.makeText(getActivity(), R.string.toast_saved, Toast.LENGTH_SHORT).show();
                     return true;
                 });
+                boolean keepDecryptedSubjects = userStore.isKeepDecryptedSubjectsEnabled();
+                keepDecryptedSubjectsSwitchPreference.setChecked(keepDecryptedSubjects);
             }
         }
 

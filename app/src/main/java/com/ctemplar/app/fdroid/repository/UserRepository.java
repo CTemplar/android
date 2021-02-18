@@ -185,6 +185,10 @@ public class UserRepository {
         userStore.setDarkModeValue(value);
     }
 
+    public boolean isKeepDecryptedSubjectsEnabled() {
+        return userStore.isKeepDecryptedSubjectsEnabled();
+    }
+
     public void clearData() {
         userStore.logout();
         CTemplarApp.getAppDatabase().clearAllTables();

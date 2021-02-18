@@ -36,6 +36,9 @@ public interface UserStore {
     void setContactsEncryptionEnabled(boolean state);
     boolean isContactsEncryptionEnabled();
 
+    void setKeepDecryptedSubjectsEnabled(boolean state);
+    boolean isKeepDecryptedSubjectsEnabled();
+
     void setDraftsAutoSaveEnabled(boolean state);
     boolean isDraftsAutoSaveEnabled();
 

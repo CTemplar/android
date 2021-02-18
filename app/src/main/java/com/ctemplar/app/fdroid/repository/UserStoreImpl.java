@@ -31,6 +31,7 @@ public class UserStoreImpl implements UserStore {
     private static final String KEY_SIGNATURE_ENABLED = "key_signature_enabled";
     private static final String KEY_NOTIFICATIONS_ENABLED = "key_notifications_enabled";
     private static final String KEY_CONTACTS_ENCRYPTION_ENABLED = "key_contacts_encryption_enabled";
+    private static final String KEY_KEEP_DECRYPTED_SUBJECTS_ENABLED = "key_keep_decrypted_subjects_enabled";
     private static final String KEY_DRAFTS_AUTO_SAVE_ENABLED = "key_drafts_auto_save_enabled";
     private static final String KEY_BLOCK_EXTERNAL_IMAGES_ENABLED = "key_block_external_images_enabled";
     private static final String KEY_REPORT_BUGS_ENABLED = "key_report_bugs_enabled";
@@ -175,6 +176,16 @@ public class UserStoreImpl implements UserStore {
     @Override
     public boolean isContactsEncryptionEnabled() {
         return preferences.getBoolean(KEY_CONTACTS_ENCRYPTION_ENABLED, false);
+    }
+
+    @Override
+    public void setKeepDecryptedSubjectsEnabled(boolean state) {
+        preferences.edit().putBoolean(KEY_KEEP_DECRYPTED_SUBJECTS_ENABLED, state).apply();
+    }
+
+    @Override
+    public boolean isKeepDecryptedSubjectsEnabled() {
+        return preferences.getBoolean(KEY_KEEP_DECRYPTED_SUBJECTS_ENABLED, true);
     }
 
     @Override

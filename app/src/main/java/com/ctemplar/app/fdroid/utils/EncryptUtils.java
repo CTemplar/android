@@ -37,8 +37,8 @@ public class EncryptUtils {
         return content;
     }
 
-    public static String decryptSubject(String subject, long mailboxId, boolean decrypt) {
-        return decryptContent(subject, mailboxId, decrypt).replaceAll("<img.+?>", "");
+    public static String decryptSubject(String subject, long mailboxId) {
+        return decryptContent(subject, mailboxId, true).replaceAll("<img.+?>", "");
     }
 
     public static String encryptData(String content) {
