@@ -18,7 +18,7 @@ import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageProvider;
 
 public class DateUtils {
-    private static final String SERVER_DATE_PATTERN = "yyyy-MM-dd'T'HH:mm:ss'Z'";
+    private static final String SERVER_DATE_PATTERN = "yyyy-MM-dd'T'HH:mm:ssZ";
 
     private static final String MAIN_TIME_PATTERN = "h:mm aa";
     private static final String MAIN_DATE_PATTERN = "E, dd MMM yyyy";
