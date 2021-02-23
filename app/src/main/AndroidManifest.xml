@@ -120,6 +120,9 @@
         <activity android:name=".mailboxes.MailboxesActivity" />
         <activity android:name=".mailboxes.AddMailboxActivity" />
 
+        <meta-data android:name="firebase_analytics_collection_deactivated" android:value="true" />
+        <meta-data android:name="google_analytics_adid_collection_enabled" android:value="false" />
+
         <meta-data
             android:name="io.sentry.dsn"
             android:value="https://564b9753db954e22b7e37b984307e219@o190614.ingest.sentry.io/5461855" />
