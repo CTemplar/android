@@ -14,575 +14,583 @@
             android:id="@+id/activity_edit_folder_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:title="@string/txt_edit_folder"
-            android:fontFamily="@font/lato_bold" />
+            android:fontFamily="@font/lato_bold"
+            app:title="@string/txt_edit_folder" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <LinearLayout
-        android:id="@+id/activity_edit_folder_input_layout"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:orientation="vertical"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/app_bar_layout">
 
-        <TextView
-            android:id="@+id/activity_edit_folder_title"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/title_folder_name"
-            android:fontFamily="@font/lato_regular"
-            android:textColor="?android:textColorPrimary"
-            android:textSize="14sp" />
+            android:orientation="vertical">
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/activity_edit_folder_text_input_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            app:hintEnabled="false">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/activity_edit_folder_input"
+            <LinearLayout
+                android:id="@+id/activity_edit_folder_input_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/lato_regular"
-                android:textSize="16sp"
-                android:padding="16dp"
-                android:inputType="text"
-                android:textColor="?android:textColorPrimary"
-                android:minHeight="45dp"
-                android:background="@drawable/text_input_field"
-                android:imeOptions="actionNext"
-                android:nextFocusForward="@id/activity_edit_folder_delete" />
-            <requestFocus />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <TextView
-            android:id="@+id/activity_edit_folder_colors_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="25dp"
-            android:text="@string/title_choose_color"
-            android:fontFamily="@font/lato_regular"
-            android:textColor="?android:textColorPrimary"
-            android:textSize="16sp" />
-
-    </LinearLayout>
-
-    <com.ctemplar.app.fdroid.folders.RadioButtonTableLayout
-        android:id="@+id/activity_edit_folder_colors_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16sp"
-        android:layout_marginLeft="16sp"
-        android:layout_marginRight="16sp"
-        android:layout_marginEnd="16sp"
-        android:layout_marginTop="16sp"
-        android:layout_marginBottom="16sp"
-        app:layout_constraintTop_toBottomOf="@id/activity_edit_folder_input_layout">
-
-        <TableRow>
-
-            <RadioButton
-                android:id="@+id/folder_color_1"
-                android:layout_width="0dp"
-                android:layout_height="28dp"
-                android:layout_weight="2"
-                android:button="@drawable/color_radio_button"
-                android:background="@drawable/folder_picker_color" />
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
-
-            <RadioButton
-                android:id="@+id/folder_color_2"
-                android:layout_width="0dp"
-                android:layout_height="28dp"
-                android:layout_weight="2"
-                android:button="@drawable/color_radio_button"
-                android:background="@drawable/folder_picker_color" />
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
-
-            <RadioButton
-                android:id="@+id/folder_color_3"
-                android:layout_width="0dp"
-                android:layout_height="28dp"
-                android:layout_weight="2"
-                android:button="@drawable/color_radio_button"
-                android:background="@drawable/folder_picker_color" />
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
-
-            <RadioButton
-                android:id="@+id/folder_color_4"
-                android:layout_width="0dp"
-                android:layout_height="28dp"
-                android:layout_weight="2"
-                android:button="@drawable/color_radio_button"
-                android:background="@drawable/folder_picker_color" />
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
-
-            <RadioButton
-                android:id="@+id/folder_color_5"
-                android:layout_width="0dp"
-                android:layout_height="28dp"
-                android:layout_weight="2"
-                android:button="@drawable/color_radio_button"
-                android:background="@drawable/folder_picker_color" />
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
-
-            <RadioButton
-                android:id="@+id/folder_color_6"
-                android:layout_width="0dp"
-                android:layout_height="28dp"
-                android:layout_weight="2"
-                android:button="@drawable/color_radio_button"
-                android:background="@drawable/folder_picker_color" />
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
-
-            <RadioButton
-                android:id="@+id/folder_color_7"
-                android:layout_width="0dp"
-                android:layout_height="28dp"
-                android:layout_weight="2"
-                android:button="@drawable/color_radio_button"
-                android:background="@drawable/folder_picker_color" />
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
-
-            <RadioButton
-                android:id="@+id/folder_color_8"
-                android:layout_width="0dp"
-                android:layout_height="28dp"
-                android:layout_weight="2"
-                android:button="@drawable/color_radio_button"
-                android:background="@drawable/folder_picker_color" />
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
-
-            <RadioButton
-                android:id="@+id/folder_color_9"
-                android:layout_width="0dp"
-                android:layout_height="28dp"
-                android:layout_weight="2"
-                android:button="@drawable/color_radio_button"
-                android:background="@drawable/folder_picker_color" />
-
-        </TableRow>
-
-        <TableRow
-            android:layout_marginTop="10dp">
-
-            <RadioButton
-                android:id="@+id/folder_color_10"
-                android:layout_width="0dp"
-                android:layout_height="28dp"
-                android:layout_weight="2"
-                android:button="@drawable/color_radio_button"
-                android:background="@drawable/folder_picker_color" />
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
-
-            <RadioButton
-                android:id="@+id/folder_color_11"
-                android:layout_width="0dp"
-                android:layout_height="28dp"
-                android:layout_weight="2"
-                android:button="@drawable/color_radio_button"
-                android:background="@drawable/folder_picker_color" />
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
-
-            <RadioButton
-                android:id="@+id/folder_color_12"
-                android:layout_width="0dp"
-                android:layout_height="28dp"
-                android:layout_weight="2"
-                android:button="@drawable/color_radio_button"
-                android:background="@drawable/folder_picker_color" />
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
-
-            <RadioButton
-                android:id="@+id/folder_color_13"
-                android:layout_width="0dp"
-                android:layout_height="28dp"
-                android:layout_weight="2"
-                android:button="@drawable/color_radio_button"
-                android:background="@drawable/folder_picker_color" />
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
-
-            <RadioButton
-                android:id="@+id/folder_color_14"
-                android:layout_width="0dp"
-                android:layout_height="28dp"
-                android:layout_weight="2"
-                android:button="@drawable/color_radio_button"
-                android:background="@drawable/folder_picker_color" />
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
-
-            <RadioButton
-                android:id="@+id/folder_color_15"
-                android:layout_width="0dp"
-                android:layout_height="28dp"
-                android:layout_weight="2"
-                android:button="@drawable/color_radio_button"
-                android:background="@drawable/folder_picker_color" />
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
-
-            <RadioButton
-                android:id="@+id/folder_color_16"
-                android:layout_width="0dp"
-                android:layout_height="28dp"
-                android:layout_weight="2"
-                android:button="@drawable/color_radio_button"
-                android:background="@drawable/folder_picker_color" />
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
-
-            <RadioButton
-                android:id="@+id/folder_color_17"
-                android:layout_width="0dp"
-                android:layout_height="28dp"
-                android:layout_weight="2"
-                android:button="@drawable/color_radio_button"
-                android:background="@drawable/folder_picker_color" />
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
-
-            <RadioButton
-                android:id="@+id/folder_color_18"
-                android:layout_width="0dp"
-                android:layout_height="28dp"
-                android:layout_weight="2"
-                android:button="@drawable/color_radio_button"
-                android:background="@drawable/folder_picker_color" />
-
-        </TableRow>
-
-        <TableRow
-            android:layout_marginTop="10dp">
-
-            <RadioButton
-                android:id="@+id/folder_color_19"
-                android:layout_width="0dp"
-                android:layout_height="28dp"
-                android:layout_weight="2"
-                android:button="@drawable/color_radio_button"
-                android:background="@drawable/folder_picker_color" />
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
-
-            <RadioButton
-                android:id="@+id/folder_color_20"
-                android:layout_width="0dp"
-                android:layout_height="28dp"
-                android:layout_weight="2"
-                android:button="@drawable/color_radio_button"
-                android:background="@drawable/folder_picker_color" />
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
-
-            <RadioButton
-                android:id="@+id/folder_color_21"
-                android:layout_width="0dp"
-                android:layout_height="28dp"
-                android:layout_weight="2"
-                android:button="@drawable/color_radio_button"
-                android:background="@drawable/folder_picker_color" />
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
-
-            <RadioButton
-                android:id="@+id/folder_color_22"
-                android:layout_width="0dp"
-                android:layout_height="28dp"
-                android:layout_weight="2"
-                android:button="@drawable/color_radio_button"
-                android:background="@drawable/folder_picker_color" />
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
-
-            <RadioButton
-                android:id="@+id/folder_color_23"
-                android:layout_width="0dp"
-                android:layout_height="28dp"
-                android:layout_weight="2"
-                android:button="@drawable/color_radio_button"
-                android:background="@drawable/folder_picker_color" />
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
-
-            <RadioButton
-                android:id="@+id/folder_color_24"
-                android:layout_width="0dp"
-                android:layout_height="28dp"
-                android:layout_weight="2"
-                android:button="@drawable/color_radio_button"
-                android:background="@drawable/folder_picker_color" />
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
-
-            <RadioButton
-                android:id="@+id/folder_color_25"
-                android:layout_width="0dp"
-                android:layout_height="28dp"
-                android:layout_weight="2"
-                android:button="@drawable/color_radio_button"
-                android:background="@drawable/folder_picker_color" />
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
-
-            <RadioButton
-                android:id="@+id/folder_color_26"
-                android:layout_width="0dp"
-                android:layout_height="28dp"
-                android:layout_weight="2"
-                android:button="@drawable/color_radio_button"
-                android:background="@drawable/folder_picker_color" />
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
-
-            <RadioButton
-                android:id="@+id/folder_color_27"
-                android:layout_width="0dp"
-                android:layout_height="28dp"
-                android:layout_weight="2"
-                android:button="@drawable/color_radio_button"
-                android:background="@drawable/folder_picker_color" />
-
-        </TableRow>
-
-        <TableRow
-            android:layout_marginTop="10dp">
-
-            <RadioButton
-                android:id="@+id/folder_color_28"
-                android:layout_width="0dp"
-                android:layout_height="28dp"
-                android:layout_weight="2"
-                android:button="@drawable/color_radio_button"
-                android:background="@drawable/folder_picker_color" />
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
-
-            <RadioButton
-                android:id="@+id/folder_color_29"
-                android:layout_width="0dp"
-                android:layout_height="28dp"
-                android:layout_weight="2"
-                android:button="@drawable/color_radio_button"
-                android:background="@drawable/folder_picker_color" />
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
-
-            <RadioButton
-                android:id="@+id/folder_color_30"
-                android:layout_width="0dp"
-                android:layout_height="28dp"
-                android:layout_weight="2"
-                android:button="@drawable/color_radio_button"
-                android:background="@drawable/folder_picker_color" />
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
-
-            <RadioButton
-                android:id="@+id/folder_color_31"
-                android:layout_width="0dp"
-                android:layout_height="28dp"
-                android:layout_weight="2"
-                android:button="@drawable/color_radio_button"
-                android:background="@drawable/folder_picker_color" />
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
-
-            <RadioButton
-                android:id="@+id/folder_color_32"
-                android:layout_width="0dp"
-                android:layout_height="28dp"
-                android:layout_weight="2"
-                android:button="@drawable/color_radio_button"
-                android:background="@drawable/folder_picker_color" />
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
-
-            <RadioButton
-                android:id="@+id/folder_color_33"
-                android:layout_width="0dp"
-                android:layout_height="28dp"
-                android:layout_weight="2"
-                android:button="@drawable/color_radio_button"
-                android:background="@drawable/folder_picker_color" />
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
-
-            <RadioButton
-                android:id="@+id/folder_color_34"
-                android:layout_width="0dp"
-                android:layout_height="28dp"
-                android:layout_weight="2"
-                android:button="@drawable/color_radio_button"
-                android:background="@drawable/folder_picker_color" />
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
-
-            <RadioButton
-                android:id="@+id/folder_color_35"
-                android:layout_width="0dp"
-                android:layout_height="28dp"
-                android:layout_weight="2"
-                android:button="@drawable/color_radio_button"
-                android:background="@drawable/folder_picker_color" />
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
-
-            <RadioButton
-                android:id="@+id/folder_color_36"
-                android:layout_width="0dp"
-                android:layout_height="28dp"
-                android:layout_weight="2"
-                android:button="@drawable/color_radio_button"
-                android:background="@drawable/folder_picker_color" />
-
-        </TableRow>
-
-    </com.ctemplar.app.fdroid.folders.RadioButtonTableLayout>
-
-    <LinearLayout
-        android:id="@+id/activity_edit_folder_actions_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="30dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent">
-
-        <Button
-            android:id="@+id/activity_edit_folder_delete"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginRight="4dp"
-            android:layout_marginEnd="4dp"
-            android:textSize="18sp"
-            android:fontFamily="@font/lato_regular"
-            android:textColor="@color/colorDarkBlue2"
-            android:background="@drawable/dialog_cancel_button_background"
-            android:textAllCaps="false"
-            android:text="@string/txt_delete_folder"/>
-
-    </LinearLayout>
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/activity_edit_folder_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/lato_regular"
+                    android:text="@string/title_folder_name"
+                    android:textColor="?android:textColorPrimary"
+                    android:textSize="14sp" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/activity_edit_folder_text_input_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    app:hintEnabled="false">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/activity_edit_folder_input"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/text_input_field"
+                        android:fontFamily="@font/lato_regular"
+                        android:imeOptions="actionNext"
+                        android:inputType="text"
+                        android:minHeight="45dp"
+                        android:nextFocusForward="@id/activity_edit_folder_delete"
+                        android:padding="16dp"
+                        android:textColor="?android:textColorPrimary"
+                        android:textSize="16sp" />
+
+                    <requestFocus />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <TextView
+                    android:id="@+id/activity_edit_folder_colors_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="25dp"
+                    android:fontFamily="@font/lato_regular"
+                    android:text="@string/title_choose_color"
+                    android:textColor="?android:textColorPrimary"
+                    android:textSize="16sp" />
+
+            </LinearLayout>
+
+            <com.ctemplar.app.fdroid.folders.RadioButtonTableLayout
+                android:id="@+id/activity_edit_folder_colors_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16sp"
+                android:layout_marginLeft="16sp"
+                android:layout_marginTop="16sp"
+                android:layout_marginEnd="16sp"
+                android:layout_marginRight="16sp"
+                android:layout_marginBottom="16sp">
+
+                <TableRow>
+
+                    <RadioButton
+                        android:id="@+id/folder_color_1"
+                        android:layout_width="0dp"
+                        android:layout_height="28dp"
+                        android:layout_weight="2"
+                        android:background="@drawable/folder_picker_color"
+                        android:button="@drawable/color_radio_button" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+
+                    <RadioButton
+                        android:id="@+id/folder_color_2"
+                        android:layout_width="0dp"
+                        android:layout_height="28dp"
+                        android:layout_weight="2"
+                        android:background="@drawable/folder_picker_color"
+                        android:button="@drawable/color_radio_button" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+
+                    <RadioButton
+                        android:id="@+id/folder_color_3"
+                        android:layout_width="0dp"
+                        android:layout_height="28dp"
+                        android:layout_weight="2"
+                        android:background="@drawable/folder_picker_color"
+                        android:button="@drawable/color_radio_button" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+
+                    <RadioButton
+                        android:id="@+id/folder_color_4"
+                        android:layout_width="0dp"
+                        android:layout_height="28dp"
+                        android:layout_weight="2"
+                        android:background="@drawable/folder_picker_color"
+                        android:button="@drawable/color_radio_button" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+
+                    <RadioButton
+                        android:id="@+id/folder_color_5"
+                        android:layout_width="0dp"
+                        android:layout_height="28dp"
+                        android:layout_weight="2"
+                        android:background="@drawable/folder_picker_color"
+                        android:button="@drawable/color_radio_button" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+
+                    <RadioButton
+                        android:id="@+id/folder_color_6"
+                        android:layout_width="0dp"
+                        android:layout_height="28dp"
+                        android:layout_weight="2"
+                        android:background="@drawable/folder_picker_color"
+                        android:button="@drawable/color_radio_button" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+
+                    <RadioButton
+                        android:id="@+id/folder_color_7"
+                        android:layout_width="0dp"
+                        android:layout_height="28dp"
+                        android:layout_weight="2"
+                        android:background="@drawable/folder_picker_color"
+                        android:button="@drawable/color_radio_button" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+
+                    <RadioButton
+                        android:id="@+id/folder_color_8"
+                        android:layout_width="0dp"
+                        android:layout_height="28dp"
+                        android:layout_weight="2"
+                        android:background="@drawable/folder_picker_color"
+                        android:button="@drawable/color_radio_button" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+
+                    <RadioButton
+                        android:id="@+id/folder_color_9"
+                        android:layout_width="0dp"
+                        android:layout_height="28dp"
+                        android:layout_weight="2"
+                        android:background="@drawable/folder_picker_color"
+                        android:button="@drawable/color_radio_button" />
+
+                </TableRow>
+
+                <TableRow android:layout_marginTop="10dp">
+
+                    <RadioButton
+                        android:id="@+id/folder_color_10"
+                        android:layout_width="0dp"
+                        android:layout_height="28dp"
+                        android:layout_weight="2"
+                        android:background="@drawable/folder_picker_color"
+                        android:button="@drawable/color_radio_button" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+
+                    <RadioButton
+                        android:id="@+id/folder_color_11"
+                        android:layout_width="0dp"
+                        android:layout_height="28dp"
+                        android:layout_weight="2"
+                        android:background="@drawable/folder_picker_color"
+                        android:button="@drawable/color_radio_button" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+
+                    <RadioButton
+                        android:id="@+id/folder_color_12"
+                        android:layout_width="0dp"
+                        android:layout_height="28dp"
+                        android:layout_weight="2"
+                        android:background="@drawable/folder_picker_color"
+                        android:button="@drawable/color_radio_button" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+
+                    <RadioButton
+                        android:id="@+id/folder_color_13"
+                        android:layout_width="0dp"
+                        android:layout_height="28dp"
+                        android:layout_weight="2"
+                        android:background="@drawable/folder_picker_color"
+                        android:button="@drawable/color_radio_button" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+
+                    <RadioButton
+                        android:id="@+id/folder_color_14"
+                        android:layout_width="0dp"
+                        android:layout_height="28dp"
+                        android:layout_weight="2"
+                        android:background="@drawable/folder_picker_color"
+                        android:button="@drawable/color_radio_button" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+
+                    <RadioButton
+                        android:id="@+id/folder_color_15"
+                        android:layout_width="0dp"
+                        android:layout_height="28dp"
+                        android:layout_weight="2"
+                        android:background="@drawable/folder_picker_color"
+                        android:button="@drawable/color_radio_button" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+
+                    <RadioButton
+                        android:id="@+id/folder_color_16"
+                        android:layout_width="0dp"
+                        android:layout_height="28dp"
+                        android:layout_weight="2"
+                        android:background="@drawable/folder_picker_color"
+                        android:button="@drawable/color_radio_button" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+
+                    <RadioButton
+                        android:id="@+id/folder_color_17"
+                        android:layout_width="0dp"
+                        android:layout_height="28dp"
+                        android:layout_weight="2"
+                        android:background="@drawable/folder_picker_color"
+                        android:button="@drawable/color_radio_button" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+
+                    <RadioButton
+                        android:id="@+id/folder_color_18"
+                        android:layout_width="0dp"
+                        android:layout_height="28dp"
+                        android:layout_weight="2"
+                        android:background="@drawable/folder_picker_color"
+                        android:button="@drawable/color_radio_button" />
+
+                </TableRow>
+
+                <TableRow android:layout_marginTop="10dp">
+
+                    <RadioButton
+                        android:id="@+id/folder_color_19"
+                        android:layout_width="0dp"
+                        android:layout_height="28dp"
+                        android:layout_weight="2"
+                        android:background="@drawable/folder_picker_color"
+                        android:button="@drawable/color_radio_button" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+
+                    <RadioButton
+                        android:id="@+id/folder_color_20"
+                        android:layout_width="0dp"
+                        android:layout_height="28dp"
+                        android:layout_weight="2"
+                        android:background="@drawable/folder_picker_color"
+                        android:button="@drawable/color_radio_button" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+
+                    <RadioButton
+                        android:id="@+id/folder_color_21"
+                        android:layout_width="0dp"
+                        android:layout_height="28dp"
+                        android:layout_weight="2"
+                        android:background="@drawable/folder_picker_color"
+                        android:button="@drawable/color_radio_button" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+
+                    <RadioButton
+                        android:id="@+id/folder_color_22"
+                        android:layout_width="0dp"
+                        android:layout_height="28dp"
+                        android:layout_weight="2"
+                        android:background="@drawable/folder_picker_color"
+                        android:button="@drawable/color_radio_button" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+
+                    <RadioButton
+                        android:id="@+id/folder_color_23"
+                        android:layout_width="0dp"
+                        android:layout_height="28dp"
+                        android:layout_weight="2"
+                        android:background="@drawable/folder_picker_color"
+                        android:button="@drawable/color_radio_button" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+
+                    <RadioButton
+                        android:id="@+id/folder_color_24"
+                        android:layout_width="0dp"
+                        android:layout_height="28dp"
+                        android:layout_weight="2"
+                        android:background="@drawable/folder_picker_color"
+                        android:button="@drawable/color_radio_button" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+
+                    <RadioButton
+                        android:id="@+id/folder_color_25"
+                        android:layout_width="0dp"
+                        android:layout_height="28dp"
+                        android:layout_weight="2"
+                        android:background="@drawable/folder_picker_color"
+                        android:button="@drawable/color_radio_button" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+
+                    <RadioButton
+                        android:id="@+id/folder_color_26"
+                        android:layout_width="0dp"
+                        android:layout_height="28dp"
+                        android:layout_weight="2"
+                        android:background="@drawable/folder_picker_color"
+                        android:button="@drawable/color_radio_button" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+
+                    <RadioButton
+                        android:id="@+id/folder_color_27"
+                        android:layout_width="0dp"
+                        android:layout_height="28dp"
+                        android:layout_weight="2"
+                        android:background="@drawable/folder_picker_color"
+                        android:button="@drawable/color_radio_button" />
+
+                </TableRow>
+
+                <TableRow android:layout_marginTop="10dp">
+
+                    <RadioButton
+                        android:id="@+id/folder_color_28"
+                        android:layout_width="0dp"
+                        android:layout_height="28dp"
+                        android:layout_weight="2"
+                        android:background="@drawable/folder_picker_color"
+                        android:button="@drawable/color_radio_button" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+
+                    <RadioButton
+                        android:id="@+id/folder_color_29"
+                        android:layout_width="0dp"
+                        android:layout_height="28dp"
+                        android:layout_weight="2"
+                        android:background="@drawable/folder_picker_color"
+                        android:button="@drawable/color_radio_button" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+
+                    <RadioButton
+                        android:id="@+id/folder_color_30"
+                        android:layout_width="0dp"
+                        android:layout_height="28dp"
+                        android:layout_weight="2"
+                        android:background="@drawable/folder_picker_color"
+                        android:button="@drawable/color_radio_button" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+
+                    <RadioButton
+                        android:id="@+id/folder_color_31"
+                        android:layout_width="0dp"
+                        android:layout_height="28dp"
+                        android:layout_weight="2"
+                        android:background="@drawable/folder_picker_color"
+                        android:button="@drawable/color_radio_button" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+
+                    <RadioButton
+                        android:id="@+id/folder_color_32"
+                        android:layout_width="0dp"
+                        android:layout_height="28dp"
+                        android:layout_weight="2"
+                        android:background="@drawable/folder_picker_color"
+                        android:button="@drawable/color_radio_button" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+
+                    <RadioButton
+                        android:id="@+id/folder_color_33"
+                        android:layout_width="0dp"
+                        android:layout_height="28dp"
+                        android:layout_weight="2"
+                        android:background="@drawable/folder_picker_color"
+                        android:button="@drawable/color_radio_button" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+
+                    <RadioButton
+                        android:id="@+id/folder_color_34"
+                        android:layout_width="0dp"
+                        android:layout_height="28dp"
+                        android:layout_weight="2"
+                        android:background="@drawable/folder_picker_color"
+                        android:button="@drawable/color_radio_button" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+
+                    <RadioButton
+                        android:id="@+id/folder_color_35"
+                        android:layout_width="0dp"
+                        android:layout_height="28dp"
+                        android:layout_weight="2"
+                        android:background="@drawable/folder_picker_color"
+                        android:button="@drawable/color_radio_button" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+
+                    <RadioButton
+                        android:id="@+id/folder_color_36"
+                        android:layout_width="0dp"
+                        android:layout_height="28dp"
+                        android:layout_weight="2"
+                        android:background="@drawable/folder_picker_color"
+                        android:button="@drawable/color_radio_button" />
+
+                </TableRow>
+
+            </com.ctemplar.app.fdroid.folders.RadioButtonTableLayout>
+
+            <LinearLayout
+                android:id="@+id/activity_edit_folder_actions_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="30dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginBottom="16dp"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/activity_edit_folder_delete"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="4dp"
+                    android:layout_marginRight="4dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/dialog_cancel_button_background"
+                    android:fontFamily="@font/lato_regular"
+                    android:text="@string/txt_delete_folder"
+                    android:textAllCaps="false"
+                    android:textColor="@color/colorDarkBlue2"
+                    android:textSize="18sp" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
