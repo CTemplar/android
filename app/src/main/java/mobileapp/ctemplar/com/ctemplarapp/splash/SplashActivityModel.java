@@ -59,6 +59,8 @@ public class SplashActivityModel extends ViewModel {
 
                     @Override
                     public void onNext(@NotNull AddFirebaseTokenResponse response) {
+                        Timber.d("addFirebaseToken is success %s", response.getToken());
+                        userRepository.saveFirebaseToken(response.getToken());
                         addFirebaseTokenResponse.postValue(response);
                     }
 
@@ -84,6 +86,7 @@ public class SplashActivityModel extends ViewModel {
 
                     @Override
                     public void onNext(@NotNull Response<Void> voidResponse) {
+                        Timber.d("deleteFirebaseToken is success %s", token);
                         deleteFirebaseTokenStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
                     }
 
