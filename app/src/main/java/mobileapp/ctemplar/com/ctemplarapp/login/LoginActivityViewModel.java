@@ -7,6 +7,8 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.google.firebase.messaging.FirebaseMessaging;
+
 import org.jetbrains.annotations.NotNull;
 
 import io.reactivex.Observable;
@@ -19,6 +21,7 @@ import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.DialogState;
 import mobileapp.ctemplar.com.ctemplarapp.LoginActivityActions;
 import mobileapp.ctemplar.com.ctemplarapp.SingleLiveEvent;
+import mobileapp.ctemplar.com.ctemplarapp.main.MainActivityViewModel;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.net.entity.PGPKeyEntity;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.AddFirebaseTokenRequest;
@@ -88,7 +91,7 @@ public class LoginActivityViewModel extends AndroidViewModel {
         return addFirebaseTokenStatus;
     }
 
-    public void clearDB() {
+    public void clearAllTables() {
         CTemplarApp.getAppDatabase().clearAllTables();
     }
 
@@ -135,7 +138,7 @@ public class LoginActivityViewModel extends AndroidViewModel {
                         } else {
                             userRepository.saveUserToken(signInResponse.getToken());
                             responseStatus.postValue(ResponseStatus.RESPONSE_NEXT);
-                            WorkersHelper.setupForceRefreshTokenWork(getApplication());
+                            userAuthorized();
                         }
                     }
                 });
@@ -233,6 +236,13 @@ public class LoginActivityViewModel extends AndroidViewModel {
 
             }
         });
+    }
+
+    private void userAuthorized() {
+        clearAllTables();
+        WorkersHelper.setupForceRefreshTokenWork(getApplication());
+        FirebaseMessaging.getInstance().getToken().addOnSuccessListener(token
+                -> addFirebaseToken(token, MainActivityViewModel.ANDROID));
     }
 
     public void addFirebaseToken(String token, String platform) {

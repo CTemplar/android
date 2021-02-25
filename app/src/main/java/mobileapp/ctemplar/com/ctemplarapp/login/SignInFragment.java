@@ -15,7 +15,6 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
-import com.google.firebase.iid.FirebaseInstanceId;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -149,16 +148,16 @@ public class SignInFragment extends BaseFragment {
 
             switch (status) {
                 case RESPONSE_ERROR:
-                    Toast.makeText(getActivity(), getString(R.string.error_sign_in), Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity(), R.string.error_sign_in, Toast.LENGTH_LONG).show();
                     break;
                 case RESPONSE_ERROR_AUTH_FAILED:
-                    Toast.makeText(getActivity(), getString(R.string.error_authentication_failed), Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity(), R.string.error_authentication_failed, Toast.LENGTH_LONG).show();
                     break;
                 case RESPONSE_WAIT_OTP:
                     show2FA();
                     break;
                 case RESPONSE_NEXT:
-                    sendFirebaseToken();
+                    loginActivityModel.changeAction(LoginActivityActions.CHANGE_ACTIVITY_MAIN);
                     break;
             }
         }
@@ -171,18 +170,6 @@ public class SignInFragment extends BaseFragment {
         textViewOtpTitle.setVisibility(View.VISIBLE);
         editTextOtpLayout.setVisibility(View.VISIBLE);
         editTextOtpLayout.requestFocus();
-    }
-
-    private void sendFirebaseToken() {
-        loginActivityModel.getAddFirebaseTokenStatus().observe(this, responseStatus -> {
-            loginActivityModel.clearDB();
-            loginActivityModel.changeAction(LoginActivityActions.CHANGE_ACTIVITY_MAIN);
-        });
-
-        FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(getActivity(), instanceIdResult -> {
-            String token = instanceIdResult.getToken();
-            loginActivityModel.addFirebaseToken(token, getString(R.string.platform));
-        });
     }
 
     private boolean isValid(String email, String password) {
