@@ -7,6 +7,7 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -62,22 +63,10 @@ public class EditFolderActivity extends BaseActivity {
         String folderName = getIntent().getStringExtra(ARG_NAME);
         if (folderName != null) {
             editTextNameFolder.setText(folderName);
+            editTextNameFolder.setSelection(editTextNameFolder.getText().length());
         }
         editFolderModel = new ViewModelProvider(this).get(EditFolderViewModel.class);
-        editFolderModel.getDeletingStatus().observe(this, responseStatus -> {
-            if (responseStatus == null || responseStatus == ResponseStatus.RESPONSE_ERROR) {
-                Toast.makeText(this, R.string.txt_folder_not_deleted, Toast.LENGTH_SHORT).show();
-            } else if (responseStatus == ResponseStatus.RESPONSE_COMPLETE) {
-                Toast.makeText(this, R.string.txt_folder_deleted, Toast.LENGTH_SHORT).show();
-            }
-        });
-        editFolderModel.getResponseStatus().observe(this, responseStatus -> {
-            if (responseStatus == null || responseStatus == ResponseStatus.RESPONSE_ERROR) {
-                Toast.makeText(this, R.string.txt_folder_not_edited, Toast.LENGTH_SHORT).show();
-            } else if (responseStatus == ResponseStatus.RESPONSE_COMPLETE) {
-                Toast.makeText(this, R.string.txt_folder_edited, Toast.LENGTH_SHORT).show();
-            }
-        });
+        setListeners();
         AddFolderActivity.fillPalette(this, radioGroupLayout);
         radioGroupLayout.setActive(firstRadioButton);
     }
@@ -93,16 +82,41 @@ public class EditFolderActivity extends BaseActivity {
         if (EditTextUtils.isTextLength(folderName, FOLDER_NAME_MIN, FOLDER_NAME_MAX)) {
             editFolderModel.editFolder(folderId, folderName, folderColor);
             editTextNameFolder.setError(null);
-            finish();
         } else {
             editTextNameFolder.setError(getString(R.string.txt_folder_name_hint));
         }
     }
 
+    private void setListeners() {
+        editFolderModel.getDeletingStatus().observe(this, responseStatus -> {
+            if (responseStatus == null || responseStatus == ResponseStatus.RESPONSE_ERROR) {
+                Toast.makeText(this, R.string.txt_folder_not_deleted, Toast.LENGTH_SHORT).show();
+            } else if (responseStatus == ResponseStatus.RESPONSE_COMPLETE) {
+                Toast.makeText(this, R.string.txt_folder_deleted, Toast.LENGTH_SHORT).show();
+            }
+            finish();
+        });
+        editFolderModel.getEditResponse().observe(this, foldersResult -> {
+            if (foldersResult == null) {
+                return;
+            }
+            Toast.makeText(this, R.string.txt_folder_edited, Toast.LENGTH_SHORT).show();
+            finish();
+        });
+        editFolderModel.getEditErrorResponse().observe(this, this::handleResponseError);
+    }
+
+    private void handleResponseError(@Nullable String errorText) {
+        if (errorText == null) {
+            return;
+        }
+        Toast.makeText(this, errorText, Toast.LENGTH_SHORT).show();
+        finish();
+    }
+
     @OnClick(R.id.activity_edit_folder_delete)
     public void OnClickFolderDelete() {
         editFolderModel.deleteFolderById(folderId);
-        onBackPressed();
     }
 
     @Override
