@@ -7,6 +7,8 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.google.gson.JsonSyntaxException;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -187,12 +189,12 @@ public class StepRegistrationViewModel extends AndroidViewModel {
                             HttpErrorResponse httpErrorResponse = GENERAL_GSON
                                     .fromJson(errorBody, HttpErrorResponse.class);
                             responseError.postValue(httpErrorResponse.getError().getError());
-                        } catch (IOException ex) {
+                        } catch (IOException | JsonSyntaxException ex) {
                             Timber.e(ex, "Can't parse signUp error");
                         }
                     }
                 } else {
-                    responseError.postValue("Uncaught error");
+                    responseError.postValue("SignUp error");
                 }
             }
 

@@ -3,10 +3,10 @@ package mobileapp.ctemplar.com.ctemplarapp.settings;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 
 import butterknife.BindView;
 import mobileapp.ctemplar.com.ctemplarapp.BaseActivity;
@@ -38,7 +38,7 @@ public class PINLockChangeActivity extends BaseActivity {
     private boolean confirmStage = false;
     private String pinCode;
 
-    private KeypadAdapter.KeypadListener mKeypadListener = new KeypadAdapter.KeypadListener() {
+    private final KeypadAdapter.KeypadListener mKeypadListener = new KeypadAdapter.KeypadListener() {
         @Override
         public void onComplete(String pin) {
             if (!confirmStage) {
@@ -49,7 +49,7 @@ public class PINLockChangeActivity extends BaseActivity {
                 return;
             }
             if (!pinCode.equals(pin)) {
-                notifyWrongPIN();
+                notifyPINsDontMatch();
                 return;
             }
             userStore.setPINLock(pinCode);
@@ -58,7 +58,11 @@ public class PINLockChangeActivity extends BaseActivity {
 
         @Override
         public void onPINChanged(int pinLength, String pinCode) {
-            //
+            if (!confirmStage && pinLength == 1) {
+                hintTextView.setText(R.string.choose_pin);
+                hintTextView.setTextColor(ContextCompat.getColor(PINLockChangeActivity.this,
+                        R.color.secondaryTextColor));
+            }
         }
 
         @Override
@@ -83,6 +87,7 @@ public class PINLockChangeActivity extends BaseActivity {
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
+            actionBar.setDisplayShowTitleEnabled(false);
             actionBar.setHomeButtonEnabled(true);
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
@@ -98,10 +103,12 @@ public class PINLockChangeActivity extends BaseActivity {
         finish();
     }
 
-    private void notifyWrongPIN() {
-        Timber.d("notifyWrongPIN");
+    private void notifyPINsDontMatch() {
+        Timber.d("notifyPINsDontMatch");
+        confirmStage = false;
         keypadView.resetKeypadView();
-        Toast.makeText(this, getString(R.string.pins_dont_match), Toast.LENGTH_SHORT).show();
+        hintTextView.setText(R.string.pins_dont_match);
+        hintTextView.setTextColor(ContextCompat.getColor(this, R.color.colorAccent));
         AppUtils.vibrate(getBaseContext(), 500);
     }
 }
