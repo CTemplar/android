@@ -9,6 +9,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import butterknife.BindView;
@@ -17,6 +18,7 @@ import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.login.LoginActivity;
 import mobileapp.ctemplar.com.ctemplarapp.main.MainActivityViewModel;
+import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserStore;
 import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
 import mobileapp.ctemplar.com.ctemplarapp.view.pinlock.KeypadAdapter;
@@ -27,6 +29,8 @@ import timber.log.Timber;
 public class PINLockActivity extends BaseActivity {
     private static final String ALLOW_BACK_KEY = "allow_back";
     private static final int ATTEMPTS_TIMEOUT = 120;
+    private static final int ATTEMPTS_COUNT = 3;
+    private static final int ATTEMPTS_TOTAL_COUNT = 9;
 
     @BindView(R.id.activity_pin_lock_pass_code_view)
     PasscodeView passcodeView;
@@ -96,6 +100,7 @@ public class PINLockActivity extends BaseActivity {
         keypadView.attachPasscodeView(passcodeView);
         keypadView.setKeypadListener(mKeypadListener);
         mainModel = new ViewModelProvider(this).get(MainActivityViewModel.class);
+        mainModel.getLogoutResponseStatus().observe(this, responseStatus -> startSignInActivity());
     }
 
     @Override
@@ -132,13 +137,12 @@ public class PINLockActivity extends BaseActivity {
         int attemptsCount = userStore.getLockAttemptsCount();
         long lastAttemptTimeDiff = (System.currentTimeMillis() - userStore.getLockLastAttemptTime()) / 1000;
 
-        if (attemptsCount > 0) {
+        if (attemptsCount > ATTEMPTS_TOTAL_COUNT) {
             mainModel.logout();
-            startSignInActivity();
             return true;
         }
 
-        if (attemptsCount % 3 == 0 && lastAttemptTimeDiff < ATTEMPTS_TIMEOUT) {
+        if (attemptsCount % ATTEMPTS_COUNT == 0 && lastAttemptTimeDiff < ATTEMPTS_TIMEOUT) {
             keypadView.resetKeypadView();
             hintTextView.setText(getString(R.string.invalid_pin_timeout,
                     ATTEMPTS_TIMEOUT - lastAttemptTimeDiff));

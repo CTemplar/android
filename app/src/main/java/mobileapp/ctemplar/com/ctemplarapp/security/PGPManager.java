@@ -10,7 +10,7 @@ import java.io.IOException;
 import mobileapp.ctemplar.com.ctemplarapp.net.entity.PGPKeyEntity;
 import timber.log.Timber;
 
- public class PGPManager {
+public class PGPManager {
     private static final int KEY_STRENGTH = 4096;
     private static final boolean COMPRESSION = false;
 
