@@ -139,6 +139,7 @@ public class PINLockSettingsActivity extends BaseActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 userStore.setAutoLockTime(autoLockTime[position]);
             }
+
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
 

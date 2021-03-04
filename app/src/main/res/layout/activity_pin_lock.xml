@@ -25,11 +25,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/icon_shield_small"
+            app:layout_constraintEnd_toStartOf="@id/activity_pin_lock_app_name_image_view"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/activity_pin_lock_app_name_image_view" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
             android:id="@+id/activity_pin_lock_app_name_image_view"
@@ -37,13 +37,13 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginLeft="8dp"
-            android:tint="@color/secondaryTextColor"
-            app:layout_constraintHorizontal_bias="0.5"
             android:src="@drawable/icon_ctemplar"
+            app:layout_constraintBottom_toBottomOf="@id/activity_pin_lock_app_logo_image_view"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@id/activity_pin_lock_app_logo_image_view"
             app:layout_constraintTop_toTopOf="@id/activity_pin_lock_app_logo_image_view"
-            app:layout_constraintBottom_toBottomOf="@id/activity_pin_lock_app_logo_image_view" />
+            app:tint="@color/secondaryTextColor" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -53,8 +53,8 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:orientation="vertical"
-        app:layout_constraintTop_toBottomOf="@id/activity_pin_lock_app_logo_layout"
-        app:layout_constraintBottom_toTopOf="@id/activity_pin_lock_key_pad_view">
+        app:layout_constraintBottom_toTopOf="@id/activity_pin_lock_key_pad_view"
+        app:layout_constraintTop_toBottomOf="@id/activity_pin_lock_app_logo_layout">
 
         <TextView
             android:id="@+id/activity_pin_lock_hint_text_view"
@@ -70,8 +70,8 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1px"
-            android:layout_marginTop="20dp"
             android:layout_marginLeft="35dp"
+            android:layout_marginTop="20dp"
             android:layout_marginRight="35dp"
             android:background="@color/disabledTextColor" />
 
@@ -81,10 +81,10 @@
         android:id="@+id/activity_pin_lock_key_pad_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:listitem="@layout/item_number"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/activity_pin_lock_input_layout" />
+        app:layout_constraintTop_toBottomOf="@id/activity_pin_lock_input_layout"
+        tools:listitem="@layout/item_number" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

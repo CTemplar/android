@@ -3,7 +3,7 @@ package com.ctemplar.app.fdroid.repository;
 import com.ctemplar.app.fdroid.net.entity.UserEntity;
 
 public interface UserStore {
-    void saveUserPref(String username, String pass, String passHashed, String privateKey, String publicKey);
+    void saveUserPref(String username, String password, String passwordHashed);
     UserEntity getUser();
 
     void clearToken();
@@ -62,6 +62,12 @@ public interface UserStore {
 
     void setLocked(boolean locked);
     boolean isLocked();
+
+    void updateLockLastAttemptTime();
+    long getLockLastAttemptTime();
+
+    void setLockAttemptsCount(int attemptsCount);
+    int getLockAttemptsCount();
 
     void setDarkModeValue(int value);
     int getDarkModeValue();
