@@ -308,6 +308,7 @@
     <string name="choose_pin">Enter a 4-digit PIN</string>
     <string name="confirm_pin">Confirm your PIN</string>
     <string name="invalid_pin">Invalid PIN</string>
+    <string name="invalid_pin_timeout">Please try again in %d second(s)</string>
     <string name="pins_dont_match">PINs do not match</string>
 
     <!-- SIGNATURE EDIT BAR -->

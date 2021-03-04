@@ -78,6 +78,7 @@ public class MainActivityViewModel extends AndroidViewModel {
     private final MutableLiveData<ResponseBody> unreadFoldersBody = new MutableLiveData<>();
     private final MutableLiveData<MyselfResponse> myselfResponse = new MutableLiveData<>();
     private final MutableLiveData<String> currentFolder = new MutableLiveData<>();
+    private final MutableLiveData<ResponseStatus> logoutResponseStatus = new MutableLiveData<>();
     private final QueuedExecutor executor;
 
     public interface OnDecryptFinishedCallback {
@@ -213,6 +214,10 @@ public class MainActivityViewModel extends AndroidViewModel {
         return currentFolder;
     }
 
+    public LiveData<ResponseStatus> getLogoutResponseStatus() {
+        return logoutResponseStatus;
+    }
+
     public LiveData<MessageProvider> getMessageResponse() {
         return messageResponse;
     }
@@ -247,11 +252,12 @@ public class MainActivityViewModel extends AndroidViewModel {
 
                     @Override
                     public void onNext(@NotNull Response<Void> voidResponse) {
-
+                        logoutResponseStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
                     }
 
                     @Override
                     public void onError(@NotNull Throwable e) {
+                        logoutResponseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
                         Timber.e(e, "logout");
                     }
 
