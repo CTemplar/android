@@ -9,11 +9,10 @@ import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Objects;
 
 import butterknife.BindView;
 import mobileapp.ctemplar.com.ctemplarapp.BaseFragment;
@@ -22,6 +21,7 @@ import mobileapp.ctemplar.com.ctemplarapp.DialogState;
 import mobileapp.ctemplar.com.ctemplarapp.LoginActivityActions;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.main.MainActivity;
+import timber.log.Timber;
 
 public class LoginActivity extends BaseFragmentActivity {
     @BindView(R.id.progress_bar)
@@ -72,7 +72,7 @@ public class LoginActivity extends BaseFragmentActivity {
     }
 
     private void handleDialogState(DialogState state) {
-        if(state != null) {
+        if (state != null) {
             switch (state) {
                 case SHOW_PROGRESS_DIALOG:
                     progress.setVisibility(View.VISIBLE);
@@ -121,17 +121,24 @@ public class LoginActivity extends BaseFragmentActivity {
 
     @Override
     protected void onSaveInstanceState(@NotNull Bundle outState) {
+        Timber.d("onSaveInstanceState");
         if (isPortrait2Landscape()) {
-            remove_fragments();
+            removeFragments();
         }
         super.onSaveInstanceState(outState);
     }
 
-    private void remove_fragments() {
-        getSupportFragmentManager()
+    private void removeFragments() {
+        Timber.d("removeFragments");
+        FragmentManager supportFragmentManager = getSupportFragmentManager();
+        if (supportFragmentManager == null) {
+            Timber.e("supportFragmentManager is null");
+            return;
+        }
+        supportFragmentManager
                 .beginTransaction()
-                .remove(Objects.requireNonNull(getSupportFragmentManager().findFragmentById(mContentFrame.getId())))
-                .commit();
+                .remove(supportFragmentManager.findFragmentById(mContentFrame.getId()))
+                .commitAllowingStateLoss();
     }
 
     private boolean isPortrait2Landscape() {
