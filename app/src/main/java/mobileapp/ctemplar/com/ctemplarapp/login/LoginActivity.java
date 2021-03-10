@@ -9,6 +9,7 @@ import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -131,13 +132,14 @@ public class LoginActivity extends BaseFragmentActivity {
     private void removeFragments() {
         Timber.d("removeFragments");
         FragmentManager supportFragmentManager = getSupportFragmentManager();
-        if (supportFragmentManager == null) {
-            Timber.e("supportFragmentManager is null");
+        Fragment fragment = supportFragmentManager.findFragmentById(mContentFrame.getId());
+        if (fragment == null) {
+            Timber.e("fragment is null");
             return;
         }
         supportFragmentManager
                 .beginTransaction()
-                .remove(supportFragmentManager.findFragmentById(mContentFrame.getId()))
+                .remove(fragment)
                 .commitAllowingStateLoss();
     }
 
