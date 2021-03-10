@@ -1,0 +1,5 @@
+* New message sync system for faster emails list updates
+* Keep decrypted subjects in local for faster displaying local emails list (optional)
+* Fix display of time of self-destructing emails
+* Display of long  email subjects with the ability to scroll through the text
+* Other improvements and fixes
