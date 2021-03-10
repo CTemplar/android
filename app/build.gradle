@@ -8,7 +8,7 @@ repositories {
 ext {
     versionMajor = 1
     versionMinor = 4
-    versionBuild = 5
+    versionBuild = 6
 }
 
 android {
@@ -17,7 +17,7 @@ android {
         applicationId "mobileapp.ctemplar.com.ctemplarapp"
         minSdkVersion 16
         targetSdkVersion 29
-        versionCode 54
+        versionCode 55
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -76,8 +76,8 @@ dependencies {
     implementation "androidx.work:work-runtime:2.5.0"
     implementation "androidx.work:work-rxjava2:2.5.0"
 
-    implementation 'com.squareup.okhttp3:okhttp:3.12.12'
-    implementation 'com.squareup.okhttp3:logging-interceptor:3.12.12'
+    implementation 'com.squareup.okhttp3:okhttp:3.12.13'
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.12.13'
     implementation 'com.squareup.retrofit2:retrofit:2.6.2'
     implementation 'com.squareup.retrofit2:converter-gson:2.6.2'
     implementation 'com.squareup.retrofit2:adapter-rxjava2:2.6.2'
@@ -91,7 +91,11 @@ dependencies {
     implementation 'com.google.dagger:dagger:2.27'
     implementation 'com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer:20200713.1'
 
-    implementation 'com.google.firebase:firebase-messaging:21.0.1'
+    implementation ('com.google.firebase:firebase-messaging:21.0.1') {
+        exclude group: 'com.google.firebase', module: 'firebase-core'
+        exclude group: 'com.google.firebase', module: 'firebase-analytics'
+        exclude group: 'com.google.firebase', module: 'firebase-measurement-connector'
+    }
 
     implementation 'org.bouncycastle:bcpg-jdk15on:1.66'
 

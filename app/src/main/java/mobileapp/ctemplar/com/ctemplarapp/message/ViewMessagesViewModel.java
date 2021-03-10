@@ -125,25 +125,22 @@ public class ViewMessagesViewModel extends ViewModel {
                             return;
                         }
                         MessagesResult parentMessageResult = messagesResults.get(0);
-                        MessageEntity parentLocalMessage = messagesRepository.getLocalMessage(id);
-                        String requestFolder = parentLocalMessage != null
-                                ? parentLocalMessage.getRequestFolder() : "";
                         MessageEntity parentEntity = MessageProvider
-                                .fromMessagesResultToEntity(parentMessageResult, requestFolder);
+                                .fromMessagesResultToEntity(parentMessageResult, null);
                         MessageProvider parentMessage = MessageProvider
                                 .fromMessageEntity(parentEntity, true, true);
 
-                        MessagesResult[] childrenResult = parentMessageResult.getChildren();
+                        List<MessagesResult> childrenResultList = parentMessageResult.getChildrenAsList();
                         List<MessageEntity> childrenEntities = MessageProvider
-                                .fromMessagesResultsToEntities(Arrays.asList(childrenResult));
+                                .fromMessagesResultsToEntities(childrenResultList);
                         List<MessageProvider> childrenMessages = MessageProvider
                                 .fromMessageEntities(childrenEntities, true, false);
 
                         messagesRepository.deleteMessagesByParentId(parentEntity.getId());
-                        messagesRepository.addMessageToDatabase(parentEntity);
+//                        messagesRepository.addMessageToDatabase(parentEntity);
                         messagesRepository.saveAllMessages(childrenEntities);
 
-                        List<MessageProvider> resultList = new ArrayList<>(1 + childrenResult.length);
+                        List<MessageProvider> resultList = new ArrayList<>(1 + childrenResultList.size());
                         resultList.add(parentMessage);
                         resultList.addAll(childrenMessages);
                         ViewMessagesViewModel.this.messagesResponse.postValue(resultList);

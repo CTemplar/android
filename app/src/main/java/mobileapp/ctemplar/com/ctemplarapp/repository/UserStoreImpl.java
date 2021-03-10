@@ -26,19 +26,23 @@ public class UserStoreImpl implements UserStore {
     private static final String KEY_PASSWORD = "key_password";
     private static final String KEY_PASSWORD_HASHED = "key_password_hashed";
     private static final String KEY_KEEP_ME_LOGGED_IN = "key_keep_me_logged_in";
-    private static final String KEY_PUBLIC_KEY = "key_public_key";
-    private static final String KEY_PRIVATE_KEY = "key_private_key";
     private static final String KEY_TIMEZONE = "key_timezone";
+
     private static final String KEY_SIGNATURE_ENABLED = "key_signature_enabled";
     private static final String KEY_NOTIFICATIONS_ENABLED = "key_notifications_enabled";
     private static final String KEY_CONTACTS_ENCRYPTION_ENABLED = "key_contacts_encryption_enabled";
+    private static final String KEY_KEEP_DECRYPTED_SUBJECTS_ENABLED = "key_keep_decrypted_subjects_enabled";
     private static final String KEY_DRAFTS_AUTO_SAVE_ENABLED = "key_drafts_auto_save_enabled";
     private static final String KEY_BLOCK_EXTERNAL_IMAGES_ENABLED = "key_block_external_images_enabled";
     private static final String KEY_REPORT_BUGS_ENABLED = "key_report_bugs_enabled";
+
     private static final String KEY_PIN_LOCK = "key_pin_lock";
     private static final String KEY_AUTO_LOCK_TIME = "key_auto_lock_time";
     private static final String KEY_LAST_PAUSE_TIME = "key_last_pause_time";
     private static final String KEY_IS_LOCKED = "key_is_locked";
+    private static final String KEY_LOCK_LAST_ATTEMPT_TIME = "key_lock_last_attempt_time";
+    private static final String KEY_LOCK_ATTEMPTS_COUNT = "key_lock_attempts_count";
+
     private static final String KEY_DARK_MODE = "key_dark_mode";
     private static final String KEY_LANGUAGE = "key_language";
 
@@ -85,13 +89,11 @@ public class UserStoreImpl implements UserStore {
     }
 
     @Override
-    public void saveUserPref(String username, String pass, String passHashed, String privateKey, String publicKey) {
+    public void saveUserPref(String username, String password, String passwordHashed) {
         preferences.edit()
                 .putString(KEY_USERNAME, username)
-                .putString(KEY_PASSWORD, pass)
-                .putString(KEY_PASSWORD_HASHED, passHashed)
-                .putString(KEY_PRIVATE_KEY, privateKey)
-                .putString(KEY_PUBLIC_KEY, publicKey)
+                .putString(KEY_PASSWORD, password)
+                .putString(KEY_PASSWORD_HASHED, passwordHashed)
                 .apply();
     }
 
@@ -101,8 +103,6 @@ public class UserStoreImpl implements UserStore {
         entity.setUsername(preferences.getString(KEY_USERNAME, ""));
         entity.setPassword(preferences.getString(KEY_PASSWORD, ""));
         entity.setPasswordHashed(preferences.getString(KEY_PASSWORD_HASHED, ""));
-        entity.setPrivateKey(preferences.getString(KEY_PRIVATE_KEY, ""));
-        entity.setPublicKey(preferences.getString(KEY_PUBLIC_KEY, ""));
         entity.setToken(preferences.getString(KEY_USER_TOKEN, ""));
         return entity;
     }
@@ -186,6 +186,16 @@ public class UserStoreImpl implements UserStore {
     @Override
     public boolean isContactsEncryptionEnabled() {
         return preferences.getBoolean(KEY_CONTACTS_ENCRYPTION_ENABLED, false);
+    }
+
+    @Override
+    public void setKeepDecryptedSubjectsEnabled(boolean state) {
+        preferences.edit().putBoolean(KEY_KEEP_DECRYPTED_SUBJECTS_ENABLED, state).apply();
+    }
+
+    @Override
+    public boolean isKeepDecryptedSubjectsEnabled() {
+        return preferences.getBoolean(KEY_KEEP_DECRYPTED_SUBJECTS_ENABLED, true);
     }
 
     @Override
@@ -275,6 +285,26 @@ public class UserStoreImpl implements UserStore {
     @Override
     public boolean isLocked() {
         return preferences.getBoolean(KEY_IS_LOCKED, false);
+    }
+
+    @Override
+    public void updateLockLastAttemptTime() {
+        preferences.edit().putLong(KEY_LOCK_LAST_ATTEMPT_TIME, System.currentTimeMillis()).apply();
+    }
+
+    @Override
+    public long getLockLastAttemptTime() {
+        return preferences.getLong(KEY_LOCK_LAST_ATTEMPT_TIME, 0);
+    }
+
+    @Override
+    public void setLockAttemptsCount(int attemptsCount) {
+        preferences.edit().putInt(KEY_LOCK_ATTEMPTS_COUNT, attemptsCount).apply();
+    }
+
+    @Override
+    public int getLockAttemptsCount() {
+        return preferences.getInt(KEY_LOCK_ATTEMPTS_COUNT, 0);
     }
 
     @Override

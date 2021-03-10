@@ -36,6 +36,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Executor;
 
@@ -81,7 +83,6 @@ public class InboxFragment extends BaseFragment
     private FilterDialogFragment dialogFragment;
     private SearchView searchView;
     private String currentFolder;
-    private QueuedExecutor executor;
     private Executor mainThreadExecutor;
 
     private boolean filterIsStarred;
@@ -91,7 +92,6 @@ public class InboxFragment extends BaseFragment
 
     private int currentOffset = 0;
     private boolean isLoadingNewMessages = false;
-    private int decryptionExecuteCounter;
 
     @OnClick(R.id.fragment_inbox_send_layout)
     void onClickComposeLayout() {
@@ -168,7 +168,6 @@ public class InboxFragment extends BaseFragment
         if (activity == null) {
             return;
         }
-        executor = new QueuedExecutor();
         mainThreadExecutor = new HandlerExecutor(Looper.getMainLooper());
         mainModel = new ViewModelProvider(activity).get(MainActivityViewModel.class);
         currentFolder = mainModel.getCurrentFolder().getValue();
@@ -217,7 +216,6 @@ public class InboxFragment extends BaseFragment
         mainModel.getDeleteMessagesStatus().observe(getViewLifecycleOwner(), this::updateMessagesResponse);
         mainModel.getEmptyFolderStatus().observe(getViewLifecycleOwner(), this::updateMessagesResponse);
         mainModel.getCurrentFolder().observe(getViewLifecycleOwner(), folderName -> {
-            ++decryptionExecuteCounter;
             currentFolder = folderName;
             swipeRefreshLayout.setRefreshing(false);
             requestNewMessages();
@@ -363,7 +361,14 @@ public class InboxFragment extends BaseFragment
         if (isSearch) {
             mainModel.searchMessages(filterText, REQUEST_MESSAGES_COUNT, currentOffset);
         } else {
-            mainModel.getMessages(REQUEST_MESSAGES_COUNT, currentOffset, currentFolder);
+            Date lastMessageUpdateTime;
+            MessageProvider messageProvider = adapter.getLast();
+            if (currentOffset == 0 || messageProvider == null) {
+                lastMessageUpdateTime = new Date(System.currentTimeMillis() + 10000);
+            } else {
+                lastMessageUpdateTime = messageProvider.getUpdatedAt();
+            }
+            mainModel.getMessages(REQUEST_MESSAGES_COUNT, currentOffset, currentFolder, lastMessageUpdateTime);
         }
         currentOffset += REQUEST_MESSAGES_COUNT;
         isLoadingNewMessages = true;
@@ -578,7 +583,6 @@ public class InboxFragment extends BaseFragment
             messages = new ArrayList<>();
         }
         if (offset == 0) {
-            ++decryptionExecuteCounter;
             adapter.clear();
         }
         decryptSubjects(messages);
@@ -591,7 +595,6 @@ public class InboxFragment extends BaseFragment
         List<MessageProvider> messages = response.getMessages();
         int offset = response.getOffset();
         if (offset == 0) {
-            ++decryptionExecuteCounter;
             adapter.clear();
         }
         decryptSubjects(messages);
@@ -601,25 +604,12 @@ public class InboxFragment extends BaseFragment
     }
 
     private void decryptSubjects(List<MessageProvider> messages) {
-//        final int currentExecutor = decryptionExecuteCounter;
-        mainModel.decryptSubjects(messages, (message) -> {
-//            if (currentExecutor != decryptionExecuteCounter) {
-//                return;
-//            }
-            mainThreadExecutor.execute(() -> adapter.onItemUpdated(message));
-        });
+        mainModel.decryptSubjects(messages, (message)
+                -> mainThreadExecutor.execute(() -> adapter.onItemUpdated(message)));
     }
 
     private void decryptSubject(MessageProvider message) {
-        if (!message.isSubjectEncrypted()) {
-            return;
-        }
-        executor.execute(() -> {
-            message.setSubject(EncryptUtils.decryptSubject(message.getSubject(),
-                    message.getMailboxId(), true));
-            message.setSubjectDecrypted(true);
-            mainThreadExecutor.execute(() -> adapter.onItemUpdated(message));
-        });
+        decryptSubjects(Collections.singletonList(message));
     }
 
     private void applyFiltersToMessages() {

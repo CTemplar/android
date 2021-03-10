@@ -1,6 +1,8 @@
 package mobileapp.ctemplar.com.ctemplarapp.utils;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
@@ -71,5 +73,17 @@ public class AppUtils {
         } else {
             vibrator.vibrate(milliseconds);
         }
+    }
+
+    private boolean noConnection(Context context) {
+        ConnectivityManager connectivityManager =
+                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivityManager == null) {
+            return false;
+        }
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        return networkInfo == null || !networkInfo.isConnected() ||
+                (networkInfo.getType() != ConnectivityManager.TYPE_WIFI
+                        && networkInfo.getType() != ConnectivityManager.TYPE_MOBILE);
     }
 }

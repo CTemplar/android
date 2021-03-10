@@ -3,7 +3,7 @@ package mobileapp.ctemplar.com.ctemplarapp.repository;
 import mobileapp.ctemplar.com.ctemplarapp.net.entity.UserEntity;
 
 public interface UserStore {
-    void saveUserPref(String username, String pass, String passHashed, String privateKey, String publicKey);
+    void saveUserPref(String username, String password, String passwordHashed);
     UserEntity getUser();
 
     void clearToken();
@@ -39,6 +39,9 @@ public interface UserStore {
     void setContactsEncryptionEnabled(boolean state);
     boolean isContactsEncryptionEnabled();
 
+    void setKeepDecryptedSubjectsEnabled(boolean state);
+    boolean isKeepDecryptedSubjectsEnabled();
+
     void setDraftsAutoSaveEnabled(boolean state);
     boolean isDraftsAutoSaveEnabled();
 
@@ -62,6 +65,12 @@ public interface UserStore {
 
     void setLocked(boolean locked);
     boolean isLocked();
+
+    void updateLockLastAttemptTime();
+    long getLockLastAttemptTime();
+
+    void setLockAttemptsCount(int attemptsCount);
+    int getLockAttemptsCount();
 
     void setDarkModeValue(int value);
     int getDarkModeValue();

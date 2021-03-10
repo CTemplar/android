@@ -1,15 +1,13 @@
 package mobileapp.ctemplar.com.ctemplarapp.repository;
 
-import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.messaging.FirebaseMessaging;
 
-import java.io.IOException;
 import java.util.List;
 
 import javax.inject.Singleton;
 
 import io.reactivex.Observable;
 import io.reactivex.Single;
-import io.reactivex.SingleOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
@@ -197,19 +195,14 @@ public class UserRepository {
         userStore.setDarkModeValue(value);
     }
 
+    public boolean isKeepDecryptedSubjectsEnabled() {
+        return userStore.isKeepDecryptedSubjectsEnabled();
+    }
+
     public void clearData() {
         userStore.logout();
         CTemplarApp.getAppDatabase().clearAllTables();
-        Single<String> firebaseClearInstance
-                = Single.create((SingleOnSubscribe<String>) emitter -> {
-            try {
-                FirebaseInstanceId.getInstance().deleteInstanceId();
-            } catch (IOException e) {
-                Timber.e(e);
-            }
-        })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread());
+        FirebaseMessaging.getInstance().deleteToken().addOnFailureListener(Timber::e);
     }
 
     public void saveMailboxes(List<MailboxesResult> mailboxes) {

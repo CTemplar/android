@@ -3,17 +3,18 @@ package mobileapp.ctemplar.com.ctemplarapp.splash;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.text.TextUtils;
 
 import androidx.lifecycle.ViewModelProvider;
 
-import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import mobileapp.ctemplar.com.ctemplarapp.BaseActivity;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.login.LoginActivity;
 import mobileapp.ctemplar.com.ctemplarapp.main.MainActivity;
 import mobileapp.ctemplar.com.ctemplarapp.main.MainActivityViewModel;
+import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
+import timber.log.Timber;
 
 public class SplashActivity extends BaseActivity {
     private SplashActivityModel viewModel;
@@ -41,37 +42,31 @@ public class SplashActivity extends BaseActivity {
 
         viewModel = new ViewModelProvider(this).get(SplashActivityModel.class);
 
-        checkFirebaseToken();
-        loadData();
-    }
+        viewModel.getAddFirebaseTokenResponse().observe(this, response -> skipDelay());
+        updateFirebaseToken();
 
-    private void checkFirebaseToken() {
-        viewModel.getAddFirebaseTokenResponse().observe(this, response -> {
-            if (response != null) {
-                String newToken = response.getToken();
-                viewModel.saveFirebaseToken(newToken);
-                skipDelay();
-            }
-        });
-
-        FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(this, instanceIdResult -> {
-            String instanceToken = instanceIdResult.getToken();
-            String storedToken = viewModel.getFirebaseToken();
-            String userToken = viewModel.getUserToken();
-            if (TextUtils.isEmpty(userToken) && TextUtils.isEmpty(storedToken) || instanceToken.equals(storedToken)) {
-                skipDelay();
-            } else {
-                if (!TextUtils.isEmpty(storedToken)) {
-                    viewModel.deleteFirebaseToken(storedToken);
-                }
-                viewModel.addFirebaseToken(instanceToken, MainActivityViewModel.ANDROID);
-            }
-        });
-    }
-
-    private void loadData() {
         // data will be loaded here before starting new activity
         handler.postDelayed(run, 2000);
+    }
+
+    private void updateFirebaseToken() {
+        if (!viewModel.isAuthorized()) {
+            Timber.w("updateFirebaseToken skip because user is not authorized");
+            skipDelay();
+            return;
+        }
+
+        String storedToken = viewModel.getFirebaseToken();
+        FirebaseMessaging.getInstance().getToken().addOnSuccessListener(token -> {
+            if (token.equals(storedToken)) {
+                skipDelay();
+                return;
+            }
+            if (EditTextUtils.isNotEmpty(storedToken)) {
+                viewModel.deleteFirebaseToken(storedToken);
+            }
+            viewModel.addFirebaseToken(token, MainActivityViewModel.ANDROID);
+        });
     }
 
     private void skipDelay() {
