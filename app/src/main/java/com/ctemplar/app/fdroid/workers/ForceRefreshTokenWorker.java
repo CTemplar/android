@@ -45,6 +45,7 @@ public class ForceRefreshTokenWorker extends RxWorker {
                 .doOnSuccess(response -> {
                     if (response == null) {
                         Timber.e("response is null");
+                        return;
                     }
                     userStore.saveUserToken(response.getToken());
                     Timber.i("force token update success");

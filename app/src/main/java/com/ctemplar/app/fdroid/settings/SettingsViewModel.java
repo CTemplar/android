@@ -4,8 +4,6 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.google.gson.Gson;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -33,6 +31,7 @@ import com.ctemplar.app.fdroid.net.response.myself.MyselfResponse;
 import com.ctemplar.app.fdroid.net.response.myself.SettingsResponse;
 import com.ctemplar.app.fdroid.repository.AppDatabase;
 import com.ctemplar.app.fdroid.repository.ContactsRepository;
+import com.ctemplar.app.fdroid.repository.MessagesRepository;
 import com.ctemplar.app.fdroid.repository.UserRepository;
 import com.ctemplar.app.fdroid.repository.entity.Contact;
 import com.ctemplar.app.fdroid.repository.entity.ContactEntity;
@@ -45,11 +44,13 @@ import static com.ctemplar.app.fdroid.utils.DateUtils.GENERAL_GSON;
 public class SettingsViewModel extends ViewModel {
     private final ContactsRepository contactsRepository;
     private final UserRepository userRepository;
+    private final MessagesRepository messagesRepository;
     private final AppDatabase appDatabase;
 
     public SettingsViewModel() {
         contactsRepository = CTemplarApp.getContactsRepository();
         userRepository = CTemplarApp.getUserRepository();
+        messagesRepository = CTemplarApp.getMessagesRepository();
         appDatabase = CTemplarApp.getAppDatabase();
     }
 
@@ -79,6 +80,10 @@ public class SettingsViewModel extends ViewModel {
 
     public boolean isSignatureEnabled() {
         return userRepository.isSignatureEnabled();
+    }
+
+    public void clearAllDecryptedSubjects() {
+        messagesRepository.clearAllDecryptedSubjects();
     }
 
     void updateAutoSaveContactsEnabled(long settingId, boolean isEnabled) {

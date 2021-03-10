@@ -1,7 +1,11 @@
 package com.ctemplar.app.fdroid.net.response.messages;
 
+import androidx.annotation.NonNull;
+
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -270,6 +274,11 @@ public class MessagesResult {
 
     public MessagesResult[] getChildren() {
         return children;
+    }
+
+    @NonNull
+    public List<MessagesResult> getChildrenAsList() {
+        return children == null ? new ArrayList<>() : Arrays.asList(children);
     }
 
     public long getMailboxId() {

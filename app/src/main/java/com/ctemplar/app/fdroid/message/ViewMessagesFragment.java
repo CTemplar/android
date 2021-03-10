@@ -110,11 +110,10 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
     private ImageView encryptedImageView;
     private ImageView starImageView;
     private View loadProgress;
-    private Toolbar toolbar;
     private ConstraintLayout messageActionsLayout;
     private AttachmentProvider attachmentProvider;
 
-    private OnAttachmentDownloading onAttachmentDownloading = new OnAttachmentDownloading() {
+    private final OnAttachmentDownloading onAttachmentDownloading = new OnAttachmentDownloading() {
         @Override
         public void onStart(AttachmentProvider attachment) {
             attachmentProvider = attachment;
@@ -136,7 +135,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
         encryptedImageView = root.findViewById(R.id.activity_view_messages_subject_encrypted_image);
         starImageView = root.findViewById(R.id.activity_view_messages_subject_star_image);
         loadProgress = root.findViewById(R.id.activity_view_messages_progress);
-        toolbar = root.findViewById(R.id.activity_view_messages_bar);
+        Toolbar toolbar = root.findViewById(R.id.activity_view_messages_bar);
         messageActionsLayout = root.findViewById(R.id.activity_view_messages_actions);
         loadProgress.setVisibility(View.VISIBLE);
 

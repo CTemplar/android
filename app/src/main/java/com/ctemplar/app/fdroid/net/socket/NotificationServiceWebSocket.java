@@ -6,6 +6,7 @@ import android.text.TextUtils;
 
 import com.ctemplar.app.fdroid.BuildConfig;
 import com.ctemplar.app.fdroid.CTemplarApp;
+import com.ctemplar.app.fdroid.net.UserAgentInterceptor;
 import com.ctemplar.app.fdroid.net.response.messages.MessagesResult;
 import com.ctemplar.app.fdroid.net.response.notification.NotificationMessageResponse;
 import com.ctemplar.app.fdroid.repository.entity.MessageEntity;
@@ -48,7 +49,7 @@ public class NotificationServiceWebSocket extends WebSocketListener {
         try {
             notificationMessageResponse = gson.fromJson(text, NotificationMessageResponse.class);
         } catch (JsonParseException e) {
-            Timber.w(e, "onMessage parse error");
+            Timber.e(e, "onMessage parse error");
             return;
         }
         MessagesResult mailResult = notificationMessageResponse.getMail();
@@ -62,12 +63,12 @@ public class NotificationServiceWebSocket extends WebSocketListener {
 
     @Override
     public void onOpen(@NotNull WebSocket webSocket, @NotNull Response response) {
-        Timber.i("is started");
+        Timber.i("started");
     }
 
     @Override
     public void onClosing(@NotNull WebSocket webSocket, int code, @NotNull String reason) {
-        Timber.i("is closed");
+        Timber.i("closed");
         if (safeShutDown) {
             webSocket.close(1000, null);
             return;
@@ -125,6 +126,7 @@ public class NotificationServiceWebSocket extends WebSocketListener {
         }
 
         client = new OkHttpClient.Builder()
+                .addInterceptor(new UserAgentInterceptor())
                 .readTimeout(0,  TimeUnit.MILLISECONDS)
                 .build();
 

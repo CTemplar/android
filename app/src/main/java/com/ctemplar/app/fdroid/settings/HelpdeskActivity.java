@@ -13,8 +13,7 @@ import androidx.appcompat.widget.Toolbar;
 import butterknife.BindView;
 import com.ctemplar.app.fdroid.BaseActivity;
 import com.ctemplar.app.fdroid.R;
-import com.ctemplar.app.fdroid.view.pinlock.KeypadView;
-import com.ctemplar.app.fdroid.view.pinlock.PasscodeView;
+import timber.log.Timber;
 
 public class HelpdeskActivity extends BaseActivity {
     @BindView(R.id.activity_helpdesk_toolbar)
@@ -47,9 +46,17 @@ public class HelpdeskActivity extends BaseActivity {
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
-                progressBar.setVisibility(View.GONE);
+                showProgressBar(false);
             }
         });
+    }
+
+    private void showProgressBar(boolean state) {
+        if (progressBar == null) {
+            Timber.e("progressBar is null");
+            return;
+        }
+        progressBar.setVisibility(state ? View.VISIBLE : View.GONE);
     }
 
     @Override

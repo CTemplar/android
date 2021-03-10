@@ -18,7 +18,7 @@ import com.ctemplar.app.fdroid.R;
 import com.ctemplar.app.fdroid.repository.provider.MessageProvider;
 
 public class DateUtils {
-    private static final String SERVER_DATE_PATTERN = "yyyy-MM-dd'T'HH:mm:ss'Z'";
+    private static final String SERVER_DATE_PATTERN = "yyyy-MM-dd'T'HH:mm:ssZ";
 
     private static final String MAIN_TIME_PATTERN = "h:mm aa";
     private static final String MAIN_DATE_PATTERN = "E, dd MMM yyyy";
@@ -36,7 +36,7 @@ public class DateUtils {
             .create();
 
     @NonNull
-    public static String messageDate(@Nullable Date date, Resources resources) {
+    public static String displayMessageDate(@Nullable Date date, Resources resources) {
         if (date == null) {
             return "";
         }
@@ -93,11 +93,11 @@ public class DateUtils {
     }
 
     @Nullable
-    public static Date getDeliveryDate(@Nullable MessageProvider messageProvider) {
-        if (messageProvider == null) {
+    public static Date getDeliveryDate(@Nullable MessageProvider message) {
+        if (message == null) {
             return null;
         }
-        return messageProvider.isSend() ? messageProvider.getSentAt() : messageProvider.getCreatedAt();
+        return message.getUpdatedAt().after(message.getCreatedAt()) ? message.getUpdatedAt() : message.getCreatedAt();
     }
 
     @Nullable

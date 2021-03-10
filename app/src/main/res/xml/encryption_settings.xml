@@ -5,4 +5,8 @@
         android:title="@string/settings_contacts_encryption"
         android:key="@string/contacts_encryption_enabled" />
 
+    <SwitchPreference
+        android:title="@string/settings_keep_decrypted_subjects"
+        android:key="@string/keep_decrypted_subjects_enabled" />
+
 </PreferenceScreen>

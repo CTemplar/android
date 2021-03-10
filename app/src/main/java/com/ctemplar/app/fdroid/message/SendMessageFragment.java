@@ -829,6 +829,10 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         if (activity == null) {
             return;
         }
+        if (attachmentUri == null) {
+            Timber.e("attachmentUri is null");
+            return;
+        }
         String attachmentPath = FileUtils.getPath(activity, attachmentUri);
         File attachmentFile;
         try {
