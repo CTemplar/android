@@ -29,6 +29,21 @@ public class PGPManager {
         return new PGPKeyEntity("", "", "");
     }
 
+    public static PGPKeyEntity generateECCKeys(String keyRingId, String password) {
+        try {
+            PGPKeyRingGenerator pgpKeyRingGenerator = PGPLib.generateECCKeyRing(
+                    password.toCharArray(), keyRingId
+            );
+            byte[] publicKeyBytes = PGPLib.getPGPPublicKey(pgpKeyRingGenerator);
+            byte[] privateKeyBytes = PGPLib.getPGPPrivateKey(pgpKeyRingGenerator);
+            String keyFingerprint = PGPLib.getPGPKeyFingerprint(pgpKeyRingGenerator.generateSecretKeyRing());
+            return new PGPKeyEntity(new String(publicKeyBytes), new String(privateKeyBytes), keyFingerprint);
+        } catch (IOException | PGPException e) {
+            Timber.e(e);
+        }
+        return new PGPKeyEntity("", "", "");
+    }
+
     public static PGPKeyEntity changePrivateKeyPassword(PGPKeyEntity pgpKeyEntity, String oldPassword, String newPassword) throws IOException, PGPException {
         String publicKey = pgpKeyEntity.getPublicKey();
         String privateKey = pgpKeyEntity.getPrivateKey();
@@ -66,7 +81,7 @@ public class PGPManager {
             return PGPLib.decrypt(encryptedBytes, pgpSecretKeyRing, password.toCharArray());
         } catch (PGPException e) {
             Timber.i(e);
-        }  catch (IOException e) {
+        } catch (IOException e) {
             Timber.w(e);
         } catch (Exception e) {
             Timber.e(e);
