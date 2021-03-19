@@ -1,13 +1,19 @@
 package com.ctemplar.app.fdroid.security;
 
+import com.ctemplar.app.fdroid.utils.EncodeUtils;
+
 import org.bouncycastle.bcpg.ArmoredInputStream;
 import org.bouncycastle.bcpg.ArmoredOutputStream;
 import org.bouncycastle.bcpg.HashAlgorithmTags;
 import org.bouncycastle.bcpg.SymmetricKeyAlgorithmTags;
 import org.bouncycastle.bcpg.sig.Features;
 import org.bouncycastle.bcpg.sig.KeyFlags;
+import org.bouncycastle.crypto.generators.Ed25519KeyPairGenerator;
 import org.bouncycastle.crypto.generators.RSAKeyPairGenerator;
+import org.bouncycastle.crypto.generators.X25519KeyPairGenerator;
+import org.bouncycastle.crypto.params.Ed25519KeyGenerationParameters;
 import org.bouncycastle.crypto.params.RSAKeyGenerationParameters;
+import org.bouncycastle.crypto.params.X25519KeyGenerationParameters;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openpgp.PGPCompressedData;
 import org.bouncycastle.openpgp.PGPCompressedDataGenerator;
@@ -49,19 +55,16 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigInteger;
 import java.security.SecureRandom;
-import java.security.Security;
 import java.util.Date;
 import java.util.Iterator;
 
-import com.ctemplar.app.fdroid.utils.EncodeUtils;
-
 class PGPLib {
-    private static final int[] symmetricAlgorithms = new int[] {
+    private static final int[] symmetricAlgorithms = new int[]{
             SymmetricKeyAlgorithmTags.AES_256,
             SymmetricKeyAlgorithmTags.AES_192,
             SymmetricKeyAlgorithmTags.AES_128
     };
-    private static final int[] hashAlgorithms = new int[] {
+    private static final int[] hashAlgorithms = new int[]{
             HashAlgorithmTags.SHA256,
             HashAlgorithmTags.SHA1,
             HashAlgorithmTags.SHA224,
@@ -88,7 +91,7 @@ class PGPLib {
         }
         int encryptedDataObjectSize = enc.size();
         for (int i = 0; sKey == null && i < encryptedDataObjectSize; i++) {
-            pbe = (PGPPublicKeyEncryptedData)enc.get(i);
+            pbe = (PGPPublicKeyEncryptedData) enc.get(i);
             sKey = getPrivateKey(pgpSecretKeyRing, pbe.getKeyID(), passwordCharArray);
         }
 
@@ -117,9 +120,6 @@ class PGPLib {
     static byte[] encrypt(byte[] inputBytes, PGPPublicKeyRing[] pgpPublicKeyRings, boolean asciiArmor, boolean compression) throws IOException, PGPException {
         if (pgpPublicKeyRings.length <= 0) {
             return new byte[0];
-        }
-        if (Security.getProvider("BC") == null) {
-            Security.addProvider(new BouncyCastleProvider());
         }
         ByteArrayOutputStream encOut = new ByteArrayOutputStream();
         OutputStream out = asciiArmor ? new ArmoredOutputStream(encOut) : encOut;
@@ -156,7 +156,7 @@ class PGPLib {
         return encOut.toByteArray();
     }
 
-    static PGPKeyRingGenerator generateKeyRing(char[] passwordCharArray, int strength, String keyRingId) throws PGPException{
+    static PGPKeyRingGenerator generateKeyRing(char[] passwordCharArray, int strength, String keyRingId) throws PGPException {
         RSAKeyPairGenerator kpg = new RSAKeyPairGenerator();
         kpg.init(new RSAKeyGenerationParameters(BigInteger.valueOf(0x10001), new SecureRandom(), strength, 12));
 
@@ -164,7 +164,7 @@ class PGPLib {
         PGPKeyPair rsakpEnc = new BcPGPKeyPair(PGPPublicKey.RSA_GENERAL, kpg.generateKeyPair(), new Date());
 
         PGPSignatureSubpacketGenerator signhashgen = new PGPSignatureSubpacketGenerator();
-        signhashgen.setKeyFlags(false, KeyFlags.SIGN_DATA|KeyFlags.CERTIFY_OTHER|KeyFlags.SHARED);
+        signhashgen.setKeyFlags(false, KeyFlags.SIGN_DATA | KeyFlags.CERTIFY_OTHER | KeyFlags.SHARED);
         signhashgen.setPreferredSymmetricAlgorithms(false, symmetricAlgorithms);
         signhashgen.setPreferredHashAlgorithms(false, hashAlgorithms);
         signhashgen.setFeature(false, Features.FEATURE_MODIFICATION_DETECTION);
@@ -179,11 +179,34 @@ class PGPLib {
                 new BcPBESecretKeyEncryptorBuilder(PGPEncryptedData.AES_256, sha256Calc, 0xc0)
         ).build(passwordCharArray);
 
-        PGPKeyRingGenerator keyRingGen = new PGPKeyRingGenerator (
+        PGPKeyRingGenerator keyRingGen = new PGPKeyRingGenerator(
                 PGPSignature.POSITIVE_CERTIFICATION, rsakpSign, keyRingId, sha1Calc, signhashgen.generate(), null,
                 new BcPGPContentSignerBuilder(rsakpSign.getPublicKey().getAlgorithm(), HashAlgorithmTags.SHA1), pske
         );
         keyRingGen.addSubKey(rsakpEnc, enchashgen.generate(), null);
+        return keyRingGen;
+    }
+
+    static PGPKeyRingGenerator generateECCKeyRing(char[] passPhrase, String identity) throws PGPException {
+        Ed25519KeyPairGenerator edKp = new Ed25519KeyPairGenerator();
+        edKp.init(new Ed25519KeyGenerationParameters(null));
+
+        PGPKeyPair dsaKeyPair = new BcPGPKeyPair(PGPPublicKey.EDDSA, edKp.generateKeyPair(), new Date());
+
+        X25519KeyPairGenerator dhKp = new X25519KeyPairGenerator();
+        dhKp.init(new X25519KeyGenerationParameters(null));
+
+        PGPKeyPair dhKeyPair = new BcPGPKeyPair(PGPPublicKey.ECDH, dhKp.generateKeyPair(), new Date());
+
+        PGPDigestCalculator sha1Calc = new BcPGPDigestCalculatorProvider().get(HashAlgorithmTags.SHA1);
+
+        PGPKeyRingGenerator keyRingGen = new PGPKeyRingGenerator(
+                PGPSignature.POSITIVE_CERTIFICATION, dsaKeyPair,
+                identity, sha1Calc, null, null,
+                new BcPGPContentSignerBuilder(dsaKeyPair.getPublicKey().getAlgorithm(), HashAlgorithmTags.SHA256),
+                new BcPBESecretKeyEncryptorBuilder(PGPEncryptedData.AES_256, sha1Calc).build(passPhrase));
+
+        keyRingGen.addSubKey(dhKeyPair);
         return keyRingGen;
     }
 
@@ -235,7 +258,7 @@ class PGPLib {
     }
 
     static byte[] getPGPPrivateKey(PGPSecretKeyRing pgpSecretKeyRing) throws IOException {
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream ();
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         ArmoredOutputStream armoredOutputStream = new ArmoredOutputStream(byteArrayOutputStream);
         pgpSecretKeyRing.encode(armoredOutputStream);
         armoredOutputStream.close();

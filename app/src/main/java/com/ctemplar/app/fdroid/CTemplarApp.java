@@ -8,6 +8,7 @@ import android.os.Bundle;
 import androidx.multidex.MultiDexApplication;
 import androidx.room.Room;
 
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.jetbrains.annotations.NotNull;
 
 import io.sentry.android.core.SentryAndroid;
@@ -26,6 +27,7 @@ import com.ctemplar.app.fdroid.splash.SplashActivity;
 import com.ctemplar.app.fdroid.utils.EditTextUtils;
 
 import java.lang.ref.WeakReference;
+import java.security.Security;
 
 import timber.log.Timber;
 
@@ -101,6 +103,9 @@ public class CTemplarApp extends MultiDexApplication {
         notificationServiceBroadcastReceiver = new NotificationServiceBroadcastReceiver();
         notificationServiceBroadcastReceiver.register(this);
         NotificationService.updateState(this);
+        if (Security.getProvider("BC") == null) {
+            Security.addProvider(new BouncyCastleProvider());
+        }
     }
 
     public static boolean isAuthorized() {
