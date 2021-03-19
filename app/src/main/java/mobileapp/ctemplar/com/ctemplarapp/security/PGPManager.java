@@ -11,13 +11,13 @@ import mobileapp.ctemplar.com.ctemplarapp.net.entity.PGPKeyEntity;
 import timber.log.Timber;
 
 public class PGPManager {
-    private static final int KEY_STRENGTH = 4096;
+    private static final int RSA_KEY_STRENGTH = 4096;
     private static final boolean COMPRESSION = false;
 
     public static PGPKeyEntity generateKeys(String keyRingId, String password) {
         try {
             PGPKeyRingGenerator pgpKeyRingGenerator = PGPLib.generateKeyRing(
-                    password.toCharArray(), KEY_STRENGTH, keyRingId
+                    password.toCharArray(), RSA_KEY_STRENGTH, keyRingId
             );
             byte[] publicKeyBytes = PGPLib.getPGPPublicKey(pgpKeyRingGenerator);
             byte[] privateKeyBytes = PGPLib.getPGPPrivateKey(pgpKeyRingGenerator);
