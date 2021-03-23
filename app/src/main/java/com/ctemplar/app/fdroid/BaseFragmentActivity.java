@@ -17,7 +17,7 @@ public abstract class BaseFragmentActivity extends BaseActivity {
     FrameLayout mContentFrame;
 
     // @State
-    boolean mHasAddedStartFragment;
+//    boolean mHasAddedStartFragment;
 
     protected int getLayoutId() {
         return R.layout.activity_fragment;
@@ -26,9 +26,8 @@ public abstract class BaseFragmentActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        if (!mHasAddedStartFragment) {
-            mHasAddedStartFragment = true;
+        if (savedInstanceState == null) {
+//            mHasAddedStartFragment = true;
             FragmentManager manager = getSupportFragmentManager();
             FragmentTransaction ft = manager.beginTransaction();
             ft.add(mContentFrame.getId(), getStartFragment());
