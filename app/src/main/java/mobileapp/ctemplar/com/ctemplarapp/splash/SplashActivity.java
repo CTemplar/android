@@ -41,15 +41,14 @@ public class SplashActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
 
         viewModel = new ViewModelProvider(this).get(SplashActivityModel.class);
-
         viewModel.getAddFirebaseTokenResponse().observe(this, response -> skipDelay());
-        updateFirebaseToken();
 
         // data will be loaded here before starting new activity
         handler.postDelayed(run, 2000);
+        firebaseTokenHandler();
     }
 
-    private void updateFirebaseToken() {
+    private void firebaseTokenHandler() {
         if (!viewModel.isAuthorized()) {
             Timber.w("updateFirebaseToken skip because user is not authorized");
             skipDelay();
