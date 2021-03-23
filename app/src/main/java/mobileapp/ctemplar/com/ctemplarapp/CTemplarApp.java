@@ -8,7 +8,10 @@ import android.os.Bundle;
 import androidx.multidex.MultiDexApplication;
 import androidx.room.Room;
 
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.jetbrains.annotations.NotNull;
+
+import java.security.Security;
 
 import io.sentry.android.core.SentryAndroid;
 import mobileapp.ctemplar.com.ctemplarapp.net.RestClient;
@@ -88,6 +91,9 @@ public class CTemplarApp extends MultiDexApplication {
         installProviders(this);
         installDebug(this);
         registerActivityLifecycleCallbacks(activityLifecycleCallbacks);
+        if (Security.getProvider("BC") == null) {
+            Security.addProvider(new BouncyCastleProvider());
+        }
     }
 
     public static CTemplarApp getInstance() {

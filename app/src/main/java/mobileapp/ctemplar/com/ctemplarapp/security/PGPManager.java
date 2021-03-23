@@ -11,13 +11,28 @@ import mobileapp.ctemplar.com.ctemplarapp.net.entity.PGPKeyEntity;
 import timber.log.Timber;
 
 public class PGPManager {
-    private static final int KEY_STRENGTH = 4096;
+    private static final int RSA_KEY_STRENGTH = 4096;
     private static final boolean COMPRESSION = false;
 
     public static PGPKeyEntity generateKeys(String keyRingId, String password) {
         try {
             PGPKeyRingGenerator pgpKeyRingGenerator = PGPLib.generateKeyRing(
-                    password.toCharArray(), KEY_STRENGTH, keyRingId
+                    password.toCharArray(), RSA_KEY_STRENGTH, keyRingId
+            );
+            byte[] publicKeyBytes = PGPLib.getPGPPublicKey(pgpKeyRingGenerator);
+            byte[] privateKeyBytes = PGPLib.getPGPPrivateKey(pgpKeyRingGenerator);
+            String keyFingerprint = PGPLib.getPGPKeyFingerprint(pgpKeyRingGenerator.generateSecretKeyRing());
+            return new PGPKeyEntity(new String(publicKeyBytes), new String(privateKeyBytes), keyFingerprint);
+        } catch (IOException | PGPException e) {
+            Timber.e(e);
+        }
+        return new PGPKeyEntity("", "", "");
+    }
+
+    public static PGPKeyEntity generateECCKeys(String keyRingId, String password) {
+        try {
+            PGPKeyRingGenerator pgpKeyRingGenerator = PGPLib.generateECCKeyRing(
+                    password.toCharArray(), keyRingId
             );
             byte[] publicKeyBytes = PGPLib.getPGPPublicKey(pgpKeyRingGenerator);
             byte[] privateKeyBytes = PGPLib.getPGPPrivateKey(pgpKeyRingGenerator);
@@ -66,7 +81,7 @@ public class PGPManager {
             return PGPLib.decrypt(encryptedBytes, pgpSecretKeyRing, password.toCharArray());
         } catch (PGPException e) {
             Timber.i(e);
-        }  catch (IOException e) {
+        } catch (IOException e) {
             Timber.w(e);
         } catch (Exception e) {
             Timber.e(e);
