@@ -51,8 +51,10 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ThemeUtils.setTheme(this);
-        setContentView(getLayoutId());
-        mUnbinder = ButterKnife.bind(this);
+        if (savedInstanceState == null || mUnbinder == null) {
+            setContentView(getLayoutId());
+            mUnbinder = ButterKnife.bind(this);
+        }
     }
 
     @Override
