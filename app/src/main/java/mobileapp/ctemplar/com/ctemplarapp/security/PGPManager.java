@@ -16,9 +16,8 @@ public class PGPManager {
 
     public static PGPKeyEntity generateKeys(String keyRingId, String password) {
         try {
-            PGPKeyRingGenerator pgpKeyRingGenerator = PGPLib.generateKeyRing(
-                    password.toCharArray(), RSA_KEY_STRENGTH, keyRingId
-            );
+            PGPKeyRingGenerator pgpKeyRingGenerator = PGPLib.generateKeyRing(password,
+                    RSA_KEY_STRENGTH, keyRingId);
             byte[] publicKeyBytes = PGPLib.getPGPPublicKey(pgpKeyRingGenerator);
             byte[] privateKeyBytes = PGPLib.getPGPPrivateKey(pgpKeyRingGenerator);
             String keyFingerprint = PGPLib.getPGPKeyFingerprint(pgpKeyRingGenerator.generateSecretKeyRing());
@@ -31,9 +30,7 @@ public class PGPManager {
 
     public static PGPKeyEntity generateECCKeys(String keyRingId, String password) {
         try {
-            PGPKeyRingGenerator pgpKeyRingGenerator = PGPLib.generateECCKeyRing(
-                    password.toCharArray(), keyRingId
-            );
+            PGPKeyRingGenerator pgpKeyRingGenerator = PGPLib.generateECCKeyRing(password, keyRingId);
             byte[] publicKeyBytes = PGPLib.getPGPPublicKey(pgpKeyRingGenerator);
             byte[] privateKeyBytes = PGPLib.getPGPPrivateKey(pgpKeyRingGenerator);
             String keyFingerprint = PGPLib.getPGPKeyFingerprint(pgpKeyRingGenerator.generateSecretKeyRing());
@@ -48,9 +45,8 @@ public class PGPManager {
         String publicKey = pgpKeyEntity.getPublicKey();
         String privateKey = pgpKeyEntity.getPrivateKey();
         PGPSecretKeyRing pgpSecretKeyRing = PGPLib.getPGPSecretKeyRing(privateKey);
-        PGPSecretKeyRing updatedPGPSecretKeyRing = PGPLib.updatePGPSecretKeyRing(
-                pgpSecretKeyRing, oldPassword.toCharArray(), newPassword.toCharArray()
-        );
+        PGPSecretKeyRing updatedPGPSecretKeyRing = PGPLib.updatePGPSecretKeyRing(pgpSecretKeyRing,
+                oldPassword, newPassword);
         byte[] updatedPrivateKeyBytes = PGPLib.getPGPPrivateKey(updatedPGPSecretKeyRing);
         String keyFingerprint = PGPLib.getPGPKeyFingerprint(updatedPGPSecretKeyRing);
 
@@ -64,6 +60,9 @@ public class PGPManager {
     public static byte[] encrypt(byte[] inputBytes, String[] pubKeys, boolean asciiArmor) {
         try {
             PGPPublicKeyRing[] pgpPublicKeyRings = PGPLib.getPGPPublicKeyRings(pubKeys);
+            if (pgpPublicKeyRings.length <= 0) {
+                return new byte[0];
+            }
             return PGPLib.encrypt(inputBytes, pgpPublicKeyRings, asciiArmor, COMPRESSION);
         } catch (Exception e) {
             Timber.e(e);
@@ -71,14 +70,14 @@ public class PGPManager {
         return new byte[0];
     }
 
-    public static String decrypt(String encryptedText, String privateKey, String password) {
-        return new String(decrypt(encryptedText.getBytes(), privateKey, password));
+    public static String decrypt(String encryptedText, String privateKey, String passPhrase) {
+        return new String(decrypt(encryptedText.getBytes(), privateKey, passPhrase));
     }
 
-    public static byte[] decrypt(byte[] encryptedBytes, String privateKey, String password) {
+    public static byte[] decrypt(byte[] encryptedBytes, String privateKey, String passPhrase) {
         try {
             PGPSecretKeyRing pgpSecretKeyRing = PGPLib.getPGPSecretKeyRing(privateKey);
-            return PGPLib.decrypt(encryptedBytes, pgpSecretKeyRing, password.toCharArray());
+            return PGPLib.decrypt(encryptedBytes, pgpSecretKeyRing, passPhrase);
         } catch (PGPException e) {
             Timber.i(e);
         } catch (IOException e) {
@@ -86,6 +85,19 @@ public class PGPManager {
         } catch (Exception e) {
             Timber.e(e);
             return encryptedBytes;
+        }
+        return new byte[0];
+    }
+
+    public static String encryptGPG(String inputText, String passPhrase) {
+        return new String(encryptGPG(inputText.getBytes(), passPhrase, true));
+    }
+
+    public static byte[] encryptGPG(byte[] inputBytes, String passPhrase, boolean asciiArmor) {
+        try {
+            return PGPLib.encryptGPG(inputBytes, passPhrase, asciiArmor);
+        } catch (Exception e) {
+            Timber.e(e);
         }
         return new byte[0];
     }
