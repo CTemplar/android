@@ -251,6 +251,52 @@ class PGPLib {
         return encOut.toByteArray();
     }
 
+    static byte[] decryptGPG(byte[] encryptedBytes, String passPhrase) throws IOException, PGPException {
+        InputStream in = new ByteArrayInputStream(encryptedBytes);
+        in = PGPUtil.getDecoderStream(in);
+        JcaPGPObjectFactory pgpF = new JcaPGPObjectFactory(in);
+        PGPEncryptedDataList enc;
+        Object o = pgpF.nextObject();
+        if (o instanceof PGPEncryptedDataList) {
+            enc = (PGPEncryptedDataList) o;
+        } else {
+            enc = (PGPEncryptedDataList) pgpF.nextObject();
+        }
+        if (enc == null) {
+            return encryptedBytes;
+        }
+        PGPPBEEncryptedData pbe = null;
+        int encryptedDataObjectSize = enc.size();
+        for (int i = 0; pbe == null && i < encryptedDataObjectSize; i++) {
+            pbe = (PGPPBEEncryptedData) enc.get(i);
+        }
+        if (pbe == null) {
+            return new byte[0];
+        }
+
+        InputStream clear = pbe.getDataStream(new JcePBEDataDecryptorFactoryBuilder(
+                new JcaPGPDigestCalculatorProviderBuilder()
+                        .setProvider(new BouncyCastleProvider()).build())
+                .setProvider(new BouncyCastleProvider()).build(passPhrase.toCharArray()));
+
+        JcaPGPObjectFactory pgpFact = new JcaPGPObjectFactory(clear);
+        Object oData = pgpFact.nextObject();
+        if (oData instanceof PGPCompressedData) {
+            PGPCompressedData cData = (PGPCompressedData) oData;
+            oData = new JcaPGPObjectFactory(cData.getDataStream()).nextObject();
+        }
+        PGPLiteralData ld = (PGPLiteralData) oData;
+        InputStream unc = ld.getInputStream();
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        int ch;
+        while ((ch = unc.read()) >= 0) {
+            out.write(ch);
+        }
+        byte[] returnBytes = out.toByteArray();
+        out.close();
+        return returnBytes;
+    }
+
     static PGPPublicKeyRing[] getPGPPublicKeyRings(String[] pubKeys) throws IOException {
         int keyCount = pubKeys.length;
         PGPPublicKeyRing[] pgpPublicKeyRings = new PGPPublicKeyRing[keyCount];

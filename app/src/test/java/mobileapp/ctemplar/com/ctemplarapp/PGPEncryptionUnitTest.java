@@ -10,10 +10,10 @@ import java.security.Security;
 
 import mobileapp.ctemplar.com.ctemplarapp.net.entity.PGPKeyEntity;
 import mobileapp.ctemplar.com.ctemplarapp.security.PGPManager;
+import mobileapp.ctemplar.com.ctemplarapp.util.EncryptionUtils;
 import mobileapp.ctemplar.com.ctemplarapp.util.ForeignAlphabetsStringGenerator;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EncodeUtils;
 
-import static mobileapp.ctemplar.com.ctemplarapp.util.EncryptionUtils.checkEncryptedMessage;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
@@ -55,7 +55,7 @@ public class PGPEncryptionUnitTest {
 
         String encryptedTextString = PGPManager.encrypt(originalTextString, publicKeys);
 
-        assertTrue(checkEncryptedMessage(encryptedTextString.trim()));
+        assertTrue(EncryptionUtils.checkEncryptedMessage(encryptedTextString.trim()));
 
         String decryptedTextString = PGPManager.decrypt(encryptedTextString,
                 privateKey, keyRingPassword);
@@ -89,7 +89,7 @@ public class PGPEncryptionUnitTest {
 
         String encryptedTextString = PGPManager.encrypt(originalTextString, publicKeys);
 
-        assertTrue(checkEncryptedMessage(encryptedTextString.trim()));
+        assertTrue(EncryptionUtils.checkEncryptedMessage(encryptedTextString.trim()));
 
         String decryptedTextString = PGPManager.decrypt(encryptedTextString,
                 privateKey, keyRingNewPassword);

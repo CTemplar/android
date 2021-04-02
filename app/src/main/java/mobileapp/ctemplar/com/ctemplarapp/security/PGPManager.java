@@ -101,4 +101,22 @@ public class PGPManager {
         }
         return new byte[0];
     }
+
+    public static String decryptGPG(String encryptedText, String passPhrase) {
+        return new String(decryptGPG(encryptedText.getBytes(), passPhrase));
+    }
+
+    public static byte[] decryptGPG(byte[] encryptedBytes, String passPhrase) {
+        try {
+            return PGPLib.decryptGPG(encryptedBytes, passPhrase);
+        } catch (PGPException e) {
+            Timber.i(e);
+        } catch (IOException e) {
+            Timber.w(e);
+        } catch (Exception e) {
+            Timber.e(e);
+            return encryptedBytes;
+        }
+        return new byte[0];
+    }
 }
