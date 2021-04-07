@@ -305,6 +305,7 @@
     <string name="choose_pin">Geben Sie eine 4-stellige PIN ein</string>
     <string name="confirm_pin">Bestätigen Sie Ihre PIN</string>
     <string name="invalid_pin">Ungültige PIN</string>
+    <string name="invalid_pin_timeout">Bitte versuchen Sie es erneut in %d Sekunde (n).</string>
     <string name="pins_dont_match">PINs stimmen nicht überein</string>
 
     <!-- SIGNATURE EDIT BAR -->
@@ -329,6 +330,7 @@
     <string name="settings_notifications">Benachrichtigungen</string>
     <string name="settings_enable_notifications">Push-Benachrichtigungen aktivieren</string>
     <string name="settings_contacts_encryption">Kontakt-Verschlüsselung</string>
+    <string name="settings_keep_decrypted_subjects">Bewahren Sie entschlüsselte Motive lokal auf</string>
     <string name="settings_encryption">Verschlüsselung</string>
     <string name="settings_phishing_protection">Phishing-Schutz</string>
     <string name="settings_phishing_protection_description"><![CDATA[<font color="#939191">Die Anti-Phishing-Phrase ermöglicht es Nutzern, ein bestimmtes Wort oder eine Phrase ihrer Wahl mit ihrem CTemplar Konto zu verknüpfen. Wenn Sie sich nach dem Festlegen der Phrase jemals in Ihr Webmail-Konto einloggen und Ihre Anti-Phishing-Phrase verschwunden oder falsch ist, könnten Sie einem Phishing-Angriff zum Opfer gefallen sein. Sie sollten sofort bestätigen, dass Sie sich auf</font> <font color="#4d92e2"><u>https://mail.ctemplar.com</u></font> <font color="#939191"> befinden. Falls nicht, könnte eine bösartige Seite bereits Ihre Login-Daten für Ihr CTemplar Konto gestohlen haben. Um den unrechtmäßigen Zugriff auf Ihr Konto zu verhindern, sollten Sie sich sofort bei</font> <font color="#4d92e2"><u>https://mail.ctemplar.com</u></font> <font color="#939191"> anmelden und Ihr Passwort ändern.<br><br>Bitte beachten Sie, dass die Anti-Phishing-Phrase nur angezeigt wird, wenn Sie sich bei der Web-Version anmelden.</font>]]></string>

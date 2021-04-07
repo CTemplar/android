@@ -305,6 +305,7 @@
     <string name="choose_pin">Insira um PIN de 4 dígitos</string>
     <string name="confirm_pin">Confirme o seu PIN</string>
     <string name="invalid_pin">PIN inválido</string>
+    <string name="invalid_pin_timeout">Tente novamente em %d segundo (s)</string>
     <string name="pins_dont_match">Os PINS não são iguais</string>
 
     <!-- SIGNATURE EDIT BAR -->
@@ -329,6 +330,7 @@
     <string name="settings_notifications">Notificações</string>
     <string name="settings_enable_notifications">Permitir notificações ‘push’</string>
     <string name="settings_contacts_encryption">Encriptação dos contactos </string>
+    <string name="settings_keep_decrypted_subjects">Manter assuntos descriptografados localmente</string>
     <string name="settings_encryption">Encriptação</string>
     <string name="settings_phishing_protection">Proteção contra Phishing</string>
     <string name="settings_phishing_protection_description"><![CDATA[<font color="#939191">A frase Anti-phishing permite que os utilizadores liguem uma palavra ou frase personalizada à sua conta CTemplar. Depois de a definir, se alguma vez entrar no seu webmail e a sua conta de Anti-phishing tiver desaparecido ou incorreta, talvez esteja a ser uma vítima de phishing. Deve imediatamente confirmar que está a visitar </font> <font color="#4d92e2"><u>https://mail.ctemplar.com</u></font> <font color="#939191">Se não tiver, então um site malicioso poderá ter os seus credenciais para entrar na conta. Para impedir qualquer dano à sua conta, deve visitar imediatamente </font> <font color="#4d92e2"><u>https://mail.ctemplar.com</u></font> <font color="#939191">e mudar a sua palavra-passe.<br><br>Note que a frase de Anti-phishing será apenas exibida quando entrar na web. </font>]]></string>

@@ -305,6 +305,7 @@
     <string name="choose_pin">Введите 4-значный ПИН-код</string>
     <string name="confirm_pin">Подтвердите ваш ПИН-код</string>
     <string name="invalid_pin">Недействительный ПИН-код</string>
+    <string name="invalid_pin_timeout">Повторите попытку через %d секунд</string>
     <string name="pins_dont_match">ПИН-коды не совпадают</string>
 
     <!-- SIGNATURE EDIT BAR -->
@@ -329,6 +330,7 @@
     <string name="settings_notifications">Уведомления</string>
     <string name="settings_enable_notifications">Включить push-уведомления</string>
     <string name="settings_contacts_encryption">Шифрование контактов</string>
+    <string name="settings_keep_decrypted_subjects">Хранить расшифрованные темы локально</string>
     <string name="settings_encryption">Шифрование</string>
     <string name="settings_phishing_protection">Защита от фишинга</string>
     <string name="settings_phishing_protection_description"><![CDATA[<font color="#939191">Антифишинговая фраза позволяет пользователям связать произвольное слово или фразу по вашему выбору с учетной записью CTemplar. Если после установки фразы при входе на страничку вашего почтового сервиса данная фраза отсутствует или неверна, вы рискуете стать жертвой фишинга. Вам следует немедленно убедится, что вы посещаете</font> <font color="#4d92e2"><u>https://mail.ctemplar.com</u></font> <font color="#939191">В противном случае вредоносный сайт может завладеть данными для входа в вашу учетную запись CTemplar. Чтобы не подвергать угрозе вашу учетную запись, вам следует немедленно посетить</font> <font color="#4d92e2"><u>https://mail.ctemplar.com</u></font> <font color="#939191">и поменять ваш пароль.<br><br>Обратите внимание, что антифишинговая фраза будет отображаться только при веб-входе.</font>]]></string>
