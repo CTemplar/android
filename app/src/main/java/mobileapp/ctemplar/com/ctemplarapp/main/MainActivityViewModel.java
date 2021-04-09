@@ -95,6 +95,9 @@ public class MainActivityViewModel extends AndroidViewModel {
             if (message.getDecryptedSubject() != null) {
                 continue;
             }
+            if (message.getEncryptionMessage() != null) {
+                continue;
+            }
             String cached = messageCacheProvider.getMessageDecryptedSubject(message);
             if (cached != null) {
                 message.setSubject(cached);

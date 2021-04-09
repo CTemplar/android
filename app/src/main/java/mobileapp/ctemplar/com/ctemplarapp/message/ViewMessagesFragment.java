@@ -12,6 +12,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.text.TextUtils;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -20,7 +21,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,11 +30,11 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
@@ -42,12 +42,16 @@ import com.google.android.material.snackbar.Snackbar;
 import java.io.File;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import mobileapp.ctemplar.com.ctemplarapp.ActivityInterface;
 import mobileapp.ctemplar.com.ctemplarapp.BuildConfig;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.main.MainActivity;
 import mobileapp.ctemplar.com.ctemplarapp.main.MainActivityViewModel;
+import mobileapp.ctemplar.com.ctemplarapp.message.dialog.MoveDialogFragment;
+import mobileapp.ctemplar.com.ctemplarapp.message.dialog.PasswordEncryptedMessageDialogFragment;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.net.entity.AttachmentsEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.constant.MessageActions;
@@ -55,11 +59,16 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.AttachmentProvider;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageProvider;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.UserDisplayProvider;
+import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.DateUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EncryptUtils;
+import mobileapp.ctemplar.com.ctemplarapp.utils.FileUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.HtmlUtils;
+import mobileapp.ctemplar.com.ctemplarapp.utils.PermissionCheck;
+import mobileapp.ctemplar.com.ctemplarapp.utils.ToastUtils;
 import timber.log.Timber;
 
+import static android.content.Context.DOWNLOAD_SERVICE;
 import static mobileapp.ctemplar.com.ctemplarapp.message.SendMessageActivity.ATTACHMENT_LIST;
 import static mobileapp.ctemplar.com.ctemplarapp.message.ViewMessagesActivity.PARENT_ID;
 import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.ARCHIVE;
@@ -79,46 +88,70 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
     private MessageProvider lastMessage;
     private String decryptedLastMessage;
     private String currentFolder;
-    private DownloadCompleteReceiver downloadReceiver = new DownloadCompleteReceiver();
+    private final DownloadCompleteReceiver downloadReceiver = new DownloadCompleteReceiver();
+    private final MessagesRecyclerViewAdapter messagesRecyclerViewAdapter
+            = new MessagesRecyclerViewAdapter();
+    private final PasswordEncryptedMessageDialogFragment decryptDialogFragment
+            = new PasswordEncryptedMessageDialogFragment();
 
-    public static ViewMessagesFragment newInstance(
-            @Nullable Long parentId
-    ) {
-        Bundle args = new Bundle();
-        if (parentId != null) {
-            args.putLong(PARENT_ID, parentId);
-        }
-
-        ViewMessagesFragment fragment = new ViewMessagesFragment();
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @NonNull
-    public static ViewMessagesFragment newInstance() {
-        return new ViewMessagesFragment();
-    }
-
-    public static ViewMessagesFragment newInstance(Bundle args) {
-        ViewMessagesFragment fragment = newInstance();
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    private ListView messagesListView;
+    private RecyclerView messagesRecyclerView;
     private TextView subjectTextView;
     private ImageView encryptedImageView;
     private ImageView starImageView;
     private View loadProgress;
-    private ConstraintLayout messageActionsLayout;
-    private AttachmentProvider attachmentProvider;
+    private ViewGroup messageActionsLayout;
+    private final Map<Long, Pair<AttachmentProvider, MessageProvider>> downloadMap = new HashMap<>();
+    private final OnAttachmentDownloading onAttachmentDownloading = (attachment, message) -> {
+        Context context = getContext();
+        if (context == null) {
+            return;
+        }
+        String documentLink = attachment.getDocumentLink();
+        if (documentLink == null) {
+            Toast.makeText(context, context.getString(R.string.error_attachment_url), Toast.LENGTH_SHORT).show();
+            return;
+        }
 
-    private final OnAttachmentDownloading onAttachmentDownloading = new OnAttachmentDownloading() {
-        @Override
-        public void onStart(AttachmentProvider attachment) {
-            attachmentProvider = attachment;
+        File externalStorageFile = Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_DOWNLOADS);
+        String originalFileName = AppUtils.getFileNameFromURL(documentLink);
+        File generatedFile = FileUtils.generateFileName(originalFileName, externalStorageFile);
+        String fileName = generatedFile == null ? originalFileName : generatedFile.getName();
+
+        String downloadFileName = attachment.isEncrypted()
+                ? fileName + ENCRYPTED_EXT : fileName;
+
+        DownloadManager.Request documentRequest = new DownloadManager.Request(Uri.parse(documentLink));
+        documentRequest.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, downloadFileName);
+        documentRequest.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+
+        if (PermissionCheck.readAndWriteExternalStorage(context)) {
+            DownloadManager downloadManager = (DownloadManager) context.getApplicationContext()
+                    .getSystemService(DOWNLOAD_SERVICE);
+            if (downloadManager == null) {
+                return;
+            }
+            long downloadId = downloadManager.enqueue(documentRequest);
+            attachment.setFileName(fileName);
+            downloadMap.put(downloadId, new Pair<>(attachment, message));
+            Toast.makeText(context, context.getString(R.string.toast_download_started), Toast.LENGTH_SHORT).show();
         }
     };
+
+
+    public ViewMessagesFragment() {
+        decryptDialogFragment.setCallback((messageProvider, decryptedMessage, decryptedSubject) -> {
+            messageProvider.getEncryptionMessage().setDecryptedMessage(decryptedMessage);
+            messagesRecyclerViewAdapter.updateItem(messageProvider);
+            if (decryptedSubject != null) {
+                messageProvider.setDecryptedSubject(decryptedSubject);
+                if (parentMessage == messageProvider) {
+                    subjectTextView.setText(decryptedSubject);
+                }
+            }
+        });
+    }
+
 
     @Nullable
     @Override
@@ -130,7 +163,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
 
         View root = inflater.inflate(R.layout.fragment_view_messages, container, false);
 
-        messagesListView = root.findViewById(R.id.activity_view_messages_messages);
+        messagesRecyclerView = root.findViewById(R.id.activity_view_messages_messages_recycler_view);
         subjectTextView = root.findViewById(R.id.activity_view_messages_subject_text);
         encryptedImageView = root.findViewById(R.id.activity_view_messages_subject_encrypted_image);
         starImageView = root.findViewById(R.id.activity_view_messages_subject_star_image);
@@ -167,8 +200,6 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
         if (parentId < 0) {
             activity.onBackPressed();
         }
-
-        attachmentProvider = new AttachmentProvider();
         viewModel.getChainMessages(parentId);
         viewModel.getMessagesResponse().observe(getViewLifecycleOwner(), messagesList -> {
             if (messagesList == null || messagesList.isEmpty()) {
@@ -180,7 +211,15 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
             }
 
             MessageProvider currentParentMessage = messagesList.get(0);
-            subjectTextView.setText(currentParentMessage.getSubject());
+            if (currentParentMessage.getEncryptionMessage() == null) {
+                subjectTextView.setText(currentParentMessage.getSubject());
+            } else {
+                if (currentParentMessage.getEncryptionMessage().isMessageDecrypted()) {
+                    subjectTextView.setText(currentParentMessage.getSubject());
+                } else {
+                    subjectTextView.setText(null);
+                }
+            }
             parentMessage = currentParentMessage;
 
             lastMessage = messagesList.get(messagesList.size() - 1);
@@ -190,10 +229,11 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
                 starImageView.setSelected(parentMessage.isStarred());
             }
 
-            ViewMessagesAdapter adapter = new ViewMessagesAdapter(
-                    messagesList, onAttachmentDownloading, getActivity()
-            );
-            messagesListView.setAdapter(adapter);
+            messagesRecyclerView.setAdapter(messagesRecyclerViewAdapter);
+            messagesRecyclerViewAdapter.setItems(messagesList);
+            messagesRecyclerViewAdapter.setOnAttachmentDownloadingCallback(onAttachmentDownloading);
+            messagesRecyclerViewAdapter.setCallback(item ->
+                    decryptDialogFragment.show(getParentFragmentManager(), item));
 
             if (parentMessage != null && !parentMessage.isRead()) {
                 long parentMessageId = parentMessage.getId();
@@ -304,7 +344,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        switch(id) {
+        switch (id) {
             case R.id.menu_view_archive:
                 snackbarMove(ARCHIVE, getResources().getString(R.string.action_archived));
                 return true;
@@ -456,9 +496,9 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
         Fragment fragmentForward = SendMessageFragment.newInstance(
                 lastMessage.getSubject(),
                 forwardHead() + HtmlUtils.fromHtml(decryptedLastMessage),
-                new String[] {},
-                new String[] {},
-                new String[] {},
+                new String[]{},
+                new String[]{},
+                new String[]{},
                 MessageActions.FORWARD,
                 attachmentsEntity,
                 null
@@ -482,7 +522,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
         switch (id) {
             case R.id.activity_view_messages_reply:
                 Intent intentReply = new Intent(getActivity(), SendMessageActivity.class);
-                intentReply.putExtra(Intent.EXTRA_EMAIL, new String[] { lastMessage.getSender() });
+                intentReply.putExtra(Intent.EXTRA_EMAIL, new String[]{lastMessage.getSender()});
                 intentReply.putExtra(Intent.EXTRA_SUBJECT, lastMessage.getSubject());
                 intentReply.putExtra(Intent.EXTRA_TEXT, replyHead() + HtmlUtils.fromHtml(decryptedLastMessage));
                 intentReply.putExtra(SendMessageActivity.LAST_ACTION, MessageActions.REPLY);
@@ -491,9 +531,9 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
                 Fragment fragmentReply = SendMessageFragment.newInstance(
                         lastMessage.getSubject(),
                         replyHead() + HtmlUtils.fromHtml(decryptedLastMessage),
-                        new String[] { lastMessage.getSender() },
-                        new String[] {},
-                        new String[] {},
+                        new String[]{lastMessage.getSender()},
+                        new String[]{},
+                        new String[]{},
                         MessageActions.REPLY,
                         new AttachmentsEntity(),
                         parentMessage.getId()
@@ -507,7 +547,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
                 break;
             case R.id.activity_view_messages_reply_all:
                 Intent intentReplyAll = new Intent(getActivity(), SendMessageActivity.class);
-                intentReplyAll.putExtra(Intent.EXTRA_EMAIL, new String[] { lastMessage.getSender() });
+                intentReplyAll.putExtra(Intent.EXTRA_EMAIL, new String[]{lastMessage.getSender()});
                 intentReplyAll.putExtra(Intent.EXTRA_SUBJECT, lastMessage.getSubject());
                 intentReplyAll.putExtra(Intent.EXTRA_TEXT, replyHead() + HtmlUtils.fromHtml(decryptedLastMessage));
                 intentReplyAll.putExtra(Intent.EXTRA_CC, lastMessage.getCc());
@@ -518,7 +558,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
                 Fragment fragmentReplyAll = SendMessageFragment.newInstance(
                         lastMessage.getSubject(),
                         replyHead() + HtmlUtils.fromHtml(decryptedLastMessage),
-                        new String[] { lastMessage.getSender() },
+                        new String[]{lastMessage.getSender()},
                         lastMessage.getCc(),
                         lastMessage.getBcc(),
                         MessageActions.REPLY_ALL,
@@ -561,26 +601,47 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
     private class DownloadCompleteReceiver extends BroadcastReceiver {
         public void onReceive(Context ctx, Intent intent) {
             Toast.makeText(ctx, getString(R.string.toast_download_complete), Toast.LENGTH_SHORT).show();
-
+            Bundle extras = intent.getExtras();
+            if (extras == null) {
+                ToastUtils.showToast(ctx, "Download failed. Extras is null");
+                return;
+            }
+            long downloadId = extras.getLong("extra_download_id");
+            Pair<AttachmentProvider, MessageProvider> dataPair = downloadMap.remove(downloadId);
+            if (dataPair == null) {
+                ToastUtils.showToast(ctx, "Download failed. Attachment cannot be recognized");
+                return;
+            }
+            AttachmentProvider attachment = dataPair.first;
+            MessageProvider message = dataPair.second;
             try {
                 File externalStorageFile = Environment.getExternalStoragePublicDirectory(
                         Environment.DIRECTORY_DOWNLOADS);
-                String fileName = attachmentProvider.getFileName();
+                String fileName = attachment.getFileName();
 
-                if (attachmentProvider.isEncrypted()) {
+                if (attachment.isEncrypted()) {
                     Toast.makeText(ctx, getString(R.string.attachment_decryption), Toast.LENGTH_SHORT).show();
 
                     File encryptedFile = new File(externalStorageFile, fileName + ENCRYPTED_EXT);
                     File decryptedFile = new File(externalStorageFile, fileName);
-                    long mailboxId = parentMessage == null ? viewModel.getDefaultMailbox().getId()
-                            : parentMessage.getMailboxId();
-
-                    MailboxEntity mailboxEntity = viewModel.getMailboxById(mailboxId);
-                    String password = viewModel.getUserPassword();
-                    String privateKey = mailboxEntity.getPrivateKey();
-                    boolean attachmentDecrypted = EncryptUtils.decryptAttachment(
-                            encryptedFile, decryptedFile, password, privateKey
-                    );
+                    boolean attachmentDecrypted;
+                    if (message.getEncryptionMessage() == null) {
+                        long mailboxId = parentMessage == null ? viewModel.getDefaultMailbox().getId()
+                                : parentMessage.getMailboxId();
+                        MailboxEntity mailboxEntity = viewModel.getMailboxById(mailboxId);
+                        String password = viewModel.getUserPassword();
+                        String privateKey = mailboxEntity.getPrivateKey();
+                        attachmentDecrypted = EncryptUtils.decryptAttachment(
+                                encryptedFile, decryptedFile, password, privateKey
+                        );
+                    } else {
+                        String password = message.getEncryptionMessage().getPassword();
+                        if (password == null) {
+                            ToastUtils.showLongToast(ctx, "Cannot decrypt attachment. Please, decrypt the message");
+                            return;
+                        }
+                        attachmentDecrypted = EncryptUtils.decryptAttachmentGPG(encryptedFile, decryptedFile, password);
+                    }
                     encryptedFile.delete();
 
                     Uri decryptedUri = FileProvider.getUriForFile(ctx,
@@ -618,4 +679,30 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
             Timber.e(e);
         }
     }
+
+
+    public static ViewMessagesFragment newInstance(
+            @Nullable Long parentId
+    ) {
+        Bundle args = new Bundle();
+        if (parentId != null) {
+            args.putLong(PARENT_ID, parentId);
+        }
+
+        ViewMessagesFragment fragment = new ViewMessagesFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @NonNull
+    public static ViewMessagesFragment newInstance() {
+        return new ViewMessagesFragment();
+    }
+
+    public static ViewMessagesFragment newInstance(Bundle args) {
+        ViewMessagesFragment fragment = newInstance();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
 }

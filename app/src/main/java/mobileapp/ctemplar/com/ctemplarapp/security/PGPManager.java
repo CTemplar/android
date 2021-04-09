@@ -119,4 +119,8 @@ public class PGPManager {
         }
         return new byte[0];
     }
+
+    public static String decryptGPGUnsafe(String encryptedData, String passPhrase) throws IOException, PGPException {
+        return new String(PGPLib.decryptGPG(encryptedData.getBytes(), passPhrase));
+    }
 }

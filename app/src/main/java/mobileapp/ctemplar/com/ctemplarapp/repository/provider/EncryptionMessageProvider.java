@@ -21,6 +21,7 @@ public class EncryptionMessageProvider {
     private int expiryHours;
     private long message;
     private String password;
+    private String decryptedMessage;
 
     public EncryptionMessageProvider() { }
 
@@ -207,5 +208,17 @@ public class EncryptionMessageProvider {
         request.setMessage(message);
         request.setPassword(password);
         return request;
+    }
+
+    public String getDecryptedMessage() {
+        return decryptedMessage;
+    }
+
+    public boolean isMessageDecrypted() {
+        return decryptedMessage != null;
+    }
+
+    public void setDecryptedMessage(String decryptedMessage) {
+        this.decryptedMessage = decryptedMessage;
     }
 }

@@ -118,6 +118,31 @@ public class EncryptUtils {
         return true;
     }
 
+
+    public static boolean decryptAttachmentGPG(File encryptedFile, File decryptedFile, String password) {
+        int fileSize = (int) encryptedFile.length();
+        byte[] fileBytes = new byte[fileSize];
+        try {
+            BufferedInputStream bufferedInputStream = new BufferedInputStream(new FileInputStream(encryptedFile));
+            bufferedInputStream.read(fileBytes, 0, fileBytes.length);
+            bufferedInputStream.close();
+        } catch (IOException e) {
+            Timber.e(e);
+            return false;
+        }
+        try {
+            byte[] encryptedBytes = PGPManager.decryptGPG(fileBytes, password);
+            BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(decryptedFile));
+            bufferedOutputStream.write(encryptedBytes);
+            bufferedOutputStream.flush();
+            bufferedOutputStream.close();
+        } catch (Exception e) {
+            Timber.e(e);
+            return false;
+        }
+        return true;
+    }
+
     public static boolean encryptAttachmentGPG(File originalFile, File encryptedFile, String passPhrase) {
         int fileSize = (int) originalFile.length();
         byte[] fileBytes = new byte[fileSize];

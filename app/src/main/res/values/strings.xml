@@ -140,6 +140,11 @@
     <string name="txt_selected_datetime_is_past">Selected datetime is in past</string>
     <string name="txt_yesterday">Yesterday</string>
     <string name="txt_attachments_in_processing">Attachments in processing…</string>
+    <string name="message_encrypted_with_password">This message has been encrypted with password</string>
+    <string name="message_encrypted_with_password_title">Enter password</string>
+    <string name="password_hint">Password hint: %s</string>
+    <string name="decrypt">Decrypt</string>
+    <string name="password_is_incorrect">Password is incorrect</string>
 
     <!-- VIEW MESSAGES -->
     <string name="txt_more_details">More details</string>

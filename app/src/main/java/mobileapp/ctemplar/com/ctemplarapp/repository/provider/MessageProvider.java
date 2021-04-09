@@ -58,7 +58,8 @@ public class MessageProvider {
 
     private String decryptedSubject;
 
-    public MessageProvider() { }
+    public MessageProvider() {
+    }
 
     public MessageProvider(long id, EncryptionMessageProvider encryptionMessage, String sender, boolean hasAttachments, List<AttachmentProvider> attachments, Date createdAt, UserDisplayProvider senderDisplay, List<UserDisplayProvider> receiverDisplayList, List<UserDisplayProvider> ccDisplayList, List<UserDisplayProvider> bccDisplayList, boolean hasChildren, int childrenCount, String subject, String content, String[] receivers, String[] cc, String[] bcc, String folderName, Date updatedAt, Date destructDate, Date delayedDelivery, Long deadManDuration, boolean isRead, boolean send, boolean isStarred, Date sentAt, boolean isEncrypted, boolean isSubjectEncrypted, boolean isProtected, boolean isHtml, String hash, List<String> spamReason, String lastAction, String lastActionThread, long mailboxId, String parent, boolean isSubjectDecrypted, String decryptedSubject) {
         this.id = id;
@@ -527,16 +528,22 @@ public class MessageProvider {
         messageProvider.bccDisplayList = convertUserDisplayListFromEntityToProvider(message.getBccDisplayList());
         messageProvider.hasChildren = message.isHasChildren();
         messageProvider.childrenCount = message.getChildrenCount();
-        if (!decryptSubject) {
-            messageProvider.subject = message.getSubject();
-        } else if (!message.isSubjectEncrypted()) {
-            messageProvider.subject = message.getSubject();
-        } else if (message.getDecryptedSubject() != null) {
-            messageProvider.subject = message.getDecryptedSubject();
+        if (message.getEncryptionMessage() == null) {
+            if (!decryptSubject) {
+                messageProvider.subject = message.getSubject();
+            } else if (!message.isSubjectEncrypted()) {
+                messageProvider.subject = message.getSubject();
+            } else if (message.getDecryptedSubject() != null) {
+                messageProvider.subject = message.getDecryptedSubject();
+            } else {
+                messageProvider.subject = EncryptUtils.decryptSubject(message.getSubject(), message.getMailboxId());
+            }
         } else {
-            messageProvider.subject = EncryptUtils.decryptSubject(message.getSubject(), message.getMailboxId());
+            messageProvider.subject = message.getSubject();
         }
-        messageProvider.content = EncryptUtils.decryptContent(message.getContent(), message.getMailboxId(), decryptContent);
+        messageProvider.content = EncryptUtils.decryptContent(message.getContent(),
+                message.getMailboxId(),
+                decryptContent && message.getEncryptionMessage() == null);
         messageProvider.receivers = listToArray(message.getReceivers());
         messageProvider.cc = listToArray(message.getCc());
         messageProvider.bcc = listToArray(message.getBcc());
