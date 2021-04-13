@@ -340,8 +340,8 @@ public class MessagesRecyclerViewAdapter extends RecyclerView.Adapter<MessagesRe
 //            contentWebView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 //        }
             EncryptionMessageProvider encryptionMessage = item.getEncryptionMessage();
-            boolean isGpgEncrypted = encryptionMessage != null && !encryptionMessage.isMessageDecrypted();
-            if (isGpgEncrypted) {
+            boolean isPasswordEncrypted = encryptionMessage != null && !encryptionMessage.isMessageDecrypted();
+            if (isPasswordEncrypted) {
                 contentLayout.setVisibility(View.GONE);
                 encryptedMessageLockLayout.setVisibility(View.VISIBLE);
                 collapsedContentTextView.setVisibility(View.GONE);
@@ -408,7 +408,7 @@ public class MessagesRecyclerViewAdapter extends RecyclerView.Adapter<MessagesRe
                 @Override
                 public void onNext(@NotNull Integer position) {
                     if (encryptionMessage != null && !encryptionMessage.isMessageDecrypted()) {
-                        ToastUtils.showToast(context, "Firstly, decrypt the message");
+                        ToastUtils.showToast(context, context.getString(R.string.firstly_decrypt_message));
                         return;
                     }
                     AttachmentProvider attachmentProvider = messageAttachmentAdapter.getAttachment(position);

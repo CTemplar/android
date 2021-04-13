@@ -136,7 +136,12 @@
     <string name="txt_encrypt">تشفير</string>
     <string name="txt_selected_datetime_is_past">الوقت المحدد من الماضي</string>
     <string name="txt_yesterday">الأمس</string>
-    <string name="txt_attachments_in_processing">المرفقات قيد المعالجة...</string>
+    <string name="txt_attachments_in_processing">المرفقات قيد المعالجة…</string>
+    <string name="message_encrypted_with_password">تم تشفير هذه الرسالة بكلمة مرور</string>
+    <string name="message_encrypted_with_password_title">أدخل كلمة المرور</string>
+    <string name="password_hint">تلميح كلمة المرور:%s</string>
+    <string name="decrypt">فك تشفير</string>
+    <string name="password_is_incorrect">كلمة المرور غير صحيحة</string>
 
     <!-- VIEW MESSAGES -->
     <string name="txt_more_details">مزيد من التفاصيل</string>

@@ -137,6 +137,11 @@
     <string name="txt_selected_datetime_is_past">Ausgewählter Zeitraum ist in der Vergangenheit</string>
     <string name="txt_yesterday">Gestern</string>
     <string name="txt_attachments_in_processing">Anhänge in Bearbeitung…</string>
+    <string name="message_encrypted_with_password">Diese Nachricht wurde mit einem Passwort verschlüsselt</string>
+    <string name="message_encrypted_with_password_title">Passwort eingeben</string>
+    <string name="password_hint">Passworthinweis: %s</string>
+    <string name="decrypt">Entschlüsseln</string>
+    <string name="password_is_incorrect">Das Passwort ist inkorrekt</string>
 
     <!-- VIEW MESSAGES -->
     <string name="txt_more_details">Nähere Details</string>

@@ -137,6 +137,11 @@
     <string name="txt_selected_datetime_is_past">选定的日期时间为过去时间</string>
     <string name="txt_yesterday">昨天</string>
     <string name="txt_attachments_in_processing">附件正在处理中……</string>
+    <string name="message_encrypted_with_password">此消息已使用密碼加密</string>
+    <string name="message_encrypted_with_password_title">輸入密碼</string>
+    <string name="password_hint">密碼提示：%s</string>
+    <string name="decrypt">解密</string>
+    <string name="password_is_incorrect">密碼錯誤</string>
 
     <!-- VIEW MESSAGES -->
     <string name="txt_more_details">更多详情</string>

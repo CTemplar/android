@@ -145,6 +145,7 @@
     <string name="password_hint">Password hint: %s</string>
     <string name="decrypt">Decrypt</string>
     <string name="password_is_incorrect">Password is incorrect</string>
+    <string name="firstly_decrypt_message">Firstly, decrypt the message</string>
 
     <!-- VIEW MESSAGES -->
     <string name="txt_more_details">More details</string>

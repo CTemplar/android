@@ -609,7 +609,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
             long downloadId = extras.getLong("extra_download_id");
             Pair<AttachmentProvider, MessageProvider> dataPair = downloadMap.remove(downloadId);
             if (dataPair == null) {
-                ToastUtils.showToast(ctx, "Download failed. Attachment cannot be recognized");
+                ToastUtils.showToast(ctx, "Download failed. Attachment cannot be parsed");
                 return;
             }
             AttachmentProvider attachment = dataPair.first;
@@ -637,7 +637,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
                     } else {
                         String password = message.getEncryptionMessage().getPassword();
                         if (password == null) {
-                            ToastUtils.showLongToast(ctx, "Cannot decrypt attachment. Please, decrypt the message");
+                            ToastUtils.showLongToast(ctx, getString(R.string.firstly_decrypt_message));
                             return;
                         }
                         attachmentDecrypted = EncryptUtils.decryptAttachmentGPG(encryptedFile, decryptedFile, password);

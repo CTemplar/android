@@ -345,7 +345,8 @@
             <TextView android:id="@+id/password_encrypted_message_hint_text_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="This message has been encrypted with password" />
+                android:layout_gravity="center"
+                android:text="@string/message_encrypted_with_password" />
 
             <Button android:id="@+id/password_encrypted_message_decrypt_button"
                 android:layout_width="match_parent"
@@ -355,7 +356,7 @@
                 android:textColor="@android:color/white"
                 android:background="@drawable/selector_button_blue"
                 android:layout_marginTop="4dp"
-                android:text="Decrypt"/>
+                android:text="@string/decrypt"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -364,7 +365,7 @@
                 android:textColor="@color/colorAccent"
                 android:textSize="18sp"
                 android:visibility="gone"
-                android:text="Password is incorrect" />
+                android:text="@string/password_is_incorrect" />
 <!--            android:fontFamily="@font/lato_regular"-->
 <!--            android:textColor="@color/colorDarkBlue2"-->
 <!--            android:background="@drawable/dialog_cancel_button_background"-->

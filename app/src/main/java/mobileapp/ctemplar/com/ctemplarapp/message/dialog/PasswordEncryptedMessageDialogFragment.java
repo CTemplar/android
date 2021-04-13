@@ -73,7 +73,7 @@ public class PasswordEncryptedMessageDialogFragment extends DialogFragment {
                     Timber.i(e);
                     mainThreadHandler.post(() -> {
                         progressBar.setVisibility(View.GONE);
-                        showDecryptError("Password is incorrect");
+                        showDecryptError(getString(R.string.password_is_incorrect));
                     });
                     return;
                 } catch (IOException e) {

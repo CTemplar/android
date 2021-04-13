@@ -137,6 +137,11 @@
     <string name="txt_selected_datetime_is_past">Обрана дата/час в минулому</string>
     <string name="txt_yesterday">Вчора</string>
     <string name="txt_attachments_in_processing">Вкладення в обробці…</string>
+    <string name="message_encrypted_with_password">Це повідомлення зашифровано паролем</string>
+    <string name="message_encrypted_with_password_title">Введіть пароль</string>
+    <string name="password_hint">Підказка: %s</string>
+    <string name="decrypt">Розшифрувати</string>
+    <string name="password_is_incorrect">Пароль неправильний</string>
 
     <!-- VIEW MESSAGES -->
     <string name="txt_more_details">Більше інформації</string>

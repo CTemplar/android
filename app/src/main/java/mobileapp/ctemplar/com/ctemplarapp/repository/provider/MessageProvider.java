@@ -541,9 +541,11 @@ public class MessageProvider {
         } else {
             messageProvider.subject = message.getSubject();
         }
-        messageProvider.content = EncryptUtils.decryptContent(message.getContent(),
+        messageProvider.content = EncryptUtils.decryptContent(
+                message.getContent(),
                 message.getMailboxId(),
-                decryptContent && message.getEncryptionMessage() == null);
+                decryptContent && message.getEncryptionMessage() == null
+        );
         messageProvider.receivers = listToArray(message.getReceivers());
         messageProvider.cc = listToArray(message.getCc());
         messageProvider.bcc = listToArray(message.getBcc());
