@@ -1,4 +1,4 @@
-package com.ctemplar.app.fdroid.message;
+package com.ctemplar.app.fdroid.message.dialog;
 
 import android.app.Dialog;
 import android.os.Bundle;
@@ -14,13 +14,14 @@ import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.ctemplar.app.fdroid.R;
+import com.ctemplar.app.fdroid.message.InputFilterMinMax;
 import com.ctemplar.app.fdroid.utils.EditTextUtils;
 import timber.log.Timber;
 
 public class DeadMansDeliveryDialogFragment extends DialogFragment {
     private OnScheduleDeadMansDelivery onScheduleDeadMansDelivery;
 
-    interface OnScheduleDeadMansDelivery {
+    public interface OnScheduleDeadMansDelivery {
         void onSchedule(Long timeInHours);
     }
 

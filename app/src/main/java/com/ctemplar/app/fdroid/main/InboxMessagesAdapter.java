@@ -188,18 +188,26 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesView
         }
 
         // check for subject
-        if (!message.isSubjectEncrypted() || message.isSubjectDecrypted()) {
+        if (message.getEncryptionMessage() != null) {
+            holder.txtSubject.setVisibility(View.INVISIBLE);
+            holder.imgPasswordKey.setVisibility(View.VISIBLE);
+            holder.txtSubjectEncrypted.setVisibility(View.GONE);
+            holder.decryptionProgressBar.setVisibility(View.GONE);
+        } else if (!message.isSubjectEncrypted() || message.isSubjectDecrypted()) {
             holder.txtSubject.setText(message.getSubject());
             holder.txtSubject.setVisibility(View.VISIBLE);
+            holder.imgPasswordKey.setVisibility(View.GONE);
             holder.txtSubjectEncrypted.setVisibility(View.GONE);
             holder.decryptionProgressBar.setVisibility(View.GONE);
         } else if (message.getDecryptedSubject() != null) {
             holder.txtSubject.setText(message.getDecryptedSubject());
             holder.txtSubject.setVisibility(View.VISIBLE);
+            holder.imgPasswordKey.setVisibility(View.GONE);
             holder.txtSubjectEncrypted.setVisibility(View.GONE);
             holder.decryptionProgressBar.setVisibility(View.GONE);
         } else {
             holder.txtSubject.setVisibility(View.INVISIBLE);
+            holder.imgPasswordKey.setVisibility(View.GONE);
             holder.txtSubjectEncrypted.setVisibility(View.VISIBLE);
             holder.decryptionProgressBar.setVisibility(View.VISIBLE);
         }

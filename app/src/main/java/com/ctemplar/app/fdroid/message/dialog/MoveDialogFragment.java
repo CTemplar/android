@@ -1,4 +1,4 @@
-package com.ctemplar.app.fdroid.message;
+package com.ctemplar.app.fdroid.message.dialog;
 
 import android.app.Dialog;
 import android.content.Intent;
@@ -29,6 +29,8 @@ import java.util.List;
 import com.ctemplar.app.fdroid.R;
 import com.ctemplar.app.fdroid.folders.AddFolderActivity;
 import com.ctemplar.app.fdroid.folders.ManageFoldersActivity;
+import com.ctemplar.app.fdroid.message.ViewMessagesActivity;
+import com.ctemplar.app.fdroid.message.ViewMessagesViewModel;
 import com.ctemplar.app.fdroid.net.response.folders.FoldersResponse;
 import com.ctemplar.app.fdroid.net.response.folders.FoldersResult;
 

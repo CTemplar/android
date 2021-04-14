@@ -2,6 +2,8 @@ package com.ctemplar.app.fdroid.utils;
 
 import android.text.TextUtils;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -13,8 +15,10 @@ import com.ctemplar.app.fdroid.net.entity.PGPKeyEntity;
 import com.ctemplar.app.fdroid.net.request.MailboxKey;
 import com.ctemplar.app.fdroid.repository.entity.MailboxEntity;
 import com.ctemplar.app.fdroid.security.PGPManager;
+import timber.log.Timber;
 
 public class EncodeUtils {
+    private static final String MD5 = "MD5";
     private static final int MAX_SYMBOLS = 29;
     private static final String ENCODE_SCHEME = "$2a$10$";
     private static final char[] HEX_ARRAY = "0123456789abcdef".toCharArray();
@@ -67,6 +71,18 @@ public class EncodeUtils {
 
     public static String generateHash(String username, String password) {
         return BCrypt.hashpw(password, generateSaltWithUsername(username, ENCODE_SCHEME));
+    }
+
+    public static String md5(final String passPhrase) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance(MD5);
+            digest.update(passPhrase.getBytes());
+            byte[] messageDigest = digest.digest();
+            return new String(bytesToHex(messageDigest));
+        } catch (NoSuchAlgorithmException e) {
+            Timber.e(e);
+        }
+        return "";
     }
 
     public static Observable<PGPKeyEntity> getPGPKeyObservable(

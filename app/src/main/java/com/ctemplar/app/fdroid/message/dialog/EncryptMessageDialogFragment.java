@@ -1,4 +1,4 @@
-package com.ctemplar.app.fdroid.message;
+package com.ctemplar.app.fdroid.message.dialog;
 
 import android.app.Dialog;
 import android.os.Bundle;
@@ -19,12 +19,13 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
 import com.ctemplar.app.fdroid.R;
+import com.ctemplar.app.fdroid.message.InputFilterMinMax;
 import com.ctemplar.app.fdroid.utils.EditTextUtils;
 import timber.log.Timber;
 
 public class EncryptMessageDialogFragment extends DialogFragment {
 
-    interface OnSetEncryptMessagePassword {
+    public interface OnSetEncryptMessagePassword {
         void onSet(String password, String passwordHint, Integer expireHours);
     }
 

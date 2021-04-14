@@ -1,4 +1,4 @@
-package com.ctemplar.app.fdroid.message;
+package com.ctemplar.app.fdroid.message.dialog;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -24,7 +24,7 @@ import com.ctemplar.app.fdroid.utils.DateUtils;
 public class DelayedDeliveryDialogFragment extends DialogFragment {
     private Calendar calendar = Calendar.getInstance();
 
-    interface OnScheduleDelayedDelivery {
+    public interface OnScheduleDelayedDelivery {
         void onSchedule(Date date);
     }
 

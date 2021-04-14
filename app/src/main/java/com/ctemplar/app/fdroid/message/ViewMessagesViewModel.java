@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import io.reactivex.Observer;

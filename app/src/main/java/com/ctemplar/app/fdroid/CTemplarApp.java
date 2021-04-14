@@ -103,7 +103,7 @@ public class CTemplarApp extends MultiDexApplication {
         notificationServiceBroadcastReceiver = new NotificationServiceBroadcastReceiver();
         notificationServiceBroadcastReceiver.register(this);
         NotificationService.updateState(this);
-        if (Security.getProvider("BC") == null) {
+        if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
             Security.addProvider(new BouncyCastleProvider());
         }
     }

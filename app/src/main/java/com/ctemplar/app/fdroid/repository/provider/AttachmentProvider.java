@@ -3,7 +3,6 @@ package com.ctemplar.app.fdroid.repository.provider;
 import java.io.Serializable;
 
 public class AttachmentProvider implements Serializable {
-
     private long id;
     private String documentLink;
     private boolean isInline;

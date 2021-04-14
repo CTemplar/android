@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
 
-    <include android:id="@+id/expanded"
+    <include
+        android:id="@+id/expanded"
         layout="@layout/item_message_view_expanded"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
-    <include android:id="@+id/collapsed"
-        layout="@layout/item_message_view_collapsed"/>
+    <include
+        android:id="@+id/collapsed"
+        layout="@layout/item_message_view_collapsed" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</FrameLayout>

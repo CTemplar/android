@@ -2,21 +2,23 @@ package com.ctemplar.app.fdroid.net.response.messages;
 
 import com.google.gson.annotations.SerializedName;
 
-public class EncryptionMessage {
+import java.util.Date;
+
+public class EncryptionMessageResponse {
     @SerializedName("id")
     private long id;
 
     @SerializedName("random_secret")
     private String randomSecret;
 
-    @SerializedName("password")
-    private String password;
+    @SerializedName("is_deleted")
+    private boolean isDeleted;
+
+    @SerializedName("deleted_at")
+    private Date deletedAt;
 
     @SerializedName("password_hint")
     private String passwordHint;
-
-    @SerializedName("expiry_hours")
-    private int expireHours;
 
     @SerializedName("private_key")
     private String privateKey;
@@ -25,17 +27,20 @@ public class EncryptionMessage {
     private String publicKey;
 
     @SerializedName("created")
-    private String created;
+    private Date createdAt;
 
     @SerializedName("expires")
-    private String expires;
+    private Date expires;
+
+    @SerializedName("expiry_hours")
+    private int expiryHours;
 
     @SerializedName("message")
     private long message;
 
-    public EncryptionMessage() {
+    @SerializedName("password")
+    private String password;
 
-    }
 
     public long getId() {
         return id;
@@ -53,12 +58,20 @@ public class EncryptionMessage {
         this.randomSecret = randomSecret;
     }
 
-    public String getPassword() {
-        return password;
+    public boolean isDeleted() {
+        return isDeleted;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setDeleted(boolean deleted) {
+        isDeleted = deleted;
+    }
+
+    public Date getDeletedAt() {
+        return deletedAt;
+    }
+
+    public void setDeletedAt(Date deletedAt) {
+        this.deletedAt = deletedAt;
     }
 
     public String getPasswordHint() {
@@ -67,14 +80,6 @@ public class EncryptionMessage {
 
     public void setPasswordHint(String passwordHint) {
         this.passwordHint = passwordHint;
-    }
-
-    public int getExpireHours() {
-        return expireHours;
-    }
-
-    public void setExpireHours(int expireHours) {
-        this.expireHours = expireHours;
     }
 
     public String getPrivateKey() {
@@ -93,20 +98,28 @@ public class EncryptionMessage {
         this.publicKey = publicKey;
     }
 
-    public String getCreated() {
-        return created;
+    public Date getCreatedAt() {
+        return createdAt;
     }
 
-    public void setCreated(String created) {
-        this.created = created;
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
     }
 
-    public String getExpires() {
+    public Date getExpires() {
         return expires;
     }
 
-    public void setExpires(String expires) {
+    public void setExpires(Date expires) {
         this.expires = expires;
+    }
+
+    public int getExpiryHours() {
+        return expiryHours;
+    }
+
+    public void setExpiryHours(int expiryHours) {
+        this.expiryHours = expiryHours;
     }
 
     public long getMessage() {
@@ -115,5 +128,13 @@ public class EncryptionMessage {
 
     public void setMessage(long message) {
         this.message = message;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

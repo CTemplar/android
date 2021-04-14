@@ -26,9 +26,11 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import com.ctemplar.app.fdroid.CTemplarApp;
 import com.ctemplar.app.fdroid.net.ResponseStatus;
+import com.ctemplar.app.fdroid.net.request.EncryptionMessageRequest;
 import com.ctemplar.app.fdroid.net.request.PublicKeysRequest;
 import com.ctemplar.app.fdroid.net.request.SendMessageRequest;
 import com.ctemplar.app.fdroid.net.response.KeyResponse;
+import com.ctemplar.app.fdroid.net.response.messages.EncryptionMessageResponse;
 import com.ctemplar.app.fdroid.net.response.messages.MessageAttachment;
 import com.ctemplar.app.fdroid.net.response.messages.MessagesResult;
 import com.ctemplar.app.fdroid.net.response.myself.MyselfResponse;
@@ -42,7 +44,6 @@ import com.ctemplar.app.fdroid.repository.provider.MessageAttachmentProvider;
 import com.ctemplar.app.fdroid.repository.provider.MessageProvider;
 import com.ctemplar.app.fdroid.security.PGPManager;
 import com.ctemplar.app.fdroid.utils.AppUtils;
-import com.ctemplar.app.fdroid.utils.DateUtils;
 import com.ctemplar.app.fdroid.utils.EditTextUtils;
 import com.ctemplar.app.fdroid.utils.FileUtils;
 import okhttp3.MediaType;
@@ -244,6 +245,9 @@ public class SendMessageActivityViewModel extends ViewModel {
     }
 
     public void setEncryptionMessage(long id, SendMessageRequest sendMessageRequest) {
+        final EncryptionMessageRequest encryptionMessage = sendMessageRequest.getEncryptionMessage();
+        final String password = encryptionMessage.getPassword();
+        encryptionMessage.setPassword(null);
         userRepository.updateMessage(id, sendMessageRequest)
                 .subscribe(new SingleObserver<MessagesResult>() {
                     @Override
@@ -253,12 +257,19 @@ public class SendMessageActivityViewModel extends ViewModel {
 
                     @Override
                     public void onSuccess(@NotNull MessagesResult messagesResult) {
-                        messageEncryptionResult.postValue(messagesResult);
+                        if (messagesResult.getEncryptionMessage() == null) {
+                            messageEncryptionResult.postValue(null);
+                        } else {
+                            EncryptionMessageResponse encryption = messagesResult.getEncryptionMessage();
+                            encryption.setPassword(password);
+                            messageEncryptionResult.postValue(messagesResult);
+                        }
                     }
 
                     @Override
                     public void onError(@NotNull Throwable e) {
-                        Timber.e(e.getCause());
+                        Timber.e(e);
+                        messageEncryptionResult.postValue(null);
                     }
                 });
     }

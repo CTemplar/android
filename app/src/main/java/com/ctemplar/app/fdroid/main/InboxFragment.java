@@ -30,7 +30,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.ctemplar.app.fdroid.BaseFragment;
 import com.ctemplar.app.fdroid.R;
 import com.ctemplar.app.fdroid.executor.HandlerExecutor;
-import com.ctemplar.app.fdroid.message.MoveDialogFragment;
+import com.ctemplar.app.fdroid.message.dialog.MoveDialogFragment;
 import com.ctemplar.app.fdroid.message.SendMessageActivity;
 import com.ctemplar.app.fdroid.message.SendMessageFragment;
 import com.ctemplar.app.fdroid.message.ViewMessagesActivity;

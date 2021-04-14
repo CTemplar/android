@@ -10,10 +10,10 @@ import java.security.Security;
 
 import com.ctemplar.app.fdroid.net.entity.PGPKeyEntity;
 import com.ctemplar.app.fdroid.security.PGPManager;
+import com.ctemplar.app.fdroid.util.EncryptionUtils;
 import com.ctemplar.app.fdroid.util.ForeignAlphabetsStringGenerator;
 import com.ctemplar.app.fdroid.utils.EncodeUtils;
 
-import static com.ctemplar.app.fdroid.util.EncryptionUtils.checkEncryptedMessage;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
@@ -55,7 +55,7 @@ public class PGPEncryptionUnitTest {
 
         String encryptedTextString = PGPManager.encrypt(originalTextString, publicKeys);
 
-        assertTrue(checkEncryptedMessage(encryptedTextString.trim()));
+        assertTrue(EncryptionUtils.checkEncryptedMessage(encryptedTextString.trim()));
 
         String decryptedTextString = PGPManager.decrypt(encryptedTextString,
                 privateKey, keyRingPassword);
@@ -89,7 +89,7 @@ public class PGPEncryptionUnitTest {
 
         String encryptedTextString = PGPManager.encrypt(originalTextString, publicKeys);
 
-        assertTrue(checkEncryptedMessage(encryptedTextString.trim()));
+        assertTrue(EncryptionUtils.checkEncryptedMessage(encryptedTextString.trim()));
 
         String decryptedTextString = PGPManager.decrypt(encryptedTextString,
                 privateKey, keyRingNewPassword);
