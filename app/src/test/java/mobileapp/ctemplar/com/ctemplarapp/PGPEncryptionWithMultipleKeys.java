@@ -7,15 +7,14 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.security.Security;
-import java.util.Arrays;
-import java.util.stream.Stream;
 
 import mobileapp.ctemplar.com.ctemplarapp.net.entity.PGPKeyEntity;
 import mobileapp.ctemplar.com.ctemplarapp.security.PGPManager;
+import mobileapp.ctemplar.com.ctemplarapp.util.EncryptionUtils;
 import mobileapp.ctemplar.com.ctemplarapp.util.ForeignAlphabetsStringGenerator;
+import mobileapp.ctemplar.com.ctemplarapp.utils.ArrayUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EncodeUtils;
 
-import static mobileapp.ctemplar.com.ctemplarapp.util.EncryptionUtils.checkEncryptedMessage;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
@@ -108,8 +107,7 @@ public class PGPEncryptionWithMultipleKeys {
                 sixthPGPECCKeyUpdatedEntity.getPublicKey()
         };
 
-        allPublicKeys = Stream.concat(Arrays.stream(rsaPublicKeys),
-                Arrays.stream(eccPublicKeys)).toArray(String[]::new);
+        allPublicKeys = ArrayUtils.concat(rsaPublicKeys, eccPublicKeys);
 
         firstRSAPrivateKey = firstPGPRSAKeyEntity.getPrivateKey();
         secondRSAPrivateKey = secondPGPRSAKeyEntity.getPrivateKey();
@@ -144,7 +142,7 @@ public class PGPEncryptionWithMultipleKeys {
 
         String encryptedTextString = PGPManager.encrypt(originalTextString, rsaPublicKeys);
 
-        assertTrue(checkEncryptedMessage(encryptedTextString.trim()));
+        assertTrue(EncryptionUtils.checkEncryptedMessage(encryptedTextString.trim()));
 
         String firstDecryptedTextString = PGPManager.decrypt(encryptedTextString,
                 firstRSAPrivateKey, firstRSAKeyRingPassword);
@@ -204,7 +202,7 @@ public class PGPEncryptionWithMultipleKeys {
 
         String encryptedTextString = PGPManager.encrypt(originalTextString, eccPublicKeys);
 
-        assertTrue(checkEncryptedMessage(encryptedTextString.trim()));
+        assertTrue(EncryptionUtils.checkEncryptedMessage(encryptedTextString.trim()));
 
         String fourthDecryptedTextString = PGPManager.decrypt(encryptedTextString,
                 fourthECCPrivateKey, fourthECCKeyRingPassword);
@@ -264,9 +262,9 @@ public class PGPEncryptionWithMultipleKeys {
 
         String encryptedTextString = PGPManager.encrypt(originalTextString, allPublicKeys);
 
-        assertTrue(checkEncryptedMessage(encryptedTextString.trim()));
+        assertTrue(EncryptionUtils.checkEncryptedMessage(encryptedTextString.trim()));
 
-        assertTrue(checkEncryptedMessage(encryptedTextString.trim()));
+        assertTrue(EncryptionUtils.checkEncryptedMessage(encryptedTextString.trim()));
 
         String firstDecryptedTextString = PGPManager.decrypt(encryptedTextString,
                 firstRSAPrivateKey, firstRSAKeyRingPassword);
@@ -288,7 +286,7 @@ public class PGPEncryptionWithMultipleKeys {
 
         assertEquals(originalTextString, thirdUpdatedDecryptedTextString);
 
-        assertTrue(checkEncryptedMessage(encryptedTextString.trim()));
+        assertTrue(EncryptionUtils.checkEncryptedMessage(encryptedTextString.trim()));
 
         String fourthDecryptedTextString = PGPManager.decrypt(encryptedTextString,
                 fourthECCPrivateKey, fourthECCKeyRingPassword);

@@ -14,7 +14,7 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MessageEntity;
                 ContactEntity.class,
                 MessageEntity.class
         },
-        version = 11,
+        version = 12,
         exportSchema = false
 )
 @TypeConverters({

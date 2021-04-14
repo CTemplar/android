@@ -31,8 +31,9 @@ import java.util.List;
 
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.R;
-import mobileapp.ctemplar.com.ctemplarapp.net.entity.PGPKeyEntity;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.EncryptionMessageRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SendMessageRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.EncryptionMessageResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.MessageAttachment;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.MessagesResult;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
@@ -136,11 +137,11 @@ public class SendMailService extends IntentService {
             @Nullable final EncryptionMessageProvider encryptionMessageProvider
     ) {
         SendMessageRequest sendMessageRequest = sendMessageRequestProvider.toRequest();
-        boolean isDraft = isDraft(sendMessageRequest);
+        boolean isDraft = DRAFT.equals(sendMessageRequest.getFolder());
         String title = isDraft ? getString(R.string.txt_saving_mail) : getString(R.string.txt_sending_mail);
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         if (notificationManager == null) {
-            Timber.e("sendMail notificationManager is null");
+            Timber.e("notificationManager is null");
             return;
         }
         createSendMailNotificationChannel(notificationManager, title);
@@ -155,19 +156,19 @@ public class SendMailService extends IntentService {
 
         List<String> publicKeyList = new ArrayList<>(Arrays.asList(publicKeys));
         if (encryptionMessageProvider != null) {
-            String randomSecret = encryptionMessageProvider.getRandomSecret();
-            String password = encryptionMessageProvider.getPassword();
+//            String randomSecret = encryptionMessageProvider.getRandomSecret();
+//            String password = encryptionMessageProvider.getPassword();
 
-            PGPKeyEntity pgpKeyEntity = PGPManager.generateKeys(randomSecret, password);
-            encryptionMessageProvider.setPublicKey(pgpKeyEntity.getPublicKey());
-            encryptionMessageProvider.setPrivateKey(pgpKeyEntity.getPrivateKey());
+//            PGPKeyEntity pgpKeyEntity = PGPManager.generateKeys(randomSecret, password);
+//            encryptionMessageProvider.setPublicKey(pgpKeyEntity.getPublicKey());
+//            encryptionMessageProvider.setPrivateKey(pgpKeyEntity.getPrivateKey());
 
-            publicKeyList.add(pgpKeyEntity.getPublicKey());
+//            publicKeyList.add(pgpKeyEntity.getPublicKey());
             sendMessageRequest.setEncryptionMessage(encryptionMessageProvider.toRequest());
         }
 
         // non-CTemplar receivers checking
-        if (publicKeyList.contains(null) && encryptionMessageProvider == null) {
+        if (publicKeyList.contains(null) && !isDraft && encryptionMessageProvider == null) {
             publicKeyList.clear();
         } else if (publicKeyList.contains(null)) {
             publicKeyList.removeAll(Collections.singleton(null));
@@ -181,8 +182,8 @@ public class SendMailService extends IntentService {
                 notificationManager.notify((int) messageId, notificationBuilder.build());
                 for (int i = 0, attachmentProvidersLength = attachmentProviders.length; i < attachmentProvidersLength; ++i) {
                     MessageAttachmentProvider attachmentProvider = attachmentProviders[i];
-                    MessageAttachment messageAttachment = updateAttachment(attachmentProvider,
-                            publicKeyList, messageId, sendMessageRequestProvider.getMailbox());
+                    MessageAttachment messageAttachment = updateAttachment(attachmentProvider, publicKeyList,
+                            messageId, sendMessageRequestProvider.getMailbox(), encryptionMessageProvider);
                     if (messageAttachment == null) {
                         Timber.e("Message attachment is null");
                     } else {
@@ -196,7 +197,7 @@ public class SendMailService extends IntentService {
             sendMessageRequest.setAttachments(messageAttachmentList);
         }
 
-        updateMessage(messageId, sendMessageRequest, publicKeyList, notificationManager, notificationBuilder);
+        updateMessage(messageId, sendMessageRequest, publicKeyList, notificationManager, notificationBuilder, isDraft);
     }
 
     private void createSendMailNotificationChannel(NotificationManager notificationManager, String title) {
@@ -214,20 +215,28 @@ public class SendMailService extends IntentService {
             final SendMessageRequest request,
             final List<String> receiverPublicKeys,
             final NotificationManager notificationManager,
-            final NotificationCompat.Builder notificationBuilder
+            final NotificationCompat.Builder notificationBuilder,
+            final boolean isDraft
     ) {
-        boolean isReceiverKeysNotEmpty = receiverPublicKeys.size() > 0;
-        if (isReceiverKeysNotEmpty) {
+        EncryptionMessageRequest encryptionMessage = request.getEncryptionMessage();
+        if (encryptionMessage != null) {
+            final String password = encryptionMessage.getPassword();
+            encryptionMessage.setPassword(null);
+            request.setEncryptionMessage(encryptionMessage);
+            request.setSubject(PGPManager.encryptGPG(request.getSubject(), password));
+            request.setContent(PGPManager.encryptGPG(request.getContent(), password));
+        } else if (receiverPublicKeys.size() > 0) {
             String[] publicKeys = receiverPublicKeys.toArray(new String[0]);
             request.setSubject(PGPManager.encrypt(request.getSubject(), publicKeys));
             request.setContent(PGPManager.encrypt(request.getContent(), publicKeys));
         }
-        request.setEncrypted(isReceiverKeysNotEmpty);
-        request.setSubjectEncrypted(isReceiverKeysNotEmpty);
+
+        boolean isMessageEncrypted = encryptionMessage != null || receiverPublicKeys.size() > 0;
+        request.setSubjectEncrypted(isMessageEncrypted);
+        request.setEncrypted(isMessageEncrypted);
         request.setUpdatedAt(new Date());
 
         MessagesResult messagesResult;
-        boolean isDraft = isDraft(request);
         try {
             messagesResult = CTemplarApp.getUserRepository().updateMessageSync(messageId, request);
         } catch (Throwable e) {
@@ -270,7 +279,8 @@ public class SendMailService extends IntentService {
             final MessageAttachmentProvider attachmentProvider,
             final List<String> publicKeyList,
             final long messageId,
-            final long mailboxId
+            final long mailboxId,
+            final EncryptionMessageProvider encryptionMessageProvider
     ) {
         File cacheDir = getCacheDir();
         File decryptedFile = null;
@@ -371,11 +381,15 @@ public class SendMailService extends IntentService {
             return null;
         }
         RequestBody attachmentPart;
-        if (publicKeyList.isEmpty()) {
-            attachmentPart = RequestBody.create(mediaType, decryptedFile);
-        } else {
+        if (encryptionMessageProvider != null) {
+            final String password = encryptionMessageProvider.getPassword();
+            EncryptUtils.encryptAttachmentGPG(decryptedFile, encryptedFile, password);
+            attachmentPart = RequestBody.create(mediaType, encryptedFile);
+        } else if (publicKeyList.size() > 0) {
             EncryptUtils.encryptAttachment(decryptedFile, encryptedFile, publicKeyList);
             attachmentPart = RequestBody.create(mediaType, encryptedFile);
+        } else {
+            attachmentPart = RequestBody.create(mediaType, decryptedFile);
         }
 
         final MultipartBody.Part multipartAttachment = MultipartBody.Part.createFormData("document", fileName, attachmentPart);
@@ -408,10 +422,6 @@ public class SendMailService extends IntentService {
             Timber.e("updateAttachment: delete encrypted cached file error");
         }
         return result;
-    }
-
-    private boolean isDraft(SendMessageRequest sendMessageRequest) {
-        return DRAFT.equals(sendMessageRequest.getFolder());
     }
 
     public static void sendMessage(

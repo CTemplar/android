@@ -1,7 +1,6 @@
 package mobileapp.ctemplar.com.ctemplarapp.repository.provider;
 
 public class UserDisplayProvider {
-
     private String email;
     private String name;
     private boolean isEncrypted;

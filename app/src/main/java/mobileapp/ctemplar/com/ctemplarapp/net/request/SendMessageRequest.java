@@ -6,12 +6,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.EncryptionMessage;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.MessageAttachment;
 
 public class SendMessageRequest {
     @SerializedName("encryption")
-    private EncryptionMessage encryptionMessage;
+    private EncryptionMessageRequest encryptionMessage;
 
     @SerializedName("sender")
     private String sender;
@@ -90,11 +89,11 @@ public class SendMessageRequest {
         this.mailbox = mailbox;
     }
 
-    public EncryptionMessage getEncryptionMessage() {
+    public EncryptionMessageRequest getEncryptionMessage() {
         return encryptionMessage;
     }
 
-    public void setEncryptionMessage(EncryptionMessage encryptionMessage) {
+    public void setEncryptionMessage(EncryptionMessageRequest encryptionMessage) {
         this.encryptionMessage = encryptionMessage;
     }
 

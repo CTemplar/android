@@ -26,9 +26,11 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.EncryptionMessageRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.PublicKeysRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SendMessageRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.KeyResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.EncryptionMessageResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.MessageAttachment;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.MessagesResult;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.MyselfResponse;
@@ -42,7 +44,6 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageAttachmentP
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageProvider;
 import mobileapp.ctemplar.com.ctemplarapp.security.PGPManager;
 import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
-import mobileapp.ctemplar.com.ctemplarapp.utils.DateUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.FileUtils;
 import okhttp3.MediaType;
@@ -244,6 +245,9 @@ public class SendMessageActivityViewModel extends ViewModel {
     }
 
     public void setEncryptionMessage(long id, SendMessageRequest sendMessageRequest) {
+        final EncryptionMessageRequest encryptionMessage = sendMessageRequest.getEncryptionMessage();
+        final String password = encryptionMessage.getPassword();
+        encryptionMessage.setPassword(null);
         userRepository.updateMessage(id, sendMessageRequest)
                 .subscribe(new SingleObserver<MessagesResult>() {
                     @Override
@@ -253,12 +257,19 @@ public class SendMessageActivityViewModel extends ViewModel {
 
                     @Override
                     public void onSuccess(@NotNull MessagesResult messagesResult) {
-                        messageEncryptionResult.postValue(messagesResult);
+                        if (messagesResult.getEncryptionMessage() == null) {
+                            messageEncryptionResult.postValue(null);
+                        } else {
+                            EncryptionMessageResponse encryption = messagesResult.getEncryptionMessage();
+                            encryption.setPassword(password);
+                            messageEncryptionResult.postValue(messagesResult);
+                        }
                     }
 
                     @Override
                     public void onError(@NotNull Throwable e) {
-                        Timber.e(e.getCause());
+                        Timber.e(e);
+                        messageEncryptionResult.postValue(null);
                     }
                 });
     }

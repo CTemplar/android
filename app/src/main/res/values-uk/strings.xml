@@ -137,6 +137,11 @@
     <string name="txt_selected_datetime_is_past">Обрана дата/час в минулому</string>
     <string name="txt_yesterday">Вчора</string>
     <string name="txt_attachments_in_processing">Вкладення в обробці…</string>
+    <string name="message_encrypted_with_password">Це повідомлення зашифровано паролем</string>
+    <string name="message_encrypted_with_password_title">Введіть пароль</string>
+    <string name="password_hint">Підказка: %s</string>
+    <string name="decrypt">Розшифрувати</string>
+    <string name="password_is_incorrect">Пароль неправильний</string>
 
     <!-- VIEW MESSAGES -->
     <string name="txt_more_details">Більше інформації</string>
@@ -305,6 +310,7 @@
     <string name="choose_pin">Введіть 4-значний ПІН-код</string>
     <string name="confirm_pin">Підтвердіть ваш ПІН-код</string>
     <string name="invalid_pin">Недійсний ПІН-код</string>
+    <string name="invalid_pin_timeout">Повторіть спробу через %d секунд</string>
     <string name="pins_dont_match">ПІН-коди не співпадають</string>
 
     <!-- SIGNATURE EDIT BAR -->
@@ -329,6 +335,7 @@
     <string name="settings_notifications">Сповіщення</string>
     <string name="settings_enable_notifications">Увімкнути push-сповіщення</string>
     <string name="settings_contacts_encryption">Шифрування контактів</string>
+    <string name="settings_keep_decrypted_subjects">Зберігати розшифровані теми локально</string>
     <string name="settings_encryption">Шифрування</string>
     <string name="settings_phishing_protection">Захист від фішингу</string>
     <string name="settings_phishing_protection_description"><![CDATA[<font color="#939191">Антифішинговий фраза дозволяє користувачам зв\'язати будь-яке слово або фразу за вашим вибором з обліковим записом CTemplar. Якщо після її встановлення при вході на сторінку вашого поштового сервісу дана фраза відсутня або невірна, ви ризикуєте стати жертвою фішингу. Вам слід негайно переконатися, що ви відвідуєте</font> <font color="#4d92e2"><u>https://mail.ctemplar.com</u></font> <font color="#939191">В іншому випадку шкідливий сайт може заволодіти даними для входу до вашого профілю CTemplar. Щоб не ставити під загрозу ваш обліковий запис, вам слід негайно відвідати </font> <font color="#4d92e2"><u>https://mail.ctemplar.com</u></font> <font color="#939191"> і поміняти ваш пароль.<br><br>Зверніть увагу, що антифішинговий фраза буде відображатися тільки при веб-вході.</font>]]></string>

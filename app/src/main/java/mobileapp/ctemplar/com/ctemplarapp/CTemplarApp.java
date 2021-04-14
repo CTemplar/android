@@ -91,7 +91,7 @@ public class CTemplarApp extends MultiDexApplication {
         installProviders(this);
         installDebug(this);
         registerActivityLifecycleCallbacks(activityLifecycleCallbacks);
-        if (Security.getProvider("BC") == null) {
+        if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
             Security.addProvider(new BouncyCastleProvider());
         }
     }

@@ -137,6 +137,11 @@
     <string name="txt_selected_datetime_is_past">选定的日期时间为过去时间</string>
     <string name="txt_yesterday">昨天</string>
     <string name="txt_attachments_in_processing">附件正在处理中……</string>
+    <string name="message_encrypted_with_password">此消息已使用密碼加密</string>
+    <string name="message_encrypted_with_password_title">輸入密碼</string>
+    <string name="password_hint">密碼提示：%s</string>
+    <string name="decrypt">解密</string>
+    <string name="password_is_incorrect">密碼錯誤</string>
 
     <!-- VIEW MESSAGES -->
     <string name="txt_more_details">更多详情</string>
@@ -305,6 +310,7 @@
     <string name="choose_pin">输入4位PIN码</string>
     <string name="confirm_pin">确认您的PIN码</string>
     <string name="invalid_pin">无效PIN码</string>
+    <string name="invalid_pin_timeout">請在%d秒後重試</string>
     <string name="pins_dont_match">PIN码不匹配</string>
 
     <!-- SIGNATURE EDIT BAR -->
@@ -329,6 +335,7 @@
     <string name="settings_notifications">通知</string>
     <string name="settings_enable_notifications">启用推送通知</string>
     <string name="settings_contacts_encryption">联系人加密</string>
+    <string name="settings_keep_decrypted_subjects">將解密的主題保留在本地</string>
     <string name="settings_encryption">加密</string>
     <string name="settings_phishing_protection">网络钓鱼保护</string>
     <string name="settings_phishing_protection_description"><![CDATA[<font color="#939191">反网络钓鱼短语允许将您选择的自定义单词或短语链接到您的CTemplar帐户。一旦设置好，如果您登录到您的网页邮箱，而您的反钓鱼短语丢失或不正确，您可能会成为网络钓鱼的受害者。您应该立即确认您正在访问</font> <font color="#4d92e2"><u>https://mail.ctemplar.com</u></font> <font color="#939191">如果您不是正在访问该网站，那么恶意网站可能拥有您的CTemplar帐户的登录凭证了。为了防止您的帐户受到损害，您应该立即访问</font> <font color="#4d92e2"><u>https://mail.ctemplar.com</u></font> <font color="#939191">并更改您的密码。<br><br>请注意，只有当您在网页上登录邮箱时会显示防网络钓鱼短语。</font>]]></string>

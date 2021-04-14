@@ -152,10 +152,24 @@
             android:textStyle="bold"
             android:textColor="?android:textColorPrimary"
             android:maxLines="1"
-            app:layout_constraintEnd_toStartOf="@+id/message_holder_subject"
-            app:layout_constraintStart_toStartOf="@+id/message_top_layout"
-            app:layout_constraintTop_toBottomOf="@+id/message_top_layout"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            app:layout_constraintEnd_toStartOf="@id/message_holder_key"
+            app:layout_constraintStart_toStartOf="@id/message_top_layout"
+            app:layout_constraintTop_toTopOf="@id/message_holder_subject"
+            app:layout_constraintBottom_toBottomOf="@id/message_holder_subject" />
+
+        <ImageView
+            android:id="@+id/message_holder_key"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            app:srcCompat="@drawable/ic_key"
+            app:tint="?android:textColorSecondary"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@id/message_holder_subject_encrypted"
+            app:layout_constraintEnd_toStartOf="@id/message_holder_subject"
+            app:layout_constraintTop_toTopOf="@id/message_holder_subject"
+            app:layout_constraintBottom_toBottomOf="@id/message_holder_subject" />
 
         <TextView
             android:id="@+id/message_holder_subject"
@@ -174,9 +188,9 @@
             android:textSize="14sp"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintHorizontal_chainStyle="spread"
-            app:layout_constraintEnd_toStartOf="@+id/message_holder_attachment"
-            app:layout_constraintStart_toEndOf="@+id/message_holder_subject_encrypted"
-            app:layout_constraintTop_toBottomOf="@+id/message_top_layout"
+            app:layout_constraintEnd_toStartOf="@id/message_holder_attachment"
+            app:layout_constraintStart_toEndOf="@id/message_holder_key"
+            app:layout_constraintTop_toBottomOf="@id/message_top_layout"
             app:layout_constraintBottom_toBottomOf="parent" />
 
         <ImageView
@@ -188,9 +202,9 @@
             android:src="@drawable/ic_attachment_small"
             app:tint="?android:textColorSecondary"
             app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintTop_toTopOf="@+id/message_holder_subject"
-            app:layout_constraintBottom_toBottomOf="@+id/message_holder_subject"
-            app:layout_constraintStart_toEndOf="@+id/message_holder_subject"
+            app:layout_constraintTop_toTopOf="@id/message_holder_subject"
+            app:layout_constraintBottom_toBottomOf="@id/message_holder_subject"
+            app:layout_constraintStart_toEndOf="@id/message_holder_subject"
             app:layout_constraintEnd_toStartOf="@id/message_holder_starred_layout" />
 
         <LinearLayout
@@ -200,11 +214,11 @@
             android:padding="5dp"
             android:layout_marginEnd="11dp"
             android:layout_marginRight="11dp"
-            app:layout_constraintTop_toTopOf="@+id/message_holder_subject"
-            app:layout_constraintBottom_toBottomOf="@+id/message_holder_subject"
-            app:layout_constraintStart_toEndOf="@+id/message_holder_attachment"
+            app:layout_constraintTop_toTopOf="@id/message_holder_subject"
+            app:layout_constraintBottom_toBottomOf="@id/message_holder_subject"
+            app:layout_constraintStart_toEndOf="@id/message_holder_attachment"
             app:layout_constraintRight_toRightOf="@id/message_top_layout"
-            app:layout_constraintEnd_toEndOf="@+id/message_top_layout" >
+            app:layout_constraintEnd_toEndOf="@id/message_top_layout" >
 
             <ImageView
                 android:id="@+id/message_holder_starred"
