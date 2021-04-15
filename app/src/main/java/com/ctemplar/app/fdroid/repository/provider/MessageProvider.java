@@ -407,15 +407,23 @@ public class MessageProvider {
         this.decryptedSubject = decryptedSubject;
     }
 
-    private static AttachmentProvider convertFromResponseMessageAttachmentToAttachmentProvider(MessageAttachment messageAttachment) {
-        AttachmentProvider attachmentProvider = new AttachmentProvider();
-        attachmentProvider.setId(messageAttachment.getId());
-        attachmentProvider.setContentId(messageAttachment.getContentId());
-        attachmentProvider.setDocumentLink(messageAttachment.getDocumentLink());
-        attachmentProvider.setInline(messageAttachment.isInline());
-        attachmentProvider.setEncrypted(messageAttachment.isEncrypted());
-        attachmentProvider.setMessage(messageAttachment.getMessage());
-        return attachmentProvider;
+    private static AttachmentProvider convertFromResponseMessageAttachmentToAttachmentProvider(MessageAttachment attachment) {
+        AttachmentProvider provider = new AttachmentProvider();
+        provider.setId(attachment.getId());
+        provider.setFileSize(attachment.getFileSize());
+        provider.setDocumentUrl(attachment.getDocumentUrl());
+        provider.setDeleted(attachment.isDeleted());
+        provider.setDeletedAt(attachment.getDeletedAt());
+        provider.setName(attachment.getName());
+        provider.setInline(attachment.isInline());
+        provider.setEncrypted(attachment.isEncrypted());
+        provider.setForwarded(attachment.isForwarded());
+        provider.setPGPMime(attachment.isPGPMime());
+        provider.setContentId(attachment.getContentId());
+        provider.setFileType(attachment.getFileType());
+        provider.setActualSize(attachment.getActualSize());
+        provider.setMessage(attachment.getMessage());
+        return provider;
     }
 
     public static List<AttachmentProvider> convertResponseAttachmentsListToProviderList(List<MessageAttachment> messageAttachments) {
@@ -470,15 +478,23 @@ public class MessageProvider {
         return new ArrayList<>(Arrays.asList(array));
     }
 
-    private static AttachmentProvider convertAttachmentFromEntityToProvider(AttachmentEntity attachmentEntity) {
-        AttachmentProvider attachmentProvider = new AttachmentProvider();
-        attachmentProvider.setId(attachmentEntity.getId());
-        attachmentProvider.setContentId(attachmentEntity.getContentId());
-        attachmentProvider.setMessage(attachmentEntity.getMessage());
-        attachmentProvider.setInline(attachmentEntity.isInline());
-        attachmentProvider.setEncrypted(attachmentEntity.isEncrypted());
-        attachmentProvider.setDocumentLink(attachmentEntity.getDocumentLink());
-        return attachmentProvider;
+    private static AttachmentProvider convertAttachmentFromEntityToProvider(AttachmentEntity entity) {
+        AttachmentProvider provider = new AttachmentProvider();
+        provider.setId(entity.getId());
+        provider.setFileSize(entity.getFileSize());
+        provider.setDocumentUrl(entity.getDocumentUrl());
+        provider.setDeleted(entity.isDeleted());
+        provider.setDeletedAt(entity.getDeletedAt());
+        provider.setName(entity.getName());
+        provider.setInline(entity.isInline());
+        provider.setEncrypted(entity.isEncrypted());
+        provider.setForwarded(entity.isForwarded());
+        provider.setPGPMime(entity.isPGPMime());
+        provider.setContentId(entity.getContentId());
+        provider.setFileType(entity.getFileType());
+        provider.setActualSize(entity.getActualSize());
+        provider.setMessage(entity.getMessage());
+        return provider;
     }
 
     private static List<AttachmentProvider> convertAttachmentsListFromEntityToProvider(List<AttachmentEntity> attachmentEntities) {
@@ -582,15 +598,23 @@ public class MessageProvider {
         return result;
     }
 
-    private static AttachmentEntity convertAttachmentFromResponseToEntity(MessageAttachment messageAttachment) {
-        AttachmentEntity attachmentEntity = new AttachmentEntity();
-        attachmentEntity.setId(messageAttachment.getId());
-        attachmentEntity.setContentId(messageAttachment.getContentId());
-        attachmentEntity.setDocumentLink(messageAttachment.getDocumentLink());
-        attachmentEntity.setInline(messageAttachment.isInline());
-        attachmentEntity.setEncrypted(messageAttachment.isEncrypted());
-        attachmentEntity.setMessage(messageAttachment.getMessage());
-        return attachmentEntity;
+    private static AttachmentEntity convertAttachmentFromResponseToEntity(MessageAttachment attachment) {
+        AttachmentEntity entity = new AttachmentEntity();
+        entity.setId(attachment.getId());
+        entity.setFileSize(attachment.getFileSize());
+        entity.setDocumentUrl(attachment.getDocumentUrl());
+        entity.setDeleted(attachment.isDeleted());
+        entity.setDeletedAt(attachment.getDeletedAt());
+        entity.setName(attachment.getName());
+        entity.setInline(attachment.isInline());
+        entity.setEncrypted(attachment.isEncrypted());
+        entity.setForwarded(attachment.isForwarded());
+        entity.setPGPMime(attachment.isPGPMime());
+        entity.setContentId(attachment.getContentId());
+        entity.setFileType(attachment.getFileType());
+        entity.setActualSize(attachment.getActualSize());
+        entity.setMessage(attachment.getMessage());
+        return entity;
     }
 
     private static List<AttachmentEntity> convertAttachmentsListFromResponsesToEntities(List<MessageAttachment> messageAttachments) {

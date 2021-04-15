@@ -120,7 +120,11 @@ public interface RestService {
     Observable<MessageAttachment> uploadAttachment(
             @Part MultipartBody.Part document,
             @Part("message") long message,
-            @Part("is_encrypted") boolean isEncrypted
+            @Part("is_inline") boolean isInline,
+            @Part("is_encrypted") boolean isEncrypted,
+            @Part("file_type") String fileType,
+            @Part("name") String name,
+            @Part("actual_size") long actualSize
     );
 
     @Multipart
@@ -129,7 +133,11 @@ public interface RestService {
             @Path("id") long id,
             @Part MultipartBody.Part document,
             @Part("message") long message,
-            @Part("is_encrypted") boolean isEncrypted
+            @Part("is_inline") boolean isInline,
+            @Part("is_encrypted") boolean isEncrypted,
+            @Part("file_type") String fileType,
+            @Part("name") String name,
+            @Part("actual_size") long actualSize
     );
 
     @DELETE("emails/attachments/{id}/")
