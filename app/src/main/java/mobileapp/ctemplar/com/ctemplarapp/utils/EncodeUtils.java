@@ -90,7 +90,7 @@ public class EncodeUtils {
             final String password
     ) {
         return Observable.fromCallable(()
-                -> PGPManager.generateKeys(emailAddress, password))
+                -> PGPManager.generateECCKeys(emailAddress, password))
                 .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread());
     }
@@ -107,7 +107,7 @@ public class EncodeUtils {
             for (MailboxEntity mailboxEntity : mailboxEntities) {
                 PGPKeyEntity pgpKeyEntity;
                 if (resetKeys) {
-                    pgpKeyEntity = PGPManager.generateKeys(
+                    pgpKeyEntity = PGPManager.generateECCKeys(
                             mailboxEntity.getEmail(), password
                     );
                 } else {
@@ -137,7 +137,7 @@ public class EncodeUtils {
             final String emailAddress,
             final String password
     ) {
-        return Observable.fromCallable(() -> PGPManager.generateKeys(emailAddress, password))
+        return Observable.fromCallable(() -> PGPManager.generateECCKeys(emailAddress, password))
                 .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread());
     }

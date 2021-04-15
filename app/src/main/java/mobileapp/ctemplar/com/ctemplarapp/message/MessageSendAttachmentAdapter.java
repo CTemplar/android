@@ -13,34 +13,37 @@ import java.util.ArrayList;
 import java.util.List;
 
 import mobileapp.ctemplar.com.ctemplarapp.R;
-import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageAttachmentProvider;
+import mobileapp.ctemplar.com.ctemplarapp.repository.provider.AttachmentProvider;
 import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
 
 public class MessageSendAttachmentAdapter extends RecyclerView.Adapter<MessageSendAttachmentHolder> {
-    private SendMessageActivityViewModel sendMessageActivityViewModel;
-    private final List<MessageAttachmentProvider> attachmentList = new ArrayList<>();
+    private final SendMessageActivityViewModel sendMessageActivityViewModel;
+    private final List<AttachmentProvider> attachmentList = new ArrayList<>();
 
     public MessageSendAttachmentAdapter(FragmentActivity fragmentActivity) {
-        sendMessageActivityViewModel = new ViewModelProvider(fragmentActivity).get(SendMessageActivityViewModel.class);
+        sendMessageActivityViewModel = new ViewModelProvider(fragmentActivity)
+                .get(SendMessageActivityViewModel.class);
     }
 
-    public List<MessageAttachmentProvider> getAttachmentList() {
+    public List<AttachmentProvider> getAttachmentList() {
         return attachmentList;
     }
 
     @NonNull
     @Override
     public MessageSendAttachmentHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_message_attachment_send, viewGroup, false);
+        View view = LayoutInflater.from(viewGroup.getContext())
+                .inflate(R.layout.item_message_attachment_send, viewGroup, false);
 
         return new MessageSendAttachmentHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull MessageSendAttachmentHolder holder, int position) {
-        final MessageAttachmentProvider messageAttachment = attachmentList.get(position);
-        final String documentLink = messageAttachment.getDocumentLink();
-        final String fileName = AppUtils.getFileNameFromURL(documentLink);
+        final AttachmentProvider messageAttachment = attachmentList.get(position);
+        final String documentUrl = messageAttachment.getDocumentUrl();
+        final String fileName = messageAttachment.getName() == null
+                ? AppUtils.getFileNameFromURL(documentUrl) : messageAttachment.getName();
 
         holder.txtName.setText(fileName);
         holder.imgDelete.setOnClickListener(v -> deleteAttachment(messageAttachment));
@@ -51,14 +54,19 @@ public class MessageSendAttachmentAdapter extends RecyclerView.Adapter<MessageSe
         return attachmentList.size();
     }
 
-    public void addAttachment(MessageAttachmentProvider messageAttachment) {
-        attachmentList.add(messageAttachment);
+    public void setAttachments(List<AttachmentProvider> attachments) {
+        attachmentList.addAll(attachments);
+        notifyDataSetChanged();
+    }
+
+    public void addAttachment(AttachmentProvider attachment) {
+        attachmentList.add(attachment);
         notifyItemInserted(attachmentList.size() - 1);
     }
 
-    public void deleteAttachment(MessageAttachmentProvider messageAttachment) {
-        sendMessageActivityViewModel.deleteAttachment(messageAttachment.getId());
-        int attachmentPosition = attachmentList.indexOf(messageAttachment);
+    public void deleteAttachment(AttachmentProvider attachment) {
+        sendMessageActivityViewModel.deleteAttachment(attachment.getId());
+        int attachmentPosition = attachmentList.indexOf(attachment);
         if (attachmentPosition != -1) {
             attachmentList.remove(attachmentPosition);
             notifyItemRemoved(attachmentPosition);

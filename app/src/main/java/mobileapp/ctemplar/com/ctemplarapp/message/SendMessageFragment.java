@@ -60,7 +60,6 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.entity.Contact;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.AttachmentProvider;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.EncryptionMessageProvider;
-import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageAttachmentProvider;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageProvider;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.SendMessageRequestProvider;
 import mobileapp.ctemplar.com.ctemplarapp.services.SendMailService;
@@ -654,7 +653,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
     private void loadMessageHandler(@Nullable MessageProvider messageProvider) {
         if (messageProvider == null) {
             if (getActivity() != null) {
-                Toast.makeText(getActivity(), getString(R.string.toast_message_not_loaded), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), R.string.toast_message_not_loaded, Toast.LENGTH_SHORT).show();
                 finish();
             }
             return;
@@ -705,14 +704,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
             deadDeliveryInHours = messageDeadMan;
         }
         if (messageAttachmentList != null) {
-            for (AttachmentProvider attachmentProvider : messageAttachmentList) {
-                MessageAttachmentProvider messageAttachment = new MessageAttachmentProvider();
-                messageAttachment.setId(attachmentProvider.getId());
-                messageAttachment.setMessage(attachmentProvider.getMessage());
-                messageAttachment.setContentId(attachmentProvider.getContentId());
-                messageAttachment.setDocumentLink(attachmentProvider.getDocumentLink());
-                messageSendAttachmentAdapter.addAttachment(messageAttachment);
-            }
+            messageSendAttachmentAdapter.setAttachments(messageAttachmentList);
         }
         if (messageSendAttachmentAdapter.getItemCount() > 0) {
             sendMessageAttachmentIco.setSelected(true);
@@ -797,7 +789,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         }
         sendMessageRequest.setBcc(bccEmailList);
 
-        List<MessageAttachmentProvider> attachments = messageSendAttachmentAdapter.getAttachmentList();
+        List<AttachmentProvider> attachments = messageSendAttachmentAdapter.getAttachmentList();
         if (attachments == null) {
             attachments = new ArrayList<>();
         }
@@ -810,8 +802,9 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
                 currentMessageId,
                 sendMessageRequest,
                 publicKeyList.toArray(new String[0]),
-                attachments.toArray(new MessageAttachmentProvider[0]),
-                encryptionMessage
+                attachments.toArray(new AttachmentProvider[0]),
+                encryptionMessage,
+                draftMessage
         );
         cancelSendingProgressBar();
         if (!draftMessage) {
@@ -830,10 +823,14 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         }
         String attachmentPath = FileUtils.getPath(activity, attachmentUri);
         File attachmentFile;
+        if (attachmentPath == null) {
+            Timber.e("attachmentPath is null");
+            return;
+        }
         try {
             attachmentFile = new File(attachmentPath);
         } catch (Exception e) {
-            Toast.makeText(getActivity(), getString(R.string.toast_attachment_unable_read_file), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), R.string.toast_attachment_unable_read_file, Toast.LENGTH_SHORT).show();
             return;
         }
         String type = activity.getContentResolver().getType(attachmentUri);
@@ -860,9 +857,13 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         }
 
         String attachmentName = attachmentFile.getName();
-        MultipartBody.Part multipartAttachment = MultipartBody.Part.createFormData("document", attachmentName, attachmentPart);
+        MultipartBody.Part document = MultipartBody.Part
+                .createFormData("document", attachmentName, attachmentPart);
 
-        sendModel.uploadAttachment(multipartAttachment, currentMessageId, attachmentPath, true);
+        sendModel.uploadAttachment(
+                document, currentMessageId, false, true, type,
+                attachmentFile.getName(), attachmentFile.length(), attachmentPath
+        );
 
         uploadProgress = new ProgressDialog(getActivity());
         uploadProgress.setCanceledOnTouchOutside(false);
