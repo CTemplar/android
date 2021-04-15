@@ -24,10 +24,6 @@ public class MessageAttachmentAdapter extends RecyclerView.Adapter<MessageAttach
     private List<AttachmentProvider> attachmentList;
     private final PublishSubject<Integer> onClickAttachmentLink = PublishSubject.create();
 
-    public MessageAttachmentAdapter() {
-
-    }
-
     public MessageAttachmentAdapter(List<AttachmentProvider> attachmentList) {
         this.attachmentList = attachmentList;
     }
@@ -54,8 +50,9 @@ public class MessageAttachmentAdapter extends RecyclerView.Adapter<MessageAttach
     @Override
     public void onBindViewHolder(@NonNull final MessageAttachmentHolder holder, int position) {
         final AttachmentProvider messageAttachment = attachmentList.get(position);
-        final String documentLink = messageAttachment.getDocumentLink();
-        final String fileName = AppUtils.getFileNameFromURL(documentLink);
+        final String documentUrl = messageAttachment.getDocumentUrl();
+        final String fileName = messageAttachment.getName() == null
+                ? AppUtils.getFileNameFromURL(documentUrl) : messageAttachment.getName();
         final int attachmentPosition = position;
 
         holder.txtName.setText(fileName);

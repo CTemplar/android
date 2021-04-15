@@ -55,9 +55,7 @@ public class MessageEntity {
     @ColumnInfo(defaultValue = "0")
     private boolean hasInboxChild;
 
-    public MessageEntity() {
-
-    }
+    public MessageEntity() { }
 
     public MessageEntity(long id, EncryptionMessageEntity encryptionMessage, String sender, boolean hasAttachments, List<AttachmentEntity> attachments, Date createdAt, UserDisplayEntity senderDisplay, List<UserDisplayEntity> receiverDisplayList, List<UserDisplayEntity> ccDisplayList, List<UserDisplayEntity> bccDisplayList, boolean hasChildren, int childrenCount, String subject, String content, List<String> receivers, List<String> cc, List<String> bcc, String folderName, Date updatedAt, Date destructDate, Date delayedDelivery, Long deadManDuration, boolean isRead, boolean send, boolean isStarred, Date sentAt, boolean isEncrypted, boolean isSubjectEncrypted, boolean isProtected, boolean isHtml, String hash, List<String> spamReason, String lastAction, String lastActionThread, long mailboxId, String parent, String decryptedSubject, boolean hasSentChild, boolean hasInboxChild) {
         this.id = id;

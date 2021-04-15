@@ -106,22 +106,21 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
         if (context == null) {
             return;
         }
-        String documentLink = attachment.getDocumentLink();
-        if (documentLink == null) {
-            Toast.makeText(context, context.getString(R.string.error_attachment_url), Toast.LENGTH_SHORT).show();
+        String documentUrl = attachment.getDocumentUrl();
+        if (documentUrl == null) {
+            Toast.makeText(context, R.string.error_attachment_url, Toast.LENGTH_SHORT).show();
             return;
         }
 
         File externalStorageFile = Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_DOWNLOADS);
-        String originalFileName = AppUtils.getFileNameFromURL(documentLink);
+        String originalFileName = attachment.getName() == null
+                ? AppUtils.getFileNameFromURL(documentUrl) : attachment.getName();
         File generatedFile = FileUtils.generateFileName(originalFileName, externalStorageFile);
         String fileName = generatedFile == null ? originalFileName : generatedFile.getName();
+        String downloadFileName = attachment.isEncrypted() ? fileName + ENCRYPTED_EXT : fileName;
 
-        String downloadFileName = attachment.isEncrypted()
-                ? fileName + ENCRYPTED_EXT : fileName;
-
-        DownloadManager.Request documentRequest = new DownloadManager.Request(Uri.parse(documentLink));
+        DownloadManager.Request documentRequest = new DownloadManager.Request(Uri.parse(documentUrl));
         documentRequest.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, downloadFileName);
         documentRequest.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
 
@@ -129,12 +128,13 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
             DownloadManager downloadManager = (DownloadManager) context.getApplicationContext()
                     .getSystemService(DOWNLOAD_SERVICE);
             if (downloadManager == null) {
+                Timber.e("downloadManager is null");
                 return;
             }
             long downloadId = downloadManager.enqueue(documentRequest);
-            attachment.setFileName(fileName);
+            attachment.setName(fileName);
             downloadMap.put(downloadId, new Pair<>(attachment, message));
-            Toast.makeText(context, context.getString(R.string.toast_download_started), Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, R.string.toast_download_started, Toast.LENGTH_SHORT).show();
         }
     };
 
@@ -480,22 +480,25 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
     }
 
     private void forwardMessage(boolean withAttachments) {
+        boolean reply = parentMessage.getEncryptionMessage() == null;
+        String replySubject = reply ? lastMessage.getSubject() : "";
+        String replyBody = reply ? forwardHead() + HtmlUtils.fromHtml(decryptedLastMessage) : "";
+
         Intent intentForward = new Intent(getActivity(), SendMessageActivity.class);
-        intentForward.putExtra(Intent.EXTRA_SUBJECT, lastMessage.getSubject());
-        intentForward.putExtra(Intent.EXTRA_TEXT, forwardHead()
-                + HtmlUtils.fromHtml(decryptedLastMessage));
+        intentForward.putExtra(Intent.EXTRA_SUBJECT, replySubject);
+        intentForward.putExtra(Intent.EXTRA_TEXT, replyBody);
         intentForward.putExtra(SendMessageActivity.LAST_ACTION, MessageActions.REPLY);
 
         Bundle extras = new Bundle();
-        AttachmentsEntity attachmentsEntity = withAttachments
+        AttachmentsEntity attachmentsEntity = withAttachments && reply
                 ? new AttachmentsEntity(lastMessage.getAttachments())
                 : new AttachmentsEntity(Collections.emptyList());
         extras.putSerializable(ATTACHMENT_LIST, attachmentsEntity);
         intentForward.putExtras(extras);
 
         Fragment fragmentForward = SendMessageFragment.newInstance(
-                lastMessage.getSubject(),
-                forwardHead() + HtmlUtils.fromHtml(decryptedLastMessage),
+                replySubject,
+                replyBody,
                 new String[]{},
                 new String[]{},
                 new String[]{},
@@ -513,24 +516,27 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
     }
 
     @Override
-    public void onClick(View v) {
-        int id = v.getId();
+    public void onClick(View view) {
+        int id = view.getId();
         FragmentActivity activity = getActivity();
         if (activity == null || parentMessage == null) {
             return;
         }
+        boolean reply = parentMessage.getEncryptionMessage() == null;
+        String replySubject = reply ? lastMessage.getSubject() : "";
+        String replyBody = reply ? replyHead() + HtmlUtils.fromHtml(decryptedLastMessage) : "";
         switch (id) {
             case R.id.activity_view_messages_reply:
                 Intent intentReply = new Intent(getActivity(), SendMessageActivity.class);
                 intentReply.putExtra(Intent.EXTRA_EMAIL, new String[]{lastMessage.getSender()});
-                intentReply.putExtra(Intent.EXTRA_SUBJECT, lastMessage.getSubject());
-                intentReply.putExtra(Intent.EXTRA_TEXT, replyHead() + HtmlUtils.fromHtml(decryptedLastMessage));
+                intentReply.putExtra(Intent.EXTRA_SUBJECT, replySubject);
+                intentReply.putExtra(Intent.EXTRA_TEXT, replyBody);
                 intentReply.putExtra(SendMessageActivity.LAST_ACTION, MessageActions.REPLY);
                 intentReply.putExtra(SendMessageActivity.PARENT_ID, parentMessage.getId());
 
                 Fragment fragmentReply = SendMessageFragment.newInstance(
-                        lastMessage.getSubject(),
-                        replyHead() + HtmlUtils.fromHtml(decryptedLastMessage),
+                        replySubject,
+                        replyBody,
                         new String[]{lastMessage.getSender()},
                         new String[]{},
                         new String[]{},
@@ -548,16 +554,16 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
             case R.id.activity_view_messages_reply_all:
                 Intent intentReplyAll = new Intent(getActivity(), SendMessageActivity.class);
                 intentReplyAll.putExtra(Intent.EXTRA_EMAIL, new String[]{lastMessage.getSender()});
-                intentReplyAll.putExtra(Intent.EXTRA_SUBJECT, lastMessage.getSubject());
-                intentReplyAll.putExtra(Intent.EXTRA_TEXT, replyHead() + HtmlUtils.fromHtml(decryptedLastMessage));
+                intentReplyAll.putExtra(Intent.EXTRA_SUBJECT, replySubject);
+                intentReplyAll.putExtra(Intent.EXTRA_TEXT, replyBody);
                 intentReplyAll.putExtra(Intent.EXTRA_CC, lastMessage.getCc());
                 intentReplyAll.putExtra(Intent.EXTRA_BCC, lastMessage.getBcc());
                 intentReplyAll.putExtra(SendMessageActivity.LAST_ACTION, MessageActions.REPLY);
                 intentReplyAll.putExtra(SendMessageActivity.PARENT_ID, parentMessage.getId());
 
                 Fragment fragmentReplyAll = SendMessageFragment.newInstance(
-                        lastMessage.getSubject(),
-                        replyHead() + HtmlUtils.fromHtml(decryptedLastMessage),
+                        replySubject,
+                        replyBody,
                         new String[]{lastMessage.getSender()},
                         lastMessage.getCc(),
                         lastMessage.getBcc(),
@@ -577,14 +583,12 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
                     forwardMessage(false);
                     return;
                 }
-                AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
-                alertDialog.setTitle(getString(R.string.forward_attachments));
-                alertDialog.setMessage(getString(R.string.forward_attachments_description));
-                alertDialog.setPositiveButton(getString(R.string.yes), (dialog, which) -> forwardMessage(true)
-                );
-                alertDialog.setNegativeButton(getString(R.string.no), (dialog, which) -> forwardMessage(false)
-                );
-                alertDialog.show();
+                new AlertDialog.Builder(getActivity())
+                        .setTitle(R.string.forward_attachments)
+                        .setMessage(R.string.forward_attachments_description)
+                        .setPositiveButton(R.string.yes, (dialog, which) -> forwardMessage(true))
+                        .setNegativeButton(R.string.no, (dialog, which) -> forwardMessage(false))
+                        .show();
                 break;
             case R.id.activity_view_messages_subject_star_image_layout:
                 boolean isStarred = !parentMessage.isStarred();
@@ -617,7 +621,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
             try {
                 File externalStorageFile = Environment.getExternalStoragePublicDirectory(
                         Environment.DIRECTORY_DOWNLOADS);
-                String fileName = attachment.getFileName();
+                String fileName = attachment.getName();
 
                 if (attachment.isEncrypted()) {
                     Toast.makeText(ctx, getString(R.string.attachment_decryption), Toast.LENGTH_SHORT).show();
@@ -626,7 +630,8 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
                     File decryptedFile = new File(externalStorageFile, fileName);
                     boolean attachmentDecrypted;
                     if (message.getEncryptionMessage() == null) {
-                        long mailboxId = parentMessage == null ? viewModel.getDefaultMailbox().getId()
+                        long mailboxId = parentMessage == null
+                                ? viewModel.getDefaultMailbox().getId()
                                 : parentMessage.getMailboxId();
                         MailboxEntity mailboxEntity = viewModel.getMailboxById(mailboxId);
                         String password = viewModel.getUserPassword();
@@ -640,12 +645,14 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
                             ToastUtils.showLongToast(ctx, getString(R.string.firstly_decrypt_message));
                             return;
                         }
-                        attachmentDecrypted = EncryptUtils.decryptAttachmentGPG(encryptedFile, decryptedFile, password);
+                        attachmentDecrypted = EncryptUtils.decryptAttachmentGPG(
+                                encryptedFile, decryptedFile, password
+                        );
                     }
                     encryptedFile.delete();
 
                     Uri decryptedUri = FileProvider.getUriForFile(ctx,
-                            BuildConfig.APPLICATION_ID + ".fileprovider", decryptedFile
+                            FileUtils.AUTHORITY, decryptedFile
                     );
                     if (attachmentDecrypted) {
                         openFile(decryptedUri);
@@ -654,7 +661,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
                 } else {
                     File downloadedFile = new File(externalStorageFile, fileName);
                     Uri fileUri = FileProvider.getUriForFile(
-                            ctx, BuildConfig.APPLICATION_ID + ".fileprovider", downloadedFile
+                            ctx, FileUtils.AUTHORITY, downloadedFile
                     );
                     openFile(fileUri);
                 }
@@ -704,5 +711,4 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
         fragment.setArguments(args);
         return fragment;
     }
-
 }
