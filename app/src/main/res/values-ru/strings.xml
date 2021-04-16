@@ -142,6 +142,7 @@
     <string name="password_hint">Подсказка пароля: %s</string>
     <string name="decrypt">Расшифровать</string>
     <string name="password_is_incorrect">Неверный пароль</string>
+    <string name="firstly_decrypt_message">Сначала расшифруйте сообщение</string>
 
     <!-- VIEW MESSAGES -->
     <string name="txt_more_details">Больше информации</string>

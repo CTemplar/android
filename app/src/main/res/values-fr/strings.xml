@@ -142,6 +142,7 @@
     <string name="password_hint">Indice de mot de passe: %s</string>
     <string name="decrypt">Décrypter</string>
     <string name="password_is_incorrect">Le mot de passe est incorrect</string>
+    <string name="firstly_decrypt_message">Tout d\'abord, décryptez le message</string>
 
     <!-- VIEW MESSAGES -->
     <string name="txt_more_details">Plus de détails</string>

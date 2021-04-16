@@ -142,6 +142,7 @@
     <string name="password_hint">Підказка: %s</string>
     <string name="decrypt">Розшифрувати</string>
     <string name="password_is_incorrect">Пароль неправильний</string>
+    <string name="firstly_decrypt_message">Спочатку розшифруйте повідомлення</string>
 
     <!-- VIEW MESSAGES -->
     <string name="txt_more_details">Більше інформації</string>

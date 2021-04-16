@@ -142,6 +142,7 @@
     <string name="password_hint">تلميح كلمة المرور:%s</string>
     <string name="decrypt">فك تشفير</string>
     <string name="password_is_incorrect">كلمة المرور غير صحيحة</string>
+    <string name="firstly_decrypt_message">أولاً ، فك تشفير الرسالة</string>
 
     <!-- VIEW MESSAGES -->
     <string name="txt_more_details">مزيد من التفاصيل</string>

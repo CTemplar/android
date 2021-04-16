@@ -142,6 +142,7 @@
     <string name="password_hint">Dica de senha: %s</string>
     <string name="decrypt">Descriptografar</string>
     <string name="password_is_incorrect">Senha é incorreta</string>
+    <string name="firstly_decrypt_message">Em primeiro lugar, descriptografe a mensagem</string>
 
     <!-- VIEW MESSAGES -->
     <string name="txt_more_details">Mais detalhes</string>
