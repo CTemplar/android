@@ -142,6 +142,7 @@
     <string name="password_hint">Passworthinweis: %s</string>
     <string name="decrypt">Entschlüsseln</string>
     <string name="password_is_incorrect">Das Passwort ist inkorrekt</string>
+    <string name="firstly_decrypt_message">Entschlüsseln Sie zunächst die Nachricht</string>
 
     <!-- VIEW MESSAGES -->
     <string name="txt_more_details">Nähere Details</string>

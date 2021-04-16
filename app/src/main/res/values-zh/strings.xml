@@ -142,6 +142,7 @@
     <string name="password_hint">密碼提示：%s</string>
     <string name="decrypt">解密</string>
     <string name="password_is_incorrect">密碼錯誤</string>
+    <string name="firstly_decrypt_message">首先，解密消息</string>
 
     <!-- VIEW MESSAGES -->
     <string name="txt_more_details">更多详情</string>
