@@ -1,195 +1,176 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/activity_view_messages_bar_layout"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/activity_view_messages_bar"
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/activity_view_messages_bar_layout"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize" />
+            android:layout_height="wrap_content">
 
-    </com.google.android.material.appbar.AppBarLayout>
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/activity_view_messages_bar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/activity_view_messages_subject_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/colorPrimary"
-        app:layout_constraintTop_toBottomOf="@id/activity_view_messages_bar_layout">
+        </com.google.android.material.appbar.AppBarLayout>
 
-        <TextView
-            android:id="@+id/activity_view_messages_subject_text"
-            android:layout_width="0dp"
+        <LinearLayout
+            android:id="@+id/activity_view_messages_subject_layout"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:text="Welcome to CTemplar!"
-            android:fontFamily="@font/lato_bold"
-            android:textColor="@color/secondaryTextColor"
-            android:textSize="18sp"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="16dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginEnd="16dp"
-            android:scrollbars="vertical"
-            android:maxLines="2"
-            android:ellipsize="end"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toLeftOf="@id/activity_view_messages_subject_encrypted_image"/>
-
-        <ImageView
-            android:id="@+id/activity_view_messages_subject_encrypted_image"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/selector_encrypted"
-            app:tint="?android:textColorSecondary"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintRight_toLeftOf="@id/activity_view_messages_subject_star_image_layout"/>
-
-        <FrameLayout android:id="@+id/activity_view_messages_subject_star_image_layout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginEnd="10dp"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent">
-
-            <ImageView
-                android:id="@+id/activity_view_messages_subject_star_image"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/selector_starred" />
-
-        </FrameLayout>
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <View
-        android:id="@+id/activity_view_messages_bottom_subject_divider"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/colorDivider"
-        app:layout_constraintTop_toBottomOf="@id/activity_view_messages_subject_layout"/>
-
-    <ListView
-        android:id="@+id/activity_view_messages_messages"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:orientation="horizontal"
-        tools:listitem="@layout/item_message_view_expanded"
-        app:layout_constraintTop_toBottomOf="@id/activity_view_messages_bottom_subject_divider"
-        app:layout_constraintBottom_toTopOf="@id/activity_view_messages_actions"
-        android:background="@color/colorPrimary" />
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/activity_view_messages_actions"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:minHeight="49dp"
-        android:background="@drawable/view_messages_actions_background"
-        app:layout_constraintBottom_toBottomOf="parent">
-
-        <RelativeLayout
-            android:id="@+id/activity_view_messages_reply"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="38dp"
-            android:layout_marginStart="38dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:background="@drawable/state_pressed_ripple"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_reply"
-                android:layout_centerInParent="true"
-                app:tint="?android:textColorSecondary"
-                android:contentDescription="Reply" />
-
-        </RelativeLayout>
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/activity_view_messages_reply_all"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:clickable="true"
-            android:focusable="true"
-            android:background="@drawable/state_pressed_ripple"
-            app:layout_constraintLeft_toRightOf="@+id/activity_view_messages_reply"
-            app:layout_constraintRight_toLeftOf="@+id/activity_view_messages_forward"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent">
-
-            <ImageView
-                android:id="@+id/activity_view_messages_reply_all_ico"
-                android:layout_width="15dp"
-                android:layout_height="15dp"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:tint="?android:textColorSecondary"
-                android:src="@drawable/ic_reply_all"
-                android:layout_centerInParent="true"
-                android:contentDescription="@string/txt_reply_all"/>
+            android:background="@color/colorPrimary"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
             <TextView
-                android:layout_width="wrap_content"
+                android:id="@+id/activity_view_messages_subject_text"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@id/activity_view_messages_reply_all_ico"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                android:fontFamily="@font/lato_regular"
-                android:textColor="?android:textColorSecondary"
-                android:textSize="12sp"
-                android:text="@string/txt_reply_all" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <RelativeLayout
-            android:id="@+id/activity_view_messages_forward"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="38dp"
-            android:layout_marginEnd="38dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:background="@drawable/state_pressed_ripple"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent">
+                android:layout_marginStart="16dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginBottom="16dp"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:fontFamily="@font/lato_bold"
+                android:maxLines="2"
+                android:scrollbars="vertical"
+                android:text="Welcome to CTemplar!"
+                android:textColor="@color/secondaryTextColor"
+                android:textSize="18sp"/>
 
             <ImageView
+                android:id="@+id/activity_view_messages_subject_encrypted_image"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_forward"
-                android:layout_centerInParent="true"
-                app:tint="?android:textColorSecondary"
-                android:contentDescription="Forward" />
+                android:src="@drawable/selector_encrypted"
+                app:tint="?android:textColorSecondary" />
 
-        </RelativeLayout>
+            <FrameLayout
+                android:id="@+id/activity_view_messages_subject_star_image_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:layout_marginRight="10dp"
+                android:padding="10dp">
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+                <ImageView
+                    android:id="@+id/activity_view_messages_subject_star_image"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/selector_starred" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+            </FrameLayout>
+
+        </LinearLayout>
+
+        <View
+            android:id="@+id/activity_view_messages_bottom_subject_divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/colorDivider" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/activity_view_messages_messages_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@color/colorPrimary"
+            android:orientation="vertical"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/item_message_view_expanded" />
+
+        <LinearLayout
+            android:id="@+id/activity_view_messages_actions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/view_messages_actions_background"
+            android:gravity="center_vertical"
+            android:minHeight="49dp"
+            android:baselineAligned="false">
+
+            <FrameLayout
+                android:id="@+id/activity_view_messages_reply"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/state_pressed_ripple"
+                android:clickable="true"
+                android:focusable="true">
+
+                <ImageView
+                    android:layout_gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="Reply"
+                    android:src="@drawable/ic_reply"
+                    app:tint="?android:textColorSecondary" />
+
+            </FrameLayout>
+
+            <LinearLayout
+                android:id="@+id/activity_view_messages_reply_all"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:background="@drawable/state_pressed_ripple"
+                android:clickable="true"
+                android:focusable="true">
+
+                <ImageView
+                    android:id="@+id/activity_view_messages_reply_all_ico"
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:contentDescription="@string/txt_reply_all"
+                    android:src="@drawable/ic_reply_all"
+                    android:layout_gravity="center"
+                    app:tint="?android:textColorSecondary" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/lato_regular"
+                    android:text="@string/txt_reply_all"
+                    android:textColor="?android:textColorSecondary"
+                    android:textSize="12sp" />
+
+            </LinearLayout>
+
+            <FrameLayout
+                android:id="@+id/activity_view_messages_forward"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:background="@drawable/state_pressed_ripple"
+                android:clickable="true"
+                android:focusable="true">
+
+                <ImageView
+                    android:layout_gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="Forward"
+                    android:src="@drawable/ic_forward"
+                    app:tint="?android:textColorSecondary" />
+
+            </FrameLayout>
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <FrameLayout
         android:id="@+id/activity_view_messages_progress"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -205,11 +186,8 @@
             android:id="@+id/activity_view_messages_progress_bar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:layout_gravity="center" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </FrameLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</FrameLayout>

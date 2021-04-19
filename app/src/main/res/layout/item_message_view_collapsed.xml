@@ -1,112 +1,110 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingStart="16dp"
-    android:paddingEnd="16dp"
-    android:paddingTop="16dp"
-    android:paddingBottom="16dp"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/item_message_view_collapsed_sender"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:ellipsize="end"
-        android:fontFamily="@font/lato_regular"
-        android:gravity="start"
-        android:lines="1"
-        android:text="CTemplar"
-        android:textSize="14sp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintHorizontal_chainStyle="spread" />
+        android:orientation="vertical"
+        android:paddingStart="16dp"
+        android:paddingTop="16dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="16dp">
 
-    <ImageView
-        android:id="@+id/item_message_view_holder_attachment_image_view"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
-        android:src="@drawable/ic_attachment_small"
-        android:tint="?android:textColorSecondary"
-        app:layout_constraintTop_toTopOf="@id/item_message_view_collapsed_sender"
-        app:layout_constraintBottom_toBottomOf="@id/item_message_view_collapsed_sender"
-        app:layout_constraintLeft_toRightOf="@id/item_message_view_collapsed_sender" />
-
-    <ImageView
-        android:id="@+id/item_message_view_holder_reply_image_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_reply_message"
-        app:layout_constraintTop_toTopOf="@id/item_message_view_holder_attachment_image_view"
-        app:layout_constraintBottom_toBottomOf="@id/item_message_view_holder_attachment_image_view"
-        app:layout_constraintLeft_toRightOf="@id/item_message_view_holder_attachment_image_view" />
-
-    <androidx.appcompat.widget.LinearLayoutCompat
-        android:id="@+id/item_message_view_holder_right_bar"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        app:layout_constraintLeft_toRightOf="@id/item_message_view_holder_reply_image_view"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="@id/item_message_view_holder_attachment_image_view"
-        app:layout_constraintBottom_toBottomOf="@id/item_message_view_holder_attachment_image_view">
-
-        <View
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1" />
-
-        <TextView
-            android:id="@+id/item_message_view_short_date_text_view"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginRight="10dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginStart="20dp"
-            android:ellipsize="end"
-            android:fontFamily="@font/lato_regular"
-            android:lines="1"
-            android:text="Apr 6"
-            android:textColor="@color/colorGrey"
-            android:textSize="14sp" />
-
-        <TextView
-            android:id="@+id/item_message_view_collapsed_folder_text_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:maxWidth="80dp"
             android:gravity="center_vertical"
-            android:layout_marginRight="4dp"
-            android:layout_marginEnd="4dp"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:text="inbox"
-            android:maxLines="1"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/item_message_view_collapsed_sender"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:fontFamily="@font/lato_regular"
+                android:gravity="start"
+                android:lines="1"
+                android:text="CTemplar"
+                android:textSize="14sp" />
+
+            <ImageView
+                android:id="@+id/item_message_view_holder_attachment_image_view"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:src="@drawable/ic_attachment_small"
+                app:tint="?android:textColorSecondary" />
+
+            <ImageView
+                android:id="@+id/item_message_view_holder_reply_image_view"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:padding="6dp"
+                android:src="@drawable/ic_reply_message" />
+
+            <TextView
+                android:id="@+id/item_message_view_short_date_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginRight="10dp"
+                android:ellipsize="end"
+                android:fontFamily="@font/lato_regular"
+                android:lines="1"
+                android:text="Apr 6"
+                android:textColor="@color/colorGrey"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/item_message_view_collapsed_folder_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/ic_message_status_blue"
+                android:ellipsize="end"
+                android:fontFamily="@font/lato_regular"
+                android:gravity="center_vertical"
+                android:maxWidth="80dp"
+                android:maxLines="1"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:text="inbox"
+                android:textColor="@color/colorWhiteLight"
+                android:textSize="14sp" />
+
+        </LinearLayout>
+
+        <ImageView android:id="@+id/encrypted_message_lock_image_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:srcCompat="@drawable/ic_key"
+            app:tint="?android:textColorSecondary" />
+
+        <TextView
+            android:id="@+id/item_message_view_collapsed_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
             android:ellipsize="end"
-            android:background="@drawable/ic_message_status_blue"
             android:fontFamily="@font/lato_regular"
-            android:textColor="@color/colorWhiteLight"
+            android:gravity="start"
+            android:lines="1"
+            android:text="You now have an inbox that is protected by strong encryption with "
             android:textSize="14sp" />
 
-    </androidx.appcompat.widget.LinearLayoutCompat>
+    </LinearLayout>
 
-    <TextView
-        android:id="@+id/item_message_view_collapsed_content"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:fontFamily="@font/lato_regular"
-        android:gravity="start"
-        android:lines="1"
-        android:ellipsize="end"
-        android:text="You now have an inbox that is protected by strong encryption"
-        android:textSize="14sp"
-        app:layout_constraintTop_toBottomOf="@id/item_message_view_collapsed_sender"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintHorizontal_chainStyle="spread" />
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/colorDivider" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

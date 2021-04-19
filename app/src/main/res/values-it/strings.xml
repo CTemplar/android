@@ -1,6 +1,4 @@
 <resources>
-    <string translatable="false" name="app_name">CTemplar</string>
-    <string translatable="false" name="platform">android</string>
     <string name="navigation_drawer_open">Apri Menu</string>
     <string name="navigation_drawer_close">Chiudi menu</string>
     <string name="nav_header_desc">Testata</string>
@@ -56,7 +54,6 @@
     <string name="menu_mark_as_unread">Segna come non letto</string>
 
     <!-- STRINGS -->
-    <string translatable="false" name="encrypted_subject">...</string>
     <string name="token_expired_title">Sessione scaduta</string>
     <string name="token_expired_message">La tua sessione è scaduta, per favore collegati di nuovo a CTemplar.</string>
     <string name="title_email">Email</string>
@@ -65,7 +62,7 @@
     <string name="title_password">Password</string>
     <string name="title_username">Nome utente</string>
     <string name="title_2fa">AUTENTICAZIONE A 2 FATTORI</string>
-    <string name="title_2fa_code">Inserisci il codice generato dall'app.</string>
+    <string name="title_2fa_code">Inserisci il codice generato dall\'app.</string>
     <string name="title_captcha">Captcha</string>
     <string name="title_ctemplar">CTEMPLAR</string>
     <string name="title_forgot_password">Password dimenticata</string>
@@ -99,7 +96,7 @@
     <string name="hint_step_email_recovery_short">Selezionando questa casella comprendi che se perdi la tua password e e non imposti una email di recupero, il tuo account non sarà recuperabile. <![CDATA[<u><font color="blue">Maggiori informazioni</font></u>]]></string>
     <string name="title_step_email_hint">Questo viene usato per recuperare il tuo account se dimentichi la tua password.</string>
     <string name="title_step_email_check_hint">Seleziona questa cartella se accetti i nostri <![CDATA[<u><a href="https://ctemplar.com/terms">Termini e Condizioni.</a></u>]]></string>
-    <string name="title_step_invitation_code_hint">Puoi ricevere un codice di invito da un cliente pagante esistente o puoi richiedere un codice a noi. Perchè i codici di invito e come ricevrne uno? <![CDATA[<u><a href="https://ctemplar.com/email-creation-restriction/">Per saperne di più</a></u>]]></string>
+    <string name="title_step_invitation_code_hint">Puoi ricevere un codice di invito da un cliente pagante esistente o puoi richiedere un codice a noi. Perché i codici di invito e come ricevrne uno? <![CDATA[<u><a href="https://ctemplar.com/email-creation-restriction/">Per saperne di più</a></u>]]></string>
     <string name="title_more_info_link"><u>Maggiori Info</u></string>
     <string name="title_empty_inbox">Non hai nessun messaggio in arrivo</string>
     <string name="title_empty_messages">Non hai nessun %1$s messaggio</string>
@@ -108,7 +105,7 @@
     <string name="btn_login">Entra</string>
     <string name="btn_compose">Conponi</string>
     <string name="btn_add_folder">Aggiungi cartella</string>
-    <string name="hint_captcha">Scrivi testo da immagine / Orario visualizzato nell'orologio (hh:mm) p.e.: 04:23</string>
+    <string name="hint_captcha">Scrivi testo da immagine / Orario visualizzato nell\'orologio (hh:mm) p.e.: 04:23</string>
     <string name="txt_forgot_pass">Password dimenticata?</string>
     <string name="txt_create_acc"><u>Crea account</u></string>
     <string name="txt_loading">Caricamento…</string>
@@ -132,14 +129,20 @@
     <string name="txt_dead_mans_title">Dead Man Timer</string>
     <string name="txt_delayed_message_title">Consegna ritarddata</string>
     <string name="txt_encrypt_message_summary">Crittografa per gli utenti email non-Ctemplar</string>
-    <string name="txt_delayed_message_summary">L\' email verrà inviata automaticamente all'orario impostato.</string>
-    <string name="txt_destruct_message_summary">Questa email si auto-eliminerà dall'account dell\'utente ricevente dopo</string>
+    <string name="txt_delayed_message_summary">L\' email verrà inviata automaticamente all\'orario impostato.</string>
+    <string name="txt_destruct_message_summary">Questa email si auto-eliminerà dall\'account dell\'utente ricevente dopo</string>
     <string name="txt_dead_mans_summary">Se non ti colleghi al tuo account dopo il tempo impostato nella email questa verrà inviata dopo</string>
     <string name="txt_schedule">Programma</string>
     <string name="txt_encrypt">Crittografa</string>
     <string name="txt_selected_datetime_is_past">La data selezionata è nel passato</string>
     <string name="txt_yesterday">Ieri</string>
     <string name="txt_attachments_in_processing">Allegato in corso…</string>
+    <string name="message_encrypted_with_password">Questo messaggio è stato crittografato con password</string>
+    <string name="message_encrypted_with_password_title">Inserire la password</string>
+    <string name="password_hint">Suggerimento password: %s</string>
+    <string name="decrypt">Decrittografa</string>
+    <string name="password_is_incorrect">La password non è corretta</string>
+    <string name="firstly_decrypt_message">In primo luogo, decrittografa il messaggio</string>
 
     <!-- VIEW MESSAGES -->
     <string name="txt_more_details">Più dettaggli</string>
@@ -264,8 +267,8 @@
     <string name="txt_delete_filter">Elimina filtro</string>
 
     <!-- WHITE-BLACK LIST -->
-    <string name="adding_blacklist_contact_error">Errore durante l'aggiunta del contatto alla lista nera</string>
-    <string name="adding_whitelist_contact_error">Errore durante l'aggiunta del contatto alla lista bianca</string>
+    <string name="adding_blacklist_contact_error">Errore durante l\'aggiunta del contatto alla lista nera</string>
+    <string name="adding_whitelist_contact_error">Errore durante l\'aggiunta del contatto alla lista bianca</string>
     <string name="added_to_whitelist">Email aggiunta alla lista bianca</string>
     <string name="title_contact_name">Nome contatto</string>
     <string name="title_contact_email">Email contatto</string>
@@ -365,7 +368,7 @@
     <string name="toast_contacts_encrypted">I contatti sono crittografati</string>
     <string name="toast_contacts_decrypted">I contatti sono decrittografati</string>
     <string name="toast_decryption_error">Si è verificato un errore durante la decrittazione. Prova di nuovo</string>
-    <string name="please_restart_app_to_apply_changes">Per favore, riavvia l'app per applicare le modifiche</string>
+    <string name="please_restart_app_to_apply_changes">Per favore, riavvia l\'app per applicare le modifiche</string>
 
     <!-- MAILBOXES -->
     <string name="addresses">Indirizzi</string>
@@ -398,11 +401,17 @@
     <string name="txt_from_three_email_addresses">da 10 indirizzi email</string>
     <string name="txt_from_one_custom_domain">da 1 dominio personalizzato</string>
     <string name="txt_thousand_messages_per_day">2000 messaggi al giorno</string>
-    <string name="txt_five_hundred_folders">500 cartelle</string><string name="txt_dead_mans_timer">Dead Man Timer</string>
+    <string name="txt_five_hundred_folders">500 cartelle</string>
+    <string name="txt_dead_mans_timer">Dead Man Timer</string>
     <string name="txt_and_more_features">e altre caratteristiche</string>
     <string name="txt_not_now">Non adesso</string>
 
-       <!-- ERRORS -->
+    <!-- PREFERENCE KEYS -->
+    <string name="change_password_reset_data">Elimina i dati</string>
+    <string name="toast_email_not_valid">L\'email non è valida</string>
+    <string name="storage_limit_info">%1$s su %2$s</string>
+
+    <!-- ERRORS -->
     <string name="error_field_cannot_be_empty">Questo campo non può essere vuoto.</string>
     <string name="error_invalid_email">Per favore seleziona un indirizzo email o seleziona account non recuperabile.</string>
     <string name="error_username_small">Minimo 4 caratteri</string>

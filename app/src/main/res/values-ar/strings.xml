@@ -136,7 +136,13 @@
     <string name="txt_encrypt">تشفير</string>
     <string name="txt_selected_datetime_is_past">الوقت المحدد من الماضي</string>
     <string name="txt_yesterday">الأمس</string>
-    <string name="txt_attachments_in_processing">المرفقات قيد المعالجة...</string>
+    <string name="txt_attachments_in_processing">المرفقات قيد المعالجة…</string>
+    <string name="message_encrypted_with_password">تم تشفير هذه الرسالة بكلمة مرور</string>
+    <string name="message_encrypted_with_password_title">أدخل كلمة المرور</string>
+    <string name="password_hint">تلميح كلمة المرور:%s</string>
+    <string name="decrypt">فك تشفير</string>
+    <string name="password_is_incorrect">كلمة المرور غير صحيحة</string>
+    <string name="firstly_decrypt_message">أولاً ، فك تشفير الرسالة</string>
 
     <!-- VIEW MESSAGES -->
     <string name="txt_more_details">مزيد من التفاصيل</string>
@@ -305,6 +311,7 @@
     <string name="choose_pin">قم بإدخال رمز من 4 أرقام</string>
     <string name="confirm_pin">تأكيد رمز القفل الخاص بك</string>
     <string name="invalid_pin">رمز قفل غير صالح</string>
+    <string name="invalid_pin_timeout">الرجاء المحاولة مرة أخرى بعد %d ثانية (ثوان)</string>
     <string name="pins_dont_match">رموز القفل غير متطابقة</string>
 
     <!-- SIGNATURE EDIT BAR -->
@@ -329,6 +336,7 @@
     <string name="settings_notifications">الإشعارات</string>
     <string name="settings_enable_notifications">تمكين دفع الإشعارات</string>
     <string name="settings_contacts_encryption">تشفير جهات الاتصال</string>
+    <string name="settings_keep_decrypted_subjects">احتفظ بالموضوعات التي تم فك تشفيرها محليًا</string>
     <string name="settings_encryption">التشفير</string>
     <string name="settings_phishing_protection">الحماية ضد الانتحال</string>
     <string name="settings_phishing_protection_description"><![CDATA[<font color="#939191">تسمح جملة ضد الانتحال للمستخدمين بربط كلمة أو جملة محددة من اختيارهم بحسابCTemplar الخاص بهم. وبمجرد تحديد هذه الكلمة أو الجملة فإنه في حالة قيامك بتسجيل الدخول إلى حسابك ووجدت أن جملة ضد الانتحال الخاصة بك غير موجودة أو غير صحيحة فإن هذا يعني أنك تعرضت للانتحال. ويجب عليك التأكد على الفور من قيامك بزيارة</font> <font color="#4d92e2"><u>https://mail.ctemplar.com</u></font> <font color="#939191">إذا لم تكن على الموقع فربما يكون أي موقع مشبوه قد حصل على معلومات تسجيل الدخول الخاصة بحسابك على CTemplar. ولتجنب أي ضرر على حسابك فيجب عليك على الفور زيارة</font> <font color="#4d92e2"><u>https://mail.ctemplar.com</u></font> <font color="#939191">وقم بتغيير كلمة المرور الخاصة بك.<br><br>برجاء ملاحظة أن جملة ضد الانتحال ستظهر فقط عندما تقوم بتسجيل الدخول عبر موقع الإنترنت.</font>]]></string>

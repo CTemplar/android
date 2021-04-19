@@ -6,7 +6,6 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -15,7 +14,7 @@ public class MessagesResult {
     private long id;
 
     @SerializedName("encryption")
-    private EncryptionMessage encryption;
+    private EncryptionMessageResponse encryptionMessage;
 
     @SerializedName("sender")
     private String sender;
@@ -133,8 +132,8 @@ public class MessagesResult {
         return id;
     }
 
-    public EncryptionMessage getEncryption() {
-        return encryption;
+    public EncryptionMessageResponse getEncryptionMessage() {
+        return encryptionMessage;
     }
 
     public String getSender() {

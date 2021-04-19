@@ -26,9 +26,11 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.EncryptionMessageRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.PublicKeysRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SendMessageRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.KeyResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.EncryptionMessageResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.MessageAttachment;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.MessagesResult;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.MyselfResponse;
@@ -38,11 +40,9 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MessageEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.AttachmentProvider;
-import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageAttachmentProvider;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageProvider;
 import mobileapp.ctemplar.com.ctemplarapp.security.PGPManager;
 import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
-import mobileapp.ctemplar.com.ctemplarapp.utils.DateUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.FileUtils;
 import okhttp3.MediaType;
@@ -59,7 +59,7 @@ public class SendMessageActivityViewModel extends ViewModel {
 
     private MutableLiveData<ResponseStatus> responseStatus = new MutableLiveData<>();
     private MutableLiveData<ResponseStatus> uploadAttachmentStatus = new MutableLiveData<>();
-    private MutableLiveData<MessageAttachmentProvider> uploadAttachmentResponse = new MutableLiveData<>();
+    private MutableLiveData<AttachmentProvider> uploadAttachmentResponse = new MutableLiveData<>();
     private MutableLiveData<ResponseStatus> deleteAttachmentStatus = new MutableLiveData<>();
     private MutableLiveData<ResponseStatus> updateAttachmentStatus = new MutableLiveData<>();
     private MutableLiveData<Boolean> grabAttachmentStatus = new MutableLiveData<>();
@@ -133,7 +133,7 @@ public class SendMessageActivityViewModel extends ViewModel {
         return grabAttachmentStatus;
     }
 
-    public LiveData<MessageAttachmentProvider> getUploadAttachmentResponse() {
+    public LiveData<AttachmentProvider> getUploadAttachmentResponse() {
         return uploadAttachmentResponse;
     }
 
@@ -244,6 +244,9 @@ public class SendMessageActivityViewModel extends ViewModel {
     }
 
     public void setEncryptionMessage(long id, SendMessageRequest sendMessageRequest) {
+        final EncryptionMessageRequest encryptionMessage = sendMessageRequest.getEncryptionMessage();
+        final String password = encryptionMessage.getPassword();
+        encryptionMessage.setPassword(null);
         userRepository.updateMessage(id, sendMessageRequest)
                 .subscribe(new SingleObserver<MessagesResult>() {
                     @Override
@@ -253,12 +256,19 @@ public class SendMessageActivityViewModel extends ViewModel {
 
                     @Override
                     public void onSuccess(@NotNull MessagesResult messagesResult) {
-                        messageEncryptionResult.postValue(messagesResult);
+                        if (messagesResult.getEncryptionMessage() == null) {
+                            messageEncryptionResult.postValue(null);
+                        } else {
+                            EncryptionMessageResponse encryption = messagesResult.getEncryptionMessage();
+                            encryption.setPassword(password);
+                            messageEncryptionResult.postValue(messagesResult);
+                        }
                     }
 
                     @Override
                     public void onError(@NotNull Throwable e) {
-                        Timber.e(e.getCause());
+                        Timber.e(e);
+                        messageEncryptionResult.postValue(null);
                     }
                 });
     }
@@ -315,12 +325,18 @@ public class SendMessageActivityViewModel extends ViewModel {
     }
 
     public void uploadAttachment(
-            @NonNull final MultipartBody.Part attachment,
-            final long messageId,
-            final String filePath,
-            final boolean isEncrypted
+            MultipartBody.Part document,
+            long messageId,
+            boolean isInline,
+            boolean isEncrypted,
+            String fileType,
+            String name,
+            long actualSize,
+            String filePath
     ) {
-        userRepository.uploadAttachment(attachment, messageId, isEncrypted)
+        userRepository.uploadAttachment(
+                document, messageId, isInline, isEncrypted, fileType, name, actualSize
+        )
                 .subscribe(new Observer<MessageAttachment>() {
                     @Override
                     public void onSubscribe(@NotNull Disposable d) {
@@ -329,15 +345,10 @@ public class SendMessageActivityViewModel extends ViewModel {
 
                     @Override
                     public void onNext(@NotNull MessageAttachment messageAttachment) {
-                        if (messageAttachment != null) {
-                            MessageAttachmentProvider messageAttachmentProvider
-                                    = MessageAttachmentProvider.fromResponse(messageAttachment);
-                            messageAttachmentProvider.setFilePath(filePath);
-                            uploadAttachmentResponse.postValue(messageAttachmentProvider);
-                            uploadAttachmentStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
-                        } else {
-                            uploadAttachmentStatus.postValue(ResponseStatus.RESPONSE_ERROR);
-                        }
+                        AttachmentProvider attachmentProvider = AttachmentProvider.fromResponse(messageAttachment);
+                        attachmentProvider.setFilePath(filePath);
+                        uploadAttachmentResponse.postValue(attachmentProvider);
+                        uploadAttachmentStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
                     }
 
                     @Override
@@ -362,13 +373,17 @@ public class SendMessageActivityViewModel extends ViewModel {
 
     @Nullable
     MessageAttachment uploadAttachmentSync(
-            MultipartBody.Part attachment,
+            MultipartBody.Part document,
             long message,
-            boolean isEncrypted
+            boolean isInline,
+            boolean isEncrypted,
+            String fileType,
+            String name,
+            long actualSize
     ) {
         try {
             return userRepository
-                    .uploadAttachment(attachment, message, isEncrypted)
+                    .uploadAttachment(document, message, isInline, isEncrypted, fileType, name, actualSize)
                     .blockingSingle();
         } catch (Throwable e) {
             if(e instanceof HttpException) {
@@ -383,39 +398,6 @@ public class SendMessageActivityViewModel extends ViewModel {
             Timber.e(e, "uploadAttachmentSync blocking error");
             return null;
         }
-    }
-
-    public void updateAttachment(
-            long id,
-            MultipartBody.Part attachment,
-            long message,
-            boolean isEncrypted
-    ) {
-        userRepository.updateAttachment(id, attachment, message, isEncrypted)
-                .subscribe(new SingleObserver<MessageAttachment>() {
-                    @Override
-                    public void onSubscribe(@NotNull Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onSuccess(@NotNull MessageAttachment messageAttachment) {
-                        updateAttachmentStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
-                    }
-
-                    @Override
-                    public void onError(@NotNull Throwable e) {
-                        if(e instanceof HttpException) {
-                            if (((HttpException)e).code() == 413) {
-                                updateAttachmentStatus.postValue(ResponseStatus.RESPONSE_ERROR_TOO_LARGE);
-                            } else {
-                                updateAttachmentStatus.postValue(ResponseStatus.RESPONSE_ERROR);
-                            }
-                        } else {
-                            updateAttachmentStatus.postValue(ResponseStatus.RESPONSE_ERROR);
-                        }
-                    }
-                });
     }
 
     public void deleteAttachment(long id) {
@@ -479,9 +461,9 @@ public class SendMessageActivityViewModel extends ViewModel {
             for (AttachmentProvider forwardedAttachment : forwardedAttachments) {
                 MessageAttachment attachment = remakeAttachment(forwardedAttachment, messageId);
                 if (attachment != null) {
-                    MessageAttachmentProvider messageAttachmentProvider
-                            = MessageAttachmentProvider.fromResponse(attachment);
-                    uploadAttachmentResponse.postValue(messageAttachmentProvider);
+                    AttachmentProvider attachmentProvider = AttachmentProvider.fromResponse(attachment);
+                    attachmentProvider.setForwarded(true);
+                    uploadAttachmentResponse.postValue(attachmentProvider);
                 } else {
                     Timber.e("grabForwardedAttachments uploaded attachment is null");
                 }
@@ -497,7 +479,7 @@ public class SendMessageActivityViewModel extends ViewModel {
         File cacheDir = CTemplarApp.getInstance().getCacheDir();
         URL url;
         try {
-            url = new URL(attachmentProvider.getDocumentLink());
+            url = new URL(attachmentProvider.getDocumentUrl());
         } catch (MalformedURLException e) {
             Timber.e(e, "remakeAttachment MalformedURLException");
             return null;
@@ -550,19 +532,23 @@ public class SendMessageActivityViewModel extends ViewModel {
                 Timber.e(e, "remakeAttachment close fileOutputStream error");
             }
         }
-        String documentLink = attachmentProvider.getDocumentLink();
-        String fileName = AppUtils.getFileNameFromURL(documentLink);
-        String type = AppUtils.getMimeType(documentLink);
+        String documentUrl = attachmentProvider.getDocumentUrl();
+        String fileName = attachmentProvider.getName() == null
+                ? AppUtils.getFileNameFromURL(documentUrl) : attachmentProvider.getName();
+        String type = attachmentProvider.getFileType() == null
+                ? AppUtils.getMimeType(documentUrl) : attachmentProvider.getFileType();
         if (type == null) {
             type = "";
         }
         MediaType mediaType = MediaType.parse(type);
         RequestBody attachmentPart = RequestBody.create(mediaType, downloadedFile);
-        final MultipartBody.Part multipartAttachment = MultipartBody.Part
+        final MultipartBody.Part document = MultipartBody.Part
                 .createFormData("document", fileName, attachmentPart);
 
         MessageAttachment messageAttachment = uploadAttachmentSync(
-                multipartAttachment, messageId, attachmentProvider.isEncrypted());
+                document, messageId, false, attachmentProvider.isEncrypted(), type,
+                fileName, downloadedFile.length()
+        );
         if (!downloadedFile.delete()) {
             Timber.e("Downloaded file is not deleted (2)");
         }

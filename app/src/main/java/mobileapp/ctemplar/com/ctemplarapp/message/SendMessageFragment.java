@@ -46,28 +46,30 @@ import mobileapp.ctemplar.com.ctemplarapp.BuildConfig;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.contacts.ContactsViewModel;
 import mobileapp.ctemplar.com.ctemplarapp.main.UpgradeToPrimeFragment;
+import mobileapp.ctemplar.com.ctemplarapp.message.dialog.DeadMansDeliveryDialogFragment;
+import mobileapp.ctemplar.com.ctemplarapp.message.dialog.DelayedDeliveryDialogFragment;
+import mobileapp.ctemplar.com.ctemplarapp.message.dialog.DestructTimerDialogFragment;
+import mobileapp.ctemplar.com.ctemplarapp.message.dialog.EncryptMessageDialogFragment;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.net.entity.AttachmentsEntity;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.PublicKeysRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SendMessageRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.KeyResult;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.EncryptionMessage;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.MyselfResult;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.Contact;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.AttachmentProvider;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.EncryptionMessageProvider;
-import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageAttachmentProvider;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageProvider;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.SendMessageRequestProvider;
 import mobileapp.ctemplar.com.ctemplarapp.services.SendMailService;
-import mobileapp.ctemplar.com.ctemplarapp.utils.DateUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EncryptUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.FileUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.HtmlUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.PermissionCheck;
 import mobileapp.ctemplar.com.ctemplarapp.utils.SpaceTokenizer;
+import mobileapp.ctemplar.com.ctemplarapp.utils.ToastUtils;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -122,7 +124,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
     private Date destructDeliveryDate;
     private Long deadDeliveryInHours;
     private String lastAction;
-    private EncryptionMessage messageEncryptionResult;
+    private EncryptionMessageProvider encryptionMessage;
     private List<AttachmentProvider> forwardedAttachments;
 
     private String startupBodyContent;
@@ -176,33 +178,32 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
     private final EncryptMessageDialogFragment.OnSetEncryptMessagePassword onSetEncryptMessagePassword
             = new EncryptMessageDialogFragment.OnSetEncryptMessagePassword() {
         @Override
-        public void onSet(String password, String passwordHint, Integer expireHours) {
-            if (password == null && passwordHint == null && expireHours == null) {
+        public void onSet(String password, String passwordHint, Integer expiryHours) {
+            if (password == null && passwordHint == null && expiryHours == null) {
                 if (getActivity() == null) {
                     return;
                 }
-                messageEncryptionResult = null;
+                encryptionMessage = null;
                 ImageView sendMessageEncryptIco = getActivity().findViewById(R.id.fragment_send_message_encrypt_ico);
                 sendMessageEncryptIco.setSelected(false);
                 return;
             }
 
-            EncryptionMessage encryptionMessage = new EncryptionMessage();
+            EncryptionMessageProvider encryptionMessage = new EncryptionMessageProvider();
             encryptionMessage.setPassword(password);
             encryptionMessage.setPasswordHint(passwordHint);
-            encryptionMessage.setExpireHours(expireHours);
+            encryptionMessage.setExpiryHours(expiryHours);
 
-            MailboxEntity defaultMailbox = EncryptUtils.getDefaultMailbox();
-            if (defaultMailbox == null) {
+            MailboxEntity fromMailboxEntity = getCurrentSelectedMailbox();
+            if (fromMailboxEntity == null) {
                 return;
             }
-            long mailboxId = defaultMailbox.getId();
+            long mailboxId = fromMailboxEntity.getId();
+            SendMessageRequest sendMessageRequest = new SendMessageRequest();
+            sendMessageRequest.setMailbox(mailboxId);
+            sendMessageRequest.setEncryptionMessage(encryptionMessage.toRequest());
 
-            SendMessageRequest setEncryptionRequest = new SendMessageRequest();
-            setEncryptionRequest.setMailbox(mailboxId);
-            setEncryptionRequest.setEncryptionMessage(encryptionMessage);
-
-            sendModel.setEncryptionMessage(currentMessageId, setEncryptionRequest);
+            sendModel.setEncryptionMessage(currentMessageId, sendMessageRequest);
         }
     };
 
@@ -605,11 +606,12 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
 
         sendModel.getMessageEncryptionResult()
                 .observe(getViewLifecycleOwner(), messagesResult -> {
-                    if (messagesResult != null) {
-                        messageEncryptionResult = messagesResult.getEncryption();
-                        if (messageEncryptionResult != null) {
-                            sendMessageEncryptIco.setSelected(true);
-                        }
+                    if (messagesResult == null) {
+                        ToastUtils.showToast(getActivity(), getString(R.string.error_connection));
+                    } else {
+                        encryptionMessage = EncryptionMessageProvider.fromResponseToProvider(
+                                messagesResult.getEncryptionMessage());
+                        sendMessageEncryptIco.setSelected(encryptionMessage != null);
                     }
                 });
 
@@ -627,12 +629,12 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
     }
 
     private void createMessage() {
-        MailboxEntity defaultMailbox = EncryptUtils.getDefaultMailbox();
-        if (defaultMailbox == null) {
+        MailboxEntity fromMailboxEntity = getCurrentSelectedMailbox();
+        if (fromMailboxEntity == null) {
             return;
         }
-        long mailboxId = defaultMailbox.getId();
-        String mailboxEmail = defaultMailbox.getEmail();
+        long mailboxId = fromMailboxEntity.getId();
+        String mailboxEmail = fromMailboxEntity.getEmail();
 
         SendMessageRequest createMessageRequest = new SendMessageRequest(
                 mailboxEmail,
@@ -651,7 +653,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
     private void loadMessageHandler(@Nullable MessageProvider messageProvider) {
         if (messageProvider == null) {
             if (getActivity() != null) {
-                Toast.makeText(getActivity(), getString(R.string.toast_message_not_loaded), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), R.string.toast_message_not_loaded, Toast.LENGTH_SHORT).show();
                 finish();
             }
             return;
@@ -702,14 +704,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
             deadDeliveryInHours = messageDeadMan;
         }
         if (messageAttachmentList != null) {
-            for (AttachmentProvider attachmentProvider : messageAttachmentList) {
-                MessageAttachmentProvider messageAttachment = new MessageAttachmentProvider();
-                messageAttachment.setId(attachmentProvider.getId());
-                messageAttachment.setMessage(attachmentProvider.getMessage());
-                messageAttachment.setContentId(attachmentProvider.getContentId());
-                messageAttachment.setDocumentLink(attachmentProvider.getDocumentLink());
-                messageSendAttachmentAdapter.addAttachment(messageAttachment);
-            }
+            messageSendAttachmentAdapter.setAttachments(messageAttachmentList);
         }
         if (messageSendAttachmentAdapter.getItemCount() > 0) {
             sendMessageAttachmentIco.setSelected(true);
@@ -733,17 +728,10 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
     }
 
     private void sendMessage() {
-        Object fromEmailItem = spinnerFrom.getSelectedItem();
-        if (fromEmailItem == null) {
-            Timber.e("sendMessage spinnerFrom.getSelectedItem is null");
-            return;
-        }
-        MailboxEntity fromMailboxEntity = sendModel.getMailboxByEmail(fromEmailItem.toString());
+        MailboxEntity fromMailboxEntity = getCurrentSelectedMailbox();
         if (fromMailboxEntity == null) {
-            Timber.e("sendMessage fromMailboxEntity is null");
             return;
         }
-
         long mailboxId = fromMailboxEntity.getId();
         String mailboxEmail = fromMailboxEntity.getEmail();
         String subject = EditTextUtils.getText(subjectEditText);
@@ -801,13 +789,12 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         }
         sendMessageRequest.setBcc(bccEmailList);
 
-        List<MessageAttachmentProvider> attachments = messageSendAttachmentAdapter.getAttachmentList();
+        List<AttachmentProvider> attachments = messageSendAttachmentAdapter.getAttachmentList();
         if (attachments == null) {
             attachments = new ArrayList<>();
         }
 
-        MailboxEntity mailboxEntity = sendModel.getMailboxById(mailboxId);
-        String senderPublicKey = mailboxEntity.getPublicKey();
+        String senderPublicKey = fromMailboxEntity.getPublicKey();
         publicKeyList.add(senderPublicKey);
 
         SendMailService.sendMessage(
@@ -815,8 +802,9 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
                 currentMessageId,
                 sendMessageRequest,
                 publicKeyList.toArray(new String[0]),
-                attachments.toArray(new MessageAttachmentProvider[0]),
-                EncryptionMessageProvider.fromResponse(messageEncryptionResult)
+                attachments.toArray(new AttachmentProvider[0]),
+                encryptionMessage,
+                draftMessage
         );
         cancelSendingProgressBar();
         if (!draftMessage) {
@@ -835,10 +823,14 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         }
         String attachmentPath = FileUtils.getPath(activity, attachmentUri);
         File attachmentFile;
+        if (attachmentPath == null) {
+            Timber.e("attachmentPath is null");
+            return;
+        }
         try {
             attachmentFile = new File(attachmentPath);
         } catch (Exception e) {
-            Toast.makeText(getActivity(), getString(R.string.toast_attachment_unable_read_file), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), R.string.toast_attachment_unable_read_file, Toast.LENGTH_SHORT).show();
             return;
         }
         String type = activity.getContentResolver().getType(attachmentUri);
@@ -847,14 +839,8 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         }
         MediaType mediaType = MediaType.parse(type);
 
-        Object fromEmailItem = spinnerFrom.getSelectedItem();
-        if (fromEmailItem == null) {
-            Timber.e("uploadAttachment: fromEmailItem is null");
-            return;
-        }
-        MailboxEntity fromMailboxEntity = sendModel.getMailboxByEmail(fromEmailItem.toString());
+        MailboxEntity fromMailboxEntity = getCurrentSelectedMailbox();
         if (fromMailboxEntity == null) {
-            Timber.e("uploadAttachment: fromMailboxEntity is null");
             return;
         }
         String mailboxPublicKey = fromMailboxEntity.getPublicKey();
@@ -871,9 +857,13 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         }
 
         String attachmentName = attachmentFile.getName();
-        MultipartBody.Part multipartAttachment = MultipartBody.Part.createFormData("document", attachmentName, attachmentPart);
+        MultipartBody.Part document = MultipartBody.Part
+                .createFormData("document", attachmentName, attachmentPart);
 
-        sendModel.uploadAttachment(multipartAttachment, currentMessageId, attachmentPath, true);
+        sendModel.uploadAttachment(
+                document, currentMessageId, false, true, type,
+                attachmentFile.getName(), attachmentFile.length(), attachmentPath
+        );
 
         uploadProgress = new ProgressDialog(getActivity());
         uploadProgress.setCanceledOnTouchOutside(false);
@@ -915,6 +905,26 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         alertDialog.show();
 
         return false;
+    }
+
+    @Nullable
+    private MailboxEntity getCurrentSelectedMailbox() {
+        Object fromEmailItem = spinnerFrom.getSelectedItem();
+        if (fromEmailItem != null) {
+            MailboxEntity fromMailboxEntity = sendModel.getMailboxByEmail(fromEmailItem.toString());
+            if (fromMailboxEntity != null) {
+                return fromMailboxEntity;
+            }
+            Timber.e("fromMailboxEntity is null");
+        } else {
+            Timber.e("fromEmailItem is null");
+        }
+        MailboxEntity defaultMailbox = EncryptUtils.getDefaultMailbox();
+        if (defaultMailbox != null) {
+            return defaultMailbox;
+        }
+        Timber.e("defaultMailbox is null");
+        return null;
     }
 
     private void addSignature(String signatureText) {
