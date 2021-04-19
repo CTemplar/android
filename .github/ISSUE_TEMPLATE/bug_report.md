@@ -12,9 +12,8 @@ Include, at least, the app version and your operative system and/or device model
 
 ### Steps to reproduce
 
-Tell us how to reproduce this issue, step by step.
-
-You can include media content like images or videos.
+1. Tell us how to reproduce this issue, step by step.
+2. You can include media content like images or videos.
 
 ### Expected behavior
 
