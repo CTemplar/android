@@ -1,7 +1,6 @@
 package com.ctemplar.app.fdroid.repository.provider;
 
 public class UserDisplayProvider {
-
     private String email;
     private String name;
     private boolean isEncrypted;

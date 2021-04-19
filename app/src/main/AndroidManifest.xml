@@ -16,13 +16,13 @@
         android:name=".CTemplarApp"
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
-        android:roundIcon="@mipmap/ic_launcher_round"
         android:label="@string/app_name"
+        android:largeHeap="true"
+        android:requestLegacyExternalStorage="true"
+        android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        android:usesCleartextTraffic="true"
-        android:largeHeap="true"
-        android:requestLegacyExternalStorage="true">
+        android:usesCleartextTraffic="true">
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -37,10 +37,11 @@
         <provider
             android:name="io.sentry.android.core.SentryInitProvider"
             android:authorities="${applicationId}.SentryInitProvider"
-            tools:node="remove"
-            android:exported="false" />
+            android:exported="false"
+            tools:node="remove" />
 
-        <service android:name=".services.NotificationService"
+        <service
+            android:name=".services.NotificationService"
             android:enabled="true"
             android:exported="false">
             <intent-filter>
@@ -49,14 +50,16 @@
             </intent-filter>
         </service>
 
-        <service android:name=".services.SendMailService"
+        <service
+            android:name=".services.SendMailService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.ctemplar.service.email.send" />
             </intent-filter>
         </service>
 
-        <receiver android:name=".services.NotificationServiceBroadcastReceiver"
+        <receiver
+            android:name=".services.NotificationServiceBroadcastReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
@@ -104,7 +107,8 @@
                 android:resource="@xml/searchable" />
         </activity>
 
-        <activity android:name=".message.SendMessageActivity"
+        <activity
+            android:name=".message.SendMessageActivity"
             android:configChanges="orientation|keyboardHidden|screenSize" />
         <activity android:name=".message.ViewMessagesActivity" />
         <activity android:name=".contacts.AddContactActivity" />
@@ -118,7 +122,8 @@
         <activity android:name=".wbl.AddBlacklistContactActivity" />
         <activity android:name=".wbl.AddWhitelistContactActivity" />
         <activity android:name=".wbl.WhiteBlackListActivity" />
-        <activity android:name=".settings.SettingsActivity"
+        <activity
+            android:name=".settings.SettingsActivity"
             android:theme="@style/PreferenceScreen" />
         <activity android:name=".settings.PINLockSettingsActivity" />
         <activity android:name=".settings.PINLockChangeActivity" />

@@ -12,7 +12,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
 import java.io.BufferedInputStream;
@@ -32,17 +31,16 @@ import java.util.List;
 
 import com.ctemplar.app.fdroid.CTemplarApp;
 import com.ctemplar.app.fdroid.R;
-import com.ctemplar.app.fdroid.net.entity.PGPKeyEntity;
+import com.ctemplar.app.fdroid.net.request.EncryptionMessageRequest;
 import com.ctemplar.app.fdroid.net.request.SendMessageRequest;
 import com.ctemplar.app.fdroid.net.response.messages.MessageAttachment;
 import com.ctemplar.app.fdroid.net.response.messages.MessagesResult;
 import com.ctemplar.app.fdroid.repository.entity.MailboxEntity;
+import com.ctemplar.app.fdroid.repository.provider.AttachmentProvider;
 import com.ctemplar.app.fdroid.repository.provider.EncryptionMessageProvider;
-import com.ctemplar.app.fdroid.repository.provider.MessageAttachmentProvider;
 import com.ctemplar.app.fdroid.repository.provider.SendMessageRequestProvider;
 import com.ctemplar.app.fdroid.security.PGPManager;
 import com.ctemplar.app.fdroid.utils.AppUtils;
-import com.ctemplar.app.fdroid.utils.DateUtils;
 import com.ctemplar.app.fdroid.utils.EditTextUtils;
 import com.ctemplar.app.fdroid.utils.EncryptUtils;
 import com.ctemplar.app.fdroid.utils.FileUtils;
@@ -68,6 +66,7 @@ public class SendMailService extends IntentService {
     private static final String PUBLIC_KEYS_EXTRA_KEY = "public_keys";
     private static final String ATTACHMENTS_EXTRA_KEY = "attachments";
     private static final String EXTERNAL_ENCRYPTION_EXTRA_KEY = "external_encryption";
+    private static final String DRAFT_MESSAGE = "draft_message";
 
     public SendMailService() {
         super(TAG);
@@ -109,10 +108,10 @@ public class SendMailService extends IntentService {
                 if (attachmentsStringArray == null) {
                     attachmentsStringArray = new String[0];
                 }
-                MessageAttachmentProvider[] attachmentProviders = new MessageAttachmentProvider[attachmentsStringArray.length];
+                AttachmentProvider[] attachmentProviders = new AttachmentProvider[attachmentsStringArray.length];
                 for (int i = 0; i < attachmentProviders.length; ++i) {
                     try {
-                        attachmentProviders[i] = GENERAL_GSON.fromJson(attachmentsStringArray[i], MessageAttachmentProvider.class);
+                        attachmentProviders[i] = GENERAL_GSON.fromJson(attachmentsStringArray[i], AttachmentProvider.class);
                     } catch (JsonSyntaxException e) {
                         Timber.e(e, "Cannot parse attachment provider");
                     }
@@ -126,7 +125,8 @@ public class SendMailService extends IntentService {
                         Timber.e(e, "Cannot parse external encryption provider");
                     }
                 }
-                sendMail(messageId, sendMessageRequestProvider, publicKeys, attachmentProviders, encryptionMessageProvider);
+                boolean draftMessage = intent.getBooleanExtra(DRAFT_MESSAGE, true);
+                sendMail(messageId, sendMessageRequestProvider, publicKeys, attachmentProviders, encryptionMessageProvider, draftMessage);
         }
     }
 
@@ -134,15 +134,15 @@ public class SendMailService extends IntentService {
             final long messageId,
             @NonNull final SendMessageRequestProvider sendMessageRequestProvider,
             final String[] publicKeys,
-            final MessageAttachmentProvider[] attachmentProviders,
-            @Nullable final EncryptionMessageProvider encryptionMessageProvider
+            final AttachmentProvider[] attachmentsProvider,
+            @Nullable EncryptionMessageProvider encryptionMessageProvider,
+            final boolean draftMessage
     ) {
         SendMessageRequest sendMessageRequest = sendMessageRequestProvider.toRequest();
-        boolean isDraft = isDraft(sendMessageRequest);
-        String title = isDraft ? getString(R.string.txt_saving_mail) : getString(R.string.txt_sending_mail);
+        String title = draftMessage ? getString(R.string.txt_saving_mail) : getString(R.string.txt_sending_mail);
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         if (notificationManager == null) {
-            Timber.e("sendMail notificationManager is null");
+            Timber.e("notificationManager is null");
             return;
         }
         createSendMailNotificationChannel(notificationManager, title);
@@ -156,35 +156,30 @@ public class SendMailService extends IntentService {
         notificationManager.notify((int) messageId, notificationBuilder.build());
 
         List<String> publicKeyList = new ArrayList<>(Arrays.asList(publicKeys));
+        if (draftMessage) {
+            encryptionMessageProvider = null;
+        }
         if (encryptionMessageProvider != null) {
-            String randomSecret = encryptionMessageProvider.getRandomSecret();
-            String password = encryptionMessageProvider.getPassword();
-
-            PGPKeyEntity pgpKeyEntity = PGPManager.generateKeys(randomSecret, password);
-            encryptionMessageProvider.setPublicKey(pgpKeyEntity.getPublicKey());
-            encryptionMessageProvider.setPrivateKey(pgpKeyEntity.getPrivateKey());
-
-            publicKeyList.add(pgpKeyEntity.getPublicKey());
             sendMessageRequest.setEncryptionMessage(encryptionMessageProvider.toRequest());
         }
 
         // non-CTemplar receivers checking
-        if (publicKeyList.contains(null) && encryptionMessageProvider == null) {
+        if (publicKeyList.contains(null) && !draftMessage && encryptionMessageProvider == null) {
             publicKeyList.clear();
         } else if (publicKeyList.contains(null)) {
             publicKeyList.removeAll(Collections.singleton(null));
         }
 
-        final List<MessageAttachment> messageAttachmentList = new ArrayList<>(attachmentProviders.length);
-        if (attachmentProviders.length > 0) {
-            if (!isDraft) {
+        final List<MessageAttachment> messageAttachmentList = new ArrayList<>(attachmentsProvider.length);
+        if (attachmentsProvider.length > 0) {
+            if (!draftMessage) {
                 notificationBuilder.setContentText(getString(R.string.txt_attachments_in_processing));
-                notificationBuilder.setProgress(attachmentProviders.length, 0, false);
+                notificationBuilder.setProgress(attachmentsProvider.length, 0, false);
                 notificationManager.notify((int) messageId, notificationBuilder.build());
-                for (int i = 0, attachmentProvidersLength = attachmentProviders.length; i < attachmentProvidersLength; ++i) {
-                    MessageAttachmentProvider attachmentProvider = attachmentProviders[i];
-                    MessageAttachment messageAttachment = updateAttachment(attachmentProvider,
-                            publicKeyList, messageId, sendMessageRequestProvider.getMailbox());
+                for (int i = 0, attachmentProvidersLength = attachmentsProvider.length; i < attachmentProvidersLength; ++i) {
+                    AttachmentProvider attachmentProvider = attachmentsProvider[i];
+                    MessageAttachment messageAttachment = updateAttachment(attachmentProvider, publicKeyList,
+                            messageId, sendMessageRequestProvider.getMailbox(), encryptionMessageProvider);
                     if (messageAttachment == null) {
                         Timber.e("Message attachment is null");
                     } else {
@@ -198,7 +193,7 @@ public class SendMailService extends IntentService {
             sendMessageRequest.setAttachments(messageAttachmentList);
         }
 
-        updateMessage(messageId, sendMessageRequest, publicKeyList, notificationManager, notificationBuilder);
+        updateMessage(messageId, sendMessageRequest, publicKeyList, notificationManager, notificationBuilder, draftMessage);
     }
 
     private void createSendMailNotificationChannel(NotificationManager notificationManager, String title) {
@@ -216,20 +211,28 @@ public class SendMailService extends IntentService {
             final SendMessageRequest request,
             final List<String> receiverPublicKeys,
             final NotificationManager notificationManager,
-            final NotificationCompat.Builder notificationBuilder
+            final NotificationCompat.Builder notificationBuilder,
+            final boolean isDraft
     ) {
-        boolean isReceiverKeysNotEmpty = receiverPublicKeys.size() > 0;
-        if (isReceiverKeysNotEmpty) {
+        EncryptionMessageRequest encryptionMessage = request.getEncryptionMessage();
+        if (encryptionMessage != null) {
+            final String password = encryptionMessage.getPassword();
+            encryptionMessage.setPassword(null);
+            request.setEncryptionMessage(encryptionMessage);
+            request.setSubject(PGPManager.encryptGPG(request.getSubject(), password));
+            request.setContent(PGPManager.encryptGPG(request.getContent(), password));
+        } else if (receiverPublicKeys.size() > 0) {
             String[] publicKeys = receiverPublicKeys.toArray(new String[0]);
             request.setSubject(PGPManager.encrypt(request.getSubject(), publicKeys));
             request.setContent(PGPManager.encrypt(request.getContent(), publicKeys));
         }
-        request.setEncrypted(isReceiverKeysNotEmpty);
-        request.setSubjectEncrypted(isReceiverKeysNotEmpty);
+
+        boolean isMessageEncrypted = encryptionMessage != null || receiverPublicKeys.size() > 0;
+        request.setSubjectEncrypted(isMessageEncrypted);
+        request.setEncrypted(isMessageEncrypted);
         request.setUpdatedAt(new Date());
 
         MessagesResult messagesResult;
-        boolean isDraft = isDraft(request);
         try {
             messagesResult = CTemplarApp.getUserRepository().updateMessageSync(messageId, request);
         } catch (Throwable e) {
@@ -269,16 +272,17 @@ public class SendMailService extends IntentService {
     }
 
     private MessageAttachment updateAttachment(
-            final MessageAttachmentProvider attachmentProvider,
+            final AttachmentProvider attachmentsProvider,
             final List<String> publicKeyList,
             final long messageId,
-            final long mailboxId
+            final long mailboxId,
+            final EncryptionMessageProvider encryptionMessageProvider
     ) {
         File cacheDir = getCacheDir();
         File decryptedFile = null;
         boolean isCachedFile = false;
 
-        String localFilePath = attachmentProvider.getFilePath();
+        String localFilePath = attachmentsProvider.getFilePath();
         if (EditTextUtils.isNotEmpty(localFilePath)) {
             decryptedFile = new File(localFilePath);
         }
@@ -286,7 +290,7 @@ public class SendMailService extends IntentService {
         if (decryptedFile == null || !decryptedFile.exists()) {
             URL url;
             try {
-                url = new URL(attachmentProvider.getDocumentLink());
+                url = new URL(attachmentsProvider.getDocumentUrl());
             } catch (MalformedURLException e) {
                 Timber.e(e, "updateAttachment: MalformedURLException");
                 return null;
@@ -345,7 +349,7 @@ public class SendMailService extends IntentService {
                 Timber.e(e, "updateAttachment: create decrypted tmp file error");
                 return null;
             }
-            if (attachmentProvider.isEncrypted()) {
+            if (attachmentsProvider.isEncrypted()) {
                 MailboxEntity mailboxEntity = CTemplarApp.getAppDatabase().mailboxDao().getById(mailboxId);
                 String privateKey = mailboxEntity.getPrivateKey();
                 String password = CTemplarApp.getUserRepository().getUserPassword();
@@ -357,12 +361,14 @@ public class SendMailService extends IntentService {
             isCachedFile = true;
         }
 
-        String documentLink = attachmentProvider.getDocumentLink();
-        String type = AppUtils.getMimeType(documentLink);
+        String documentUrl = attachmentsProvider.getDocumentUrl();
+        String type = attachmentsProvider.getFileType() == null
+                ? AppUtils.getMimeType(documentUrl) : attachmentsProvider.getFileType();
         if (type == null) {
             type = "";
         }
-        String fileName = AppUtils.getFileNameFromURL(documentLink);
+        String fileName = attachmentsProvider.getName() == null
+                ? AppUtils.getFileNameFromURL(documentUrl) : attachmentsProvider.getName();
         MediaType mediaType = MediaType.parse(type);
 
         File encryptedFile;
@@ -373,23 +379,31 @@ public class SendMailService extends IntentService {
             return null;
         }
         RequestBody attachmentPart;
-        if (publicKeyList.isEmpty()) {
-            attachmentPart = RequestBody.create(mediaType, decryptedFile);
-        } else {
+        if (encryptionMessageProvider != null) {
+            final String password = encryptionMessageProvider.getPassword();
+            EncryptUtils.encryptAttachmentGPG(decryptedFile, encryptedFile, password);
+            attachmentPart = RequestBody.create(mediaType, encryptedFile);
+        } else if (publicKeyList.size() > 0) {
             EncryptUtils.encryptAttachment(decryptedFile, encryptedFile, publicKeyList);
             attachmentPart = RequestBody.create(mediaType, encryptedFile);
+        } else {
+            attachmentPart = RequestBody.create(mediaType, decryptedFile);
         }
 
-        final MultipartBody.Part multipartAttachment = MultipartBody.Part.createFormData("document", fileName, attachmentPart);
+        final MultipartBody.Part document = MultipartBody.Part.createFormData("document", fileName, attachmentPart);
 
         MessageAttachment result;
         try {
             result = CTemplarApp.getUserRepository()
                     .updateAttachmentSync(
-                            attachmentProvider.getId(),
-                            multipartAttachment,
+                            attachmentsProvider.getId(),
+                            document,
                             messageId,
-                            true
+                            false,
+                            true,
+                            type,
+                            fileName,
+                            decryptedFile.length()
                     );
         } catch (Throwable e) {
             if (e instanceof HttpException) {
@@ -412,32 +426,30 @@ public class SendMailService extends IntentService {
         return result;
     }
 
-    private boolean isDraft(SendMessageRequest sendMessageRequest) {
-        return DRAFT.equals(sendMessageRequest.getFolder());
-    }
-
     public static void sendMessage(
-            Context context,
-            long messageId,
-            SendMessageRequestProvider sendMessageRequestProvider,
-            String[] publicKeyList,
-            MessageAttachmentProvider[] attachmentProviderList,
-            EncryptionMessageProvider encryptionMessageProvider
+            final Context context,
+            final long messageId,
+            final SendMessageRequestProvider sendMessageRequestProvider,
+            final String[] publicKeyList,
+            final AttachmentProvider[] attachmentsProvider,
+            final EncryptionMessageProvider encryptionMessageProvider,
+            final boolean draftMessage
     ) {
         Intent intent = new Intent(SEND_MAIL_ACTION);
         intent.setComponent(new ComponentName(context, SendMailService.class));
         intent.putExtra(MESSAGE_ID_EXTRA_KEY, messageId);
         intent.putExtra(MESSAGE_PROVIDER_EXTRA_KEY, GENERAL_GSON.toJson(sendMessageRequestProvider));
         intent.putExtra(PUBLIC_KEYS_EXTRA_KEY, publicKeyList);
-        String[] attachmentsStringArray = new String[attachmentProviderList.length];
-        for (int i = 0, count = attachmentProviderList.length; i < count; ++i) {
-            MessageAttachmentProvider attachmentProvider = attachmentProviderList[i];
+        String[] attachmentsStringArray = new String[attachmentsProvider.length];
+        for (int i = 0, count = attachmentsProvider.length; i < count; ++i) {
+            AttachmentProvider attachmentProvider = attachmentsProvider[i];
             attachmentsStringArray[i] = GENERAL_GSON.toJson(attachmentProvider);
         }
         intent.putExtra(ATTACHMENTS_EXTRA_KEY, attachmentsStringArray);
         if (encryptionMessageProvider != null) {
             intent.putExtra(EXTERNAL_ENCRYPTION_EXTRA_KEY, GENERAL_GSON.toJson(encryptionMessageProvider));
         }
+        intent.putExtra(DRAFT_MESSAGE, draftMessage);
         LaunchUtils.launchService(context, intent);
     }
 }

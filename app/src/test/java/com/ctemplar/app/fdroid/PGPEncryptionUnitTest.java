@@ -1,13 +1,17 @@
 package com.ctemplar.app.fdroid;
 
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openpgp.PGPException;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.security.Security;
 
 import com.ctemplar.app.fdroid.net.entity.PGPKeyEntity;
 import com.ctemplar.app.fdroid.security.PGPManager;
+import com.ctemplar.app.fdroid.util.EncryptionUtils;
+import com.ctemplar.app.fdroid.util.ForeignAlphabetsStringGenerator;
 import com.ctemplar.app.fdroid.utils.EncodeUtils;
 
 import static org.junit.Assert.assertEquals;
@@ -17,8 +21,6 @@ import static org.junit.Assert.assertTrue;
 
 public class PGPEncryptionUnitTest {
     private static final int STRING_LENGTH = 1000;
-    private static final String BEGIN_PGP_MESSAGE = "-----BEGIN PGP MESSAGE-----";
-    private static final String END_PGP_MESSAGE = "-----END PGP MESSAGE-----";
 
     private PGPKeyEntity pgpKeyEntity;
     private PGPKeyEntity changedPgpKeyEntity;
@@ -28,6 +30,8 @@ public class PGPEncryptionUnitTest {
 
     @Before
     public void setUp() throws IOException, PGPException {
+        Security.addProvider(new BouncyCastleProvider());
+
         String keyRingId = EncodeUtils.randomString(6);
         keyRingPassword = EncodeUtils.randomString(8);
         keyRingNewPassword = EncodeUtils.randomString(8);
@@ -46,12 +50,12 @@ public class PGPEncryptionUnitTest {
     @Test
     public void textEncryptionAndDecryptionWithArmoring() {
         String originalTextString = ForeignAlphabetsStringGenerator.randomString(STRING_LENGTH);
-        String[] publicKeys = { pgpKeyEntity.getPublicKey() };
+        String[] publicKeys = {pgpKeyEntity.getPublicKey()};
         String privateKey = pgpKeyEntity.getPrivateKey();
 
         String encryptedTextString = PGPManager.encrypt(originalTextString, publicKeys);
 
-        assertTrue(checkEncryptedMessage(encryptedTextString.trim()));
+        assertTrue(EncryptionUtils.checkEncryptedMessage(encryptedTextString.trim()));
 
         String decryptedTextString = PGPManager.decrypt(encryptedTextString,
                 privateKey, keyRingPassword);
@@ -62,7 +66,7 @@ public class PGPEncryptionUnitTest {
     @Test
     public void textEncryptionAndDecryptionWithoutArmoring() {
         String originalTextString = ForeignAlphabetsStringGenerator.randomString(STRING_LENGTH);
-        String[] publicKeys = { pgpKeyEntity.getPublicKey() };
+        String[] publicKeys = {pgpKeyEntity.getPublicKey()};
         String privateKey = pgpKeyEntity.getPrivateKey();
 
         byte[] encryptedTextBytes = PGPManager.encrypt(originalTextString.getBytes(),
@@ -80,22 +84,16 @@ public class PGPEncryptionUnitTest {
     @Test
     public void textEncryptionAndDecryptionWithChangedPass() {
         String originalTextString = ForeignAlphabetsStringGenerator.randomString(STRING_LENGTH);
-        String[] publicKeys = { pgpKeyEntity.getPublicKey() };
+        String[] publicKeys = {pgpKeyEntity.getPublicKey()};
         String privateKey = changedPgpKeyEntity.getPrivateKey();
 
         String encryptedTextString = PGPManager.encrypt(originalTextString, publicKeys);
 
-        assertTrue(checkEncryptedMessage(encryptedTextString.trim()));
+        assertTrue(EncryptionUtils.checkEncryptedMessage(encryptedTextString.trim()));
 
         String decryptedTextString = PGPManager.decrypt(encryptedTextString,
                 privateKey, keyRingNewPassword);
 
         assertEquals(originalTextString, decryptedTextString);
-    }
-
-    private boolean checkEncryptedMessage(String message) {
-        boolean startWith = message.startsWith(BEGIN_PGP_MESSAGE);
-        boolean endWith = message.endsWith(END_PGP_MESSAGE);
-        return startWith && endWith;
     }
 }

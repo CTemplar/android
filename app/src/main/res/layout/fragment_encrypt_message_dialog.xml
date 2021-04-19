@@ -20,8 +20,8 @@
             android:layout_marginStart="16dp"
             android:layout_marginLeft="16dp"
             android:src="@drawable/ic_close"
-            android:tint="@color/secondaryTextColor"
-            android:background="@drawable/state_pressed_ripple" />
+            android:background="@drawable/state_pressed_ripple"
+            app:tint="@color/secondaryTextColor" />
 
     </RelativeLayout>
 

@@ -1,40 +1,44 @@
 package com.ctemplar.app.fdroid.repository.provider;
 
-import com.google.gson.annotations.SerializedName;
+import androidx.annotation.Nullable;
 
-import com.ctemplar.app.fdroid.net.response.messages.EncryptionMessage;
+import java.util.Date;
+
+import com.ctemplar.app.fdroid.net.request.EncryptionMessageRequest;
+import com.ctemplar.app.fdroid.net.response.messages.EncryptionMessageResponse;
+import com.ctemplar.app.fdroid.repository.entity.EncryptionMessageEntity;
 
 public class EncryptionMessageProvider {
-
-    @SerializedName("id")
     private long id;
-
-    @SerializedName("random_secret")
     private String randomSecret;
-
-    @SerializedName("password")
-    private String password;
-
-    @SerializedName("password_hint")
+    private boolean isDeleted;
+    private Date deletedAt;
     private String passwordHint;
-
-    @SerializedName("expiry_hours")
-    private int expireHours;
-
-    @SerializedName("private_key")
     private String privateKey;
-
-    @SerializedName("public_key")
     private String publicKey;
-
-    @SerializedName("created")
-    private String created;
-
-    @SerializedName("expires")
-    private String expires;
-
-    @SerializedName("message")
+    private Date createdAt;
+    private Date expires;
+    private int expiryHours;
     private long message;
+    private String password;
+    private String decryptedMessage;
+
+    public EncryptionMessageProvider() { }
+
+    public EncryptionMessageProvider(long id, String randomSecret, boolean isDeleted, Date deletedAt, String passwordHint, String privateKey, String publicKey, Date createdAt, Date expires, int expiryHours, long message, String password) {
+        this.id = id;
+        this.randomSecret = randomSecret;
+        this.isDeleted = isDeleted;
+        this.deletedAt = deletedAt;
+        this.passwordHint = passwordHint;
+        this.privateKey = privateKey;
+        this.publicKey = publicKey;
+        this.createdAt = createdAt;
+        this.expires = expires;
+        this.expiryHours = expiryHours;
+        this.message = message;
+        this.password = password;
+    }
 
     public long getId() {
         return id;
@@ -52,12 +56,20 @@ public class EncryptionMessageProvider {
         this.randomSecret = randomSecret;
     }
 
-    public String getPassword() {
-        return password;
+    public boolean isDeleted() {
+        return isDeleted;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setDeleted(boolean deleted) {
+        isDeleted = deleted;
+    }
+
+    public Date getDeletedAt() {
+        return deletedAt;
+    }
+
+    public void setDeletedAt(Date deletedAt) {
+        this.deletedAt = deletedAt;
     }
 
     public String getPasswordHint() {
@@ -66,14 +78,6 @@ public class EncryptionMessageProvider {
 
     public void setPasswordHint(String passwordHint) {
         this.passwordHint = passwordHint;
-    }
-
-    public int getExpireHours() {
-        return expireHours;
-    }
-
-    public void setExpireHours(int expireHours) {
-        this.expireHours = expireHours;
     }
 
     public String getPrivateKey() {
@@ -92,20 +96,28 @@ public class EncryptionMessageProvider {
         this.publicKey = publicKey;
     }
 
-    public String getCreated() {
-        return created;
+    public Date getCreatedAt() {
+        return createdAt;
     }
 
-    public void setCreated(String created) {
-        this.created = created;
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
     }
 
-    public String getExpires() {
+    public Date getExpires() {
         return expires;
     }
 
-    public void setExpires(String expires) {
+    public void setExpires(Date expires) {
         this.expires = expires;
+    }
+
+    public int getExpiryHours() {
+        return expiryHours;
+    }
+
+    public void setExpiryHours(int expiryHours) {
+        this.expiryHours = expiryHours;
     }
 
     public long getMessage() {
@@ -116,37 +128,97 @@ public class EncryptionMessageProvider {
         this.message = message;
     }
 
+    public String getPassword() {
+        return password;
+    }
 
-    public static EncryptionMessageProvider fromResponse(EncryptionMessage response) {
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    @Nullable
+    public static EncryptionMessageEntity fromResponseToEntity(@Nullable EncryptionMessageResponse response) {
         if (response == null) {
             return null;
         }
-        EncryptionMessageProvider result = new EncryptionMessageProvider();
-        result.setId(response.getId());
-        result.setRandomSecret(response.getRandomSecret());
-        result.setPassword(response.getPassword());
-        result.setPasswordHint(response.getPasswordHint());
-        result.setExpireHours(response.getExpireHours());
-        result.setPrivateKey(response.getPrivateKey());
-        result.setPublicKey(response.getPublicKey());
-        result.setCreated(response.getCreated());
-        result.setExpires(response.getExpires());
-        result.setMessage(response.getMessage());
-        return result;
+        EncryptionMessageEntity entity = new EncryptionMessageEntity();
+        entity.setId(response.getId());
+        entity.setRandomSecret(response.getRandomSecret());
+        entity.setDeleted(response.isDeleted());
+        entity.setDeletedAt(response.getDeletedAt());
+        entity.setPasswordHint(response.getPasswordHint());
+        entity.setPrivateKey(response.getPrivateKey());
+        entity.setPublicKey(response.getPublicKey());
+        entity.setCreatedAt(response.getCreatedAt());
+        entity.setExpires(response.getExpires());
+        entity.setExpiryHours(response.getExpiryHours());
+        entity.setMessage(response.getMessage());
+        entity.setPassword(response.getPassword());
+        return entity;
     }
 
-    public EncryptionMessage toRequest() {
-        EncryptionMessage request = new EncryptionMessage();
-        request.setId(getId());
-        request.setRandomSecret(getRandomSecret());
-        request.setPassword(getPassword());
-        request.setPasswordHint(getPasswordHint());
-        request.setExpireHours(getExpireHours());
-        request.setPrivateKey(getPrivateKey());
-        request.setPublicKey(getPublicKey());
-        request.setCreated(getCreated());
-        request.setExpires(getExpires());
-        request.setMessage(getMessage());
+    @Nullable
+    public static EncryptionMessageProvider fromEntityToProvider(@Nullable EncryptionMessageEntity entity) {
+        if (entity == null) {
+            return null;
+        }
+        EncryptionMessageProvider provider = new EncryptionMessageProvider();
+        provider.setId(entity.getId());
+        provider.setRandomSecret(entity.getRandomSecret());
+        provider.setDeleted(entity.isDeleted());
+        provider.setDeletedAt(entity.getDeletedAt());
+        provider.setPasswordHint(entity.getPasswordHint());
+        provider.setPrivateKey(entity.getPrivateKey());
+        provider.setPublicKey(entity.getPublicKey());
+        provider.setCreatedAt(entity.getCreatedAt());
+        provider.setExpires(entity.getExpires());
+        provider.setExpiryHours(entity.getExpiryHours());
+        provider.setMessage(entity.getMessage());
+        provider.setPassword(entity.getPassword());
+        return provider;
+    }
+
+    @Nullable
+    public static EncryptionMessageProvider fromResponseToProvider(@Nullable EncryptionMessageResponse response) {
+        if (response == null) {
+            return null;
+        }
+        EncryptionMessageProvider provider = new EncryptionMessageProvider();
+        provider.setId(response.getId());
+        provider.setRandomSecret(response.getRandomSecret());
+        provider.setDeleted(response.isDeleted());
+        provider.setDeletedAt(response.getDeletedAt());
+        provider.setPasswordHint(response.getPasswordHint());
+        provider.setPrivateKey(response.getPrivateKey());
+        provider.setPublicKey(response.getPublicKey());
+        provider.setCreatedAt(response.getCreatedAt());
+        provider.setExpires(response.getExpires());
+        provider.setExpiryHours(response.getExpiryHours());
+        provider.setMessage(response.getMessage());
+        provider.setPassword(response.getPassword());
+        return provider;
+    }
+
+    public EncryptionMessageRequest toRequest() {
+        EncryptionMessageRequest request = new EncryptionMessageRequest();
+        request.setId(id);
+        request.setRandomSecret(randomSecret);
+        request.setPasswordHint(passwordHint);
+        request.setExpiryHours(expiryHours);
+        request.setMessage(message);
+        request.setPassword(password);
         return request;
+    }
+
+    public String getDecryptedMessage() {
+        return decryptedMessage;
+    }
+
+    public boolean isMessageDecrypted() {
+        return decryptedMessage != null;
+    }
+
+    public void setDecryptedMessage(String decryptedMessage) {
+        this.decryptedMessage = decryptedMessage;
     }
 }

@@ -2,7 +2,6 @@ package com.ctemplar.app.fdroid.repository;
 
 import androidx.room.TypeConverter;
 
-import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
@@ -10,6 +9,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.ctemplar.app.fdroid.repository.entity.AttachmentEntity;
+import com.ctemplar.app.fdroid.repository.entity.EncryptionMessageEntity;
 import com.ctemplar.app.fdroid.repository.entity.UserDisplayEntity;
 
 import static com.ctemplar.app.fdroid.utils.DateUtils.GENERAL_GSON;
@@ -22,7 +22,7 @@ public class Converters {
     }
 
     @TypeConverter
-    public static String fromList(List<String> list) {
+    public static String fromStringList(List<String> list) {
         return GENERAL_GSON.toJson(list);
     }
 
@@ -70,5 +70,17 @@ public class Converters {
     @TypeConverter
     public static Long dateToTimestamp(Date date) {
         return date == null ? null : date.getTime();
+    }
+
+    @TypeConverter
+    public static EncryptionMessageEntity stringToEncryptionMessage(String json) {
+        Type type = new TypeToken<EncryptionMessageEntity>() {}.getType();
+        return GENERAL_GSON.fromJson(json, type);
+    }
+
+    @TypeConverter
+    public static String encryptionMessageToString(EncryptionMessageEntity entity) {
+        Type type = new TypeToken<EncryptionMessageEntity>() {}.getType();
+        return GENERAL_GSON.toJson(entity, type);
     }
 }

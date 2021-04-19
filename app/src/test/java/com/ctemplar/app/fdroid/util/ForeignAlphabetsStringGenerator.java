@@ -1,4 +1,4 @@
-package com.ctemplar.app.fdroid;
+package com.ctemplar.app.fdroid.util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,8 +7,7 @@ import java.util.Random;
 import com.ctemplar.app.fdroid.utils.EncodeUtils;
 
 public class ForeignAlphabetsStringGenerator {
-
-    static String randomString(int length) {
+    public static String randomString(int length) {
         Random generator = new Random();
         int subLength = length / 5;
         String englishString = EncodeUtils.randomString(subLength);

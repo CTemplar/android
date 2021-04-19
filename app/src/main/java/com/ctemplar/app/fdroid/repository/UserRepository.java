@@ -350,30 +350,51 @@ public class UserRepository {
     }
 
     public Observable<MessageAttachment> uploadAttachment(
-            MultipartBody.Part attachment,
-            long message, boolean isEncrypted
+            MultipartBody.Part document,
+            long message,
+            boolean isInline,
+            boolean isEncrypted,
+            String fileType,
+            String name,
+            long actualSize
     ) {
-        return service.uploadAttachment(attachment, message, isEncrypted)
+        return service.uploadAttachment(
+                document, message, isInline, isEncrypted, fileType, name, actualSize
+        )
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
     public Single<MessageAttachment> updateAttachment(
-            long id, MultipartBody.Part attachment,
-            long message, boolean isEncrypted
+            long id,
+            MultipartBody.Part document,
+            long message,
+            boolean isInline,
+            boolean isEncrypted,
+            String fileType,
+            String name,
+            long actualSize
     ) {
-        return service.updateAttachment(id, attachment, message, isEncrypted)
+        return service.updateAttachment(
+                id, document, message, isInline, isEncrypted, fileType, name, actualSize
+        )
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
     public MessageAttachment updateAttachmentSync(
             long id,
-            MultipartBody.Part attachment,
-            long message,
-            boolean isEncrypted
+            MultipartBody.Part document,
+            long messageId,
+            boolean isInline,
+            boolean isEncrypted,
+            String fileType,
+            String name,
+            long actualSize
     ) {
-        return service.updateAttachment(id, attachment, message, isEncrypted)
+        return service.updateAttachment(
+                id, document, messageId, isInline, isEncrypted, fileType, name, actualSize
+        )
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .blockingGet();

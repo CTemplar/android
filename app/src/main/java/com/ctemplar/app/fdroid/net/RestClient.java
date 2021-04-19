@@ -13,6 +13,7 @@ import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.converter.scalars.ScalarsConverterFactory;
 import timber.log.Timber;
 
 import static com.ctemplar.app.fdroid.utils.DateUtils.GENERAL_GSON;
@@ -26,6 +27,7 @@ public class RestClient {
                 .baseUrl(BuildConfig.BASE_URL)
                 .client(logLevel())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .addConverterFactory(ScalarsConverterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create(GENERAL_GSON))
                 .build();
 

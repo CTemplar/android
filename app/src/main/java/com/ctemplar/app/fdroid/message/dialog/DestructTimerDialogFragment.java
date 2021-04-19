@@ -1,4 +1,4 @@
-package com.ctemplar.app.fdroid.message;
+package com.ctemplar.app.fdroid.message.dialog;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -24,7 +24,7 @@ import com.ctemplar.app.fdroid.utils.DateUtils;
 public class DestructTimerDialogFragment extends DialogFragment {
     private Calendar calendar = Calendar.getInstance();
 
-    interface OnScheduleDestructTimerDelivery {
+    public interface OnScheduleDestructTimerDelivery {
         void onSchedule(Date date);
     }
 
