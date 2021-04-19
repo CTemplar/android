@@ -1,0 +1,5 @@
+* ECC encryption and key generation by default
+* Remote-encrypted link feature update
+* Improved work with attachments
+* Italian translation
+* Other improvements and fixes
