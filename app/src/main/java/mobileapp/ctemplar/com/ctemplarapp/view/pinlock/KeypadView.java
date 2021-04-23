@@ -7,9 +7,6 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import mobileapp.ctemplar.com.ctemplarapp.R;
-import mobileapp.ctemplar.com.ctemplarapp.utils.ThemeUtils;
-
 public class KeypadView extends RecyclerView {
     private PasscodeView passcodeView;
     private KeypadAdapter adapter;
@@ -18,14 +15,14 @@ public class KeypadView extends RecyclerView {
     private int pinLength = 4;
     private String pinCode = "";
 
-    private KeypadAdapter.OnNumClickListener onNumClickListener
+    private final KeypadAdapter.OnNumClickListener onNumClickListener
             = new KeypadAdapter.OnNumClickListener() {
         @Override
         public void onNumClicked(int keyValue) {
             if (pinCode.length() < pinLength) {
                 pinCode = pinCode.concat(String.valueOf(keyValue));
-                if (ispasscodeViewAttached()) {
-                    passcodeView.updatepasscode(pinCode.length());
+                if (isPasscodeViewAttached()) {
+                    passcodeView.updatePasscode(pinCode.length());
                 }
                 if (pinCode.length() == 1) {
                     adapter.setPinLength(pinCode.length());
@@ -46,14 +43,14 @@ public class KeypadView extends RecyclerView {
         }
     };
 
-    private KeypadAdapter.OnDeleteClickListener onDeleteClickListener
+    private final KeypadAdapter.OnDeleteClickListener onDeleteClickListener
             = new KeypadAdapter.OnDeleteClickListener() {
         @Override
         public void onDeleteClicked() {
             if (pinCode.length() > 0) {
                 pinCode = pinCode.substring(0, pinCode.length() - 1);
-                if (ispasscodeViewAttached()) {
-                    passcodeView.updatepasscode(pinCode.length());
+                if (isPasscodeViewAttached()) {
+                    passcodeView.updatePasscode(pinCode.length());
                 }
                 if (pinCode.length() == 0) {
                     adapter.setPinLength(pinCode.length());
@@ -105,7 +102,7 @@ public class KeypadView extends RecyclerView {
         adapter.setOnDeleteClickListener(onDeleteClickListener);
         setAdapter(adapter);
 
-        addItemDecoration(new RecyclerSpaceDecoration( 3));
+        addItemDecoration(new RecyclerSpaceDecoration(getContext(), 3));
         setOverScrollMode(OVER_SCROLL_NEVER);
     }
 
@@ -126,11 +123,11 @@ public class KeypadView extends RecyclerView {
         adapter.setPinLength(pinCode.length());
         adapter.notifyItemChanged(adapter.getItemCount() - 1);
         if (passcodeView != null) {
-            passcodeView.updatepasscode(pinCode.length());
+            passcodeView.updatePasscode(pinCode.length());
         }
     }
 
-    public boolean ispasscodeViewAttached() {
+    public boolean isPasscodeViewAttached() {
         return passcodeView != null;
     }
 

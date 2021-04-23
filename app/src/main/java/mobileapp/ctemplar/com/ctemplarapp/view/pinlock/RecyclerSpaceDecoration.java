@@ -1,6 +1,8 @@
 package mobileapp.ctemplar.com.ctemplarapp.view.pinlock;
 
+import android.content.Context;
 import android.graphics.Rect;
+import android.view.Surface;
 import android.view.View;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -8,13 +10,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import org.jetbrains.annotations.NotNull;
 
 import mobileapp.ctemplar.com.ctemplarapp.R;
-import mobileapp.ctemplar.com.ctemplarapp.utils.ThemeUtils;
-import timber.log.Timber;
+import mobileapp.ctemplar.com.ctemplarapp.utils.DisplayUtils;
 
 public class RecyclerSpaceDecoration extends RecyclerView.ItemDecoration {
+    private final int displayRotation;
     private final int spanCount;
 
-    public RecyclerSpaceDecoration(int spanCount) {
+    public RecyclerSpaceDecoration(Context context, int spanCount) {
+        this.displayRotation = DisplayUtils.getRotation(context);
         this.spanCount = spanCount;
     }
 
@@ -25,7 +28,7 @@ public class RecyclerSpaceDecoration extends RecyclerView.ItemDecoration {
 
         RecyclerView.LayoutManager layoutManger = parent.getLayoutManager();
         if (layoutManger != null && layoutManger.getWidth() != 0) {
-            int numberSize = (int) ThemeUtils.getDimension(parent.getContext(), R.dimen.number_button_size);
+            int numberSize = (int) DisplayUtils.getDimension(parent.getContext(), R.dimen.number_button_size);
             int layoutWidth = layoutManger.getWidth();
             int buttonSpace = numberSize * spanCount;
             int space = (layoutWidth - buttonSpace) / spanCount;
@@ -37,11 +40,15 @@ public class RecyclerSpaceDecoration extends RecyclerView.ItemDecoration {
                 outRect.right = space / 2;
             }
             if (position >= spanCount) {
-                outRect.top = space / 3;
+                if (displayRotation == Surface.ROTATION_90 || displayRotation == Surface.ROTATION_270) {
+                    outRect.top = 0;
+                } else {
+                    outRect.top = space / 3;
+                }
             }
         } else {
-            int keypadColumnSpace = (int) ThemeUtils.getDimension(parent.getContext(), R.dimen.keypad_column_space);
-            int keypadRowSpace = (int) ThemeUtils.getDimension(parent.getContext(), R.dimen.keypad_row_space);
+            int keypadColumnSpace = (int) DisplayUtils.getDimension(parent.getContext(), R.dimen.keypad_column_space);
+            int keypadRowSpace = (int) DisplayUtils.getDimension(parent.getContext(), R.dimen.keypad_row_space);
             outRect.left = column * keypadColumnSpace / spanCount;
             outRect.right = keypadColumnSpace - (column + 1) * keypadColumnSpace / spanCount;
             if (position >= spanCount) {
