@@ -61,11 +61,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
-        <com.ctemplar.app.fdroid.view.pinlock.PasscodeView
+        <mobileapp.ctemplar.com.ctemplarapp.view.pinlock.PasscodeView
             android:id="@+id/activity_pin_lock_pass_code_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="50dp" />
+            android:layout_marginTop="20dp" />
 
         <View
             android:layout_width="match_parent"
@@ -77,9 +77,9 @@
 
     </LinearLayout>
 
-    <com.ctemplar.app.fdroid.view.pinlock.KeypadView
+    <mobileapp.ctemplar.com.ctemplarapp.view.pinlock.KeypadView
         android:id="@+id/activity_pin_lock_key_pad_view"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"

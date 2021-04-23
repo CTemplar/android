@@ -68,8 +68,4 @@ public class ThemeUtils {
     public static boolean isModeNight(String key) {
         return "on".equals(key);
     }
-
-    public static float getDimension(Context context, @DimenRes int resourceId) {
-        return context.getResources().getDimension(resourceId);
-    }
 }
