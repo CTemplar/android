@@ -4,12 +4,13 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.Surface;
+import android.view.View;
 import android.widget.TextView;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import butterknife.BindView;
@@ -18,9 +19,9 @@ import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.login.LoginActivity;
 import mobileapp.ctemplar.com.ctemplarapp.main.MainActivityViewModel;
-import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserStore;
 import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
+import mobileapp.ctemplar.com.ctemplarapp.utils.DisplayUtils;
 import mobileapp.ctemplar.com.ctemplarapp.view.pinlock.KeypadAdapter;
 import mobileapp.ctemplar.com.ctemplarapp.view.pinlock.KeypadView;
 import mobileapp.ctemplar.com.ctemplarapp.view.pinlock.PasscodeView;
@@ -89,11 +90,14 @@ public class PINLockActivity extends BaseActivity {
         if (intent != null) {
             canBackPress = intent.getBooleanExtra(ALLOW_BACK_KEY, false);
         }
+        int displayRotation = DisplayUtils.getRotation(this);
         if (actionBar != null) {
             actionBar.setDisplayShowTitleEnabled(false);
             if (canBackPress) {
                 actionBar.setHomeButtonEnabled(true);
                 actionBar.setDisplayHomeAsUpEnabled(true);
+            } else if (displayRotation == Surface.ROTATION_90 || displayRotation == Surface.ROTATION_270) {
+                toolbar.setVisibility(View.GONE);
             }
         }
         userStore = CTemplarApp.getUserStore();
