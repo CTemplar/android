@@ -164,10 +164,11 @@ public class SendMailService extends IntentService {
         }
 
         // non-CTemplar receivers checking
-        if (publicKeyList.contains(null) && !draftMessage && encryptionMessageProvider == null) {
+        boolean publicKeyListContainsEmpty = publicKeyList.contains(null) || publicKeyList.contains("");
+        if (publicKeyListContainsEmpty && !draftMessage && encryptionMessageProvider == null) {
             publicKeyList.clear();
-        } else if (publicKeyList.contains(null)) {
-            publicKeyList.removeAll(Collections.singleton(null));
+        } else if (publicKeyListContainsEmpty) {
+            publicKeyList.removeAll(Arrays.asList(null, ""));
         }
 
         final List<MessageAttachment> messageAttachmentList = new ArrayList<>(attachmentsProvider.length);
