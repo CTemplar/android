@@ -18,6 +18,7 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
+import java.util.UUID;
 
 import io.reactivex.Observer;
 import io.reactivex.Single;
@@ -494,7 +495,7 @@ public class SendMessageActivityViewModel extends ViewModel {
         BufferedInputStream inputStream = new BufferedInputStream(downloadStream);
         File downloadedFile;
         try {
-            downloadedFile = File.createTempFile("attachment", ".ext", cacheDir);
+            downloadedFile = File.createTempFile(UUID.randomUUID().toString(), null, cacheDir);
         } catch (IOException e) {
             Timber.e(e, "remakeAttachment createTempFile error");
             return null;

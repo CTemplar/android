@@ -480,10 +480,6 @@ public class FileUtils {
         return intent;
     }
 
-    public static File getDownloadsDir() {
-        return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-    }
-
     public static File getDocumentCacheDir(@NonNull Context context) {
         File dir = new File(context.getCacheDir(), DOCUMENTS_DIR);
         if (!dir.exists()) {
@@ -537,7 +533,7 @@ public class FileUtils {
                 return null;
             }
         } catch (IOException e) {
-            Timber.w(e);
+            Timber.e(e);
             return null;
         }
 
