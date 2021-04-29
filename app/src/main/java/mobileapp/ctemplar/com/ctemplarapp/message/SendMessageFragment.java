@@ -542,8 +542,8 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         sendModel.getKeyResponse().observe(getViewLifecycleOwner(), keyResponse -> {
             if (keyResponse != null && keyResponse.getKeyResult() != null && keyResponse.getKeyResult().length > 0) {
                 publicKeyList = new ArrayList<>();
-                for (KeyResult key : keyResponse.getKeyResult()) {
-                    String emailPublicKey = key.getPublicKey();
+                for (KeyResult keyResult : keyResponse.getKeyResult()) {
+                    String emailPublicKey = keyResult.getPublicKey();
                     publicKeyList.add(emailPublicKey);
                 }
                 draftMessage = false;
@@ -559,7 +559,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         sendModel.getCreateMessageStatus()
                 .observe(getViewLifecycleOwner(), responseStatus -> {
                     if (responseStatus == null || responseStatus == ResponseStatus.RESPONSE_ERROR) {
-                        Toast.makeText(activity, getString(R.string.toast_message_not_created), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(activity, R.string.toast_message_not_created, Toast.LENGTH_SHORT).show();
                         finish();
                     }
                 });
@@ -570,7 +570,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
                         currentMessageId = messagesResult.getId();
                         grabForwardedAttachments();
                     } else {
-                        Toast.makeText(activity, getString(R.string.toast_message_not_created), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(activity, R.string.toast_message_not_created, Toast.LENGTH_SHORT).show();
                         finish();
                     }
                 });
@@ -580,9 +580,9 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         sendModel.getUploadAttachmentStatus()
                 .observe(getViewLifecycleOwner(), responseStatus -> {
                     if (responseStatus == ResponseStatus.RESPONSE_ERROR_TOO_LARGE) {
-                        Toast.makeText(activity, getString(R.string.error_upload_attachment_too_large), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(activity, R.string.error_upload_attachment_too_large, Toast.LENGTH_SHORT).show();
                     } else if (responseStatus == ResponseStatus.RESPONSE_ERROR) {
-                        Toast.makeText(activity, getString(R.string.error_upload_attachment), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(activity, R.string.error_upload_attachment, Toast.LENGTH_SHORT).show();
                     }
                     if (uploadProgress != null) {
                         uploadProgress.dismiss();
