@@ -12,23 +12,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
-import com.google.gson.JsonSyntaxException;
-
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-
 import com.ctemplar.app.fdroid.CTemplarApp;
 import com.ctemplar.app.fdroid.R;
 import com.ctemplar.app.fdroid.net.request.EncryptionMessageRequest;
@@ -46,13 +29,29 @@ import com.ctemplar.app.fdroid.utils.EncryptUtils;
 import com.ctemplar.app.fdroid.utils.FileUtils;
 import com.ctemplar.app.fdroid.utils.LaunchUtils;
 import com.ctemplar.app.fdroid.utils.ToastUtils;
+import com.google.gson.JsonSyntaxException;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
+
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.HttpException;
 import timber.log.Timber;
 
-import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.DRAFT;
 import static com.ctemplar.app.fdroid.utils.DateUtils.GENERAL_GSON;
 
 public class SendMailService extends IntentService {
@@ -164,10 +163,11 @@ public class SendMailService extends IntentService {
         }
 
         // non-CTemplar receivers checking
-        if (publicKeyList.contains(null) && !draftMessage && encryptionMessageProvider == null) {
+        boolean publicKeyListContainsEmpty = publicKeyList.contains(null) || publicKeyList.contains("");
+        if (publicKeyListContainsEmpty && !draftMessage && encryptionMessageProvider == null) {
             publicKeyList.clear();
-        } else if (publicKeyList.contains(null)) {
-            publicKeyList.removeAll(Collections.singleton(null));
+        } else if (publicKeyListContainsEmpty) {
+            publicKeyList.removeAll(Arrays.asList(null, ""));
         }
 
         final List<MessageAttachment> messageAttachmentList = new ArrayList<>(attachmentsProvider.length);
@@ -305,7 +305,7 @@ public class SendMailService extends IntentService {
             BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
             File downloadedFile;
             try {
-                downloadedFile = File.createTempFile("downloadedAttachment", ".ext", cacheDir);
+                downloadedFile = File.createTempFile(UUID.randomUUID().toString(), null, cacheDir);
             } catch (IOException e) {
                 Timber.e(e, "updateAttachment: create downloaded tmp file error");
                 return null;
@@ -344,7 +344,7 @@ public class SendMailService extends IntentService {
                 }
             }
             try {
-                decryptedFile = File.createTempFile("decryptedAttachment", ".ext", cacheDir);
+                decryptedFile = File.createTempFile(UUID.randomUUID().toString(), null, cacheDir);
             } catch (IOException e) {
                 Timber.e(e, "updateAttachment: create decrypted tmp file error");
                 return null;
@@ -373,7 +373,7 @@ public class SendMailService extends IntentService {
 
         File encryptedFile;
         try {
-            encryptedFile = File.createTempFile("encryptedAttachment", ".ext", cacheDir);
+            encryptedFile = File.createTempFile(UUID.randomUUID().toString(), null, cacheDir);
         } catch (IOException e) {
             Timber.e(e, "updateAttachment: create encrypted attachment error");
             return null;
@@ -390,7 +390,8 @@ public class SendMailService extends IntentService {
             attachmentPart = RequestBody.create(mediaType, decryptedFile);
         }
 
-        final MultipartBody.Part document = MultipartBody.Part.createFormData("document", fileName, attachmentPart);
+        final MultipartBody.Part document = MultipartBody.Part
+                .createFormData("document", fileName, attachmentPart);
 
         MessageAttachment result;
         try {

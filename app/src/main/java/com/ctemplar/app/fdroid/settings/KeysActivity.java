@@ -13,6 +13,8 @@ import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProvider;
@@ -27,7 +29,7 @@ import butterknife.BindView;
 import com.ctemplar.app.fdroid.BaseActivity;
 import com.ctemplar.app.fdroid.R;
 import com.ctemplar.app.fdroid.repository.entity.MailboxEntity;
-import com.ctemplar.app.fdroid.utils.PermissionCheck;
+import com.ctemplar.app.fdroid.utils.PermissionUtils;
 import timber.log.Timber;
 
 public class KeysActivity extends BaseActivity {
@@ -49,6 +51,15 @@ public class KeysActivity extends BaseActivity {
 
     private SettingsViewModel settingsViewModel;
     private List<MailboxEntity> mailboxEntityList;
+    private boolean isPrivate;
+
+    private final ActivityResultLauncher<String[]> downloadKeyPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), result -> {
+                if (result.containsValue(false)) {
+                    return;
+                }
+                downloadKey(isPrivate);
+            });
 
     @Override
     protected int getLayoutId() {
@@ -113,7 +124,9 @@ public class KeysActivity extends BaseActivity {
     }
 
     private void downloadKey(boolean isPrivate) {
-        if (!PermissionCheck.readAndWriteExternalStorage(this)) {
+        this.isPrivate = isPrivate;
+        if (!PermissionUtils.writeExternalStorage(this)) {
+            downloadKeyPermissionLauncher.launch(PermissionUtils.externalStoragePermissions());
             return;
         }
         int selectedItemPosition = mailboxSpinner.getSelectedItemPosition();
@@ -145,8 +158,7 @@ public class KeysActivity extends BaseActivity {
             return;
         }
 
-        String savedToast = isPrivate
-                ? getString(R.string.your_private_key_saved)
+        String savedToast = isPrivate ? getString(R.string.your_private_key_saved)
                 : getString(R.string.your_public_key_saved);
         Toast.makeText(this, savedToast, Toast.LENGTH_SHORT).show();
     }

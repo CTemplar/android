@@ -8,15 +8,13 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import org.jetbrains.annotations.NotNull;
+import com.ctemplar.app.fdroid.R;
+import com.ctemplar.app.fdroid.utils.EditTextUtils;
 
-import java.util.HashMap;
-import java.util.Map;
+import org.jetbrains.annotations.NotNull;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import com.ctemplar.app.fdroid.R;
-import com.ctemplar.app.fdroid.utils.EditTextUtils;
 
 public class KeypadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int VIEW_TYPE_NUMBER = 0;

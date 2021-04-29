@@ -485,7 +485,7 @@
                     android:paddingRight="12dp"
                     android:paddingTop="4dp"
                     android:paddingBottom="12dp"
-                    android:orientation="vertical"
+                    android:orientation="horizontal"
                     android:layout_below="@id/fragment_send_message_attachments_processing_text_view"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
