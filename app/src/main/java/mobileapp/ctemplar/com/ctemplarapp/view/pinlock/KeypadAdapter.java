@@ -10,9 +10,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import mobileapp.ctemplar.com.ctemplarapp.R;
@@ -25,7 +22,7 @@ public class KeypadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     private OnNumClickListener onNumClickListener;
     private OnDeleteClickListener onDeleteClickListener;
 
-    private int[] keyValues = getAdjustKeyValues(new int[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 0});
+    private int[] keyValues = getAdjustKeyValues(new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 0});
     private int pinLength;
 
     @NotNull
@@ -51,26 +48,28 @@ public class KeypadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     }
 
     private void setupNumberButtonHolder(NumberViewHolder holder, int position) {
-        if (holder != null) {
-            if (position == 9) {
-                holder.itemView.setVisibility(View.GONE);
-            } else {
-                int keyValue = keyValues[position];
-                holder.numberTextView.setText(String.valueOf(keyValue));
-                holder.numberHintTextView.setText(getKeyPadWordHint(keyValue));
-                holder.itemView.setVisibility(View.VISIBLE);
-                holder.itemView.setTag(keyValues[position]);
-            }
+        if (holder == null) {
+            return;
+        }
+        if (position == 9) {
+            holder.itemView.setVisibility(View.GONE);
+        } else {
+            int keyValue = keyValues[position];
+            holder.numberTextView.setText(String.valueOf(keyValue));
+            holder.numberHintTextView.setText(getKeyPadWordHint(keyValue));
+            holder.itemView.setVisibility(View.VISIBLE);
+            holder.itemView.setTag(keyValues[position]);
         }
     }
 
     private void setupDeleteButtonHolder(DeleteViewHolder holder) {
-        if (holder != null) {
-            if (pinLength > 0) {
-                holder.itemView.setVisibility(View.VISIBLE);
-            } else {
-                holder.itemView.setVisibility(View.GONE);
-            }
+        if (holder == null) {
+            return;
+        }
+        if (pinLength > 0) {
+            holder.itemView.setVisibility(View.VISIBLE);
+        } else {
+            holder.itemView.setVisibility(View.GONE);
         }
     }
 
@@ -199,12 +198,15 @@ public class KeypadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     public interface OnDeleteClickListener {
         void onDeleteClicked();
+
         void onDeleteLongClicked();
     }
 
     public interface KeypadListener {
         void onComplete(String pinCode);
+
         void onPINChanged(int pinLength, String changedPIN);
+
         void onEmpty();
     }
 }

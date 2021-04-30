@@ -24,6 +24,8 @@ import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -40,6 +42,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import mobileapp.ctemplar.com.ctemplarapp.ActivityInterface;
 import mobileapp.ctemplar.com.ctemplarapp.BuildConfig;
@@ -67,7 +71,7 @@ import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EncryptUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.FileUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.HtmlUtils;
-import mobileapp.ctemplar.com.ctemplarapp.utils.PermissionCheck;
+import mobileapp.ctemplar.com.ctemplarapp.utils.PermissionUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.SpaceTokenizer;
 import mobileapp.ctemplar.com.ctemplarapp.utils.ToastUtils;
 import okhttp3.MediaType;
@@ -75,7 +79,6 @@ import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import timber.log.Timber;
 
-import static android.app.Activity.RESULT_OK;
 import static mobileapp.ctemplar.com.ctemplarapp.message.SendMessageActivity.ATTACHMENT_LIST;
 import static mobileapp.ctemplar.com.ctemplarapp.message.SendMessageActivity.LAST_ACTION;
 import static mobileapp.ctemplar.com.ctemplarapp.message.SendMessageActivity.MESSAGE_ID;
@@ -85,8 +88,6 @@ import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderN
 import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.SENT;
 
 public class SendMessageFragment extends Fragment implements View.OnClickListener, ActivityInterface {
-    private final static int PICK_FILE_FROM_STORAGE = 1;
-
     private EditText subjectEditText;
     private EditText composeEditText;
 
@@ -138,6 +139,25 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
     private final EncryptMessageDialogFragment encryptMessageDialogFragment = new EncryptMessageDialogFragment();
 
     private MessageSendAttachmentAdapter messageSendAttachmentAdapter;
+
+    private final ActivityResultLauncher<String[]> pickAttachmentPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), result -> {
+                if (result.containsValue(false)) {
+                    return;
+                }
+                onClickPickAttachment();
+            });
+
+    private final ActivityResultLauncher<String> pickAttachmentResultLauncher =
+            registerForActivityResult(new ActivityResultContracts.GetContent(), attachmentUri -> {
+                if (attachmentUri == null) {
+                    Toast.makeText(getActivity(), R.string.toast_attachment_unable_read_path,
+                            Toast.LENGTH_SHORT).show();
+                    Timber.e("onActivityResult attachmentUri is null");
+                    return;
+                }
+                uploadAttachment(attachmentUri);
+            });
 
     private final DelayedDeliveryDialogFragment.OnScheduleDelayedDelivery onScheduleDelayedDelivery
             = new DelayedDeliveryDialogFragment.OnScheduleDelayedDelivery() {
@@ -355,22 +375,6 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == PICK_FILE_FROM_STORAGE && resultCode == RESULT_OK
-                && data != null && data.getData() != null) {
-            Uri attachmentUri = data.getData();
-            if (attachmentUri != null) {
-                uploadAttachment(attachmentUri);
-            } else {
-                Toast.makeText(getActivity(), getString(R.string.toast_attachment_unable_read_path), Toast.LENGTH_SHORT).show();
-                Timber.e("onActivityResult: attachmentUri is null");
-            }
-        }
-    }
-
-    @Override
     public void onPause() {
         super.onPause();
         if (draftMessage) {
@@ -398,7 +402,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
                 onClickSend();
                 break;
             case R.id.fragment_send_message_attachment_layout:
-                onClickAttachment();
+                onClickPickAttachment();
                 break;
             case R.id.fragment_send_message_to_add_button:
                 onClickAddReceiver();
@@ -505,12 +509,12 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         sendModel.getEmailPublicKeys(publicKeysRequest);
     }
 
-    public void onClickAttachment() {
-        if (PermissionCheck.readAndWriteExternalStorage(getActivity())) {
-            Intent chooseIntent = new Intent(Intent.ACTION_GET_CONTENT);
-            chooseIntent.setType("*/*");
-            startActivityForResult(chooseIntent, PICK_FILE_FROM_STORAGE);
+    public void onClickPickAttachment() {
+        if (!PermissionUtils.readExternalStorage(getActivity())) {
+            pickAttachmentPermissionLauncher.launch(PermissionUtils.externalStoragePermissions());
+            return;
         }
+        pickAttachmentResultLauncher.launch("*/*");
     }
 
     public void onClickAddReceiver() {
@@ -538,8 +542,8 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         sendModel.getKeyResponse().observe(getViewLifecycleOwner(), keyResponse -> {
             if (keyResponse != null && keyResponse.getKeyResult() != null && keyResponse.getKeyResult().length > 0) {
                 publicKeyList = new ArrayList<>();
-                for (KeyResult key : keyResponse.getKeyResult()) {
-                    String emailPublicKey = key.getPublicKey();
+                for (KeyResult keyResult : keyResponse.getKeyResult()) {
+                    String emailPublicKey = keyResult.getPublicKey();
                     publicKeyList.add(emailPublicKey);
                 }
                 draftMessage = false;
@@ -555,7 +559,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         sendModel.getCreateMessageStatus()
                 .observe(getViewLifecycleOwner(), responseStatus -> {
                     if (responseStatus == null || responseStatus == ResponseStatus.RESPONSE_ERROR) {
-                        Toast.makeText(activity, getString(R.string.toast_message_not_created), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(activity, R.string.toast_message_not_created, Toast.LENGTH_SHORT).show();
                         finish();
                     }
                 });
@@ -566,7 +570,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
                         currentMessageId = messagesResult.getId();
                         grabForwardedAttachments();
                     } else {
-                        Toast.makeText(activity, getString(R.string.toast_message_not_created), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(activity, R.string.toast_message_not_created, Toast.LENGTH_SHORT).show();
                         finish();
                     }
                 });
@@ -576,9 +580,9 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         sendModel.getUploadAttachmentStatus()
                 .observe(getViewLifecycleOwner(), responseStatus -> {
                     if (responseStatus == ResponseStatus.RESPONSE_ERROR_TOO_LARGE) {
-                        Toast.makeText(activity, getString(R.string.error_upload_attachment_too_large), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(activity, R.string.error_upload_attachment_too_large, Toast.LENGTH_SHORT).show();
                     } else if (responseStatus == ResponseStatus.RESPONSE_ERROR) {
-                        Toast.makeText(activity, getString(R.string.error_upload_attachment), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(activity, R.string.error_upload_attachment, Toast.LENGTH_SHORT).show();
                     }
                     if (uploadProgress != null) {
                         uploadProgress.dismiss();
@@ -815,6 +819,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
     private void uploadAttachment(Uri attachmentUri) {
         Activity activity = getActivity();
         if (activity == null) {
+            Timber.e("activity is null");
             return;
         }
         if (attachmentUri == null) {
@@ -830,7 +835,8 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         try {
             attachmentFile = new File(attachmentPath);
         } catch (Exception e) {
-            Toast.makeText(getActivity(), R.string.toast_attachment_unable_read_file, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), R.string.toast_attachment_unable_read_file,
+                    Toast.LENGTH_SHORT).show();
             return;
         }
         String type = activity.getContentResolver().getType(attachmentUri);
@@ -848,7 +854,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         RequestBody attachmentPart;
         try {
             File cacheDir = getActivity().getCacheDir();
-            File encryptedFile = File.createTempFile("attachment", ".ext", cacheDir);
+            File encryptedFile = File.createTempFile(UUID.randomUUID().toString(), null, cacheDir);
             EncryptUtils.encryptAttachment(attachmentFile, encryptedFile, Collections.singletonList(mailboxPublicKey));
             attachmentPart = RequestBody.create(mediaType, encryptedFile);
         } catch (IOException e) {

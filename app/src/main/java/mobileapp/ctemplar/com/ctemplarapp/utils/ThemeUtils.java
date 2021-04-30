@@ -8,7 +8,6 @@ import android.view.WindowManager;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 
-import androidx.annotation.DimenRes;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.content.ContextCompat;
 import androidx.webkit.WebSettingsCompat;
@@ -67,9 +66,5 @@ public class ThemeUtils {
 
     public static boolean isModeNight(String key) {
         return "on".equals(key);
-    }
-
-    public static float getDimension(Context context, @DimenRes int resourceId) {
-        return context.getResources().getDimension(resourceId);
     }
 }

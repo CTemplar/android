@@ -11,7 +11,7 @@ import androidx.annotation.Nullable;
 import androidx.core.view.ViewCompat;
 
 import mobileapp.ctemplar.com.ctemplarapp.R;
-import mobileapp.ctemplar.com.ctemplarapp.utils.ThemeUtils;
+import mobileapp.ctemplar.com.ctemplarapp.utils.DisplayUtils;
 
 public class PasscodeView extends LinearLayout {
     private final int dotDiameter;
@@ -29,8 +29,8 @@ public class PasscodeView extends LinearLayout {
 
     public PasscodeView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        dotDiameter = (int) ThemeUtils.getDimension(getContext(), R.dimen.passcode_dot_diameter);
-        dotSpacing = (int) ThemeUtils.getDimension(getContext(), R.dimen.passcode_dot_spacing);
+        dotDiameter = (int) DisplayUtils.getDimension(getContext(), R.dimen.passcode_dot_diameter);
+        dotSpacing = (int) DisplayUtils.getDimension(getContext(), R.dimen.passcode_dot_spacing);
         initView();
     }
 
@@ -47,7 +47,7 @@ public class PasscodeView extends LinearLayout {
         requestLayout();
     }
 
-    public void updatepasscode(int length) {
+    public void updatePasscode(int length) {
         if (length > 0) {
             if (length > previousLength) {
                 View view = new View(getContext());
