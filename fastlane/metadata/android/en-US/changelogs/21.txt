@@ -1,0 +1,3 @@
+* Increased the minimum and maximum supported OS versions to provide better security and performance
+* Improved work with device storage on latest OS'
+* Other improvements and fixes
