@@ -1,59 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_marginTop="5dp"
-    android:layout_marginBottom="5dp">
+    android:layout_marginBottom="5dp"
+    android:layout_marginEnd="5dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/item_message_attachment_send_tile"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="10dp"
         android:background="@drawable/item_attachment_background"
+        android:padding="10dp"
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:id="@+id/item_message_attachment_send_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="4dp"
             android:layout_marginEnd="4dp"
+            android:ellipsize="end"
+            android:fontFamily="@font/lato_regular"
+            android:lines="1"
             android:text="filename.doc"
             android:textColor="?android:textColorSecondary"
-            android:fontFamily="@font/lato_regular"
             android:textSize="14sp"
-            android:lines="1"
-            android:ellipsize="end"
-            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintRight_toLeftOf="@id/item_message_attachment_delete" />
+            app:layout_constraintRight_toLeftOf="@id/item_message_attachment_delete"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/item_message_attachment_send_size"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="(340 K)"
-            android:layout_marginLeft="3dp"
-            android:fontFamily="@font/lato_bold"
-            android:textSize="14sp"
-            android:lines="1"
+            android:layout_marginStart="3dp"
             android:ellipsize="end"
+            android:fontFamily="@font/lato_bold"
+            android:lines="1"
+            android:text="(340 K)"
             android:textColor="?android:textColorSecondary"
+            android:textSize="14sp"
             android:visibility="gone"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent" />
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
             android:id="@+id/item_message_attachment_delete"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_close"
-            android:tint="?android:textColorSecondary"
-            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintRight_toRightOf="parent" />
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="?android:textColorSecondary" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

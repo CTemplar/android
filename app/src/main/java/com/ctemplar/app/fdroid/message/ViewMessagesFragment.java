@@ -24,12 +24,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
@@ -46,7 +49,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.ctemplar.app.fdroid.ActivityInterface;
-import com.ctemplar.app.fdroid.BuildConfig;
 import com.ctemplar.app.fdroid.R;
 import com.ctemplar.app.fdroid.main.MainActivity;
 import com.ctemplar.app.fdroid.main.MainActivityViewModel;
@@ -64,7 +66,7 @@ import com.ctemplar.app.fdroid.utils.DateUtils;
 import com.ctemplar.app.fdroid.utils.EncryptUtils;
 import com.ctemplar.app.fdroid.utils.FileUtils;
 import com.ctemplar.app.fdroid.utils.HtmlUtils;
-import com.ctemplar.app.fdroid.utils.PermissionCheck;
+import com.ctemplar.app.fdroid.utils.PermissionUtils;
 import com.ctemplar.app.fdroid.utils.ToastUtils;
 import timber.log.Timber;
 
@@ -100,10 +102,20 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
     private ImageView starImageView;
     private View loadProgress;
     private ViewGroup messageActionsLayout;
+
+    private final ActivityResultLauncher<String[]> downloadAttachmentPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), result -> {
+                if (result.containsValue(false)) {
+                    return;
+                }
+                //
+            });
+
     private final Map<Long, Pair<AttachmentProvider, MessageProvider>> downloadMap = new HashMap<>();
     private final OnAttachmentDownloading onAttachmentDownloading = (attachment, message) -> {
         Context context = getContext();
         if (context == null) {
+            Timber.e("Context is null");
             return;
         }
         String documentUrl = attachment.getDocumentUrl();
@@ -112,11 +124,11 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
             return;
         }
 
-        File externalStorageFile = Environment.getExternalStoragePublicDirectory(
+        File externalFilesDir = Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_DOWNLOADS);
         String originalFileName = attachment.getName() == null
                 ? AppUtils.getFileNameFromURL(documentUrl) : attachment.getName();
-        File generatedFile = FileUtils.generateFileName(originalFileName, externalStorageFile);
+        File generatedFile = FileUtils.generateFileName(originalFileName, externalFilesDir);
         String fileName = generatedFile == null ? originalFileName : generatedFile.getName();
         String downloadFileName = attachment.isEncrypted() ? fileName + ENCRYPTED_EXT : fileName;
 
@@ -124,18 +136,20 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
         documentRequest.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, downloadFileName);
         documentRequest.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
 
-        if (PermissionCheck.readAndWriteExternalStorage(context)) {
-            DownloadManager downloadManager = (DownloadManager) context.getApplicationContext()
-                    .getSystemService(DOWNLOAD_SERVICE);
-            if (downloadManager == null) {
-                Timber.e("downloadManager is null");
-                return;
-            }
-            long downloadId = downloadManager.enqueue(documentRequest);
-            attachment.setName(fileName);
-            downloadMap.put(downloadId, new Pair<>(attachment, message));
-            Toast.makeText(context, R.string.toast_download_started, Toast.LENGTH_SHORT).show();
+        if (!PermissionUtils.readExternalStorage(context) || !PermissionUtils.writeExternalStorage(context)) {
+            downloadAttachmentPermissionLauncher.launch(PermissionUtils.externalStoragePermissions());
+            return;
         }
+        DownloadManager downloadManager = (DownloadManager) context.getApplicationContext()
+                .getSystemService(DOWNLOAD_SERVICE);
+        if (downloadManager == null) {
+            Timber.e("downloadManager is null");
+            return;
+        }
+        long downloadId = downloadManager.enqueue(documentRequest);
+        attachment.setName(fileName);
+        downloadMap.put(downloadId, new Pair<>(attachment, message));
+        Toast.makeText(context, R.string.toast_download_started, Toast.LENGTH_SHORT).show();
     };
 
 
@@ -619,15 +633,15 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
             AttachmentProvider attachment = dataPair.first;
             MessageProvider message = dataPair.second;
             try {
-                File externalStorageFile = Environment.getExternalStoragePublicDirectory(
+                File externalFilesDir = Environment.getExternalStoragePublicDirectory(
                         Environment.DIRECTORY_DOWNLOADS);
                 String fileName = attachment.getName();
 
                 if (attachment.isEncrypted()) {
                     Toast.makeText(ctx, getString(R.string.attachment_decryption), Toast.LENGTH_SHORT).show();
 
-                    File encryptedFile = new File(externalStorageFile, fileName + ENCRYPTED_EXT);
-                    File decryptedFile = new File(externalStorageFile, fileName);
+                    File encryptedFile = new File(externalFilesDir, fileName + ENCRYPTED_EXT);
+                    File decryptedFile = new File(externalFilesDir, fileName);
                     boolean attachmentDecrypted;
                     if (message.getEncryptionMessage() == null) {
                         long mailboxId = parentMessage == null
@@ -659,7 +673,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
                     }
 
                 } else {
-                    File downloadedFile = new File(externalStorageFile, fileName);
+                    File downloadedFile = new File(externalFilesDir, fileName);
                     Uri fileUri = FileProvider.getUriForFile(
                             ctx, FileUtils.AUTHORITY, downloadedFile
                     );
