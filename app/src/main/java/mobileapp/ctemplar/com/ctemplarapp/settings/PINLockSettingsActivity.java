@@ -62,7 +62,7 @@ public class PINLockSettingsActivity extends BaseActivity {
         userStore = CTemplarApp.getUserStore();
 
         changePINButton.setOnClickListener(v -> startChangePINLockActivity());
-        boolean pinEnabled = isPINEnabled();
+        boolean pinEnabled = userStore.isPINLockEnabled();
         pinLockSwitch.setChecked(pinEnabled);
         showPINAdjusting(pinEnabled);
         pinLockSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -104,10 +104,6 @@ public class PINLockSettingsActivity extends BaseActivity {
             return;
         }
         super.onActivityResult(requestCode, resultCode, data);
-    }
-
-    private boolean isPINEnabled() {
-        return userStore.isPINLockEnabled();
     }
 
     private void showPINAdjusting(boolean state) {
