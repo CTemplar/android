@@ -1,0 +1,502 @@
+<resources>
+    <string translatable="false" name="romanian_translation_by">Dorian Oszczęda ~ vxern@ctemplar.com, Copyright © 2021 CTemplar. All rights reserved.</string>
+
+    <string translatable="false" name="app_name">CTemplar</string>
+    <string translatable="false" name="platform">android</string>
+    <string name="navigation_drawer_open">Deschide sertarul navigării</string>
+    <string name="navigation_drawer_close">Închide sertarul navigării</string>
+    <string name="nav_header_desc">Antetul navigării</string>
+    <string name="action_settings">Setări</string>
+    <string name="action_undo">DESFACE</string>
+
+    <!-- MAIN -->
+    <string name="dialog_log_out">Deconectează-mă</string>
+    <string name="dialog_log_out_confirm">"Sunteți sigur/ă că vreți să vă deconectați?"</string>
+    <string name="btn_log_out">DECONECTEAZĂ-TE</string>
+
+    <!-- NAVIGATION DRAWER -->
+    <string name="nav_drawer_inbox">Primite</string>
+    <string name="nav_drawer_draft">Schițe</string>
+    <string name="nav_drawer_sent">Trimise</string>
+    <string name="nav_drawer_outbox">De expediat</string>
+    <string name="nav_drawer_starred">Cu steluță</string>
+    <string name="nav_drawer_archive">Arhivă</string>
+    <string name="nav_drawer_spam">Spam</string>
+    <string name="nav_drawer_trash">Coș</string>
+    <string name="nav_drawer_all_mails">Toate</string>
+    <string name="nav_drawer_unread">Necitite</string>
+    <string name="nav_drawer_add_folder">Adaugă un dosar</string>
+    <string name="nav_drawer_add_label">Adaugă o etichetă</string>
+    <string name="nav_drawer_contact">Contacte</string>
+    <string name="nav_drawer_settings">Setări</string>
+    <string name="nav_drawer_help">Ajutor</string>
+    <string name="nav_drawer_logout">Deconectează-te</string>
+    <string name="nav_drawer_manage_folders">Gestionează dosarele</string>
+    <string name="nav_drawer_manage_folders_param">Gestionează dosarele (%1$d)</string>
+    <string name="nav_drawer_folders_show_more">Arată mai multe dosare</string>
+
+    <!-- TOOLBAR -->
+    <string name="action_search">Caută</string>
+    <string name="action_filter">Filtrează</string>
+    <string name="action_search_hint">Caută un mesaj</string>
+    <string name="action_empty_folder">Dosar gol</string>
+    <string name="action_spam">Mesajul a fost raportat ca spam</string>
+    <string name="action_archived">Mesajul a fost arhivat</string>
+    <string name="action_moved_to_inbox">Mesajul a fost mutat în spam</string>
+    <string name="action_reported_as_spam">Mesajul a fost marcat ca spam</string>
+    <string name="action_reported_as_not_spam">Mesajul a fost marcat nu spam</string>
+    <string name="action_message_removed">Mesajul a fost șters</string>
+
+    <!-- MENU -->
+    <string name="menu_save">Salvează</string>
+    <string name="menu_spam">Spam</string>
+    <string name="menu_not_spam">Nu spam</string>
+    <string name="menu_move">Mută</string>
+    <string name="menu_trash">Coș</string>
+    <string name="menu_move_to_inbox">Mută în primite</string>
+    <string name="menu_move_to_archive">Mută în arhivă</string>
+    <string name="menu_mark_as_unread">Mută în necitite</string>
+
+    <!-- STRINGS -->
+    <string translatable="false" name="encrypted_subject">...</string>
+    <string name="token_expired_title">Sesiunea a expirat</string>
+    <string name="token_expired_message">Sesiunea dvs. a expirat. Vă rugăm să vă conectați din nou.</string>
+    <string name="title_email">E-mail</string>
+    <string name="title_next">Următorul</string>
+    <string name="title_next_no_email">Următorul (Nu există mesaje)</string>
+    <string name="title_password">Parolă</string>
+    <string name="title_username">Nume de utilizator</string>
+    <string name="title_2fa">Autentificare cu doi pași (2FA)</string>
+    <string name="title_2fa_code">Introduceți codul generat de aplicația de autentificare</string>
+    <string name="title_captcha">CAPTCHA</string>
+    <string name="title_ctemplar">CTEMPLAR</string>
+    <string name="title_forgot_password">Ați uitat parola?</string>
+    <string name="title_forgot_password_hint">O să vă trimitem dvs. un link.</string>
+    <string name="title_choose_password">Alege o parolă</string>
+    <string name="title_confirm_password">Confirmă parola</string>
+    <string name="title_ctemplar_username">Nume de utilizator</string>
+    <string name="title_recovery_email">E-mail de recuperare</string>
+    <string name="title_security_check">Control de securitate</string>
+    <string name="title_recovery_email_optional">E-mail de recuperare (Opțional)</string>
+    <string name="title_reset_password">Resetează parola</string>
+    <string name="title_reset_code">Cod de recuperare</string>
+    <string name="title_confirm">Confirmă</string>
+    <string name="title_confirm_reset_password">Confirmă recuperarea parolei</string>
+    <string name="title_invitation_code">Cod de invitație</string>
+    <string name="title_further_question_hint">Dacă aveți întrebări, ne puteți contacta la adresa <![CDATA[<u><a href="mailto:support@ctemplar.com">Support@CTemplar.com</a></u>]]>.</string>
+    <string name="title_confirm_reset_password_hint">Cheia de criptare este legată de parola dvs. Dacă vă schimbați parola, <![CDATA[<font color="#e74c3c">nu veți mai putea decripta mesajele, atașamentele și contactele mai vechi</font>]]>.</string>
+    <string name="title_confirm_reset_password_hint2">Sunteți sigur/ă că vreți să resetați parola?</string>
+    <string name="title_reset_code_hint">V-am trimis codul la <![CDATA[<u><a href="mailto:%1$s">adresa de recuperare</a></u>]]>.</string>
+    <string name="title_reset_code_hint2">Introduceți codul dedesubt pentru a vă autentifica.</string>
+    <string name="title_new_password_hint">Nu uitați această parolă căci aceasta nu poate fi recuperată.</string>
+    <string name="title_forgot_username_underlined"><u>Ați uitat parola?</u></string>
+    <string name="title_keep_me_logged_in">Păstrează-mă conectat/ă.</string>
+    <string name="title_forgot_username">Ați uitat numele de utilizator?</string>
+    <string name="title_forgot_username_hint">Introduceți adresa de recuperare.</string>
+    <string name="title_email_my_username">Trimite-mi numele meu de utilizator</string>
+    <string name="title_username_and_domain">Nume de utilizator și domeniu</string>
+    <string name="title_step_username_hint">Aceasta va fi noua dvs. adresa de e-mail CTemplar.</string>
+    <string name="title_step_password_hint">Parola trebuie să conțină cel puțin 10 caractere, și nu poate conține simboluri.</string>
+    <string name="hint_step_email_recovery_long">Bifând această căsuță afirmați că înțelegeți că dacă vă pierdeți parola și n-ați setat o adresă de recuperare, contul dvs. va fi irecuperabil. Dacă schimbați parola, veți obține o cheie nouă de criptare dar toate datele dvs. vor fi pierdute. <![CDATA[<u><font color="blue">Mai puține</font></u>]]></string>
+    <string name="hint_step_email_recovery_short">Bifând această căsuță afirmați că înțelegeți că dacă vă pierdeți parola și n-ați setat o adresă de recuperare, contul dvs. va fi irecuperabil. <![CDATA[<u><font color="blue">Mai multe</font></u>]]></string>
+    <string name="title_step_email_hint">Dacă vă uitați parola, vom folosi adresa de recuperare pentru a o restabili</string>
+    <string name="title_step_email_check_hint">Vă rugăm să bifați această căsuță dacă sunteți de acord cu <![CDATA[<u><a href="https://ctemplar.com/terms">Termenii și Condițiile</a></u>]]></string>
+    <string name="title_step_invitation_code_hint">Puteți obține un cod de invitație de la un utilizator cu pachet plătit, sau direct de la noi, trimitându-ne un mesaj. Pentru ce sunt codurile de invitație și cum pot obține unul? <![CDATA[<u><a href="https://ctemplar.com/email-creation-restriction/">Află mai multe</a></u>]]></string>
+    <string name="title_more_info_link"><u>Mai multe</u></string>
+    <string name="title_empty_inbox">Nu există niciun mesaj</string>
+    <string name="title_empty_messages">Nu există niciun mesaj %1$s</string>
+    <string name="title_empty_contacts">Nu există niciun contact</string>
+    <string name="title_empty_folders">Nu există niciun dosar</string>
+    <string name="btn_login">Conectează-te</string>
+    <string name="btn_compose">Compune un e-mail</string>
+    <string name="btn_add_folder">Adaugă un dosar</string>
+    <string name="hint_captcha">Scrieți conținutul imaginii sau ora în formatul (oo:mm), de exemplu (04:20).</string>
+    <string name="txt_forgot_pass">Ați uitat parola?</string>
+    <string name="txt_create_acc"><u>Creează un cont</u></string>
+    <string name="txt_loading">Se încarcă…</string>
+    <string name="txt_add_contact">Adaugă un contact</string>
+    <string name="txt_edit_contact">Editează un contact</string>
+    <string name="txt_enter_valid_captcha">Introduceți codul potrivit CAPTCHA</string>
+    <string name="btn_confirm">CONFIRMĂ</string>
+    <string name="title_clear_folder">Șterge conținutul dosarului</string>
+    <string name="txt_clear_folder">Sunteți sigur/ă că vreți să ștergeți toate mesajele din acest dosar?</string>
+    <string name="username_is_available">Nume disponibil</string>
+    <string name="username_is_not_available">Nume indisponibil</string>
+    <string name="checking">Se verifică…</string>
+
+    <!-- COMPOSE OPTIONS -->
+    <string name="txt_left_time_destruct">Șterge în %1$s</string>
+    <string name="txt_left_time_delay_delivery">Livrează în %1$s</string>
+    <string name="txt_left_time_dead_mans_timer">Cronometrul omului mort în %1$s</string>
+    <string name="txt_encrypt_message_title">Setează o parolă</string>
+    <string name="txt_destruct_message_title">Cronometrul sindistrugerii</string>
+    <string name="txt_dead_mans_title">Cronometrul omului mort</string>
+    <string name="txt_delayed_message_title">Livrare amânată</string>
+    <string name="txt_encrypt_message_summary">Criptare a mesajelor pentru utilizatorii altor servicii</string>
+    <string name="txt_delayed_message_summary">Mesajul va fi livrat la data aleasă.</string>
+    <string name="txt_destruct_message_summary">Mesajul se va șterge automatic din cutia poștală a destinatarului după</string>
+    <string name="txt_dead_mans_summary">Dacă nu vă conectați la cont, mesajul va fi livrat după</string>
+    <string name="txt_schedule">Programează</string>
+    <string name="txt_encrypt">Criptează</string>
+    <string name="txt_selected_datetime_is_past">Timpul ales a trecut deja.</string>
+    <string name="txt_yesterday">Ieri</string>
+    <string name="txt_attachments_in_processing">Atașamente în curs de procesare…</string>
+
+    <!-- VIEW MESSAGES -->
+    <string name="txt_more_details">Mai multe</string>
+    <string name="txt_less_details">Mai puține</string>
+    <string name="toast_message_marked_unread">Mesaj marcat ca necitit</string>
+    <string name="toast_message_moved_to">Mesaj mutat în %1$s</string>
+    <string name="toast_messages_doesnt_exist">Mesajul nu există</string>
+    <string name="toast_download_started">Descărcarea a început</string>
+    <string name="toast_download_complete">Descărcarea s-a terminat</string>
+    <string name="txt_user_wrote">\n\n-----------------------------------------------------------------------------------------------\nLa %1$s %2$s a scris:\n\n</string>
+    <string name="txt_forwarded_message">Mesaj redirecționat</string>
+    <string name="txt_from">De către:&#160;</string>
+    <string name="txt_date">Dată</string>
+    <string name="txt_subject">Subiect</string>
+    <string name="txt_to">Către:&#160;</string>
+    <string name="txt_reply_all">Răspunde la toate</string>
+    <string name="attachment_decryption">Decriptare a atașamentelor…</string>
+    <string name="no_results_found">Nu există niciun mesaj</string>
+
+    <!-- CHANGE PASSWORD -->
+    <string name="toast_password_changed">Parolă schimbată</string>
+    <string name="toast_password_not_changed">Parolă nu schimbată</string>
+    <string name="dialog_change_password">Schimbă parola</string>
+    <string name="title_current_password">Parolă actuală</string>
+    <string name="title_new_password">Parolă nouă</string>
+    <string name="title_new_password_confirm">Confirmă parola</string>
+    <string name="dialog_change_password_confirm">Sunteți sigur/ă că vreți să vă schimbați parola?</string>
+    <string name="dialog_change_password_confirm_reset">Sunteți sigur/ă că vreți să vă schimbați parola? Toate datele dvs. vor fi șterse.</string>
+    <string name="btn_change">SCHIMBĂ</string>
+    <string name="btn_change_lowercase">Schimbă</string>
+    <string name="title_message_password">Parolă</string>
+    <string name="title_message_password_confirm">Confirmă parola</string>
+    <string name="title_message_password_hint">Indiciu de recuperare</string>
+    <string name="title_message_password_expire_days">Zile</string>
+    <string name="title_message_password_expire_hours">Ore</string>
+    <string name="txt_encrypt_message_password_expiration">Dată de expirare</string>
+
+    <!-- CONTACT -->
+    <string name="toast_not_saved">Nesalvate</string>
+    <string name="txt_enter_name">Introduceți numele de utilizator</string>
+    <string name="txt_enter_valid_email">Introduceți o adresă validă de e-mail</string>
+    <string name="txt_name_removed">%1$s șters/ă!</string>
+    <string name="txt_contact_loading_error">A apărut o eroare de încărcare a contactului</string>
+    <string name="txt_delete_folder_quest_title">Vreți să ștergeți dosarul?</string>
+    <string name="txt_delete_folder_quest_message">Sunteți sigur/ă că vreți să ștergeți mesajul?</string>
+    <string name="btn_contact_delete">ȘTERGE</string>
+    <string name="btn_cancel">Anulează</string>
+    <string name="title_email_address">Adresă de e-mail</string>
+    <string name="title_phone_number">Număr de telefon</string>
+    <string name="title_phone_number_second">Al doilea număr de telefon</string>
+    <string name="title_address">Adresă</string>
+    <string name="title_note">Notă</string>
+    <string name="txt_contacts_empty">Nu există contacte</string>
+
+    <!-- FOLDERS -->
+    <string name="toast_folder_created">Dosar creat</string>
+    <string name="toast_folder_not_created">Un dosar cu numele acesta există deja.</string>
+    <string name="txt_folder_deleted">Dosar șters</string>
+    <string name="txt_folder_not_deleted">Dosarul nu a fost șters</string>
+    <string name="txt_folder_edited">Dosar editat</string>
+    <string name="txt_folder_not_edited">Dosarul nu a fost editat</string>
+    <string name="txt_folder_name_hint">Numele dosarului trebuie să aibă măcar 4 caractere și nu mai multe de 30</string>
+    <string name="title_folder_name">Numele dosarului</string>
+    <string name="title_choose_color">Alegeți o culoare</string>
+    <string name="txt_edit_folder">Editează un dosar</string>
+    <string name="txt_delete_folder">Șterge dosarul</string>
+    <string name="txt_manage_folders">Gestionează dosarele</string>
+    <string name="txt_folders_empty">Dosare goale</string>
+    <string name="txt_create_folder_free_error">Pentru a crea mai multe dosare, trebuie să îmbunătățiți planul.</string>
+
+    <!-- SEND MESSAGE -->
+    <string name="toast_message_sent">Mesaj trimis</string>
+    <string name="toast_message_not_sent">Mesaj nu trimis</string>
+    <string name="toast_message_saved_as_draft">Mesajul a fost salvat în schițe</string>
+    <string name="toast_message_not_created">Mesaj nu creat</string>
+    <string name="toast_message_not_loaded">Mesaj nu încărcat</string>
+    <string name="toast_attachment_unable_read_file">Nu s-a putut încărca fișierul din calea aleasă</string>
+    <string name="toast_attachment_unable_read_path">"Fișierul nu poate fi încărcat"</string>
+    <string name="txt_sending_mail">Se trimite…</string>
+    <string name="txt_saving_mail">Se salvează…</string>
+    <string name="txt_uploading">Se încarcă…</string>
+    <string name="dialog_discard_mail">Șterge mesajul</string>
+    <string name="dialog_discard_confirm">Sunteți sigur/ă că vreți să ștergeți schița?</string>
+    <string name="dialog_save_in_drafts">Salvează în schițe</string>
+    <string name="action_discard">Șterge</string>
+    <string name="action_cancel">Anulează</string>
+    <string name="btn_add">Adaugă</string>
+    <string name="txt_new_message">Mesaj nou</string>
+    <string name="txt_cc">CC: &#160;</string>
+    <string name="txt_bcc">BCC: &#160;</string>
+    <string name="txt_date_format">Dată: %1$s</string>
+    <string name="hint_compose">Creează un mesaj</string>
+
+    <!-- NOTIFICATION SERVICE -->
+    <string name="notification_channel_name">CTemplar</string>
+    <string name="notification_channel_description">Mesaj nou</string>
+    <string name="title_notification_service">Serviciu de notificare</string>
+    <string name="title_service_running">Serviciul a fost pornit</string>
+
+    <!-- CUSTOM FILTERS -->
+    <string name="txt_filters_title">Filtre</string>
+    <string name="title_add_custom_filter">Adaugă un filtru personalizat</string>
+    <string name="title_edit_custom_filter">Editează un filtru personalizat</string>
+    <string name="btn_add_custom_filter">Adaugă un filtru</string>
+    <string name="txt_filter_name">Numele filtrului</string>
+    <string name="txt_filter_conditions">Condiții</string>
+    <string name="txt_filter_actions">Acțiuni</string>
+    <string name="txt_filter_move_to">Mută în</string>
+    <string name="txt_filter_mark_as_read">Marchează ca citit</string>
+    <string name="txt_filter_mark_as_starred">Marchează cu steluță</string>
+    <string name="btn_submit">Salvează</string>
+    <string name="toast_filter_not_created">Un filtru cu numele acesta există deja</string>
+    <string name="toast_filter_created">Filtru creat</string>
+    <string name="txt_filter_name_hint">Numele filtrului trebuie să fie de cel puțin 4 caractere și cel mult 30.</string>
+    <string name="txt_filter_text_hint">Textul filtrului trebuie să fie de cel puțin un singur caracter și cel mult 30.</string>
+    <string name="txt_filter_not_deleted">Filtru nu șters</string>
+    <string name="txt_filter_deleted">Filtru șters</string>
+    <string name="txt_filter_not_edited">Filtru nu editat</string>
+    <string name="txt_filter_edited">Filtru editat</string>
+    <string name="txt_delete_filter_quest_title">Ștergerea filtrului</string>
+    <string name="txt_delete_filter_quest_message">Sunteți sigur/ă că vreți să ștergeți filtrul?</string>
+    <string name="txt_delete_filter">Șterge filtrul</string>
+
+    <!-- WHITE-BLACK LIST -->
+    <string name="adding_blacklist_contact_error">A apărut o eroare la adăugarea contactului pe lista albă</string>
+    <string name="adding_whitelist_contact_error">A apărut o eroare la adăugarea contactului pe lista neagră</string>
+    <string name="added_to_whitelist">Adresă adăugată la lista albă</string>
+    <string name="title_contact_name">Numele contactului</string>
+    <string name="title_contact_email">Adresa de e-mail a contactului</string>
+    <string name="title_add_to_blacklist">Adaugă la lista neagră</string>
+    <string name="title_add_to_whitelist">Adaugă la lista albă</string>
+    <string name="title_white_black_list">Listele albă / neagră</string>
+    <string name="txt_add_blacklist_contact">Adaugă un contact de pe lista neagră</string>
+    <string name="txt_add_whitelist_contact">Adaugă un contact de pe lista albă</string>
+
+    <!-- FILTER DIALOG -->
+    <string name="filtered">Filtrate</string>
+    <string name="txt_filters">Filtre</string>
+    <string name="txt_clear_all">Curăță tot</string>
+    <string name="txt_select_filters">Alege filtrele</string>
+    <string name="txt_starred">Cu steluță</string>
+    <string name="txt_unread">Necitite</string>
+    <string name="txt_with_attachments">Cu atașament</string>
+    <string name="btn_apply">Salvează</string>
+
+    <!-- MOVE TO -->
+    <string name="txt_move_to">Mută în…</string>
+    <string name="txt_select_folder">Alege un dosar</string>
+    <string name="forward_attachments">Confirmă transmiterea atașamentelor</string>
+    <string name="forward_attachments_description">Sunteți sigur/ă că vreți să transmiteți atașamentele?</string>
+    <string name="yes">Da</string>
+    <string name="no">Nu</string>
+
+    <!-- SETTINGS -->
+    <string name="txt_settings">Setări</string>
+    <string name="txt_display_name">Numele utilizatorului</string>
+    <string name="txt_type_your_name">Introduceți numele</string>
+    <string name="txt_type_signature">Introduceți semnătura</string>
+    <string name="txt_signature_enabled">Semnarea este activată</string>
+    <string name="txt_mobile_signature_enabled">Semnare activată</string>
+
+    <!-- PIN LOCK -->
+    <string name="pin_lock">Blocare cu PIN</string>
+    <string name="pin_lock_enable">Activează blocarea cu PIN</string>
+    <string name="change_pin">Schimbă PIN-ul</string>
+    <string name="auto_lock">Blocare automată</string>
+    <string name="choose_pin">Introduceți codul PIN din patru cifre</string>
+    <string name="confirm_pin">Confirmă PIN-ul</string>
+    <string name="invalid_pin">PIN nevalid</string>
+    <string name="pins_dont_match">Codurile PIN nu se potrivesc</string>
+
+    <!-- SIGNATURE EDIT BAR -->
+    <string name="txt_panel_bold">B</string>
+    <string name="txt_panel_italic">I</string>
+    <string name="txt_panel_underline">U</string>
+    <string name="txt_panel_monospace">M</string>
+    <string name="txt_panel_normal">Standard</string>
+
+    <!-- SETTINGS -->
+    <string name="settings_general">Setări generale</string>
+    <string name="settings_recovery_email">Adresă de recuperare</string>
+    <string name="settings_enable_recovery_email">Activează adresa de recuperare</string>
+    <string name="settings_type_recovery_email">Introduceți adresa de recuperare</string>
+    <string name="settings_enabled_anti_phishing">Antiphishing</string>
+    <string name="settings_type_anti_phishing_phrase">Introduceți fraza de antiphishing</string>
+    <string name="settings_subject_encryption">Criptarea subiectului</string>
+    <string name="settings_password">Parolă</string>
+    <string name="settings_language">Limbă</string>
+    <string name="settings_notifications">Notificări</string>
+    <string name="settings_enable_notifications">Activează notificările push</string>
+    <string name="settings_contacts_encryption">Criptarea contactelor</string>
+    <string name="settings_encryption">Criptare</string>
+    <string name="settings_phishing_protection">Protecție împotriva phishing-ului</string>
+    <string name="settings_phishing_protection_description"><![CDATA[<font color="#939191">Fraza de antiphishing permite utilizatorilor să leagă un cuvânt sau o frază de contul CTemplar. După setarea, dacă vă conectați la cont și fraza de antiphishing a fost schimbată sau nu există, aceasta poate însemna că ai căzut pradă phishingului. În cazul acesta trebuie să vă asigurați că vă găsiți la </font><font color="#4d92e2"><u>https://mail.ctemplar.com</u></font>. <font color="#939191">Dacă nu, un site răutacios are acces la contul dvs. Pentru a preveni mai multe daune, trebuie să vă duceți imediat la </font><font color="#4d92e2"><u>https://mail.ctemplar.com</u></font> <font color="#939191">și să schimbați parola.<br><br>Vă rugăm să rețineți că fraza de antiphishing va fi afișată numai în browser.</font>]]></string>
+    <string name="settings_auto_save">Salvare automată</string>
+    <string name="settings_auto_save_contacts">Salvează contactele automat</string>
+    <string name="settings_auto_save_drafts">Salvează schițele automat</string>
+    <string name="settings_filters">Filtre</string>
+    <string name="settings_wb_list">Listele albă / neagră</string>
+    <string name="settings_dark_mode">Modul întunecat</string>
+    <string name="settings_block_external_images">Blocarea imaginilor externe</string>
+    <string name="settings_folders">Dosare</string>
+    <string name="settings_manage_folders">Gestionează dosarele</string>
+    <string name="settings_security">Securitate</string>
+    <string name="settings_mail">Poștă</string>
+    <string name="settings_addresses">Adrese</string>
+    <string name="settings_signature">Semnătură</string>
+    <string name="settings_enable_signature">Activează semnătura</string>
+    <string name="settings_type_signature">Introduceți-vă semnătura</string>
+    <string name="settings_mobile_signature">Semnătură mobilă</string>
+    <string name="settings_keys">Chei</string>
+    <string name="settings_enable_mobile_signature">Activează semnătura mobilă</string>
+    <string name="settings_about">Despre</string>
+    <string name="settings_helpdesk">Centru de securitate</string>
+    <string name="settings_local_storage_limit">Limita de stocare locală</string>
+    <string name="settings_app_version">Versiunea aplicației</string>
+    <string name="settings_disable_contacts_encryption">Sunteți sigur/ă că vreți să dezactivați criptarea contactelor?</string>
+    <string name="settings_disable_contacts_encryption_note">Dezactivarea criptării contactelor poate dura o clipiță, relativ la numărul de contacte. După confirmarea, toate contactele vor fi decriptate și salvate pe server.</string>
+    <string name="txt_contact_decryption">Contactele se decriptează..</string>
+    <string name="toast_saved">Salvat</string>
+    <string name="toast_contacts_encrypted">Contactele sunt criptate</string>
+    <string name="toast_contacts_decrypted">Contactele nu sunt criptate</string>
+    <string name="toast_decryption_error">A apărut o eroare la decriptarea contactelor. Vă rugăm să încercați din nou.</string>
+
+    <!-- MAILBOXES -->
+    <string name="addresses">Adrese</string>
+    <string name="add_address">Adaugă o adresă</string>
+    <string name="select_default_address">Alege o adresă implicită</string>
+    <string name="mailbox_add_address">Adaugă o adresă</string>
+    <string name="mailbox_enable">Activează</string>
+    <string name="mailbox_disable">Dezactivează</string>
+    <string name="mailbox_add_title">Alege un nume și domeniu</string>
+    <string name="mailbox_create">Creează o cutie poștală</string>
+    <string name="mailbox_alias_exists">Pseudonimul poștal există deja.</string>
+    <string name="mailbox_alias_creation_success">Pseudonim poștal creat cu succes</string>
+    <string name="mailbox_alias_creation_paid">Vă rugăm să îmbunătățiți pachetul pentru a crea mai multe pseudonime.</string>
+    <string name="mailbox_alias_creation_failed">Încercarea creării pseudonimului nu a reușit</string>
+    <string name="mailbox_alias_creation_progress">Se creează pseudonimul.</string>
+
+    <!-- KEYS -->
+    <string name="email_address">Adresă de e-mail</string>
+    <string name="fingerprint">Amprentă digitală</string>
+    <string name="keys">Chei</string>
+    <string name="download_public_key">Descarcă cheia publică (4096 de biți)</string>
+    <string name="download_private_key">Descarcă cheia publică (4096 de biți)</string>
+    <string name="your_public_key_saved">Cheia publică a fost salvată în Descărcate</string>
+    <string name="your_private_key_saved">Cheia privată a fost salvată în Descărcate</string>
+
+    <!-- UPGRADE TO PRIME -->
+    <string name="title_upgrade_to_prime">Îmbunătățește pachetul la Prime</string>
+    <string name="txt_one_user">un utilizator</string>
+    <string name="txt_from_five_gb_storage">de la 5 GB</string>
+    <string name="txt_from_three_email_addresses">de la 10 adrese de e-mail</string>
+    <string name="txt_from_one_custom_domain">de la un domeniu</string>
+    <string name="txt_thousand_messages_per_day">2000 de mesaje pe zi</string>
+    <string name="txt_five_hundred_folders">500 de dosare</string>
+    <string name="txt_dead_mans_timer">Cronometrul omului mort</string>
+    <string name="txt_and_more_features">și mult mai multe</string>
+    <string name="txt_not_now">Nu acum</string>
+
+    <!-- EXTERNAL URLS -->
+    <string translatable="false" name="url_prime_upgrade">https://ctemplar.com/mail/settings/dashboard-and-plans</string>
+    <string translatable="false" name="url_prime_more">https://ctemplar.com/pricing</string>
+    <string translatable="false" name="url_helpdesk">https://ctemplar.com/help/</string>
+
+    <!-- PREFERENCE KEYS -->
+    <string name="change_password_reset_data">Șterge datele</string>
+    <string name="toast_email_not_valid">Adresa nu este validă</string>
+    <string name="storage_limit_info">%1$s din %2$s</string>
+    <string translatable="false" name="password_key">password_key</string>
+    <string translatable="false" name="pin_lock_key">pin_lock_key</string>
+    <string translatable="false" name="signature_key">signature_key</string>
+    <string translatable="false" name="mobile_signature_key">mobile_signature_key</string>
+    <string translatable="false" name="filters_key">filters_key</string>
+    <string translatable="false" name="dark_mode_key">dark_mode_key</string>
+    <string translatable="false" name="block_external_images_key">block_external_images_key</string>
+    <string translatable="false" name="white_black_list">white_black_list</string>
+    <string translatable="false" name="manage_folders">manage_folders</string>
+    <string translatable="false" name="push_notifications_enabled">push_notifications_enabled</string>
+    <string translatable="false" name="recovery_email_enabled">recovery_email_enabled</string>
+    <string translatable="false" name="recovery_email">recovery_email</string>
+    <string translatable="false" name="anti_phishing_enabled">anti_phishing_enabled</string>
+    <string translatable="false" name="anti_phishing_key">anti_phishing_key</string>
+    <string translatable="false" name="anti_phishing_description_key">anti_phishing_description_key</string>
+    <string translatable="false" name="setting_keys">setting_keys</string>
+    <string translatable="false" name="email_addresses">email_addresses</string>
+    <string translatable="false" name="helpdesk_key">helpdesk_key</string>
+    <string translatable="false" name="local_storage_limit">local_storage_limit</string>
+    <string translatable="false" name="recovery_email_holder">recovery_email_holder</string>
+    <string translatable="false" name="contacts_encryption_enabled">contacts_encryption_enabled</string>
+    <string translatable="false" name="auto_save_contacts_enabled">auto_save_contacts_enabled</string>
+    <string translatable="false" name="auto_save_drafts_enabled">auto_save_drafts_enabled</string>
+    <string translatable="false" name="setting_id">setting_id</string>
+
+    <!-- ERRORS -->
+    <string name="error_field_cannot_be_empty">Căsuța aceasta nu poate fi goală</string>
+    <string name="error_invalid_email">Vă rugăm să introduceți o adresă de e-mail validă</string>
+    <string name="error_username_small">Minimum patru caractere</string>
+    <string name="error_username_small_two">Minimum două caractere</string>
+    <string name="error_username_big">Maximum 64 de caractere</string>
+    <string name="error_password_small">Minimum un caracter</string>
+    <string name="error_password_big">Maximum 255 de caractere</string>
+    <string name="error_username_incorrect">Nazwa użytkownika musi się zaczynać na literę, i może zawierać wyłącznie litery alfanumeryczne, kropki i myślniki</string>
+    <string name="error_username_incorrect">Numele de utilizator trebuie să se înceapă cu o literă și poate conține numai caractere alfanumerice, puncte și cratime.</string>
+    <string name="error_username_exists">Adresa acela există deja</string>
+    <string name="error_password_not_match">Parolele nu se potrivesc</string>
+    <string name="error_current_password_not_match">Parola veche nu este validă</string>
+    <string name="error_empty_email">O adresă nu a fost introdusă</string>
+    <string name="error_empty_password">O parolă nu a fost introdusă</string>
+    <string name="error_enter_old_password">Vă rugăm să introduceți parola veche.</string>
+    <string name="error_authentication_failed">Încercarea autentificării cu datele introduse nu a reușit</string>
+    <string name="error_server">Eroare la server</string>
+    <string name="error_connection">Eroare la conexiune</string>
+    <string name="error_messages">Eroare la primirea mesajului</string>
+    <string name="error_sign_in">Eroare la conectare</string>
+    <string name="error_change_password">Eroare la schimbarea parolei</string>
+    <string name="error_reset_password">Eroare la recuperarea parolei</string>
+    <string name="error_recover_password">Nume sau adresă nevalidă.</string>
+    <string name="error_upload_attachment">Transmiterea atașamentului nu a reușit</string>
+    <string name="error_attachment_url">Adresa atașamentului este goală</string>
+    <string name="error_upload_attachment_too_large">Fișier prea mare</string>
+    <string name="error_too_many_requests">Prea multe cereri în prea puțin timp. Vă rugăm să așteptați.</string>
+    <string name="title_activity_white_black_list">Listele albă / neagră</string>
+    <string name="section_format">Hello world de la secțiune: %1$d</string>
+    <string name="toast_undefined_error">Eroare necunoscută</string>
+    <string name="whitelist">Listă albă</string>
+    <string name="blacklist">Listă neagră</string>
+
+    <string-array name="filter_parameter_list">
+        <item>subiect</item>
+        <item>expeditor</item>
+    </string-array>
+
+    <string-array name="filter_condition_list">
+        <item>conține</item>
+        <item>se începe cu</item>
+    </string-array>
+
+    <string-array name="auto_lock_time">
+        <item>Imediat</item>
+        <item>1 minut</item>
+        <item>5 minute</item>
+        <item>10 minute</item>
+        <item>1 oră</item>
+        <item>24 de ore</item>
+    </string-array>
+
+    <string-array name="dark_mode_entries">
+        <item>Auto (detect)</item>
+        <item>On</item>
+        <item>Off</item>
+    </string-array>
+
+    <string-array name="dark_mode_values">
+        <item>auto</item>
+        <item>on</item>
+        <item>off</item>
+    </string-array>
+</resources>
