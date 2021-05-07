@@ -26,7 +26,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.request.UpdateReportBugsRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.contacts.ContactData;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.contacts.ContactsResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.contacts.EncryptContact;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.mailboxes.MailboxesResult;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.mailboxes.MailboxResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.MyselfResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.SettingsResponse;
 import mobileapp.ctemplar.com.ctemplarapp.repository.AppDatabase;
@@ -218,14 +218,14 @@ public class SettingsViewModel extends ViewModel {
                 mailboxId,
                 new SignatureRequest(displayName, signatureText)
         )
-                .subscribe(new Observer<MailboxesResult>() {
+                .subscribe(new Observer<MailboxResponse>() {
                     @Override
                     public void onSubscribe(@NotNull Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(@NotNull MailboxesResult mailboxesResult) {
+                    public void onNext(@NotNull MailboxResponse mailboxResponse) {
                         appDatabase.mailboxDao().updateSignature(mailboxId, displayName, signatureText);
                         updateSignatureStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
                     }

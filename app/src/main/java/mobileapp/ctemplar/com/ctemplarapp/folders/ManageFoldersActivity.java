@@ -35,7 +35,7 @@ import mobileapp.ctemplar.com.ctemplarapp.utils.AccountTypeManager;
 
 public class ManageFoldersActivity extends BaseActivity {
     private ManageFoldersViewModel manageFoldersModel;
-    private ManageFoldersAdapter manageFoldersAdapter;
+    private final ManageFoldersAdapter manageFoldersAdapter = new ManageFoldersAdapter();
     private boolean isPrime = false;
 
     @BindView(R.id.activity_manage_folders_recycler_view)
@@ -118,7 +118,7 @@ public class ManageFoldersActivity extends BaseActivity {
             frameCompose.setVisibility(View.GONE);
             footerAddFolder.setVisibility(View.VISIBLE);
         }
-        manageFoldersAdapter = new ManageFoldersAdapter(foldersResults);
+        manageFoldersAdapter.setItems(foldersResults);
         recyclerView.setAdapter(manageFoldersAdapter);
     }
 

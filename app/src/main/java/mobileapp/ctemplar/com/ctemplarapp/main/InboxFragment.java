@@ -310,7 +310,9 @@ public class InboxFragment extends BaseFragment
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_filter:
-                dialogFragment.show(getParentFragmentManager(), null);
+                if (!dialogFragment.isAdded()) {
+                    dialogFragment.show(getParentFragmentManager(), null);
+                }
                 return true;
             case R.id.action_search:
                 return true;

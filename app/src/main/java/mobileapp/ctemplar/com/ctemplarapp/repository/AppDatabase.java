@@ -4,6 +4,8 @@ import androidx.room.Database;
 import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
 
+import mobileapp.ctemplar.com.ctemplarapp.repository.converter.CommonConverter;
+import mobileapp.ctemplar.com.ctemplarapp.repository.converter.KeyTypeConverter;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.ContactEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MessageEntity;
@@ -14,11 +16,12 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MessageEntity;
                 ContactEntity.class,
                 MessageEntity.class
         },
-        version = 12,
+        version = 13,
         exportSchema = false
 )
 @TypeConverters({
-        Converters.class
+        CommonConverter.class,
+        KeyTypeConverter.class
 })
 public abstract class AppDatabase extends RoomDatabase {
     public abstract MailboxDao mailboxDao();
