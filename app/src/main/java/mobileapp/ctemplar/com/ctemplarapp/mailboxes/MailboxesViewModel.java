@@ -22,7 +22,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.request.DefaultMailboxRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.EnabledMailboxRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.CheckUsernameResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.domains.DomainsResponse;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.mailboxes.MailboxesResult;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.mailboxes.MailboxResponse;
 import mobileapp.ctemplar.com.ctemplarapp.repository.MailboxDao;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
@@ -76,14 +76,14 @@ public class MailboxesViewModel extends ViewModel {
 
     void updateDefaultMailbox(final long lastSelectedMailboxId, final long mailboxId) {
         userRepository.updateDefaultMailbox(mailboxId, new DefaultMailboxRequest())
-                .subscribe(new Observer<MailboxesResult>() {
+                .subscribe(new Observer<MailboxResponse>() {
                     @Override
                     public void onSubscribe(Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(MailboxesResult mailboxesResult) {
+                    public void onNext(MailboxResponse mailboxResponse) {
                         defaultMailboxResponseStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
                         mailboxDao.setDefault(lastSelectedMailboxId, false);
                         mailboxDao.setDefault(mailboxId, true);
@@ -103,14 +103,14 @@ public class MailboxesViewModel extends ViewModel {
 
     void updateEnabledMailbox(final long mailboxId, final boolean isEnabled) {
         userRepository.updateEnabledMailbox(mailboxId, new EnabledMailboxRequest(isEnabled))
-                .subscribe(new Observer<MailboxesResult>() {
+                .subscribe(new Observer<MailboxResponse>() {
                     @Override
                     public void onSubscribe(Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(MailboxesResult mailboxesResult) {
+                    public void onNext(MailboxResponse mailboxResponse) {
                         enabledMailboxResponseStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
                         mailboxDao.setEnabled(mailboxId, isEnabled);
                     }
@@ -195,23 +195,23 @@ public class MailboxesViewModel extends ViewModel {
         EncodeUtils.generateAdditionalMailbox(mailboxEmail, userPassword)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .flatMap((Function<PGPKeyEntity, Observable<Response<MailboxesResult>>>) pgpKeyEntity -> {
+                .flatMap((Function<PGPKeyEntity, Observable<Response<MailboxResponse>>>) pgpKeyEntity -> {
                     createMailboxRequest.setPrivateKey(pgpKeyEntity.getPrivateKey());
                     createMailboxRequest.setPublicKey(pgpKeyEntity.getPublicKey());
                     createMailboxRequest.setFingerprint(pgpKeyEntity.getFingerprint());
                     return userRepository.createMailbox(createMailboxRequest);
-                }).subscribe(new Observer<Response<MailboxesResult>>() {
+                }).subscribe(new Observer<Response<MailboxResponse>>() {
             @Override
             public void onSubscribe(Disposable d) {
 
             }
 
             @Override
-            public void onNext(Response<MailboxesResult> mailboxesResultResponse) {
+            public void onNext(Response<MailboxResponse> mailboxesResultResponse) {
                 if (mailboxesResultResponse.code() == 201) {
                     createMailboxResponseStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
-                    final MailboxesResult mailboxResponse = mailboxesResultResponse.body();
-                    List<MailboxesResult> mailboxEntityList = Collections.singletonList(mailboxResponse);
+                    final MailboxResponse mailboxResponse = mailboxesResultResponse.body();
+                    List<MailboxResponse> mailboxEntityList = Collections.singletonList(mailboxResponse);
                     userRepository.saveMailboxes(mailboxEntityList);
                 } else if (mailboxesResultResponse.code() == 400) {
                     createMailboxResponseStatus.postValue(ResponseStatus.RESPONSE_ERROR_PAID);

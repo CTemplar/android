@@ -48,7 +48,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.folders.FoldersResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.folders.FoldersResult;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.KeyResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.mailboxes.MailboxesResponse;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.mailboxes.MailboxesResult;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.mailboxes.MailboxResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.EmptyFolderResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.MessageAttachment;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.MessagesResponse;
@@ -215,7 +215,7 @@ public interface RestService {
     );
 
     @POST("emails/mailboxes/")
-    Observable<Response<MailboxesResult>> createMailbox(@Body CreateMailboxRequest request);
+    Observable<Response<MailboxResponse>> createMailbox(@Body CreateMailboxRequest request);
 
     @POST("emails/keys/")
     Observable<KeyResponse> getKeys(@Body PublicKeysRequest request);
@@ -227,19 +227,19 @@ public interface RestService {
     Single<MessagesResult> updateMessage(@Path("id") long id, @Body SendMessageRequest request);
 
     @PATCH("emails/mailboxes/{id}/")
-    Observable<MailboxesResult> updateDefaultMailbox(
+    Observable<MailboxResponse> updateDefaultMailbox(
             @Path("id") long mailboxId,
             @Body DefaultMailboxRequest body
     );
 
     @PATCH("emails/mailboxes/{id}/")
-    Observable<MailboxesResult> updateEnabledMailbox(
+    Observable<MailboxResponse> updateEnabledMailbox(
             @Path("id") long mailboxId,
             @Body EnabledMailboxRequest body
     );
 
     @PATCH("emails/mailboxes/{id}/")
-    Observable<MailboxesResult> updateSignature(
+    Observable<MailboxResponse> updateSignature(
             @Path("id") long mailboxId,
             @Body SignatureRequest body
     );

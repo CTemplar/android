@@ -1,7 +1,5 @@
 package mobileapp.ctemplar.com.ctemplarapp.utils;
 
-import android.text.TextUtils;
-
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -58,10 +56,11 @@ public class EncodeUtils {
     }
 
     private static String generateSaltWithUsername(String username, String salt) {
-        if (TextUtils.isEmpty(username)) {
-            return "";
+        if (username == null) {
+            username = "";
         }
-        username = username.replaceAll("[^a-zA-Z]", "");
+        username = username.replaceAll("[^a-zA-Z ]", "");
+        username = username.isEmpty() ? "test" : username;
         if (salt.length() < MAX_SYMBOLS) {
             return generateSaltWithUsername(username, salt + username);
         } else {
