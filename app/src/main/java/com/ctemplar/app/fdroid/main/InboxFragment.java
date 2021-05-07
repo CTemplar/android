@@ -30,11 +30,11 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.ctemplar.app.fdroid.BaseFragment;
 import com.ctemplar.app.fdroid.R;
 import com.ctemplar.app.fdroid.executor.HandlerExecutor;
-import com.ctemplar.app.fdroid.message.dialog.MoveDialogFragment;
 import com.ctemplar.app.fdroid.message.SendMessageActivity;
 import com.ctemplar.app.fdroid.message.SendMessageFragment;
 import com.ctemplar.app.fdroid.message.ViewMessagesActivity;
 import com.ctemplar.app.fdroid.message.ViewMessagesFragment;
+import com.ctemplar.app.fdroid.message.dialog.MoveDialogFragment;
 import com.ctemplar.app.fdroid.net.ResponseStatus;
 import com.ctemplar.app.fdroid.net.response.ResponseMessagesData;
 import com.ctemplar.app.fdroid.repository.provider.MessageProvider;
@@ -305,7 +305,9 @@ public class InboxFragment extends BaseFragment
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_filter:
-                dialogFragment.show(getParentFragmentManager(), null);
+                if (!dialogFragment.isAdded()) {
+                    dialogFragment.show(getParentFragmentManager(), null);
+                }
                 return true;
             case R.id.action_search:
                 return true;

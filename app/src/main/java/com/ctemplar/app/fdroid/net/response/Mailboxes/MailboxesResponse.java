@@ -18,7 +18,7 @@ public class MailboxesResponse {
     private String previous;
 
     @SerializedName("results")
-    private List<MailboxesResult> mailboxesList;
+    private List<MailboxResponse> mailboxesList;
 
 
     public int getTotalCount() {
@@ -37,7 +37,7 @@ public class MailboxesResponse {
         return previous;
     }
 
-    public List<MailboxesResult> getMailboxesList() {
+    public List<MailboxResponse> getMailboxesList() {
         return mailboxesList;
     }
 }

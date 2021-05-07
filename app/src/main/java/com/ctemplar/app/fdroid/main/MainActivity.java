@@ -657,8 +657,8 @@ public class MainActivity extends AppCompatActivity
 
             TextView navUsername = headerView.findViewById(R.id.main_activity_username);
             TextView navEmail = headerView.findViewById(R.id.main_activity_email);
-            navUsername.setText(defaultMailbox.displayName);
-            navEmail.setText(defaultMailbox.email);
+            navUsername.setText(defaultMailbox.getDisplayName());
+            navEmail.setText(defaultMailbox.getEmail());
         }
     }
 

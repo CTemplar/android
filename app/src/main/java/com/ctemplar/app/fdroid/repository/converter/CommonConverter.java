@@ -1,4 +1,4 @@
-package com.ctemplar.app.fdroid.repository;
+package com.ctemplar.app.fdroid.repository.converter;
 
 import androidx.room.TypeConverter;
 
@@ -14,7 +14,7 @@ import com.ctemplar.app.fdroid.repository.entity.UserDisplayEntity;
 
 import static com.ctemplar.app.fdroid.utils.DateUtils.GENERAL_GSON;
 
-public class Converters {
+public class CommonConverter {
     @TypeConverter
     public static List<String> fromString(String value) {
         Type listType = new TypeToken<List<String>>() {}.getType();

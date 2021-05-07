@@ -26,7 +26,7 @@ import com.ctemplar.app.fdroid.net.request.UpdateReportBugsRequest;
 import com.ctemplar.app.fdroid.net.response.contacts.ContactData;
 import com.ctemplar.app.fdroid.net.response.contacts.ContactsResponse;
 import com.ctemplar.app.fdroid.net.response.contacts.EncryptContact;
-import com.ctemplar.app.fdroid.net.response.mailboxes.MailboxesResult;
+import com.ctemplar.app.fdroid.net.response.mailboxes.MailboxResponse;
 import com.ctemplar.app.fdroid.net.response.myself.MyselfResponse;
 import com.ctemplar.app.fdroid.net.response.myself.SettingsResponse;
 import com.ctemplar.app.fdroid.repository.AppDatabase;
@@ -218,14 +218,14 @@ public class SettingsViewModel extends ViewModel {
                 mailboxId,
                 new SignatureRequest(displayName, signatureText)
         )
-                .subscribe(new Observer<MailboxesResult>() {
+                .subscribe(new Observer<MailboxResponse>() {
                     @Override
                     public void onSubscribe(@NotNull Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(@NotNull MailboxesResult mailboxesResult) {
+                    public void onNext(@NotNull MailboxResponse mailboxResponse) {
                         appDatabase.mailboxDao().updateSignature(mailboxId, displayName, signatureText);
                         updateSignatureStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
                     }

@@ -40,8 +40,8 @@ import com.ctemplar.app.fdroid.net.response.SignUpResponse;
 import com.ctemplar.app.fdroid.net.response.domains.DomainsResponse;
 import com.ctemplar.app.fdroid.net.response.filters.FilterResult;
 import com.ctemplar.app.fdroid.net.response.filters.FiltersResponse;
+import com.ctemplar.app.fdroid.net.response.mailboxes.MailboxResponse;
 import com.ctemplar.app.fdroid.net.response.mailboxes.MailboxesResponse;
-import com.ctemplar.app.fdroid.net.response.mailboxes.MailboxesResult;
 import com.ctemplar.app.fdroid.net.response.messages.EmptyFolderResponse;
 import com.ctemplar.app.fdroid.net.response.messages.MessageAttachment;
 import com.ctemplar.app.fdroid.net.response.messages.MessagesResponse;
@@ -52,7 +52,7 @@ import com.ctemplar.app.fdroid.net.response.myself.SettingsResponse;
 import com.ctemplar.app.fdroid.net.response.myself.WhiteListContact;
 import com.ctemplar.app.fdroid.net.response.whiteBlackList.BlackListResponse;
 import com.ctemplar.app.fdroid.net.response.whiteBlackList.WhiteListResponse;
-import com.ctemplar.app.fdroid.repository.entity.MailboxEntity;
+import com.ctemplar.app.fdroid.repository.mapper.MailboxMapper;
 import com.ctemplar.app.fdroid.utils.EditTextUtils;
 
 import java.util.List;
@@ -66,6 +66,7 @@ import io.reactivex.schedulers.Schedulers;
 import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
 import retrofit2.Response;
+import timber.log.Timber;
 
 @Singleton
 public class UserRepository {
@@ -194,25 +195,20 @@ public class UserRepository {
         CTemplarApp.getAppDatabase().clearAllTables();
     }
 
-    public void saveMailboxes(List<MailboxesResult> mailboxes) {
-        if (mailboxes != null && mailboxes.size() > 0) {
-            for (int i = 0; i < mailboxes.size(); ++i) {
-                MailboxesResult result = mailboxes.get(i);
-
-                MailboxEntity entity = new MailboxEntity();
-                entity.setId(result.getId());
-                entity.setDefault(result.isDefault());
-                entity.setDisplayName(result.getDisplayName());
-                entity.setEmail(result.getEmail());
-                entity.setEnabled(result.isEnabled());
-                entity.setFingerprint(result.getFingerprint());
-                entity.setPrivateKey(result.getPrivateKey());
-                entity.setPublicKey(result.getPublicKey());
-                entity.setSignature(result.getSignature());
-
-                CTemplarApp.getAppDatabase().mailboxDao().save(entity);
-            }
+    public void saveMailbox(MailboxResponse mailbox) {
+        if (mailbox == null) {
+            Timber.e("Mailbox is null");
+            return;
         }
+        CTemplarApp.getAppDatabase().mailboxDao().save(MailboxMapper.map(mailbox));
+    }
+
+    public void saveMailboxes(List<MailboxResponse> mailboxes) {
+        if (mailboxes == null || mailboxes.size() == 0) {
+            Timber.e("Mailboxes is null");
+            return;
+        }
+        CTemplarApp.getAppDatabase().mailboxDao().saveAll(MailboxMapper.map(mailboxes));
     }
 
     // Requests
@@ -472,7 +468,7 @@ public class UserRepository {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<MailboxesResult> updateDefaultMailbox(
+    public Observable<MailboxResponse> updateDefaultMailbox(
             long mailboxId,
             DefaultMailboxRequest request
     ) {
@@ -481,7 +477,7 @@ public class UserRepository {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<MailboxesResult> updateEnabledMailbox(
+    public Observable<MailboxResponse> updateEnabledMailbox(
             long mailboxId,
             EnabledMailboxRequest request
     ) {
@@ -490,7 +486,7 @@ public class UserRepository {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<Response<MailboxesResult>> createMailbox(CreateMailboxRequest request) {
+    public Observable<Response<MailboxResponse>> createMailbox(CreateMailboxRequest request) {
         return service.createMailbox(request)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
@@ -583,7 +579,7 @@ public class UserRepository {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<MailboxesResult> updateSignature(long mailboxId, SignatureRequest request) {
+    public Observable<MailboxResponse> updateSignature(long mailboxId, SignatureRequest request) {
         return service.updateSignature(mailboxId, request)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
