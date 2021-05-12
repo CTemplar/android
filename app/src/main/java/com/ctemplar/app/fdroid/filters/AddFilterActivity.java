@@ -1,14 +1,20 @@
 package com.ctemplar.app.fdroid.filters;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.AttributeSet;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProvider;
@@ -16,10 +22,10 @@ import androidx.lifecycle.ViewModelProvider;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import butterknife.BindView;
-import butterknife.OnClick;
 import com.ctemplar.app.fdroid.BaseActivity;
 import com.ctemplar.app.fdroid.R;
 import com.ctemplar.app.fdroid.net.ResponseStatus;
@@ -28,10 +34,9 @@ import com.ctemplar.app.fdroid.net.response.folders.FoldersResponse;
 import com.ctemplar.app.fdroid.net.response.folders.FoldersResult;
 import com.ctemplar.app.fdroid.repository.constant.MainFolderNames;
 import com.ctemplar.app.fdroid.utils.EditTextUtils;
+import timber.log.Timber;
 
 public class AddFilterActivity extends BaseActivity {
-    private FiltersViewModel filtersModel;
-
     @BindView(R.id.activity_add_filter_name_edit_text)
     TextInputEditText filterNameEditText;
 
@@ -56,9 +61,32 @@ public class AddFilterActivity extends BaseActivity {
     @BindView(R.id.activity_add_filter_folder_spinner)
     Spinner filterFolderSpinner;
 
+    @BindView(R.id.activity_add_filter_action_submit)
+    Button addCustomFilterButton;
+
+    @BindView(R.id.activity_add_filter_action_cancel)
+    Button cancelButton;
+
+    private FiltersViewModel filtersModel;
+
+    private String[] filterParameterEntries;
+    private String[] filterParameterValues;
+    private String[] filterConditionEntries;
+    private String[] filterConditionValues;
+
     @Override
     protected int getLayoutId() {
         return R.layout.activity_add_filter;
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(@Nullable View parent, @NonNull String name, @NonNull Context context, @NonNull AttributeSet attrs) {
+        filterParameterEntries = getResources().getStringArray(R.array.filter_parameter_entries);
+        filterParameterValues = getResources().getStringArray(R.array.filter_parameter_values);
+        filterConditionEntries = getResources().getStringArray(R.array.filter_condition_entries);
+        filterConditionValues = getResources().getStringArray(R.array.filter_condition_values);
+        return super.onCreateView(parent, name, context, attrs);
     }
 
     @Override
@@ -74,41 +102,34 @@ public class AddFilterActivity extends BaseActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        String[] filterParameters = getResources().getStringArray(R.array.filter_parameter_list);
         ArrayAdapter<String> parametersAdapter = new ArrayAdapter<>(
                 this,
                 R.layout.item_domain_spinner,
-                filterParameters
+                filterParameterEntries
         );
         parameterSpinner.setAdapter(parametersAdapter);
-
-        String[] filterConditions = getResources().getStringArray(R.array.filter_condition_list);
         ArrayAdapter<String> conditionsAdapter = new ArrayAdapter<>(
                 this,
                 R.layout.item_domain_spinner,
-                filterConditions
+                filterConditionEntries
         );
         conditionSpinner.setAdapter(conditionsAdapter);
 
-        filtersModel.getFoldersResponse().observe(this, foldersResponse -> {
-            if (foldersResponse != null) {
-                handleCustomFolders(foldersResponse);
-            }
-        });
+        filtersModel.getFoldersResponse().observe(this, this::handleCustomFolders);
         getCustomFolders();
         addListeners();
     }
 
     private void handleCustomFolders(FoldersResponse foldersResponse) {
+        if (foldersResponse == null) {
+            Timber.d("foldersResponse is null");
+            return;
+        }
         List<FoldersResult> customFolderList = foldersResponse.getFoldersList();
-        List<String> folderList = new ArrayList<>();
-        folderList.add(MainFolderNames.INBOX);
-        folderList.add(MainFolderNames.ARCHIVE);
-        folderList.add(MainFolderNames.SPAM);
-        folderList.add(MainFolderNames.TRASH);
+        List<String> folderList = new ArrayList<>(Arrays.asList(MainFolderNames.INBOX,
+                MainFolderNames.ARCHIVE, MainFolderNames.SPAM, MainFolderNames.TRASH));
         for (FoldersResult customFolder : customFolderList) {
-            String folderName = customFolder.getName();
-            folderList.add(folderName);
+            folderList.add(customFolder.getName());
         }
 
         ArrayAdapter<String> foldersAdapter = new ArrayAdapter<>(
@@ -123,23 +144,18 @@ public class AddFilterActivity extends BaseActivity {
 
     private void handleAddFilterStatus(ResponseStatus responseStatus) {
         if (responseStatus == null || responseStatus == ResponseStatus.RESPONSE_ERROR) {
-            Toast.makeText(getApplicationContext(), getResources().getString(R.string.toast_filter_not_created), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), R.string.toast_filter_not_created, Toast.LENGTH_SHORT).show();
         } else if (responseStatus == ResponseStatus.RESPONSE_COMPLETE) {
-            Toast.makeText(getApplicationContext(), getResources().getString(R.string.toast_filter_created), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), R.string.toast_filter_created, Toast.LENGTH_SHORT).show();
             onBackPressed();
         }
     }
 
-    private void getCustomFolders() {
-        filtersModel.getFolders(200, 0);
-    }
-
-    @OnClick(R.id.activity_add_filter_action_submit)
-    public void onClickSubmit() {
+    public void createCustomFilter() {
         String filterName = EditTextUtils.getText(filterNameEditText);
         String filterText = EditTextUtils.getText(filterTextEditText);
-        String selectedParameter = parameterSpinner.getSelectedItem().toString();
-        String selectedCondition = conditionSpinner.getSelectedItem().toString();
+        String selectedParameter = filterParameterValues[parameterSpinner.getSelectedItemPosition()];
+        String selectedCondition = filterConditionValues[conditionSpinner.getSelectedItemPosition()];
         String selectedFolder = filterFolderSpinner.getSelectedItem().toString();
         boolean isMoveTo = moveToCheckBox.isChecked();
         boolean markAsRead = markAsReadCheckBox.isChecked();
@@ -183,10 +199,15 @@ public class AddFilterActivity extends BaseActivity {
 
             }
         });
+        addCustomFilterButton.setOnClickListener(v -> createCustomFilter());
+        cancelButton.setOnClickListener(v -> cancel());
     }
 
-    @OnClick(R.id.activity_add_filter_action_cancel)
-    public void onClickCancel() {
+    private void getCustomFolders() {
+        filtersModel.getFolders(200, 0);
+    }
+
+    public void cancel() {
         onBackPressed();
     }
 

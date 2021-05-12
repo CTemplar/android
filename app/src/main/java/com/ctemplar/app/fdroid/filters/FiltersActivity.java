@@ -19,17 +19,17 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 import butterknife.BindView;
-import butterknife.OnClick;
 import com.ctemplar.app.fdroid.BaseActivity;
 import com.ctemplar.app.fdroid.R;
 import com.ctemplar.app.fdroid.main.RecycleDeleteSwiper;
 import com.ctemplar.app.fdroid.net.ResponseStatus;
 import com.ctemplar.app.fdroid.net.response.filters.FilterResult;
 import com.ctemplar.app.fdroid.net.response.filters.FiltersResponse;
+import timber.log.Timber;
 
 public class FiltersActivity extends BaseActivity {
+    private final FiltersAdapter filtersAdapter = new FiltersAdapter();
     private FiltersViewModel filtersModel;
-    private FiltersAdapter filtersAdapter;
 
     @BindView(R.id.activity_filters_recycler_view)
     RecyclerView filtersRecyclerView;
@@ -65,22 +65,23 @@ public class FiltersActivity extends BaseActivity {
             }
         });
         filtersModel.getDeleteFilterResponseStatus().observe(this, this::handleFilterDeletingStatus);
+        addFilterButton.setOnClickListener(v -> addFilter());
         getFilters();
         setupSwiperForFilterList();
     }
 
     private void handleFilterDeletingStatus(ResponseStatus responseStatus) {
         if (responseStatus == null || responseStatus == ResponseStatus.RESPONSE_ERROR) {
-            Toast.makeText(getApplicationContext(), getString(R.string.txt_filter_not_deleted), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), R.string.txt_filter_not_deleted, Toast.LENGTH_SHORT).show();
         } else if (responseStatus == ResponseStatus.RESPONSE_COMPLETE) {
-            Toast.makeText(getApplicationContext(), getString(R.string.txt_filter_deleted), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), R.string.txt_filter_deleted, Toast.LENGTH_SHORT).show();
         }
     }
 
     private void handleFiltersResponse(FiltersResponse filtersResponse) {
         List<FilterResult> filterList = filtersResponse.getFilterResultList();
-        filtersAdapter = new FiltersAdapter(filterList);
         filtersRecyclerView.setAdapter(filtersAdapter);
+        filtersAdapter.setItems(filterList);
     }
 
     private void getFilters() {
@@ -93,20 +94,21 @@ public class FiltersActivity extends BaseActivity {
             public void onSwiped(final @NonNull RecyclerView.ViewHolder viewHolder, int i) {
                 final FiltersAdapter adapter = filtersAdapter;
                 if (adapter == null) {
+                    Timber.w("Adapter is null");
                     return;
                 }
-
                 final int deletedIndex = viewHolder.getAdapterPosition();
                 final FilterResult deletedFilter = adapter.removeAt(deletedIndex);
                 new AlertDialog.Builder(FiltersActivity.this)
-                        .setTitle(getString(R.string.txt_delete_filter_quest_title))
-                        .setMessage(getString(R.string.txt_delete_filter_quest_message))
-                        .setPositiveButton(getString(R.string.btn_contact_delete), (dialog, which) -> {
-                            long filterId = deletedFilter.getId();
-                            filtersModel.deleteFilter(filterId);
-                        }
+                        .setTitle(R.string.txt_delete_filter_quest_title)
+                        .setMessage(R.string.txt_delete_filter_quest_message)
+                        .setPositiveButton(R.string.btn_contact_delete, (dialog, which) -> {
+                                    long filterId = deletedFilter.getId();
+                                    filtersModel.deleteFilter(filterId);
+                                }
                         )
-                        .setNeutralButton(getString(R.string.btn_cancel), (dialog, which) -> adapter.restoreItem(deletedIndex, deletedFilter))
+                        .setNeutralButton(R.string.btn_cancel, (dialog, which)
+                                -> adapter.restoreItem(deletedIndex, deletedFilter))
                         .show();
             }
         };
@@ -121,8 +123,7 @@ public class FiltersActivity extends BaseActivity {
         getFilters();
     }
 
-    @OnClick(R.id.filters_footer_btn)
-    public void onClickAddFilter() {
+    public void addFilter() {
         Intent addFilterIntent = new Intent(this, AddFilterActivity.class);
         startActivity(addFilterIntent);
     }

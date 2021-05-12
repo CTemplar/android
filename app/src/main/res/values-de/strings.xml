@@ -254,7 +254,8 @@
     <string name="txt_filter_mark_as_read">Als gelesen markieren</string>
     <string name="txt_filter_mark_as_starred">Mit Stern markieren</string>
     <string name="btn_submit">Absenden</string>
-    <string name="toast_filter_not_created">Es existiert bereits ein Filter mit dem gleichen Namen</string>
+    <string name="filter_already_exists">Es existiert bereits ein Filter mit dem gleichen Namen</string>
+    <string name="toast_filter_not_created">Filter nicht erstellt</string>
     <string name="toast_filter_created">Filter erstellt</string>
     <string name="txt_filter_name_hint">Filter-Name muss zwischen 4 und 30 Buchstaben lang sein</string>
     <string name="txt_filter_text_hint">Filter-Text muss zwischen 1 and 30 Buchstaben lang sein</string>
@@ -444,14 +445,24 @@
     <string name="whitelist">Whitelist</string>
     <string name="blacklist">Blacklist</string>
 
-    <string-array name="filter_parameter_list">
-        <item>Betreff</item>
+    <string-array name="filter_parameter_entries">
+        <item>Gegenstand</item>
         <item>Absender</item>
+        <item>Empfänger</item>
+        <item>Header</item>
     </string-array>
 
-    <string-array name="filter_condition_list">
-        <item>enthält</item>
-        <item>beginnt mit</item>
+    <string-array name="filter_condition_entries">
+        <item>Enthält</item>
+        <item>Beinhaltet nicht</item>
+        <item>Beginnt mit</item>
+        <item>Beginnt nicht mit</item>
+        <item>Endet mit</item>
+        <item>Endet nicht mit</item>
+        <item>Genau</item>
+        <item>Stimmt nicht genau überein</item>
+        <item>Spiel</item>
+        <item>Stimmt nicht überein</item>
     </string-array>
 
     <string-array name="auto_lock_time">
