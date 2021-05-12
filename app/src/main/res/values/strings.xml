@@ -257,7 +257,8 @@
     <string name="txt_filter_mark_as_read">Mark as read</string>
     <string name="txt_filter_mark_as_starred">Mark as starred</string>
     <string name="btn_submit">Submit</string>
-    <string name="toast_filter_not_created">Filter with the same name already exists</string>
+    <string name="filter_already_exists">Filter with the same name already exists</string>
+    <string name="toast_filter_not_created">Filter not created</string>
     <string name="toast_filter_created">Filter created</string>
     <string name="txt_filter_name_hint">Filter name must be between 4 and 30 letters</string>
     <string name="txt_filter_text_hint">Filter text must be between 1 and 30 letters</string>
@@ -478,14 +479,44 @@
     <string name="whitelist">Whitelist</string>
     <string name="blacklist">Blacklist</string>
 
-    <string-array name="filter_parameter_list">
-        <item>subject</item>
-        <item>sender</item>
+    <string-array name="filter_parameter_entries">
+        <item>Subject</item>
+        <item>Sender</item>
+        <item>Recipient</item>
+        <item>Header</item>
     </string-array>
 
-    <string-array name="filter_condition_list">
+    <string-array name="filter_parameter_values">
+        <item>subject</item>
+        <item>sender</item>
+        <item>recipient</item>
+        <item>header</item>
+    </string-array>
+
+    <string-array name="filter_condition_entries">
+        <item>Contains</item>
+        <item>Does Not Contain</item>
+        <item>Startswith</item>
+        <item>Does Not Startswith</item>
+        <item>Endswith</item>
+        <item>Does Not Endswith</item>
+        <item>Exactly</item>
+        <item>Does Not Exactly Match</item>
+        <item>Match</item>
+        <item>Does Not Match</item>
+    </string-array>
+
+    <string-array name="filter_condition_values">
         <item>contains</item>
+        <item>not_contains</item>
         <item>startswith</item>
+        <item>not_startswith</item>
+        <item>endswith</item>
+        <item>not_endswith</item>
+        <item>exactly</item>
+        <item>not_exactly</item>
+        <item>pattern</item>
+        <item>not_pattern</item>
     </string-array>
 
     <string-array name="auto_lock_time">

@@ -28,7 +28,6 @@ public class CustomFilterRequest {
     private boolean markAsStarred;
 
     public CustomFilterRequest() {
-
     }
 
     public CustomFilterRequest(String name, String parameter, String condition, String filterText, boolean moveTo, String folder, boolean markAsRead, boolean markAsStarred) {

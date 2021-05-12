@@ -254,7 +254,8 @@
     <string name="txt_filter_mark_as_read">Marquer comme lu</string>
     <string name="txt_filter_mark_as_starred">Marquer comme favoris</string>
     <string name="btn_submit">Envoyer</string>
-    <string name="toast_filter_not_created">Un filtre avec le même nom existe déjà.</string>
+    <string name="filter_already_exists">Un filtre avec le même nom existe déjà.</string>
+    <string name="toast_filter_not_created">Filtre non créé</string>
     <string name="toast_filter_created">Filtre créé</string>
     <string name="txt_filter_name_hint">Le nom de filtre doit contenir entre 4 et 30 caractères.</string>
     <string name="txt_filter_text_hint">Le texte doit contenir entre 1 et 30 caractères.</string>
@@ -444,14 +445,24 @@
     <string name="whitelist">Liste blanche</string>
     <string name="blacklist">Liste noire</string>
 
-    <string-array name="filter_parameter_list">
-        <item>objet</item>
-        <item>de</item>
+    <string-array name="filter_parameter_entries">
+        <item>Matière</item>
+        <item>Expéditeur</item>
+        <item>Destinataire</item>
+        <item>Entête</item>
     </string-array>
 
-    <string-array name="filter_condition_list">
-        <item>contient</item>
-        <item>commence par</item>
+    <string-array name="filter_condition_entries">
+        <item>Contient</item>
+        <item>Ne contient pas</item>
+        <item>Commence avec</item>
+        <item>Ne démarre pas avec</item>
+        <item>Se termine par</item>
+        <item>Ne se termine pas avec</item>
+        <item>Exactement</item>
+        <item>Ne correspond pas exactement</item>
+        <item>Correspondre</item>
+        <item>Ne correspond pas</item>
     </string-array>
 
     <string-array name="auto_lock_time">
