@@ -3,6 +3,8 @@ package mobileapp.ctemplar.com.ctemplarapp.filters;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import org.jetbrains.annotations.NotNull;
+
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
@@ -17,14 +19,14 @@ import retrofit2.Response;
 import timber.log.Timber;
 
 public class FiltersViewModel extends ViewModel {
-    private UserRepository userRepository;
-    private ManageFoldersRepository manageFoldersRepository;
+    private final UserRepository userRepository;
+    private final ManageFoldersRepository manageFoldersRepository;
 
-    private MutableLiveData<FiltersResponse> filtersResponse = new MutableLiveData<>();
-    private MutableLiveData<FoldersResponse> foldersResponse = new MutableLiveData<>();
-    private MutableLiveData<ResponseStatus> addFilterResponseStatus = new MutableLiveData<>();
-    private MutableLiveData<ResponseStatus> deleteFilterResponseStatus = new MutableLiveData<>();
-    private MutableLiveData<ResponseStatus> editFilterResponseStatus = new MutableLiveData<>();
+    private final MutableLiveData<FiltersResponse> filtersResponse = new MutableLiveData<>();
+    private final MutableLiveData<FoldersResponse> foldersResponse = new MutableLiveData<>();
+    private final MutableLiveData<ResponseStatus> addFilterResponseStatus = new MutableLiveData<>();
+    private final MutableLiveData<ResponseStatus> deleteFilterResponseStatus = new MutableLiveData<>();
+    private final MutableLiveData<ResponseStatus> editFilterResponseStatus = new MutableLiveData<>();
 
     MutableLiveData<FoldersResponse> getFoldersResponse() {
         return foldersResponse;
@@ -55,17 +57,17 @@ public class FiltersViewModel extends ViewModel {
         userRepository.getFilterList()
                 .subscribe(new Observer<FiltersResponse>() {
                     @Override
-                    public void onSubscribe(Disposable d) {
+                    public void onSubscribe(@NotNull Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(FiltersResponse response) {
+                    public void onNext(@NotNull FiltersResponse response) {
                         filtersResponse.postValue(response);
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onError(@NotNull Throwable e) {
                         Timber.e(e);
                     }
 
@@ -80,17 +82,17 @@ public class FiltersViewModel extends ViewModel {
         userRepository.createFilter(customFilterRequest)
                 .subscribe(new Observer<FilterResult>() {
                     @Override
-                    public void onSubscribe(Disposable d) {
+                    public void onSubscribe(@NotNull Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(FilterResult response) {
+                    public void onNext(@NotNull FilterResult response) {
                         addFilterResponseStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onError(@NotNull Throwable e) {
                         addFilterResponseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
                     }
 
@@ -105,17 +107,17 @@ public class FiltersViewModel extends ViewModel {
         userRepository.updateFilter(id, customFilterRequest)
                 .subscribe(new Observer<FilterResult>() {
                     @Override
-                    public void onSubscribe(Disposable d) {
+                    public void onSubscribe(@NotNull Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(FilterResult response) {
+                    public void onNext(@NotNull FilterResult response) {
                         editFilterResponseStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onError(@NotNull Throwable e) {
                         editFilterResponseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
                     }
 
@@ -130,17 +132,17 @@ public class FiltersViewModel extends ViewModel {
         userRepository.deleteFilter(id)
                 .subscribe(new Observer<Response<Void>>() {
                     @Override
-                    public void onSubscribe(Disposable d) {
+                    public void onSubscribe(@NotNull Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(Response<Void> response) {
+                    public void onNext(@NotNull Response<Void> response) {
                         deleteFilterResponseStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onError(@NotNull Throwable e) {
                         deleteFilterResponseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
                     }
 
@@ -155,17 +157,17 @@ public class FiltersViewModel extends ViewModel {
         manageFoldersRepository.getFoldersList(limit, offset)
                 .subscribe(new Observer<FoldersResponse>() {
                     @Override
-                    public void onSubscribe(Disposable d) {
+                    public void onSubscribe(@NotNull Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(FoldersResponse response) {
+                    public void onNext(@NotNull FoldersResponse response) {
                         foldersResponse.postValue(response);
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onError(@NotNull Throwable e) {
                         Timber.e(e);
                     }
 

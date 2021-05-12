@@ -1,15 +1,21 @@
 package mobileapp.ctemplar.com.ctemplarapp.filters;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.AttributeSet;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProvider;
@@ -21,7 +27,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import butterknife.BindView;
-import butterknife.OnClick;
 import mobileapp.ctemplar.com.ctemplarapp.BaseActivity;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
@@ -30,10 +35,9 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.folders.FoldersResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.folders.FoldersResult;
 import mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
+import timber.log.Timber;
 
 public class EditFilterActivity extends BaseActivity {
-    private FiltersViewModel filtersModel;
-
     public static final String ARG_ID = "id";
     public static final String ARG_NAME = "name";
     public static final String ARG_PARAMETER = "parameter";
@@ -43,9 +47,6 @@ public class EditFilterActivity extends BaseActivity {
     public static final String ARG_FOLDER = "folder";
     public static final String ARG_AS_READ = "mark_as_read";
     public static final String ARG_AS_STARRED = "mark_as_starred";
-
-    private static long filterId;
-    private static String filterFolder;
 
     @BindView(R.id.activity_edit_filter_name_edit_text)
     TextInputEditText filterNameEditText;
@@ -71,9 +72,32 @@ public class EditFilterActivity extends BaseActivity {
     @BindView(R.id.activity_edit_filter_folder_spinner)
     Spinner filterFolderSpinner;
 
+    @BindView(R.id.activity_edit_filter_delete)
+    Button deleteFilterButton;
+
+    private FiltersViewModel filtersModel;
+
+    private static long filterId;
+    private static String filterFolder;
+
+    private String[] filterParameterEntries;
+    private String[] filterParameterValues;
+    private String[] filterConditionEntries;
+    private String[] filterConditionValues;
+
     @Override
     protected int getLayoutId() {
         return R.layout.activity_edit_filter;
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(@Nullable View parent, @NonNull String name, @NonNull Context context, @NonNull AttributeSet attrs) {
+        filterParameterEntries = getResources().getStringArray(R.array.filter_parameter_entries);
+        filterParameterValues = getResources().getStringArray(R.array.filter_parameter_values);
+        filterConditionEntries = getResources().getStringArray(R.array.filter_condition_entries);
+        filterConditionValues = getResources().getStringArray(R.array.filter_condition_values);
+        return super.onCreateView(parent, name, context, attrs);
     }
 
     @Override
@@ -108,33 +132,25 @@ public class EditFilterActivity extends BaseActivity {
         markAsReadCheckBox.setChecked(filterAsRead);
         markAsStarredCheckBox.setChecked(filterAsStarred);
 
-        String[] filterParameters = getResources().getStringArray(R.array.filter_parameter_list);
         ArrayAdapter<String> parametersAdapter = new ArrayAdapter<>(
                 this,
                 R.layout.item_domain_spinner,
-                filterParameters
+                filterParameterEntries
         );
         parameterSpinner.setAdapter(parametersAdapter);
-        List<String> filterParameterList = Arrays.asList(filterParameters);
-        int editFilterParameter = filterParameterList.indexOf(filterParameter);
-        parameterSpinner.setSelection(editFilterParameter);
+        int filterParameterPosition = Arrays.asList(filterParameterValues).indexOf(filterParameter);
+        parameterSpinner.setSelection(filterParameterPosition);
 
-        String[] filterConditions = getResources().getStringArray(R.array.filter_condition_list);
         ArrayAdapter<String> conditionsAdapter = new ArrayAdapter<>(
                 this,
                 R.layout.item_domain_spinner,
-                filterConditions
+                filterConditionEntries
         );
         conditionSpinner.setAdapter(conditionsAdapter);
-        List<String> filterConditionList = Arrays.asList(filterConditions);
-        int editFilterCondition = filterConditionList.indexOf(filterCondition);
-        conditionSpinner.setSelection(editFilterCondition);
+        int filterConditionPosition = Arrays.asList(filterConditionValues).indexOf(filterCondition);
+        conditionSpinner.setSelection(filterConditionPosition);
 
-        filtersModel.getFoldersResponse().observe(this, foldersResponse -> {
-            if (foldersResponse != null) {
-                handleCustomFolders(foldersResponse);
-            }
-        });
+        filtersModel.getFoldersResponse().observe(this, this::handleCustomFolders);
         filtersModel.getEditFilterResponseStatus().observe(this, this::handleEditFilterStatus);
         filtersModel.getDeleteFilterResponseStatus().observe(this, this::handleFilterDeletingStatus);
         getCustomFolders();
@@ -143,22 +159,26 @@ public class EditFilterActivity extends BaseActivity {
 
     private void handleEditFilterStatus(ResponseStatus responseStatus) {
         if (responseStatus == null || responseStatus == ResponseStatus.RESPONSE_ERROR) {
-            Toast.makeText(getApplicationContext(), getString(R.string.txt_filter_not_edited), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), R.string.txt_filter_not_edited, Toast.LENGTH_SHORT).show();
         } else if (responseStatus == ResponseStatus.RESPONSE_COMPLETE) {
-            Toast.makeText(getApplicationContext(), getString(R.string.txt_filter_edited), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), R.string.txt_filter_edited, Toast.LENGTH_SHORT).show();
             onBackPressed();
         }
     }
 
     private void handleFilterDeletingStatus(ResponseStatus responseStatus) {
         if (responseStatus == null || responseStatus == ResponseStatus.RESPONSE_ERROR) {
-            Toast.makeText(getApplicationContext(), getString(R.string.txt_filter_not_deleted), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), R.string.txt_filter_not_deleted, Toast.LENGTH_SHORT).show();
         } else if (responseStatus == ResponseStatus.RESPONSE_COMPLETE) {
-            Toast.makeText(getApplicationContext(), getString(R.string.txt_filter_deleted), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), R.string.txt_filter_deleted, Toast.LENGTH_SHORT).show();
         }
     }
 
     private void handleCustomFolders(FoldersResponse foldersResponse) {
+        if (foldersResponse == null) {
+            Timber.d("foldersResponse is null");
+            return;
+        }
         List<FoldersResult> customFolderList = foldersResponse.getFoldersList();
         List<String> folderList = new ArrayList<>();
         folderList.add(MainFolderNames.INBOX);
@@ -184,7 +204,7 @@ public class EditFilterActivity extends BaseActivity {
         filtersModel.getFolders(200, 0);
     }
 
-    public void editFilter() {
+    public void updateFilter() {
         String filterName = EditTextUtils.getText(filterNameEditText);
         String filterText = EditTextUtils.getText(filterTextEditText);
         String selectedParameter = parameterSpinner.getSelectedItem().toString();
@@ -232,10 +252,10 @@ public class EditFilterActivity extends BaseActivity {
 
             }
         });
+        deleteFilterButton.setOnClickListener(v -> deleteFilter());
     }
 
-    @OnClick(R.id.activity_edit_filter_delete)
-    public void onClickFilterDelete() {
+    public void deleteFilter() {
         filtersModel.deleteFilter(filterId);
         onBackPressed();
     }
@@ -250,7 +270,7 @@ public class EditFilterActivity extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_edit_filter:
-                editFilter();
+                updateFilter();
                 break;
             case android.R.id.home:
                 onBackPressed();

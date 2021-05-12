@@ -254,7 +254,8 @@
     <string name="txt_filter_mark_as_read">Отметить как прочитанное</string>
     <string name="txt_filter_mark_as_starred">Отметить</string>
     <string name="btn_submit">Включить</string>
-    <string name="toast_filter_not_created">Фильтр с таким названием уже существует</string>
+    <string name="filter_already_exists">Фильтр с таким названием уже существует</string>
+    <string name="toast_filter_not_created">Фильтр не создан</string>
     <string name="toast_filter_created">Фильтр создан</string>
     <string name="txt_filter_name_hint">Название фильтра должно включать от 4 до 30 букв</string>
     <string name="txt_filter_text_hint">Текст фильтра должен включать от 1 до 30 букв</string>
@@ -444,14 +445,24 @@
     <string name="whitelist">Белый список</string>
     <string name="blacklist">Черный список</string>
 
-    <string-array name="filter_parameter_list">
-        <item>тема</item>
-        <item>отправитель</item>
+    <string-array name="filter_parameter_entries">
+        <item>Тема</item>
+        <item>Отправитель</item>
+        <item>Получатель</item>
+        <item>Заголовок</item>
     </string-array>
 
-    <string-array name="filter_condition_list">
-        <item>содержит</item>
-        <item>начинается с</item>
+    <string-array name="filter_condition_entries">
+        <item>Содержит</item>
+        <item>Не содержит</item>
+        <item>Начинается с</item>
+        <item>Не начинается с</item>
+        <item>Заканчивается на</item>
+        <item>Не заканчивается на</item>
+        <item>Равно</item>
+        <item>Не совсем совпадает</item>
+        <item>Совпадает</item>
+        <item>Не совпадает</item>
     </string-array>
 
     <string-array name="auto_lock_time">

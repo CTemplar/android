@@ -254,7 +254,8 @@
     <string name="txt_filter_mark_as_read">التمييز بأنه تمت قراءته</string>
     <string name="txt_filter_mark_as_starred">التمييز بنجمة</string>
     <string name="btn_submit">تسجيل</string>
-    <string name="toast_filter_not_created">يوجد مرشح بنفس الاسم بالفعل</string>
+    <string name="filter_already_exists">يوجد مرشح بنفس الاسم بالفعل</string>
+    <string name="toast_filter_not_created">لم يتم إنشاء الفلتر</string>
     <string name="toast_filter_created">تم إنشاء مرشح</string>
     <string name="txt_filter_name_hint">يجب أن يتراوح اسم المرشح بين 4 و 30 حرفًا</string>
     <string name="txt_filter_text_hint">يجب أن يتراوح نص المرشح بين 1 و 30 حرفًا</string>
@@ -444,14 +445,24 @@
     <string name="whitelist">القائمة المسموحة</string>
     <string name="blacklist">القائمة المحظورة</string>
 
-    <string-array name="filter_parameter_list">
-        <item>الموضوع</item>
-        <item>المرسل</item>
+    <string-array name="filter_parameter_entries">
+        <item>موضوع</item>
+        <item>مرسل</item>
+        <item>متلقي</item>
+        <item>رأس</item>
     </string-array>
 
-    <string-array name="filter_condition_list">
-        <item>يحتوي على</item>
-        <item>البدء من خلال</item>
+    <string-array name="filter_condition_entries">
+        <item>يتضمن</item>
+        <item>لا يحتوي</item>
+        <item>ابدا ب</item>
+        <item>لا يبدأ</item>
+        <item>ينتهي</item>
+        <item>لا ينتهي</item>
+        <item>بالضبط</item>
+        <item>لا تتطابق تمامًا</item>
+        <item>تطابق</item>
+        <item>غير مطابق</item>
     </string-array>
 
     <string-array name="auto_lock_time">
