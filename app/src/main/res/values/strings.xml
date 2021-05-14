@@ -544,11 +544,13 @@
         <item>Auto (detect)</item>
         <item>English</item>
         <item>Français</item>
+        <item>Polski</item>
         <item>Português</item>
         <item>Deutsche</item>
         <item>Italiano</item>
         <item>عربى</item>
         <item>中文</item>
+        <item>Română</item>
         <item>Русский</item>
         <item>Українська</item>
     </string-array>
@@ -557,11 +559,13 @@
         <item>auto</item>
         <item>en</item>
         <item>fr</item>
+        <item>pl</item>
         <item>pt</item>
         <item>de</item>
         <item>it</item>
         <item>ar</item>
         <item>zh</item>
+        <item>ro</item>
         <item>ru</item>
         <item>uk</item>
     </string-array>
