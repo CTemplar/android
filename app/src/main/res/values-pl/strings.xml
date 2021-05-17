@@ -1,8 +1,4 @@
 <resources>
-    <string translatable="false" name="polish_translation_by">Dorian Oszczęda ~ vxern@ctemplar.com, Copyright © 2021 CTemplar. All rights reserved.</string>
-
-    <string translatable="false" name="app_name">CTemplar</string>
-    <string translatable="false" name="platform">android</string>
     <string name="navigation_drawer_open">Otwórz szufladkę nawigacji</string>
     <string name="navigation_drawer_close">Zamknij szufladkę nawigacji</string>
     <string name="nav_header_desc">Nagłówek nawigacji</string>
@@ -58,7 +54,6 @@
     <string name="menu_mark_as_unread">Przenieś do nieprzeczytanych</string>
 
     <!-- STRINGS -->
-    <string translatable="false" name="encrypted_subject">...</string>
     <string name="token_expired_title">Sesja wygasła</string>
     <string name="token_expired_message">Sesja wygasła. Prosimy zalogować się ponownie.</string>
     <string name="title_email">E-mail</string>
@@ -130,6 +125,7 @@
     <string name="txt_left_time_dead_mans_timer">Czasomierz truposza w %1$s</string>
     <string name="txt_encrypt_message_title">Ustaw hasło</string>
     <string name="txt_destruct_message_title">Czasomierz samozniszczenia</string>
+    <string name="txt_destruct_timer_hint">Self Destruction jest tylko dla odbiorców CTemplar. Dodaj odbiorców CTemplar do funkcji autodestrukcji</string>
     <string name="txt_dead_mans_title">Czasomierz truposza</string>
     <string name="txt_delayed_message_title">Opóźnione dostarczenie</string>
     <string name="txt_encrypt_message_summary">Szyfrowanie dla użytkowników innych serwisów</string>
@@ -141,6 +137,12 @@
     <string name="txt_selected_datetime_is_past">Wybrany czas już minął</string>
     <string name="txt_yesterday">Wczoraj</string>
     <string name="txt_attachments_in_processing">Załączniki w procesie przetwarzania…</string>
+    <string name="message_encrypted_with_password">Ta wiadomość została zaszyfrowana hasłem</string>
+    <string name="message_encrypted_with_password_title">Wprowadź hasło</string>
+    <string name="password_hint">Podpowiedź do hasła: %s</string>
+    <string name="decrypt">Odszyfruj</string>
+    <string name="password_is_incorrect">Hasło jest niepoprawne</string>
+    <string name="firstly_decrypt_message">Najpierw odszyfruj wiadomość</string>
 
     <!-- VIEW MESSAGES -->
     <string name="txt_more_details">Więcej</string>
@@ -252,7 +254,8 @@
     <string name="txt_filter_mark_as_read">Oznacz jako przeczytane</string>
     <string name="txt_filter_mark_as_starred">Oznacz gwiazdką</string>
     <string name="btn_submit">Zapisz</string>
-    <string name="toast_filter_not_created">Filtr z tą nazwą już istnieje</string>
+    <string name="filter_already_exists">Filtr z tą nazwą już istnieje</string>
+    <string name="toast_filter_not_created">Filtr nie został utworzony</string>
     <string name="toast_filter_created">Filtr stworzony</string>
     <string name="txt_filter_name_hint">Nazwa filtru musi zawierać przynajmniej 4 i nie więcej niż 30 znaków</string>
     <string name="txt_filter_text_hint">Tekst filtru musi zawierać przynajmniej 1 i nie więcej niż 30 znaków</string>
@@ -300,7 +303,6 @@
     <string name="txt_type_your_name">Wprowadź nazwę</string>
     <string name="txt_type_signature">Wprowadź podpis</string>
     <string name="txt_signature_enabled">Podpisywanie włączone</string>
-    <string name="txt_mobile_signature_enabled">Podpisywanie włączone</string>
 
     <!-- PIN LOCK -->
     <string name="pin_lock">Blokada PIN</string>
@@ -310,6 +312,7 @@
     <string name="choose_pin">Wprowadź czterocyfrowy kod PIN</string>
     <string name="confirm_pin">Potwierdź PIN</string>
     <string name="invalid_pin">Niepoprawny PIN</string>
+    <string name="invalid_pin_timeout">Spróbuj ponownie za %d sekund</string>
     <string name="pins_dont_match">Kody PIN się nie zgadzają</string>
 
     <!-- SIGNATURE EDIT BAR -->
@@ -324,6 +327,8 @@
     <string name="settings_recovery_email">E-mail pomocniczy</string>
     <string name="settings_enable_recovery_email">Aktywuj e-mail pomocniczy</string>
     <string name="settings_type_recovery_email">Wprowadź swój e-mail pomocniczy</string>
+    <string name="settings_type_notification_email">Wpisz swój e-mail z powiadomieniem</string>
+    <string name="settings_type_notification_email_description">Wprowadź wiadomość e-mail z powiadomieniem, na którą chcesz codziennie otrzymywać powiadomienia o nowych wiadomościach e-mail.</string>
     <string name="settings_enabled_anti_phishing">Antyphishing</string>
     <string name="settings_type_anti_phishing_phrase">Wprowadź swoją frazę antyphishingową</string>
     <string name="settings_subject_encryption">Szyfrowanie tematu</string>
@@ -332,6 +337,7 @@
     <string name="settings_notifications">Powiadomienia</string>
     <string name="settings_enable_notifications">Aktywuj powiadomienia push</string>
     <string name="settings_contacts_encryption">Szyfrowanie kontaktów</string>
+    <string name="settings_keep_decrypted_subjects">Przechowuj odszyfrowane tematy lokalnie</string>
     <string name="settings_encryption">Szyfrowanie</string>
     <string name="settings_phishing_protection">Ochrona przez phishingiem</string>
     <string name="settings_phishing_protection_description"><![CDATA[<font color="#939191">Fraza antyphishingowa pozwala użytkownikom na połączenie słowa lub frazy do konta CTemplar. Po ustawieniu, jeśli się zalogujesz na konto a fraza antyphishingowa jest zmieniona lub jej nie ma, może to znaczyć że padłeś/aś ofiarą phishingu. Powinieneś/aś się niezwłocznie upewnić że znajdujesz się na stronie </font><font color="#4d92e2"><u>https://mail.ctemplar.com</u></font>. <font color="#939191">Jeśli nie jesteś, znaczy to że złośliwa strona ma dostęp do twojego konta. Aby zapobiec dalszym szkodom, powinieneś/aś się udać natychmiastowo na stronę </font><font color="#4d92e2"><u>https://mail.ctemplar.com</u></font> <font color="#939191">i zmienić hasło.<br><br>Prosimy zauważyć iż fraza antyphishingowa będzie wyświetlona wyłącznie w przeglądarce.</font>]]></string>
@@ -342,6 +348,7 @@
     <string name="settings_wb_list">Whitelista / Blacklista</string>
     <string name="settings_dark_mode">Tryb przyciemniony</string>
     <string name="settings_block_external_images">Blokuj zewnętrznych obrazów</string>
+    <string name="settings_report_bugs">Zgłoś błędy</string>
     <string name="settings_folders">Foldery</string>
     <string name="settings_manage_folders">Zarządzaj folderami</string>
     <string name="settings_security">Bezpieczeństwo</string>
@@ -350,9 +357,7 @@
     <string name="settings_signature">Podpis</string>
     <string name="settings_enable_signature">Aktywuj podpis</string>
     <string name="settings_type_signature">Wprowadź swój podpis</string>
-    <string name="settings_mobile_signature">Podpis mobilny</string>
     <string name="settings_keys">Klucze</string>
-    <string name="settings_enable_mobile_signature">Aktywuj podpis mobilny</string>
     <string name="settings_about">O</string>
     <string name="settings_helpdesk">Centrum pomocy</string>
     <string name="settings_local_storage_limit">Limit lokalnej pamięci</string>
@@ -364,6 +369,7 @@
     <string name="toast_contacts_encrypted">Kontakty są zaszyfrowane</string>
     <string name="toast_contacts_decrypted">Kontakty są odszyfrowane</string>
     <string name="toast_decryption_error">Wystąpił błąd podczas odszyfrowywania. Prosimy spróbować ponownie.</string>
+    <string name="please_restart_app_to_apply_changes">Uruchom ponownie aplikację, aby zastosować zmiany</string>
 
     <!-- MAILBOXES -->
     <string name="addresses">Adresy</string>
@@ -401,39 +407,10 @@
     <string name="txt_and_more_features">i wiele więcej</string>
     <string name="txt_not_now">Nie teraz</string>
 
-    <!-- EXTERNAL URLS -->
-    <string translatable="false" name="url_prime_upgrade">https://ctemplar.com/mail/settings/dashboard-and-plans</string>
-    <string translatable="false" name="url_prime_more">https://ctemplar.com/pricing</string>
-    <string translatable="false" name="url_helpdesk">https://ctemplar.com/help/</string>
-
     <!-- PREFERENCE KEYS -->
     <string name="change_password_reset_data">Usuń dane</string>
     <string name="toast_email_not_valid">E-mail jest nieprawidłowy</string>
     <string name="storage_limit_info">%1$s z %2$s</string>
-    <string translatable="false" name="password_key">password_key</string>
-    <string translatable="false" name="pin_lock_key">pin_lock_key</string>
-    <string translatable="false" name="signature_key">signature_key</string>
-    <string translatable="false" name="mobile_signature_key">mobile_signature_key</string>
-    <string translatable="false" name="filters_key">filters_key</string>
-    <string translatable="false" name="dark_mode_key">dark_mode_key</string>
-    <string translatable="false" name="block_external_images_key">block_external_images_key</string>
-    <string translatable="false" name="white_black_list">white_black_list</string>
-    <string translatable="false" name="manage_folders">manage_folders</string>
-    <string translatable="false" name="push_notifications_enabled">push_notifications_enabled</string>
-    <string translatable="false" name="recovery_email_enabled">recovery_email_enabled</string>
-    <string translatable="false" name="recovery_email">recovery_email</string>
-    <string translatable="false" name="anti_phishing_enabled">anti_phishing_enabled</string>
-    <string translatable="false" name="anti_phishing_key">anti_phishing_key</string>
-    <string translatable="false" name="anti_phishing_description_key">anti_phishing_description_key</string>
-    <string translatable="false" name="setting_keys">setting_keys</string>
-    <string translatable="false" name="email_addresses">email_addresses</string>
-    <string translatable="false" name="helpdesk_key">helpdesk_key</string>
-    <string translatable="false" name="local_storage_limit">local_storage_limit</string>
-    <string translatable="false" name="recovery_email_holder">recovery_email_holder</string>
-    <string translatable="false" name="contacts_encryption_enabled">contacts_encryption_enabled</string>
-    <string translatable="false" name="auto_save_contacts_enabled">auto_save_contacts_enabled</string>
-    <string translatable="false" name="auto_save_drafts_enabled">auto_save_drafts_enabled</string>
-    <string translatable="false" name="setting_id">setting_id</string>
 
     <!-- ERRORS -->
     <string name="error_field_cannot_be_empty">To pole nie może być puste.</string>
@@ -468,14 +445,24 @@
     <string name="whitelist">Whitelista</string>
     <string name="blacklist">Blacklista</string>
 
-    <string-array name="filter_parameter_list">
-        <item>temat</item>
-        <item>nadawca</item>
+    <string-array name="filter_parameter_entries">
+        <item>Przedmiot</item>
+        <item>Nadawca</item>
+        <item>Odbiorca</item>
+        <item>Nagłówek</item>
     </string-array>
 
-    <string-array name="filter_condition_list">
-        <item>zawiera</item>
-        <item>zaczyna się na</item>
+    <string-array name="filter_condition_entries">
+        <item>Zawiera</item>
+        <item>Nie zawiera</item>
+        <item>Zaczynać z</item>
+        <item>Nie zaczyna się od</item>
+        <item>Kończy się</item>
+        <item>Nie kończy się na</item>
+        <item>Dokładnie</item>
+        <item>Nie pasuje dokładnie</item>
+        <item>Mecz</item>
+        <item>Nie pasuje</item>
     </string-array>
 
     <string-array name="auto_lock_time">
@@ -488,14 +475,8 @@
     </string-array>
 
     <string-array name="dark_mode_entries">
-        <item>Auto (detect)</item>
-        <item>On</item>
-        <item>Off</item>
-    </string-array>
-
-    <string-array name="dark_mode_values">
-        <item>auto</item>
-        <item>on</item>
-        <item>off</item>
+        <item>Automatyczne wykrywanie</item>
+        <item>Zawiera</item>
+        <item>Wyłączony</item>
     </string-array>
 </resources>
