@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class FiltersResponse {
+public class EmailFilterResponse {
     @SerializedName("total_count")
     private int totalCount;
 
@@ -18,7 +18,7 @@ public class FiltersResponse {
     private String previous;
 
     @SerializedName("results")
-    private List<FilterResult> filterResultList;
+    private List<EmailFilterResult> results;
 
 
     public int getTotalCount() {
@@ -37,7 +37,7 @@ public class FiltersResponse {
         return previous;
     }
 
-    public List<FilterResult> getFilterResultList() {
-        return filterResultList;
+    public List<EmailFilterResult> getResults() {
+        return results;
     }
 }

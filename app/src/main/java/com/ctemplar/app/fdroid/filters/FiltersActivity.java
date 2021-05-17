@@ -16,15 +16,13 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.List;
-
 import butterknife.BindView;
 import com.ctemplar.app.fdroid.BaseActivity;
 import com.ctemplar.app.fdroid.R;
 import com.ctemplar.app.fdroid.main.RecycleDeleteSwiper;
 import com.ctemplar.app.fdroid.net.ResponseStatus;
-import com.ctemplar.app.fdroid.net.response.filters.FilterResult;
-import com.ctemplar.app.fdroid.net.response.filters.FiltersResponse;
+import com.ctemplar.app.fdroid.net.response.filters.EmailFilterResponse;
+import com.ctemplar.app.fdroid.net.response.filters.EmailFilterResult;
 import timber.log.Timber;
 
 public class FiltersActivity extends BaseActivity {
@@ -59,11 +57,10 @@ public class FiltersActivity extends BaseActivity {
         DividerItemDecoration dividerItemDecoration =
                 new DividerItemDecoration(this, layoutManager.getOrientation());
         filtersRecyclerView.addItemDecoration(dividerItemDecoration);
-        filtersModel.getFiltersResponse().observe(this, filtersResponse -> {
-            if (filtersResponse != null) {
-                handleFiltersResponse(filtersResponse);
-            }
-        });
+        filtersRecyclerView.setAdapter(filtersAdapter);
+        filtersAdapter.setOnChangeOrderListener(request -> filtersModel.updateEmailFiltersOrder(request));
+
+        filtersModel.getFiltersResponse().observe(this, this::handleFiltersResponse);
         filtersModel.getDeleteFilterResponseStatus().observe(this, this::handleFilterDeletingStatus);
         addFilterButton.setOnClickListener(v -> addFilter());
         getFilters();
@@ -78,10 +75,12 @@ public class FiltersActivity extends BaseActivity {
         }
     }
 
-    private void handleFiltersResponse(FiltersResponse filtersResponse) {
-        List<FilterResult> filterList = filtersResponse.getFilterResultList();
-        filtersRecyclerView.setAdapter(filtersAdapter);
-        filtersAdapter.setItems(filterList);
+    private void handleFiltersResponse(EmailFilterResponse emailFilterResponse) {
+        if (emailFilterResponse == null) {
+            Timber.e("handleFiltersResponse is null");
+            return;
+        }
+        filtersAdapter.setItems(emailFilterResponse.getResults());
     }
 
     private void getFilters() {
@@ -98,18 +97,18 @@ public class FiltersActivity extends BaseActivity {
                     return;
                 }
                 final int deletedIndex = viewHolder.getAdapterPosition();
-                final FilterResult deletedFilter = adapter.removeAt(deletedIndex);
-                new AlertDialog.Builder(FiltersActivity.this)
-                        .setTitle(R.string.txt_delete_filter_quest_title)
-                        .setMessage(R.string.txt_delete_filter_quest_message)
-                        .setPositiveButton(R.string.btn_contact_delete, (dialog, which) -> {
-                                    long filterId = deletedFilter.getId();
-                                    filtersModel.deleteFilter(filterId);
-                                }
-                        )
-                        .setNeutralButton(R.string.btn_cancel, (dialog, which)
-                                -> adapter.restoreItem(deletedIndex, deletedFilter))
-                        .show();
+                final EmailFilterResult deletedFilter = adapter.removeAt(deletedIndex);
+                AlertDialog.Builder builder = new AlertDialog.Builder(FiltersActivity.this);
+                builder.setTitle(R.string.txt_delete_filter_quest_title);
+                builder.setMessage(R.string.txt_delete_filter_quest_message);
+                builder.setPositiveButton(R.string.btn_contact_delete, (dialog, which) -> {
+                            long filterId = deletedFilter.getId();
+                            filtersModel.deleteFilter(filterId);
+                        }
+                );
+                builder.setNeutralButton(R.string.btn_cancel, (dialog, which)
+                        -> adapter.restoreItem(deletedIndex, deletedFilter));
+                builder.show();
             }
         };
 

@@ -14,7 +14,6 @@ import com.ctemplar.app.fdroid.net.request.ChangePasswordRequest;
 import com.ctemplar.app.fdroid.net.request.CheckUsernameRequest;
 import com.ctemplar.app.fdroid.net.request.ContactsEncryptionRequest;
 import com.ctemplar.app.fdroid.net.request.CreateMailboxRequest;
-import com.ctemplar.app.fdroid.net.request.CustomFilterRequest;
 import com.ctemplar.app.fdroid.net.request.DarkModeRequest;
 import com.ctemplar.app.fdroid.net.request.DefaultMailboxRequest;
 import com.ctemplar.app.fdroid.net.request.DisableLoadingImagesRequest;
@@ -36,20 +35,26 @@ import com.ctemplar.app.fdroid.net.request.SignatureRequest;
 import com.ctemplar.app.fdroid.net.request.SubjectEncryptedRequest;
 import com.ctemplar.app.fdroid.net.request.TokenRefreshRequest;
 import com.ctemplar.app.fdroid.net.request.UpdateReportBugsRequest;
+import com.ctemplar.app.fdroid.net.request.filters.EmailFilterOrderListRequest;
+import com.ctemplar.app.fdroid.net.request.filters.EmailFilterRequest;
 import com.ctemplar.app.fdroid.net.response.AddAppTokenResponse;
 import com.ctemplar.app.fdroid.net.response.CaptchaResponse;
 import com.ctemplar.app.fdroid.net.response.CaptchaVerifyResponse;
 import com.ctemplar.app.fdroid.net.response.CheckUsernameResponse;
+import com.ctemplar.app.fdroid.net.response.KeyResponse;
+import com.ctemplar.app.fdroid.net.response.RecoverPasswordResponse;
+import com.ctemplar.app.fdroid.net.response.SignInResponse;
+import com.ctemplar.app.fdroid.net.response.SignUpResponse;
 import com.ctemplar.app.fdroid.net.response.contacts.ContactData;
 import com.ctemplar.app.fdroid.net.response.contacts.ContactsResponse;
 import com.ctemplar.app.fdroid.net.response.domains.DomainsResponse;
-import com.ctemplar.app.fdroid.net.response.filters.FilterResult;
-import com.ctemplar.app.fdroid.net.response.filters.FiltersResponse;
+import com.ctemplar.app.fdroid.net.response.filters.EmailFilterOrderListResponse;
+import com.ctemplar.app.fdroid.net.response.filters.EmailFilterResponse;
+import com.ctemplar.app.fdroid.net.response.filters.EmailFilterResult;
 import com.ctemplar.app.fdroid.net.response.folders.FoldersResponse;
 import com.ctemplar.app.fdroid.net.response.folders.FoldersResult;
-import com.ctemplar.app.fdroid.net.response.KeyResponse;
-import com.ctemplar.app.fdroid.net.response.mailboxes.MailboxesResponse;
 import com.ctemplar.app.fdroid.net.response.mailboxes.MailboxResponse;
+import com.ctemplar.app.fdroid.net.response.mailboxes.MailboxesResponse;
 import com.ctemplar.app.fdroid.net.response.messages.EmptyFolderResponse;
 import com.ctemplar.app.fdroid.net.response.messages.MessageAttachment;
 import com.ctemplar.app.fdroid.net.response.messages.MessagesResponse;
@@ -58,9 +63,6 @@ import com.ctemplar.app.fdroid.net.response.myself.BlackListContact;
 import com.ctemplar.app.fdroid.net.response.myself.MyselfResponse;
 import com.ctemplar.app.fdroid.net.response.myself.SettingsResponse;
 import com.ctemplar.app.fdroid.net.response.myself.WhiteListContact;
-import com.ctemplar.app.fdroid.net.response.RecoverPasswordResponse;
-import com.ctemplar.app.fdroid.net.response.SignInResponse;
-import com.ctemplar.app.fdroid.net.response.SignUpResponse;
 import com.ctemplar.app.fdroid.net.response.whiteBlackList.BlackListResponse;
 import com.ctemplar.app.fdroid.net.response.whiteBlackList.WhiteListResponse;
 import okhttp3.MultipartBody;
@@ -248,6 +250,9 @@ public interface RestService {
     @GET("emails/domains/")
     Observable<DomainsResponse> getDomains();
 
+    @POST("emails/filter-order/")
+    Observable<EmailFilterOrderListResponse> updateEmailFiltersOrder(@Body EmailFilterOrderListRequest request);
+
     @GET("users/myself/")
     Observable<MyselfResponse> getMyself();
 
@@ -280,15 +285,15 @@ public interface RestService {
     Observable<ResponseBody> deleteContact(@Path("id") long id);
 
     @GET("users/filters/")
-    Observable<FiltersResponse> getFilterList();
+    Observable<EmailFilterResponse> getFilterList();
 
     @POST("users/filters/")
-    Observable<FilterResult> createFilter(@Body CustomFilterRequest customFilterRequest);
+    Observable<EmailFilterResult> createFilter(@Body EmailFilterRequest emailFilterRequest);
 
     @PATCH("users/filters/{id}/")
-    Observable<FilterResult> updateFilter(
+    Observable<EmailFilterResult> updateFilter(
             @Path("id") long id,
-            @Body CustomFilterRequest customFilterRequest
+            @Body EmailFilterRequest emailFilterRequest
     );
 
     @DELETE("users/filters/{id}/")

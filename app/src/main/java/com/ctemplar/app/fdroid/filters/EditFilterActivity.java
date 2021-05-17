@@ -24,13 +24,15 @@ import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
 import com.ctemplar.app.fdroid.BaseActivity;
 import com.ctemplar.app.fdroid.R;
 import com.ctemplar.app.fdroid.net.ResponseStatus;
-import com.ctemplar.app.fdroid.net.request.CustomFilterRequest;
+import com.ctemplar.app.fdroid.net.request.filters.EmailFilterConditionRequest;
+import com.ctemplar.app.fdroid.net.request.filters.EmailFilterRequest;
 import com.ctemplar.app.fdroid.net.response.folders.FoldersResponse;
 import com.ctemplar.app.fdroid.net.response.folders.FoldersResult;
 import com.ctemplar.app.fdroid.repository.constant.MainFolderNames;
@@ -223,16 +225,21 @@ public class EditFilterActivity extends BaseActivity {
             return;
         }
 
-        CustomFilterRequest customFilterRequest = new CustomFilterRequest();
-        customFilterRequest.setName(filterName);
-        customFilterRequest.setFilterText(filterText);
-        customFilterRequest.setParameter(selectedParameter);
-        customFilterRequest.setCondition(selectedCondition);
-        customFilterRequest.setFolder(selectedFolder);
-        customFilterRequest.setMoveTo(isMoveTo);
-        customFilterRequest.setMarkAsRead(markAsRead);
-        customFilterRequest.setMarkAsStarred(markAsStarred);
-        filtersModel.editFilter(filterId, customFilterRequest);
+        EmailFilterRequest emailFilterRequest = new EmailFilterRequest();
+        emailFilterRequest.setName(filterName);
+
+        EmailFilterConditionRequest emailFilterConditionRequest = new EmailFilterConditionRequest();
+//        emailFilterConditionRequest.setId(); TODO
+        emailFilterConditionRequest.setFilterText(filterText);
+        emailFilterConditionRequest.setParameter(selectedParameter);
+        emailFilterConditionRequest.setCondition(selectedCondition);
+
+        emailFilterRequest.setConditions(Collections.singletonList(emailFilterConditionRequest));
+        emailFilterRequest.setFolder(selectedFolder);
+        emailFilterRequest.setMoveTo(isMoveTo);
+        emailFilterRequest.setMarkAsRead(markAsRead);
+        emailFilterRequest.setMarkAsStarred(markAsStarred);
+        filtersModel.editFilter(filterId, emailFilterRequest);
     }
 
     private void addListeners() {
