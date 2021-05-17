@@ -2,7 +2,7 @@
 
 Official Android client for the CTemplar secure (end-to-end encrypted) email service.
 
-Currently available in early access on the Play Store.
+Currently available in early access on the Play Store. We also have a totally FLOSS version [included in F-Droid](https://f-droid.org/packages/com.ctemplar.app.fdroid/), you can find its source code [here](https://github.com/CTemplar/android/tree/fdroid).
 
 <a href='https://play.google.com/store/apps/details?id=mobileapp.ctemplar.com.ctemplarapp.production'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png' height='80px'/></a>
 
