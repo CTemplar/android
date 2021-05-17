@@ -15,7 +15,6 @@ import okhttp3.ResponseBody;
 import retrofit2.Response;
 
 public class ManageFoldersRepository {
-
     private final RestService service;
 
     private static final ManageFoldersRepository instance = new ManageFoldersRepository();
