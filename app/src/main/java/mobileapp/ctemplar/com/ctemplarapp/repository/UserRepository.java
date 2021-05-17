@@ -20,7 +20,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.request.ChangePasswordRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.CheckUsernameRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.ContactsEncryptionRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.CreateMailboxRequest;
-import mobileapp.ctemplar.com.ctemplarapp.net.request.CustomFilterRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.filters.EmailFilterRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.DarkModeRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.DefaultMailboxRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.DisableLoadingImagesRequest;
@@ -48,8 +48,8 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.RecoverPasswordResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.SignInResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.SignUpResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.domains.DomainsResponse;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.filters.FilterResult;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.filters.FiltersResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.filters.EmailFilterResult;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.filters.EmailFilterResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.mailboxes.MailboxResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.mailboxes.MailboxesResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.EmptyFolderResponse;
@@ -418,20 +418,20 @@ public class UserRepository {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<FiltersResponse> getFilterList() {
+    public Observable<EmailFilterResponse> getFilterList() {
         return service.getFilterList()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<FilterResult> createFilter(CustomFilterRequest customFilterRequest) {
-        return service.createFilter(customFilterRequest)
+    public Observable<EmailFilterResult> createFilter(EmailFilterRequest emailFilterRequest) {
+        return service.createFilter(emailFilterRequest)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<FilterResult> updateFilter(long id, CustomFilterRequest customFilterRequest) {
-        return service.updateFilter(id, customFilterRequest)
+    public Observable<EmailFilterResult> updateFilter(long id, EmailFilterRequest emailFilterRequest) {
+        return service.updateFilter(id, emailFilterRequest)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }

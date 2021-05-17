@@ -13,7 +13,6 @@ import mobileapp.ctemplar.com.ctemplarapp.net.request.ChangePasswordRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.CheckUsernameRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.ContactsEncryptionRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.CreateMailboxRequest;
-import mobileapp.ctemplar.com.ctemplarapp.net.request.CustomFilterRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.DarkModeRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.DefaultMailboxRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.DisableLoadingImagesRequest;
@@ -35,20 +34,26 @@ import mobileapp.ctemplar.com.ctemplarapp.net.request.SignatureRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SubjectEncryptedRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.TokenRefreshRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.UpdateReportBugsRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.filters.EmailFilterOrderListRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.filters.EmailFilterRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.AddFirebaseTokenResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.CaptchaResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.CaptchaVerifyResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.CheckUsernameResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.KeyResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.RecoverPasswordResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.SignInResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.SignUpResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.contacts.ContactData;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.contacts.ContactsResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.domains.DomainsResponse;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.filters.FilterResult;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.filters.FiltersResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.filters.EmailFilterOrderListResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.filters.EmailFilterResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.filters.EmailFilterResult;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.folders.FoldersResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.folders.FoldersResult;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.KeyResponse;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.mailboxes.MailboxesResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.mailboxes.MailboxResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.mailboxes.MailboxesResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.EmptyFolderResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.MessageAttachment;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.MessagesResponse;
@@ -57,9 +62,6 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.BlackListContact;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.MyselfResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.SettingsResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.WhiteListContact;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.RecoverPasswordResponse;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.SignInResponse;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.SignUpResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.whiteBlackList.BlackListResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.whiteBlackList.WhiteListResponse;
 import okhttp3.MultipartBody;
@@ -247,6 +249,9 @@ public interface RestService {
     @GET("emails/domains/")
     Observable<DomainsResponse> getDomains();
 
+    @POST("emails/filter-order/")
+    Observable<EmailFilterOrderListResponse> updateEmailFiltersOrder(@Body EmailFilterOrderListRequest request);
+
     @GET("users/myself/")
     Observable<MyselfResponse> getMyself();
 
@@ -279,15 +284,15 @@ public interface RestService {
     Observable<ResponseBody> deleteContact(@Path("id") long id);
 
     @GET("users/filters/")
-    Observable<FiltersResponse> getFilterList();
+    Observable<EmailFilterResponse> getFilterList();
 
     @POST("users/filters/")
-    Observable<FilterResult> createFilter(@Body CustomFilterRequest customFilterRequest);
+    Observable<EmailFilterResult> createFilter(@Body EmailFilterRequest emailFilterRequest);
 
     @PATCH("users/filters/{id}/")
-    Observable<FilterResult> updateFilter(
+    Observable<EmailFilterResult> updateFilter(
             @Path("id") long id,
-            @Body CustomFilterRequest customFilterRequest
+            @Body EmailFilterRequest emailFilterRequest
     );
 
     @DELETE("users/filters/{id}/")

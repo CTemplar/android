@@ -2,21 +2,17 @@ package mobileapp.ctemplar.com.ctemplarapp.net.response.filters;
 
 import com.google.gson.annotations.SerializedName;
 
-public class FilterResult {
+import java.util.List;
+
+public class EmailFilterResult {
     @SerializedName("id")
     private long id;
 
+    @SerializedName("conditions")
+    private List<EmailFilterConditionResponse> conditions;
+
     @SerializedName("name")
     private String name;
-
-    @SerializedName("parameter")
-    private String parameter;
-
-    @SerializedName("condition")
-    private String condition;
-
-    @SerializedName("filter_text")
-    private String filterText;
 
     @SerializedName("move_to")
     private boolean moveTo;
@@ -30,25 +26,23 @@ public class FilterResult {
     @SerializedName("mark_as_starred")
     private boolean markAsStarred;
 
+    @SerializedName("priority_order")
+    private int priorityOrder;
+
+    @SerializedName("delete_msg")
+    private boolean delete_msg;
+
 
     public long getId() {
         return id;
     }
 
+    public List<EmailFilterConditionResponse> getConditions() {
+        return conditions;
+    }
+
     public String getName() {
         return name;
-    }
-
-    public String getParameter() {
-        return parameter;
-    }
-
-    public String getCondition() {
-        return condition;
-    }
-
-    public String getFilterText() {
-        return filterText;
     }
 
     public boolean isMoveTo() {
@@ -65,5 +59,13 @@ public class FilterResult {
 
     public boolean isMarkAsStarred() {
         return markAsStarred;
+    }
+
+    public int getPriorityOrder() {
+        return priorityOrder;
+    }
+
+    public boolean isDelete_msg() {
+        return delete_msg;
     }
 }
