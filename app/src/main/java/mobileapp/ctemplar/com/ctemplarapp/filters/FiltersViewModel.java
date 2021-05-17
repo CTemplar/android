@@ -6,12 +6,15 @@ import androidx.lifecycle.ViewModel;
 import org.jetbrains.annotations.NotNull;
 
 import io.reactivex.Observer;
+import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
-import mobileapp.ctemplar.com.ctemplarapp.net.request.CustomFilterRequest;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.filters.FilterResult;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.filters.FiltersResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.filters.EmailFilterOrderListRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.filters.EmailFilterRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.filters.EmailFilterOrderListResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.filters.EmailFilterResult;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.filters.EmailFilterResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.folders.FoldersResponse;
 import mobileapp.ctemplar.com.ctemplarapp.repository.ManageFoldersRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
@@ -22,17 +25,18 @@ public class FiltersViewModel extends ViewModel {
     private final UserRepository userRepository;
     private final ManageFoldersRepository manageFoldersRepository;
 
-    private final MutableLiveData<FiltersResponse> filtersResponse = new MutableLiveData<>();
+    private final MutableLiveData<EmailFilterResponse> filtersResponse = new MutableLiveData<>();
     private final MutableLiveData<FoldersResponse> foldersResponse = new MutableLiveData<>();
     private final MutableLiveData<ResponseStatus> addFilterResponseStatus = new MutableLiveData<>();
     private final MutableLiveData<ResponseStatus> deleteFilterResponseStatus = new MutableLiveData<>();
     private final MutableLiveData<ResponseStatus> editFilterResponseStatus = new MutableLiveData<>();
+    private final MutableLiveData<EmailFilterOrderListResponse> filterOrderListResponse = new MutableLiveData<>();
 
     MutableLiveData<FoldersResponse> getFoldersResponse() {
         return foldersResponse;
     }
 
-    MutableLiveData<FiltersResponse> getFiltersResponse() {
+    MutableLiveData<EmailFilterResponse> getFiltersResponse() {
         return filtersResponse;
     }
 
@@ -48,21 +52,25 @@ public class FiltersViewModel extends ViewModel {
         return editFilterResponseStatus;
     }
 
+    MutableLiveData<EmailFilterOrderListResponse> getEmailFilterOrderListResponse() {
+        return filterOrderListResponse;
+    }
+
     public FiltersViewModel() {
         userRepository = CTemplarApp.getUserRepository();
         manageFoldersRepository = CTemplarApp.getManageFoldersRepository();
     }
 
-    void getFilters() {
+    public void getFilters() {
         userRepository.getFilterList()
-                .subscribe(new Observer<FiltersResponse>() {
+                .subscribe(new Observer<EmailFilterResponse>() {
                     @Override
                     public void onSubscribe(@NotNull Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(@NotNull FiltersResponse response) {
+                    public void onNext(@NotNull EmailFilterResponse response) {
                         filtersResponse.postValue(response);
                     }
 
@@ -78,16 +86,16 @@ public class FiltersViewModel extends ViewModel {
                 });
     }
 
-    void addFilter(CustomFilterRequest customFilterRequest) {
-        userRepository.createFilter(customFilterRequest)
-                .subscribe(new Observer<FilterResult>() {
+    public void addFilter(EmailFilterRequest emailFilterRequest) {
+        userRepository.createFilter(emailFilterRequest)
+                .subscribe(new Observer<EmailFilterResult>() {
                     @Override
                     public void onSubscribe(@NotNull Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(@NotNull FilterResult response) {
+                    public void onNext(@NotNull EmailFilterResult response) {
                         addFilterResponseStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
                     }
 
@@ -103,16 +111,16 @@ public class FiltersViewModel extends ViewModel {
                 });
     }
 
-    void editFilter(long id, CustomFilterRequest customFilterRequest) {
-        userRepository.updateFilter(id, customFilterRequest)
-                .subscribe(new Observer<FilterResult>() {
+    public void editFilter(long id, EmailFilterRequest emailFilterRequest) {
+        userRepository.updateFilter(id, emailFilterRequest)
+                .subscribe(new Observer<EmailFilterResult>() {
                     @Override
                     public void onSubscribe(@NotNull Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(@NotNull FilterResult response) {
+                    public void onNext(@NotNull EmailFilterResult response) {
                         editFilterResponseStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
                     }
 
@@ -128,7 +136,7 @@ public class FiltersViewModel extends ViewModel {
                 });
     }
 
-    void deleteFilter(long id) {
+    public void deleteFilter(long id) {
         userRepository.deleteFilter(id)
                 .subscribe(new Observer<Response<Void>>() {
                     @Override
@@ -168,6 +176,31 @@ public class FiltersViewModel extends ViewModel {
 
                     @Override
                     public void onError(@NotNull Throwable e) {
+                        Timber.e(e);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    public void updateEmailFiltersOrder(EmailFilterOrderListRequest request) {
+        manageFoldersRepository.updateEmailFiltersOrder(request)
+                .subscribe(new Observer<EmailFilterOrderListResponse>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(@NonNull EmailFilterOrderListResponse response) {
+                        filterOrderListResponse.postValue(response);
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
                         Timber.e(e);
                     }
 
