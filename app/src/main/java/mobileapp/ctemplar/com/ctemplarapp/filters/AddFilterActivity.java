@@ -7,9 +7,11 @@ import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -23,7 +25,6 @@ import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
@@ -42,14 +43,11 @@ public class AddFilterActivity extends BaseActivity {
     @BindView(R.id.activity_add_filter_name_edit_text)
     TextInputEditText filterNameEditText;
 
-    @BindView(R.id.activity_add_parameter_spinner)
-    Spinner parameterSpinner;
+    @BindView(R.id.activity_add_filter_conditions_holder)
+    ViewGroup conditionsHolder;
 
-    @BindView(R.id.activity_add_condition_spinner)
-    Spinner conditionSpinner;
-
-    @BindView(R.id.activity_add_filter_text_edit_text)
-    TextInputEditText filterTextEditText;
+    @BindView(R.id.activity_add_filter_add_condition)
+    Button addConditionButton;
 
     @BindView(R.id.activity_add_filter_move_to_check_box)
     CheckBox moveToCheckBox;
@@ -70,6 +68,7 @@ public class AddFilterActivity extends BaseActivity {
     Button cancelButton;
 
     private FiltersViewModel filtersModel;
+    private final List<ConditionViews> conditionViewsList = new ArrayList<>();
 
     private String[] filterParameterEntries;
     private String[] filterParameterValues;
@@ -103,23 +102,32 @@ public class AddFilterActivity extends BaseActivity {
             actionBar.setHomeButtonEnabled(true);
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-
-        ArrayAdapter<String> parametersAdapter = new ArrayAdapter<>(
-                this,
-                R.layout.item_domain_spinner,
-                filterParameterEntries
-        );
-        parameterSpinner.setAdapter(parametersAdapter);
-        ArrayAdapter<String> conditionsAdapter = new ArrayAdapter<>(
-                this,
-                R.layout.item_domain_spinner,
-                filterConditionEntries
-        );
-        conditionSpinner.setAdapter(conditionsAdapter);
-
+        conditionsHolder.removeAllViews();
+        conditionViewsList.clear();
+        addCondition();
         filtersModel.getFoldersResponse().observe(this, this::handleCustomFolders);
         getCustomFolders();
         addListeners();
+    }
+
+    private void addCondition() {
+        View view = getLayoutInflater().inflate(R.layout.filter_condition, conditionsHolder, false);
+        ConditionViews conditionViews = new ConditionViews(view);
+        conditionViewsList.add(conditionViews);
+        conditionsHolder.addView(view);
+        updateConditionCloseVisibility();
+    }
+
+    private void updateConditionCloseVisibility() {
+        if (conditionViewsList.size() > 1) {
+            for (ConditionViews conditionViews : conditionViewsList) {
+                conditionViews.closeView.setVisibility(View.VISIBLE);
+            }
+        } else {
+            for (ConditionViews conditionViews : conditionViewsList) {
+                conditionViews.closeView.setVisibility(View.GONE);
+            }
+        }
     }
 
     private void handleCustomFolders(FoldersResponse foldersResponse) {
@@ -140,7 +148,6 @@ public class AddFilterActivity extends BaseActivity {
                 folderList
         );
         filterFolderSpinner.setAdapter(foldersAdapter);
-
         filtersModel.getAddFilterResponseStatus().observe(this, this::handleAddFilterStatus);
     }
 
@@ -155,32 +162,33 @@ public class AddFilterActivity extends BaseActivity {
 
     public void createCustomFilter() {
         String filterName = EditTextUtils.getText(filterNameEditText);
-        String filterText = EditTextUtils.getText(filterTextEditText);
-        String selectedParameter = filterParameterValues[parameterSpinner.getSelectedItemPosition()];
-        String selectedCondition = filterConditionValues[conditionSpinner.getSelectedItemPosition()];
+        if (!EditTextUtils.isTextValid(filterName) || !EditTextUtils.isTextLength(filterName, 4, 30)) {
+            filterNameEditText.setError(getString(R.string.txt_filter_name_hint));
+            return;
+        }
         String selectedFolder = filterFolderSpinner.getSelectedItem().toString();
         boolean isMoveTo = moveToCheckBox.isChecked();
         boolean markAsRead = markAsReadCheckBox.isChecked();
         boolean markAsStarred = markAsStarredCheckBox.isChecked();
 
-        if (!EditTextUtils.isTextValid(filterName) || !EditTextUtils.isTextLength(filterName, 4, 30)) {
-            filterNameEditText.setError(getString(R.string.txt_filter_name_hint));
-            return;
-        }
-        if (!EditTextUtils.isTextLength(filterText, 1, 30)) {
-            filterTextEditText.setError(getString(R.string.txt_filter_text_hint));
-            return;
-        }
-
         EmailFilterRequest emailFilterRequest = new EmailFilterRequest();
         emailFilterRequest.setName(filterName);
-
-        EmailFilterConditionRequest emailFilterConditionRequest = new EmailFilterConditionRequest();
-        emailFilterConditionRequest.setFilterText(filterText);
-        emailFilterConditionRequest.setParameter(selectedParameter);
-        emailFilterConditionRequest.setCondition(selectedCondition);
-
-        emailFilterRequest.setConditions(Collections.singletonList(emailFilterConditionRequest));
+        List<EmailFilterConditionRequest> conditionRequestList = new ArrayList<>();
+        for (ConditionViews conditionViews : conditionViewsList) {
+            String filterText = EditTextUtils.getText(conditionViews.editText);
+            if (!EditTextUtils.isTextLength(filterText, 1, 30)) {
+                conditionViews.editText.setError(getString(R.string.txt_filter_text_hint));
+                return;
+            }
+            String selectedParameter = conditionViews.getSelectedParameter();
+            String selectedCondition = conditionViews.getSelectedCondition();
+            EmailFilterConditionRequest emailFilterConditionRequest = new EmailFilterConditionRequest();
+            emailFilterConditionRequest.setFilterText(filterText);
+            emailFilterConditionRequest.setParameter(selectedParameter);
+            emailFilterConditionRequest.setCondition(selectedCondition);
+            conditionRequestList.add(emailFilterConditionRequest);
+        }
+        emailFilterRequest.setConditions(conditionRequestList);
         emailFilterRequest.setFolder(selectedFolder);
         emailFilterRequest.setMoveTo(isMoveTo);
         emailFilterRequest.setMarkAsRead(markAsRead);
@@ -205,6 +213,7 @@ public class AddFilterActivity extends BaseActivity {
 
             }
         });
+        addConditionButton.setOnClickListener(v -> addCondition());
         addCustomFilterButton.setOnClickListener(v -> createCustomFilter());
         cancelButton.setOnClickListener(v -> cancel());
     }
@@ -224,5 +233,49 @@ public class AddFilterActivity extends BaseActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    class ConditionViews {
+        private final View rootView;
+        private final Spinner parameterSpinner;
+        private final Spinner conditionSpinner;
+        private final EditText editText;
+        private final View closeView;
+
+        private ConditionViews(View view) {
+            rootView = view;
+            parameterSpinner = view.findViewById(R.id.parameter_spinner);
+            conditionSpinner = view.findViewById(R.id.condition_spinner);
+            editText = view.findViewById(R.id.text_edit_text);
+            closeView = view.findViewById(R.id.delete_button_image_view);
+            ArrayAdapter<String> parametersAdapter = new ArrayAdapter<>(
+                    AddFilterActivity.this,
+                    R.layout.item_domain_spinner,
+                    filterParameterEntries
+            );
+            parameterSpinner.setAdapter(parametersAdapter);
+            ArrayAdapter<String> conditionsAdapter = new ArrayAdapter<>(
+                    AddFilterActivity.this,
+                    R.layout.item_domain_spinner,
+                    filterConditionEntries
+            );
+            conditionSpinner.setAdapter(conditionsAdapter);
+            closeView.setOnClickListener(v -> {
+                if (conditionViewsList.size() <= 1) {
+                    return;
+                }
+                conditionViewsList.remove(this);
+                conditionsHolder.removeView(rootView);
+                updateConditionCloseVisibility();
+            });
+        }
+
+        private String getSelectedParameter() {
+            return filterParameterValues[parameterSpinner.getSelectedItemPosition()];
+        }
+
+        private String getSelectedCondition() {
+            return filterConditionValues[conditionSpinner.getSelectedItemPosition()];
+        }
     }
 }

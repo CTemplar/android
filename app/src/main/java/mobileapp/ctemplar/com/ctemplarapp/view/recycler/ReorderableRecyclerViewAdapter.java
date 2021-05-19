@@ -19,6 +19,8 @@ public abstract class ReorderableRecyclerViewAdapter<VH extends ReorderableRecyc
 
     public abstract void onItemMove(int oldPosition, int newPosition);
 
+    public abstract void onItemMoveFinished();
+
     @CallSuper
     @Override
     public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
