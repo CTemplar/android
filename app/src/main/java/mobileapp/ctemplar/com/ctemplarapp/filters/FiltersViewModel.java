@@ -3,7 +3,11 @@ package mobileapp.ctemplar.com.ctemplarapp.filters;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.google.gson.JsonSyntaxException;
+
 import org.jetbrains.annotations.NotNull;
+
+import java.io.IOException;
 
 import io.reactivex.Observer;
 import io.reactivex.annotations.NonNull;
@@ -12,14 +16,18 @@ import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.filters.EmailFilterOrderListRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.filters.EmailFilterRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.HttpErrorResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.filters.EmailFilterOrderListResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.filters.EmailFilterResult;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.filters.EmailFilterResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.folders.FoldersResponse;
 import mobileapp.ctemplar.com.ctemplarapp.repository.ManageFoldersRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
+import retrofit2.HttpException;
 import retrofit2.Response;
 import timber.log.Timber;
+
+import static mobileapp.ctemplar.com.ctemplarapp.utils.DateUtils.GENERAL_GSON;
 
 public class FiltersViewModel extends ViewModel {
     private final UserRepository userRepository;
@@ -31,6 +39,7 @@ public class FiltersViewModel extends ViewModel {
     private final MutableLiveData<ResponseStatus> deleteFilterResponseStatus = new MutableLiveData<>();
     private final MutableLiveData<ResponseStatus> editFilterResponseStatus = new MutableLiveData<>();
     private final MutableLiveData<EmailFilterOrderListResponse> filterOrderListResponse = new MutableLiveData<>();
+    private final MutableLiveData<String> filterOrderListErrorResponse = new MutableLiveData<>();
 
     MutableLiveData<FoldersResponse> getFoldersResponse() {
         return foldersResponse;
@@ -54,6 +63,10 @@ public class FiltersViewModel extends ViewModel {
 
     MutableLiveData<EmailFilterOrderListResponse> getEmailFilterOrderListResponse() {
         return filterOrderListResponse;
+    }
+
+    MutableLiveData<String> getFilterOrderListErrorResponse() {
+        return filterOrderListErrorResponse;
     }
 
     public FiltersViewModel() {
@@ -202,6 +215,19 @@ public class FiltersViewModel extends ViewModel {
                     @Override
                     public void onError(@NonNull Throwable e) {
                         Timber.e(e);
+                        if (e instanceof HttpException) {
+                            Response<?> errorResponse = ((HttpException) e).response();
+                            if (errorResponse != null && errorResponse.errorBody() != null) {
+                                try {
+                                    String errorBody = errorResponse.errorBody().string();
+                                    HttpErrorResponse httpErrorResponse = GENERAL_GSON
+                                            .fromJson(errorBody, HttpErrorResponse.class);
+                                    filterOrderListErrorResponse.postValue(httpErrorResponse.getError().getError());
+                                } catch (IOException | JsonSyntaxException ex) {
+                                    Timber.e(ex, "Can't parse filters order error");
+                                }
+                            }
+                        }
                     }
 
                     @Override

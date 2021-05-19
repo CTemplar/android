@@ -62,6 +62,7 @@ public class FiltersActivity extends BaseActivity {
 
         filtersModel.getFiltersResponse().observe(this, this::handleFiltersResponse);
         filtersModel.getDeleteFilterResponseStatus().observe(this, this::handleFilterDeletingStatus);
+        filtersModel.getFilterOrderListErrorResponse().observe(this, this::handleFiltersErrorResponse);
         addFilterButton.setOnClickListener(v -> addFilter());
         getFilters();
         setupSwiperForFilterList();
@@ -73,6 +74,10 @@ public class FiltersActivity extends BaseActivity {
         } else if (responseStatus == ResponseStatus.RESPONSE_COMPLETE) {
             Toast.makeText(getApplicationContext(), R.string.txt_filter_deleted, Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void handleFiltersErrorResponse(String errorText) {
+        Toast.makeText(this, errorText, Toast.LENGTH_SHORT).show();
     }
 
     private void handleFiltersResponse(EmailFilterResponse emailFilterResponse) {
