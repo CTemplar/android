@@ -1,6 +1,7 @@
 package mobileapp.ctemplar.com.ctemplarapp.filters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -53,6 +54,7 @@ public class EditFilterActivity extends BaseActivity {
     public static final String ARG_FOLDER = "folder";
     public static final String ARG_AS_READ = "mark_as_read";
     public static final String ARG_AS_STARRED = "mark_as_starred";
+    public static final String ARG_DELETE_MSG = "delete_msg";
 
     @BindView(R.id.activity_edit_filter_name_edit_text)
     TextInputEditText filterNameEditText;
@@ -62,6 +64,9 @@ public class EditFilterActivity extends BaseActivity {
 
     @BindView(R.id.activity_edit_filter_add_condition)
     Button addConditionButton;
+
+    @BindView(R.id.activity_edit_filter_delete_check_box)
+    CheckBox deleteMsgCheckBox;
 
     @BindView(R.id.activity_edit_filter_move_to_check_box)
     CheckBox moveToCheckBox;
@@ -119,13 +124,14 @@ public class EditFilterActivity extends BaseActivity {
         conditionsHolder.removeAllViews();
         conditionViewsList.clear();
 
-        filterId = getIntent().getLongExtra(ARG_ID, -1);
+        Intent intent = getIntent();
+        filterId = intent.getLongExtra(ARG_ID, -1);
         if (filterId == -1) {
             return;
         }
-        filterFolder = getIntent().getStringExtra(ARG_FOLDER);
-        String filterName = getIntent().getStringExtra(ARG_NAME);
-        String[] conditionStringArray = getIntent().getStringArrayExtra(ARG_CONDITIONS);
+        filterFolder = intent.getStringExtra(ARG_FOLDER);
+        String filterName = intent.getStringExtra(ARG_NAME);
+        String[] conditionStringArray = intent.getStringArrayExtra(ARG_CONDITIONS);
         for (String conditionResponse : conditionStringArray) {
             try {
                 EmailFilterConditionResponse response = GENERAL_GSON.fromJson(conditionResponse, EmailFilterConditionResponse.class);
@@ -134,14 +140,16 @@ public class EditFilterActivity extends BaseActivity {
                 Timber.e(e, "Cannot parse conditionStringArray");
             }
         }
-        boolean filterMoveTo = getIntent().getBooleanExtra(ARG_MOVE_TO, false);
-        boolean filterAsRead = getIntent().getBooleanExtra(ARG_AS_READ, false);
-        boolean filterAsStarred = getIntent().getBooleanExtra(ARG_AS_STARRED, false);
+        boolean filterMoveTo = intent.getBooleanExtra(ARG_MOVE_TO, false);
+        boolean filterAsRead = intent.getBooleanExtra(ARG_AS_READ, false);
+        boolean filterAsStarred = intent.getBooleanExtra(ARG_AS_STARRED, false);
+        boolean filterDeleteMsg = intent.getBooleanExtra(ARG_DELETE_MSG, false);
 
         filterNameEditText.setText(filterName);
         moveToCheckBox.setChecked(filterMoveTo);
         markAsReadCheckBox.setChecked(filterAsRead);
         markAsStarredCheckBox.setChecked(filterAsStarred);
+        deleteMsgCheckBox.setChecked(filterDeleteMsg);
 
         filtersModel.getFoldersResponse().observe(this, this::handleCustomFolders);
         filtersModel.getEditFilterResponseStatus().observe(this, this::handleEditFilterStatus);
@@ -234,9 +242,10 @@ public class EditFilterActivity extends BaseActivity {
             return;
         }
         String selectedFolder = filterFolderSpinner.getSelectedItem().toString();
-        boolean isMoveTo = moveToCheckBox.isChecked();
+        boolean moveTo = moveToCheckBox.isChecked();
         boolean markAsRead = markAsReadCheckBox.isChecked();
         boolean markAsStarred = markAsStarredCheckBox.isChecked();
+        boolean deleteMsg = deleteMsgCheckBox.isChecked();
 
         EmailFilterRequest emailFilterRequest = new EmailFilterRequest();
         emailFilterRequest.setName(filterName);
@@ -257,9 +266,10 @@ public class EditFilterActivity extends BaseActivity {
         }
         emailFilterRequest.setConditions(conditionRequestList);
         emailFilterRequest.setFolder(selectedFolder);
-        emailFilterRequest.setMoveTo(isMoveTo);
+        emailFilterRequest.setMoveTo(moveTo);
         emailFilterRequest.setMarkAsRead(markAsRead);
         emailFilterRequest.setMarkAsStarred(markAsStarred);
+        emailFilterRequest.setDeleteMsg(deleteMsg);
         filtersModel.editFilter(filterId, emailFilterRequest);
     }
 
@@ -279,6 +289,17 @@ public class EditFilterActivity extends BaseActivity {
             public void afterTextChanged(Editable s) {
 
             }
+        });
+        moveToCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                deleteMsgCheckBox.setChecked(false);
+            }
+        });
+        deleteMsgCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                moveToCheckBox.setChecked(false);
+            }
+            disableOptions(isChecked);
         });
         addConditionButton.setOnClickListener(v -> addCondition());
         deleteFilterButton.setOnClickListener(v -> deleteFilter());
@@ -308,6 +329,15 @@ public class EditFilterActivity extends BaseActivity {
                 return super.onOptionsItemSelected(item);
         }
         return true;
+    }
+
+    private void disableOptions(boolean state) {
+        if (state) {
+            markAsReadCheckBox.setChecked(false);
+            markAsStarredCheckBox.setChecked(false);
+        }
+        markAsReadCheckBox.setEnabled(!state);
+        markAsStarredCheckBox.setEnabled(!state);
     }
 
     class ConditionViews {

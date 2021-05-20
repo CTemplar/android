@@ -23,16 +23,20 @@ public class EmailFilterRequest {
     @SerializedName("mark_as_starred")
     private boolean markAsStarred;
 
+    @SerializedName("delete_msg")
+    private boolean deleteMsg;
+
     public EmailFilterRequest() {
     }
 
-    public EmailFilterRequest(List<EmailFilterConditionRequest> conditions, String name, boolean moveTo, String folder, boolean markAsRead, boolean markAsStarred) {
+    public EmailFilterRequest(List<EmailFilterConditionRequest> conditions, String name, boolean moveTo, String folder, boolean markAsRead, boolean markAsStarred, boolean deleteMsg) {
         this.conditions = conditions;
         this.name = name;
         this.moveTo = moveTo;
         this.folder = folder;
         this.markAsRead = markAsRead;
         this.markAsStarred = markAsStarred;
+        this.deleteMsg = deleteMsg;
     }
 
     public void setConditions(List<EmailFilterConditionRequest> conditions) {
@@ -57,5 +61,9 @@ public class EmailFilterRequest {
 
     public void setMarkAsStarred(boolean markAsStarred) {
         this.markAsStarred = markAsStarred;
+    }
+
+    public void setDeleteMsg(boolean deleteMsg) {
+        this.deleteMsg = deleteMsg;
     }
 }

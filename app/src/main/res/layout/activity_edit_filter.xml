@@ -140,6 +140,13 @@
                     android:orientation="horizontal">
 
                     <CheckBox
+                        android:id="@+id/activity_edit_filter_delete_check_box"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginEnd="8dp"
+                        android:text="@string/btn_delete" />
+
+                    <CheckBox
                         android:id="@+id/activity_edit_filter_move_to_check_box"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
@@ -166,14 +173,13 @@
                         android:id="@+id/activity_edit_filter_as_read_check_box"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:layout_marginEnd="4dp"
+                        android:layout_marginEnd="8dp"
                         android:text="@string/txt_filter_mark_as_read" />
 
                     <CheckBox
                         android:id="@+id/activity_edit_filter_as_starred_check_box"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:layout_marginStart="4dp"
                         android:text="@string/txt_filter_mark_as_starred" />
 
                 </LinearLayout>

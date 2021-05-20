@@ -188,7 +188,7 @@
     <string name="txt_contact_loading_error">خطأ في تحميل جهة الاتصال</string>
     <string name="txt_delete_folder_quest_title">هل تريد حذف مجلد؟</string>
     <string name="txt_delete_folder_quest_message">هل أنت متأكد من رغبتك في حذف مجلد؟</string>
-    <string name="btn_contact_delete">حذف</string>
+    <string name="btn_delete">حذف</string>
     <string name="btn_cancel">إلغاء</string>
     <string name="title_email_address">البريدالإلكتروني</string>
     <string name="title_phone_number">رقم الهاتف</string>
@@ -254,6 +254,8 @@
     <string name="txt_filter_mark_as_read">التمييز بأنه تمت قراءته</string>
     <string name="txt_filter_mark_as_starred">التمييز بنجمة</string>
     <string name="btn_submit">تسجيل</string>
+    <string name="add_condition">أضف الشرط</string>
+    <string name="condition_text_hint">نص الشرط</string>
     <string name="filter_already_exists">يوجد مرشح بنفس الاسم بالفعل</string>
     <string name="toast_filter_not_created">لم يتم إنشاء الفلتر</string>
     <string name="toast_filter_created">تم إنشاء مرشح</string>

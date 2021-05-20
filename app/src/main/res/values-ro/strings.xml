@@ -188,7 +188,7 @@
     <string name="txt_contact_loading_error">A apărut o eroare de încărcare a contactului</string>
     <string name="txt_delete_folder_quest_title">Vreți să ștergeți dosarul?</string>
     <string name="txt_delete_folder_quest_message">Sunteți sigur/ă că vreți să ștergeți mesajul?</string>
-    <string name="btn_contact_delete">ȘTERGE</string>
+    <string name="btn_delete">Șterge</string>
     <string name="btn_cancel">Anulează</string>
     <string name="title_email_address">Adresă de e-mail</string>
     <string name="title_phone_number">Număr de telefon</string>
@@ -254,6 +254,8 @@
     <string name="txt_filter_mark_as_read">Marchează ca citit</string>
     <string name="txt_filter_mark_as_starred">Marchează cu steluță</string>
     <string name="btn_submit">Salvează</string>
+    <string name="add_condition">Adăugați o condiție</string>
+    <string name="condition_text_hint">Textul condiției</string>
     <string name="filter_already_exists">Un filtru cu numele acesta există deja</string>
     <string name="toast_filter_not_created">Filtr nie został utworzony</string>
     <string name="toast_filter_created">Filtru creat</string>
