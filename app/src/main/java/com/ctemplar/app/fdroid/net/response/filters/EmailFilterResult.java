@@ -30,7 +30,7 @@ public class EmailFilterResult {
     private int priorityOrder;
 
     @SerializedName("delete_msg")
-    private boolean delete_msg;
+    private boolean deleteMsg;
 
 
     public long getId() {
@@ -65,7 +65,7 @@ public class EmailFilterResult {
         return priorityOrder;
     }
 
-    public boolean isDelete_msg() {
-        return delete_msg;
+    public boolean isDeleteMsg() {
+        return deleteMsg;
     }
 }

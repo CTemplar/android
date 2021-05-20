@@ -135,11 +135,12 @@ public class ManageFoldersActivity extends BaseActivity {
                 final FoldersResult deletedFolder = adapter.removeAt(deletedIndex);
 
                 new AlertDialog.Builder(ManageFoldersActivity.this)
-                        .setTitle(getResources().getString(R.string.txt_delete_folder_quest_title))
-                        .setMessage(getResources().getString(R.string.txt_delete_folder_quest_message))
-                        .setPositiveButton(getResources().getString(R.string.btn_contact_delete), (dialog, which) -> manageFoldersModel.deleteFolder(deletedFolder)
-                        )
-                        .setNeutralButton(getResources().getString(R.string.btn_cancel), (dialog, which) -> adapter.restoreItem(deletedIndex, deletedFolder))
+                        .setTitle(getString(R.string.txt_delete_folder_quest_title))
+                        .setMessage(getString(R.string.txt_delete_folder_quest_message))
+                        .setPositiveButton(getString(R.string.btn_delete).toUpperCase(),
+                                (dialog, which) -> manageFoldersModel.deleteFolder(deletedFolder))
+                        .setNeutralButton(getString(R.string.btn_cancel), (dialog, which)
+                                -> adapter.restoreItem(deletedIndex, deletedFolder))
                         .show();
             }
         };

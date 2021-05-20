@@ -188,7 +188,7 @@
     <string name="txt_contact_loading_error">Errore caricamento contatto</string>
     <string name="txt_delete_folder_quest_title">Eliminare la cartella?</string>
     <string name="txt_delete_folder_quest_message">"Sei sicuro di voler eliminare la cartella?</string>
-    <string name="btn_contact_delete">ELIMINA</string>
+    <string name="btn_delete">Elimina</string>
     <string name="btn_cancel">ANNULLA</string>
     <string name="title_email_address">Email</string>
     <string name="title_phone_number">Telefono</string>
@@ -254,6 +254,8 @@
     <string name="txt_filter_mark_as_read">Segna come letto</string>
     <string name="txt_filter_mark_as_starred">Segna come preferito</string>
     <string name="btn_submit">Invia</string>
+    <string name="add_condition">Aggiungi condizione</string>
+    <string name="condition_text_hint">Testo della condizione</string>
     <string name="filter_already_exists">Un filtro con lo stesso nome esiste già</string>
     <string name="toast_filter_not_created">Filtro non creato</string>
     <string name="toast_filter_created">Filtro creato</string>

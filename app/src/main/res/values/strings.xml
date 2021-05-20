@@ -191,7 +191,7 @@
     <string name="txt_contact_loading_error">Contact loading error</string>
     <string name="txt_delete_folder_quest_title">Delete folder?</string>
     <string name="txt_delete_folder_quest_message">"Are you sure you want to delete folder?</string>
-    <string name="btn_contact_delete">DELETE</string>
+    <string name="btn_delete">Delete</string>
     <string name="btn_cancel">CANCEL</string>
     <string name="title_email_address">Email</string>
     <string name="title_phone_number">Phone</string>

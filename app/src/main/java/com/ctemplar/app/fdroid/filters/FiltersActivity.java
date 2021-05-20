@@ -106,7 +106,8 @@ public class FiltersActivity extends BaseActivity {
                 AlertDialog.Builder builder = new AlertDialog.Builder(FiltersActivity.this);
                 builder.setTitle(R.string.txt_delete_filter_quest_title);
                 builder.setMessage(R.string.txt_delete_filter_quest_message);
-                builder.setPositiveButton(R.string.btn_contact_delete, (dialog, which) -> {
+                builder.setPositiveButton(getString(R.string.btn_delete).toUpperCase(),
+                        (dialog, which) -> {
                             long filterId = deletedFilter.getId();
                             filtersModel.deleteFilter(filterId);
                         }
