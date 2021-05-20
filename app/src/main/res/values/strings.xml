@@ -185,7 +185,7 @@
 
     <!-- CONTACT -->
     <string name="toast_not_saved">Not saved</string>
-    <string name="txt_enter_name">Enter Name</string>
+    <string name="txt_enter_name">Enter name</string>
     <string name="txt_enter_valid_email">Enter valid email address</string>
     <string name="txt_name_removed">%1$s removed!</string>
     <string name="txt_contact_loading_error">Contact loading error</string>
@@ -257,6 +257,8 @@
     <string name="txt_filter_mark_as_read">Mark as read</string>
     <string name="txt_filter_mark_as_starred">Mark as starred</string>
     <string name="btn_submit">Submit</string>
+    <string name="add_condition">Add condition</string>
+    <string name="condition_text_hint">Condition text</string>
     <string name="filter_already_exists">Filter with the same name already exists</string>
     <string name="toast_filter_not_created">Filter not created</string>
     <string name="toast_filter_created">Filter created</string>

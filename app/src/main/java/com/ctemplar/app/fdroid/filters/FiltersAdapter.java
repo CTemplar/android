@@ -16,8 +16,12 @@ import java.util.List;
 import com.ctemplar.app.fdroid.R;
 import com.ctemplar.app.fdroid.net.request.filters.EmailFilterOrderListRequest;
 import com.ctemplar.app.fdroid.net.request.filters.EmailFilterOrderRequest;
+import com.ctemplar.app.fdroid.net.response.filters.EmailFilterConditionResponse;
 import com.ctemplar.app.fdroid.net.response.filters.EmailFilterResult;
 import com.ctemplar.app.fdroid.view.recycler.ReorderableRecyclerViewAdapter;
+import timber.log.Timber;
+
+import static com.ctemplar.app.fdroid.utils.DateUtils.GENERAL_GSON;
 
 public class FiltersAdapter extends ReorderableRecyclerViewAdapter<FiltersAdapter.ViewHolder> {
     private final List<EmailFilterResult> items = new ArrayList<>();
@@ -35,6 +39,10 @@ public class FiltersAdapter extends ReorderableRecyclerViewAdapter<FiltersAdapte
         EmailFilterResult item = items.remove(oldPosition);
         items.add(newPosition > oldPosition ? newPosition - 1 : newPosition, item);
         notifyItemMoved(oldPosition, newPosition);
+    }
+
+    @Override
+    public void onItemMoveFinished() {
         onChangeOrder();
     }
 
@@ -83,7 +91,7 @@ public class FiltersAdapter extends ReorderableRecyclerViewAdapter<FiltersAdapte
         this.onChangeOrderListener = onChangeOrderListener;
     }
 
-    void onChangeOrder() {
+    public void onChangeOrder() {
         EmailFilterOrderListRequest emailFilterOrderListRequest = new EmailFilterOrderListRequest();
         List<EmailFilterOrderRequest> emailFilterOrderRequestList = new ArrayList<>();
         for (int i = 0; i < items.size(); i++) {
@@ -108,17 +116,20 @@ public class FiltersAdapter extends ReorderableRecyclerViewAdapter<FiltersAdapte
         public void update(EmailFilterResult item) {
             name.setText(item.getName());
             itemView.setOnClickListener(v -> {
-                Intent editFilter = new Intent(context, EditFilterActivity.class);
-                editFilter.putExtra(EditFilterActivity.ARG_ID, item.getId());
-                editFilter.putExtra(EditFilterActivity.ARG_NAME, item.getName());
-//                editFilter.putExtra(EditFilterActivity.ARG_PARAMETER, item.getParameter());
-//                editFilter.putExtra(EditFilterActivity.ARG_CONDITION, item.getCondition());
-//                editFilter.putExtra(EditFilterActivity.ARG_FILTER_TEXT, item.getFilterText());
-                editFilter.putExtra(EditFilterActivity.ARG_MOVE_TO, item.isMoveTo());
-                editFilter.putExtra(EditFilterActivity.ARG_FOLDER, item.getFolder());
-                editFilter.putExtra(EditFilterActivity.ARG_AS_READ, item.isMarkAsRead());
-                editFilter.putExtra(EditFilterActivity.ARG_AS_STARRED, item.isMarkAsStarred());
-                context.startActivity(editFilter);
+                Intent intent = new Intent(context, EditFilterActivity.class);
+                intent.putExtra(EditFilterActivity.ARG_ID, item.getId());
+                intent.putExtra(EditFilterActivity.ARG_NAME, item.getName());
+                String[] conditionStringArray = new String[item.getConditions().size()];
+                for (int i = 0, count = item.getConditions().size(); i < count; ++i) {
+                    EmailFilterConditionResponse response = item.getConditions().get(i);
+                    conditionStringArray[i] = GENERAL_GSON.toJson(response);
+                }
+                intent.putExtra(EditFilterActivity.ARG_CONDITIONS, conditionStringArray);
+                intent.putExtra(EditFilterActivity.ARG_MOVE_TO, item.isMoveTo());
+                intent.putExtra(EditFilterActivity.ARG_FOLDER, item.getFolder());
+                intent.putExtra(EditFilterActivity.ARG_AS_READ, item.isMarkAsRead());
+                intent.putExtra(EditFilterActivity.ARG_AS_STARRED, item.isMarkAsStarred());
+                context.startActivity(intent);
             });
             setDraggableView(reorderTouchView);
         }

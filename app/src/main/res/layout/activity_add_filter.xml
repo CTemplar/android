@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/app_bar_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_height="wrap_content">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/activity_add_filter_toolbar"
@@ -20,203 +20,179 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <LinearLayout
-        android:id="@+id/activity_add_filter_name_layout"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:orientation="vertical"
-        app:layout_constraintTop_toBottomOf="@id/app_bar_layout">
+        android:layout_height="0dp"
+        android:layout_weight="1">
 
-        <TextView
-            android:id="@+id/activity_add_filter_name_text_view"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/lato_regular"
-            android:text="@string/txt_filter_name"
-            android:textColor="?android:textColorPrimary"
-            android:textSize="16sp" />
+            android:orientation="vertical">
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/activity_add_filter_name_input_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            app:hintEnabled="false">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/activity_add_filter_name_edit_text"
+            <LinearLayout
+                android:id="@+id/activity_add_filter_name_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/text_input_field"
-                android:fontFamily="@font/lato_regular"
-                android:imeOptions="actionNext"
-                android:inputType="text"
-                android:minHeight="45dp"
-                android:nextFocusForward="@id/activity_add_filter_text_edit_text"
-                android:padding="12dp"
-                android:textColor="?android:textColorPrimary"
-                android:textSize="16sp" />
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:orientation="vertical">
 
-            <requestFocus />
-        </com.google.android.material.textfield.TextInputLayout>
+                <TextView
+                    android:id="@+id/activity_add_filter_name_text_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/lato_regular"
+                    android:text="@string/txt_filter_name"
+                    android:textColor="?android:textColorPrimary"
+                    android:textSize="16sp" />
 
-    </LinearLayout>
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/activity_add_filter_name_input_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    app:hintEnabled="false">
 
-    <LinearLayout
-        android:id="@+id/activity_add_filter_conditions_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:orientation="vertical"
-        app:layout_constraintTop_toBottomOf="@id/activity_add_filter_name_layout">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/activity_add_filter_name_edit_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/text_input_field"
+                        android:fontFamily="@font/lato_regular"
+                        android:hint="@string/txt_enter_name"
+                        android:imeOptions="actionNext"
+                        android:inputType="text"
+                        android:minHeight="45dp"
+                        android:padding="12dp"
+                        android:textColor="?android:textColorPrimary"
+                        android:textSize="16sp" />
 
-        <TextView
-            android:id="@+id/activity_add_filter_conditions_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/lato_regular"
-            android:text="@string/txt_filter_conditions"
-            android:textColor="?android:textColorPrimary"
-            android:textSize="16sp" />
+                    <requestFocus />
+                </com.google.android.material.textfield.TextInputLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            </LinearLayout>
 
-            <Spinner
-                android:id="@+id/activity_add_parameter_spinner"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="4dp"
-                tools:listitem="@layout/item_filters_holder" />
-
-            <Spinner
-                android:id="@+id/activity_add_condition_spinner"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
-                android:layout_marginTop="8dp"
-                tools:listitem="@layout/item_filters_holder" />
-
-        </LinearLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/activity_add_filter_text_input_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            app:hintEnabled="false">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/activity_add_filter_text_edit_text"
+            <LinearLayout
+                android:id="@+id/activity_add_filter_conditions_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/text_input_field"
-                android:fontFamily="@font/lato_regular"
-                android:inputType="text"
-                android:minHeight="45dp"
-                android:padding="12dp"
-                android:textColor="?android:textColorPrimary"
-                android:textSize="16sp" />
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:orientation="vertical">
 
-        </com.google.android.material.textfield.TextInputLayout>
+                <TextView
+                    android:id="@+id/activity_add_filter_conditions_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/lato_regular"
+                    android:text="@string/txt_filter_conditions"
+                    android:textColor="?android:textColorPrimary"
+                    android:textSize="16sp" />
 
-    </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/activity_add_filter_conditions_holder"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" />
 
-    <LinearLayout
-        android:id="@+id/activity_add_filter_actions_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:orientation="vertical"
-        app:layout_constraintTop_toBottomOf="@id/activity_add_filter_conditions_layout">
+                <Button
+                    android:id="@+id/activity_add_filter_add_condition"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="4dp"
+                    android:background="@drawable/dialog_cancel_button_background"
+                    android:fontFamily="@font/lato_regular"
+                    android:text="@string/add_condition"
+                    android:textAllCaps="false"
+                    android:textColor="@color/colorDarkBlue2"
+                    android:textSize="18sp" />
 
-        <TextView
-            android:id="@+id/activity_add_filter_actions_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/lato_regular"
-            android:text="@string/txt_filter_conditions"
-            android:textColor="?android:textColorPrimary"
-            android:textSize="16sp" />
+            </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/activity_add_filter_select_folder_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginTop="16dp"
-            android:orientation="horizontal">
-
-            <CheckBox
-                android:id="@+id/activity_add_filter_move_to_check_box"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginEnd="4dp"
-                android:text="@string/txt_filter_move_to" />
-
-            <Spinner
-                android:id="@+id/activity_add_filter_folder_spinner"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:id="@+id/activity_add_filter_actions_layout"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                tools:listitem="@layout/item_filters_holder" />
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/activity_add_filter_actions_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/lato_regular"
+                    android:text="@string/txt_filter_actions"
+                    android:textColor="?android:textColorPrimary"
+                    android:textSize="16sp" />
+
+                <LinearLayout
+                    android:id="@+id/activity_add_filter_select_folder_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginTop="16dp"
+                    android:orientation="horizontal">
+
+                    <CheckBox
+                        android:id="@+id/activity_add_filter_move_to_check_box"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginEnd="4dp"
+                        android:text="@string/txt_filter_move_to" />
+
+                    <Spinner
+                        android:id="@+id/activity_add_filter_folder_spinner"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        tools:listitem="@layout/item_filters_holder" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/activity_add_filter_options_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginTop="8dp"
+                    android:orientation="horizontal">
+
+                    <CheckBox
+                        android:id="@+id/activity_add_filter_as_read_check_box"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginEnd="4dp"
+                        android:text="@string/txt_filter_mark_as_read" />
+
+                    <CheckBox
+                        android:id="@+id/activity_add_filter_as_starred_check_box"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="4dp"
+                        android:text="@string/txt_filter_mark_as_starred" />
+
+                </LinearLayout>
+
+            </LinearLayout>
 
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/activity_add_filter_options_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginTop="8dp"
-            android:orientation="horizontal">
-
-            <CheckBox
-                android:id="@+id/activity_add_filter_as_read_check_box"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginEnd="4dp"
-                android:text="@string/txt_filter_mark_as_read" />
-
-            <CheckBox
-                android:id="@+id/activity_add_filter_as_starred_check_box"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginStart="4dp"
-                android:text="@string/txt_filter_mark_as_starred" />
-
-        </LinearLayout>
-
-    </LinearLayout>
+    </ScrollView>
 
     <LinearLayout
         android:id="@+id/activity_add_folder_actions_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
         android:layout_marginTop="30dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
         android:layout_marginBottom="16dp"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent">
+        android:orientation="horizontal">
 
         <Button
             android:id="@+id/activity_add_filter_action_cancel"
@@ -246,4 +222,4 @@
 
     </LinearLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

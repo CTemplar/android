@@ -84,6 +84,7 @@ public class ReorderableRecyclerViewItemTouchCallback extends ItemTouchHelper.Ca
     public void clearView(@NotNull RecyclerView recyclerView, RecyclerView.@NotNull ViewHolder viewHolder) {
         super.clearView(recyclerView, viewHolder);
 
+        mAdapter.onItemMoveFinished();
         viewHolder.itemView.setAlpha(ALPHA_FULL);
 
         if (viewHolder instanceof ReorderableRecyclerViewAdapter.ViewHolder) {

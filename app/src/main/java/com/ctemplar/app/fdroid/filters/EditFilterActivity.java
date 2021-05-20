@@ -8,9 +8,11 @@ import android.util.AttributeSet;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -21,6 +23,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.gson.JsonSyntaxException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,18 +36,19 @@ import com.ctemplar.app.fdroid.R;
 import com.ctemplar.app.fdroid.net.ResponseStatus;
 import com.ctemplar.app.fdroid.net.request.filters.EmailFilterConditionRequest;
 import com.ctemplar.app.fdroid.net.request.filters.EmailFilterRequest;
+import com.ctemplar.app.fdroid.net.response.filters.EmailFilterConditionResponse;
 import com.ctemplar.app.fdroid.net.response.folders.FoldersResponse;
 import com.ctemplar.app.fdroid.net.response.folders.FoldersResult;
 import com.ctemplar.app.fdroid.repository.constant.MainFolderNames;
 import com.ctemplar.app.fdroid.utils.EditTextUtils;
 import timber.log.Timber;
 
+import static com.ctemplar.app.fdroid.utils.DateUtils.GENERAL_GSON;
+
 public class EditFilterActivity extends BaseActivity {
     public static final String ARG_ID = "id";
     public static final String ARG_NAME = "name";
-    public static final String ARG_PARAMETER = "parameter";
-    public static final String ARG_CONDITION = "condition";
-    public static final String ARG_FILTER_TEXT = "filter_text";
+    public static final String ARG_CONDITIONS = "conditions";
     public static final String ARG_MOVE_TO = "move_to";
     public static final String ARG_FOLDER = "folder";
     public static final String ARG_AS_READ = "mark_as_read";
@@ -53,14 +57,11 @@ public class EditFilterActivity extends BaseActivity {
     @BindView(R.id.activity_edit_filter_name_edit_text)
     TextInputEditText filterNameEditText;
 
-    @BindView(R.id.activity_edit_parameter_spinner)
-    Spinner parameterSpinner;
+    @BindView(R.id.activity_edit_filter_conditions_holder)
+    ViewGroup conditionsHolder;
 
-    @BindView(R.id.activity_edit_condition_spinner)
-    Spinner conditionSpinner;
-
-    @BindView(R.id.activity_edit_filter_text_edit_text)
-    TextInputEditText filterTextEditText;
+    @BindView(R.id.activity_edit_filter_add_condition)
+    Button addConditionButton;
 
     @BindView(R.id.activity_edit_filter_move_to_check_box)
     CheckBox moveToCheckBox;
@@ -78,6 +79,7 @@ public class EditFilterActivity extends BaseActivity {
     Button deleteFilterButton;
 
     private FiltersViewModel filtersModel;
+    private final List<ConditionViews> conditionViewsList = new ArrayList<>();
 
     private static long filterId;
     private static String filterFolder;
@@ -114,6 +116,8 @@ public class EditFilterActivity extends BaseActivity {
             actionBar.setHomeButtonEnabled(true);
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
+        conditionsHolder.removeAllViews();
+        conditionViewsList.clear();
 
         filterId = getIntent().getLongExtra(ARG_ID, -1);
         if (filterId == -1) {
@@ -121,42 +125,64 @@ public class EditFilterActivity extends BaseActivity {
         }
         filterFolder = getIntent().getStringExtra(ARG_FOLDER);
         String filterName = getIntent().getStringExtra(ARG_NAME);
-        String filterParameter = getIntent().getStringExtra(ARG_PARAMETER);
-        String filterCondition = getIntent().getStringExtra(ARG_CONDITION);
-        String filterText = getIntent().getStringExtra(ARG_FILTER_TEXT);
+        String[] conditionStringArray = getIntent().getStringArrayExtra(ARG_CONDITIONS);
+        for (String conditionResponse : conditionStringArray) {
+            try {
+                EmailFilterConditionResponse response = GENERAL_GSON.fromJson(conditionResponse, EmailFilterConditionResponse.class);
+                addCondition(response.getParameter(), response.getCondition(), response.getFilterText());
+            } catch (JsonSyntaxException e) {
+                Timber.e(e, "Cannot parse conditionStringArray");
+            }
+        }
         boolean filterMoveTo = getIntent().getBooleanExtra(ARG_MOVE_TO, false);
         boolean filterAsRead = getIntent().getBooleanExtra(ARG_AS_READ, false);
         boolean filterAsStarred = getIntent().getBooleanExtra(ARG_AS_STARRED, false);
 
         filterNameEditText.setText(filterName);
-        filterTextEditText.setText(filterText);
         moveToCheckBox.setChecked(filterMoveTo);
         markAsReadCheckBox.setChecked(filterAsRead);
         markAsStarredCheckBox.setChecked(filterAsStarred);
-
-        ArrayAdapter<String> parametersAdapter = new ArrayAdapter<>(
-                this,
-                R.layout.item_domain_spinner,
-                filterParameterEntries
-        );
-        parameterSpinner.setAdapter(parametersAdapter);
-        int filterParameterPosition = Arrays.asList(filterParameterValues).indexOf(filterParameter);
-        parameterSpinner.setSelection(filterParameterPosition);
-
-        ArrayAdapter<String> conditionsAdapter = new ArrayAdapter<>(
-                this,
-                R.layout.item_domain_spinner,
-                filterConditionEntries
-        );
-        conditionSpinner.setAdapter(conditionsAdapter);
-        int filterConditionPosition = Arrays.asList(filterConditionValues).indexOf(filterCondition);
-        conditionSpinner.setSelection(filterConditionPosition);
 
         filtersModel.getFoldersResponse().observe(this, this::handleCustomFolders);
         filtersModel.getEditFilterResponseStatus().observe(this, this::handleEditFilterStatus);
         filtersModel.getDeleteFilterResponseStatus().observe(this, this::handleFilterDeletingStatus);
         getCustomFolders();
         addListeners();
+    }
+
+    private void addCondition() {
+        addCondition(null, null, null);
+    }
+
+    private void addCondition(String parameter, String condition, String filterText) {
+        View view = getLayoutInflater().inflate(R.layout.filter_condition, conditionsHolder, false);
+        ConditionViews conditionViews = new ConditionViews(view);
+        if (parameter != null) {
+            int parameterPosition = Arrays.asList(filterParameterValues).indexOf(parameter);
+            conditionViews.parameterSpinner.setSelection(parameterPosition);
+        }
+        if (condition != null) {
+            int conditionPosition = Arrays.asList(filterConditionValues).indexOf(condition);
+            conditionViews.conditionSpinner.setSelection(conditionPosition);
+        }
+        if (filterText != null) {
+            conditionViews.editText.setText(filterText);
+        }
+        conditionViewsList.add(conditionViews);
+        conditionsHolder.addView(view);
+        updateConditionCloseVisibility();
+    }
+
+    private void updateConditionCloseVisibility() {
+        if (conditionViewsList.size() > 1) {
+            for (ConditionViews conditionViews : conditionViewsList) {
+                conditionViews.closeView.setVisibility(View.VISIBLE);
+            }
+        } else {
+            for (ConditionViews conditionViews : conditionViewsList) {
+                conditionViews.closeView.setVisibility(View.GONE);
+            }
+        }
     }
 
     private void handleEditFilterStatus(ResponseStatus responseStatus) {
@@ -182,14 +208,10 @@ public class EditFilterActivity extends BaseActivity {
             return;
         }
         List<FoldersResult> customFolderList = foldersResponse.getFoldersList();
-        List<String> folderList = new ArrayList<>();
-        folderList.add(MainFolderNames.INBOX);
-        folderList.add(MainFolderNames.ARCHIVE);
-        folderList.add(MainFolderNames.SPAM);
-        folderList.add(MainFolderNames.TRASH);
+        List<String> folderList = new ArrayList<>(Arrays.asList(MainFolderNames.INBOX,
+                MainFolderNames.ARCHIVE, MainFolderNames.SPAM, MainFolderNames.TRASH));
         for (FoldersResult customFolder : customFolderList) {
-            String folderName = customFolder.getName();
-            folderList.add(folderName);
+            folderList.add(customFolder.getName());
         }
 
         ArrayAdapter<String> foldersAdapter = new ArrayAdapter<>(
@@ -198,8 +220,7 @@ public class EditFilterActivity extends BaseActivity {
                 folderList
         );
         filterFolderSpinner.setAdapter(foldersAdapter);
-        int editSelectedFolder = folderList.indexOf(filterFolder);
-        filterFolderSpinner.setSelection(editSelectedFolder);
+        filterFolderSpinner.setSelection(folderList.indexOf(filterFolder));
     }
 
     private void getCustomFolders() {
@@ -208,33 +229,33 @@ public class EditFilterActivity extends BaseActivity {
 
     public void updateFilter() {
         String filterName = EditTextUtils.getText(filterNameEditText);
-        String filterText = EditTextUtils.getText(filterTextEditText);
-        String selectedParameter = parameterSpinner.getSelectedItem().toString();
-        String selectedCondition = conditionSpinner.getSelectedItem().toString();
+        if (!EditTextUtils.isTextValid(filterName) || !EditTextUtils.isTextLength(filterName, 4, 30)) {
+            filterNameEditText.setError(getString(R.string.txt_filter_name_hint));
+            return;
+        }
         String selectedFolder = filterFolderSpinner.getSelectedItem().toString();
         boolean isMoveTo = moveToCheckBox.isChecked();
         boolean markAsRead = markAsReadCheckBox.isChecked();
         boolean markAsStarred = markAsStarredCheckBox.isChecked();
 
-        if (!EditTextUtils.isTextValid(filterName) || !EditTextUtils.isTextLength(filterName, 4, 30)) {
-            filterNameEditText.setError(getString(R.string.txt_filter_name_hint));
-            return;
-        }
-        if (!EditTextUtils.isTextLength(filterText, 1, 30)) {
-            filterTextEditText.setError(getString(R.string.txt_filter_text_hint));
-            return;
-        }
-
         EmailFilterRequest emailFilterRequest = new EmailFilterRequest();
         emailFilterRequest.setName(filterName);
-
-        EmailFilterConditionRequest emailFilterConditionRequest = new EmailFilterConditionRequest();
-//        emailFilterConditionRequest.setId(); TODO
-        emailFilterConditionRequest.setFilterText(filterText);
-        emailFilterConditionRequest.setParameter(selectedParameter);
-        emailFilterConditionRequest.setCondition(selectedCondition);
-
-        emailFilterRequest.setConditions(Collections.singletonList(emailFilterConditionRequest));
+        List<EmailFilterConditionRequest> conditionRequestList = new ArrayList<>();
+        for (ConditionViews conditionViews : conditionViewsList) {
+            String filterText = EditTextUtils.getText(conditionViews.editText);
+            if (!EditTextUtils.isTextLength(filterText, 1, 30)) {
+                conditionViews.editText.setError(getString(R.string.txt_filter_text_hint));
+                return;
+            }
+            String selectedParameter = conditionViews.getSelectedParameter();
+            String selectedCondition = conditionViews.getSelectedCondition();
+            EmailFilterConditionRequest emailFilterConditionRequest = new EmailFilterConditionRequest();
+            emailFilterConditionRequest.setFilterText(filterText);
+            emailFilterConditionRequest.setParameter(selectedParameter);
+            emailFilterConditionRequest.setCondition(selectedCondition);
+            conditionRequestList.add(emailFilterConditionRequest);
+        }
+        emailFilterRequest.setConditions(conditionRequestList);
         emailFilterRequest.setFolder(selectedFolder);
         emailFilterRequest.setMoveTo(isMoveTo);
         emailFilterRequest.setMarkAsRead(markAsRead);
@@ -259,6 +280,7 @@ public class EditFilterActivity extends BaseActivity {
 
             }
         });
+        addConditionButton.setOnClickListener(v -> addCondition());
         deleteFilterButton.setOnClickListener(v -> deleteFilter());
     }
 
@@ -286,5 +308,49 @@ public class EditFilterActivity extends BaseActivity {
                 return super.onOptionsItemSelected(item);
         }
         return true;
+    }
+
+    class ConditionViews {
+        private final View rootView;
+        private final Spinner parameterSpinner;
+        private final Spinner conditionSpinner;
+        private final EditText editText;
+        private final View closeView;
+
+        private ConditionViews(View view) {
+            rootView = view;
+            parameterSpinner = view.findViewById(R.id.parameter_spinner);
+            conditionSpinner = view.findViewById(R.id.condition_spinner);
+            editText = view.findViewById(R.id.text_edit_text);
+            closeView = view.findViewById(R.id.delete_button_image_view);
+            ArrayAdapter<String> parametersAdapter = new ArrayAdapter<>(
+                    EditFilterActivity.this,
+                    R.layout.item_domain_spinner,
+                    filterParameterEntries
+            );
+            parameterSpinner.setAdapter(parametersAdapter);
+            ArrayAdapter<String> conditionsAdapter = new ArrayAdapter<>(
+                    EditFilterActivity.this,
+                    R.layout.item_domain_spinner,
+                    filterConditionEntries
+            );
+            conditionSpinner.setAdapter(conditionsAdapter);
+            closeView.setOnClickListener(v -> {
+                if (conditionViewsList.size() <= 1) {
+                    return;
+                }
+                conditionViewsList.remove(this);
+                conditionsHolder.removeView(rootView);
+                updateConditionCloseVisibility();
+            });
+        }
+
+        private String getSelectedParameter() {
+            return filterParameterValues[parameterSpinner.getSelectedItemPosition()];
+        }
+
+        private String getSelectedCondition() {
+            return filterConditionValues[conditionSpinner.getSelectedItemPosition()];
+        }
     }
 }
