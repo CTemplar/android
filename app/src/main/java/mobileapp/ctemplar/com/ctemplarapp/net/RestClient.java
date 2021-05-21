@@ -1,10 +1,5 @@
 package mobileapp.ctemplar.com.ctemplarapp.net;
 
-import android.os.Build;
-
-import java.security.KeyManagementException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
 import java.util.concurrent.TimeUnit;
 
 import mobileapp.ctemplar.com.ctemplarapp.BuildConfig;
@@ -14,7 +9,6 @@ import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
-import timber.log.Timber;
 
 import static mobileapp.ctemplar.com.ctemplarapp.utils.DateUtils.GENERAL_GSON;
 
@@ -45,21 +39,6 @@ public class RestClient {
                 .authenticator(new TokenAuthenticator())
                 .readTimeout(30, TimeUnit.SECONDS)
                 .connectTimeout(30, TimeUnit.SECONDS);
-
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            try {
-                TLSSocketFactory tlsSocketFactory = new TLSSocketFactory();
-                if (tlsSocketFactory.getTrustManager() != null) {
-                    client.sslSocketFactory(tlsSocketFactory, tlsSocketFactory.getTrustManager());
-                }
-            } catch (KeyManagementException e) {
-                Timber.e(e);
-            } catch (NoSuchAlgorithmException e) {
-                Timber.e(e);
-            } catch (KeyStoreException e) {
-                Timber.e(e);
-            }
-        }
 
         return client.build();
     }
