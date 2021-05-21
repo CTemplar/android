@@ -188,7 +188,7 @@
     <string name="txt_contact_loading_error">联系人加载错误</string>
     <string name="txt_delete_folder_quest_title">删除文件夹？</string>
     <string name="txt_delete_folder_quest_message">"您确定要删除文件夹吗？ </string>
-    <string name="btn_contact_delete">删除</string>
+    <string name="btn_delete">删除</string>
     <string name="btn_cancel">取消</string>
     <string name="title_email_address">邮箱</string>
     <string name="title_phone_number">电话</string>
@@ -254,6 +254,8 @@
     <string name="txt_filter_mark_as_read">标记为已读</string>
     <string name="txt_filter_mark_as_starred">标记为星号</string>
     <string name="btn_submit">提交</string>
+    <string name="add_condition">添加條件</string>
+    <string name="condition_text_hint">條件文字</string>
     <string name="filter_already_exists">相同名称的过滤器已存在</string>
     <string name="toast_filter_not_created">過濾器未創建</string>
     <string name="toast_filter_created">过滤器已创建</string>

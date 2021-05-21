@@ -129,6 +129,7 @@ public class FiltersAdapter extends ReorderableRecyclerViewAdapter<FiltersAdapte
                 intent.putExtra(EditFilterActivity.ARG_FOLDER, item.getFolder());
                 intent.putExtra(EditFilterActivity.ARG_AS_READ, item.isMarkAsRead());
                 intent.putExtra(EditFilterActivity.ARG_AS_STARRED, item.isMarkAsStarred());
+                intent.putExtra(EditFilterActivity.ARG_DELETE_MSG, item.isDeleteMsg());
                 context.startActivity(intent);
             });
             setDraggableView(reorderTouchView);

@@ -188,7 +188,7 @@
     <string name="txt_contact_loading_error">Fehler beim Laden des Kontakts</string>
     <string name="txt_delete_folder_quest_title">Ordner löschen?</string>
     <string name="txt_delete_folder_quest_message">"Sind Sie sicher, dass Sie diesen Ordner löschen möchten?</string>
-    <string name="btn_contact_delete">LÖSCHEN</string>
+    <string name="btn_delete">Löschen</string>
     <string name="btn_cancel">ABBRECHEN</string>
     <string name="title_email_address">E-Mail</string>
     <string name="title_phone_number">Telefon</string>
@@ -254,6 +254,8 @@
     <string name="txt_filter_mark_as_read">Als gelesen markieren</string>
     <string name="txt_filter_mark_as_starred">Mit Stern markieren</string>
     <string name="btn_submit">Absenden</string>
+    <string name="add_condition">Bedingung hinzufügen</string>
+    <string name="condition_text_hint">Bedingungstext</string>
     <string name="filter_already_exists">Es existiert bereits ein Filter mit dem gleichen Namen</string>
     <string name="toast_filter_not_created">Filter nicht erstellt</string>
     <string name="toast_filter_created">Filter erstellt</string>

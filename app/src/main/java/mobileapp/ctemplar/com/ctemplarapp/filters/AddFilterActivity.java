@@ -49,6 +49,9 @@ public class AddFilterActivity extends BaseActivity {
     @BindView(R.id.activity_add_filter_add_condition)
     Button addConditionButton;
 
+    @BindView(R.id.activity_add_filter_delete_check_box)
+    CheckBox deleteMsgCheckBox;
+
     @BindView(R.id.activity_add_filter_move_to_check_box)
     CheckBox moveToCheckBox;
 
@@ -167,9 +170,10 @@ public class AddFilterActivity extends BaseActivity {
             return;
         }
         String selectedFolder = filterFolderSpinner.getSelectedItem().toString();
-        boolean isMoveTo = moveToCheckBox.isChecked();
+        boolean moveTo = moveToCheckBox.isChecked();
         boolean markAsRead = markAsReadCheckBox.isChecked();
         boolean markAsStarred = markAsStarredCheckBox.isChecked();
+        boolean deleteMsg = deleteMsgCheckBox.isChecked();
 
         EmailFilterRequest emailFilterRequest = new EmailFilterRequest();
         emailFilterRequest.setName(filterName);
@@ -190,9 +194,10 @@ public class AddFilterActivity extends BaseActivity {
         }
         emailFilterRequest.setConditions(conditionRequestList);
         emailFilterRequest.setFolder(selectedFolder);
-        emailFilterRequest.setMoveTo(isMoveTo);
+        emailFilterRequest.setMoveTo(moveTo);
         emailFilterRequest.setMarkAsRead(markAsRead);
         emailFilterRequest.setMarkAsStarred(markAsStarred);
+        emailFilterRequest.setDeleteMsg(deleteMsg);
         filtersModel.addFilter(emailFilterRequest);
     }
 
@@ -212,6 +217,17 @@ public class AddFilterActivity extends BaseActivity {
             public void afterTextChanged(Editable s) {
 
             }
+        });
+        moveToCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                deleteMsgCheckBox.setChecked(false);
+            }
+        });
+        deleteMsgCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                moveToCheckBox.setChecked(false);
+            }
+            disableOptions(isChecked);
         });
         addConditionButton.setOnClickListener(v -> addCondition());
         addCustomFilterButton.setOnClickListener(v -> createCustomFilter());
@@ -233,6 +249,15 @@ public class AddFilterActivity extends BaseActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void disableOptions(boolean state) {
+        if (state) {
+            markAsReadCheckBox.setChecked(false);
+            markAsStarredCheckBox.setChecked(false);
+        }
+        markAsReadCheckBox.setEnabled(!state);
+        markAsStarredCheckBox.setEnabled(!state);
     }
 
     class ConditionViews {

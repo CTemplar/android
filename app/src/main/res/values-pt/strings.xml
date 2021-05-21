@@ -188,7 +188,7 @@
     <string name="txt_contact_loading_error">Erro ao carregar os contactos</string>
     <string name="txt_delete_folder_quest_title">Eliminar a pasta?</string>
     <string name="txt_delete_folder_quest_message">"Tem a certeza que quer eliminar esta pasta?</string>
-    <string name="btn_contact_delete">ELIMINAR</string>
+    <string name="btn_delete">Eliminar</string>
     <string name="btn_cancel">CANCELAR</string>
     <string name="title_email_address">Email</string>
     <string name="title_phone_number">Número de Telemóvel</string>
@@ -254,6 +254,8 @@
     <string name="txt_filter_mark_as_read">Marcar como lido</string>
     <string name="txt_filter_mark_as_starred">Sinalizar</string>
     <string name="btn_submit">Submeter</string>
+    <string name="add_condition">Adicionar condição</string>
+    <string name="condition_text_hint">Texto de condição</string>
     <string name="filter_already_exists">Filtrar com o mesmo nome que já existe</string>
     <string name="toast_filter_not_created">Filtro não criado</string>
     <string name="toast_filter_created">Filtrar criados</string>

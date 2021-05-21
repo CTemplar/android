@@ -188,7 +188,7 @@
     <string name="txt_contact_loading_error">Ошибка загрузки контакта</string>
     <string name="txt_delete_folder_quest_title">Удалить папку?</string>
     <string name="txt_delete_folder_quest_message">"Вы уверены, что хотите удалить папку?</string>
-    <string name="btn_contact_delete">УДАЛИТЬ</string>
+    <string name="btn_delete">Удалить</string>
     <string name="btn_cancel">ОТМЕНИТЬ</string>
     <string name="title_email_address">Имейл-адрес</string>
     <string name="title_phone_number">Телефон</string>
@@ -254,6 +254,8 @@
     <string name="txt_filter_mark_as_read">Отметить как прочитанное</string>
     <string name="txt_filter_mark_as_starred">Отметить</string>
     <string name="btn_submit">Включить</string>
+    <string name="add_condition">Добавить условие</string>
+    <string name="condition_text_hint">Текст условия</string>
     <string name="filter_already_exists">Фильтр с таким названием уже существует</string>
     <string name="toast_filter_not_created">Фильтр не создан</string>
     <string name="toast_filter_created">Фильтр создан</string>

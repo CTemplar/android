@@ -189,7 +189,7 @@
     <string name="txt_contact_loading_error">Erreur lors du chargement des contacts</string>
     <string name="txt_delete_folder_quest_title">Supprimer le dossier ?</string>
     <string name="txt_delete_folder_quest_message">Êtes-vous certain de vouloir supprimer le dossier ?</string>
-    <string name="btn_contact_delete">SUPPRIMER</string>
+    <string name="btn_delete">Supprimer</string>
     <string name="btn_cancel">ANNULER</string>
     <string name="title_email_address">Email</string>
     <string name="title_phone_number">Téléphone</string>
@@ -254,6 +254,8 @@
     <string name="txt_filter_mark_as_read">Marquer comme lu</string>
     <string name="txt_filter_mark_as_starred">Marquer comme favoris</string>
     <string name="btn_submit">Envoyer</string>
+    <string name="add_condition">Ajouter une condition</string>
+    <string name="condition_text_hint">Texte de la condition</string>
     <string name="filter_already_exists">Un filtre avec le même nom existe déjà.</string>
     <string name="toast_filter_not_created">Filtre non créé</string>
     <string name="toast_filter_created">Filtre créé</string>
