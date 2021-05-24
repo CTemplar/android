@@ -57,6 +57,8 @@
 
     <!-- STRINGS -->
     <string translatable="false" name="encrypted_subject">...</string>
+    <string translatable="false" name="subject_reply">Re: %s</string>
+    <string translatable="false" name="subject_forward">Fwd: %s</string>
     <string name="token_expired_title">Session expired</string>
     <string name="token_expired_message">Your session has expired, please log in to CTemplar again.</string>
     <string name="title_email">Email</string>

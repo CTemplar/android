@@ -63,6 +63,7 @@ import com.ctemplar.app.fdroid.repository.provider.MessageProvider;
 import com.ctemplar.app.fdroid.repository.provider.UserDisplayProvider;
 import com.ctemplar.app.fdroid.utils.AppUtils;
 import com.ctemplar.app.fdroid.utils.DateUtils;
+import com.ctemplar.app.fdroid.utils.EditTextUtils;
 import com.ctemplar.app.fdroid.utils.EncryptUtils;
 import com.ctemplar.app.fdroid.utils.FileUtils;
 import com.ctemplar.app.fdroid.utils.HtmlUtils;
@@ -88,7 +89,6 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
     private ViewMessagesViewModel viewModel;
     private MessageProvider parentMessage;
     private MessageProvider lastMessage;
-    private String decryptedLastMessage;
     private String currentFolder;
     private final DownloadCompleteReceiver downloadReceiver = new DownloadCompleteReceiver();
     private final MessagesRecyclerViewAdapter messagesRecyclerViewAdapter
@@ -237,7 +237,6 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
             parentMessage = currentParentMessage;
 
             lastMessage = messagesList.get(messagesList.size() - 1);
-            decryptedLastMessage = lastMessage.getContent();
             if (parentMessage != null) {
                 encryptedImageView.setSelected(parentMessage.isProtected());
                 starImageView.setSelected(parentMessage.isStarred());
@@ -489,30 +488,32 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
         return "\n\n---------- " + getString(R.string.txt_forwarded_message) + "----------\n" +
                 getString(R.string.txt_from) + " <" + lastMessage.getSender() + ">\n" +
                 getString(R.string.txt_date) + ": " + DateUtils.getStringDate(messageDate) + "\n" +
-                getString(R.string.txt_subject) + ": " + lastMessage.getSubject() + "\n" +
+                getString(R.string.txt_subject) + ": " + EditTextUtils.getText(subjectTextView) + "\n" +
                 getString(R.string.txt_to) + " " + addQuotesToNames(lastMessage.getReceivers()) + "\n\n";
     }
 
     private void forwardMessage(boolean withAttachments) {
-        boolean reply = parentMessage.getEncryptionMessage() == null;
-        String replySubject = reply ? lastMessage.getSubject() : "";
-        String replyBody = reply ? forwardHead() + HtmlUtils.fromHtml(decryptedLastMessage) : "";
+        boolean noEncryptionPhrase = parentMessage.getEncryptionMessage() == null;
+        String forwardSubject = noEncryptionPhrase ? getString(R.string.subject_forward,
+                EditTextUtils.getText(subjectTextView)) : "";
+        String forwardBody = noEncryptionPhrase ? forwardHead()
+                + HtmlUtils.fromHtml(lastMessage.getContent()) : "";
 
         Intent intentForward = new Intent(getActivity(), SendMessageActivity.class);
-        intentForward.putExtra(Intent.EXTRA_SUBJECT, replySubject);
-        intentForward.putExtra(Intent.EXTRA_TEXT, replyBody);
-        intentForward.putExtra(SendMessageActivity.LAST_ACTION, MessageActions.REPLY);
+        intentForward.putExtra(Intent.EXTRA_SUBJECT, forwardSubject);
+        intentForward.putExtra(Intent.EXTRA_TEXT, forwardBody);
+        intentForward.putExtra(SendMessageActivity.LAST_ACTION, MessageActions.FORWARD);
 
         Bundle extras = new Bundle();
-        AttachmentsEntity attachmentsEntity = withAttachments && reply
+        AttachmentsEntity attachmentsEntity = withAttachments && noEncryptionPhrase
                 ? new AttachmentsEntity(lastMessage.getAttachments())
                 : new AttachmentsEntity(Collections.emptyList());
         extras.putSerializable(ATTACHMENT_LIST, attachmentsEntity);
         intentForward.putExtras(extras);
 
         Fragment fragmentForward = SendMessageFragment.newInstance(
-                replySubject,
-                replyBody,
+                forwardSubject,
+                forwardBody,
                 new String[]{},
                 new String[]{},
                 new String[]{},
@@ -536,9 +537,11 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
         if (activity == null || parentMessage == null) {
             return;
         }
-        boolean reply = parentMessage.getEncryptionMessage() == null;
-        String replySubject = reply ? lastMessage.getSubject() : "";
-        String replyBody = reply ? replyHead() + HtmlUtils.fromHtml(decryptedLastMessage) : "";
+        boolean noEncryptionPhrase = parentMessage.getEncryptionMessage() == null;
+        String replySubject = noEncryptionPhrase ? getString(R.string.subject_reply,
+                EditTextUtils.getText(subjectTextView)) : "";
+        String replyBody = noEncryptionPhrase ? replyHead()
+                + HtmlUtils.fromHtml(lastMessage.getContent()) : "";
         switch (id) {
             case R.id.activity_view_messages_reply:
                 Intent intentReply = new Intent(getActivity(), SendMessageActivity.class);
