@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -317,14 +318,6 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
             }
         }
 
-        String toEmail = EditTextUtils.getText(toEmailTextView);
-        if (toEmail.isEmpty()) {
-            toEmailTextView.requestFocus();
-        } else {
-            composeEditText.requestFocus();
-            composeEditText.setSelection(0);
-        }
-
         sendModel = new ViewModelProvider(getActivity()).get(SendMessageActivityViewModel.class);
         contactsViewModel = new ViewModelProvider(getActivity()).get(ContactsViewModel.class);
         if (currentMessageId == -1) {
@@ -346,13 +339,6 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
             }
         }
 
-        MailboxEntity defaultMailbox = EncryptUtils.getDefaultMailbox();
-        boolean isSignatureEnabled = sendModel.isSignatureEnabled();
-        if (defaultMailbox != null && isSignatureEnabled) {
-            String signatureText = defaultMailbox.getSignature();
-            addSignature(signatureText);
-        }
-
         SpinnerAdapter adapter = new ArrayAdapter<>(
                 activity,
                 R.layout.fragment_send_message_spinner,
@@ -363,6 +349,20 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
 
         messageSendAttachmentAdapter = new MessageSendAttachmentAdapter(activity);
         messageAttachmentsRecycleView.setAdapter(messageSendAttachmentAdapter);
+
+        MailboxEntity defaultMailbox = EncryptUtils.getDefaultMailbox();
+        boolean isSignatureEnabled = sendModel.isSignatureEnabled();
+        if (defaultMailbox != null && isSignatureEnabled) {
+            String signatureText = defaultMailbox.getSignature();
+            addSignature(signatureText);
+        }
+
+        if (EditTextUtils.getText(toEmailTextView).isEmpty()) {
+            toEmailTextView.requestFocus();
+        } else {
+            composeEditText.requestFocus();
+            new Handler().post(() -> composeEditText.setSelection(0));
+        }
 
         return root;
     }
