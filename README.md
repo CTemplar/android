@@ -11,7 +11,7 @@ Currently available on the Play Store. We also have a totally FLOSS version [inc
 + Android SDK 28 or later
 
 ## Runtime Requirements
-+ Android 4.1 or later
++ Android 5 or later
 
 ## Security
 The application uses the open-source encryption library from [BouncyCastle](https://github.com/bcgit/bc-java)
