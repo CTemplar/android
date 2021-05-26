@@ -1,8 +1,8 @@
-# CTemplar app for android
+# CTemplar (for Android and F-Droid)
 
 Official Android client for the CTemplar secure (end-to-end encrypted) email service.
 
-Currently available on the Play Store. We also have a totally FLOSS version [included in F-Droid](https://f-droid.org/packages/com.ctemplar.app.fdroid/), you can find its source code [here](https://github.com/CTemplar/android/tree/fdroid).
+Currently available in early access on the Play Store.
 
 <a href='https://play.google.com/store/apps/details?id=mobileapp.ctemplar.com.ctemplarapp.production'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png' height='80px'/></a>
 
@@ -11,7 +11,7 @@ Currently available on the Play Store. We also have a totally FLOSS version [inc
 + Android SDK 28 or later
 
 ## Runtime Requirements
-+ Android 5 or later
++ Android 4.1 or later
 
 ## Security
 The application uses the open-source encryption library from [BouncyCastle](https://github.com/bcgit/bc-java)
