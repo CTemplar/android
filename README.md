@@ -14,14 +14,14 @@ Currently available on the Play Store. We also have a totally FLOSS version [inc
 + Android 5 or later
 
 ## Security
-The application uses the open-source encryption library from [BouncyCastle](https://github.com/bcgit/bc-java)
+The application uses the open-source encryption library from [BouncyCastle](https://github.com/bcgit/bc-java).
 
 ## License
 
-The source code is published under [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0)
+The source code is published under [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0).
 
-The encryption library is distributed under [The Legion of the Bouncy Castle License](https://www.bouncycastle.org/licence.html), which should be read in the same way as the [MIT License](https://opensource.org/licenses/MIT)
+The encryption library is distributed under [The Legion of the Bouncy Castle License](https://www.bouncycastle.org/licence.html), which should be read in the same way as the [MIT License](https://opensource.org/licenses/MIT).
 
-Copyright ©2020 Templar Software Systems Ltd., a Seychelles Limited Liability Company
+Copyright ©2020 Templar Software Systems Ltd., a Seychelles Limited Liability Company.
 
 Google Play and the Google Play logo are trademarks of Google Inc.
