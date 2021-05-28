@@ -15,7 +15,7 @@ import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.main.MainActivityActions;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.ChangePasswordRequest;
-import mobileapp.ctemplar.com.ctemplarapp.net.request.MailboxKey;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.mailboxes.MailboxKey;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EncodeUtils;

@@ -10,7 +10,7 @@ import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import mobileapp.ctemplar.com.ctemplarapp.net.entity.PGPKeyEntity;
-import mobileapp.ctemplar.com.ctemplarapp.net.request.MailboxKey;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.mailboxes.MailboxKey;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import mobileapp.ctemplar.com.ctemplarapp.security.PGPManager;
 import timber.log.Timber;

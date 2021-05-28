@@ -45,6 +45,8 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.MyselfResult;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.SettingsResponse;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserStore;
+import mobileapp.ctemplar.com.ctemplarapp.settings.keys.KeysActivity;
+import mobileapp.ctemplar.com.ctemplarapp.settings.keys.OldKeysActivity;
 import mobileapp.ctemplar.com.ctemplarapp.utils.DateUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EncodeUtils;
@@ -59,8 +61,8 @@ public class SettingsActivity extends BaseActivity {
 
     private static SettingsViewModel settingsModel;
 
-    private static UserRepository userRepository = CTemplarApp.getUserRepository();
-    private static UserStore userStore = CTemplarApp.getUserStore();
+    private static final UserRepository userRepository = CTemplarApp.getUserRepository();
+    private static final UserStore userStore = CTemplarApp.getUserStore();
 
     private static PreferenceScreen recoveryEmailPreferenceScreen;
     private static Preference storageLimitPreference;
@@ -143,7 +145,7 @@ public class SettingsActivity extends BaseActivity {
             Preference mailboxKeys = findPreference(getString(R.string.setting_keys));
             if (mailboxKeys != null) {
                 mailboxKeys.setOnPreferenceClickListener(preference -> {
-                    Intent keysIntent = new Intent(getActivity(), KeysActivity.class);
+                    Intent keysIntent = new Intent(getActivity(), OldKeysActivity.class);
                     startActivity(keysIntent);
                     return false;
                 });

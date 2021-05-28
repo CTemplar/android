@@ -1,4 +1,4 @@
-package mobileapp.ctemplar.com.ctemplarapp.net.request;
+package mobileapp.ctemplar.com.ctemplarapp.net.request.contacts;
 
 import com.google.gson.annotations.SerializedName;
 

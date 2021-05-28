@@ -1,4 +1,4 @@
-package mobileapp.ctemplar.com.ctemplarapp.settings;
+package mobileapp.ctemplar.com.ctemplarapp.settings.keys;
 
 import android.os.Bundle;
 import android.os.Environment;
@@ -8,14 +8,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -25,29 +24,20 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 
-import butterknife.BindView;
-import mobileapp.ctemplar.com.ctemplarapp.BaseActivity;
 import mobileapp.ctemplar.com.ctemplarapp.R;
+import mobileapp.ctemplar.com.ctemplarapp.databinding.ActivitySettingsKeysOldBinding;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
+import mobileapp.ctemplar.com.ctemplarapp.settings.SettingsViewModel;
 import mobileapp.ctemplar.com.ctemplarapp.utils.PermissionUtils;
+import mobileapp.ctemplar.com.ctemplarapp.utils.ThemeUtils;
 import timber.log.Timber;
 
-public class KeysActivity extends BaseActivity {
+public class OldKeysActivity extends AppCompatActivity {
     private static final String PUBLIC_KEY_FORMAT = "public.asc";
     private static final String PRIVATE_KEY_FORMAT = "private.asc";
     private static final String SPLITTER = "_";
 
-    @BindView(R.id.activity_setting_keys_address_spinner)
-    Spinner mailboxSpinner;
-
-    @BindView(R.id.activity_setting_keys_fingerprint_text_view)
-    TextView fingerprintTextView;
-
-    @BindView(R.id.activity_setting_keys_public_key_text_view)
-    TextView downloadPublicKeyTextView;
-
-    @BindView(R.id.activity_setting_keys_private_key_text_view)
-    TextView downloadPrivateKeyTextView;
+    private ActivitySettingsKeysOldBinding binding;
 
     private SettingsViewModel settingsViewModel;
     private List<MailboxEntity> mailboxEntityList;
@@ -62,11 +52,6 @@ public class KeysActivity extends BaseActivity {
             });
 
     @Override
-    protected int getLayoutId() {
-        return R.layout.activity_settings_keys;
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
             onBackPressed();
@@ -78,6 +63,9 @@ public class KeysActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ThemeUtils.setTheme(this);
+        binding = ActivitySettingsKeysOldBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
@@ -96,15 +84,15 @@ public class KeysActivity extends BaseActivity {
                 R.layout.item_domain_spinner,
                 addresses
         );
-        mailboxSpinner.setAdapter(addressAdapter);
+        binding.addressSpinner.setAdapter(addressAdapter);
         setListeners();
     }
 
     private void setListeners() {
-        mailboxSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        binding.addressSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                fingerprintTextView.setText(mailboxEntityList.get(position).getFingerprint());
+                binding.fingerprintTextView.setText(mailboxEntityList.get(position).getFingerprint());
             }
 
             @Override
@@ -112,15 +100,15 @@ public class KeysActivity extends BaseActivity {
 
             }
         });
-        downloadPublicKeyTextView.setOnClickListener(v -> downloadKey(false));
-        downloadPrivateKeyTextView.setOnClickListener(v -> downloadKey(true));
+        binding.publicKeyTextView.setOnClickListener(v -> downloadKey(false));
+        binding.privateKeyTextView.setOnClickListener(v -> downloadKey(true));
 
         SpannableString publicKeyTitleSpannable = new SpannableString(getString(R.string.download_public_key));
         SpannableString privateKeyTitleSpannable = new SpannableString(getString(R.string.download_private_key));
         publicKeyTitleSpannable.setSpan(new UnderlineSpan(), 0, publicKeyTitleSpannable.length(), 0);
         privateKeyTitleSpannable.setSpan(new UnderlineSpan(), 0, privateKeyTitleSpannable.length(), 0);
-        downloadPublicKeyTextView.setText(publicKeyTitleSpannable);
-        downloadPrivateKeyTextView.setText(privateKeyTitleSpannable);
+        binding.publicKeyTextView.setText(publicKeyTitleSpannable);
+        binding.privateKeyTextView.setText(privateKeyTitleSpannable);
     }
 
     private void downloadKey(boolean isPrivate) {
@@ -129,8 +117,8 @@ public class KeysActivity extends BaseActivity {
             downloadKeyPermissionLauncher.launch(PermissionUtils.externalStoragePermissions());
             return;
         }
-        int selectedItemPosition = mailboxSpinner.getSelectedItemPosition();
-        MailboxEntity mailboxEntity = mailboxEntityList.get(selectedItemPosition);
+        MailboxEntity mailboxEntity
+                = mailboxEntityList.get(binding.addressSpinner.getSelectedItemPosition());
 
         String keyName;
         byte[] keyContent;

@@ -15,7 +15,7 @@ import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.AntiPhishingPhraseRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.AutoSaveContactEnabledRequest;
-import mobileapp.ctemplar.com.ctemplarapp.net.request.ContactsEncryptionRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.contacts.ContactsEncryptionRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.DarkModeRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.DisableLoadingImagesRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.NotificationEmailRequest;
@@ -70,7 +70,7 @@ public class SettingsViewModel extends ViewModel {
         return myselfResponse;
     }
 
-    List<MailboxEntity> getAllMailboxes() {
+    public List<MailboxEntity> getAllMailboxes() {
         return appDatabase.mailboxDao().getAll();
     }
 

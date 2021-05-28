@@ -1,4 +1,4 @@
-package mobileapp.ctemplar.com.ctemplarapp.repository.provider;
+package mobileapp.ctemplar.com.ctemplarapp.net.request.messages;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -6,9 +6,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import mobileapp.ctemplar.com.ctemplarapp.net.request.messages.SendMessageRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.MessageAttachment;
 
-public class SendMessageRequestProvider {
+public class SendMessageRequest {
+    @SerializedName("encryption")
+    private EncryptionMessageRequest encryptionMessage;
+
     @SerializedName("sender")
     private String sender;
 
@@ -60,11 +63,17 @@ public class SendMessageRequestProvider {
     @SerializedName("parent")
     private Long parent;
 
-    public SendMessageRequestProvider() {
+    @SerializedName("attachments")
+    private List<MessageAttachment> attachments;
+
+    @SerializedName("updated")
+    private Date updatedAt;
+
+    public SendMessageRequest() {
 
     }
 
-    public SendMessageRequestProvider(String sender,
+    public SendMessageRequest(String sender,
                               String content,
                               ArrayList<String> receivers,
                               ArrayList<String> cc,
@@ -78,6 +87,14 @@ public class SendMessageRequestProvider {
         this.bcc = bcc;
         this.folder = folder;
         this.mailbox = mailbox;
+    }
+
+    public EncryptionMessageRequest getEncryptionMessage() {
+        return encryptionMessage;
+    }
+
+    public void setEncryptionMessage(EncryptionMessageRequest encryptionMessage) {
+        this.encryptionMessage = encryptionMessage;
     }
 
     public String getSender() {
@@ -216,25 +233,19 @@ public class SendMessageRequestProvider {
         this.parent = parent;
     }
 
-    public SendMessageRequest toRequest() {
-        SendMessageRequest request = new SendMessageRequest();
-        request.setSender(getSender());
-        request.setSubject(getSubject());
-        request.setContent(getContent());
-        request.setReceivers(getReceivers());
-        request.setCc(getCc());
-        request.setBcc(getBcc());
-        request.setFolder(getFolder());
-        request.setDestructDate(getDestructDate());
-        request.setDelayedDelivery(getDelayedDelivery());
-        request.setDeadManDuration(getDeadManDuration());
-        request.setSend(isSend());
-        request.setEncrypted(isEncrypted());
-        request.setHtml(isHtml());
-        request.setSubjectEncrypted(isSubjectEncrypted());
-        request.setMailbox(getMailbox());
-        request.setLastAction(getLastAction());
-        request.setParent(getParent());
-        return request;
+    public List<MessageAttachment> getAttachments() {
+        return attachments;
+    }
+
+    public void setAttachments(List<MessageAttachment> attachments) {
+        this.attachments = attachments;
+    }
+
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }

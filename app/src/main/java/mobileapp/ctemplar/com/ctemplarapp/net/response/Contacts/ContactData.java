@@ -2,6 +2,10 @@ package mobileapp.ctemplar.com.ctemplarapp.net.response.contacts;
 
 import com.google.gson.annotations.SerializedName;
 
+import mobileapp.ctemplar.com.ctemplarapp.utils.EncryptUtils;
+
+import static mobileapp.ctemplar.com.ctemplarapp.utils.DateUtils.GENERAL_GSON;
+
 public class ContactData {
     @SerializedName("id")
     private long id;
@@ -34,7 +38,6 @@ public class ContactData {
     private String encryptedData;
 
     public ContactData() {
-
     }
 
     public long getId() {
@@ -115,5 +118,29 @@ public class ContactData {
 
     public void setEncryptedData(String encryptedData) {
         this.encryptedData = encryptedData;
+    }
+
+    public void encryptContactData() {
+        EncryptContact encryptContact = new EncryptContact();
+        encryptContact.setEmail(getEmail());
+        encryptContact.setName(getName());
+        encryptContact.setAddress(getAddress());
+        encryptContact.setNote(getNote());
+        encryptContact.setPhone(getPhone());
+        encryptContact.setPhone2(getPhone2());
+        encryptContact.setProvider(getProvider());
+
+        setEmail(null);
+        setName(null);
+        setAddress(null);
+        setNote(null);
+        setPhone(null);
+        setPhone2(null);
+        setProvider(null);
+        setEncrypted(true);
+
+        String contactString = GENERAL_GSON.toJson(encryptContact);
+        String encryptedContactString = EncryptUtils.encryptData(contactString);
+        setEncryptedData(encryptedContactString);
     }
 }

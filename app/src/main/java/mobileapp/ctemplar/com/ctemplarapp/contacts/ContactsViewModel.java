@@ -32,9 +32,9 @@ public class ContactsViewModel extends ViewModel {
     private final ContactsRepository contactsRepository;
     private final UserStore userStore;
 
-    private MutableLiveData<ResponseStatus> responseStatus = new MutableLiveData<>();
-    private MutableLiveData<List<Contact>> contactsResponse = new MutableLiveData<>();
-    private MutableLiveData<Contact> contactResponse = new MutableLiveData<>();
+    private final MutableLiveData<ResponseStatus> responseStatus = new MutableLiveData<>();
+    private final MutableLiveData<List<Contact>> contactsResponse = new MutableLiveData<>();
+    private final MutableLiveData<Contact> contactResponse = new MutableLiveData<>();
 
     public ContactsViewModel() {
         contactsRepository = CTemplarApp.getContactsRepository();
@@ -119,7 +119,6 @@ public class ContactsViewModel extends ViewModel {
                     @Override
                     public void onNext(@NotNull ResponseBody responseBody) {
                         contactsRepository.deleteLocalContact(contact.getId());
-                        Timber.d("deleteContact");
                     }
 
                     @Override
@@ -140,48 +139,28 @@ public class ContactsViewModel extends ViewModel {
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.computation())
                 .subscribe(new SingleObserver<Contact>() {
-            @Override
-            public void onSubscribe(@NonNull Disposable d) {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
 
-            }
+                    }
 
-            @Override
-            public void onSuccess(@NonNull Contact contact) {
-                contactResponse.postValue(contact);
-            }
+                    @Override
+                    public void onSuccess(@NonNull Contact contact) {
+                        contactResponse.postValue(contact);
+                    }
 
-            @Override
-            public void onError(@NonNull Throwable e) {
-                contactResponse.postValue(null);
-                Timber.e(e);
-            }
-        });
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        contactResponse.postValue(null);
+                        Timber.e(e);
+                    }
+                });
     }
 
     public void updateContact(ContactData contactData) {
         boolean contactsEncryption = userStore.isContactsEncryptionEnabled();
         if (contactsEncryption) {
-            EncryptContact encryptContact = new EncryptContact();
-            encryptContact.setEmail(contactData.getEmail());
-            encryptContact.setName(contactData.getName());
-            encryptContact.setAddress(contactData.getAddress());
-            encryptContact.setNote(contactData.getNote());
-            encryptContact.setPhone(contactData.getPhone());
-            encryptContact.setPhone2(contactData.getPhone2());
-            encryptContact.setProvider(contactData.getProvider());
-
-            contactData.setEmail(null);
-            contactData.setName(null);
-            contactData.setAddress(null);
-            contactData.setNote(null);
-            contactData.setPhone(null);
-            contactData.setPhone2(null);
-            contactData.setProvider(null);
-            contactData.setEncrypted(true);
-
-            String contactString = GENERAL_GSON.toJson(encryptContact);
-            String encryptedContactString = EncryptUtils.encryptData(contactString);
-            contactData.setEncryptedData(encryptedContactString);
+            contactData.encryptContactData();
         }
 
         contactsRepository.updateContact(contactData)

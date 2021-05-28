@@ -30,7 +30,7 @@ import mobileapp.ctemplar.com.ctemplarapp.DialogState;
 import mobileapp.ctemplar.com.ctemplarapp.SingleLiveEvent;
 import mobileapp.ctemplar.com.ctemplarapp.executor.QueuedExecutor;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
-import mobileapp.ctemplar.com.ctemplarapp.net.request.EmptyFolderRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.folders.EmptyFolderRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SignInRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.ResponseMessagesData;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.SignInResponse;
@@ -474,7 +474,7 @@ public class MainActivityViewModel extends AndroidViewModel {
     }
 
     public void getMailboxes(int limit, int offset) {
-        userRepository.getMailboxesList(limit, offset)
+        userRepository.getMailboxes(limit, offset)
                 .subscribe(new Observer<MailboxesResponse>() {
                     @Override
                     public void onSubscribe(@NotNull Disposable d) {
@@ -501,7 +501,7 @@ public class MainActivityViewModel extends AndroidViewModel {
                             }
                         }
                         responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
-                        Timber.e(e.getCause());
+                        Timber.e(e);
                     }
 
                     @Override

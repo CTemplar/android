@@ -15,10 +15,9 @@ import mobileapp.ctemplar.com.ctemplarapp.BaseActivity;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.contacts.ContactData;
+import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 
 public class AddContactActivity extends BaseActivity {
-    private AddContactViewModel viewModel;
-
     @BindView(R.id.activity_add_contact_name_input)
     EditText editTextContactName;
 
@@ -44,6 +43,8 @@ public class AddContactActivity extends BaseActivity {
     protected int getLayoutId() {
         return R.layout.activity_add_contact;
     }
+
+    private AddContactViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,31 +82,31 @@ public class AddContactActivity extends BaseActivity {
 
     private void handleResponse(ResponseStatus responseStatus) {
         if (responseStatus == null || responseStatus == ResponseStatus.RESPONSE_ERROR) {
-            Toast.makeText(this, getResources().getString(R.string.toast_not_saved), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.toast_not_saved, Toast.LENGTH_SHORT).show();
         } else if (responseStatus == ResponseStatus.RESPONSE_COMPLETE) {
             onBackPressed();
         } else {
-            Toast.makeText(this, getResources().getString(R.string.toast_undefined_error), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.toast_undefined_error, Toast.LENGTH_SHORT).show();
         }
     }
 
     private void saveContact() {
-        String contactName = editTextContactName.getText().toString();
-        String contactEmail = editTextContactEmail.getText().toString();
-        String contactPhone = editTextContactPhoneNumber.getText().toString();
-        String contactPhoneSecond = editTextContactPhoneNumberSecond.getText().toString();
-        String contactAddress = editTextContactAddress.getText().toString();
-        String contactNote = editTextContactNote.getText().toString();
+        String contactName = EditTextUtils.getText(editTextContactName);
+        String contactEmail = EditTextUtils.getText(editTextContactEmail);
+        String contactPhone = EditTextUtils.getText(editTextContactPhoneNumber);
+        String contactPhoneSecond = EditTextUtils.getText(editTextContactPhoneNumberSecond);
+        String contactAddress = EditTextUtils.getText(editTextContactAddress);
+        String contactNote = EditTextUtils.getText(editTextContactNote);
 
         if (contactName.isEmpty()) {
-            editTextContactName.setError(getResources().getString(R.string.txt_enter_name));
+            editTextContactName.setError(getString(R.string.txt_enter_name));
         } else {
             editTextContactName.setError(null);
         }
         if (Patterns.EMAIL_ADDRESS.matcher(contactEmail).matches()) {
             editTextContactEmail.setError(null);
         } else {
-            editTextContactEmail.setError(getResources().getString(R.string.txt_enter_valid_email));
+            editTextContactEmail.setError(getString(R.string.txt_enter_valid_email));
         }
         if (editTextContactName.getError() != null || editTextContactEmail.getError() != null) {
             return;
