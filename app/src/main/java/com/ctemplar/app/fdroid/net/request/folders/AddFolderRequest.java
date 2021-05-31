@@ -1,25 +1,17 @@
-package com.ctemplar.app.fdroid.net.request;
+package com.ctemplar.app.fdroid.net.request.folders;
 
 import com.google.gson.annotations.SerializedName;
 
-public class EditFolderRequest {
-    @SerializedName("id")
-    private long id;
-
+public class AddFolderRequest {
     @SerializedName("name")
     private String name;
 
     @SerializedName("color")
     private String color;
 
-    public EditFolderRequest(long id, String name, String color) {
-        this.id = id;
+    public AddFolderRequest(String name, String color) {
         this.name = name;
         this.color = color;
-    }
-
-    public void setId(long id) {
-        this.id = id;
     }
 
     public void setName(String name) {

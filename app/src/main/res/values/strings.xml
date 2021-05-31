@@ -397,6 +397,10 @@
     <string name="email_address">E-mail address</string>
     <string name="fingerprint">Fingerprint</string>
     <string name="keys">Keys</string>
+    <string name="key_type">Key type</string>
+    <string name="add_new_key">Add new key</string>
+    <string name="import_key">Import key</string>
+
     <string name="download_public_key">Download public key (4096 Bit)</string>
     <string name="download_private_key">Download private key (4096 Bit)</string>
     <string name="your_public_key_saved">Your PGP Public Key saved to Downloads</string>

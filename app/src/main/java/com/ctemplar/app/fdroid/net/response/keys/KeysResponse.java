@@ -1,20 +1,20 @@
-package com.ctemplar.app.fdroid.net.response;
+package com.ctemplar.app.fdroid.net.response.keys;
 
 import com.google.gson.annotations.SerializedName;
 
-public class KeyResponse {
+public class KeysResponse {
     @SerializedName("encrypt")
     private boolean encrypt;
 
     @SerializedName("keys")
-    private KeyResult[] keyResult;
+    private KeyResponse[] keys;
 
 
     public boolean isEncrypt() {
         return encrypt;
     }
 
-    public KeyResult[] getKeyResult() {
-        return keyResult;
+    public KeyResponse[] getKeys() {
+        return keys;
     }
 }

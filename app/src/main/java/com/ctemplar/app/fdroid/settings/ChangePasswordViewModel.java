@@ -15,7 +15,7 @@ import com.ctemplar.app.fdroid.CTemplarApp;
 import com.ctemplar.app.fdroid.main.MainActivityActions;
 import com.ctemplar.app.fdroid.net.ResponseStatus;
 import com.ctemplar.app.fdroid.net.request.ChangePasswordRequest;
-import com.ctemplar.app.fdroid.net.request.MailboxKey;
+import com.ctemplar.app.fdroid.net.request.mailboxes.MailboxKey;
 import com.ctemplar.app.fdroid.repository.UserRepository;
 import com.ctemplar.app.fdroid.repository.entity.MailboxEntity;
 import com.ctemplar.app.fdroid.utils.EncodeUtils;

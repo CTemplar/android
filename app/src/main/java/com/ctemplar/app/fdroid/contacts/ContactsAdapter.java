@@ -1,42 +1,54 @@
 package com.ctemplar.app.fdroid.contacts;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
+import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import io.reactivex.subjects.PublishSubject;
 import com.ctemplar.app.fdroid.R;
 import com.ctemplar.app.fdroid.repository.entity.Contact;
 
-public class ContactsAdapter extends RecyclerView.Adapter<ContactViewHolder> {
-    private final List<Contact> contactsList;
-    private final List<Contact> filteredList;
-    private final PublishSubject<Long> onClickSubject = PublishSubject.create();
+public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHolder> {
+    private List<Contact> contactList = new ArrayList<>();
+    private final List<Contact> filteredList = new ArrayList<>();
 
-    ContactsAdapter(List<Contact> contactsList) {
-        this.contactsList = contactsList;
-        filteredList = new ArrayList<>();
-        filteredList.addAll(contactsList);
+    private Context context;
+    private LayoutInflater inflater;
+
+    public ContactsAdapter() {
+    }
+
+    public void setItems(List<Contact> contactList, String filterText) {
+        this.contactList = contactList;
+        filter(filterText);
+        notifyDataSetChanged();
+    }
+
+    @Override
+    public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
+        context = recyclerView.getContext();
+        inflater = LayoutInflater.from(context);
     }
 
     @NonNull
     @Override
-    public ContactViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_contact_holder, viewGroup, false);
-        return new ContactViewHolder(view);
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = inflater.inflate(R.layout.item_contact_holder, parent, false);
+        return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ContactViewHolder holder, int position) {
-        final Contact contacts = filteredList.get(position);
-        holder.txtName.setText(contacts.getName());
-        holder.txtMail.setText(contacts.getEmail());
-        holder.root.setOnClickListener(v -> onClickSubject.onNext(contacts.getId()));
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        holder.update(filteredList.get(position));
     }
 
     @Override
@@ -44,29 +56,28 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactViewHolder> {
         return filteredList.size();
     }
 
-    Contact removeAt(int position) {
+    public Contact removeAt(int position) {
         Contact removedContact = filteredList.remove(position);
-        contactsList.remove(removedContact);
+        contactList.remove(removedContact);
         notifyItemRemoved(position);
         return removedContact;
     }
 
-    void restoreItem(Contact contact, int position) {
-        if (contactsList.contains(contact)) {
+    public void restoreItem(Contact contact, int position) {
+        if (contactList.contains(contact)) {
             return;
         }
-        contactsList.add(position, contact);
+        contactList.add(position, contact);
         filteredList.add(position, contact);
         notifyItemInserted(position);
     }
 
-    PublishSubject<Long> getOnClickSubject() {
-        return onClickSubject;
-    }
-
     public void filter(String filter) {
+        if (filter == null) {
+            return;
+        }
         filteredList.clear();
-        for (Contact contact : contactsList) {
+        for (Contact contact : contactList) {
             if (containsStr(contact, filter)) {
                 filteredList.add(contact);
             }
@@ -90,5 +101,28 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactViewHolder> {
             return "";
         }
         return str.toLowerCase();
+    }
+
+    class ViewHolder extends RecyclerView.ViewHolder {
+        private final View root;
+        private final TextView name;
+        private final TextView email;
+
+        public ViewHolder(@NonNull View itemView) {
+            super(itemView);
+            root = itemView;
+            name = itemView.findViewById(R.id.item_contact_holder_name);
+            email = itemView.findViewById(R.id.item_contact_holder_mail);
+        }
+
+        public void update(Contact contact) {
+            name.setText(contact.getName());
+            email.setText(contact.getEmail());
+            root.setOnClickListener(v -> {
+                Intent intent = new Intent(context, EditContactActivity.class);
+                intent.putExtra(EditContactActivity.ARG_ID, contact.getId());
+                context.startActivity(intent);
+            });
+        }
     }
 }

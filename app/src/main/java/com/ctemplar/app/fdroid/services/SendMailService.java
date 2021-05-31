@@ -31,8 +31,8 @@ import java.util.UUID;
 
 import com.ctemplar.app.fdroid.CTemplarApp;
 import com.ctemplar.app.fdroid.R;
-import com.ctemplar.app.fdroid.net.request.EncryptionMessageRequest;
-import com.ctemplar.app.fdroid.net.request.SendMessageRequest;
+import com.ctemplar.app.fdroid.net.request.messages.EncryptionMessageRequest;
+import com.ctemplar.app.fdroid.net.request.messages.SendMessageRequest;
 import com.ctemplar.app.fdroid.net.response.messages.MessageAttachment;
 import com.ctemplar.app.fdroid.net.response.messages.MessagesResult;
 import com.ctemplar.app.fdroid.repository.entity.MailboxEntity;

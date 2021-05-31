@@ -1,4 +1,4 @@
-package com.ctemplar.app.fdroid.net.request;
+package com.ctemplar.app.fdroid.net.request.messages;
 
 import com.google.gson.annotations.SerializedName;
 

@@ -4,6 +4,8 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -17,9 +19,9 @@ import com.ctemplar.app.fdroid.CTemplarApp;
 import com.ctemplar.app.fdroid.net.ResponseStatus;
 import com.ctemplar.app.fdroid.net.entity.PGPKeyEntity;
 import com.ctemplar.app.fdroid.net.request.CheckUsernameRequest;
-import com.ctemplar.app.fdroid.net.request.CreateMailboxRequest;
-import com.ctemplar.app.fdroid.net.request.DefaultMailboxRequest;
-import com.ctemplar.app.fdroid.net.request.EnabledMailboxRequest;
+import com.ctemplar.app.fdroid.net.request.mailboxes.CreateMailboxRequest;
+import com.ctemplar.app.fdroid.net.request.mailboxes.DefaultMailboxRequest;
+import com.ctemplar.app.fdroid.net.request.mailboxes.EnabledMailboxRequest;
 import com.ctemplar.app.fdroid.net.response.CheckUsernameResponse;
 import com.ctemplar.app.fdroid.net.response.domains.DomainsResponse;
 import com.ctemplar.app.fdroid.net.response.mailboxes.MailboxResponse;
@@ -32,14 +34,15 @@ import retrofit2.Response;
 import timber.log.Timber;
 
 public class MailboxesViewModel extends ViewModel {
-    private UserRepository userRepository;
-    private MailboxDao mailboxDao;
-    private MutableLiveData<ResponseStatus> defaultMailboxResponseStatus = new MutableLiveData<>();
-    private MutableLiveData<ResponseStatus> enabledMailboxResponseStatus = new MutableLiveData<>();
-    private MutableLiveData<DomainsResponse> domainsResponse = new MutableLiveData<>();
-    private MutableLiveData<CheckUsernameResponse> checkUsernameResponse = new MutableLiveData<>();
-    private MutableLiveData<ResponseStatus> createMailboxResponseStatus = new MutableLiveData<>();
-    private MutableLiveData<ResponseStatus> checkUsernameStatus = new MutableLiveData<>();
+    private final UserRepository userRepository;
+    private final MailboxDao mailboxDao;
+
+    private final MutableLiveData<ResponseStatus> defaultMailboxResponseStatus = new MutableLiveData<>();
+    private final MutableLiveData<ResponseStatus> enabledMailboxResponseStatus = new MutableLiveData<>();
+    private final MutableLiveData<DomainsResponse> domainsResponse = new MutableLiveData<>();
+    private final MutableLiveData<CheckUsernameResponse> checkUsernameResponse = new MutableLiveData<>();
+    private final MutableLiveData<ResponseStatus> createMailboxResponseStatus = new MutableLiveData<>();
+    private final MutableLiveData<ResponseStatus> checkUsernameStatus = new MutableLiveData<>();
 
     public MailboxesViewModel() {
         userRepository = CTemplarApp.getUserRepository();
@@ -78,19 +81,19 @@ public class MailboxesViewModel extends ViewModel {
         userRepository.updateDefaultMailbox(mailboxId, new DefaultMailboxRequest())
                 .subscribe(new Observer<MailboxResponse>() {
                     @Override
-                    public void onSubscribe(Disposable d) {
+                    public void onSubscribe(@NotNull Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(MailboxResponse mailboxResponse) {
+                    public void onNext(@NotNull MailboxResponse mailboxResponse) {
                         defaultMailboxResponseStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
                         mailboxDao.setDefault(lastSelectedMailboxId, false);
                         mailboxDao.setDefault(mailboxId, true);
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onError(@NotNull Throwable e) {
                         Timber.e(e);
                     }
 
@@ -105,18 +108,18 @@ public class MailboxesViewModel extends ViewModel {
         userRepository.updateEnabledMailbox(mailboxId, new EnabledMailboxRequest(isEnabled))
                 .subscribe(new Observer<MailboxResponse>() {
                     @Override
-                    public void onSubscribe(Disposable d) {
+                    public void onSubscribe(@NotNull Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(MailboxResponse mailboxResponse) {
+                    public void onNext(@NotNull MailboxResponse mailboxResponse) {
                         enabledMailboxResponseStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
                         mailboxDao.setEnabled(mailboxId, isEnabled);
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onError(@NotNull Throwable e) {
                         Timber.e(e);
                     }
 
@@ -131,17 +134,17 @@ public class MailboxesViewModel extends ViewModel {
         userRepository.getDomains()
                 .subscribe(new Observer<DomainsResponse>() {
                     @Override
-                    public void onSubscribe(Disposable d) {
+                    public void onSubscribe(@NotNull Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(DomainsResponse response) {
+                    public void onNext(@NotNull DomainsResponse response) {
                         domainsResponse.postValue(response);
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onError(@NotNull Throwable e) {
                         Timber.e(e);
                     }
 
@@ -156,17 +159,17 @@ public class MailboxesViewModel extends ViewModel {
         userRepository.checkUsername(new CheckUsernameRequest(username))
                 .subscribe(new Observer<CheckUsernameResponse>() {
                     @Override
-                    public void onSubscribe(Disposable d) {
+                    public void onSubscribe(@NotNull Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(CheckUsernameResponse response) {
+                    public void onNext(@NotNull CheckUsernameResponse response) {
                         checkUsernameResponse.postValue(response);
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onError(@NotNull Throwable e) {
                         if (e instanceof HttpException) {
                             HttpException exception = (HttpException) e;
                             if (exception.code() == 429) {
@@ -202,12 +205,12 @@ public class MailboxesViewModel extends ViewModel {
                     return userRepository.createMailbox(createMailboxRequest);
                 }).subscribe(new Observer<Response<MailboxResponse>>() {
             @Override
-            public void onSubscribe(Disposable d) {
+            public void onSubscribe(@NotNull Disposable d) {
 
             }
 
             @Override
-            public void onNext(Response<MailboxResponse> mailboxesResultResponse) {
+            public void onNext(@NotNull Response<MailboxResponse> mailboxesResultResponse) {
                 if (mailboxesResultResponse.code() == 201) {
                     createMailboxResponseStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
                     final MailboxResponse mailboxResponse = mailboxesResultResponse.body();
@@ -221,7 +224,7 @@ public class MailboxesViewModel extends ViewModel {
             }
 
             @Override
-            public void onError(Throwable e) {
+            public void onError(@NotNull Throwable e) {
                 createMailboxResponseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
                 Timber.e(e);
             }

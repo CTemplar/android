@@ -1,12 +1,12 @@
-package com.ctemplar.app.fdroid.net.request;
+package com.ctemplar.app.fdroid.net.request.folders;
 
 import com.google.gson.annotations.SerializedName;
 
-public class MoveToFolderRequest {
+public class EmptyFolderRequest {
     @SerializedName("folder")
     private String folder;
 
-    public MoveToFolderRequest(String folder) {
+    public EmptyFolderRequest(String folder) {
         this.folder = folder;
     }
 

@@ -13,8 +13,8 @@ import com.ctemplar.app.fdroid.DialogState;
 import com.ctemplar.app.fdroid.SingleLiveEvent;
 import com.ctemplar.app.fdroid.executor.QueuedExecutor;
 import com.ctemplar.app.fdroid.net.ResponseStatus;
-import com.ctemplar.app.fdroid.net.request.EmptyFolderRequest;
 import com.ctemplar.app.fdroid.net.request.SignInRequest;
+import com.ctemplar.app.fdroid.net.request.folders.EmptyFolderRequest;
 import com.ctemplar.app.fdroid.net.response.ResponseMessagesData;
 import com.ctemplar.app.fdroid.net.response.SignInResponse;
 import com.ctemplar.app.fdroid.net.response.folders.FoldersResponse;
@@ -450,7 +450,7 @@ public class MainActivityViewModel extends AndroidViewModel {
     }
 
     public void getMailboxes(int limit, int offset) {
-        userRepository.getMailboxesList(limit, offset)
+        userRepository.getMailboxes(limit, offset)
                 .subscribe(new Observer<MailboxesResponse>() {
                     @Override
                     public void onSubscribe(@NotNull Disposable d) {
@@ -477,7 +477,7 @@ public class MainActivityViewModel extends AndroidViewModel {
                             }
                         }
                         responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
-                        Timber.e(e.getCause());
+                        Timber.e(e);
                     }
 
                     @Override

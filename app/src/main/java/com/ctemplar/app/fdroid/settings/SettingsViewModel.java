@@ -15,7 +15,7 @@ import com.ctemplar.app.fdroid.CTemplarApp;
 import com.ctemplar.app.fdroid.net.ResponseStatus;
 import com.ctemplar.app.fdroid.net.request.AntiPhishingPhraseRequest;
 import com.ctemplar.app.fdroid.net.request.AutoSaveContactEnabledRequest;
-import com.ctemplar.app.fdroid.net.request.ContactsEncryptionRequest;
+import com.ctemplar.app.fdroid.net.request.contacts.ContactsEncryptionRequest;
 import com.ctemplar.app.fdroid.net.request.DarkModeRequest;
 import com.ctemplar.app.fdroid.net.request.DisableLoadingImagesRequest;
 import com.ctemplar.app.fdroid.net.request.NotificationEmailRequest;
@@ -70,7 +70,7 @@ public class SettingsViewModel extends ViewModel {
         return myselfResponse;
     }
 
-    List<MailboxEntity> getAllMailboxes() {
+    public List<MailboxEntity> getAllMailboxes() {
         return appDatabase.mailboxDao().getAll();
     }
 

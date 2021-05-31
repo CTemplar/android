@@ -99,12 +99,6 @@ public class MainActivity extends AppCompatActivity
     private Handler handler = new Handler();
     private AppCompatDelegate baseContextWrappingDelegate;
 
-//    @Override
-//    protected void attachBaseContext(Context newBase) {
-//        Context context = LocaleUtils.getContextWrapper(newBase);
-//        super.attachBaseContext(context);
-//    }
-
     @NonNull
     @Override
     public AppCompatDelegate getDelegate() {

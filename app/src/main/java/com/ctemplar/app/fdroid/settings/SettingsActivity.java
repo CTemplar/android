@@ -46,6 +46,7 @@ import com.ctemplar.app.fdroid.net.response.myself.SettingsResponse;
 import com.ctemplar.app.fdroid.repository.UserRepository;
 import com.ctemplar.app.fdroid.repository.UserStore;
 import com.ctemplar.app.fdroid.services.NotificationService;
+import com.ctemplar.app.fdroid.settings.keys.OldKeysActivity;
 import com.ctemplar.app.fdroid.utils.DateUtils;
 import com.ctemplar.app.fdroid.utils.EditTextUtils;
 import com.ctemplar.app.fdroid.utils.EncodeUtils;
@@ -60,8 +61,8 @@ public class SettingsActivity extends BaseActivity {
 
     private static SettingsViewModel settingsModel;
 
-    private static UserRepository userRepository = CTemplarApp.getUserRepository();
-    private static UserStore userStore = CTemplarApp.getUserStore();
+    private static final UserRepository userRepository = CTemplarApp.getUserRepository();
+    private static final UserStore userStore = CTemplarApp.getUserStore();
 
     private static PreferenceScreen recoveryEmailPreferenceScreen;
     private static Preference storageLimitPreference;
@@ -144,7 +145,7 @@ public class SettingsActivity extends BaseActivity {
             Preference mailboxKeys = findPreference(getString(R.string.setting_keys));
             if (mailboxKeys != null) {
                 mailboxKeys.setOnPreferenceClickListener(preference -> {
-                    Intent keysIntent = new Intent(getActivity(), KeysActivity.class);
+                    Intent keysIntent = new Intent(getActivity(), OldKeysActivity.class);
                     startActivity(keysIntent);
                     return false;
                 });

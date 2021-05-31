@@ -131,7 +131,8 @@
         <activity android:name=".settings.PINLockSettingsActivity" />
         <activity android:name=".settings.PINLockChangeActivity" />
         <activity android:name=".settings.ChangePasswordActivity" />
-        <activity android:name=".settings.KeysActivity" />
+        <activity android:name=".settings.keys.KeysActivity" />
+        <activity android:name=".settings.keys.OldKeysActivity" />
         <activity android:name=".settings.SignatureActivity" />
         <activity android:name=".settings.HelpdeskActivity" />
         <activity android:name=".mailboxes.MailboxesActivity" />

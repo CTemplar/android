@@ -1,33 +1,17 @@
 package com.ctemplar.app.fdroid.net;
 
-import javax.inject.Singleton;
-
-import io.reactivex.Observable;
-import io.reactivex.Single;
-
 import com.ctemplar.app.fdroid.net.request.AddAppTokenRequest;
-import com.ctemplar.app.fdroid.net.request.AddFolderRequest;
 import com.ctemplar.app.fdroid.net.request.AntiPhishingPhraseRequest;
 import com.ctemplar.app.fdroid.net.request.AutoSaveContactEnabledRequest;
 import com.ctemplar.app.fdroid.net.request.CaptchaVerifyRequest;
 import com.ctemplar.app.fdroid.net.request.ChangePasswordRequest;
 import com.ctemplar.app.fdroid.net.request.CheckUsernameRequest;
-import com.ctemplar.app.fdroid.net.request.ContactsEncryptionRequest;
-import com.ctemplar.app.fdroid.net.request.CreateMailboxRequest;
 import com.ctemplar.app.fdroid.net.request.DarkModeRequest;
-import com.ctemplar.app.fdroid.net.request.DefaultMailboxRequest;
 import com.ctemplar.app.fdroid.net.request.DisableLoadingImagesRequest;
-import com.ctemplar.app.fdroid.net.request.EditFolderRequest;
-import com.ctemplar.app.fdroid.net.request.EmptyFolderRequest;
-import com.ctemplar.app.fdroid.net.request.EnabledMailboxRequest;
-import com.ctemplar.app.fdroid.net.request.MarkMessageAsReadRequest;
-import com.ctemplar.app.fdroid.net.request.MarkMessageIsStarredRequest;
-import com.ctemplar.app.fdroid.net.request.MoveToFolderRequest;
 import com.ctemplar.app.fdroid.net.request.NotificationEmailRequest;
 import com.ctemplar.app.fdroid.net.request.PublicKeysRequest;
 import com.ctemplar.app.fdroid.net.request.RecoverPasswordRequest;
 import com.ctemplar.app.fdroid.net.request.RecoveryEmailRequest;
-import com.ctemplar.app.fdroid.net.request.SendMessageRequest;
 import com.ctemplar.app.fdroid.net.request.SettingsRequest;
 import com.ctemplar.app.fdroid.net.request.SignInRequest;
 import com.ctemplar.app.fdroid.net.request.SignUpRequest;
@@ -35,13 +19,24 @@ import com.ctemplar.app.fdroid.net.request.SignatureRequest;
 import com.ctemplar.app.fdroid.net.request.SubjectEncryptedRequest;
 import com.ctemplar.app.fdroid.net.request.TokenRefreshRequest;
 import com.ctemplar.app.fdroid.net.request.UpdateReportBugsRequest;
+import com.ctemplar.app.fdroid.net.request.contacts.ContactsEncryptionRequest;
 import com.ctemplar.app.fdroid.net.request.filters.EmailFilterOrderListRequest;
 import com.ctemplar.app.fdroid.net.request.filters.EmailFilterRequest;
+import com.ctemplar.app.fdroid.net.request.folders.AddFolderRequest;
+import com.ctemplar.app.fdroid.net.request.folders.EditFolderRequest;
+import com.ctemplar.app.fdroid.net.request.folders.EmptyFolderRequest;
+import com.ctemplar.app.fdroid.net.request.folders.MoveToFolderRequest;
+import com.ctemplar.app.fdroid.net.request.mailboxes.CreateMailboxKeyRequest;
+import com.ctemplar.app.fdroid.net.request.mailboxes.CreateMailboxRequest;
+import com.ctemplar.app.fdroid.net.request.mailboxes.DefaultMailboxRequest;
+import com.ctemplar.app.fdroid.net.request.mailboxes.EnabledMailboxRequest;
+import com.ctemplar.app.fdroid.net.request.messages.MarkMessageAsReadRequest;
+import com.ctemplar.app.fdroid.net.request.messages.MarkMessageIsStarredRequest;
+import com.ctemplar.app.fdroid.net.request.messages.SendMessageRequest;
 import com.ctemplar.app.fdroid.net.response.AddAppTokenResponse;
 import com.ctemplar.app.fdroid.net.response.CaptchaResponse;
 import com.ctemplar.app.fdroid.net.response.CaptchaVerifyResponse;
 import com.ctemplar.app.fdroid.net.response.CheckUsernameResponse;
-import com.ctemplar.app.fdroid.net.response.KeyResponse;
 import com.ctemplar.app.fdroid.net.response.RecoverPasswordResponse;
 import com.ctemplar.app.fdroid.net.response.SignInResponse;
 import com.ctemplar.app.fdroid.net.response.SignUpResponse;
@@ -53,6 +48,9 @@ import com.ctemplar.app.fdroid.net.response.filters.EmailFilterResponse;
 import com.ctemplar.app.fdroid.net.response.filters.EmailFilterResult;
 import com.ctemplar.app.fdroid.net.response.folders.FoldersResponse;
 import com.ctemplar.app.fdroid.net.response.folders.FoldersResult;
+import com.ctemplar.app.fdroid.net.response.keys.KeysResponse;
+import com.ctemplar.app.fdroid.net.response.mailboxes.MailboxKeyResponse;
+import com.ctemplar.app.fdroid.net.response.mailboxes.MailboxKeysResponse;
 import com.ctemplar.app.fdroid.net.response.mailboxes.MailboxResponse;
 import com.ctemplar.app.fdroid.net.response.mailboxes.MailboxesResponse;
 import com.ctemplar.app.fdroid.net.response.messages.EmptyFolderResponse;
@@ -65,6 +63,11 @@ import com.ctemplar.app.fdroid.net.response.myself.SettingsResponse;
 import com.ctemplar.app.fdroid.net.response.myself.WhiteListContact;
 import com.ctemplar.app.fdroid.net.response.whiteBlackList.BlackListResponse;
 import com.ctemplar.app.fdroid.net.response.whiteBlackList.WhiteListResponse;
+
+import javax.inject.Singleton;
+
+import io.reactivex.Observable;
+import io.reactivex.Single;
 import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -220,8 +223,17 @@ public interface RestService {
     @POST("emails/mailboxes/")
     Observable<Response<MailboxResponse>> createMailbox(@Body CreateMailboxRequest request);
 
+    @GET("emails/mailbox-keys/")
+    Observable<MailboxKeysResponse> getMailboxKeys(
+            @Query("limit") int limit,
+            @Query("offset") int offset
+    );
+
+    @POST("emails/mailbox-keys/")
+    Observable<Response<MailboxKeyResponse>> createMailboxKey(@Body CreateMailboxKeyRequest request);
+
     @POST("emails/keys/")
-    Observable<KeyResponse> getKeys(@Body PublicKeysRequest request);
+    Observable<KeysResponse> getKeys(@Body PublicKeysRequest request);
 
     @POST("emails/messages/")
     Observable<MessagesResult> sendMessage(@Body SendMessageRequest request);

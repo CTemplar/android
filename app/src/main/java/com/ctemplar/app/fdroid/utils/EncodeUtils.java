@@ -10,7 +10,7 @@ import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import com.ctemplar.app.fdroid.net.entity.PGPKeyEntity;
-import com.ctemplar.app.fdroid.net.request.MailboxKey;
+import com.ctemplar.app.fdroid.net.request.mailboxes.MailboxKey;
 import com.ctemplar.app.fdroid.repository.entity.MailboxEntity;
 import com.ctemplar.app.fdroid.security.PGPManager;
 import timber.log.Timber;
