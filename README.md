@@ -8,7 +8,7 @@ Currently available on the Play Store. We also have a totally FLOSS version [inc
 
 ## Build Requirements
 + Android Studio
-+ Android SDK 28 or later
++ Android SDK 30 or later
 
 ## Runtime Requirements
 + Android 5 or later
