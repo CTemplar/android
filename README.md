@@ -10,7 +10,7 @@ Currently available on the F-Droid Store.
 
 ## Build Requirements
 + Android Studio
-+ Android SDK 28 or later
++ Android SDK 30 or later
 
 ## Runtime Requirements
 + Android 5 or later
