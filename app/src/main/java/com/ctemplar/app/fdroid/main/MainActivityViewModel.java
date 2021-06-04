@@ -18,7 +18,6 @@ import com.ctemplar.app.fdroid.net.request.folders.EmptyFolderRequest;
 import com.ctemplar.app.fdroid.net.response.ResponseMessagesData;
 import com.ctemplar.app.fdroid.net.response.SignInResponse;
 import com.ctemplar.app.fdroid.net.response.folders.FoldersResponse;
-import com.ctemplar.app.fdroid.net.response.mailboxes.MailboxesResponse;
 import com.ctemplar.app.fdroid.net.response.messages.EmptyFolderResponse;
 import com.ctemplar.app.fdroid.net.response.messages.MessagesResponse;
 import com.ctemplar.app.fdroid.net.response.messages.MessagesResult;
@@ -439,44 +438,6 @@ public class MainActivityViewModel extends AndroidViewModel {
                     public void onError(@NotNull Throwable e) {
                         searchMessagesResponse.postValue(new ResponseMessagesData(
                                 Collections.emptyList(), offset));
-                        Timber.e(e);
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
-    }
-
-    public void getMailboxes(int limit, int offset) {
-        userRepository.getMailboxes(limit, offset)
-                .subscribe(new Observer<MailboxesResponse>() {
-                    @Override
-                    public void onSubscribe(@NotNull Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(@NotNull MailboxesResponse mailboxesResponse) {
-                        if (mailboxesResponse.getTotalCount() > 0) {
-                            userRepository.saveMailboxes(mailboxesResponse.getMailboxesList());
-                        }
-                        responseStatus.postValue(ResponseStatus.RESPONSE_NEXT_MAILBOXES);
-                    }
-
-                    @Override
-                    public void onError(@NotNull Throwable e) {
-                        if (e instanceof HttpException) {
-                            int code = ((HttpException) e).code();
-                            switch (code) {
-                                case 401:
-                                case 403:
-                                    signIn();
-                                    break;
-                            }
-                        }
-                        responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
                         Timber.e(e);
                     }
 

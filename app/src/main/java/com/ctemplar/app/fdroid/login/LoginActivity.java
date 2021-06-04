@@ -5,52 +5,43 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.FrameLayout;
-import android.widget.ProgressBar;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
 import org.jetbrains.annotations.NotNull;
 
-import butterknife.BindView;
+import com.ctemplar.app.fdroid.BaseActivity;
 import com.ctemplar.app.fdroid.BaseFragment;
-import com.ctemplar.app.fdroid.BaseFragmentActivity;
 import com.ctemplar.app.fdroid.DialogState;
 import com.ctemplar.app.fdroid.LoginActivityActions;
 import com.ctemplar.app.fdroid.R;
+import com.ctemplar.app.fdroid.databinding.ActivityLoginBinding;
 import com.ctemplar.app.fdroid.main.MainActivity;
 import timber.log.Timber;
 
-public class LoginActivity extends BaseFragmentActivity {
-    @BindView(R.id.progress_bar)
-    public ProgressBar progress;
-
-    @BindView(R.id.progress_background)
-    public View progressBackground;
-
-    @BindView(R.id.content_frame)
-    FrameLayout mContentFrame;
-
+public class LoginActivity extends BaseActivity {
     private LoginActivityViewModel loginViewModel;
 
-    @NonNull
-    @Override
+    private ActivityLoginBinding binding;
+
     protected BaseFragment getStartFragment() {
         return new SignInFragment();
     }
 
     @Override
-    protected int getLayoutId() {
-        return R.layout.activity_login;
-    }
-
-    @Override
     protected void onCreate(Bundle savedState) {
         super.onCreate(savedState);
-
+        binding = ActivityLoginBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+        if (savedState == null) {
+            FragmentManager manager = getSupportFragmentManager();
+            FragmentTransaction ft = manager.beginTransaction();
+            ft.add(binding.contentFrame.getId(), getStartFragment());
+            ft.commit();
+        }
         loginViewModel = new ViewModelProvider(this).get(LoginActivityViewModel.class);
         loginViewModel.getActionStatus().observe(this, this::handleActions);
         loginViewModel.getDialogState().observe(this, this::handleDialogState);
@@ -76,13 +67,13 @@ public class LoginActivity extends BaseFragmentActivity {
         if (state != null) {
             switch (state) {
                 case SHOW_PROGRESS_DIALOG:
-                    progress.setVisibility(View.VISIBLE);
-                    progressBackground.setVisibility(View.VISIBLE);
+                    binding.progressBar.setVisibility(View.VISIBLE);
+                    binding.progressBackground.setVisibility(View.VISIBLE);
                     blockUI();
                     break;
                 case HIDE_PROGRESS_DIALOG:
-                    progress.setVisibility(View.GONE);
-                    progressBackground.setVisibility(View.GONE);
+                    binding.progressBar.setVisibility(View.GONE);
+                    binding.progressBackground.setVisibility(View.GONE);
                     unlockUI();
                     break;
             }
@@ -132,7 +123,7 @@ public class LoginActivity extends BaseFragmentActivity {
     private void removeFragments() {
         Timber.d("removeFragments");
         FragmentManager supportFragmentManager = getSupportFragmentManager();
-        Fragment fragment = supportFragmentManager.findFragmentById(mContentFrame.getId());
+        Fragment fragment = supportFragmentManager.findFragmentById(binding.contentFrame.getId());
         if (fragment == null) {
             Timber.e("fragment is null");
             return;
@@ -148,6 +139,50 @@ public class LoginActivity extends BaseFragmentActivity {
     }
 
     private boolean isDevicePortrait() {
-        return (findViewById(mContentFrame.getId()) != null);
+        return (findViewById(binding.contentFrame.getId()) != null);
+    }
+
+    protected BaseFragment getCurrentFragment() {
+        return (BaseFragment) getSupportFragmentManager().findFragmentById(binding.contentFrame.getId());
+    }
+
+    protected void resetFragment() {
+        FragmentManager manager = getSupportFragmentManager();
+
+        //noinspection StatementWithEmptyBody
+        while (manager.popBackStackImmediate()) {
+        }
+
+        FragmentTransaction ft = manager.beginTransaction();
+        ft.replace(binding.contentFrame.getId(), getStartFragment());
+        ft.commit();
+    }
+
+
+    @Override
+    protected boolean handleBackPress() {
+        FragmentManager manager = getSupportFragmentManager();
+        if (getCurrentFragment().handleBackPress()) {
+            return true;
+        }
+        if (manager.getBackStackEntryCount() > 0) {
+            manager.popBackStack();
+            return true;
+        }
+        return false;
+    }
+
+    protected void pushFragment(BaseFragment fragment) {
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction ft = manager.beginTransaction();
+        ft.setCustomAnimations(
+                R.anim.fragment_enter_from_right,
+                R.anim.fragment_exit_to_left,
+                R.anim.fragment_enter_from_left,
+                R.anim.fragment_exit_to_right
+        );
+        ft.replace(binding.contentFrame.getId(), fragment);
+        ft.addToBackStack(null);
+        ft.commit();
     }
 }

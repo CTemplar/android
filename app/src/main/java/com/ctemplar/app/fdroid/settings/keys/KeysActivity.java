@@ -3,6 +3,10 @@ package com.ctemplar.app.fdroid.settings.keys;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.SpinnerAdapter;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -11,20 +15,20 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.DividerItemDecoration;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import com.ctemplar.app.fdroid.R;
 import com.ctemplar.app.fdroid.databinding.ActivitySettingsKeysBinding;
 import com.ctemplar.app.fdroid.repository.entity.MailboxEntity;
-import com.ctemplar.app.fdroid.settings.SettingsViewModel;
 import com.ctemplar.app.fdroid.utils.PermissionUtils;
 import com.ctemplar.app.fdroid.utils.ThemeUtils;
+import com.ctemplar.app.fdroid.utils.ToastUtils;
 import timber.log.Timber;
 
 public class KeysActivity extends AppCompatActivity {
@@ -34,18 +38,37 @@ public class KeysActivity extends AppCompatActivity {
 
     private ActivitySettingsKeysBinding binding;
 
-    private final MailboxAdapter adapter = new MailboxAdapter();
-    private SettingsViewModel settingsViewModel;
-    private List<MailboxEntity> mailboxEntityList;
-    private boolean isPrivate;
+    private GeneralizedMailboxKey keyToDownload;
+    private boolean isPrivateKeyToDownload;
+
+    private MailboxViewModel mailboxViewModel;
+    private final MailboxKeysAdapter.ClickCallback clickCallback = new MailboxKeysAdapter.ClickCallback() {
+        @Override
+        public void onSetAsPrimaryClick(GeneralizedMailboxKey key) {
+            openSetKeyAsPrimaryDialog(key);
+        }
+
+        @Override
+        public void onDownloadKeyClick(GeneralizedMailboxKey key) {
+            openDownloadKeyDialog(key);
+        }
+
+        @Override
+        public void onRemoveKeyClick(GeneralizedMailboxKey key) {
+            openRemoveKeyDialog(key);
+        }
+    };
+
+    private final MailboxKeysAdapter adapter = new MailboxKeysAdapter(clickCallback);
 
     private final ActivityResultLauncher<String[]> downloadKeyPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), result -> {
                 if (result.containsValue(false)) {
                     return;
                 }
-                downloadKey(isPrivate);
+                downloadKey(keyToDownload, isPrivateKeyToDownload);
             });
+    private Map<MailboxEntity, List<GeneralizedMailboxKey>> mailboxKeyMap;
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -69,40 +92,138 @@ public class KeysActivity extends AppCompatActivity {
             actionBar.setHomeButtonEnabled(true);
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-        settingsViewModel = new ViewModelProvider(this).get(SettingsViewModel.class);
+        binding.keysRecyclerView.setAdapter(adapter);
+        mailboxViewModel = new ViewModelProvider(this).get(MailboxViewModel.class);
 
-        binding.mailboxesRecyclerView.setAdapter(adapter);
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(
-                binding.mailboxesRecyclerView.getContext(),
-                DividerItemDecoration.VERTICAL
+//        binding.keysRecyclerView.setAdapter();
+//        binding.mailboxesRecyclerView.setAdapter(adapter);
+//        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(
+//                binding.mailboxesRecyclerView.getContext(),
+//                DividerItemDecoration.VERTICAL
+//        );
+//        binding.mailboxesRecyclerView.addItemDecoration(dividerItemDecoration);
+        mailboxKeyMap = mailboxViewModel.getMailboxKeyMap();
+        if (mailboxKeyMap == null || mailboxKeyMap.isEmpty()) {
+            onBackPressed();
+            return;
+        }
+        String[] addresses = new String[mailboxKeyMap.size()];
+        int iterator = 0;
+        for (MailboxEntity mailbox : mailboxKeyMap.keySet()) {
+            addresses[iterator++] = mailbox.getEmail();
+        }
+        SpinnerAdapter addressAdapter = new ArrayAdapter<>(
+                this,
+                R.layout.item_domain_spinner,
+                addresses
         );
-        binding.mailboxesRecyclerView.addItemDecoration(dividerItemDecoration);
-        adapter.setItems(settingsViewModel.getAllMailboxes());
-        setListeners();
+        binding.emailSpinner.setAdapter(addressAdapter);
+        binding.emailSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                selectMailbox(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+        mailboxKeyMap.keySet();
+        selectMailbox(0);
     }
 
-    private void setListeners() {
+    private MailboxEntity getMailboxByIndex(int index) {
+        int counter = 0;
+        for (MailboxEntity mailboxEntity : mailboxKeyMap.keySet()) {
+            if (counter++ == index) {
+                return mailboxEntity;
+            }
+        }
+        return null;
     }
 
-    private void downloadKey(boolean isPrivate) {
-        this.isPrivate = isPrivate;
+    private void selectMailbox(int index) {
+        selectMailbox(getMailboxByIndex(index));
+    }
+
+    private void selectMailbox(MailboxEntity mailbox) {
+        if (mailbox == null) {
+            Timber.e("Mailbox is null");
+            return;
+        }
+        List<GeneralizedMailboxKey> keys = mailboxKeyMap.get(mailbox);
+        if (keys == null) {
+            return;
+        }
+        adapter.setItems(keys);
+    }
+
+    private MailboxEntity getKeyMailbox(GeneralizedMailboxKey key) {
+        for (Map.Entry<MailboxEntity, List<GeneralizedMailboxKey>> mailboxEntityListEntry : mailboxKeyMap.entrySet()) {
+            if (mailboxEntityListEntry.getValue().contains(key)) {
+                return mailboxEntityListEntry.getKey();
+            }
+        }
+        return null;
+    }
+
+    private void openSetKeyAsPrimaryDialog(GeneralizedMailboxKey key) {
+        MakeAsPrimaryKeyDialog dialog = new MakeAsPrimaryKeyDialog();
+        dialog.setOnApplyClickListener(() -> {
+            // TODO mark as primary
+        });
+        dialog.show(getSupportFragmentManager(), null);
+    }
+
+    private void openDownloadKeyDialog(GeneralizedMailboxKey key) {
+        DownloadKeyDialog dialog = new DownloadKeyDialog();
+        dialog.setOnApplyClickListener(new DownloadKeyDialog.OnApplyClickListener() {
+            @Override
+            public void onDownloadPublicKeyClick() {
+                downloadKey(key, false);
+            }
+
+            @Override
+            public void onDownloadPrivateKeyClick() {
+                downloadKey(key, true);
+            }
+        });
+        dialog.show(getSupportFragmentManager(), null);
+    }
+
+    private void openRemoveKeyDialog(GeneralizedMailboxKey key) {
+        DeleteKeyDialog dialog = new DeleteKeyDialog();
+        dialog.setOnApplyClickListener(() -> {
+            // TODO delete key
+        });
+        dialog.show(getSupportFragmentManager(), null);
+    }
+
+    private void downloadKey(GeneralizedMailboxKey key, boolean isPrivate) {
         if (!PermissionUtils.writeExternalStorage(this)) {
+            keyToDownload = key;
+            isPrivateKeyToDownload = isPrivate;
             downloadKeyPermissionLauncher.launch(PermissionUtils.externalStoragePermissions());
             return;
         }
         int selectedItemPosition = 0;
-        MailboxEntity mailboxEntity = mailboxEntityList.get(selectedItemPosition);
 
+        MailboxEntity mailboxEntity = getKeyMailbox(key);
+        if (mailboxEntity == null) {
+            ToastUtils.showLongToast(this, "Cannot download key");
+            return;
+        }
         String keyName;
         byte[] keyContent;
         if (isPrivate) {
-            keyName = mailboxEntity.getEmail() + SPLITTER + mailboxEntity.getFingerprint()
+            keyName = mailboxEntity.getEmail() + SPLITTER + key.getFingerprint()
                     + SPLITTER + PRIVATE_KEY_FORMAT;
-            keyContent = mailboxEntity.getPrivateKey().getBytes();
+            keyContent = key.getPrivateKey().getBytes();
         } else {
-            keyName = mailboxEntity.getEmail() + SPLITTER + mailboxEntity.getFingerprint()
+            keyName = mailboxEntity.getEmail() + SPLITTER + key.getFingerprint()
                     + SPLITTER + PUBLIC_KEY_FORMAT;
-            keyContent = mailboxEntity.getPublicKey().getBytes();
+            keyContent = key.getPublicKey().getBytes();
         }
 
         File externalStorageFile = Environment

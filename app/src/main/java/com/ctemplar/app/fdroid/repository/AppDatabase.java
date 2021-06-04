@@ -8,15 +8,17 @@ import com.ctemplar.app.fdroid.repository.converter.CommonConverter;
 import com.ctemplar.app.fdroid.repository.converter.KeyTypeConverter;
 import com.ctemplar.app.fdroid.repository.entity.ContactEntity;
 import com.ctemplar.app.fdroid.repository.entity.MailboxEntity;
+import com.ctemplar.app.fdroid.repository.entity.MailboxKeyEntity;
 import com.ctemplar.app.fdroid.repository.entity.MessageEntity;
 
 @Database(
         entities = {
                 MailboxEntity.class,
+                MailboxKeyEntity.class,
                 ContactEntity.class,
                 MessageEntity.class
         },
-        version = 13,
+        version = 14,
         exportSchema = false
 )
 @TypeConverters({
@@ -25,6 +27,8 @@ import com.ctemplar.app.fdroid.repository.entity.MessageEntity;
 })
 public abstract class AppDatabase extends RoomDatabase {
     public abstract MailboxDao mailboxDao();
+
+    public abstract MailboxKeyDao mailboxKeyDao();
 
     public abstract ContactDao contactDao();
 

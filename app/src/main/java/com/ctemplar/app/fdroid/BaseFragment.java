@@ -2,25 +2,35 @@ package com.ctemplar.app.fdroid;
 
 import android.content.Context;
 import android.os.Bundle;
+
 import androidx.annotation.LayoutRes;
 import androidx.fragment.app.Fragment;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import org.jetbrains.annotations.NotNull;
 
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
 public abstract class BaseFragment extends Fragment {
-
+    @Deprecated
     @LayoutRes
-    protected abstract int getLayoutId();
+    protected int getLayoutId() {
+        return 0;
+    }
 
     private Unbinder mUnbinder;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(getLayoutId(), container, false);
+    public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        int layoutId = getLayoutId();
+        if (layoutId == 0) {
+            throw new RuntimeException("Use bindings instead of ButterKnife (in " + this.getClass().getSimpleName() + " Fragment):");
+        }
+        View view = inflater.inflate(layoutId, container, false);
         view.setClickable(true);
         mUnbinder = ButterKnife.bind(this, view);
         return view;
@@ -28,7 +38,9 @@ public abstract class BaseFragment extends Fragment {
 
     @Override
     public void onDestroyView() {
-        mUnbinder.unbind();
+        if (mUnbinder != null) {
+            mUnbinder.unbind();
+        }
         super.onDestroyView();
     }
 
@@ -60,25 +72,5 @@ public abstract class BaseFragment extends Fragment {
         }
 
         throw new RuntimeException(this.getClass().getSimpleName() + " attached to invalid listener (Activity/ParentFragment). Expecting " + clazz.getSimpleName());
-    }
-
-//    protected boolean isEventListener() {
-//        return false;
-//    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-//        if (isEventListener()) {
-//            sEventBus.register(this);
-//        }
-    }
-
-    @Override
-    public void onPause() {
-//        if (isEventListener()) {
-//            sEventBus.unregister(this);
-//        }
-        super.onPause();
     }
 }

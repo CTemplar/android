@@ -1,6 +1,5 @@
 package com.ctemplar.app.fdroid.net.request.messages;
 
-import com.ctemplar.app.fdroid.net.request.messages.EncryptionMessageRequest;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;

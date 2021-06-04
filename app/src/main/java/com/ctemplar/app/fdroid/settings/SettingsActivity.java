@@ -46,6 +46,7 @@ import com.ctemplar.app.fdroid.net.response.myself.SettingsResponse;
 import com.ctemplar.app.fdroid.repository.UserRepository;
 import com.ctemplar.app.fdroid.repository.UserStore;
 import com.ctemplar.app.fdroid.services.NotificationService;
+import com.ctemplar.app.fdroid.settings.keys.KeysActivity;
 import com.ctemplar.app.fdroid.settings.keys.OldKeysActivity;
 import com.ctemplar.app.fdroid.utils.DateUtils;
 import com.ctemplar.app.fdroid.utils.EditTextUtils;
@@ -145,7 +146,7 @@ public class SettingsActivity extends BaseActivity {
             Preference mailboxKeys = findPreference(getString(R.string.setting_keys));
             if (mailboxKeys != null) {
                 mailboxKeys.setOnPreferenceClickListener(preference -> {
-                    Intent keysIntent = new Intent(getActivity(), OldKeysActivity.class);
+                    Intent keysIntent = new Intent(getActivity(), KeysActivity.class);
                     startActivity(keysIntent);
                     return false;
                 });
