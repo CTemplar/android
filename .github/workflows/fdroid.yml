@@ -1,0 +1,20 @@
+name: android-fdroid
+
+on:
+  push:
+    branches: [fdroid]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v2
+      
+      - name: Mirror at Codeberg
+        uses: spyoungtech/mirror-action@master
+        with:
+          REMOTE: git@codeberg.org:CTemplar/android.git
+          GIT_SSH_PRIVATE_KEY: ${{ secrets.CODEBERG_SSH_PRIVATE_KEY }}
+          GIT_SSH_NO_VERIFY_HOST: "true"
