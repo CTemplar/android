@@ -145,7 +145,7 @@ public class SettingsActivity extends BaseActivity {
             Preference mailboxKeys = findPreference(getString(R.string.setting_keys));
             if (mailboxKeys != null) {
                 mailboxKeys.setOnPreferenceClickListener(preference -> {
-                    Intent keysIntent = new Intent(getActivity(), OldKeysActivity.class);
+                    Intent keysIntent = new Intent(getActivity(), KeysActivity.class);
                     startActivity(keysIntent);
                     return false;
                 });

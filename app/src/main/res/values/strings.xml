@@ -394,17 +394,43 @@
     <string name="mailbox_alias_creation_progress">The e-mail alias is being created</string>
 
     <!-- KEYS -->
+    <string translatable="false" name="rsa4096">RSA4096</string>
     <string name="email_address">E-mail address</string>
     <string name="fingerprint">Fingerprint</string>
     <string name="keys">Keys</string>
+    <string name="primary">Primary</string>
+    <string name="update_primary_key">Update primary key</string>
+    <string name="update_primary_key_description">After changed the primary key, all of messages with this alias will be encrypted with this key. Primary key will always be placed in the top of the key list. Are you sure you want to continue?</string>
+    <string name="set_as_primary">Set as primary</string>
+    <string name="make_as_primary">Make as primary</string>
     <string name="key_type">Key type</string>
     <string name="add_new_key">Add new key</string>
     <string name="import_key">Import key</string>
-    
-    <string name="download_public_key">Download public key (4096 Bit)</string>
-    <string name="download_private_key">Download private key (4096 Bit)</string>
+    <string name="import_private_key">Import private key</string>
+    <string name="download_key">Download key</string>
+    <string name="download_key_question">Do you want to download the public key or the private key?</string>
+    <string name="private_key">Private key</string>
+    <string name="public_key">Public key</string>
+    <string name="enter_your_password_to_continue">Please enter your account password to continue.</string>
+    <string name="type_ctemplar_to_confirm">Please type CTEMPLAR to confirm.</string>
+    <string name="generate_keys">Generate keys</string>
+    <string name="import_private_key_description">Are you sure to import the private key? Please be ensure the private key is secure.</string>
+    <string name="select_private_key_to_impport">Please select a private key to import</string>
+    <string name="add_key">Add key</string>
+    <string name="select_mailbox_for_new_key">Please select a mailbox that you want to add new key</string>
+    <string name="select_key_type">Please select a key type</string>
+    <string name="download">Download</string>
+    <string name="remove">Remove</string>
+    <string name="yes_iam_sure">Yes, I am sure</string>
+    <string name="delete_key_title">Are you sure to delete this key?</string>
+    <string name="delete_key_description">After deleted this key, you will not be able to decrypt any message that was encrypted with this key. It may lead to data loss.</string>
+    <string name="ecc_default">ECC (Default)</string>
     <string name="your_public_key_saved">Your PGP Public Key saved to Downloads</string>
     <string name="your_private_key_saved">Your PGP Private Key saved to Downloads</string>
+
+    <!-- Deprecated -->
+    <string name="download_public_key">Download public key (4096 Bit)</string>
+    <string name="download_private_key">Download private key (4096 Bit)</string>
 
     <!-- UPGRADE TO PRIME -->
     <string name="title_upgrade_to_prime">Upgrade to Prime</string>

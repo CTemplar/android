@@ -54,6 +54,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.folders.FoldersResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.folders.FoldersResult;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import mobileapp.ctemplar.com.ctemplarapp.settings.SettingsActivity;
+import mobileapp.ctemplar.com.ctemplarapp.settings.keys.MailboxViewModel;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EncryptUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.LocaleUtils;
@@ -98,6 +99,7 @@ public class MainActivity extends AppCompatActivity
     private MainFragment mainFragment;
     private Handler handler = new Handler();
     private AppCompatDelegate baseContextWrappingDelegate;
+    private MailboxViewModel mailboxViewModel;
 
     @NonNull
     @Override
@@ -141,6 +143,7 @@ public class MainActivity extends AppCompatActivity
         showFragment(mainFragment);
 
         mainModel = new ViewModelProvider(this).get(MainActivityViewModel.class);
+        mailboxViewModel = new ViewModelProvider(this).get(MailboxViewModel.class);
         mainModel.getActionsStatus().observe(this, this::handleMainActions);
         mainModel.getCurrentFolder().observe(this, folder -> {
             showFragmentByFolder(folder);
@@ -619,7 +622,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void loadUserInfo() {
-        mainModel.getMailboxes(20, 0);
+        mailboxViewModel.getMailboxes(20, 0);
+        mailboxViewModel.getMailboxKeys(20, 0);
         mainModel.getUserMyselfInfo();
     }
 

@@ -19,7 +19,9 @@ import mobileapp.ctemplar.com.ctemplarapp.net.request.mailboxes.DefaultMailboxRe
 import mobileapp.ctemplar.com.ctemplarapp.net.request.DisableLoadingImagesRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.folders.EditFolderRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.folders.EmptyFolderRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.mailboxes.DeleteMailboxKeyRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.mailboxes.EnabledMailboxRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.mailboxes.UpdateMailboxPrimaryKeyRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.messages.MarkMessageAsReadRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.messages.MarkMessageIsStarredRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.folders.MoveToFolderRequest;
@@ -74,6 +76,7 @@ import retrofit2.Response;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
+import retrofit2.http.HTTP;
 import retrofit2.http.Multipart;
 import retrofit2.http.PATCH;
 import retrofit2.http.POST;
@@ -222,14 +225,20 @@ public interface RestService {
     @POST("emails/mailboxes/")
     Observable<Response<MailboxResponse>> createMailbox(@Body CreateMailboxRequest request);
 
+    @POST("emails/mailboxes-change-primary/")
+    Single<Response<Void>> updateMailboxPrimaryKey(@Body UpdateMailboxPrimaryKeyRequest request);
+
     @GET("emails/mailbox-keys/")
-    Observable<MailboxKeysResponse> getMailboxKeys(
+    Single<MailboxKeysResponse> getMailboxKeys(
             @Query("limit") int limit,
             @Query("offset") int offset
     );
 
     @POST("emails/mailbox-keys/")
-    Observable<Response<MailboxKeyResponse>> createMailboxKey(@Body CreateMailboxKeyRequest request);
+    Single<Response<MailboxKeyResponse>> createMailboxKey(@Body CreateMailboxKeyRequest request);
+
+    @HTTP(method = "DELETE", path = "emails/mailbox-keys/{id}/", hasBody = true)
+    Single<Response<Void>> deleteMailboxKey(@Path("id") long id, @Body DeleteMailboxKeyRequest request);
 
     @POST("emails/keys/")
     Observable<KeysResponse> getKeys(@Body PublicKeysRequest request);

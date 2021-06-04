@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/colorDivider"
+    android:orientation="vertical"
+    android:paddingHorizontal="8dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/lato_regular"
+            android:text="@string/fingerprint"
+            android:textColor="?android:textColorSecondary"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/fingerprint_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:fontFamily="@font/lato_regular"
+            android:text="9d6baf4fa28d4035e7d56d15ddeb6750ecda5774"
+            android:textColor="?android:textColorSecondary"
+            android:textSize="12sp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp">
+
+        <TextView
+            android:id="@+id/key_type_text_view"
+            android:layout_width="0dp"
+            android:layout_height="32dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginEnd="4dp"
+            android:layout_weight="1"
+            android:background="@drawable/ic_message_status_yellow"
+            android:backgroundTint="@color/colorGrey6"
+            android:fontFamily="@font/lato_regular"
+            android:gravity="center"
+            android:paddingHorizontal="12dp"
+            android:text="@string/rsa4096"
+            android:textColor="@color/colorWhiteLight" />
+
+        <TextView
+            android:id="@+id/primary_type_text_view"
+            android:layout_width="0dp"
+            android:layout_height="32dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="4dp"
+            android:visibility="gone"
+            android:layout_weight="1"
+            android:background="@drawable/ic_message_status_yellow"
+            android:backgroundTint="@color/colorGrey6"
+            android:fontFamily="@font/lato_regular"
+            android:gravity="center"
+            android:paddingHorizontal="12dp"
+            android:text="@string/primary"
+            android:textColor="@color/colorWhiteLight" />
+
+        <Button
+            android:id="@+id/set_primary_key_button"
+            android:layout_width="0dp"
+            android:layout_height="32dp"
+            android:layout_weight="1"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp"
+            android:background="@drawable/dialog_cancel_button_background"
+            android:drawableStart="@drawable/icon_check_selected"
+            android:textColor="@color/colorDarkBlue2"
+            android:gravity="center"
+            android:fontFamily="@font/lato_regular"
+            android:layout_marginStart="4dp"
+            android:text="@string/set_as_primary" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp">
+
+        <Button
+            android:id="@+id/download_key_button"
+            android:layout_width="0dp"
+            android:layout_height="32dp"
+            android:layout_weight="1"
+            android:background="@drawable/selector_button_blue"
+            android:drawableStart="@drawable/ic_download"
+            android:drawablePadding="0dp"
+            android:fontFamily="@font/lato_regular"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp"
+            android:text="@string/download"
+            android:textColor="@color/colorWhiteLight"
+            app:drawableTint="@color/colorWhiteLight" />
+
+        <Button
+            android:id="@+id/remove_key_button"
+            android:layout_width="0dp"
+            android:layout_height="32dp"
+            android:layout_marginStart="8dp"
+            android:layout_weight="1"
+            android:background="@drawable/selector_button_blue"
+            android:drawableStart="@drawable/ic_trash"
+            android:fontFamily="@font/lato_regular"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp"
+            android:text="@string/remove"
+            android:textColor="@android:color/white"
+            app:drawableTint="@color/colorWhiteLight" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="8dp" />
+
+</LinearLayout>

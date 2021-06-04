@@ -8,15 +8,17 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.converter.CommonConverter;
 import mobileapp.ctemplar.com.ctemplarapp.repository.converter.KeyTypeConverter;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.ContactEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
+import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxKeyEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MessageEntity;
 
 @Database(
         entities = {
                 MailboxEntity.class,
+                MailboxKeyEntity.class,
                 ContactEntity.class,
                 MessageEntity.class
         },
-        version = 13,
+        version = 14,
         exportSchema = false
 )
 @TypeConverters({
@@ -25,6 +27,8 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MessageEntity;
 })
 public abstract class AppDatabase extends RoomDatabase {
     public abstract MailboxDao mailboxDao();
+
+    public abstract MailboxKeyDao mailboxKeyDao();
 
     public abstract ContactDao contactDao();
 

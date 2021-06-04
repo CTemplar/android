@@ -26,7 +26,9 @@ import mobileapp.ctemplar.com.ctemplarapp.net.request.DarkModeRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.mailboxes.DefaultMailboxRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.DisableLoadingImagesRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.folders.EmptyFolderRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.mailboxes.DeleteMailboxKeyRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.mailboxes.EnabledMailboxRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.mailboxes.UpdateMailboxPrimaryKeyRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.messages.MarkMessageAsReadRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.messages.MarkMessageIsStarredRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.folders.MoveToFolderRequest;
@@ -65,6 +67,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.SettingsResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.WhiteListContact;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.whiteBlackList.BlackListResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.whiteBlackList.WhiteListResponse;
+import mobileapp.ctemplar.com.ctemplarapp.repository.mapper.MailboxKeyMapper;
 import mobileapp.ctemplar.com.ctemplarapp.repository.mapper.MailboxMapper;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 import okhttp3.MultipartBody;
@@ -224,6 +227,14 @@ public class UserRepository {
         CTemplarApp.getAppDatabase().mailboxDao().saveAll(MailboxMapper.map(mailboxes));
     }
 
+    public void saveMailboxKeys(List<MailboxKeyResponse> mailboxKeys) {
+        if (mailboxKeys == null || mailboxKeys.size() == 0) {
+            Timber.e("Mailbox keys is null");
+            return;
+        }
+        CTemplarApp.getAppDatabase().mailboxKeyDao().saveAll(MailboxKeyMapper.map(mailboxKeys));
+    }
+
     // Requests
     public Observable<SignInResponse> signIn(SignInRequest request) {
         return service.signIn(request)
@@ -339,14 +350,20 @@ public class UserRepository {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<MailboxKeysResponse> getMailboxKeys(int limit, int offset) {
+    public Single<MailboxKeysResponse> getMailboxKeys(int limit, int offset) {
         return service.getMailboxKeys(limit, offset)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<Response<MailboxKeyResponse>> createMailboxKey(CreateMailboxKeyRequest request) {
+    public Single<Response<MailboxKeyResponse>> createMailboxKey(CreateMailboxKeyRequest request) {
         return service.createMailboxKey(request)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public Single<Response<Void>> deleteMailboxKey(long id, DeleteMailboxKeyRequest request) {
+        return service.deleteMailboxKey(id, request)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
@@ -513,6 +530,12 @@ public class UserRepository {
 
     public Observable<Response<MailboxResponse>> createMailbox(CreateMailboxRequest request) {
         return service.createMailbox(request)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public Single<Response<Void>> updateMailboxPrimaryKey(UpdateMailboxPrimaryKeyRequest request) {
+        return service.updateMailboxPrimaryKey(request)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
