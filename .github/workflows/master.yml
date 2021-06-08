@@ -2,7 +2,7 @@ name: android-master
 
 on:
   push:
-    branches: [master]
+    branches: [master,fdroid]
 
 jobs:
   build:
@@ -11,10 +11,13 @@ jobs:
     steps:
       - name: Check out Git repository
         uses: actions/checkout@v2
-      
-      - name: Mirror at Codeberg
-        uses: spyoungtech/mirror-action@master
         with:
-          REMOTE: git@codeberg.org:CTemplar/android.git
-          GIT_SSH_PRIVATE_KEY: ${{ secrets.CODEBERG_SSH_PRIVATE_KEY }}
-          GIT_SSH_NO_VERIFY_HOST: "true"
+          fetch-depth: '0'
+
+      - uses: pixta-dev/repository-mirroring-action@v1
+        with:
+          target_repo_url:
+            git@codeberg.org:CTemplar/android.git
+          ssh_private_key:
+            ${{ secrets.CODEBERG_SSH_PRIVATE_KEY }}
+
