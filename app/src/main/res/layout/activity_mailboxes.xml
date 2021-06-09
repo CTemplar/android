@@ -1,18 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".mailboxes.MailboxesActivity">
+    android:orientation="vertical"
+    tools:context=".settings.mailboxes.MailboxesActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/app_bar_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_height="wrap_content">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
@@ -24,51 +22,42 @@
     </com.google.android.material.appbar.AppBarLayout>
 
     <TextView
-        android:id="@+id/activity_mailboxes_add"
+        android:id="@+id/mailboxes_add_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
+        android:fontFamily="@font/lato_regular"
         android:gravity="center_vertical"
         android:text="@string/mailbox_add_address"
-        android:textSize="16sp"
         android:textColor="@color/colorAccentSettings"
-        android:fontFamily="@font/lato_regular"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/app_bar_layout" />
+        android:textSize="18sp" />
 
     <TextView
-        android:id="@+id/activity_mailboxes_select_default"
+        android:id="@+id/mailboxes_select_default_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
+        android:fontFamily="@font/lato_regular"
         android:gravity="center_vertical"
         android:text="@string/select_default_address"
-        android:textSize="16sp"
         android:textColor="@color/disabledTextColor"
-        android:fontFamily="@font/lato_regular"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/activity_mailboxes_add" />
+        android:textSize="16sp" />
 
     <View
-        android:id="@+id/activity_mailboxes_divider"
+        android:id="@+id/activity_mailboxes_divider_view"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_marginTop="16dp"
-        android:background="@color/colorDivider"
-        app:layout_constraintTop_toBottomOf="@id/activity_mailboxes_select_default" />
+        android:background="@color/colorDivider" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/activity_mailboxes_recycler_view"
-        android:scrollbars="vertical"
+        android:id="@+id/mailboxes_recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="match_parent"
+        android:scrollbars="vertical"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        tools:listitem="@layout/item_mailbox_holder"
-        app:layout_constraintTop_toBottomOf="@id/activity_mailboxes_divider"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        tools:listitem="@layout/item_mailbox_holder" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

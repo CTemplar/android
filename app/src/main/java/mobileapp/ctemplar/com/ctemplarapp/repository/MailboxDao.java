@@ -13,7 +13,7 @@ import static androidx.room.OnConflictStrategy.REPLACE;
 
 @Dao
 public interface MailboxDao {
-    @Query("SELECT * FROM mailboxes")
+    @Query("SELECT * FROM mailboxes ORDER BY email")
     List<MailboxEntity> getAll();
 
     @Query("SELECT * FROM mailboxes WHERE isDefault = 1")

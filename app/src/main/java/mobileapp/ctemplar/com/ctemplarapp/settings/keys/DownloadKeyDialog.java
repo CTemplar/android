@@ -1,6 +1,5 @@
 package mobileapp.ctemplar.com.ctemplarapp.settings.keys;
 
-
 import android.app.Dialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;

@@ -224,7 +224,9 @@ public class UserRepository {
             Timber.e("Mailboxes is null");
             return;
         }
-        CTemplarApp.getAppDatabase().mailboxDao().saveAll(MailboxMapper.map(mailboxes));
+        MailboxDao mailboxDao = CTemplarApp.getAppDatabase().mailboxDao();
+        mailboxDao.deleteAll();
+        mailboxDao.saveAll(MailboxMapper.map(mailboxes));
     }
 
     public void saveMailboxKeys(List<MailboxKeyResponse> mailboxKeys) {
@@ -232,7 +234,9 @@ public class UserRepository {
             Timber.e("Mailbox keys is null");
             return;
         }
-        CTemplarApp.getAppDatabase().mailboxKeyDao().saveAll(MailboxKeyMapper.map(mailboxKeys));
+        MailboxKeyDao mailboxKeyDao = CTemplarApp.getAppDatabase().mailboxKeyDao();
+        mailboxKeyDao.deleteAll();
+        mailboxKeyDao.saveAll(MailboxKeyMapper.map(mailboxKeys));
     }
 
     // Requests

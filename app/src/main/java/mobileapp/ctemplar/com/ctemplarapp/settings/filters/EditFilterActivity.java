@@ -1,4 +1,4 @@
-package mobileapp.ctemplar.com.ctemplarapp.filters;
+package mobileapp.ctemplar.com.ctemplarapp.settings.filters;
 
 import android.content.Context;
 import android.content.Intent;
@@ -28,7 +28,6 @@ import com.google.gson.JsonSyntaxException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;

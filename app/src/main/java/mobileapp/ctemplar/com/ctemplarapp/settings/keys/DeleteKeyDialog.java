@@ -10,12 +10,15 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 
 import org.jetbrains.annotations.NotNull;
 
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.databinding.FragmentDialogDeleteKeyBinding;
+import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
+import timber.log.Timber;
 
 public class DeleteKeyDialog extends DialogFragment {
     private OnApplyClickListener onApplyClickListener;
@@ -33,7 +36,9 @@ public class DeleteKeyDialog extends DialogFragment {
     @Override
     public void onResume() {
         super.onResume();
-        getDialog().getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        getDialog().getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+//        getDialog().getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        getDialog().getWindow().setStatusBarColor(ContextCompat.getColor(getContext(), R.color.colorPrimary));
     }
 
     @Nullable
@@ -54,7 +59,8 @@ public class DeleteKeyDialog extends DialogFragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                binding.confirmationButton.setEnabled(s.equals("CTEMPLAR"));
+                Timber.i("Eq: %s", s);
+                binding.confirmationButton.setEnabled(s.toString().equals("CTEMPLAR"));
             }
 
             @Override
@@ -73,6 +79,16 @@ public class DeleteKeyDialog extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        return new Dialog(getActivity(), R.style.DialogAnimation);
+        return new Dialog(getActivity(), R.style.DialogTransparentAnimation);
+    }
+
+    public void setLoading(boolean loading) {
+        binding.progressBar.setVisibility(loading ? View.VISIBLE : View.GONE);
+        binding.confirmationButton.setEnabled(!loading);
+        binding.closeButtonImageView.setEnabled(!loading);
+    }
+
+    public String getPassword() {
+        return EditTextUtils.getText(binding.passwordEditText);
     }
 }

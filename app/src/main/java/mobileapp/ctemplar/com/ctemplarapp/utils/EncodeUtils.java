@@ -120,10 +120,11 @@ public class EncodeUtils {
                     );
                 }
 
-                MailboxKey mailboxKey = new MailboxKey();
-                mailboxKey.setMailboxId(mailboxEntity.getId());
-                mailboxKey.setPrivateKey(pgpKeyEntity.getPrivateKey());
-                mailboxKey.setPublicKey(pgpKeyEntity.getPublicKey());
+                MailboxKey mailboxKey = new MailboxKey(
+                        mailboxEntity.getId(),
+                        pgpKeyEntity.getPrivateKey(),
+                        pgpKeyEntity.getPublicKey()
+                );
                 mailboxKeys.add(mailboxKey);
             }
 
@@ -132,7 +133,16 @@ public class EncodeUtils {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public static Observable<PGPKeyEntity> generateAdditionalMailbox(
+    public static Observable<PGPKeyEntity> generateRSAKeys(
+            final String emailAddress,
+            final String password
+    ) {
+        return Observable.fromCallable(() -> PGPManager.generateKeys(emailAddress, password))
+                .subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public static Observable<PGPKeyEntity> generateECCKeys(
             final String emailAddress,
             final String password
     ) {

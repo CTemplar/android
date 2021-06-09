@@ -17,4 +17,7 @@ public interface MailboxKeyDao {
 
     @Insert(onConflict = REPLACE)
     void saveAll(List<MailboxKeyEntity> entities);
+
+    @Query("DELETE FROM mailbox_keys")
+    void deleteAll();
 }

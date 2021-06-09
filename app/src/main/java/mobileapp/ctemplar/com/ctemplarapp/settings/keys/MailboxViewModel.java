@@ -1,5 +1,6 @@
 package mobileapp.ctemplar.com.ctemplarapp.settings.keys;
 
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -7,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -25,6 +27,7 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.AppDatabase;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxKeyEntity;
+import mobileapp.ctemplar.com.ctemplarapp.repository.mapper.GeneralizedMailboxKeyMapper;
 import retrofit2.Response;
 import timber.log.Timber;
 
@@ -35,6 +38,7 @@ public class MailboxViewModel extends ViewModel {
     private final MutableLiveData<ResponseStatus> mailboxesResponseStatus = new MutableLiveData<>();
     private final MutableLiveData<ResponseStatus> mailboxKeysResponseStatus = new MutableLiveData<>();
     private final MutableLiveData<ResponseStatus> mailboxPrimaryResponseStatus = new MutableLiveData<>();
+    private final MutableLiveData<ResponseStatus> deleteMailboxKeyResponseStatus = new MutableLiveData<>();
 
     public MailboxViewModel() {
         userRepository = CTemplarApp.getUserRepository();
@@ -61,31 +65,23 @@ public class MailboxViewModel extends ViewModel {
         return mailboxPrimaryResponseStatus;
     }
 
+    public LiveData<ResponseStatus> deleteMailboxKeyResponseStatus() {
+        return deleteMailboxKeyResponseStatus;
+    }
+
     public Map<MailboxEntity, List<GeneralizedMailboxKey>> getMailboxKeyMap() {
         List<MailboxEntity> mailboxes = getAllMailboxes();
         if (mailboxes == null) {
             return new HashMap<>();
         }
-        Map<MailboxEntity, List<GeneralizedMailboxKey>> result = new HashMap<>();
+        Map<MailboxEntity, List<GeneralizedMailboxKey>> result = new LinkedHashMap<>();
         List<MailboxKeyEntity> keys = getMailboxKeys();
         for (MailboxEntity mailbox : mailboxes) {
             List<GeneralizedMailboxKey> keyList = new ArrayList<>();
-            keyList.add(new GeneralizedMailboxKey(
-                    -1,
-                    mailbox.getPrivateKey(),
-                    mailbox.getPublicKey(),
-                    mailbox.getFingerprint(),
-                    mailbox.getKeyType()
-            ));
+            keyList.add(GeneralizedMailboxKeyMapper.map(mailbox));
             for (MailboxKeyEntity key : keys) {
                 if (key.getMailbox() == mailbox.getId()) {
-                    keyList.add(new GeneralizedMailboxKey(
-                            key.getId(),
-                            key.getPrivateKey(),
-                            key.getPublicKey(),
-                            key.getFingerprint(),
-                            key.getKeyType())
-                    );
+                    keyList.add(GeneralizedMailboxKeyMapper.map(key));
                 }
             }
             result.put(mailbox, keyList);
@@ -166,44 +162,77 @@ public class MailboxViewModel extends ViewModel {
                 });
     }
 
-    public void deleteMailboxKey(long id, DeleteMailboxKeyRequest request) {
-        userRepository.deleteMailboxKey(id, request)
-                .subscribe(new SingleObserver<Response<Void>>() {
-                    @Override
-                    public void onSubscribe(@NotNull Disposable d) {
-
+    public void deleteMailboxKey(long id, String passwordHash) {
+        List<Disposable> disposables = new ArrayList<>();
+        disposables.add(userRepository.deleteMailboxKey(id, new DeleteMailboxKeyRequest(passwordHash))
+                .subscribe(voidResponse -> {
+                    disposables.add(userRepository.getMailboxes(20, 0)
+                            .subscribe(mailboxesResponse -> {
+                                userRepository.saveMailboxes(mailboxesResponse.getMailboxesList());
+                                disposables.add(userRepository.getMailboxKeys(20, 0)
+                                        .subscribe(response -> {
+                                            userRepository.saveMailboxKeys(response.getResults());
+                                            deleteMailboxKeyResponseStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
+                                            for (Disposable disposable : disposables) {
+                                                disposable.dispose();
+                                            }
+                                        }, e -> {
+                                            Timber.e(e);
+                                            deleteMailboxKeyResponseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
+                                            for (Disposable disposable : disposables) {
+                                                disposable.dispose();
+                                            }
+                                        }));
+                            }, e -> {
+                                Timber.e(e);
+                                deleteMailboxKeyResponseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
+                                for (Disposable disposable : disposables) {
+                                    disposable.dispose();
+                                }
+                            }));
+                }, e -> {
+                    Timber.e(e);
+                    deleteMailboxKeyResponseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
+                    for (Disposable disposable : disposables) {
+                        disposable.dispose();
                     }
-
-                    @Override
-                    public void onSuccess(@NotNull Response<Void> voidResponse) {
-
-                    }
-
-                    @Override
-                    public void onError(@NotNull Throwable e) {
-                        Timber.e(e);
-                    }
-                });
+                }));
     }
 
-    public void updateMailboxPrimaryKey(UpdateMailboxPrimaryKeyRequest request) {
-        userRepository.updateMailboxPrimaryKey(request)
-                .subscribe(new SingleObserver<Response<Void>>() {
-                    @Override
-                    public void onSubscribe(@NotNull Disposable d) {
-
+    public void updateMailboxPrimaryKey(long mailboxId, long mailboxKeyId) {
+        List<Disposable> disposables = new ArrayList<>();
+        disposables.add(userRepository.updateMailboxPrimaryKey(new UpdateMailboxPrimaryKeyRequest(mailboxId, mailboxKeyId))
+                .subscribe(voidResponse -> {
+                    disposables.add(userRepository.getMailboxes(20, 0)
+                            .subscribe(mailboxesResponse -> {
+                                userRepository.saveMailboxes(mailboxesResponse.getMailboxesList());
+                                disposables.add(userRepository.getMailboxKeys(20, 0)
+                                        .subscribe(response -> {
+                                            userRepository.saveMailboxKeys(response.getResults());
+                                            mailboxPrimaryResponseStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
+                                            for (Disposable disposable : disposables) {
+                                                disposable.dispose();
+                                            }
+                                        }, e -> {
+                                            Timber.e(e);
+                                            mailboxPrimaryResponseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
+                                            for (Disposable disposable : disposables) {
+                                                disposable.dispose();
+                                            }
+                                        }));
+                            }, e -> {
+                                Timber.e(e);
+                                mailboxPrimaryResponseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
+                                for (Disposable disposable : disposables) {
+                                    disposable.dispose();
+                                }
+                            }));
+                }, e -> {
+                    Timber.e(e);
+                    mailboxPrimaryResponseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
+                    for (Disposable disposable : disposables) {
+                        disposable.dispose();
                     }
-
-                    @Override
-                    public void onSuccess(@NotNull Response<Void> voidResponse) {
-                        mailboxPrimaryResponseStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
-                    }
-
-                    @Override
-                    public void onError(@NotNull Throwable e) {
-                        Timber.e(e);
-                        mailboxPrimaryResponseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
-                    }
-                });
+                }));
     }
 }

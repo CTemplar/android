@@ -1,4 +1,4 @@
-package mobileapp.ctemplar.com.ctemplarapp.filters;
+package mobileapp.ctemplar.com.ctemplarapp.settings.filters;
 
 import android.content.Context;
 import android.os.Bundle;

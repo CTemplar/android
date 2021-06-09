@@ -1,4 +1,4 @@
-package mobileapp.ctemplar.com.ctemplarapp.filters;
+package mobileapp.ctemplar.com.ctemplarapp.settings.filters;
 
 import mobileapp.ctemplar.com.ctemplarapp.net.request.filters.EmailFilterOrderListRequest;
 

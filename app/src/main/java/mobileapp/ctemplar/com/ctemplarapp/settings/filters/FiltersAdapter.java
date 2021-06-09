@@ -1,4 +1,4 @@
-package mobileapp.ctemplar.com.ctemplarapp.filters;
+package mobileapp.ctemplar.com.ctemplarapp.settings.filters;
 
 import android.content.Context;
 import android.content.Intent;
@@ -19,7 +19,6 @@ import mobileapp.ctemplar.com.ctemplarapp.net.request.filters.EmailFilterOrderRe
 import mobileapp.ctemplar.com.ctemplarapp.net.response.filters.EmailFilterConditionResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.filters.EmailFilterResult;
 import mobileapp.ctemplar.com.ctemplarapp.view.recycler.ReorderableRecyclerViewAdapter;
-import timber.log.Timber;
 
 import static mobileapp.ctemplar.com.ctemplarapp.utils.DateUtils.GENERAL_GSON;
 

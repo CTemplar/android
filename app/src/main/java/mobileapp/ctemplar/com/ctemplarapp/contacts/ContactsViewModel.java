@@ -17,16 +17,12 @@ import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.contacts.ContactData;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.contacts.ContactsResponse;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.contacts.EncryptContact;
 import mobileapp.ctemplar.com.ctemplarapp.repository.ContactsRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserStore;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.Contact;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.ContactEntity;
-import mobileapp.ctemplar.com.ctemplarapp.utils.EncryptUtils;
 import okhttp3.ResponseBody;
 import timber.log.Timber;
-
-import static mobileapp.ctemplar.com.ctemplarapp.utils.DateUtils.GENERAL_GSON;
 
 public class ContactsViewModel extends ViewModel {
     private final ContactsRepository contactsRepository;
