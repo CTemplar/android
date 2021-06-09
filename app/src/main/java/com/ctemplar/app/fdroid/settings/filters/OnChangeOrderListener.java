@@ -1,4 +1,4 @@
-package com.ctemplar.app.fdroid.filters;
+package com.ctemplar.app.fdroid.settings.filters;
 
 import com.ctemplar.app.fdroid.net.request.filters.EmailFilterOrderListRequest;
 

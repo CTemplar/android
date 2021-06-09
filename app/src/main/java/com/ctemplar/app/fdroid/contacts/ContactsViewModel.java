@@ -3,15 +3,6 @@ package com.ctemplar.app.fdroid.contacts;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.ctemplar.app.fdroid.CTemplarApp;
-import com.ctemplar.app.fdroid.net.ResponseStatus;
-import com.ctemplar.app.fdroid.net.response.contacts.ContactData;
-import com.ctemplar.app.fdroid.net.response.contacts.ContactsResponse;
-import com.ctemplar.app.fdroid.repository.ContactsRepository;
-import com.ctemplar.app.fdroid.repository.UserStore;
-import com.ctemplar.app.fdroid.repository.entity.Contact;
-import com.ctemplar.app.fdroid.repository.entity.ContactEntity;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -22,6 +13,14 @@ import io.reactivex.SingleObserver;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+import com.ctemplar.app.fdroid.CTemplarApp;
+import com.ctemplar.app.fdroid.net.ResponseStatus;
+import com.ctemplar.app.fdroid.net.response.contacts.ContactData;
+import com.ctemplar.app.fdroid.net.response.contacts.ContactsResponse;
+import com.ctemplar.app.fdroid.repository.ContactsRepository;
+import com.ctemplar.app.fdroid.repository.UserStore;
+import com.ctemplar.app.fdroid.repository.entity.Contact;
+import com.ctemplar.app.fdroid.repository.entity.ContactEntity;
 import okhttp3.ResponseBody;
 import timber.log.Timber;
 

@@ -13,7 +13,6 @@ public class MailboxKey {
     private String publicKey;
 
     public MailboxKey() {
-
     }
 
     public MailboxKey(long mailboxId, String privateKey, String publicKey) {

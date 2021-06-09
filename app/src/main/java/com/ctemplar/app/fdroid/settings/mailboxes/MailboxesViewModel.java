@@ -1,4 +1,4 @@
-package com.ctemplar.app.fdroid.mailboxes;
+package com.ctemplar.app.fdroid.settings.mailboxes;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -87,14 +87,15 @@ public class MailboxesViewModel extends ViewModel {
 
                     @Override
                     public void onNext(@NotNull MailboxResponse mailboxResponse) {
-                        defaultMailboxResponseStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
                         mailboxDao.setDefault(lastSelectedMailboxId, false);
                         mailboxDao.setDefault(mailboxId, true);
+                        defaultMailboxResponseStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
                     }
 
                     @Override
                     public void onError(@NotNull Throwable e) {
                         Timber.e(e);
+                        defaultMailboxResponseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
                     }
 
                     @Override
@@ -114,13 +115,14 @@ public class MailboxesViewModel extends ViewModel {
 
                     @Override
                     public void onNext(@NotNull MailboxResponse mailboxResponse) {
-                        enabledMailboxResponseStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
                         mailboxDao.setEnabled(mailboxId, isEnabled);
+                        enabledMailboxResponseStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
                     }
 
                     @Override
                     public void onError(@NotNull Throwable e) {
                         Timber.e(e);
+                        enabledMailboxResponseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
                     }
 
                     @Override
@@ -170,6 +172,7 @@ public class MailboxesViewModel extends ViewModel {
 
                     @Override
                     public void onError(@NotNull Throwable e) {
+                        Timber.w(e);
                         if (e instanceof HttpException) {
                             HttpException exception = (HttpException) e;
                             if (exception.code() == 429) {
@@ -180,7 +183,6 @@ public class MailboxesViewModel extends ViewModel {
                         } else {
                             checkUsernameStatus.postValue(ResponseStatus.RESPONSE_ERROR);
                         }
-                        Timber.w(e);
                     }
 
                     @Override
@@ -225,8 +227,8 @@ public class MailboxesViewModel extends ViewModel {
 
             @Override
             public void onError(@NotNull Throwable e) {
-                createMailboxResponseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
                 Timber.e(e);
+                createMailboxResponseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
             }
 
             @Override

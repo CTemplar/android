@@ -418,9 +418,11 @@
     <string name="select_private_key_to_impport">Please select a private key to import</string>
     <string name="add_key">Add key</string>
     <string name="select_mailbox_for_new_key">Please select a mailbox that you want to add new key</string>
+    <string name="select_mailbox_for_import_key">Please select a mailbox that you want to import key</string>
     <string name="select_key_type">Please select a key type</string>
     <string name="download">Download</string>
     <string name="remove">Remove</string>
+    <string name="operation_failed">Operation failed</string>
     <string name="yes_iam_sure">Yes, I am sure</string>
     <string name="delete_key_title">Are you sure to delete this key?</string>
     <string name="delete_key_description">After deleted this key, you will not be able to decrypt any message that was encrypted with this key. It may lead to data loss.</string>

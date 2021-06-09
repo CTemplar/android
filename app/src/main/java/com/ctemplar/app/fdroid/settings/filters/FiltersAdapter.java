@@ -1,4 +1,4 @@
-package com.ctemplar.app.fdroid.filters;
+package com.ctemplar.app.fdroid.settings.filters;
 
 import android.content.Context;
 import android.content.Intent;
@@ -19,7 +19,6 @@ import com.ctemplar.app.fdroid.net.request.filters.EmailFilterOrderRequest;
 import com.ctemplar.app.fdroid.net.response.filters.EmailFilterConditionResponse;
 import com.ctemplar.app.fdroid.net.response.filters.EmailFilterResult;
 import com.ctemplar.app.fdroid.view.recycler.ReorderableRecyclerViewAdapter;
-import timber.log.Timber;
 
 import static com.ctemplar.app.fdroid.utils.DateUtils.GENERAL_GSON;
 

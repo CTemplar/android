@@ -1,153 +1,174 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:theme="@style/AppTheme"
-    android:background="@color/colorPrimary"
-    android:orientation="vertical">
+    android:layout_height="match_parent"
+    android:paddingHorizontal="15dp"
+    android:theme="@style/AppTheme">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:orientation="horizontal"
-        android:paddingHorizontal="16dp"
-        android:paddingVertical="4dp">
-
-        <ImageView
-            android:id="@+id/close_button_image_view"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:layout_gravity="center_vertical"
-            android:background="@drawable/state_pressed_ripple"
-            android:padding="4dp"
-            android:src="@drawable/ic_close"
-            app:tint="@color/secondaryTextColor" />
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_weight="1"
-            android:fontFamily="@font/lato_regular"
-            android:gravity="center"
-            android:text="@string/delete_key_title"
-            android:textColor="@color/secondaryTextColor"
-            android:textSize="18sp" />
-
-        <View
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:layout_gravity="center_vertical" />
-
-    </LinearLayout>
-
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginVertical="12dp"
-        android:layout_weight="1"
-        android:divider="@drawable/dialog_divider"
-        android:orientation="vertical"
-        android:paddingHorizontal="16dp"
-        android:paddingVertical="8dp">
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/lato_regular"
-            android:text="@string/delete_key_description"
-            android:textColor="@color/colorAccent"
-            android:textSize="16sp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:fontFamily="@font/lato_regular"
-            android:text="@string/enter_your_password_to_continue"
-            android:textColor="@color/secondaryTextColor"
-            android:textSize="16sp" />
-
-        <com.google.android.material.textfield.TextInputLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            app:hintEnabled="false"
-            app:passwordToggleDrawable="@drawable/selector_password_state"
-            app:passwordToggleEnabled="true"
-            app:passwordToggleTint="@color/secondaryTextColor">
+            android:background="@color/colorPrimary"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:orientation="vertical">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/password_edit_text"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/text_input_field"
-                android:fontFamily="@font/lato_regular"
-                android:hint="@string/title_password"
-                android:imeOptions="actionNext"
-                android:inputType="textPassword"
-                android:nextFocusForward="@id/confirmation_edit_text"
-                android:padding="12dp"
-                android:textColor="@color/secondaryTextColor"
-                android:textSize="16sp" />
+                android:layout_marginTop="12dp"
+                android:orientation="horizontal"
+                android:paddingHorizontal="16dp"
+                android:paddingTop="16dp"
+                android:paddingBottom="4dp">
 
-            <requestFocus />
-        </com.google.android.material.textfield.TextInputLayout>
+                <ImageView
+                    android:id="@+id/close_button_image_view"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:layout_gravity="center_vertical"
+                    android:background="@drawable/state_pressed_ripple"
+                    android:padding="4dp"
+                    android:src="@drawable/ic_close"
+                    app:tint="@color/secondaryTextColor" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="28dp"
-            android:fontFamily="@font/lato_regular"
-            android:text="@string/type_ctemplar_to_confirm"
-            android:textColor="@color/secondaryTextColor"
-            android:textSize="16sp" />
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/lato_regular"
+                    android:gravity="center"
+                    android:text="@string/delete_key_title"
+                    android:textColor="@color/secondaryTextColor"
+                    android:textSize="18sp" />
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            app:hintEnabled="false">
+                <View
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:layout_gravity="center_vertical" />
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/confirmation_edit_text"
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/text_input_field"
-                android:fontFamily="@font/lato_regular"
-                android:hint="CTEMPLAR"
-                android:imeOptions="actionNext"
-                android:inputType="text"
-                android:nextFocusForward="@id/confirmation_button"
-                android:padding="12dp"
-                android:textColor="@color/secondaryTextColor"
-                android:textSize="16sp" />
+                android:divider="@drawable/dialog_divider"
+                android:orientation="vertical"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="20dp">
 
-        </com.google.android.material.textfield.TextInputLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/lato_regular"
+                    android:text="@string/delete_key_description"
+                    android:textColor="@color/colorAccent"
+                    android:textSize="16sp" />
 
-    </LinearLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:fontFamily="@font/lato_regular"
+                    android:text="@string/enter_your_password_to_continue"
+                    android:textColor="@color/secondaryTextColor"
+                    android:textSize="16sp" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        android:orientation="horizontal">
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    app:hintEnabled="false"
+                    app:passwordToggleDrawable="@drawable/selector_password_state"
+                    app:passwordToggleEnabled="true"
+                    app:passwordToggleTint="@color/secondaryTextColor">
 
-        <Button
-            android:id="@+id/confirmation_button"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@drawable/selector_button_blue"
-            android:fontFamily="@font/lato_regular"
-            android:text="@string/yes_iam_sure"
-            android:textColor="@color/colorWhiteLight" />
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/password_edit_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/text_input_field"
+                        android:fontFamily="@font/lato_regular"
+                        android:hint="@string/title_password"
+                        android:imeOptions="actionNext"
+                        android:inputType="textPassword"
+                        android:nextFocusForward="@id/confirmation_edit_text"
+                        android:padding="12dp"
+                        android:textColor="@color/secondaryTextColor"
+                        android:textSize="16sp" />
 
-    </LinearLayout>
+                    <requestFocus />
+                </com.google.android.material.textfield.TextInputLayout>
 
-</LinearLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="28dp"
+                    android:fontFamily="@font/lato_regular"
+                    android:text="@string/type_ctemplar_to_confirm"
+                    android:textColor="@color/secondaryTextColor"
+                    android:textSize="16sp" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    app:hintEnabled="false">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/confirmation_edit_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/text_input_field"
+                        android:fontFamily="@font/lato_regular"
+                        android:hint="CTEMPLAR"
+                        android:imeOptions="actionNext"
+                        android:inputType="text"
+                        android:nextFocusForward="@id/confirmation_button"
+                        android:padding="12dp"
+                        android:textColor="@color/secondaryTextColor"
+                        android:textSize="16sp" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="16dp">
+
+                <ProgressBar
+                    android:id="@+id/progress_bar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginBottom="10dp"
+                    android:indeterminateTint="@color/primaryTextColor"
+                    android:visibility="gone" />
+
+                <Button
+                    android:id="@+id/confirmation_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/selector_button_blue"
+                    android:fontFamily="@font/lato_regular"
+                    android:text="@string/yes_iam_sure"
+                    android:textColor="@color/colorWhiteLight" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

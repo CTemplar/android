@@ -40,7 +40,7 @@ public class MailboxKeysAdapter extends RecyclerView.Adapter<MailboxKeysAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.update(items.get(position), position % 2 == 0);
+        holder.update(items.get(position), position % 2 == 1);
     }
 
     @Override

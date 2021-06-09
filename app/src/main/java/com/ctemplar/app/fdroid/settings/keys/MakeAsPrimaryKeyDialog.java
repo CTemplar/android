@@ -56,4 +56,11 @@ public class MakeAsPrimaryKeyDialog extends DialogFragment {
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         return new Dialog(getActivity(), R.style.DialogAnimation);
     }
+
+    public void setLoading(boolean loading) {
+        binding.progressBar.setVisibility(loading ? View.VISIBLE : View.GONE);
+        binding.makeAsPrimaryButton.setEnabled(!loading);
+        binding.closeButtonImageView.setEnabled(!loading);
+    }
+
 }

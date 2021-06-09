@@ -1,4 +1,4 @@
-package com.ctemplar.app.fdroid.filters;
+package com.ctemplar.app.fdroid.settings.filters;
 
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;

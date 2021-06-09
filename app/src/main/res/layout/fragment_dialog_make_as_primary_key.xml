@@ -32,7 +32,7 @@
             android:fontFamily="@font/lato_regular"
             android:gravity="center"
             android:text="@string/update_primary_key"
-            android:textColor="@color/secondaryTextColor"
+            android:textColor="?android:textColorSecondary"
             android:textSize="20sp" />
 
         <View
@@ -57,7 +57,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/lato_regular"
             android:text="@string/update_primary_key_description"
-            android:textColor="@color/secondaryTextColor"
+            android:textColor="?android:textColorSecondary"
             android:textSize="16sp" />
 
     </LinearLayout>
@@ -65,17 +65,24 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginHorizontal="16dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
-        android:orientation="horizontal">
+        android:orientation="vertical">
+
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="10dp"
+            android:indeterminateTint="@color/primaryTextColor"
+            android:visibility="gone" />
 
         <Button
             android:id="@+id/make_as_primary_button"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:background="@drawable/selector_button_blue"
             android:fontFamily="@font/lato_regular"
             android:text="@string/make_as_primary"
