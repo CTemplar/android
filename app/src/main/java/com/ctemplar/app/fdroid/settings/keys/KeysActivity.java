@@ -14,7 +14,6 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProvider;
 
 import java.io.BufferedOutputStream;
@@ -24,11 +23,9 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import com.ctemplar.app.fdroid.CTemplarApp;
 import com.ctemplar.app.fdroid.R;
 import com.ctemplar.app.fdroid.databinding.ActivitySettingsKeysBinding;
 import com.ctemplar.app.fdroid.net.ResponseStatus;
-import com.ctemplar.app.fdroid.repository.UserRepository;
 import com.ctemplar.app.fdroid.repository.entity.MailboxEntity;
 import com.ctemplar.app.fdroid.utils.EncodeUtils;
 import com.ctemplar.app.fdroid.utils.PermissionUtils;
@@ -42,14 +39,13 @@ public class KeysActivity extends AppCompatActivity {
     private static final String SPLITTER = "_";
 
     private ActivitySettingsKeysBinding binding;
-    private MailboxViewModel mailboxViewModel;
+    private MailboxKeyViewModel mailboxKeyViewModel;
 
     private Map<MailboxEntity, List<GeneralizedMailboxKey>> mailboxKeyMap;
     private GeneralizedMailboxKey keyToDownload;
     private boolean isPrivateKeyToDownload;
     private MakeAsPrimaryKeyDialog markAsPrimaryDialog;
     private DeleteKeyDialog removeKeyDialog;
-    private UserRepository userRepository;
 
     private final ActivityResultLauncher<String[]> downloadKeyPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), result -> {
@@ -115,12 +111,11 @@ public class KeysActivity extends AppCompatActivity {
                 new Intent(KeysActivity.this, ImportMailboxKeyActivity.class)));
 
 
-        userRepository = CTemplarApp.getUserRepository();
-        mailboxViewModel = new ViewModelProvider(this).get(MailboxViewModel.class);
-        mailboxViewModel.getMailboxPrimaryResponseStatus().observe(this, responseStatus -> {
+        mailboxKeyViewModel = new ViewModelProvider(this).get(MailboxKeyViewModel.class);
+        mailboxKeyViewModel.getMailboxPrimaryResponseStatus().observe(this, responseStatus -> {
             if (responseStatus == ResponseStatus.RESPONSE_COMPLETE) {
                 int currentPosition = binding.emailSpinner.getSelectedItemPosition();
-                onMailboxKeysUpdated(mailboxViewModel.getMailboxKeyMap());
+                onMailboxKeysUpdated(mailboxKeyViewModel.getMailboxKeyMap());
                 if (markAsPrimaryDialog != null) {
                     markAsPrimaryDialog.dismiss();
                     markAsPrimaryDialog = null;
@@ -133,23 +128,24 @@ public class KeysActivity extends AppCompatActivity {
                 }
             }
         });
-        mailboxViewModel.deleteMailboxKeyResponseStatus().observe(this, responseStatus -> {
+        mailboxKeyViewModel.deleteMailboxKeyResponseStatus().observe(this, responseStatus -> {
             if (responseStatus == ResponseStatus.RESPONSE_COMPLETE) {
                 int currentPosition = binding.emailSpinner.getSelectedItemPosition();
-                onMailboxKeysUpdated(mailboxViewModel.getMailboxKeyMap());
+                onMailboxKeysUpdated(mailboxKeyViewModel.getMailboxKeyMap());
                 if (removeKeyDialog != null) {
                     removeKeyDialog.dismiss();
                     removeKeyDialog = null;
                 }
                 binding.emailSpinner.setSelection(currentPosition);
             } else if (responseStatus == ResponseStatus.RESPONSE_ERROR) {
-                ToastUtils.showLongToast(getApplicationContext(), getString(R.string.operation_failed));
                 if (removeKeyDialog != null) {
                     removeKeyDialog.setLoading(false);
                 }
             }
         });
-        onMailboxKeysUpdated(mailboxViewModel.getMailboxKeyMap());
+        mailboxKeyViewModel.getDeleteMailboxErrorResponse().observe(this,
+                responseStatus -> ToastUtils.showToast(this, responseStatus));
+        onMailboxKeysUpdated(mailboxKeyViewModel.getMailboxKeyMap());
         selectMailbox(0);
     }
 
@@ -218,7 +214,7 @@ public class KeysActivity extends AppCompatActivity {
                 dialog.dismiss();
                 return;
             }
-            mailboxViewModel.updateMailboxPrimaryKey(mailbox.getId(), key.getId());
+            mailboxKeyViewModel.updateMailboxPrimaryKey(mailbox.getId(), key.getId());
         });
         dialog.show(getSupportFragmentManager(), null);
         this.markAsPrimaryDialog = dialog;
@@ -229,9 +225,10 @@ public class KeysActivity extends AppCompatActivity {
         dialog.setOnApplyClickListener(() -> {
             dialog.setLoading(true);
             dialog.setCancelable(false);
-            String username = userRepository.getUsername();
+            String username = mailboxKeyViewModel.getUsername();
             String password = dialog.getPassword();
-            mailboxViewModel.deleteMailboxKey(key.getId(), EncodeUtils.generateHash(username, password));
+            mailboxKeyViewModel.deleteMailboxKey(key.getId(),
+                    EncodeUtils.generateHash(username, password));
         });
         dialog.show(getSupportFragmentManager(), null);
         this.removeKeyDialog = dialog;

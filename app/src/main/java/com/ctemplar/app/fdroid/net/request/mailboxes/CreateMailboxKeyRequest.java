@@ -21,21 +21,18 @@ public class CreateMailboxKeyRequest {
     private KeyType keyType;
 
     @SerializedName("mailbox")
-    private long mailbox;
-
-    public CreateMailboxKeyRequest() {
-    }
+    private long mailboxId;
 
     public CreateMailboxKeyRequest(
             String privateKey, String publicKey, String fingerprint, String password,
-            KeyType keyType, long mailbox
+            KeyType keyType, long mailboxId
     ) {
         this.privateKey = privateKey;
         this.publicKey = publicKey;
         this.fingerprint = fingerprint;
         this.password = password;
         this.keyType = keyType;
-        this.mailbox = mailbox;
+        this.mailboxId = mailboxId;
     }
 
     public void setPrivateKey(String privateKey) {
@@ -58,7 +55,7 @@ public class CreateMailboxKeyRequest {
         this.keyType = keyType;
     }
 
-    public void setMailbox(long mailbox) {
-        this.mailbox = mailbox;
+    public void setMailboxId(long mailboxId) {
+        this.mailboxId = mailboxId;
     }
 }

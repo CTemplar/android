@@ -6,11 +6,11 @@ import androidx.lifecycle.ViewModel;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
 import java.util.List;
 
-import io.reactivex.Observable;
 import io.reactivex.Observer;
+import io.reactivex.Single;
+import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Function;
@@ -28,6 +28,7 @@ import com.ctemplar.app.fdroid.net.response.mailboxes.MailboxResponse;
 import com.ctemplar.app.fdroid.repository.MailboxDao;
 import com.ctemplar.app.fdroid.repository.UserRepository;
 import com.ctemplar.app.fdroid.repository.entity.MailboxEntity;
+import com.ctemplar.app.fdroid.repository.mapper.MailboxMapper;
 import com.ctemplar.app.fdroid.utils.EncodeUtils;
 import retrofit2.HttpException;
 import retrofit2.Response;
@@ -194,47 +195,42 @@ public class MailboxesViewModel extends ViewModel {
 
     void createMailbox(final String mailboxEmail) {
         final String userPassword = userRepository.getUserPassword();
-        final CreateMailboxRequest createMailboxRequest = new CreateMailboxRequest();
-        createMailboxRequest.setEmail(mailboxEmail);
+        final CreateMailboxRequest request = new CreateMailboxRequest();
+        request.setEmail(mailboxEmail);
 
-        EncodeUtils.generateAdditionalMailbox(mailboxEmail, userPassword)
+        EncodeUtils.generateKeys(mailboxEmail, userPassword, true)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .flatMap((Function<PGPKeyEntity, Observable<Response<MailboxResponse>>>) pgpKeyEntity -> {
-                    createMailboxRequest.setPrivateKey(pgpKeyEntity.getPrivateKey());
-                    createMailboxRequest.setPublicKey(pgpKeyEntity.getPublicKey());
-                    createMailboxRequest.setFingerprint(pgpKeyEntity.getFingerprint());
-                    return userRepository.createMailbox(createMailboxRequest);
-                }).subscribe(new Observer<Response<MailboxResponse>>() {
-            @Override
-            public void onSubscribe(@NotNull Disposable d) {
+                .flatMap((Function<PGPKeyEntity, Single<Response<MailboxResponse>>>) pgpKeyEntity -> {
+                    request.setPrivateKey(pgpKeyEntity.getPrivateKey());
+                    request.setPublicKey(pgpKeyEntity.getPublicKey());
+                    request.setFingerprint(pgpKeyEntity.getFingerprint());
+                    return userRepository.createMailbox(request);
+                })
+                .subscribe(new SingleObserver<Response<MailboxResponse>>() {
+                    @Override
+                    public void onSubscribe(@NotNull Disposable d) {
 
-            }
+                    }
 
-            @Override
-            public void onNext(@NotNull Response<MailboxResponse> mailboxesResultResponse) {
-                if (mailboxesResultResponse.code() == 201) {
-                    createMailboxResponseStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
-                    final MailboxResponse mailboxResponse = mailboxesResultResponse.body();
-                    List<MailboxResponse> mailboxEntityList = Collections.singletonList(mailboxResponse);
-                    userRepository.saveMailboxes(mailboxEntityList);
-                } else if (mailboxesResultResponse.code() == 400) {
-                    createMailboxResponseStatus.postValue(ResponseStatus.RESPONSE_ERROR_PAID);
-                } else {
-                    createMailboxResponseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
-                }
-            }
+                    @Override
+                    public void onSuccess(@NotNull Response<MailboxResponse> mailboxesResultResponse) {
+                        if (mailboxesResultResponse.code() == 201) {
+                            createMailboxResponseStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
+                            final MailboxResponse mailboxResponse = mailboxesResultResponse.body();
+                            userRepository.saveMailbox(MailboxMapper.map(mailboxResponse));
+                        } else if (mailboxesResultResponse.code() == 400) {
+                            createMailboxResponseStatus.postValue(ResponseStatus.RESPONSE_ERROR_PAID);
+                        } else {
+                            createMailboxResponseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
+                        }
+                    }
 
-            @Override
-            public void onError(@NotNull Throwable e) {
-                Timber.e(e);
-                createMailboxResponseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
-            }
-
-            @Override
-            public void onComplete() {
-
-            }
-        });
+                    @Override
+                    public void onError(@NotNull Throwable e) {
+                        Timber.e(e);
+                        createMailboxResponseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
+                    }
+                });
     }
 }

@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Random;
 
 import io.reactivex.Observable;
+import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import com.ctemplar.app.fdroid.net.entity.PGPKeyEntity;
@@ -133,21 +134,19 @@ public class EncodeUtils {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public static Observable<PGPKeyEntity> generateRSAKeys(
+    public static Single<PGPKeyEntity> generateKeys(
             final String emailAddress,
-            final String password
+            final String password,
+            final boolean ECC
     ) {
-        return Observable.fromCallable(() -> PGPManager.generateKeys(emailAddress, password))
-                .subscribeOn(Schedulers.computation())
-                .observeOn(AndroidSchedulers.mainThread());
-    }
-
-    public static Observable<PGPKeyEntity> generateECCKeys(
-            final String emailAddress,
-            final String password
-    ) {
-        return Observable.fromCallable(() -> PGPManager.generateECCKeys(emailAddress, password))
-                .subscribeOn(Schedulers.computation())
-                .observeOn(AndroidSchedulers.mainThread());
+        if (ECC) {
+            return Single.fromCallable(() -> PGPManager.generateECCKeys(emailAddress, password))
+                    .subscribeOn(Schedulers.computation())
+                    .observeOn(AndroidSchedulers.mainThread());
+        } else {
+            return Single.fromCallable(() -> PGPManager.generateKeys(emailAddress, password))
+                    .subscribeOn(Schedulers.computation())
+                    .observeOn(AndroidSchedulers.mainThread());
+        }
     }
 }

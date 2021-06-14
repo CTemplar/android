@@ -3,6 +3,7 @@ package com.ctemplar.app.fdroid.settings.keys;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,7 +19,6 @@ import org.jetbrains.annotations.NotNull;
 import com.ctemplar.app.fdroid.R;
 import com.ctemplar.app.fdroid.databinding.FragmentDialogDeleteKeyBinding;
 import com.ctemplar.app.fdroid.utils.EditTextUtils;
-import timber.log.Timber;
 
 public class DeleteKeyDialog extends DialogFragment {
     private OnApplyClickListener onApplyClickListener;
@@ -51,6 +51,24 @@ public class DeleteKeyDialog extends DialogFragment {
     @Override
     public void onViewCreated(@NonNull @NotNull View view, @Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
         binding.closeButtonImageView.setOnClickListener(v -> dismiss());
+        binding.passwordEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (binding.passwordLayout.getError() != null) {
+                    binding.passwordLayout.setError(null);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
         binding.confirmationEditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -59,7 +77,6 @@ public class DeleteKeyDialog extends DialogFragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                Timber.i("Eq: %s", s);
                 binding.confirmationButton.setEnabled(s.toString().equals("CTEMPLAR"));
             }
 
@@ -70,6 +87,10 @@ public class DeleteKeyDialog extends DialogFragment {
         });
         binding.confirmationButton.setEnabled(false);
         binding.confirmationButton.setOnClickListener(v -> {
+            if (TextUtils.isEmpty(binding.passwordEditText.getText())) {
+                binding.passwordLayout.setError(getString(R.string.error_field_cannot_be_empty));
+                return;
+            }
             if (onApplyClickListener != null) {
                 onApplyClickListener.onDeleteKeyClick();
             }
@@ -84,6 +105,7 @@ public class DeleteKeyDialog extends DialogFragment {
 
     public void setLoading(boolean loading) {
         binding.progressBar.setVisibility(loading ? View.VISIBLE : View.GONE);
+        binding.confirmationButton.setVisibility(loading ? View.GONE : View.VISIBLE);
         binding.confirmationButton.setEnabled(!loading);
         binding.closeButtonImageView.setEnabled(!loading);
     }

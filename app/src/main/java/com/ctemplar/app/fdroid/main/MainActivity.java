@@ -54,7 +54,7 @@ import com.ctemplar.app.fdroid.net.response.folders.FoldersResponse;
 import com.ctemplar.app.fdroid.net.response.folders.FoldersResult;
 import com.ctemplar.app.fdroid.repository.entity.MailboxEntity;
 import com.ctemplar.app.fdroid.settings.SettingsActivity;
-import com.ctemplar.app.fdroid.settings.keys.MailboxViewModel;
+import com.ctemplar.app.fdroid.settings.keys.MailboxKeyViewModel;
 import com.ctemplar.app.fdroid.utils.EditTextUtils;
 import com.ctemplar.app.fdroid.utils.EncryptUtils;
 import com.ctemplar.app.fdroid.utils.LocaleUtils;
@@ -80,6 +80,7 @@ import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.UNREAD
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     private static final int CUSTOM_FOLDER_STEP = 10;
+    private final List<FoldersResult> customFoldersListAll = new ArrayList<>();
 
     private FrameLayout contentContainer;
     private NavigationView navigationView;
@@ -87,7 +88,6 @@ public class MainActivity extends AppCompatActivity
 
     private MainActivityViewModel mainModel;
     private List<FoldersResult> customFoldersList;
-    private List<FoldersResult> customFoldersListAll = new ArrayList<>();
     private String toggleFolder;
     private int customFoldersShowCount = 3;
     private boolean isTablet;
@@ -99,7 +99,7 @@ public class MainActivity extends AppCompatActivity
     private MainFragment mainFragment;
     private Handler handler = new Handler();
     private AppCompatDelegate baseContextWrappingDelegate;
-    private MailboxViewModel mailboxViewModel;
+    private MailboxKeyViewModel mailboxKeyViewModel;
 
     @NonNull
     @Override
@@ -143,7 +143,7 @@ public class MainActivity extends AppCompatActivity
         showFragment(mainFragment);
 
         mainModel = new ViewModelProvider(this).get(MainActivityViewModel.class);
-        mailboxViewModel = new ViewModelProvider(this).get(MailboxViewModel.class);
+        mailboxKeyViewModel = new ViewModelProvider(this).get(MailboxKeyViewModel.class);
         mainModel.getActionsStatus().observe(this, this::handleMainActions);
         mainModel.getCurrentFolder().observe(this, folder -> {
             showFragmentByFolder(folder);
@@ -622,8 +622,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void loadUserInfo() {
-        mailboxViewModel.getMailboxes(20, 0);
-        mailboxViewModel.getMailboxKeys(20, 0);
+        mailboxKeyViewModel.getMailboxes(20, 0);
+        mailboxKeyViewModel.getMailboxKeys(20, 0);
         mainModel.getUserMyselfInfo();
     }
 

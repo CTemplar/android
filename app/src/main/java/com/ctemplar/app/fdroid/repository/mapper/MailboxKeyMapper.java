@@ -20,7 +20,7 @@ public class MailboxKeyMapper {
                 response.isDeleted(),
                 response.getDeletedAt(),
                 response.getKeyType() == null ? KeyType.RSA4096 : response.getKeyType(),
-                response.getMailbox()
+                response.getMailboxId()
         );
     }
 

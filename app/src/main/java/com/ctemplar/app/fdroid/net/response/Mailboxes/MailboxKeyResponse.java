@@ -29,7 +29,7 @@ public class MailboxKeyResponse {
     private KeyType keyType;
 
     @SerializedName("mailbox")
-    private long mailbox;
+    private long mailboxId;
 
 
     public long getId() {
@@ -60,7 +60,7 @@ public class MailboxKeyResponse {
         return keyType;
     }
 
-    public long getMailbox() {
-        return mailbox;
+    public long getMailboxId() {
+        return mailboxId;
     }
 }

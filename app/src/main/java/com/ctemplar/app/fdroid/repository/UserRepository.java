@@ -57,8 +57,8 @@ import com.ctemplar.app.fdroid.net.response.myself.SettingsResponse;
 import com.ctemplar.app.fdroid.net.response.myself.WhiteListContact;
 import com.ctemplar.app.fdroid.net.response.whiteBlackList.BlackListResponse;
 import com.ctemplar.app.fdroid.net.response.whiteBlackList.WhiteListResponse;
-import com.ctemplar.app.fdroid.repository.mapper.MailboxKeyMapper;
-import com.ctemplar.app.fdroid.repository.mapper.MailboxMapper;
+import com.ctemplar.app.fdroid.repository.entity.MailboxEntity;
+import com.ctemplar.app.fdroid.repository.entity.MailboxKeyEntity;
 import com.ctemplar.app.fdroid.utils.EditTextUtils;
 
 import java.util.List;
@@ -201,32 +201,40 @@ public class UserRepository {
         CTemplarApp.getAppDatabase().clearAllTables();
     }
 
-    public void saveMailbox(MailboxResponse mailbox) {
+    public void saveMailbox(MailboxEntity mailbox) {
         if (mailbox == null) {
             Timber.e("Mailbox is null");
             return;
         }
-        CTemplarApp.getAppDatabase().mailboxDao().save(MailboxMapper.map(mailbox));
+        CTemplarApp.getAppDatabase().mailboxDao().save(mailbox);
     }
 
-    public void saveMailboxes(List<MailboxResponse> mailboxes) {
+    public void saveMailboxes(List<MailboxEntity> mailboxes) {
         if (mailboxes == null || mailboxes.size() == 0) {
             Timber.e("Mailboxes is null");
             return;
         }
         MailboxDao mailboxDao = CTemplarApp.getAppDatabase().mailboxDao();
         mailboxDao.deleteAll();
-        mailboxDao.saveAll(MailboxMapper.map(mailboxes));
+        mailboxDao.saveAll(mailboxes);
     }
 
-    public void saveMailboxKeys(List<MailboxKeyResponse> mailboxKeys) {
+    public void saveMailboxKey(MailboxKeyEntity mailboxKey) {
+        if (mailboxKey == null) {
+            Timber.e("MailboxKey is null");
+            return;
+        }
+        CTemplarApp.getAppDatabase().mailboxKeyDao().save(mailboxKey);
+    }
+
+    public void saveMailboxKeys(List<MailboxKeyEntity> mailboxKeys) {
         if (mailboxKeys == null || mailboxKeys.size() == 0) {
             Timber.e("Mailbox keys is null");
             return;
         }
         MailboxKeyDao mailboxKeyDao = CTemplarApp.getAppDatabase().mailboxKeyDao();
         mailboxKeyDao.deleteAll();
-        mailboxKeyDao.saveAll(MailboxKeyMapper.map(mailboxKeys));
+        mailboxKeyDao.saveAll(mailboxKeys);
     }
 
     // Requests
@@ -522,7 +530,7 @@ public class UserRepository {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<Response<MailboxResponse>> createMailbox(CreateMailboxRequest request) {
+    public Single<Response<MailboxResponse>> createMailbox(CreateMailboxRequest request) {
         return service.createMailbox(request)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
