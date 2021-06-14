@@ -59,6 +59,7 @@ public class MakeAsPrimaryKeyDialog extends DialogFragment {
 
     public void setLoading(boolean loading) {
         binding.progressBar.setVisibility(loading ? View.VISIBLE : View.GONE);
+        binding.makeAsPrimaryButton.setVisibility(loading ? View.GONE : View.VISIBLE);
         binding.makeAsPrimaryButton.setEnabled(!loading);
         binding.closeButtonImageView.setEnabled(!loading);
     }

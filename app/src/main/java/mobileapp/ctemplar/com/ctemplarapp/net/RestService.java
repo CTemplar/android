@@ -223,7 +223,7 @@ public interface RestService {
     );
 
     @POST("emails/mailboxes/")
-    Observable<Response<MailboxResponse>> createMailbox(@Body CreateMailboxRequest request);
+    Single<Response<MailboxResponse>> createMailbox(@Body CreateMailboxRequest request);
 
     @POST("emails/mailboxes-change-primary/")
     Single<Response<Void>> updateMailboxPrimaryKey(@Body UpdateMailboxPrimaryKeyRequest request);

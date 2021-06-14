@@ -32,6 +32,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.CheckUsernameResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.HttpErrorResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.SignUpResponse;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
+import mobileapp.ctemplar.com.ctemplarapp.repository.enums.KeyType;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EncodeUtils;
 import mobileapp.ctemplar.com.ctemplarapp.workers.WorkersHelper;
@@ -159,50 +160,54 @@ public class StepRegistrationViewModel extends AndroidViewModel {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .flatMap((Function<PGPKeyEntity, Observable<SignUpResponse>>) pgpKeyEntity -> {
-                    generatePGPKeys(pgpKeyEntity);
-                    hashPassword();
+                    signUpRequest.setPrivateKey(pgpKeyEntity.getPrivateKey());
+                    signUpRequest.setPublicKey(pgpKeyEntity.getPublicKey());
+                    signUpRequest.setFingerprint(pgpKeyEntity.getFingerprint());
+                    signUpRequest.setPasswordHashed(EncodeUtils.generateHash(
+                            signUpRequest.getUsername(), signUpRequest.getPassword()));
                     return userRepository.signUp(signUpRequest);
-                }).subscribe(new Observer<SignUpResponse>() {
+                })
+                .subscribe(new Observer<SignUpResponse>() {
 
-            @Override
-            public void onSubscribe(@NotNull Disposable d) {
+                    @Override
+                    public void onSubscribe(@NotNull Disposable d) {
 
-            }
+                    }
 
-            @Override
-            public void onNext(@NotNull SignUpResponse signUpResponse) {
-                userRepository.saveUsername(signUpRequest.getUsername());
-                userRepository.saveUserToken(signUpResponse.getToken());
-                userRepository.saveUserPassword(signUpRequest.getPassword());
-                responseStatus.postValue(ResponseStatus.RESPONSE_NEXT_STEP_EMAIL);
-                WorkersHelper.setupForceRefreshTokenWork(getApplication());
-            }
+                    @Override
+                    public void onNext(@NotNull SignUpResponse signUpResponse) {
+                        userRepository.saveUsername(signUpRequest.getUsername());
+                        userRepository.saveUserToken(signUpResponse.getToken());
+                        userRepository.saveUserPassword(signUpRequest.getPassword());
+                        responseStatus.postValue(ResponseStatus.RESPONSE_NEXT_STEP_EMAIL);
+                        WorkersHelper.setupForceRefreshTokenWork(getApplication());
+                    }
 
-            @Override
-            public void onError(@NotNull Throwable e) {
-                responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
-                if (e instanceof HttpException) {
-                    Response<?> errorResponse = ((HttpException) e).response();
-                    if (errorResponse != null && errorResponse.errorBody() != null) {
-                        try {
-                            String errorBody = errorResponse.errorBody().string();
-                            HttpErrorResponse httpErrorResponse = GENERAL_GSON
-                                    .fromJson(errorBody, HttpErrorResponse.class);
-                            responseError.postValue(httpErrorResponse.getError().getError());
-                        } catch (IOException | JsonSyntaxException ex) {
-                            Timber.e(ex, "Can't parse signUp error");
+                    @Override
+                    public void onError(@NotNull Throwable e) {
+                        responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
+                        if (e instanceof HttpException) {
+                            Response<?> errorResponse = ((HttpException) e).response();
+                            if (errorResponse != null && errorResponse.errorBody() != null) {
+                                try {
+                                    String errorBody = errorResponse.errorBody().string();
+                                    HttpErrorResponse httpErrorResponse = GENERAL_GSON
+                                            .fromJson(errorBody, HttpErrorResponse.class);
+                                    responseError.postValue(httpErrorResponse.getError().getError());
+                                } catch (IOException | JsonSyntaxException ex) {
+                                    Timber.e(ex, "Can't parse signUp error");
+                                }
+                            }
+                        } else {
+                            responseError.postValue("SignUp error");
                         }
                     }
-                } else {
-                    responseError.postValue("SignUp error");
-                }
-            }
 
-            @Override
-            public void onComplete() {
+                    @Override
+                    public void onComplete() {
 
-            }
-        });
+                    }
+                });
     }
 
     public void getCaptcha() {
@@ -253,16 +258,5 @@ public class StepRegistrationViewModel extends AndroidViewModel {
 
                     }
                 });
-    }
-
-    private void generatePGPKeys(PGPKeyEntity pgpKeyEntity) {
-        signUpRequest.setPrivateKey(pgpKeyEntity.getPrivateKey());
-        signUpRequest.setPublicKey(pgpKeyEntity.getPublicKey());
-        signUpRequest.setFingerprint(pgpKeyEntity.getFingerprint());
-    }
-
-    private void hashPassword() {
-        signUpRequest.setPasswordHashed(
-                EncodeUtils.generateHash(signUpRequest.getUsername(), signUpRequest.getPassword()));
     }
 }

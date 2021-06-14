@@ -22,7 +22,7 @@ import mobileapp.ctemplar.com.ctemplarapp.utils.ThemeUtils;
 
 public class ImportMailboxKeyActivity extends AppCompatActivity {
     private ActivityMailboxKeyImportBinding binding;
-    private MailboxViewModel mailboxViewModel;
+    private MailboxKeyViewModel mailboxKeyViewModel;
 
     private Map<MailboxEntity, List<GeneralizedMailboxKey>> mailboxKeyMap;
 
@@ -48,9 +48,9 @@ public class ImportMailboxKeyActivity extends AppCompatActivity {
             actionBar.setHomeButtonEnabled(true);
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-        mailboxViewModel = new ViewModelProvider(this).get(MailboxViewModel.class);
+        mailboxKeyViewModel = new ViewModelProvider(this).get(MailboxKeyViewModel.class);
 
-        mailboxKeyMap = mailboxViewModel.getMailboxKeyMap();
+        mailboxKeyMap = mailboxKeyViewModel.getMailboxKeyMap();
         if (mailboxKeyMap == null || mailboxKeyMap.isEmpty()) {
             onBackPressed();
             return;
