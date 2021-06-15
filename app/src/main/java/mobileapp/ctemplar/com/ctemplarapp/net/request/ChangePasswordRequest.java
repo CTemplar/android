@@ -4,6 +4,8 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
+import mobileapp.ctemplar.com.ctemplarapp.net.request.mailboxes.MailboxKey;
+
 public class ChangePasswordRequest {
     @SerializedName("old_password")
     private String oldPassword;

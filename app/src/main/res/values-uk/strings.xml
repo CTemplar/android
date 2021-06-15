@@ -188,7 +188,7 @@
     <string name="txt_contact_loading_error">Помилка завантаження контакту</string>
     <string name="txt_delete_folder_quest_title">Видалити папку?</string>
     <string name="txt_delete_folder_quest_message">"Ви впевнені, що хочете видалити папку?</string>
-    <string name="btn_contact_delete">ВИДАЛИТИ</string>
+    <string name="btn_delete">Видалити</string>
     <string name="btn_cancel">СКАСУВАТИ</string>
     <string name="title_email_address">Імейл-адреса</string>
     <string name="title_phone_number">Телефон</string>
@@ -254,7 +254,10 @@
     <string name="txt_filter_mark_as_read">Позначити як прочитане </string>
     <string name="txt_filter_mark_as_starred">Позначити зірочкою</string>
     <string name="btn_submit">Включити</string>
-    <string name="toast_filter_not_created">Фільтр з такою назвою вже існує</string>
+    <string name="add_condition">Додати умову</string>
+    <string name="condition_text_hint">Текст умови</string>
+    <string name="filter_already_exists">Фільтр з такою назвою вже існує</string>
+    <string name="toast_filter_not_created">Фільтр не створено</string>
     <string name="toast_filter_created">Фільтр створено</string>
     <string name="txt_filter_name_hint">Назва фільтра має включати від 4 до 30 букв</string>
     <string name="txt_filter_text_hint">Текст фільтра повинен включати від 1 до 30 букв</string>
@@ -444,14 +447,24 @@
     <string name="whitelist">Білий список</string>
     <string name="blacklist">Чорний список</string>
 
-    <string-array name="filter_parameter_list">
-        <item>тема</item>
-        <item>відправник</item>
+    <string-array name="filter_parameter_entries">
+        <item>Тема</item>
+        <item>Відправник</item>
+        <item>Одержувач</item>
+        <item>Заголовок</item>
     </string-array>
 
-    <string-array name="filter_condition_list">
-        <item>містить</item>
-        <item>починається з</item>
+    <string-array name="filter_condition_entries">
+        <item>Містить</item>
+        <item>Не містить</item>
+        <item>Починається з</item>
+        <item>Не починається з</item>
+        <item>Закінчується на</item>
+        <item>Не закінчується на</item>
+        <item>Рівно</item>
+        <item>Не зовсім співпадає</item>
+        <item>Співпадає</item>
+        <item>Не співпадає</item>
     </string-array>
 
     <string-array name="auto_lock_time">

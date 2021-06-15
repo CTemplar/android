@@ -9,16 +9,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.folders.FoldersResult;
 
 public class ManageFoldersAdapter extends RecyclerView.Adapter<ManageFoldersViewHolder> {
-    private final List<FoldersResult> foldersList;
+    private final List<FoldersResult> items = new ArrayList<>();
 
-    ManageFoldersAdapter(List<FoldersResult> foldersList) {
-        this.foldersList = foldersList;
+    ManageFoldersAdapter() {
+
     }
 
     @NonNull
@@ -31,7 +32,7 @@ public class ManageFoldersAdapter extends RecyclerView.Adapter<ManageFoldersView
 
     @Override
     public void onBindViewHolder(@NonNull final ManageFoldersViewHolder holder, int position) {
-        final FoldersResult folder = foldersList.get(position);
+        final FoldersResult folder = items.get(position);
         holder.txtName.setText(folder.getName());
         final int folderColor = Color.parseColor(folder.getColor());
         holder.icoFolder.setColorFilter(folderColor, PorterDuff.Mode.SRC_IN);
@@ -45,17 +46,23 @@ public class ManageFoldersAdapter extends RecyclerView.Adapter<ManageFoldersView
 
     @Override
     public int getItemCount() {
-        return foldersList.size();
+        return items.size();
+    }
+
+    public void setItems(List<FoldersResult> items) {
+        this.items.clear();
+        this.items.addAll(items);
+        notifyDataSetChanged();
     }
 
     public FoldersResult removeAt(int position) {
-        FoldersResult deletedFolder = foldersList.remove(position);
+        FoldersResult deletedFolder = items.remove(position);
         notifyItemRemoved(position);
         return deletedFolder;
     }
 
     public void restoreItem(int position, FoldersResult foldersResult) {
-        foldersList.add(position, foldersResult);
+        items.add(position, foldersResult);
         notifyItemInserted(position);
     }
 }

@@ -188,7 +188,7 @@
     <string name="txt_contact_loading_error">Erro ao carregar os contactos</string>
     <string name="txt_delete_folder_quest_title">Eliminar a pasta?</string>
     <string name="txt_delete_folder_quest_message">"Tem a certeza que quer eliminar esta pasta?</string>
-    <string name="btn_contact_delete">ELIMINAR</string>
+    <string name="btn_delete">Eliminar</string>
     <string name="btn_cancel">CANCELAR</string>
     <string name="title_email_address">Email</string>
     <string name="title_phone_number">Número de Telemóvel</string>
@@ -254,7 +254,10 @@
     <string name="txt_filter_mark_as_read">Marcar como lido</string>
     <string name="txt_filter_mark_as_starred">Sinalizar</string>
     <string name="btn_submit">Submeter</string>
-    <string name="toast_filter_not_created">Filtrar com o mesmo nome que já existe</string>
+    <string name="add_condition">Adicionar condição</string>
+    <string name="condition_text_hint">Texto de condição</string>
+    <string name="filter_already_exists">Filtrar com o mesmo nome que já existe</string>
+    <string name="toast_filter_not_created">Filtro não criado</string>
     <string name="toast_filter_created">Filtrar criados</string>
     <string name="txt_filter_name_hint">Filtrar por nome, tem de ter entre 4 e 30 letras</string>
     <string name="txt_filter_text_hint">Filtrar texto, tem de ter entre 1 e 30 letras</string>
@@ -444,14 +447,24 @@
     <string name="whitelist">Lista branca</string>
     <string name="blacklist">Lista negra</string>
 
-    <string-array name="filter_parameter_list">
-        <item>assunto</item>
-        <item>remetente</item>
+    <string-array name="filter_parameter_entries">
+        <item>Sujeito</item>
+        <item>Remetente</item>
+        <item>Recebedor</item>
+        <item>Cabeçalho</item>
     </string-array>
 
-    <string-array name="filter_condition_list">
-        <item>contém</item>
-        <item>começa com</item>
+    <string-array name="filter_condition_entries">
+        <item>Contém</item>
+        <item>Não contém</item>
+        <item>Começa com</item>
+        <item>Não começa com</item>
+        <item>Termina com</item>
+        <item>Não termina</item>
+        <item>Exatamente</item>
+        <item>Não Corresponde Exatamente</item>
+        <item>Partida</item>
+        <item>Não corresponde</item>
     </string-array>
 
     <string-array name="auto_lock_time">

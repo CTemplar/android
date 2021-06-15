@@ -188,7 +188,7 @@
     <string name="txt_contact_loading_error">联系人加载错误</string>
     <string name="txt_delete_folder_quest_title">删除文件夹？</string>
     <string name="txt_delete_folder_quest_message">"您确定要删除文件夹吗？ </string>
-    <string name="btn_contact_delete">删除</string>
+    <string name="btn_delete">删除</string>
     <string name="btn_cancel">取消</string>
     <string name="title_email_address">邮箱</string>
     <string name="title_phone_number">电话</string>
@@ -254,7 +254,10 @@
     <string name="txt_filter_mark_as_read">标记为已读</string>
     <string name="txt_filter_mark_as_starred">标记为星号</string>
     <string name="btn_submit">提交</string>
-    <string name="toast_filter_not_created">相同名称的过滤器已存在</string>
+    <string name="add_condition">添加條件</string>
+    <string name="condition_text_hint">條件文字</string>
+    <string name="filter_already_exists">相同名称的过滤器已存在</string>
+    <string name="toast_filter_not_created">過濾器未創建</string>
     <string name="toast_filter_created">过滤器已创建</string>
     <string name="txt_filter_name_hint">过滤器名称必须是4-30个字母之间</string>
     <string name="txt_filter_text_hint">过滤器文本必须是1-30个字母之间</string>
@@ -444,14 +447,24 @@
     <string name="whitelist">白名单</string>
     <string name="blacklist">黑名单</string>
 
-    <string-array name="filter_parameter_list">
+    <string-array name="filter_parameter_entries">
         <item>主题</item>
-        <item>发送人</item>
+        <item>发件人</item>
+        <item>接受者</item>
+        <item>标头</item>
     </string-array>
 
-    <string-array name="filter_condition_list">
+    <string-array name="filter_condition_entries">
         <item>包含</item>
-        <item>开始于</item>
+        <item>不含</item>
+        <item>以。。开始</item>
+        <item>不以...开头</item>
+        <item>以。。结束</item>
+        <item>不以结尾</item>
+        <item>确切地</item>
+        <item>不完全匹配</item>
+        <item>比赛</item>
+        <item>不匹配</item>
     </string-array>
 
     <string-array name="auto_lock_time">

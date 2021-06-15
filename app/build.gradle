@@ -8,7 +8,7 @@ repositories {
 ext {
     versionMajor = 1
     versionMinor = 4
-    versionBuild = 8
+    versionBuild = 9
 }
 
 android {
@@ -17,7 +17,7 @@ android {
         applicationId "mobileapp.ctemplar.com.ctemplarapp"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 57
+        versionCode 58
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -27,6 +27,9 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+    buildFeatures {
+        viewBinding true
     }
 
     applicationVariants.all { variant ->
@@ -68,20 +71,20 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-viewmodel:2.2.0'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     implementation 'androidx.appcompat:appcompat:1.2.0'
-    implementation 'androidx.activity:activity:1.2.2'
+    implementation 'androidx.activity:activity:1.2.3'
     implementation 'androidx.fragment:fragment:1.3.3'
     implementation 'androidx.vectordrawable:vectordrawable:1.1.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
-    implementation 'androidx.recyclerview:recyclerview:1.1.0'
+    implementation 'androidx.recyclerview:recyclerview:1.2.0'
     implementation 'androidx.preference:preference:1.1.1'
     implementation 'androidx.webkit:webkit:1.4.0'
     implementation "androidx.work:work-runtime:2.5.0"
     implementation "androidx.work:work-rxjava2:2.5.0"
 
-    implementation 'com.squareup.okhttp3:okhttp:3.12.13'
-    implementation 'com.squareup.okhttp3:logging-interceptor:3.12.13'
-    implementation 'com.squareup.retrofit2:retrofit:2.6.2'
-    implementation 'com.squareup.retrofit2:converter-gson:2.6.2'
+    implementation 'com.squareup.okhttp3:okhttp:4.3.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.3.0'
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
     implementation 'com.squareup.retrofit2:converter-scalars:2.6.2'
     implementation 'com.squareup.retrofit2:adapter-rxjava2:2.6.2'
     implementation 'com.squareup.picasso:picasso:2.71828'
@@ -89,9 +92,9 @@ dependencies {
     implementation 'io.reactivex.rxjava2:rxjava:2.2.6'
     implementation 'io.sentry:sentry-android:3.1.0'
 
-    implementation 'com.google.android.material:material:1.2.1'
+    implementation 'com.google.android.material:material:1.3.0'
     implementation 'com.google.guava:guava:29.0-android'
-    implementation 'com.google.dagger:dagger:2.27'
+    implementation 'com.google.dagger:dagger:2.31'
     implementation 'com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer:20200713.1'
 
     implementation ('com.google.firebase:firebase-messaging:21.0.1') {
@@ -107,12 +110,12 @@ dependencies {
     implementation 'com.romandanylyk:pageindicatorview:1.0.3'
 
     annotationProcessor 'androidx.room:room-compiler:2.2.5'
-    annotationProcessor 'com.google.dagger:dagger-compiler:2.17'
+    annotationProcessor 'com.google.dagger:dagger-compiler:2.30.1'
     annotationProcessor 'com.google.auto.value:auto-value:1.5.2'
     annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.1'
     compileOnly 'com.jakewharton.auto.value:auto-value-annotations:1.4'
 
-    testImplementation 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.13.1'
     testImplementation 'org.mockito:mockito-core:3.3.3'
 
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'

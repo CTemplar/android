@@ -11,27 +11,17 @@ import androidx.appcompat.app.BaseContextWrapperDelegate;
 
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
-import io.reactivex.disposables.CompositeDisposable;
-import mobileapp.ctemplar.com.ctemplarapp.utils.DialogUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.LocaleUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.ThemeUtils;
 
 public abstract class BaseActivity extends AppCompatActivity {
-
-    protected abstract int getLayoutId();
+    @Deprecated
+    protected int getLayoutId() {
+        return 0;
+    }
 
     private Unbinder mUnbinder;
-
-    protected boolean mRegisterForUserTokenExpiry = true;
-    private boolean mExpiredDialogShowing = false;
-    private CompositeDisposable mSubscriptions = new CompositeDisposable();
     private AppCompatDelegate baseContextWrappingDelegate;
-
-//    @Override
-//    protected void attachBaseContext(Context newBase) {
-//        Context context = LocaleUtils.getContextWrapper(newBase);
-//        super.attachBaseContext(context);
-//    }
 
     @NonNull
     @Override
@@ -52,52 +42,20 @@ public abstract class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         ThemeUtils.setTheme(this);
         if (savedInstanceState == null || mUnbinder == null) {
-            setContentView(getLayoutId());
-            mUnbinder = ButterKnife.bind(this);
+            int layoutId = getLayoutId();
+            if (layoutId != 0) {
+                setContentView(layoutId);
+                mUnbinder = ButterKnife.bind(this);
+            }
         }
     }
 
     @Override
     protected void onDestroy() {
-        mUnbinder.unbind();
-        super.onDestroy();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        if (mRegisterForUserTokenExpiry) {
-
-//            mSubscriptions.add(UserTokenExpired
-//                    .asObservable()
-//                    .observeOn(AndroidSchedulers.mainThread())
-//                    .subscribe(new Subscriber<String>() {
-//                        @Override
-//                        public void onCompleted() {
-//                            // never happens
-//                        }
-//
-//                        @Override
-//                        public void onError(Throwable e) {
-//                            // never happens
-//                        }
-//
-//                        @Override
-//                        public void onNext(String o) {
-//                            // ignore the Object
-//                            onUserTokenExpired();
-//                        }
-//                    })
-//            );
+        if (mUnbinder != null) {
+            mUnbinder.unbind();
         }
-    }
-
-    @Override
-    protected void onPause() {
-        mSubscriptions.dispose();
-        mSubscriptions.clear();
-        super.onPause();
+        super.onDestroy();
     }
 
     protected boolean handleBackPress() {
@@ -108,19 +66,6 @@ public abstract class BaseActivity extends AppCompatActivity {
     public void onBackPressed() {
         if (!handleBackPress()) {
             finish();
-        }
-    }
-
-    private void onUserTokenExpired() {
-        if (!mExpiredDialogShowing) {
-            mExpiredDialogShowing = true;
-            // Logout and show dialog
-            DialogUtils.showAlertDialog(this, R.string.token_expired_title, R.string.token_expired_message, false, dialog -> {
-                mExpiredDialogShowing = false;
-                // go to LoginActivity for relogin
-                // I.startLoginActivity(BaseActivity.this);
-                finish();
-            });
         }
     }
 }

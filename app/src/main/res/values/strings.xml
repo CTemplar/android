@@ -57,6 +57,8 @@
 
     <!-- STRINGS -->
     <string translatable="false" name="encrypted_subject">...</string>
+    <string translatable="false" name="subject_reply">Re: %s</string>
+    <string translatable="false" name="subject_forward">Fwd: %s</string>
     <string name="token_expired_title">Session expired</string>
     <string name="token_expired_message">Your session has expired, please log in to CTemplar again.</string>
     <string name="title_email">Email</string>
@@ -185,13 +187,13 @@
 
     <!-- CONTACT -->
     <string name="toast_not_saved">Not saved</string>
-    <string name="txt_enter_name">Enter Name</string>
+    <string name="txt_enter_name">Enter name</string>
     <string name="txt_enter_valid_email">Enter valid email address</string>
     <string name="txt_name_removed">%1$s removed!</string>
     <string name="txt_contact_loading_error">Contact loading error</string>
     <string name="txt_delete_folder_quest_title">Delete folder?</string>
     <string name="txt_delete_folder_quest_message">"Are you sure you want to delete folder?</string>
-    <string name="btn_contact_delete">DELETE</string>
+    <string name="btn_delete">Delete</string>
     <string name="btn_cancel">CANCEL</string>
     <string name="title_email_address">Email</string>
     <string name="title_phone_number">Phone</string>
@@ -257,7 +259,10 @@
     <string name="txt_filter_mark_as_read">Mark as read</string>
     <string name="txt_filter_mark_as_starred">Mark as starred</string>
     <string name="btn_submit">Submit</string>
-    <string name="toast_filter_not_created">Filter with the same name already exists</string>
+    <string name="add_condition">Add condition</string>
+    <string name="condition_text_hint">Condition text</string>
+    <string name="filter_already_exists">Filter with the same name already exists</string>
+    <string name="toast_filter_not_created">Filter not created</string>
     <string name="toast_filter_created">Filter created</string>
     <string name="txt_filter_name_hint">Filter name must be between 4 and 30 letters</string>
     <string name="txt_filter_text_hint">Filter text must be between 1 and 30 letters</string>
@@ -389,13 +394,46 @@
     <string name="mailbox_alias_creation_progress">The e-mail alias is being created</string>
 
     <!-- KEYS -->
+    <string translatable="false" name="rsa4096">RSA4096</string>
     <string name="email_address">E-mail address</string>
     <string name="fingerprint">Fingerprint</string>
     <string name="keys">Keys</string>
-    <string name="download_public_key">Download public key (4096 Bit)</string>
-    <string name="download_private_key">Download private key (4096 Bit)</string>
+    <string name="primary">Primary</string>
+    <string name="update_primary_key">Update primary key</string>
+    <string name="update_primary_key_description">After changed the primary key, all of messages with this alias will be encrypted with this key. Primary key will always be placed in the top of the key list. Are you sure you want to continue?</string>
+    <string name="set_as_primary">Set as primary</string>
+    <string name="make_as_primary">Make as primary</string>
+    <string name="key_type">Key type</string>
+    <string name="add_new_key">Add new key</string>
+    <string name="import_key">Import key</string>
+    <string name="import_private_key">Import private key</string>
+    <string name="download_key">Download key</string>
+    <string name="download_key_question">Do you want to download the public key or the private key?</string>
+    <string name="private_key">Private key</string>
+    <string name="public_key">Public key</string>
+    <string name="enter_your_password_to_continue">Please enter your account password to continue.</string>
+    <string name="type_ctemplar_to_confirm">Please type CTEMPLAR to confirm.</string>
+    <string name="generate_keys">Generate keys</string>
+    <string name="import_private_key_description">Are you sure to import the private key? Please be ensure the private key is secure.</string>
+    <string name="select_private_key_to_impport">Please select a private key to import</string>
+    <string name="add_key">Add key</string>
+    <string name="select_mailbox_for_new_key">Please select a mailbox that you want to add new key</string>
+    <string name="select_mailbox_for_import_key">Please select a mailbox that you want to import key</string>
+    <string name="select_key_type">Please select a key type</string>
+    <string name="download">Download</string>
+    <string name="remove">Remove</string>
+    <string name="operation_failed">Operation failed</string>
+    <string name="yes_iam_sure">Yes, I am sure</string>
+    <string name="delete_key_title">Are you sure to delete this key?</string>
+    <string name="delete_key_description">After deleted this key, you will not be able to decrypt any message that was encrypted with this key. It may lead to data loss.</string>
+    <string name="ecc_default">ECC (Default)</string>
+    <string name="add_new_key_message">Key has been added successfully</string>
     <string name="your_public_key_saved">Your PGP Public Key saved to Downloads</string>
     <string name="your_private_key_saved">Your PGP Private Key saved to Downloads</string>
+
+    <!-- Deprecated -->
+    <string name="download_public_key">Download public key (4096 Bit)</string>
+    <string name="download_private_key">Download private key (4096 Bit)</string>
 
     <!-- UPGRADE TO PRIME -->
     <string name="title_upgrade_to_prime">Upgrade to Prime</string>
@@ -478,14 +516,44 @@
     <string name="whitelist">Whitelist</string>
     <string name="blacklist">Blacklist</string>
 
-    <string-array name="filter_parameter_list">
-        <item>subject</item>
-        <item>sender</item>
+    <string-array name="filter_parameter_entries">
+        <item>Subject</item>
+        <item>Sender</item>
+        <item>Recipient</item>
+        <item>Header</item>
     </string-array>
 
-    <string-array name="filter_condition_list">
+    <string-array name="filter_parameter_values">
+        <item>subject</item>
+        <item>sender</item>
+        <item>recipient</item>
+        <item>header</item>
+    </string-array>
+
+    <string-array name="filter_condition_entries">
+        <item>Contains</item>
+        <item>Does Not Contain</item>
+        <item>Startswith</item>
+        <item>Does Not Startswith</item>
+        <item>Endswith</item>
+        <item>Does Not Endswith</item>
+        <item>Exactly</item>
+        <item>Does Not Exactly Match</item>
+        <item>Match</item>
+        <item>Does Not Match</item>
+    </string-array>
+
+    <string-array name="filter_condition_values">
         <item>contains</item>
+        <item>not_contains</item>
         <item>startswith</item>
+        <item>not_startswith</item>
+        <item>endswith</item>
+        <item>not_endswith</item>
+        <item>exactly</item>
+        <item>not_exactly</item>
+        <item>pattern</item>
+        <item>not_pattern</item>
     </string-array>
 
     <string-array name="auto_lock_time">
@@ -513,11 +581,13 @@
         <item>Auto (detect)</item>
         <item>English</item>
         <item>Français</item>
+        <item>Polski</item>
         <item>Português</item>
         <item>Deutsche</item>
         <item>Italiano</item>
         <item>عربى</item>
         <item>中文</item>
+        <item>Română</item>
         <item>Русский</item>
         <item>Українська</item>
     </string-array>
@@ -526,11 +596,13 @@
         <item>auto</item>
         <item>en</item>
         <item>fr</item>
+        <item>pl</item>
         <item>pt</item>
         <item>de</item>
         <item>it</item>
         <item>ar</item>
         <item>zh</item>
+        <item>ro</item>
         <item>ru</item>
         <item>uk</item>
     </string-array>

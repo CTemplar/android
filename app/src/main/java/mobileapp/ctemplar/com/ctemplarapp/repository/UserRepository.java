@@ -18,40 +18,45 @@ import mobileapp.ctemplar.com.ctemplarapp.net.request.AutoSaveContactEnabledRequ
 import mobileapp.ctemplar.com.ctemplarapp.net.request.CaptchaVerifyRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.ChangePasswordRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.CheckUsernameRequest;
-import mobileapp.ctemplar.com.ctemplarapp.net.request.ContactsEncryptionRequest;
-import mobileapp.ctemplar.com.ctemplarapp.net.request.CreateMailboxRequest;
-import mobileapp.ctemplar.com.ctemplarapp.net.request.CustomFilterRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.DarkModeRequest;
-import mobileapp.ctemplar.com.ctemplarapp.net.request.DefaultMailboxRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.DisableLoadingImagesRequest;
-import mobileapp.ctemplar.com.ctemplarapp.net.request.EmptyFolderRequest;
-import mobileapp.ctemplar.com.ctemplarapp.net.request.EnabledMailboxRequest;
-import mobileapp.ctemplar.com.ctemplarapp.net.request.MarkMessageAsReadRequest;
-import mobileapp.ctemplar.com.ctemplarapp.net.request.MarkMessageIsStarredRequest;
-import mobileapp.ctemplar.com.ctemplarapp.net.request.MoveToFolderRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.NotificationEmailRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.PublicKeysRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.RecoverPasswordRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.RecoveryEmailRequest;
-import mobileapp.ctemplar.com.ctemplarapp.net.request.SendMessageRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SignInRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SignUpRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SignatureRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SubjectEncryptedRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.UpdateReportBugsRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.contacts.ContactsEncryptionRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.filters.EmailFilterRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.folders.EmptyFolderRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.folders.MoveToFolderRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.mailboxes.CreateMailboxKeyRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.mailboxes.CreateMailboxRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.mailboxes.DefaultMailboxRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.mailboxes.DeleteMailboxKeyRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.mailboxes.EnabledMailboxRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.mailboxes.UpdateMailboxPrimaryKeyRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.messages.MarkMessageAsReadRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.messages.MarkMessageIsStarredRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.messages.SendMessageRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.AddFirebaseTokenResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.CaptchaResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.CaptchaVerifyResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.CheckUsernameResponse;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.KeyResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.RecoverPasswordResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.SignInResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.SignUpResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.domains.DomainsResponse;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.filters.FilterResult;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.filters.FiltersResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.filters.EmailFilterResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.filters.EmailFilterResult;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.keys.KeysResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.mailboxes.MailboxKeyResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.mailboxes.MailboxKeysResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.mailboxes.MailboxResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.mailboxes.MailboxesResponse;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.mailboxes.MailboxesResult;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.EmptyFolderResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.MessageAttachment;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.MessagesResponse;
@@ -63,6 +68,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.WhiteListContact;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.whiteBlackList.BlackListResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.whiteBlackList.WhiteListResponse;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
+import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxKeyEntity;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
@@ -205,25 +211,40 @@ public class UserRepository {
         FirebaseMessaging.getInstance().deleteToken().addOnFailureListener(Timber::e);
     }
 
-    public void saveMailboxes(List<MailboxesResult> mailboxes) {
-        if (mailboxes != null && mailboxes.size() > 0) {
-            for (int i = 0; i < mailboxes.size(); ++i) {
-                MailboxesResult result = mailboxes.get(i);
-
-                MailboxEntity entity = new MailboxEntity();
-                entity.setId(result.getId());
-                entity.setDefault(result.isDefault());
-                entity.setDisplayName(result.getDisplayName());
-                entity.setEmail(result.getEmail());
-                entity.setEnabled(result.isEnabled());
-                entity.setFingerprint(result.getFingerprint());
-                entity.setPrivateKey(result.getPrivateKey());
-                entity.setPublicKey(result.getPublicKey());
-                entity.setSignature(result.getSignature());
-
-                CTemplarApp.getAppDatabase().mailboxDao().save(entity);
-            }
+    public void saveMailbox(MailboxEntity mailbox) {
+        if (mailbox == null) {
+            Timber.e("Mailbox is null");
+            return;
         }
+        CTemplarApp.getAppDatabase().mailboxDao().save(mailbox);
+    }
+
+    public void saveMailboxes(List<MailboxEntity> mailboxes) {
+        if (mailboxes == null || mailboxes.size() == 0) {
+            Timber.e("Mailboxes is null");
+            return;
+        }
+        MailboxDao mailboxDao = CTemplarApp.getAppDatabase().mailboxDao();
+        mailboxDao.deleteAll();
+        mailboxDao.saveAll(mailboxes);
+    }
+
+    public void saveMailboxKey(MailboxKeyEntity mailboxKey) {
+        if (mailboxKey == null) {
+            Timber.e("MailboxKey is null");
+            return;
+        }
+        CTemplarApp.getAppDatabase().mailboxKeyDao().save(mailboxKey);
+    }
+
+    public void saveMailboxKeys(List<MailboxKeyEntity> mailboxKeys) {
+        if (mailboxKeys == null || mailboxKeys.size() == 0) {
+            Timber.e("Mailbox keys is null");
+            return;
+        }
+        MailboxKeyDao mailboxKeyDao = CTemplarApp.getAppDatabase().mailboxKeyDao();
+        mailboxKeyDao.deleteAll();
+        mailboxKeyDao.saveAll(mailboxKeys);
     }
 
     // Requests
@@ -335,8 +356,26 @@ public class UserRepository {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<MailboxesResponse> getMailboxesList(int limit, int offset) {
+    public Observable<MailboxesResponse> getMailboxes(int limit, int offset) {
         return service.getMailboxes(limit, offset)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public Single<MailboxKeysResponse> getMailboxKeys(int limit, int offset) {
+        return service.getMailboxKeys(limit, offset)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public Single<Response<MailboxKeyResponse>> createMailboxKey(CreateMailboxKeyRequest request) {
+        return service.createMailboxKey(request)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public Single<Response<Void>> deleteMailboxKey(long id, DeleteMailboxKeyRequest request) {
+        return service.deleteMailboxKey(id, request)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
@@ -417,26 +456,26 @@ public class UserRepository {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<KeyResponse> getEmailPublicKeys(PublicKeysRequest request) {
+    public Observable<KeysResponse> getEmailPublicKeys(PublicKeysRequest request) {
         return service.getKeys(request)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<FiltersResponse> getFilterList() {
+    public Observable<EmailFilterResponse> getFilterList() {
         return service.getFilterList()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<FilterResult> createFilter(CustomFilterRequest customFilterRequest) {
-        return service.createFilter(customFilterRequest)
+    public Observable<EmailFilterResult> createFilter(EmailFilterRequest emailFilterRequest) {
+        return service.createFilter(emailFilterRequest)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<FilterResult> updateFilter(long id, CustomFilterRequest customFilterRequest) {
-        return service.updateFilter(id, customFilterRequest)
+    public Observable<EmailFilterResult> updateFilter(long id, EmailFilterRequest emailFilterRequest) {
+        return service.updateFilter(id, emailFilterRequest)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
@@ -483,7 +522,7 @@ public class UserRepository {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<MailboxesResult> updateDefaultMailbox(
+    public Observable<MailboxResponse> updateDefaultMailbox(
             long mailboxId,
             DefaultMailboxRequest request
     ) {
@@ -492,7 +531,7 @@ public class UserRepository {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<MailboxesResult> updateEnabledMailbox(
+    public Observable<MailboxResponse> updateEnabledMailbox(
             long mailboxId,
             EnabledMailboxRequest request
     ) {
@@ -501,8 +540,14 @@ public class UserRepository {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<Response<MailboxesResult>> createMailbox(CreateMailboxRequest request) {
+    public Single<Response<MailboxResponse>> createMailbox(CreateMailboxRequest request) {
         return service.createMailbox(request)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public Single<Response<Void>> updateMailboxPrimaryKey(UpdateMailboxPrimaryKeyRequest request) {
+        return service.updateMailboxPrimaryKey(request)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
@@ -594,7 +639,7 @@ public class UserRepository {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<MailboxesResult> updateSignature(long mailboxId, SignatureRequest request) {
+    public Observable<MailboxResponse> updateSignature(long mailboxId, SignatureRequest request) {
         return service.updateSignature(mailboxId, request)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());

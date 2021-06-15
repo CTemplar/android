@@ -13,7 +13,7 @@ import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
-import mobileapp.ctemplar.com.ctemplarapp.net.request.EditFolderRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.folders.EditFolderRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.HttpErrorResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.folders.FoldersResult;
 import mobileapp.ctemplar.com.ctemplarapp.repository.ManageFoldersRepository;

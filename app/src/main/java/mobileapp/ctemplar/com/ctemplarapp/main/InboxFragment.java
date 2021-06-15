@@ -6,10 +6,12 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Looper;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -310,7 +312,9 @@ public class InboxFragment extends BaseFragment
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_filter:
-                dialogFragment.show(getParentFragmentManager(), null);
+                if (!dialogFragment.isAdded()) {
+                    dialogFragment.show(getParentFragmentManager(), null);
+                }
                 return true;
             case R.id.action_search:
                 return true;

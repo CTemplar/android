@@ -149,11 +149,10 @@ public class Contact {
         Contact contact = new Contact();
         contact.setId(entity.getId());
         contact.setEncryptedData(entity.getEncryptedData());
-        if (entity.isEncrypted) {
+        if (entity.isEncrypted()) {
             String encryptedData = entity.getEncryptedData();
             String decryptedData = EncryptUtils.decryptData(encryptedData);
-            EncryptContact decryptedContact = GENERAL_GSON.fromJson(decryptedData,
-                    EncryptContact.class);
+            EncryptContact decryptedContact = GENERAL_GSON.fromJson(decryptedData, EncryptContact.class);
             if (decryptedContact == null) {
                 return contact;
             }
@@ -178,23 +177,22 @@ public class Contact {
         return contact;
     }
 
-    @NonNull
     public static ContactEntity fromContactDataToEntity(@Nullable ContactData contactData) {
         if (contactData == null) {
-            return new ContactEntity();
+            return null;
         }
-        ContactEntity contactEntity = new ContactEntity();
-        contactEntity.setId(contactData.getId());
-        contactEntity.setEmail(contactData.getEmail());
-        contactEntity.setName(contactData.getName());
-        contactEntity.setAddress(contactData.getAddress());
-        contactEntity.setNote(contactData.getNote());
-        contactEntity.setPhone(contactData.getPhone());
-        contactEntity.setProvider(contactData.getProvider());
-        contactEntity.setPhone2(contactData.getPhone2());
-        contactEntity.setEncrypted(contactData.isEncrypted());
-        contactEntity.setEncryptedData(contactData.getEncryptedData());
-        return contactEntity;
+        return new ContactEntity(
+                contactData.getId(),
+                contactData.getEmail(),
+                contactData.getName(),
+                contactData.getAddress(),
+                contactData.getNote(),
+                contactData.getPhone(),
+                contactData.getPhone2(),
+                contactData.getProvider(),
+                contactData.isEncrypted(),
+                contactData.getEncryptedData()
+        );
     }
 
     @NonNull

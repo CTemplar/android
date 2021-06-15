@@ -54,6 +54,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.folders.FoldersResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.folders.FoldersResult;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import mobileapp.ctemplar.com.ctemplarapp.settings.SettingsActivity;
+import mobileapp.ctemplar.com.ctemplarapp.settings.keys.MailboxKeyViewModel;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EncryptUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.LocaleUtils;
@@ -79,6 +80,7 @@ import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderN
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     private static final int CUSTOM_FOLDER_STEP = 10;
+    private final List<FoldersResult> customFoldersListAll = new ArrayList<>();
 
     private FrameLayout contentContainer;
     private NavigationView navigationView;
@@ -86,7 +88,6 @@ public class MainActivity extends AppCompatActivity
 
     private MainActivityViewModel mainModel;
     private List<FoldersResult> customFoldersList;
-    private List<FoldersResult> customFoldersListAll = new ArrayList<>();
     private String toggleFolder;
     private int customFoldersShowCount = 3;
     private boolean isTablet;
@@ -98,12 +99,7 @@ public class MainActivity extends AppCompatActivity
     private MainFragment mainFragment;
     private Handler handler = new Handler();
     private AppCompatDelegate baseContextWrappingDelegate;
-
-//    @Override
-//    protected void attachBaseContext(Context newBase) {
-//        Context context = LocaleUtils.getContextWrapper(newBase);
-//        super.attachBaseContext(context);
-//    }
+    private MailboxKeyViewModel mailboxKeyViewModel;
 
     @NonNull
     @Override
@@ -147,6 +143,7 @@ public class MainActivity extends AppCompatActivity
         showFragment(mainFragment);
 
         mainModel = new ViewModelProvider(this).get(MainActivityViewModel.class);
+        mailboxKeyViewModel = new ViewModelProvider(this).get(MailboxKeyViewModel.class);
         mainModel.getActionsStatus().observe(this, this::handleMainActions);
         mainModel.getCurrentFolder().observe(this, folder -> {
             showFragmentByFolder(folder);
@@ -625,7 +622,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void loadUserInfo() {
-        mainModel.getMailboxes(20, 0);
+        mailboxKeyViewModel.getMailboxes(20, 0);
+        mailboxKeyViewModel.getMailboxKeys(20, 0);
         mainModel.getUserMyselfInfo();
     }
 
@@ -657,8 +655,8 @@ public class MainActivity extends AppCompatActivity
 
             TextView navUsername = headerView.findViewById(R.id.main_activity_username);
             TextView navEmail = headerView.findViewById(R.id.main_activity_email);
-            navUsername.setText(defaultMailbox.displayName);
-            navEmail.setText(defaultMailbox.email);
+            navUsername.setText(defaultMailbox.getDisplayName());
+            navEmail.setText(defaultMailbox.getEmail());
         }
     }
 

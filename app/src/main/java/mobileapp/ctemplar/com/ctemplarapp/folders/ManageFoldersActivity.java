@@ -35,7 +35,7 @@ import mobileapp.ctemplar.com.ctemplarapp.utils.AccountTypeManager;
 
 public class ManageFoldersActivity extends BaseActivity {
     private ManageFoldersViewModel manageFoldersModel;
-    private ManageFoldersAdapter manageFoldersAdapter;
+    private final ManageFoldersAdapter manageFoldersAdapter = new ManageFoldersAdapter();
     private boolean isPrime = false;
 
     @BindView(R.id.activity_manage_folders_recycler_view)
@@ -118,7 +118,7 @@ public class ManageFoldersActivity extends BaseActivity {
             frameCompose.setVisibility(View.GONE);
             footerAddFolder.setVisibility(View.VISIBLE);
         }
-        manageFoldersAdapter = new ManageFoldersAdapter(foldersResults);
+        manageFoldersAdapter.setItems(foldersResults);
         recyclerView.setAdapter(manageFoldersAdapter);
     }
 
@@ -135,11 +135,12 @@ public class ManageFoldersActivity extends BaseActivity {
                 final FoldersResult deletedFolder = adapter.removeAt(deletedIndex);
 
                 new AlertDialog.Builder(ManageFoldersActivity.this)
-                        .setTitle(getResources().getString(R.string.txt_delete_folder_quest_title))
-                        .setMessage(getResources().getString(R.string.txt_delete_folder_quest_message))
-                        .setPositiveButton(getResources().getString(R.string.btn_contact_delete), (dialog, which) -> manageFoldersModel.deleteFolder(deletedFolder)
-                        )
-                        .setNeutralButton(getResources().getString(R.string.btn_cancel), (dialog, which) -> adapter.restoreItem(deletedIndex, deletedFolder))
+                        .setTitle(getString(R.string.txt_delete_folder_quest_title))
+                        .setMessage(getString(R.string.txt_delete_folder_quest_message))
+                        .setPositiveButton(getString(R.string.btn_delete).toUpperCase(),
+                                (dialog, which) -> manageFoldersModel.deleteFolder(deletedFolder))
+                        .setNeutralButton(getString(R.string.btn_cancel), (dialog, which)
+                                -> adapter.restoreItem(deletedIndex, deletedFolder))
                         .show();
             }
         };

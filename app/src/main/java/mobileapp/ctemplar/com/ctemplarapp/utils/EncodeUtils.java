@@ -1,7 +1,5 @@
 package mobileapp.ctemplar.com.ctemplarapp.utils;
 
-import android.text.TextUtils;
-
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -9,10 +7,11 @@ import java.util.List;
 import java.util.Random;
 
 import io.reactivex.Observable;
+import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import mobileapp.ctemplar.com.ctemplarapp.net.entity.PGPKeyEntity;
-import mobileapp.ctemplar.com.ctemplarapp.net.request.MailboxKey;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.mailboxes.MailboxKey;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import mobileapp.ctemplar.com.ctemplarapp.security.PGPManager;
 import timber.log.Timber;
@@ -58,10 +57,11 @@ public class EncodeUtils {
     }
 
     private static String generateSaltWithUsername(String username, String salt) {
-        if (TextUtils.isEmpty(username)) {
-            return "";
+        if (username == null) {
+            username = "";
         }
-        username = username.replaceAll("[^a-zA-Z]", "");
+        username = username.replaceAll("[^a-zA-Z ]", "");
+        username = username.isEmpty() ? "test" : username;
         if (salt.length() < MAX_SYMBOLS) {
             return generateSaltWithUsername(username, salt + username);
         } else {
@@ -121,10 +121,11 @@ public class EncodeUtils {
                     );
                 }
 
-                MailboxKey mailboxKey = new MailboxKey();
-                mailboxKey.setMailboxId(mailboxEntity.getId());
-                mailboxKey.setPrivateKey(pgpKeyEntity.getPrivateKey());
-                mailboxKey.setPublicKey(pgpKeyEntity.getPublicKey());
+                MailboxKey mailboxKey = new MailboxKey(
+                        mailboxEntity.getId(),
+                        pgpKeyEntity.getPrivateKey(),
+                        pgpKeyEntity.getPublicKey()
+                );
                 mailboxKeys.add(mailboxKey);
             }
 
@@ -133,12 +134,19 @@ public class EncodeUtils {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public static Observable<PGPKeyEntity> generateAdditionalMailbox(
+    public static Single<PGPKeyEntity> generateKeys(
             final String emailAddress,
-            final String password
+            final String password,
+            final boolean ECC
     ) {
-        return Observable.fromCallable(() -> PGPManager.generateECCKeys(emailAddress, password))
-                .subscribeOn(Schedulers.computation())
-                .observeOn(AndroidSchedulers.mainThread());
+        if (ECC) {
+            return Single.fromCallable(() -> PGPManager.generateECCKeys(emailAddress, password))
+                    .subscribeOn(Schedulers.computation())
+                    .observeOn(AndroidSchedulers.mainThread());
+        } else {
+            return Single.fromCallable(() -> PGPManager.generateKeys(emailAddress, password))
+                    .subscribeOn(Schedulers.computation())
+                    .observeOn(AndroidSchedulers.mainThread());
+        }
     }
 }
