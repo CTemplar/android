@@ -4,7 +4,7 @@ import androidx.annotation.Nullable;
 
 import java.util.Date;
 
-import mobileapp.ctemplar.com.ctemplarapp.net.request.EncryptionMessageRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.messages.EncryptionMessageRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.EncryptionMessageResponse;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.EncryptionMessageEntity;
 

@@ -43,7 +43,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import mobileapp.ctemplar.com.ctemplarapp.ActivityInterface;
@@ -58,8 +57,8 @@ import mobileapp.ctemplar.com.ctemplarapp.message.dialog.EncryptMessageDialogFra
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.net.entity.AttachmentsEntity;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.PublicKeysRequest;
-import mobileapp.ctemplar.com.ctemplarapp.net.request.SendMessageRequest;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.KeyResult;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.messages.SendMessageRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.keys.KeyResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.MyselfResult;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.Contact;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
@@ -118,7 +117,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
     private boolean userIsPrime;
     private long currentMessageId = -1;
     private Long parentId;
-    private List<String> publicKeyList = new ArrayList<>();
+    private final List<String> publicKeyList = new ArrayList<>();
 
     // COMPOSE OPTIONS
     private final List<String> mailboxAddresses = new ArrayList<>();
@@ -539,16 +538,17 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
                 this::handleContactsList);
         contactsViewModel.getContacts(200, 0);
         // Load keys before sending message
-        sendModel.getKeyResponse().observe(getViewLifecycleOwner(), keyResponse -> {
-            if (keyResponse != null && keyResponse.getKeyResult() != null && keyResponse.getKeyResult().length > 0) {
-                publicKeyList = new ArrayList<>();
-                for (KeyResult keyResult : keyResponse.getKeyResult()) {
-                    String emailPublicKey = keyResult.getPublicKey();
-                    publicKeyList.add(emailPublicKey);
-                }
-                draftMessage = false;
-                sendMessage();
+        sendModel.getKeyResponse().observe(getViewLifecycleOwner(), keysResponse -> {
+            if (keysResponse == null || keysResponse.getKeys() == null) {
+                Timber.e("keyResponse is null");
+                return;
             }
+            for (KeyResponse keyResponse : keysResponse.getKeys()) {
+                String emailPublicKey = keyResponse.getPublicKey();
+                publicKeyList.add(emailPublicKey);
+            }
+            draftMessage = false;
+            sendMessage();
         });
 
         sendModel.getGrabAttachmentStatus().observe(getViewLifecycleOwner(), aBoolean -> {

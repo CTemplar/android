@@ -30,12 +30,11 @@ import mobileapp.ctemplar.com.ctemplarapp.DialogState;
 import mobileapp.ctemplar.com.ctemplarapp.SingleLiveEvent;
 import mobileapp.ctemplar.com.ctemplarapp.executor.QueuedExecutor;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
-import mobileapp.ctemplar.com.ctemplarapp.net.request.EmptyFolderRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SignInRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.folders.EmptyFolderRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.ResponseMessagesData;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.SignInResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.folders.FoldersResponse;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.mailboxes.MailboxesResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.EmptyFolderResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.MessagesResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.MessagesResult;
@@ -464,44 +463,6 @@ public class MainActivityViewModel extends AndroidViewModel {
                         searchMessagesResponse.postValue(new ResponseMessagesData(
                                 Collections.emptyList(), offset));
                         Timber.e(e);
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
-    }
-
-    public void getMailboxes(int limit, int offset) {
-        userRepository.getMailboxesList(limit, offset)
-                .subscribe(new Observer<MailboxesResponse>() {
-                    @Override
-                    public void onSubscribe(@NotNull Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(@NotNull MailboxesResponse mailboxesResponse) {
-                        if (mailboxesResponse.getTotalCount() > 0) {
-                            userRepository.saveMailboxes(mailboxesResponse.getMailboxesList());
-                        }
-                        responseStatus.postValue(ResponseStatus.RESPONSE_NEXT_MAILBOXES);
-                    }
-
-                    @Override
-                    public void onError(@NotNull Throwable e) {
-                        if (e instanceof HttpException) {
-                            int code = ((HttpException) e).code();
-                            switch (code) {
-                                case 401:
-                                case 403:
-                                    signIn();
-                                    break;
-                            }
-                        }
-                        responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
-                        Timber.e(e.getCause());
                     }
 
                     @Override

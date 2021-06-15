@@ -49,8 +49,6 @@
             android:layout_height="wrap_content"
             android:padding="4dp"
             android:src="@drawable/icon_message_send"
-            android:background="@drawable/state_pressed_ripple"
-            android:layout_marginRight="12dp"
             android:layout_marginEnd="12dp"
             android:contentDescription="Send message"
             app:tint="?android:textColorSecondary"

@@ -27,10 +27,10 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
-import mobileapp.ctemplar.com.ctemplarapp.net.request.EncryptionMessageRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.messages.EncryptionMessageRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.PublicKeysRequest;
-import mobileapp.ctemplar.com.ctemplarapp.net.request.SendMessageRequest;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.KeyResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.messages.SendMessageRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.keys.KeysResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.EncryptionMessageResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.MessageAttachment;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.MessagesResult;
@@ -67,7 +67,7 @@ public class SendMessageActivityViewModel extends ViewModel {
     private MutableLiveData<MessagesResult> messagesResult = new MutableLiveData<>();
     private MutableLiveData<MessagesResult> createMessageResponse = new MutableLiveData<>();
     private MutableLiveData<ResponseStatus> createMessageStatus = new MutableLiveData<>();
-    private MutableLiveData<KeyResponse> keyResponse = new MutableLiveData<>();
+    private MutableLiveData<KeysResponse> keyResponse = new MutableLiveData<>();
     private MutableLiveData<MessagesResult> messageEncryptionResult = new MutableLiveData<>();
     private MutableLiveData<MyselfResponse> myselfResponse = new MutableLiveData<>();
     private MutableLiveData<MessageProvider> openMessageResponse = new MutableLiveData<>();
@@ -110,7 +110,7 @@ public class SendMessageActivityViewModel extends ViewModel {
         return responseStatus;
     }
 
-    public LiveData<KeyResponse> getKeyResponse() {
+    public LiveData<KeysResponse> getKeyResponse() {
         return keyResponse;
     }
 
@@ -301,15 +301,15 @@ public class SendMessageActivityViewModel extends ViewModel {
 
     public void getEmailPublicKeys(PublicKeysRequest request) {
         userRepository.getEmailPublicKeys(request)
-                .subscribe(new Observer<KeyResponse>() {
+                .subscribe(new Observer<KeysResponse>() {
                     @Override
                     public void onSubscribe(@NotNull Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(@NotNull KeyResponse keyResponse) {
-                        SendMessageActivityViewModel.this.keyResponse.postValue(keyResponse);
+                    public void onNext(@NotNull KeysResponse keysResponse) {
+                        SendMessageActivityViewModel.this.keyResponse.postValue(keysResponse);
                     }
 
                     @Override

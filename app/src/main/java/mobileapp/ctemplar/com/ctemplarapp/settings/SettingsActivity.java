@@ -36,15 +36,16 @@ import mobileapp.ctemplar.com.ctemplarapp.BaseActivity;
 import mobileapp.ctemplar.com.ctemplarapp.BuildConfig;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.R;
-import mobileapp.ctemplar.com.ctemplarapp.filters.FiltersActivity;
+import mobileapp.ctemplar.com.ctemplarapp.settings.filters.FiltersActivity;
 import mobileapp.ctemplar.com.ctemplarapp.folders.ManageFoldersActivity;
-import mobileapp.ctemplar.com.ctemplarapp.mailboxes.MailboxesActivity;
+import mobileapp.ctemplar.com.ctemplarapp.settings.mailboxes.MailboxesActivity;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.MyselfResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.MyselfResult;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.SettingsResponse;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserStore;
+import mobileapp.ctemplar.com.ctemplarapp.settings.keys.KeysActivity;
 import mobileapp.ctemplar.com.ctemplarapp.utils.DateUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EncodeUtils;
@@ -59,8 +60,8 @@ public class SettingsActivity extends BaseActivity {
 
     private static SettingsViewModel settingsModel;
 
-    private static UserRepository userRepository = CTemplarApp.getUserRepository();
-    private static UserStore userStore = CTemplarApp.getUserStore();
+    private static final UserRepository userRepository = CTemplarApp.getUserRepository();
+    private static final UserStore userStore = CTemplarApp.getUserStore();
 
     private static PreferenceScreen recoveryEmailPreferenceScreen;
     private static Preference storageLimitPreference;
