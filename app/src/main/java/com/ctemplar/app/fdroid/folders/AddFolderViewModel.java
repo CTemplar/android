@@ -10,7 +10,7 @@ import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 import com.ctemplar.app.fdroid.CTemplarApp;
 import com.ctemplar.app.fdroid.net.ResponseStatus;
-import com.ctemplar.app.fdroid.net.request.AddFolderRequest;
+import com.ctemplar.app.fdroid.net.request.folders.AddFolderRequest;
 import com.ctemplar.app.fdroid.repository.ManageFoldersRepository;
 import okhttp3.ResponseBody;
 

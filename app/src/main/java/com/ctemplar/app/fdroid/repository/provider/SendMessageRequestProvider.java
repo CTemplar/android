@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.ctemplar.app.fdroid.net.request.SendMessageRequest;
+import com.ctemplar.app.fdroid.net.request.messages.SendMessageRequest;
 
 public class SendMessageRequestProvider {
     @SerializedName("sender")

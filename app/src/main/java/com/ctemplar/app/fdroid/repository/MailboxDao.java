@@ -32,7 +32,7 @@ public interface MailboxDao {
     void save(MailboxEntity mailboxEntity);
 
     @Insert(onConflict = REPLACE)
-    void saveAll(List<MailboxEntity> mailboxes);
+    void saveAll(List<MailboxEntity> mailboxEntities);
 
     @Delete
     void delete(MailboxEntity mailbox);

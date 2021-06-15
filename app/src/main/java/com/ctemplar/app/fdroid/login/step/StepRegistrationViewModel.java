@@ -7,18 +7,6 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.google.gson.JsonSyntaxException;
-
-import org.jetbrains.annotations.NotNull;
-
-import java.io.IOException;
-
-import io.reactivex.Observable;
-import io.reactivex.Observer;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Function;
-import io.reactivex.schedulers.Schedulers;
 import com.ctemplar.app.fdroid.CTemplarApp;
 import com.ctemplar.app.fdroid.SingleLiveEvent;
 import com.ctemplar.app.fdroid.net.ResponseStatus;
@@ -35,6 +23,18 @@ import com.ctemplar.app.fdroid.repository.UserRepository;
 import com.ctemplar.app.fdroid.utils.EditTextUtils;
 import com.ctemplar.app.fdroid.utils.EncodeUtils;
 import com.ctemplar.app.fdroid.workers.WorkersHelper;
+import com.google.gson.JsonSyntaxException;
+
+import org.jetbrains.annotations.NotNull;
+
+import java.io.IOException;
+
+import io.reactivex.Observable;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Function;
+import io.reactivex.schedulers.Schedulers;
 import retrofit2.HttpException;
 import retrofit2.Response;
 import timber.log.Timber;
@@ -159,50 +159,54 @@ public class StepRegistrationViewModel extends AndroidViewModel {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .flatMap((Function<PGPKeyEntity, Observable<SignUpResponse>>) pgpKeyEntity -> {
-                    generatePGPKeys(pgpKeyEntity);
-                    hashPassword();
+                    signUpRequest.setPrivateKey(pgpKeyEntity.getPrivateKey());
+                    signUpRequest.setPublicKey(pgpKeyEntity.getPublicKey());
+                    signUpRequest.setFingerprint(pgpKeyEntity.getFingerprint());
+                    signUpRequest.setPasswordHashed(EncodeUtils.generateHash(
+                            signUpRequest.getUsername(), signUpRequest.getPassword()));
                     return userRepository.signUp(signUpRequest);
-                }).subscribe(new Observer<SignUpResponse>() {
+                })
+                .subscribe(new Observer<SignUpResponse>() {
 
-            @Override
-            public void onSubscribe(@NotNull Disposable d) {
+                    @Override
+                    public void onSubscribe(@NotNull Disposable d) {
 
-            }
+                    }
 
-            @Override
-            public void onNext(@NotNull SignUpResponse signUpResponse) {
-                userRepository.saveUsername(signUpRequest.getUsername());
-                userRepository.saveUserToken(signUpResponse.getToken());
-                userRepository.saveUserPassword(signUpRequest.getPassword());
-                responseStatus.postValue(ResponseStatus.RESPONSE_NEXT_STEP_EMAIL);
-                WorkersHelper.setupForceRefreshTokenWork(getApplication());
-            }
+                    @Override
+                    public void onNext(@NotNull SignUpResponse signUpResponse) {
+                        userRepository.saveUsername(signUpRequest.getUsername());
+                        userRepository.saveUserToken(signUpResponse.getToken());
+                        userRepository.saveUserPassword(signUpRequest.getPassword());
+                        responseStatus.postValue(ResponseStatus.RESPONSE_NEXT_STEP_EMAIL);
+                        WorkersHelper.setupForceRefreshTokenWork(getApplication());
+                    }
 
-            @Override
-            public void onError(@NotNull Throwable e) {
-                responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
-                if (e instanceof HttpException) {
-                    Response<?> errorResponse = ((HttpException) e).response();
-                    if (errorResponse != null && errorResponse.errorBody() != null) {
-                        try {
-                            String errorBody = errorResponse.errorBody().string();
-                            HttpErrorResponse httpErrorResponse = GENERAL_GSON
-                                    .fromJson(errorBody, HttpErrorResponse.class);
-                            responseError.postValue(httpErrorResponse.getError().getError());
-                        } catch (IOException | JsonSyntaxException ex) {
-                            Timber.e(ex, "Can't parse signUp error");
+                    @Override
+                    public void onError(@NotNull Throwable e) {
+                        responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
+                        if (e instanceof HttpException) {
+                            Response<?> errorResponse = ((HttpException) e).response();
+                            if (errorResponse != null && errorResponse.errorBody() != null) {
+                                try {
+                                    String errorBody = errorResponse.errorBody().string();
+                                    HttpErrorResponse httpErrorResponse = GENERAL_GSON
+                                            .fromJson(errorBody, HttpErrorResponse.class);
+                                    responseError.postValue(httpErrorResponse.getError().getError());
+                                } catch (IOException | JsonSyntaxException ex) {
+                                    Timber.e(ex, "Can't parse signUp error");
+                                }
+                            }
+                        } else {
+                            responseError.postValue("SignUp error");
                         }
                     }
-                } else {
-                    responseError.postValue("SignUp error");
-                }
-            }
 
-            @Override
-            public void onComplete() {
+                    @Override
+                    public void onComplete() {
 
-            }
-        });
+                    }
+                });
     }
 
     public void getCaptcha() {
@@ -253,16 +257,5 @@ public class StepRegistrationViewModel extends AndroidViewModel {
 
                     }
                 });
-    }
-
-    private void generatePGPKeys(PGPKeyEntity pgpKeyEntity) {
-        signUpRequest.setPrivateKey(pgpKeyEntity.getPrivateKey());
-        signUpRequest.setPublicKey(pgpKeyEntity.getPublicKey());
-        signUpRequest.setFingerprint(pgpKeyEntity.getFingerprint());
-    }
-
-    private void hashPassword() {
-        signUpRequest.setPasswordHashed(
-                EncodeUtils.generateHash(signUpRequest.getUsername(), signUpRequest.getPassword()));
     }
 }

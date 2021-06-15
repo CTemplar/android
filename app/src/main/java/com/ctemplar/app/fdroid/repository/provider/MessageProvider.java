@@ -531,6 +531,9 @@ public class MessageProvider {
     }
 
     public static MessageProvider fromMessageEntity(MessageEntity message, boolean decryptContent, boolean decryptSubject) {
+        if (message == null) {
+            return new MessageProvider();
+        }
         MessageProvider messageProvider = new MessageProvider();
         messageProvider.id = message.getId();
         messageProvider.encryptionMessage = EncryptionMessageProvider.fromEntityToProvider(message.getEncryptionMessage());

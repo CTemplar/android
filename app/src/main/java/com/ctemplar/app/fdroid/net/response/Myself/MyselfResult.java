@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.Date;
 
-import com.ctemplar.app.fdroid.net.response.mailboxes.MailboxesResult;
+import com.ctemplar.app.fdroid.net.response.mailboxes.MailboxResponse;
 
 public class MyselfResult {
     @SerializedName("id")
@@ -32,7 +32,7 @@ public class MyselfResult {
     private SettingsResponse settings;
 
     @SerializedName("mailboxes")
-    private MailboxesResult[] mailboxes;
+    private MailboxResponse[] mailboxes;
 
     @SerializedName("blacklist")
     private BlackListContact[] blacklist;
@@ -73,7 +73,7 @@ public class MyselfResult {
         return settings;
     }
 
-    public MailboxesResult[] getMailboxes() {
+    public MailboxResponse[] getMailboxes() {
         return mailboxes;
     }
 

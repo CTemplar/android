@@ -4,6 +4,8 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 
 import io.reactivex.Observable;
@@ -15,17 +17,17 @@ import com.ctemplar.app.fdroid.CTemplarApp;
 import com.ctemplar.app.fdroid.main.MainActivityActions;
 import com.ctemplar.app.fdroid.net.ResponseStatus;
 import com.ctemplar.app.fdroid.net.request.ChangePasswordRequest;
-import com.ctemplar.app.fdroid.net.request.MailboxKey;
+import com.ctemplar.app.fdroid.net.request.mailboxes.MailboxKey;
 import com.ctemplar.app.fdroid.repository.UserRepository;
 import com.ctemplar.app.fdroid.repository.entity.MailboxEntity;
 import com.ctemplar.app.fdroid.utils.EncodeUtils;
 import okhttp3.ResponseBody;
 
 public class ChangePasswordViewModel extends ViewModel {
-    private UserRepository userRepository;
-    private List<MailboxEntity> mailboxEntities;
-    private MutableLiveData<ResponseStatus> responseStatus = new MutableLiveData<>();
-    private MutableLiveData<MainActivityActions> actions = new MutableLiveData<>();
+    private final UserRepository userRepository;
+    private final List<MailboxEntity> mailboxEntities;
+    private final MutableLiveData<ResponseStatus> responseStatus = new MutableLiveData<>();
+    private final MutableLiveData<MainActivityActions> actions = new MutableLiveData<>();
 
     public ChangePasswordViewModel() {
         userRepository = CTemplarApp.getUserRepository();
@@ -62,17 +64,17 @@ public class ChangePasswordViewModel extends ViewModel {
                     return userRepository.changePassword(changePasswordRequest);
                 }).subscribe(new Observer<ResponseBody>() {
             @Override
-            public void onSubscribe(Disposable d) {
+            public void onSubscribe(@NotNull Disposable d) {
 
             }
 
             @Override
-            public void onNext(ResponseBody responseBody) {
+            public void onNext(@NotNull ResponseBody responseBody) {
                 responseStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
             }
 
             @Override
-            public void onError(Throwable e) {
+            public void onError(@NotNull Throwable e) {
                 responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
             }
 

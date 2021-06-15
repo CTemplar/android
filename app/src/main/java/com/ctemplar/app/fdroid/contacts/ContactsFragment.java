@@ -1,6 +1,5 @@
 package com.ctemplar.app.fdroid.contacts;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -14,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SearchView;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -28,21 +28,14 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 import butterknife.BindView;
-import butterknife.OnClick;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
 import com.ctemplar.app.fdroid.BaseFragment;
 import com.ctemplar.app.fdroid.R;
-import com.ctemplar.app.fdroid.main.MainActivityViewModel;
 import com.ctemplar.app.fdroid.main.RecycleDeleteSwiper;
 import com.ctemplar.app.fdroid.repository.entity.Contact;
+import com.ctemplar.app.fdroid.utils.EditTextUtils;
 import timber.log.Timber;
 
 public class ContactsFragment extends BaseFragment {
-    private ContactsViewModel contactsViewModel;
-    private ContactsAdapter contactsAdapter;
-
     @BindView(R.id.fragment_contact_recycler_view)
     RecyclerView recyclerView;
 
@@ -63,19 +56,29 @@ public class ContactsFragment extends BaseFragment {
         return R.layout.fragment_contact;
     }
 
+    private ContactsViewModel contactsViewModel;
+    private ContactsAdapter contactsAdapter;
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        FragmentActivity activity = getActivity();
+        if (activity == null) {
+            Timber.e("FragmentActivity is null");
+            return;
+        }
         setHasOptionsMenu(true);
+
+        contactsViewModel = new ViewModelProvider(activity).get(ContactsViewModel.class);
+        contactsAdapter = new ContactsAdapter();
+        recyclerView.setAdapter(contactsAdapter);
 
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(mLayoutManager);
-        setupSwiperForRecyclerView();
-
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(
-                recyclerView.getContext(), mLayoutManager.getOrientation());
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(activity,
+                mLayoutManager.getOrientation());
         recyclerView.addItemDecoration(dividerItemDecoration);
+        setupSwiperForRecyclerView();
 
         searchView.setIconifiedByDefault(false);
         searchView.clearFocus();
@@ -87,15 +90,12 @@ public class ContactsFragment extends BaseFragment {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                if (contactsAdapter != null) {
-                    contactsAdapter.filter(newText);
-                }
-                return false;
+                contactsAdapter.filter(newText);
+                return true;
             }
         });
+        frameCompose.setOnClickListener(v -> startAddContactActivity());
 
-
-        contactsViewModel = new ViewModelProvider(getActivity()).get(ContactsViewModel.class);
         contactsViewModel.getContactsResponse().observe(getViewLifecycleOwner(), this::handleContactsList);
         contactsViewModel.getContacts(200, 0);
     }
@@ -120,63 +120,29 @@ public class ContactsFragment extends BaseFragment {
         progressLayout.setVisibility(View.GONE);
         listEmptyLayout.setVisibility(View.GONE);
 
-        contactsAdapter = new ContactsAdapter(contactList);
-        contactsAdapter.getOnClickSubject()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new io.reactivex.Observer<Long>() {
-                    @Override
-                    public void onSubscribe(@NotNull Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(@NotNull Long id) {
-                        Activity activity = getActivity();
-                        if (activity != null) {
-                            Intent intent = new Intent(activity, EditContactActivity.class);
-                            intent.putExtra(EditContactActivity.ARG_ID, id);
-                            activity.startActivity(intent);
-                        }
-                    }
-
-                    @Override
-                    public void onError(@NotNull Throwable e) {
-                        Timber.e(e);
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
-
-        recyclerView.setAdapter(contactsAdapter);
+        contactsAdapter.setItems(contactList, searchView.getQuery().toString());
     }
 
     private void setupSwiperForRecyclerView() {
         RecycleDeleteSwiper swipeHandler = new RecycleDeleteSwiper(getActivity()) {
             @Override
-            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
-                final ContactsAdapter adapter = ContactsFragment.this.contactsAdapter;
-                if (adapter == null) {
-                    return;
-                }
-                final int deletedIndex = viewHolder.getAdapterPosition();
-                final Contact deletedContact =  adapter.removeAt(deletedIndex);
-                final String name = deletedContact.getName();
-                Snackbar snackbar = Snackbar.make(frameCompose, getResources().getString(R.string.txt_name_removed, name), Snackbar.LENGTH_LONG);
-                snackbar.setAction(getString(R.string.action_undo), view -> adapter.restoreItem(deletedContact, deletedIndex));
-                snackbar.addCallback(new BaseTransientBottomBar.BaseCallback<Snackbar>() {
-                    @Override
-                    public void onDismissed(Snackbar transientBottomBar, int event) {
-                        if (event != DISMISS_EVENT_ACTION) {
-                            contactsViewModel.deleteContact(deletedContact);
-                        }
-                    }
-                });
-                snackbar.setActionTextColor(Color.YELLOW);
-                snackbar.show();
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int viewType) {
+                final int deletedIndex = viewHolder.getBindingAdapterPosition();
+                final Contact deletedContact = contactsAdapter.removeAt(deletedIndex);
+                Snackbar.make(frameCompose, getString(R.string.txt_name_removed,
+                        deletedContact.getName()), Snackbar.LENGTH_LONG)
+                        .setAction(getString(R.string.action_undo), view
+                                -> contactsAdapter.restoreItem(deletedContact, deletedIndex))
+                        .addCallback(new BaseTransientBottomBar.BaseCallback<Snackbar>() {
+                            @Override
+                            public void onDismissed(Snackbar transientBottomBar, int event) {
+                                if (event != DISMISS_EVENT_ACTION) {
+                                    contactsViewModel.deleteContact(deletedContact);
+                                }
+                            }
+                        })
+                        .setActionTextColor(Color.YELLOW)
+                        .show();
             }
         };
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(swipeHandler);
@@ -190,19 +156,12 @@ public class ContactsFragment extends BaseFragment {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_add_contact) {
             startAddContactActivity();
-        } else {
-            return super.onOptionsItemSelected(item);
         }
-        return true;
-    }
-
-    @OnClick(R.id.fragment_contact_add_layout)
-    void onClickAdd() {
-        startAddContactActivity();
+        return super.onOptionsItemSelected(item);
     }
 
     private void startAddContactActivity() {

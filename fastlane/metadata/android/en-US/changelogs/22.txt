@@ -1,0 +1,3 @@
+* Polish and Romanian translations
+* Email filters improvements
+* Other improvements and fixes

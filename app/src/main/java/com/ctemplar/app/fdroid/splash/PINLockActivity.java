@@ -76,7 +76,7 @@ public class PINLockActivity extends BaseActivity {
 
         @Override
         public void onEmpty() {
-            //
+
         }
     };
 
@@ -142,11 +142,12 @@ public class PINLockActivity extends BaseActivity {
         long lastAttemptTimeDiff = (System.currentTimeMillis() - userStore.getLockLastAttemptTime()) / 1000;
 
         if (attemptsCount > ATTEMPTS_TOTAL_COUNT) {
+            userStore.setLockAttemptsCount(0);
             mainModel.logout();
             return true;
         }
 
-        if (attemptsCount % ATTEMPTS_COUNT == 0 && lastAttemptTimeDiff < ATTEMPTS_TIMEOUT) {
+        if (attemptsCount > 0 && attemptsCount % ATTEMPTS_COUNT == 0 && lastAttemptTimeDiff < ATTEMPTS_TIMEOUT) {
             keypadView.resetKeypadView();
             hintTextView.setText(getString(R.string.invalid_pin_timeout,
                     ATTEMPTS_TIMEOUT - lastAttemptTimeDiff));

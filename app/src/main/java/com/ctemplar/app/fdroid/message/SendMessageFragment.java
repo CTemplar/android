@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -42,7 +43,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import com.ctemplar.app.fdroid.ActivityInterface;
@@ -57,8 +57,8 @@ import com.ctemplar.app.fdroid.message.dialog.EncryptMessageDialogFragment;
 import com.ctemplar.app.fdroid.net.ResponseStatus;
 import com.ctemplar.app.fdroid.net.entity.AttachmentsEntity;
 import com.ctemplar.app.fdroid.net.request.PublicKeysRequest;
-import com.ctemplar.app.fdroid.net.request.SendMessageRequest;
-import com.ctemplar.app.fdroid.net.response.KeyResult;
+import com.ctemplar.app.fdroid.net.request.messages.SendMessageRequest;
+import com.ctemplar.app.fdroid.net.response.keys.KeyResponse;
 import com.ctemplar.app.fdroid.net.response.myself.MyselfResult;
 import com.ctemplar.app.fdroid.repository.entity.Contact;
 import com.ctemplar.app.fdroid.repository.entity.MailboxEntity;
@@ -117,7 +117,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
     private boolean userIsPrime;
     private long currentMessageId = -1;
     private Long parentId;
-    private List<String> publicKeyList = new ArrayList<>();
+    private final List<String> publicKeyList = new ArrayList<>();
 
     // COMPOSE OPTIONS
     private final List<String> mailboxAddresses = new ArrayList<>();
@@ -317,14 +317,6 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
             }
         }
 
-        String toEmail = EditTextUtils.getText(toEmailTextView);
-        if (toEmail.isEmpty()) {
-            toEmailTextView.requestFocus();
-        } else {
-            composeEditText.requestFocus();
-            composeEditText.setSelection(0);
-        }
-
         sendModel = new ViewModelProvider(getActivity()).get(SendMessageActivityViewModel.class);
         contactsViewModel = new ViewModelProvider(getActivity()).get(ContactsViewModel.class);
         if (currentMessageId == -1) {
@@ -346,13 +338,6 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
             }
         }
 
-        MailboxEntity defaultMailbox = EncryptUtils.getDefaultMailbox();
-        boolean isSignatureEnabled = sendModel.isSignatureEnabled();
-        if (defaultMailbox != null && isSignatureEnabled) {
-            String signatureText = defaultMailbox.getSignature();
-            addSignature(signatureText);
-        }
-
         SpinnerAdapter adapter = new ArrayAdapter<>(
                 activity,
                 R.layout.fragment_send_message_spinner,
@@ -363,6 +348,20 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
 
         messageSendAttachmentAdapter = new MessageSendAttachmentAdapter(activity);
         messageAttachmentsRecycleView.setAdapter(messageSendAttachmentAdapter);
+
+        MailboxEntity defaultMailbox = EncryptUtils.getDefaultMailbox();
+        boolean isSignatureEnabled = sendModel.isSignatureEnabled();
+        if (defaultMailbox != null && isSignatureEnabled) {
+            String signatureText = defaultMailbox.getSignature();
+            addSignature(signatureText);
+        }
+
+        if (EditTextUtils.getText(toEmailTextView).isEmpty()) {
+            toEmailTextView.requestFocus();
+        } else {
+            composeEditText.requestFocus();
+            new Handler().post(() -> composeEditText.setSelection(0));
+        }
 
         return root;
     }
@@ -539,16 +538,17 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
                 this::handleContactsList);
         contactsViewModel.getContacts(200, 0);
         // Load keys before sending message
-        sendModel.getKeyResponse().observe(getViewLifecycleOwner(), keyResponse -> {
-            if (keyResponse != null && keyResponse.getKeyResult() != null && keyResponse.getKeyResult().length > 0) {
-                publicKeyList = new ArrayList<>();
-                for (KeyResult keyResult : keyResponse.getKeyResult()) {
-                    String emailPublicKey = keyResult.getPublicKey();
-                    publicKeyList.add(emailPublicKey);
-                }
-                draftMessage = false;
-                sendMessage();
+        sendModel.getKeyResponse().observe(getViewLifecycleOwner(), keysResponse -> {
+            if (keysResponse == null || keysResponse.getKeys() == null) {
+                Timber.e("keyResponse is null");
+                return;
             }
+            for (KeyResponse keyResponse : keysResponse.getKeys()) {
+                String emailPublicKey = keyResponse.getPublicKey();
+                publicKeyList.add(emailPublicKey);
+            }
+            draftMessage = false;
+            sendMessage();
         });
 
         sendModel.getGrabAttachmentStatus().observe(getViewLifecycleOwner(), aBoolean -> {

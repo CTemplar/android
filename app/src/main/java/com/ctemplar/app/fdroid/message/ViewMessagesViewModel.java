@@ -16,7 +16,7 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import com.ctemplar.app.fdroid.CTemplarApp;
 import com.ctemplar.app.fdroid.net.ResponseStatus;
-import com.ctemplar.app.fdroid.net.request.MarkMessageAsReadRequest;
+import com.ctemplar.app.fdroid.net.request.messages.MarkMessageAsReadRequest;
 import com.ctemplar.app.fdroid.net.response.folders.FoldersResponse;
 import com.ctemplar.app.fdroid.net.response.messages.MessagesResponse;
 import com.ctemplar.app.fdroid.net.response.messages.MessagesResult;

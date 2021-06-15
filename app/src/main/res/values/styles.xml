@@ -56,6 +56,18 @@
         <item name="android:windowAnimationStyle">@style/Dialog.Window</item>
     </style>
 
+    <style name="DialogTransparentAnimation" parent="Theme.AppCompat.Dialog.Alert">
+        <item name="android:windowAnimationStyle">@style/Dialog.Window</item>
+
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowSoftInputMode">adjustPan</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowMinWidthMinor">90%</item>
+        <item name="android:windowMinWidthMajor">60%</item>
+    </style>
+
     <style name="Dialog.Window" parent="@android:style/Animation.Activity">
         <item name="android:windowEnterAnimation">@anim/fragment_enter_from_bottom</item>
         <item name="android:windowExitAnimation">@anim/fragment_exit_to_bottom</item>

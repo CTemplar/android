@@ -4,7 +4,7 @@ import androidx.annotation.Nullable;
 
 import java.util.Date;
 
-import com.ctemplar.app.fdroid.net.request.EncryptionMessageRequest;
+import com.ctemplar.app.fdroid.net.request.messages.EncryptionMessageRequest;
 import com.ctemplar.app.fdroid.net.response.messages.EncryptionMessageResponse;
 import com.ctemplar.app.fdroid.repository.entity.EncryptionMessageEntity;
 
