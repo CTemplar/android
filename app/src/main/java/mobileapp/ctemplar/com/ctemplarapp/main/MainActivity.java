@@ -80,6 +80,7 @@ import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderN
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     private static final int CUSTOM_FOLDER_STEP = 10;
+    private final List<FoldersResult> customFoldersListAll = new ArrayList<>();
 
     private FrameLayout contentContainer;
     private NavigationView navigationView;
@@ -87,7 +88,6 @@ public class MainActivity extends AppCompatActivity
 
     private MainActivityViewModel mainModel;
     private List<FoldersResult> customFoldersList;
-    private List<FoldersResult> customFoldersListAll = new ArrayList<>();
     private String toggleFolder;
     private int customFoldersShowCount = 3;
     private boolean isTablet;

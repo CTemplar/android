@@ -38,6 +38,7 @@ import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.settings.filters.FiltersActivity;
 import mobileapp.ctemplar.com.ctemplarapp.folders.ManageFoldersActivity;
+import mobileapp.ctemplar.com.ctemplarapp.settings.keys.OldKeysActivity;
 import mobileapp.ctemplar.com.ctemplarapp.settings.mailboxes.MailboxesActivity;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.MyselfResponse;

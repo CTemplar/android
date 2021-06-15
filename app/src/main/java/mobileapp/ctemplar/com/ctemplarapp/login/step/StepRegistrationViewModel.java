@@ -32,7 +32,6 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.CheckUsernameResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.HttpErrorResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.SignUpResponse;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
-import mobileapp.ctemplar.com.ctemplarapp.repository.enums.KeyType;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EncodeUtils;
 import mobileapp.ctemplar.com.ctemplarapp.workers.WorkersHelper;
