@@ -116,6 +116,8 @@ public class AddMailboxKeyActivity extends AppCompatActivity {
         setLoading(false);
         if (response == ResponseStatus.RESPONSE_COMPLETE) {
             ToastUtils.showLongToast(getApplicationContext(), getString(R.string.add_new_key_message));
+            setResult(RESULT_OK);
+            onBackPressed();
         }
     }
 

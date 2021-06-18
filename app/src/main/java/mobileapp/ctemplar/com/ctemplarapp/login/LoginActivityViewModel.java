@@ -11,8 +11,9 @@ import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.jetbrains.annotations.NotNull;
 
-import io.reactivex.Observable;
 import io.reactivex.Observer;
+import io.reactivex.Single;
+import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Function;
@@ -196,7 +197,7 @@ public class LoginActivityViewModel extends AndroidViewModel {
         EncodeUtils.getPGPKeyObservable(emailAddress, password)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .flatMap((Function<PGPKeyEntity, Observable<RecoverPasswordResponse>>) pgpKeyEntity -> {
+                .flatMap((Function<PGPKeyEntity, Single<RecoverPasswordResponse>>) pgpKeyEntity -> {
                     recoverPasswordRequest.setPrivateKey(pgpKeyEntity.getPrivateKey());
                     recoverPasswordRequest.setPublicKey(pgpKeyEntity.getPublicKey());
                     recoverPasswordRequest.setPassword(
@@ -204,38 +205,33 @@ public class LoginActivityViewModel extends AndroidViewModel {
                     );
 
                     return userRepository.resetPassword(recoverPasswordRequest);
-                }).subscribe(new Observer<RecoverPasswordResponse>() {
+                })
+                .subscribe(new SingleObserver<RecoverPasswordResponse>() {
+                    @Override
+                    public void onSubscribe(@NotNull Disposable d) {
 
-            @Override
-            public void onSubscribe(@NotNull Disposable d) {
-
-            }
-
-            @Override
-            public void onNext(@NotNull RecoverPasswordResponse recoverPasswordResponse) {
-                userRepository.saveUserToken(recoverPasswordResponse.getToken());
-                responseStatus.postValue(ResponseStatus.RESPONSE_NEXT_NEW_PASSWORD);
-            }
-
-            @Override
-            public void onError(@NotNull Throwable e) {
-                if (e instanceof HttpException) {
-                    HttpException exception = (HttpException) e;
-                    if (exception.code() == 400) {
-                        responseStatus.postValue(ResponseStatus.RESPONSE_ERROR_CODE_NOT_MATCH);
-                    } else {
-                        responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
                     }
-                } else {
-                    responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
-                }
-            }
 
-            @Override
-            public void onComplete() {
+                    @Override
+                    public void onSuccess(@NotNull RecoverPasswordResponse recoverPasswordResponse) {
+                        userRepository.saveUserToken(recoverPasswordResponse.getToken());
+                        responseStatus.postValue(ResponseStatus.RESPONSE_NEXT_NEW_PASSWORD);
+                    }
 
-            }
-        });
+                    @Override
+                    public void onError(@NotNull Throwable e) {
+                        if (e instanceof HttpException) {
+                            HttpException exception = (HttpException) e;
+                            if (exception.code() == 400) {
+                                responseStatus.postValue(ResponseStatus.RESPONSE_ERROR_CODE_NOT_MATCH);
+                            } else {
+                                responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
+                            }
+                        } else {
+                            responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
+                        }
+                    }
+                });
     }
 
     private void userAuthorized() {

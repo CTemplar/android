@@ -13,8 +13,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 
-import io.reactivex.Observable;
 import io.reactivex.Observer;
+import io.reactivex.Single;
+import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Function;
@@ -158,7 +159,7 @@ public class StepRegistrationViewModel extends AndroidViewModel {
         EncodeUtils.getPGPKeyObservable(emailAddress, password)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .flatMap((Function<PGPKeyEntity, Observable<SignUpResponse>>) pgpKeyEntity -> {
+                .flatMap((Function<PGPKeyEntity, Single<SignUpResponse>>) pgpKeyEntity -> {
                     signUpRequest.setPrivateKey(pgpKeyEntity.getPrivateKey());
                     signUpRequest.setPublicKey(pgpKeyEntity.getPublicKey());
                     signUpRequest.setFingerprint(pgpKeyEntity.getFingerprint());
@@ -166,15 +167,14 @@ public class StepRegistrationViewModel extends AndroidViewModel {
                             signUpRequest.getUsername(), signUpRequest.getPassword()));
                     return userRepository.signUp(signUpRequest);
                 })
-                .subscribe(new Observer<SignUpResponse>() {
-
+                .subscribe(new SingleObserver<SignUpResponse>() {
                     @Override
                     public void onSubscribe(@NotNull Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(@NotNull SignUpResponse signUpResponse) {
+                    public void onSuccess(@NotNull SignUpResponse signUpResponse) {
                         userRepository.saveUsername(signUpRequest.getUsername());
                         userRepository.saveUserToken(signUpResponse.getToken());
                         userRepository.saveUserPassword(signUpRequest.getPassword());
@@ -200,11 +200,6 @@ public class StepRegistrationViewModel extends AndroidViewModel {
                         } else {
                             responseError.postValue("SignUp error");
                         }
-                    }
-
-                    @Override
-                    public void onComplete() {
-
                     }
                 });
     }

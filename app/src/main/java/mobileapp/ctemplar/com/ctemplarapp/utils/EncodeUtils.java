@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
@@ -85,23 +84,23 @@ public class EncodeUtils {
         return "";
     }
 
-    public static Observable<PGPKeyEntity> getPGPKeyObservable(
+    public static Single<PGPKeyEntity> getPGPKeyObservable(
             final String emailAddress,
             final String password
     ) {
-        return Observable.fromCallable(()
+        return Single.fromCallable(()
                 -> PGPManager.generateECCKeys(emailAddress, password))
                 .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public static Observable<List<MailboxKey>> generateMailboxKeys(
+    public static Single<List<MailboxKey>> generateMailboxKeys(
             final List<MailboxEntity> mailboxEntities,
             final String oldPassword,
             final String password,
             final boolean resetKeys
     ) {
-        return Observable.fromCallable(() -> {
+        return Single.fromCallable(() -> {
             List<MailboxKey> mailboxKeys = new ArrayList<>();
 
             for (MailboxEntity mailboxEntity : mailboxEntities) {
@@ -130,7 +129,7 @@ public class EncodeUtils {
             }
 
             return mailboxKeys;
-        }).subscribeOn(io.reactivex.schedulers.Schedulers.computation())
+        }).subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
