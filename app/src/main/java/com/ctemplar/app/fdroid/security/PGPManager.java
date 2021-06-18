@@ -1,5 +1,8 @@
 package com.ctemplar.app.fdroid.security;
 
+import androidx.annotation.Nullable;
+
+import org.bouncycastle.bcpg.PublicKeyAlgorithmTags;
 import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPKeyRingGenerator;
 import org.bouncycastle.openpgp.PGPPublicKeyRing;
@@ -8,6 +11,7 @@ import org.bouncycastle.openpgp.PGPSecretKeyRing;
 import java.io.IOException;
 
 import com.ctemplar.app.fdroid.net.entity.PGPKeyEntity;
+import com.ctemplar.app.fdroid.repository.enums.KeyType;
 import timber.log.Timber;
 
 public class PGPManager {
@@ -122,5 +126,25 @@ public class PGPManager {
 
     public static String decryptGPGUnsafe(String encryptedData, String passPhrase) throws IOException, PGPException {
         return new String(PGPLib.decryptGPG(encryptedData.getBytes(), passPhrase));
+    }
+
+    @Nullable
+    public static KeyType getKeyType(String privateKey) {
+        try {
+            PGPSecretKeyRing pgpSecretKeyRing = PGPLib.getPGPSecretKeyRing(privateKey);
+            switch (pgpSecretKeyRing.getPublicKey().getAlgorithm()) {
+                case PublicKeyAlgorithmTags.ECDH:
+                case PublicKeyAlgorithmTags.ECDSA:
+                case PublicKeyAlgorithmTags.EDDSA:
+                    return KeyType.ECC;
+                case PublicKeyAlgorithmTags.RSA_GENERAL:
+                case PublicKeyAlgorithmTags.RSA_ENCRYPT:
+                case PublicKeyAlgorithmTags.RSA_SIGN:
+                    return KeyType.RSA4096;
+            }
+        } catch (Exception e) {
+            Timber.e(e);
+        }
+        return null;
     }
 }

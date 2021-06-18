@@ -7,6 +7,19 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.google.gson.JsonSyntaxException;
+
+import org.jetbrains.annotations.NotNull;
+
+import java.io.IOException;
+
+import io.reactivex.Observer;
+import io.reactivex.Single;
+import io.reactivex.SingleObserver;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Function;
+import io.reactivex.schedulers.Schedulers;
 import com.ctemplar.app.fdroid.CTemplarApp;
 import com.ctemplar.app.fdroid.SingleLiveEvent;
 import com.ctemplar.app.fdroid.net.ResponseStatus;
@@ -23,18 +36,6 @@ import com.ctemplar.app.fdroid.repository.UserRepository;
 import com.ctemplar.app.fdroid.utils.EditTextUtils;
 import com.ctemplar.app.fdroid.utils.EncodeUtils;
 import com.ctemplar.app.fdroid.workers.WorkersHelper;
-import com.google.gson.JsonSyntaxException;
-
-import org.jetbrains.annotations.NotNull;
-
-import java.io.IOException;
-
-import io.reactivex.Observable;
-import io.reactivex.Observer;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Function;
-import io.reactivex.schedulers.Schedulers;
 import retrofit2.HttpException;
 import retrofit2.Response;
 import timber.log.Timber;
@@ -158,7 +159,7 @@ public class StepRegistrationViewModel extends AndroidViewModel {
         EncodeUtils.getPGPKeyObservable(emailAddress, password)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .flatMap((Function<PGPKeyEntity, Observable<SignUpResponse>>) pgpKeyEntity -> {
+                .flatMap((Function<PGPKeyEntity, Single<SignUpResponse>>) pgpKeyEntity -> {
                     signUpRequest.setPrivateKey(pgpKeyEntity.getPrivateKey());
                     signUpRequest.setPublicKey(pgpKeyEntity.getPublicKey());
                     signUpRequest.setFingerprint(pgpKeyEntity.getFingerprint());
@@ -166,15 +167,14 @@ public class StepRegistrationViewModel extends AndroidViewModel {
                             signUpRequest.getUsername(), signUpRequest.getPassword()));
                     return userRepository.signUp(signUpRequest);
                 })
-                .subscribe(new Observer<SignUpResponse>() {
-
+                .subscribe(new SingleObserver<SignUpResponse>() {
                     @Override
                     public void onSubscribe(@NotNull Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(@NotNull SignUpResponse signUpResponse) {
+                    public void onSuccess(@NotNull SignUpResponse signUpResponse) {
                         userRepository.saveUsername(signUpRequest.getUsername());
                         userRepository.saveUserToken(signUpResponse.getToken());
                         userRepository.saveUserPassword(signUpRequest.getPassword());
@@ -200,11 +200,6 @@ public class StepRegistrationViewModel extends AndroidViewModel {
                         } else {
                             responseError.postValue("SignUp error");
                         }
-                    }
-
-                    @Override
-                    public void onComplete() {
-
                     }
                 });
     }

@@ -27,7 +27,6 @@ import com.ctemplar.app.fdroid.R;
 import com.ctemplar.app.fdroid.databinding.ActivitySettingsKeysBinding;
 import com.ctemplar.app.fdroid.net.ResponseStatus;
 import com.ctemplar.app.fdroid.repository.entity.MailboxEntity;
-import com.ctemplar.app.fdroid.utils.EncodeUtils;
 import com.ctemplar.app.fdroid.utils.PermissionUtils;
 import com.ctemplar.app.fdroid.utils.ThemeUtils;
 import com.ctemplar.app.fdroid.utils.ToastUtils;
@@ -72,6 +71,13 @@ public class KeysActivity extends AppCompatActivity {
         }
     });
 
+    private final ActivityResultLauncher<Intent> keyChangeActivityLauncher =
+            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+                if (result.getResultCode() == RESULT_OK) {
+                    onMailboxKeysUpdated(mailboxKeyViewModel.getMailboxKeyMap());
+                }
+            });
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
@@ -105,22 +111,19 @@ public class KeysActivity extends AppCompatActivity {
 
             }
         });
-        binding.addNewKeyButton.setOnClickListener(v -> startActivity(
+        binding.addNewKeyButton.setOnClickListener(v -> keyChangeActivityLauncher.launch(
                 new Intent(KeysActivity.this, AddMailboxKeyActivity.class)));
-        binding.importKeyButton.setOnClickListener(v -> startActivity(
+        binding.importKeyButton.setOnClickListener(v -> keyChangeActivityLauncher.launch(
                 new Intent(KeysActivity.this, ImportMailboxKeyActivity.class)));
-
 
         mailboxKeyViewModel = new ViewModelProvider(this).get(MailboxKeyViewModel.class);
         mailboxKeyViewModel.getMailboxPrimaryResponseStatus().observe(this, responseStatus -> {
             if (responseStatus == ResponseStatus.RESPONSE_COMPLETE) {
-                int currentPosition = binding.emailSpinner.getSelectedItemPosition();
                 onMailboxKeysUpdated(mailboxKeyViewModel.getMailboxKeyMap());
                 if (markAsPrimaryDialog != null) {
                     markAsPrimaryDialog.dismiss();
                     markAsPrimaryDialog = null;
                 }
-                binding.emailSpinner.setSelection(currentPosition);
             } else if (responseStatus == ResponseStatus.RESPONSE_ERROR) {
                 ToastUtils.showLongToast(getApplicationContext(), getString(R.string.operation_failed));
                 if (markAsPrimaryDialog != null) {
@@ -128,7 +131,7 @@ public class KeysActivity extends AppCompatActivity {
                 }
             }
         });
-        mailboxKeyViewModel.deleteMailboxKeyResponseStatus().observe(this, responseStatus -> {
+        mailboxKeyViewModel.getDeleteMailboxKeyResponseStatus().observe(this, responseStatus -> {
             if (responseStatus == ResponseStatus.RESPONSE_COMPLETE) {
                 int currentPosition = binding.emailSpinner.getSelectedItemPosition();
                 onMailboxKeysUpdated(mailboxKeyViewModel.getMailboxKeyMap());
@@ -154,6 +157,7 @@ public class KeysActivity extends AppCompatActivity {
             onBackPressed();
             return;
         }
+        int startPosition = binding.emailSpinner.getSelectedItemPosition();
         this.mailboxKeyMap = mailboxKeyMap;
         String[] addresses = new String[mailboxKeyMap.size()];
         int iterator = 0;
@@ -166,6 +170,10 @@ public class KeysActivity extends AppCompatActivity {
                 addresses
         );
         binding.emailSpinner.setAdapter(addressAdapter);
+        if (startPosition >= addresses.length) {
+            startPosition = 0;
+        }
+        binding.emailSpinner.setSelection(startPosition);
     }
 
     private MailboxEntity getMailboxByIndex(int index) {
@@ -210,7 +218,7 @@ public class KeysActivity extends AppCompatActivity {
             MailboxEntity mailbox = getKeyMailbox(key);
             dialog.setCancelable(false);
             if (mailbox == null) {
-                Timber.wtf("openSetKeyAsPrimaryDialog: Mailbox is null");
+                Timber.wtf("openSetKeyAsPrimaryDialog mailbox is null");
                 dialog.dismiss();
                 return;
             }
@@ -225,10 +233,8 @@ public class KeysActivity extends AppCompatActivity {
         dialog.setOnApplyClickListener(() -> {
             dialog.setLoading(true);
             dialog.setCancelable(false);
-            String username = mailboxKeyViewModel.getUsername();
             String password = dialog.getPassword();
-            mailboxKeyViewModel.deleteMailboxKey(key.getId(),
-                    EncodeUtils.generateHash(username, password));
+            mailboxKeyViewModel.deleteMailboxKey(key.getId(), password);
         });
         dialog.show(getSupportFragmentManager(), null);
         this.removeKeyDialog = dialog;
@@ -265,12 +271,12 @@ public class KeysActivity extends AppCompatActivity {
         String keyName;
         byte[] keyContent;
         if (isPrivate) {
-            keyName = mailboxEntity.getEmail() + SPLITTER + key.getFingerprint()
-                    + SPLITTER + PRIVATE_KEY_FORMAT;
+            keyName = mailboxEntity.getEmail() + SPLITTER + key.getFingerprint() + SPLITTER
+                    + PRIVATE_KEY_FORMAT;
             keyContent = key.getPrivateKey().getBytes();
         } else {
-            keyName = mailboxEntity.getEmail() + SPLITTER + key.getFingerprint()
-                    + SPLITTER + PUBLIC_KEY_FORMAT;
+            keyName = mailboxEntity.getEmail() + SPLITTER + key.getFingerprint() + SPLITTER
+                    + PUBLIC_KEY_FORMAT;
             keyContent = key.getPublicKey().getBytes();
         }
 

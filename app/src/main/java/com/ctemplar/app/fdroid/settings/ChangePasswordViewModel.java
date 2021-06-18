@@ -8,8 +8,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-import io.reactivex.Observable;
-import io.reactivex.Observer;
+import io.reactivex.Single;
+import io.reactivex.SingleObserver;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
@@ -59,30 +59,26 @@ public class ChangePasswordViewModel extends ViewModel {
         EncodeUtils.generateMailboxKeys(mailboxEntities, oldPassword, password, resetKeys)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.computation())
-                .flatMap((Function<List<MailboxKey>, Observable<ResponseBody>>) mailboxKeys -> {
+                .flatMap((Function<List<MailboxKey>, Single<ResponseBody>>) mailboxKeys -> {
                     changePasswordRequest.setMailboxesKeys(mailboxKeys);
                     return userRepository.changePassword(changePasswordRequest);
-                }).subscribe(new Observer<ResponseBody>() {
-            @Override
-            public void onSubscribe(@NotNull Disposable d) {
+                })
+                .subscribe(new SingleObserver<ResponseBody>() {
+                    @Override
+                    public void onSubscribe(@NotNull Disposable d) {
 
-            }
+                    }
 
-            @Override
-            public void onNext(@NotNull ResponseBody responseBody) {
-                responseStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
-            }
+                    @Override
+                    public void onSuccess(@NotNull ResponseBody responseBody) {
+                        responseStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
+                    }
 
-            @Override
-            public void onError(@NotNull Throwable e) {
-                responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
-            }
-
-            @Override
-            public void onComplete() {
-
-            }
-        });
+                    @Override
+                    public void onError(@NotNull Throwable e) {
+                        responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
+                    }
+                });
     }
 
     public void logout() {

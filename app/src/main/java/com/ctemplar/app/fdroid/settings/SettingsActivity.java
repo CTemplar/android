@@ -28,32 +28,32 @@ import androidx.preference.PreferenceManager;
 import androidx.preference.PreferenceScreen;
 import androidx.preference.SwitchPreference;
 
-import org.jetbrains.annotations.NotNull;
-
-import io.reactivex.Observer;
-import io.reactivex.disposables.Disposable;
 import com.ctemplar.app.fdroid.BaseActivity;
 import com.ctemplar.app.fdroid.BuildConfig;
 import com.ctemplar.app.fdroid.CTemplarApp;
 import com.ctemplar.app.fdroid.R;
-import com.ctemplar.app.fdroid.services.NotificationService;
-import com.ctemplar.app.fdroid.settings.filters.FiltersActivity;
 import com.ctemplar.app.fdroid.folders.ManageFoldersActivity;
-import com.ctemplar.app.fdroid.settings.keys.OldKeysActivity;
-import com.ctemplar.app.fdroid.settings.mailboxes.MailboxesActivity;
 import com.ctemplar.app.fdroid.net.ResponseStatus;
 import com.ctemplar.app.fdroid.net.response.myself.MyselfResponse;
 import com.ctemplar.app.fdroid.net.response.myself.MyselfResult;
 import com.ctemplar.app.fdroid.net.response.myself.SettingsResponse;
 import com.ctemplar.app.fdroid.repository.UserRepository;
 import com.ctemplar.app.fdroid.repository.UserStore;
+import com.ctemplar.app.fdroid.services.NotificationService;
+import com.ctemplar.app.fdroid.settings.filters.FiltersActivity;
 import com.ctemplar.app.fdroid.settings.keys.KeysActivity;
+import com.ctemplar.app.fdroid.settings.mailboxes.MailboxesActivity;
 import com.ctemplar.app.fdroid.utils.DateUtils;
 import com.ctemplar.app.fdroid.utils.EditTextUtils;
 import com.ctemplar.app.fdroid.utils.EncodeUtils;
 import com.ctemplar.app.fdroid.utils.HtmlUtils;
 import com.ctemplar.app.fdroid.utils.ThemeUtils;
 import com.ctemplar.app.fdroid.wbl.WhiteBlackListActivity;
+
+import org.jetbrains.annotations.NotNull;
+
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
 import timber.log.Timber;
 
 public class SettingsActivity extends BaseActivity {
@@ -146,7 +146,7 @@ public class SettingsActivity extends BaseActivity {
             Preference mailboxKeys = findPreference(getString(R.string.setting_keys));
             if (mailboxKeys != null) {
                 mailboxKeys.setOnPreferenceClickListener(preference -> {
-                    Intent keysIntent = new Intent(getActivity(), OldKeysActivity.class);
+                    Intent keysIntent = new Intent(getActivity(), KeysActivity.class);
                     startActivity(keysIntent);
                     return false;
                 });
