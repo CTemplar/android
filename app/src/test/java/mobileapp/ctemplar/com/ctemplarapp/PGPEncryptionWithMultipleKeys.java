@@ -58,7 +58,7 @@ public class PGPEncryptionWithMultipleKeys {
     private String sixthECCKeyRingNewPassword;
 
     @Before
-    public void setup() throws IOException, PGPException {
+    public void setup() throws PGPException, IOException {
         Security.addProvider(new BouncyCastleProvider());
 
         String firstRSAKeyRingId = EncodeUtils.randomString(6);

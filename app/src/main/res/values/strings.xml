@@ -423,6 +423,7 @@
     <string name="select_mailbox_for_import_key">Please select a mailbox that you want to import key</string>
     <string name="select_key_type">Please select a key type</string>
     <string name="selected_key_is_not_valid">The selected key is not a valid PGP private key</string>
+    <string name="selected_key_already_in_active_use">The selected key is already in active use</string>
     <string name="download">Download</string>
     <string name="remove">Remove</string>
     <string name="operation_failed">Operation failed</string>
@@ -431,6 +432,7 @@
     <string name="delete_key_description">After deleted this key, you will not be able to decrypt any message that was encrypted with this key. It may lead to data loss</string>
     <string name="ecc_default">ECC (Default)</string>
     <string name="add_new_key_message">Key has been added successfully</string>
+    <string name="import_new_key_message">Key has been imported successfully</string>
     <string name="your_public_key_saved">Your PGP Public Key saved to Downloads</string>
     <string name="your_private_key_saved">Your PGP Private Key saved to Downloads</string>
 

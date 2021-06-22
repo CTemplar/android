@@ -21,6 +21,7 @@ import java.util.Map;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.databinding.ActivityMailboxKeyAddBinding;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
+import mobileapp.ctemplar.com.ctemplarapp.repository.entity.GeneralizedMailboxKey;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.enums.KeyType;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
@@ -85,8 +86,6 @@ public class AddMailboxKeyActivity extends AppCompatActivity {
 
             }
         });
-
-        binding.generateKeysButton.setOnClickListener(v -> onGenerateKeys());
         binding.passwordEditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -105,6 +104,7 @@ public class AddMailboxKeyActivity extends AppCompatActivity {
 
             }
         });
+        binding.generateKeysButton.setOnClickListener(v -> onGenerateKeys());
 
         mailboxKeyViewModel.getAddMailboxKeyResponseStatus().observe(this,
                 this::handleAddMailboxStatus);
@@ -118,6 +118,8 @@ public class AddMailboxKeyActivity extends AppCompatActivity {
             ToastUtils.showLongToast(getApplicationContext(), getString(R.string.add_new_key_message));
             setResult(RESULT_OK);
             onBackPressed();
+        } else {
+            ToastUtils.showLongToast(getApplicationContext(), getString(R.string.operation_failed));
         }
     }
 

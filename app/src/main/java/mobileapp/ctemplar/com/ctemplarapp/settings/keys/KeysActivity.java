@@ -26,6 +26,7 @@ import java.util.Map;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.databinding.ActivitySettingsKeysBinding;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
+import mobileapp.ctemplar.com.ctemplarapp.repository.entity.GeneralizedMailboxKey;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import mobileapp.ctemplar.com.ctemplarapp.utils.PermissionUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.ThemeUtils;

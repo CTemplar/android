@@ -34,6 +34,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.mailboxes.MailboxKeysResp
 import mobileapp.ctemplar.com.ctemplarapp.net.response.mailboxes.MailboxesResponse;
 import mobileapp.ctemplar.com.ctemplarapp.repository.AppDatabase;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
+import mobileapp.ctemplar.com.ctemplarapp.repository.entity.GeneralizedMailboxKey;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxKeyEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.enums.KeyType;
@@ -205,10 +206,58 @@ public class MailboxKeyViewModel extends ViewModel {
                 });
     }
 
-    public void importMailboxKey(long mailboxId, String privateKey, KeyType keyType, String oldPassword, String password) {
+    public void importMailboxKey(long mailboxId, String privateKey, KeyType keyType,
+                                 String oldPassword, String password) {
         final String username = userRepository.getUsername();
-    }
 
+        EncodeUtils.generatePublicKey(privateKey, oldPassword, password)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .flatMap((Function<PGPKeyEntity, Single<Response<MailboxKeyResponse>>>) pgpKeyEntity -> {
+                    CreateMailboxKeyRequest request = new CreateMailboxKeyRequest(
+                            pgpKeyEntity.getPrivateKey(),
+                            pgpKeyEntity.getPublicKey(),
+                            pgpKeyEntity.getFingerprint(),
+                            EncodeUtils.generateHash(username, password),
+                            keyType, mailboxId
+                    );
+                    return userRepository.createMailboxKey(request);
+                })
+                .subscribe(new SingleObserver<Response<MailboxKeyResponse>>() {
+                    @Override
+                    public void onSubscribe(@NotNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onSuccess(@NotNull Response<MailboxKeyResponse> response) {
+                        if (response.isSuccessful()) {
+                            importMailboxKeyResponseStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
+                            userRepository.saveMailboxKey(MailboxKeyMapper.map(response.body()));
+                            return;
+                        }
+
+                        if (response.errorBody() != null) {
+                            try {
+                                String errorBody = response.errorBody().string();
+                                HttpErrorResponse httpErrorResponse = GENERAL_GSON.fromJson(
+                                        errorBody, HttpErrorResponse.class);
+                                importMailboxKeyErrorResponse.postValue(httpErrorResponse.getError()
+                                        .getError());
+                            } catch (IOException | JsonSyntaxException e) {
+                                Timber.e(e, "Can't parse error");
+                            }
+                        }
+                        importMailboxKeyResponseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
+                    }
+
+                    @Override
+                    public void onError(@NotNull Throwable e) {
+                        Timber.e(e);
+                        importMailboxKeyResponseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
+                    }
+                });
+    }
 
     public void updateMailboxPrimaryKey(long mailboxId, long mailboxKeyId) {
         callAsync(

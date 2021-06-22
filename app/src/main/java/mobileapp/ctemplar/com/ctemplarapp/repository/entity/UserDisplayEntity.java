@@ -5,6 +5,15 @@ public class UserDisplayEntity {
     private String name;
     private boolean isEncrypted;
 
+    public UserDisplayEntity() {
+    }
+
+    public UserDisplayEntity(String email, String name, boolean isEncrypted) {
+        this.email = email;
+        this.name = name;
+        this.isEncrypted = isEncrypted;
+    }
+
     public String getEmail() {
         return email;
     }

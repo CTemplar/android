@@ -94,6 +94,17 @@ public class EncodeUtils {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
+    public static Single<PGPKeyEntity> generatePublicKey(
+            final String privateKey,
+            final String oldPassword,
+            final String password
+    ) {
+        return Single.fromCallable(()
+                -> PGPManager.generatePublicKey(privateKey, oldPassword, password))
+                .subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
     public static Single<List<MailboxKey>> generateMailboxKeys(
             final List<MailboxEntity> mailboxEntities,
             final String oldPassword,

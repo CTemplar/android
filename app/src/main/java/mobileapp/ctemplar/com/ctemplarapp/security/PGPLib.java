@@ -57,8 +57,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigInteger;
 import java.security.SecureRandom;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 
 import mobileapp.ctemplar.com.ctemplarapp.utils.EncodeUtils;
 
@@ -322,16 +324,16 @@ class PGPLib {
         return getPGPPublicKey(pgpKeyRingGenerator.generatePublicKeyRing());
     }
 
-    private static byte[] getPGPPublicKey(PGPPublicKeyRing pgpPublicKeyRing) throws IOException {
+    static byte[] getPGPPrivateKey(PGPKeyRingGenerator pgpKeyRingGenerator) throws IOException {
+        return getPGPPrivateKey(pgpKeyRingGenerator.generateSecretKeyRing());
+    }
+
+    static byte[] getPGPPublicKey(PGPPublicKeyRing pgpPublicKeyRing) throws IOException {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         ArmoredOutputStream armoredOutputStream = new ArmoredOutputStream(byteArrayOutputStream);
         pgpPublicKeyRing.encode(armoredOutputStream);
         armoredOutputStream.close();
         return byteArrayOutputStream.toByteArray();
-    }
-
-    static byte[] getPGPPrivateKey(PGPKeyRingGenerator pgpKeyRingGenerator) throws IOException {
-        return getPGPPrivateKey(pgpKeyRingGenerator.generateSecretKeyRing());
     }
 
     static byte[] getPGPPrivateKey(PGPSecretKeyRing pgpSecretKeyRing) throws IOException {
@@ -340,6 +342,19 @@ class PGPLib {
         pgpSecretKeyRing.encode(armoredOutputStream);
         armoredOutputStream.close();
         return byteArrayOutputStream.toByteArray();
+    }
+
+    static PGPPublicKeyRing getPGPPublicKeyRing(PGPSecretKeyRing pgpSecretKeyRing) {
+        List<PGPPublicKey> publicKeys = new ArrayList<>();
+        Iterator<PGPPublicKey> pgpPublicKeysIterator = pgpSecretKeyRing.getPublicKeys();
+        while (pgpPublicKeysIterator.hasNext()) {
+            publicKeys.add(pgpPublicKeysIterator.next());
+        }
+        Iterator<PGPPublicKey> pgpExtraPublicKeysIterator = pgpSecretKeyRing.getExtraPublicKeys();
+        while (pgpExtraPublicKeysIterator.hasNext()) {
+            publicKeys.add(pgpExtraPublicKeysIterator.next());
+        }
+        return new PGPPublicKeyRing(publicKeys);
     }
 
     static String getPGPKeyFingerprint(PGPSecretKeyRing pgpSecretKeyRing) {

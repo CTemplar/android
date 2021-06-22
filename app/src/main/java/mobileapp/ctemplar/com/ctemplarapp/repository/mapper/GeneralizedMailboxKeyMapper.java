@@ -2,7 +2,7 @@ package mobileapp.ctemplar.com.ctemplarapp.repository.mapper;
 
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxKeyEntity;
-import mobileapp.ctemplar.com.ctemplarapp.settings.keys.GeneralizedMailboxKey;
+import mobileapp.ctemplar.com.ctemplarapp.repository.entity.GeneralizedMailboxKey;
 
 public class GeneralizedMailboxKeyMapper {
     public static GeneralizedMailboxKey map(MailboxEntity entity) {
