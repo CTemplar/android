@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.security.Security;
 
 import com.ctemplar.app.fdroid.net.entity.PGPKeyEntity;
+import com.ctemplar.app.fdroid.repository.enums.KeyType;
 import com.ctemplar.app.fdroid.security.PGPManager;
 import com.ctemplar.app.fdroid.util.EncryptionUtils;
 import com.ctemplar.app.fdroid.util.ForeignAlphabetsStringGenerator;
@@ -29,7 +30,7 @@ public class PGPEncryptionUnitTest {
     private String keyRingNewPassword;
 
     @Before
-    public void setUp() throws IOException, PGPException {
+    public void setup() throws PGPException, IOException {
         Security.addProvider(new BouncyCastleProvider());
 
         String keyRingId = EncodeUtils.randomString(6);
@@ -43,8 +44,34 @@ public class PGPEncryptionUnitTest {
     }
 
     @Test
-    public void generationKeyEntity_Success() {
+    public void generationKeyEntitySuccess() {
         assertNotNull(pgpKeyEntity);
+    }
+
+    @Test
+    public void keyTypeMatch() {
+        KeyType keyType = PGPManager.getKeyType(pgpKeyEntity.getPrivateKey());
+        assertEquals(KeyType.RSA4096, keyType);
+    }
+
+    @Test
+    public void generatePublicKey() throws IOException, PGPException {
+        String originalTextString = ForeignAlphabetsStringGenerator.randomString(STRING_LENGTH);
+        String privateKey = pgpKeyEntity.getPrivateKey();
+
+        PGPKeyEntity generatedPGPKeyEntity = PGPManager.generatePublicKey(privateKey,
+                keyRingPassword, keyRingNewPassword);
+
+        String[] publicKeys = {generatedPGPKeyEntity.getPublicKey()};
+
+        String encryptedTextString = PGPManager.encrypt(originalTextString, publicKeys);
+
+        assertTrue(EncryptionUtils.checkEncryptedMessage(encryptedTextString.trim()));
+
+        String decryptedTextString = PGPManager.decrypt(encryptedTextString,
+                generatedPGPKeyEntity.getPrivateKey(), keyRingNewPassword);
+
+        assertEquals(originalTextString, decryptedTextString);
     }
 
     @Test

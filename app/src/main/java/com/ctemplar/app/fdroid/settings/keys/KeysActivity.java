@@ -26,6 +26,7 @@ import java.util.Map;
 import com.ctemplar.app.fdroid.R;
 import com.ctemplar.app.fdroid.databinding.ActivitySettingsKeysBinding;
 import com.ctemplar.app.fdroid.net.ResponseStatus;
+import com.ctemplar.app.fdroid.repository.entity.GeneralizedMailboxKey;
 import com.ctemplar.app.fdroid.repository.entity.MailboxEntity;
 import com.ctemplar.app.fdroid.utils.PermissionUtils;
 import com.ctemplar.app.fdroid.utils.ThemeUtils;

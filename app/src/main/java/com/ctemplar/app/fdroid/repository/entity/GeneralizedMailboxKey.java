@@ -1,4 +1,4 @@
-package com.ctemplar.app.fdroid.settings.keys;
+package com.ctemplar.app.fdroid.repository.entity;
 
 import com.ctemplar.app.fdroid.repository.enums.KeyType;
 

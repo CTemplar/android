@@ -13,6 +13,7 @@ import java.util.List;
 
 import com.ctemplar.app.fdroid.R;
 import com.ctemplar.app.fdroid.databinding.ItemMailboxKeyHolderBinding;
+import com.ctemplar.app.fdroid.repository.entity.GeneralizedMailboxKey;
 
 public class MailboxKeysAdapter extends RecyclerView.Adapter<MailboxKeysAdapter.ViewHolder> {
     private Context context;

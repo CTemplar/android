@@ -16,7 +16,8 @@ public class EncryptionMessageEntity {
     private long message;
     private String password;
 
-    public EncryptionMessageEntity() { }
+    public EncryptionMessageEntity() {
+    }
 
     public EncryptionMessageEntity(long id, String randomSecret, boolean isDeleted, Date deletedAt, String passwordHint, String privateKey, String publicKey, Date createdAt, Date expires, int expiryHours, long message, String password) {
         this.id = id;

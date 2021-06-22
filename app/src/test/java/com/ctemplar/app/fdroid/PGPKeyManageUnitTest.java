@@ -22,7 +22,7 @@ public class PGPKeyManageUnitTest {
     private PGPKeyEntity changedPgpKeyEntity;
 
     @Before
-    public void setUp() throws IOException, PGPException {
+    public void setup() throws PGPException, IOException {
         Security.addProvider(new BouncyCastleProvider());
 
         String keyRingId = EncodeUtils.randomString(6);
@@ -36,45 +36,45 @@ public class PGPKeyManageUnitTest {
     }
 
     @Test
-    public void generationKeyEntity_Success() {
+    public void generationKeyEntitySuccess() {
         assertNotNull(pgpKeyEntity);
     }
 
     @Test
-    public void keyEntityHasFingerprint_Success() {
+    public void keyEntityHasFingerprintSuccess() {
         assertFalse(pgpKeyEntity.getFingerprint().isEmpty());
     }
 
     @Test
-    public void keyEntityPublicKey_isCorrect() {
+    public void keyEntityPublicKeyIsCorrect() {
         String trimmedPublicKey = pgpKeyEntity.getPublicKey().trim();
         assertTrue(EncryptionUtils.checkPublicKey(trimmedPublicKey));
     }
 
     @Test
-    public void keyEntityPrivateKey_isCorrect() {
+    public void keyEntityPrivateKeyIsCorrect() {
         String trimmedPrivateKey = pgpKeyEntity.getPrivateKey().trim();
         assertTrue(EncryptionUtils.checkPrivateKey(trimmedPrivateKey));
     }
 
     @Test
-    public void keyEntityChangePassword_Success() {
+    public void keyEntityChangePasswordSuccess() {
         assertNotNull(changedPgpKeyEntity);
     }
 
     @Test
-    public void changedKeyEntityHasFingerprint_Success() {
+    public void changedKeyEntityHasFingerprintSuccess() {
         assertNotNull(changedPgpKeyEntity.getFingerprint());
     }
 
     @Test
-    public void changedKeyEntityPublicKey_isCorrect() {
+    public void changedKeyEntityPublicKeyIsCorrect() {
         String trimmedPublicKey = changedPgpKeyEntity.getPublicKey().trim();
         assertTrue(EncryptionUtils.checkPublicKey(trimmedPublicKey));
     }
 
     @Test
-    public void changedKeyEntityPrivateKey_isCorrect() {
+    public void changedKeyEntityPrivateKeyIsCorrect() {
         String trimmedPrivateKey = changedPgpKeyEntity.getPrivateKey().trim();
         assertTrue(EncryptionUtils.checkPrivateKey(trimmedPrivateKey));
     }

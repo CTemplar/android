@@ -21,6 +21,7 @@ import java.util.Map;
 import com.ctemplar.app.fdroid.R;
 import com.ctemplar.app.fdroid.databinding.ActivityMailboxKeyAddBinding;
 import com.ctemplar.app.fdroid.net.ResponseStatus;
+import com.ctemplar.app.fdroid.repository.entity.GeneralizedMailboxKey;
 import com.ctemplar.app.fdroid.repository.entity.MailboxEntity;
 import com.ctemplar.app.fdroid.repository.enums.KeyType;
 import com.ctemplar.app.fdroid.utils.EditTextUtils;
@@ -85,8 +86,6 @@ public class AddMailboxKeyActivity extends AppCompatActivity {
 
             }
         });
-
-        binding.generateKeysButton.setOnClickListener(v -> onGenerateKeys());
         binding.passwordEditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -105,6 +104,7 @@ public class AddMailboxKeyActivity extends AppCompatActivity {
 
             }
         });
+        binding.generateKeysButton.setOnClickListener(v -> onGenerateKeys());
 
         mailboxKeyViewModel.getAddMailboxKeyResponseStatus().observe(this,
                 this::handleAddMailboxStatus);
@@ -118,6 +118,8 @@ public class AddMailboxKeyActivity extends AppCompatActivity {
             ToastUtils.showLongToast(getApplicationContext(), getString(R.string.add_new_key_message));
             setResult(RESULT_OK);
             onBackPressed();
+        } else {
+            ToastUtils.showLongToast(getApplicationContext(), getString(R.string.operation_failed));
         }
     }
 
