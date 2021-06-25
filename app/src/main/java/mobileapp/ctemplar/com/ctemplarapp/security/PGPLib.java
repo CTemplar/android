@@ -279,7 +279,8 @@ class PGPLib {
         InputStream clear = pbe.getDataStream(new JcePBEDataDecryptorFactoryBuilder(
                 new JcaPGPDigestCalculatorProviderBuilder()
                         .setProvider(new BouncyCastleProvider()).build())
-                .setProvider(new BouncyCastleProvider()).build(passPhrase.toCharArray()));
+                .setProvider(new BouncyCastleProvider()).build(passPhrase.toCharArray())
+        );
 
         JcaPGPObjectFactory pgpFact = new JcaPGPObjectFactory(clear);
         Object oData = pgpFact.nextObject();

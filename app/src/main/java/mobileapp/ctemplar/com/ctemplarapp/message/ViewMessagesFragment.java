@@ -650,11 +650,9 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
                         long mailboxId = parentMessage == null
                                 ? viewModel.getDefaultMailbox().getId()
                                 : parentMessage.getMailboxId();
-                        MailboxEntity mailboxEntity = viewModel.getMailboxById(mailboxId);
                         String password = viewModel.getUserPassword();
-                        String privateKey = mailboxEntity.getPrivateKey();
                         attachmentDecrypted = EncryptUtils.decryptAttachment(
-                                encryptedFile, decryptedFile, password, privateKey
+                                encryptedFile, decryptedFile, password, mailboxId
                         );
                     } else {
                         String password = message.getEncryptionMessage().getPassword();

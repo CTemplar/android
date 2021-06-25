@@ -15,6 +15,9 @@ public interface MailboxKeyDao {
     @Query("SELECT * FROM mailbox_keys")
     List<MailboxKeyEntity> getAll();
 
+    @Query("SELECT * FROM mailbox_keys WHERE mailbox = :mailboxId")
+    List<MailboxKeyEntity> getByMailboxId(long mailboxId);
+
     @Insert(onConflict = REPLACE)
     void save(MailboxKeyEntity entity);
 
