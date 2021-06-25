@@ -6,33 +6,59 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Nullable;
 
 import com.ctemplar.app.fdroid.CTemplarApp;
 import com.ctemplar.app.fdroid.repository.MailboxDao;
+import com.ctemplar.app.fdroid.repository.MailboxKeyDao;
 import com.ctemplar.app.fdroid.repository.UserStore;
 import com.ctemplar.app.fdroid.repository.entity.MailboxEntity;
+import com.ctemplar.app.fdroid.repository.entity.MailboxKeyEntity;
+import com.ctemplar.app.fdroid.security.Cryptor;
 import com.ctemplar.app.fdroid.security.PGPManager;
 import timber.log.Timber;
 
 public class EncryptUtils {
     private static final MailboxDao mailboxDao = CTemplarApp.getAppDatabase().mailboxDao();
+    private static final MailboxKeyDao mailboxKeyDao = CTemplarApp.getAppDatabase().mailboxKeyDao();
     private static final UserStore userStore = CTemplarApp.getUserStore();
+
+    private static List<String> getPrivateKeys(long mailboxId) {
+        MailboxEntity mailboxEntity = mailboxDao.getById(mailboxId);
+        if (mailboxEntity == null) {
+            return null;
+        }
+        List<MailboxKeyEntity> mailboxKeyEntity = mailboxKeyDao.getByMailboxId(mailboxId);
+        String privateKey = mailboxEntity.getPrivateKey();
+        List<String> privateKeys = new ArrayList<>();
+        privateKeys.add(privateKey);
+        if (mailboxKeyEntity != null) {
+            for (MailboxKeyEntity keyEntity : mailboxKeyEntity) {
+                privateKeys.add(keyEntity.getPrivateKey());
+            }
+        }
+        return privateKeys;
+    }
 
     public static String decryptContent(String content, long mailboxId, boolean decrypt) {
         if (content == null || content.length() == 0) {
             return "";
         }
         if (decrypt) {
+            List<String> privateKeys = getPrivateKeys(mailboxId);
+            if (privateKeys == null) {
+                return "";
+            }
             MailboxEntity mailboxEntity = mailboxDao.getById(mailboxId);
             String password = userStore.getUserPassword();
             if (mailboxEntity == null || password == null || password.length() == 0) {
                 return "";
             }
-            String privateKey = mailboxEntity.getPrivateKey();
-            content = PGPManager.decrypt(content, privateKey, password);
+            content = Cryptor.decryptPGP(content, privateKeys, password);
+//            content = PGPManager.decrypt(content, privateKey, password);
         }
         return content;
     }
@@ -58,12 +84,10 @@ public class EncryptUtils {
             return "";
         }
         MailboxEntity mailboxEntity = EncryptUtils.getDefaultMailbox();
-        String password = userStore.getUserPassword();
-        if (mailboxEntity == null || password == null || password.length() == 0) {
+        if (mailboxEntity == null) {
             return "";
         }
-        String privateKey = mailboxEntity.getPrivateKey();
-        return PGPManager.decrypt(content, privateKey, password);
+        return decryptContent(content, mailboxEntity.getId(), true);
     }
 
     public static boolean encryptAttachment(File originalFile, File encryptedFile, List<String> publicKeyList) {
@@ -94,7 +118,11 @@ public class EncryptUtils {
         return true;
     }
 
-    public static boolean decryptAttachment(File encryptedFile, File decryptedFile, String password, String privateKey) {
+    public static boolean decryptAttachment(File encryptedFile, File decryptedFile, String password, long mailboxId) {
+        List<String> privateKeys = getPrivateKeys(mailboxId);
+        if (privateKeys == null) {
+            return false;
+        }
         int fileSize = (int) encryptedFile.length();
         byte[] fileBytes = new byte[fileSize];
         try {
@@ -106,7 +134,7 @@ public class EncryptUtils {
             return false;
         }
         try {
-            byte[] encryptedBytes = PGPManager.decrypt(fileBytes, privateKey, password);
+            byte[] encryptedBytes = Cryptor.decryptPGP(fileBytes, privateKeys, password);
             BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(decryptedFile));
             bufferedOutputStream.write(encryptedBytes);
             bufferedOutputStream.flush();
