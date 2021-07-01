@@ -1,5 +1,8 @@
 package com.ctemplar.app.fdroid.utils;
 
+import org.bouncycastle.openpgp.PGPException;
+
+import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -10,8 +13,10 @@ import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import com.ctemplar.app.fdroid.net.entity.PGPKeyEntity;
-import com.ctemplar.app.fdroid.net.request.mailboxes.MailboxKey;
+import com.ctemplar.app.fdroid.net.request.mailboxes.MailboxExtraKeyRequest;
+import com.ctemplar.app.fdroid.net.request.mailboxes.MailboxKeyRequest;
 import com.ctemplar.app.fdroid.repository.entity.MailboxEntity;
+import com.ctemplar.app.fdroid.repository.entity.MailboxKeyEntity;
 import com.ctemplar.app.fdroid.security.PGPManager;
 import timber.log.Timber;
 
@@ -105,14 +110,14 @@ public class EncodeUtils {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public static Single<List<MailboxKey>> generateMailboxKeys(
+    public static Single<List<MailboxKeyRequest>> generateMailboxKeys(
             final List<MailboxEntity> mailboxEntities,
             final String oldPassword,
             final String password,
             final boolean resetKeys
     ) {
         return Single.fromCallable(() -> {
-            List<MailboxKey> mailboxKeys = new ArrayList<>();
+            List<MailboxKeyRequest> mailboxKeyRequests = new ArrayList<>();
 
             for (MailboxEntity mailboxEntity : mailboxEntities) {
                 PGPKeyEntity pgpKeyEntity;
@@ -131,17 +136,87 @@ public class EncodeUtils {
                     );
                 }
 
-                MailboxKey mailboxKey = new MailboxKey(
+                MailboxKeyRequest mailboxKeyRequest = new MailboxKeyRequest(
                         mailboxEntity.getId(),
                         pgpKeyEntity.getPrivateKey(),
                         pgpKeyEntity.getPublicKey()
                 );
-                mailboxKeys.add(mailboxKey);
+                mailboxKeyRequests.add(mailboxKeyRequest);
             }
 
-            return mailboxKeys;
+            return mailboxKeyRequests;
         }).subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread());
+    }
+
+
+    public static List<MailboxExtraKeyRequest> regenerateMailboxExtraKeys(
+            MailboxEntity mailboxEntity,
+            final List<MailboxKeyEntity> mailboxKeyEntities,
+            final String oldPassword,
+            final String password,
+            final boolean resetKeys
+    ) throws PGPException, IOException {
+        List<MailboxExtraKeyRequest> result = new ArrayList<>();
+
+        for (MailboxKeyEntity mailboxKeyEntity : mailboxKeyEntities) {
+            PGPKeyEntity pgpKeyEntity;
+            if (resetKeys) {
+                pgpKeyEntity = PGPManager.generateECCKeys(
+                        mailboxEntity.getEmail(), password
+                );
+            } else {
+                PGPKeyEntity oldPgpKeyEntity = new PGPKeyEntity(
+                        mailboxKeyEntity.getPublicKey(),
+                        mailboxKeyEntity.getPrivateKey(),
+                        mailboxKeyEntity.getFingerprint()
+                );
+                pgpKeyEntity = PGPManager.changePrivateKeyPassword(
+                        oldPgpKeyEntity, oldPassword, password
+                );
+            }
+            MailboxExtraKeyRequest extraKeyRequest = new MailboxExtraKeyRequest(
+                    mailboxKeyEntity.getMailbox(),
+                    pgpKeyEntity.getPrivateKey(),
+                    pgpKeyEntity.getPublicKey(),
+                    mailboxKeyEntity.getId()
+            );
+            result.add(extraKeyRequest);
+        }
+        return result;
+    }
+
+    public static List<MailboxKeyRequest> regenerateMailboxKeys(
+            final List<MailboxEntity> mailboxEntities,
+            final String oldPassword,
+            final String password,
+            final boolean resetKeys
+    ) throws PGPException, IOException {
+        List<MailboxKeyRequest> result = new ArrayList<>();
+        for (MailboxEntity mailboxEntity : mailboxEntities) {
+            PGPKeyEntity pgpKeyEntity;
+            if (resetKeys) {
+                pgpKeyEntity = PGPManager.generateECCKeys(
+                        mailboxEntity.getEmail(), password
+                );
+            } else {
+                PGPKeyEntity oldPgpKeyEntity = new PGPKeyEntity(
+                        mailboxEntity.getPublicKey(),
+                        mailboxEntity.getPrivateKey(),
+                        mailboxEntity.getFingerprint()
+                );
+                pgpKeyEntity = PGPManager.changePrivateKeyPassword(
+                        oldPgpKeyEntity, oldPassword, password
+                );
+            }
+            MailboxKeyRequest request = new MailboxKeyRequest(
+                    mailboxEntity.getId(),
+                    pgpKeyEntity.getPrivateKey(),
+                    pgpKeyEntity.getPublicKey()
+            );
+            result.add(request);
+        }
+        return result;
     }
 
     public static Single<PGPKeyEntity> generateKeys(

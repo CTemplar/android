@@ -2,6 +2,7 @@ package com.ctemplar.app.fdroid.utils;
 
 import org.jetbrains.annotations.NotNull;
 
+import io.reactivex.Scheduler;
 import io.reactivex.Single;
 import io.reactivex.SingleObserver;
 import io.reactivex.SingleOnSubscribe;
@@ -11,7 +12,7 @@ import io.reactivex.schedulers.Schedulers;
 
 public class RxUtils {
     public interface RunnableWithParam<T> {
-        T run();
+        T run() throws Exception;
     }
 
     public interface OnSuccessCallbackWithParam<T> {
@@ -27,8 +28,13 @@ public class RxUtils {
     }
 
     public static <T> void callAsyncWithResult(RunnableWithParam<T> runnable, OnSuccessCallbackWithParam<T> onSuccess, OnErrorCallback onError) {
+        callAsyncWithResult(runnable, onSuccess, onError, Schedulers.io());
+    }
+
+
+    public static <T> void callAsyncWithResult(RunnableWithParam<T> runnable, OnSuccessCallbackWithParam<T> onSuccess, OnErrorCallback onError, Scheduler subscribeOn) {
         Single.create((SingleOnSubscribe<T>) emitter -> emitter.onSuccess(runnable.run()))
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(subscribeOn)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SingleObserver<T>() {
                     @Override
@@ -49,11 +55,15 @@ public class RxUtils {
     }
 
     public static void callAsync(Runnable runnable, OnSuccessCallback onSuccess, OnErrorCallback onError) {
+        callAsync(runnable, onSuccess, onError, Schedulers.io());
+    }
+
+    public static void callAsync(Runnable runnable, OnSuccessCallback onSuccess, OnErrorCallback onError, Scheduler subscribeOn) {
         Single.create(emitter -> {
             runnable.run();
             emitter.onSuccess(new Object());
         })
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(subscribeOn)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SingleObserver<Object>() {
                     @Override
