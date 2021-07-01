@@ -1,5 +1,6 @@
 package mobileapp.ctemplar.com.ctemplarapp.security;
 
+import java.util.Collections;
 import java.util.List;
 
 import timber.log.Timber;
@@ -32,6 +33,10 @@ public class Cryptor {
         return content;
     }
 
+    public static byte[] decryptPGP(byte[] content, String privateKey, String passPhrase) {
+        return decryptPGP(content, Collections.singletonList(privateKey), passPhrase);
+    }
+
     public static String decryptPGP(String content, List<String> privateKeys, String passPhrase) {
         if (content == null) {
             throw new NullPointerException("content cannot be null");
@@ -41,6 +46,10 @@ public class Cryptor {
             return null;
         }
         return new String(result);
+    }
+
+    public static String decryptPGP(String content, String privateKey, String passPhrase) {
+        return decryptPGP(content, Collections.singletonList(privateKey), passPhrase);
     }
 
     public static byte[] decryptGPG(byte[] content, String passPhrase) {

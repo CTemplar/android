@@ -58,7 +58,6 @@ public class EncryptUtils {
                 return "";
             }
             content = Cryptor.decryptPGP(content, privateKeys, password);
-//            content = PGPManager.decrypt(content, privateKey, password);
         }
         return content;
     }

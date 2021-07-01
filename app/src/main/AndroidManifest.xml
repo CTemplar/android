@@ -118,7 +118,7 @@
             android:theme="@style/PreferenceScreen" />
         <activity android:name=".settings.PINLockSettingsActivity" />
         <activity android:name=".settings.PINLockChangeActivity" />
-        <activity android:name=".settings.ChangePasswordActivity" />
+        <activity android:name=".settings.password.ChangePasswordActivity" />
         <activity android:name=".settings.SignatureActivity" />
         <activity android:name=".settings.HelpdeskActivity" />
         <activity android:name=".settings.mailboxes.MailboxesActivity" />
