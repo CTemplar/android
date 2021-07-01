@@ -2,7 +2,7 @@ package mobileapp.ctemplar.com.ctemplarapp.net.request.mailboxes;
 
 import com.google.gson.annotations.SerializedName;
 
-public class MailboxKey {
+public class MailboxKeyRequest {
     @SerializedName("mailbox_id")
     private long mailboxId;
 
@@ -12,10 +12,10 @@ public class MailboxKey {
     @SerializedName("public_key")
     private String publicKey;
 
-    public MailboxKey() {
+    public MailboxKeyRequest() {
     }
 
-    public MailboxKey(long mailboxId, String privateKey, String publicKey) {
+    public MailboxKeyRequest(long mailboxId, String privateKey, String publicKey) {
         this.mailboxId = mailboxId;
         this.privateKey = privateKey;
         this.publicKey = publicKey;

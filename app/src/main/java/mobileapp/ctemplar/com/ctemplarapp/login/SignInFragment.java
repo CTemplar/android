@@ -26,6 +26,7 @@ import mobileapp.ctemplar.com.ctemplarapp.LoginActivityActions;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
+import mobileapp.ctemplar.com.ctemplarapp.utils.ToastUtils;
 import timber.log.Timber;
 
 public class SignInFragment extends BaseFragment {
@@ -77,6 +78,8 @@ public class SignInFragment extends BaseFragment {
 
         loginActivityModel = new ViewModelProvider(activity).get(LoginActivityViewModel.class);
         loginActivityModel.getResponseStatus().observe(getViewLifecycleOwner(), this::handleStatus);
+        loginActivityModel.getLoginResponseError().observe(getViewLifecycleOwner(),
+                v -> ToastUtils.showToast(getActivity(), v));
         setListeners();
     }
 

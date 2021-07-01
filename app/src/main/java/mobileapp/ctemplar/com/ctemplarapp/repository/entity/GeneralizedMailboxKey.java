@@ -1,4 +1,4 @@
-package mobileapp.ctemplar.com.ctemplarapp.settings.keys;
+package mobileapp.ctemplar.com.ctemplarapp.repository.entity;
 
 import mobileapp.ctemplar.com.ctemplarapp.repository.enums.KeyType;
 

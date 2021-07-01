@@ -90,7 +90,7 @@ public interface RestService {
     Observable<SignInResponse> signIn(@Body SignInRequest request);
 
     @POST("auth/sign-up/")
-    Observable<SignUpResponse> signUp(@Body SignUpRequest request);
+    Single<SignUpResponse> signUp(@Body SignUpRequest request);
 
     @GET("auth/sign-out/")
     Observable<Response<Void>> signOut(
@@ -111,10 +111,10 @@ public interface RestService {
     Observable<RecoverPasswordResponse> recoverPassword(@Body RecoverPasswordRequest request);
 
     @POST("auth/reset/")
-    Observable<RecoverPasswordResponse> resetPassword(@Body RecoverPasswordRequest request);
+    Single<RecoverPasswordResponse> resetPassword(@Body RecoverPasswordRequest request);
 
     @POST("auth/change-password/")
-    Observable<ResponseBody> changePassword(@Body ChangePasswordRequest request);
+    Single<ResponseBody> changePassword(@Body ChangePasswordRequest request);
 
     @GET("auth/captcha/")
     Observable<CaptchaResponse> getCaptcha();

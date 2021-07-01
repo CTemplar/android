@@ -13,6 +13,7 @@ import java.util.List;
 
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.databinding.ItemMailboxKeyHolderBinding;
+import mobileapp.ctemplar.com.ctemplarapp.repository.entity.GeneralizedMailboxKey;
 
 public class MailboxKeysAdapter extends RecyclerView.Adapter<MailboxKeysAdapter.ViewHolder> {
     private Context context;

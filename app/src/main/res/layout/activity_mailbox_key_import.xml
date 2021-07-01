@@ -20,86 +20,184 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="8dp"
-        android:orientation="vertical">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/email_address_text_view"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/lato_regular"
-                android:text="@string/select_mailbox_for_import_key"
-                android:textColor="?android:textColorSecondary"
-                android:textSize="16sp" />
-
-            <Spinner
-                android:id="@+id/email_spinner"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                tools:listitem="@layout/item_domain_spinner" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:fontFamily="@font/lato_regular"
-                android:text="@string/import_private_key_description"
-                android:textColor="?android:colorAccent"
-                android:textSize="16sp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:fontFamily="@font/lato_regular"
-                android:text="@string/select_private_key_to_impport"
-                android:textColor="?android:textColorSecondary"
-                android:textSize="16sp" />
-
-            <TextView
-                android:id="@+id/add_key_text_view"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:drawablePadding="4dp"
-                android:fontFamily="@font/lato_regular"
-                android:text="@string/add_key"
-                android:textColor="@color/colorBlue"
-                android:textSize="18sp"
-                app:drawableStartCompat="@drawable/add_outline"
-                app:drawableTint="@color/colorBlue" />
-
-        </LinearLayout>
+        android:layout_height="wrap_content">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
-            android:layout_marginVertical="20dp"
-            android:orientation="horizontal">
+            android:layout_marginTop="8dp"
+            android:orientation="vertical">
 
-            <Button
-                android:id="@+id/next_button"
-                android:layout_width="0dp"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="@drawable/selector_button_blue"
-                android:fontFamily="@font/lato_regular"
-                android:text="@string/title_next"
-                android:textColor="@color/colorWhiteLight" />
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/email_address_text_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/lato_regular"
+                    android:text="@string/select_mailbox_for_import_key"
+                    android:textColor="?android:textColorSecondary"
+                    android:textSize="16sp" />
+
+                <Spinner
+                    android:id="@+id/email_spinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    tools:listitem="@layout/item_domain_spinner" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="@font/lato_regular"
+                    android:text="@string/import_private_key_description"
+                    android:textColor="?android:colorAccent"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:fontFamily="@font/lato_regular"
+                    android:text="@string/select_private_key_to_impport"
+                    android:textColor="?android:textColorSecondary"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/add_key_text_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:drawablePadding="4dp"
+                    android:fontFamily="@font/lato_regular"
+                    android:text="@string/add_key"
+                    android:textColor="@color/colorBlue"
+                    android:textSize="18sp"
+                    app:drawableStartCompat="@drawable/add_outline"
+                    app:drawableTint="@color/colorBlue" />
+
+                <TextView
+                    android:id="@+id/private_key_name_text_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:drawablePadding="2dp"
+                    android:gravity="center_vertical"
+                    android:text="keyname@ctemplar.com.asc"
+                    app:drawableStartCompat="@drawable/ic_file" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/password_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/lato_regular"
+                    android:text="@string/enter_selected_private_key_password"
+                    android:textColor="@color/secondaryTextColor" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/selected_key_password_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    app:hintEnabled="false"
+                    app:passwordToggleDrawable="@drawable/selector_password_state"
+                    app:passwordToggleEnabled="true"
+                    app:passwordToggleTint="@color/secondaryTextColor">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/selected_key_password_edit_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/text_input_field"
+                        android:fontFamily="@font/lato_regular"
+                        android:hint="@string/title_password"
+                        android:imeOptions="actionNext"
+                        android:inputType="textPassword"
+                        android:nextFocusForward="@id/account_password_edit_text"
+                        android:padding="12dp"
+                        android:textColor="@color/secondaryTextColor"
+                        android:textSize="16sp" />
+
+                    <requestFocus />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:fontFamily="@font/lato_regular"
+                    android:text="@string/enter_your_password_to_continue"
+                    android:textColor="@color/secondaryTextColor" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/account_password_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    app:hintEnabled="false"
+                    app:passwordToggleDrawable="@drawable/selector_password_state"
+                    app:passwordToggleEnabled="true"
+                    app:passwordToggleTint="@color/secondaryTextColor">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/account_password_edit_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/text_input_field"
+                        android:fontFamily="@font/lato_regular"
+                        android:hint="@string/title_password"
+                        android:inputType="textPassword"
+                        android:padding="12dp"
+                        android:textColor="@color/secondaryTextColor"
+                        android:textSize="16sp" />
+
+                    <requestFocus />
+                </com.google.android.material.textfield.TextInputLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="20dp"
+                android:orientation="vertical">
+
+                <ProgressBar
+                    android:id="@+id/progress_bar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginBottom="10dp"
+                    android:indeterminateTint="@color/primaryTextColor"
+                    android:visibility="gone" />
+
+                <Button
+                    android:id="@+id/import_key_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/selector_button_blue"
+                    android:fontFamily="@font/lato_regular"
+                    android:text="@string/import_key"
+                    android:textColor="@color/colorWhiteLight" />
+
+            </LinearLayout>
 
         </LinearLayout>
 
-    </LinearLayout>
+    </ScrollView>
 
 </LinearLayout>

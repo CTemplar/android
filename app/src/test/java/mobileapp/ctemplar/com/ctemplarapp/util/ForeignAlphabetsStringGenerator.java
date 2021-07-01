@@ -15,10 +15,7 @@ public class ForeignAlphabetsStringGenerator {
         String chineseString = randomChineseString(subLength, generator);
         String japaneseString = randomJapaneseString(subLength, generator);
         String cyrillicString = randomCyrillicString(subLength, generator);
-        return englishString
-                + "\n" + arabicString
-                + "\n" + chineseString
-                + "\n" + japaneseString
+        return englishString + "\n" + arabicString + "\n" + chineseString + "\n" + japaneseString
                 + "\n" + cyrillicString;
     }
 
@@ -28,18 +25,21 @@ public class ForeignAlphabetsStringGenerator {
     }
 
     private static String randomChineseString(int length, Random random) {
-        List<Character> chinesChars = findCharactersInUnicodeScript(Character.UnicodeScript.HAN);
+        List<Character> chinesChars = new ArrayList<>();
+        chinesChars.addAll(findCharactersInUnicodeBlock(Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_A));
+        chinesChars.addAll(findCharactersInUnicodeBlock(Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS));
+        chinesChars.addAll(findCharactersInUnicodeBlock(Character.UnicodeBlock.CJK_COMPATIBILITY_IDEOGRAPHS));
+        chinesChars.addAll(findCharactersInUnicodeBlock(Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_B));
+        chinesChars.addAll(findCharactersInUnicodeBlock(Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_C));
+        chinesChars.addAll(findCharactersInUnicodeBlock(Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_D));
         return randomStringFromCharacters(chinesChars, length, random);
     }
 
     private static String randomJapaneseString(int length, Random random) {
         List<Character> japaneseChars = new ArrayList<>();
-        List<Character> japaneseHiraganaChars = findCharactersInUnicodeBlock(Character.UnicodeBlock.HIRAGANA);
-        List<Character> japaneseKatakanaChars = findCharactersInUnicodeBlock(Character.UnicodeBlock.KATAKANA);
-        List<Character> japaneseKatakanaPhoneticChars = findCharactersInUnicodeBlock(Character.UnicodeBlock.KATAKANA_PHONETIC_EXTENSIONS);
-        japaneseChars.addAll(japaneseHiraganaChars);
-        japaneseChars.addAll(japaneseKatakanaChars);
-        japaneseChars.addAll(japaneseKatakanaPhoneticChars);
+        japaneseChars.addAll(findCharactersInUnicodeBlock(Character.UnicodeBlock.HIRAGANA));
+        japaneseChars.addAll(findCharactersInUnicodeBlock(Character.UnicodeBlock.KATAKANA));
+        japaneseChars.addAll(findCharactersInUnicodeBlock(Character.UnicodeBlock.KATAKANA_PHONETIC_EXTENSIONS));
         return randomStringFromCharacters(japaneseChars, length, random);
     }
 
@@ -57,16 +57,6 @@ public class ForeignAlphabetsStringGenerator {
             randomStringBuilder.append(tempChar);
         }
         return randomStringBuilder.toString();
-    }
-
-    private static List<Character> findCharactersInUnicodeScript(Character.UnicodeScript block) {
-        final List<Character> chars = new ArrayList<>();
-        for (int codePoint = Character.MIN_CODE_POINT; codePoint <= Character.MAX_CODE_POINT; codePoint++) {
-            if (block == Character.UnicodeScript.of(codePoint)) {
-                chars.add((char) codePoint);
-            }
-        }
-        return chars;
     }
 
     private static List<Character> findCharactersInUnicodeBlock(Character.UnicodeBlock block) {

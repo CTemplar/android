@@ -254,7 +254,7 @@ public class UserRepository {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<SignUpResponse> signUp(SignUpRequest request) {
+    public Single<SignUpResponse> signUp(SignUpRequest request) {
         return service.signUp(request)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
@@ -278,13 +278,13 @@ public class UserRepository {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<ResponseBody> changePassword(ChangePasswordRequest request) {
+    public Single<ResponseBody> changePassword(ChangePasswordRequest request) {
         return service.changePassword(request)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<RecoverPasswordResponse> resetPassword(RecoverPasswordRequest request) {
+    public Single<RecoverPasswordResponse> resetPassword(RecoverPasswordRequest request) {
         return service.resetPassword(request)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());

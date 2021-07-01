@@ -47,7 +47,8 @@ public class AttachmentEntity {
     @SerializedName("message")
     private long message;
 
-    public AttachmentEntity() { }
+    public AttachmentEntity() {
+    }
 
     public AttachmentEntity(long id, long fileSize, String documentUrl, boolean isDeleted, Date deletedAt, String name, boolean isInline, boolean isEncrypted, boolean isForwarded, boolean isPGPMime, String contentId, String fileType, long actualSize, long message) {
         this.id = id;
