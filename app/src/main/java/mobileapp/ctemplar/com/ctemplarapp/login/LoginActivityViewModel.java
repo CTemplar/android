@@ -104,7 +104,7 @@ public class LoginActivityViewModel extends AndroidViewModel {
         return addFirebaseTokenStatus;
     }
 
-    public void clearAllTables() {
+    private void clearAllTables() {
         CTemplarApp.getAppDatabase().clearAllTables();
     }
 

@@ -82,25 +82,6 @@ public class PGPManager {
         return new byte[0];
     }
 
-//    public static String decrypt(String encryptedText, String privateKey, String passPhrase) {
-//        return new String(decrypt(encryptedText.getBytes(), privateKey, passPhrase));
-//    }
-//
-//    public static byte[] decrypt(byte[] encryptedBytes, String privateKey, String passPhrase) {
-//        try {
-//            PGPSecretKeyRing pgpSecretKeyRing = PGPLib.getPGPSecretKeyRing(privateKey);
-//            return PGPLib.decrypt(encryptedBytes, pgpSecretKeyRing, passPhrase);
-//        } catch (PGPException e) {
-//            Timber.d(e);
-//        } catch (IOException e) {
-//            Timber.w(e);
-//        } catch (Exception e) {
-//            Timber.e(e);
-//            return encryptedBytes;
-//        }
-//        return new byte[0];
-//    }
-
     public static String encryptGPG(String inputText, String passPhrase) {
         return new String(encryptGPG(inputText.getBytes(), passPhrase, true));
     }
