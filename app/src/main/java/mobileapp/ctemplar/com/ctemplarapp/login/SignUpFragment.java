@@ -7,6 +7,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.google.android.material.tabs.TabLayout;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -28,6 +30,9 @@ public class SignUpFragment extends BaseFragment {
     @BindView(R.id.fragment_sign_up_view_pager)
     ViewPagerNoScroll viewPager;
 
+    @BindView(R.id.fragment_sign_up_page_indicator_tab_layout)
+    TabLayout pageIndicatorTabLayout;
+
     private StepRegistrationViewModel stepModel;
 
     @Override
@@ -47,6 +52,7 @@ public class SignUpFragment extends BaseFragment {
 
         viewPager.setAdapter(new SignUpFragmentsAdapter(getChildFragmentManager(), list));
         viewPager.setOnTouchListener(null);
+        pageIndicatorTabLayout.setupWithViewPager(viewPager, true);
 
         stepModel = new ViewModelProvider(this).get(StepRegistrationViewModel.class);
         stepModel.getAction().observe(getViewLifecycleOwner(), this::handleRegistrationActions);
@@ -59,7 +65,7 @@ public class SignUpFragment extends BaseFragment {
     }
 
     public void onBackPressed() {
-        if(viewPager.getCurrentItem() == 0) {
+        if (viewPager.getCurrentItem() == 0) {
             getActivity().onBackPressed();
         } else {
             viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
@@ -67,7 +73,7 @@ public class SignUpFragment extends BaseFragment {
     }
 
     public void onNextPressed() {
-        if(viewPager.getCurrentItem() != Objects.requireNonNull(viewPager.getAdapter()).getCount() -1) {
+        if (viewPager.getCurrentItem() != Objects.requireNonNull(viewPager.getAdapter()).getCount() - 1) {
             viewPager.setCurrentItem(viewPager.getCurrentItem() + 1);
         }
     }
