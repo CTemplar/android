@@ -322,14 +322,7 @@ public class MailboxKeyViewModel extends ViewModel {
     public Response<Void> deleteMailboxKeySync(long id, String passwordHash) {
         Response<Void> voidResponse = userRepository.deleteMailboxKey(id,
                 new DeleteMailboxKeyRequest(passwordHash)).blockingGet();
-        if (!voidResponse.isSuccessful()) {
-            return voidResponse;
-        }
-        try {
-            updateMailboxesSync(20, 0, true);
-        } catch (Throwable e) {
-            Timber.e(e);
-        }
+        updateMailboxesSync(20, 0);
         return voidResponse;
     }
 
