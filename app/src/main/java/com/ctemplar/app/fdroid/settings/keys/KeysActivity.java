@@ -142,6 +142,7 @@ public class KeysActivity extends AppCompatActivity {
                 }
                 binding.emailSpinner.setSelection(currentPosition);
             } else if (responseStatus == ResponseStatus.RESPONSE_ERROR) {
+                ToastUtils.showLongToast(getApplicationContext(), getString(R.string.operation_failed));
                 if (removeKeyDialog != null) {
                     removeKeyDialog.setLoading(false);
                 }
@@ -216,8 +217,8 @@ public class KeysActivity extends AppCompatActivity {
         MakeAsPrimaryKeyDialog dialog = new MakeAsPrimaryKeyDialog();
         dialog.setOnApplyClickListener(() -> {
             dialog.setLoading(true);
-            MailboxEntity mailbox = getKeyMailbox(key);
             dialog.setCancelable(false);
+            MailboxEntity mailbox = getKeyMailbox(key);
             if (mailbox == null) {
                 Timber.wtf("openSetKeyAsPrimaryDialog mailbox is null");
                 dialog.dismiss();

@@ -1,19 +1,13 @@
 apply plugin: 'com.android.application'
 
-ext {
-    versionMajor = 1
-    versionMinor = 4
-    versionBuild = 9
-}
-
 android {
     compileSdkVersion 30
     defaultConfig {
         applicationId "com.ctemplar.app.fdroid"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 22
-        versionName "${versionMajor}.${versionMinor}.${versionBuild}"
+        versionCode 23
+        versionName "1.5.0"
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"

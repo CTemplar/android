@@ -210,7 +210,7 @@ public class UserRepository {
     }
 
     public void saveMailboxes(List<MailboxEntity> mailboxes) {
-        if (mailboxes == null || mailboxes.size() == 0) {
+        if (mailboxes == null) {
             Timber.e("Mailboxes is null");
             return;
         }
@@ -228,7 +228,7 @@ public class UserRepository {
     }
 
     public void saveMailboxKeys(List<MailboxKeyEntity> mailboxKeys) {
-        if (mailboxKeys == null || mailboxKeys.size() == 0) {
+        if (mailboxKeys == null) {
             Timber.e("Mailbox keys is null");
             return;
         }
