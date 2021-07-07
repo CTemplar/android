@@ -13,11 +13,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.ctemplar.app.fdroid.BaseFragment;
-import com.ctemplar.app.fdroid.LoginActivityActions;
-import com.ctemplar.app.fdroid.R;
-import com.ctemplar.app.fdroid.net.ResponseStatus;
-import com.ctemplar.app.fdroid.utils.EditTextUtils;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -26,6 +21,12 @@ import org.jetbrains.annotations.NotNull;
 import butterknife.BindInt;
 import butterknife.BindView;
 import butterknife.OnClick;
+import com.ctemplar.app.fdroid.BaseFragment;
+import com.ctemplar.app.fdroid.LoginActivityActions;
+import com.ctemplar.app.fdroid.R;
+import com.ctemplar.app.fdroid.net.ResponseStatus;
+import com.ctemplar.app.fdroid.utils.EditTextUtils;
+import com.ctemplar.app.fdroid.utils.ToastUtils;
 import timber.log.Timber;
 
 public class SignInFragment extends BaseFragment {
@@ -77,6 +78,8 @@ public class SignInFragment extends BaseFragment {
 
         loginActivityModel = new ViewModelProvider(activity).get(LoginActivityViewModel.class);
         loginActivityModel.getResponseStatus().observe(getViewLifecycleOwner(), this::handleStatus);
+        loginActivityModel.getLoginResponseError().observe(getViewLifecycleOwner(),
+                v -> ToastUtils.showToast(getActivity(), v));
         setListeners();
     }
 
@@ -148,16 +151,15 @@ public class SignInFragment extends BaseFragment {
 
             switch (status) {
                 case RESPONSE_ERROR:
-                    Toast.makeText(getActivity(), getString(R.string.error_sign_in), Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity(), R.string.error_sign_in, Toast.LENGTH_LONG).show();
                     break;
                 case RESPONSE_ERROR_AUTH_FAILED:
-                    Toast.makeText(getActivity(), getString(R.string.error_authentication_failed), Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity(), R.string.error_authentication_failed, Toast.LENGTH_LONG).show();
                     break;
                 case RESPONSE_WAIT_OTP:
                     show2FA();
                     break;
                 case RESPONSE_NEXT:
-                    loginActivityModel.clearDB();
                     loginActivityModel.changeAction(LoginActivityActions.CHANGE_ACTIVITY_MAIN);
                     break;
             }

@@ -14,6 +14,7 @@ import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+
 import com.ctemplar.app.fdroid.BaseFragment;
 import com.ctemplar.app.fdroid.R;
 import com.ctemplar.app.fdroid.login.step.SignUpFragmentsAdapter;
@@ -23,10 +24,14 @@ import com.ctemplar.app.fdroid.login.step.StepRegistrationActions;
 import com.ctemplar.app.fdroid.login.step.StepRegistrationViewModel;
 import com.ctemplar.app.fdroid.login.step.StepUsernameFragment;
 import com.ctemplar.app.fdroid.login.step.ViewPagerNoScroll;
+import com.google.android.material.tabs.TabLayout;
 
 public class SignUpFragment extends BaseFragment {
     @BindView(R.id.fragment_sign_up_view_pager)
     ViewPagerNoScroll viewPager;
+
+    @BindView(R.id.fragment_sign_up_page_indicator_tab_layout)
+    TabLayout pageIndicatorTabLayout;
 
     private StepRegistrationViewModel stepModel;
 
@@ -47,6 +52,7 @@ public class SignUpFragment extends BaseFragment {
 
         viewPager.setAdapter(new SignUpFragmentsAdapter(getChildFragmentManager(), list));
         viewPager.setOnTouchListener(null);
+        pageIndicatorTabLayout.setupWithViewPager(viewPager, true);
 
         stepModel = new ViewModelProvider(this).get(StepRegistrationViewModel.class);
         stepModel.getAction().observe(getViewLifecycleOwner(), this::handleRegistrationActions);
@@ -59,7 +65,7 @@ public class SignUpFragment extends BaseFragment {
     }
 
     public void onBackPressed() {
-        if(viewPager.getCurrentItem() == 0) {
+        if (viewPager.getCurrentItem() == 0) {
             getActivity().onBackPressed();
         } else {
             viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
@@ -67,7 +73,7 @@ public class SignUpFragment extends BaseFragment {
     }
 
     public void onNextPressed() {
-        if(viewPager.getCurrentItem() != Objects.requireNonNull(viewPager.getAdapter()).getCount() -1) {
+        if (viewPager.getCurrentItem() != Objects.requireNonNull(viewPager.getAdapter()).getCount() - 1) {
             viewPager.setCurrentItem(viewPager.getCurrentItem() + 1);
         }
     }

@@ -15,18 +15,18 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProvider;
 
+import java.util.List;
+import java.util.Map;
+
 import com.ctemplar.app.fdroid.R;
 import com.ctemplar.app.fdroid.databinding.ActivityMailboxKeyAddBinding;
 import com.ctemplar.app.fdroid.net.ResponseStatus;
+import com.ctemplar.app.fdroid.repository.entity.GeneralizedMailboxKey;
 import com.ctemplar.app.fdroid.repository.entity.MailboxEntity;
 import com.ctemplar.app.fdroid.repository.enums.KeyType;
 import com.ctemplar.app.fdroid.utils.EditTextUtils;
 import com.ctemplar.app.fdroid.utils.ThemeUtils;
 import com.ctemplar.app.fdroid.utils.ToastUtils;
-
-import java.util.List;
-import java.util.Map;
-
 import timber.log.Timber;
 
 public class AddMailboxKeyActivity extends AppCompatActivity {
@@ -86,8 +86,6 @@ public class AddMailboxKeyActivity extends AppCompatActivity {
 
             }
         });
-
-        binding.generateKeysButton.setOnClickListener(v -> onGenerateKeys());
         binding.passwordEditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -106,6 +104,7 @@ public class AddMailboxKeyActivity extends AppCompatActivity {
 
             }
         });
+        binding.generateKeysButton.setOnClickListener(v -> onGenerateKeys());
 
         mailboxKeyViewModel.getAddMailboxKeyResponseStatus().observe(this,
                 this::handleAddMailboxStatus);
@@ -117,6 +116,10 @@ public class AddMailboxKeyActivity extends AppCompatActivity {
         setLoading(false);
         if (response == ResponseStatus.RESPONSE_COMPLETE) {
             ToastUtils.showLongToast(getApplicationContext(), getString(R.string.add_new_key_message));
+            setResult(RESULT_OK);
+            onBackPressed();
+        } else {
+            ToastUtils.showLongToast(getApplicationContext(), getString(R.string.operation_failed));
         }
     }
 

@@ -2,6 +2,7 @@ package com.ctemplar.app.fdroid.login;
 
 import android.app.Application;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -14,23 +15,32 @@ import com.ctemplar.app.fdroid.net.ResponseStatus;
 import com.ctemplar.app.fdroid.net.entity.PGPKeyEntity;
 import com.ctemplar.app.fdroid.net.request.RecoverPasswordRequest;
 import com.ctemplar.app.fdroid.net.request.SignInRequest;
+import com.ctemplar.app.fdroid.net.response.HttpErrorResponse;
 import com.ctemplar.app.fdroid.net.response.RecoverPasswordResponse;
 import com.ctemplar.app.fdroid.net.response.SignInResponse;
-import com.ctemplar.app.fdroid.services.NotificationService;
 import com.ctemplar.app.fdroid.repository.UserRepository;
+import com.ctemplar.app.fdroid.services.NotificationService;
 import com.ctemplar.app.fdroid.utils.EditTextUtils;
 import com.ctemplar.app.fdroid.utils.EncodeUtils;
 import com.ctemplar.app.fdroid.workers.WorkersHelper;
+import com.google.gson.JsonSyntaxException;
 
 import org.jetbrains.annotations.NotNull;
 
-import io.reactivex.Observable;
+import java.io.IOException;
+
 import io.reactivex.Observer;
+import io.reactivex.Single;
+import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import retrofit2.HttpException;
+import retrofit2.Response;
+import timber.log.Timber;
+
+import static com.ctemplar.app.fdroid.utils.DateUtils.GENERAL_GSON;
 
 public class LoginActivityViewModel extends AndroidViewModel {
     private final UserRepository userRepository;
@@ -39,9 +49,9 @@ public class LoginActivityViewModel extends AndroidViewModel {
     private final MutableLiveData<LoginActivityActions> actions = new SingleLiveEvent<>();
     private final MutableLiveData<DialogState> dialogState = new SingleLiveEvent<>();
     private final MutableLiveData<ResponseStatus> responseStatus = new MutableLiveData<>();
-    private final MutableLiveData<ResponseStatus> addAppTokenStatus = new MutableLiveData<>();
+    private final MutableLiveData<String> loginResponseError = new MutableLiveData<>();
 
-    public LoginActivityViewModel(Application application) {
+    public LoginActivityViewModel(@NonNull Application application) {
         super(application);
         userRepository = CTemplarApp.getUserRepository();
     }
@@ -70,6 +80,10 @@ public class LoginActivityViewModel extends AndroidViewModel {
         return responseStatus;
     }
 
+    public MutableLiveData<String> getLoginResponseError() {
+        return loginResponseError;
+    }
+
     public void resetResponseStatus() {
         responseStatus.postValue(null);
     }
@@ -82,7 +96,7 @@ public class LoginActivityViewModel extends AndroidViewModel {
         return recoverPasswordRequest;
     }
 
-    public void clearDB() {
+    private void clearAllTables() {
         CTemplarApp.getAppDatabase().clearAllTables();
     }
 
@@ -104,6 +118,17 @@ public class LoginActivityViewModel extends AndroidViewModel {
                                 responseStatus.postValue(ResponseStatus.RESPONSE_ERROR_AUTH_FAILED);
                             } else {
                                 responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
+                            }
+                            Response<?> errorResponse = ((HttpException) e).response();
+                            if (errorResponse != null && errorResponse.errorBody() != null) {
+                                try {
+                                    String errorBody = errorResponse.errorBody().string();
+                                    HttpErrorResponse httpErrorResponse = GENERAL_GSON
+                                            .fromJson(errorBody, HttpErrorResponse.class);
+                                    loginResponseError.postValue(httpErrorResponse.getError().getError());
+                                } catch (IOException | JsonSyntaxException ex) {
+                                    Timber.e(ex, "Can't parse signIn error");
+                                }
                             }
                         } else {
                             responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
@@ -128,9 +153,10 @@ public class LoginActivityViewModel extends AndroidViewModel {
                             responseStatus.postValue(ResponseStatus.RESPONSE_WAIT_OTP);
                         } else {
                             userRepository.saveUserToken(signInResponse.getToken());
-                            NotificationService.updateState(getApplication());
                             responseStatus.postValue(ResponseStatus.RESPONSE_NEXT);
+                            clearAllTables();
                             WorkersHelper.setupForceRefreshTokenWork(getApplication());
+                            NotificationService.updateState(getApplication());
                         }
                     }
                 });
@@ -188,7 +214,7 @@ public class LoginActivityViewModel extends AndroidViewModel {
         EncodeUtils.getPGPKeyObservable(emailAddress, password)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .flatMap((Function<PGPKeyEntity, Observable<RecoverPasswordResponse>>) pgpKeyEntity -> {
+                .flatMap((Function<PGPKeyEntity, Single<RecoverPasswordResponse>>) pgpKeyEntity -> {
                     recoverPasswordRequest.setPrivateKey(pgpKeyEntity.getPrivateKey());
                     recoverPasswordRequest.setPublicKey(pgpKeyEntity.getPublicKey());
                     recoverPasswordRequest.setPassword(
@@ -196,37 +222,32 @@ public class LoginActivityViewModel extends AndroidViewModel {
                     );
 
                     return userRepository.resetPassword(recoverPasswordRequest);
-                }).subscribe(new Observer<RecoverPasswordResponse>() {
+                })
+                .subscribe(new SingleObserver<RecoverPasswordResponse>() {
+                    @Override
+                    public void onSubscribe(@NotNull Disposable d) {
 
-            @Override
-            public void onSubscribe(@NotNull Disposable d) {
-
-            }
-
-            @Override
-            public void onNext(@NotNull RecoverPasswordResponse recoverPasswordResponse) {
-                userRepository.saveUserToken(recoverPasswordResponse.getToken());
-                responseStatus.postValue(ResponseStatus.RESPONSE_NEXT_NEW_PASSWORD);
-            }
-
-            @Override
-            public void onError(@NotNull Throwable e) {
-                if (e instanceof HttpException) {
-                    HttpException exception = (HttpException) e;
-                    if (exception.code() == 400) {
-                        responseStatus.postValue(ResponseStatus.RESPONSE_ERROR_CODE_NOT_MATCH);
-                    } else {
-                        responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
                     }
-                } else {
-                    responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
-                }
-            }
 
-            @Override
-            public void onComplete() {
+                    @Override
+                    public void onSuccess(@NotNull RecoverPasswordResponse recoverPasswordResponse) {
+                        userRepository.saveUserToken(recoverPasswordResponse.getToken());
+                        responseStatus.postValue(ResponseStatus.RESPONSE_NEXT_NEW_PASSWORD);
+                    }
 
-            }
-        });
+                    @Override
+                    public void onError(@NotNull Throwable e) {
+                        if (e instanceof HttpException) {
+                            HttpException exception = (HttpException) e;
+                            if (exception.code() == 400) {
+                                responseStatus.postValue(ResponseStatus.RESPONSE_ERROR_CODE_NOT_MATCH);
+                            } else {
+                                responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
+                            }
+                        } else {
+                            responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
+                        }
+                    }
+                });
     }
 }

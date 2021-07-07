@@ -350,10 +350,8 @@ public class SendMailService extends IntentService {
                 return null;
             }
             if (attachmentsProvider.isEncrypted()) {
-                MailboxEntity mailboxEntity = CTemplarApp.getAppDatabase().mailboxDao().getById(mailboxId);
-                String privateKey = mailboxEntity.getPrivateKey();
                 String password = CTemplarApp.getUserRepository().getUserPassword();
-                EncryptUtils.decryptAttachment(downloadedFile, decryptedFile, password, privateKey);
+                EncryptUtils.decryptAttachment(downloadedFile, decryptedFile, password, mailboxId);
                 if (!downloadedFile.delete()) {
                     Timber.e("Downloaded file is not deleted after decryption error");
                 }
