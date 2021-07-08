@@ -26,7 +26,6 @@ public class Contact {
     private String encryptedData;
 
     public Contact() {
-
     }
 
     public Contact(long id, String email, String name, String address, String note, String phone, String phone2, String provider, boolean isEncrypted, String encryptedData) {

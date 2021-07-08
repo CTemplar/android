@@ -1,6 +1,7 @@
 package mobileapp.ctemplar.com.ctemplarapp.settings.keys;
 
-import androidx.lifecycle.LiveData;
+import android.annotation.SuppressLint;
+
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -15,7 +16,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import io.reactivex.Observer;
 import io.reactivex.Single;
 import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -34,6 +34,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.mailboxes.MailboxKeysResp
 import mobileapp.ctemplar.com.ctemplarapp.net.response.mailboxes.MailboxesResponse;
 import mobileapp.ctemplar.com.ctemplarapp.repository.AppDatabase;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
+import mobileapp.ctemplar.com.ctemplarapp.repository.entity.GeneralizedMailboxKey;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxKeyEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.enums.KeyType;
@@ -45,6 +46,8 @@ import retrofit2.Response;
 import timber.log.Timber;
 
 import static mobileapp.ctemplar.com.ctemplarapp.utils.DateUtils.GENERAL_GSON;
+import static mobileapp.ctemplar.com.ctemplarapp.utils.RxUtils.callAsync;
+import static mobileapp.ctemplar.com.ctemplarapp.utils.RxUtils.callAsyncWithResult;
 
 public class MailboxKeyViewModel extends ViewModel {
     private final UserRepository userRepository;
@@ -57,14 +60,12 @@ public class MailboxKeyViewModel extends ViewModel {
     private final MutableLiveData<String> deleteMailboxErrorResponse = new MutableLiveData<>();
     private final MutableLiveData<ResponseStatus> addMailboxKeyResponseStatus = new MutableLiveData<>();
     private final MutableLiveData<String> addMailboxKeyErrorResponse = new MutableLiveData<>();
+    private final MutableLiveData<ResponseStatus> importMailboxKeyResponseStatus = new MutableLiveData<>();
+    private final MutableLiveData<String> importMailboxKeyErrorResponse = new MutableLiveData<>();
 
     public MailboxKeyViewModel() {
         userRepository = CTemplarApp.getUserRepository();
         appDatabase = CTemplarApp.getAppDatabase();
-    }
-
-    public String getUsername() {
-        return userRepository.getUsername();
     }
 
     public List<MailboxEntity> getAllMailboxes() {
@@ -87,7 +88,7 @@ public class MailboxKeyViewModel extends ViewModel {
         return mailboxPrimaryResponseStatus;
     }
 
-    public LiveData<ResponseStatus> deleteMailboxKeyResponseStatus() {
+    public MutableLiveData<ResponseStatus> getDeleteMailboxKeyResponseStatus() {
         return deleteMailboxKeyResponseStatus;
     }
 
@@ -101,6 +102,14 @@ public class MailboxKeyViewModel extends ViewModel {
 
     public MutableLiveData<String> getAddMailboxKeyErrorResponse() {
         return addMailboxKeyErrorResponse;
+    }
+
+    public MutableLiveData<ResponseStatus> getImportMailboxKeyResponseStatus() {
+        return importMailboxKeyResponseStatus;
+    }
+
+    public MutableLiveData<String> getImportMailboxKeyErrorResponse() {
+        return importMailboxKeyErrorResponse;
     }
 
     public Map<MailboxEntity, List<GeneralizedMailboxKey>> getMailboxKeyMap() {
@@ -124,57 +133,25 @@ public class MailboxKeyViewModel extends ViewModel {
     }
 
     public void getMailboxes(int limit, int offset) {
-        userRepository.getMailboxes(limit, offset)
-                .subscribe(new Observer<MailboxesResponse>() {
-                    @Override
-                    public void onSubscribe(@NotNull Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(@NotNull MailboxesResponse mailboxesResponse) {
-                        if (mailboxesResponse.getTotalCount() > 0) {
-                            userRepository.saveMailboxes(
-                                    MailboxMapper.map(mailboxesResponse.getMailboxesList()));
-                        }
-                        mailboxesResponseStatus.postValue(ResponseStatus.RESPONSE_NEXT_MAILBOXES);
-                    }
-
-                    @Override
-                    public void onError(@NotNull Throwable e) {
-                        Timber.e(e);
-                        mailboxesResponseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
+        callAsync(
+                () -> updateMailboxesSync(limit, offset, false),
+                () -> mailboxesResponseStatus.postValue(ResponseStatus.RESPONSE_NEXT),
+                (e) -> {
+                    Timber.e(e);
+                    mailboxesResponseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
+                }
+        );
     }
 
     public void getMailboxKeys(int limit, int offset) {
-        userRepository.getMailboxKeys(limit, offset)
-                .subscribe(new SingleObserver<MailboxKeysResponse>() {
-                    @Override
-                    public void onSubscribe(@NotNull Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onSuccess(@NotNull MailboxKeysResponse response) {
-                        if (response.getTotalCount() > 0) {
-                            userRepository.saveMailboxKeys(MailboxKeyMapper.map(response.getResults()));
-                        }
-                        mailboxKeysResponseStatus.postValue(ResponseStatus.RESPONSE_NEXT);
-                    }
-
-                    @Override
-                    public void onError(@NotNull Throwable e) {
-                        Timber.e(e);
-                        mailboxKeysResponseStatus.postValue(ResponseStatus.RESPONSE_NEXT);
-                    }
-                });
+        callAsync(
+                () -> updateMailboxKeysSync(limit, offset),
+                () -> mailboxKeysResponseStatus.postValue(ResponseStatus.RESPONSE_NEXT),
+                (e) -> {
+                    Timber.e(e);
+                    mailboxKeysResponseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
+                }
+        );
     }
 
     public void createMailboxKey(long mailboxId, String address, KeyType keyType, String password) {
@@ -203,18 +180,17 @@ public class MailboxKeyViewModel extends ViewModel {
                     public void onSuccess(@NotNull Response<MailboxKeyResponse> response) {
                         if (response.isSuccessful()) {
                             addMailboxKeyResponseStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
-                            final MailboxKeyResponse mailboxKey = response.body();
-                            userRepository.saveMailboxKey(MailboxKeyMapper.map(mailboxKey));
+                            userRepository.saveMailboxKey(MailboxKeyMapper.map(response.body()));
                             return;
                         }
 
                         if (response.errorBody() != null) {
                             try {
                                 String errorBody = response.errorBody().string();
-                                HttpErrorResponse httpErrorResponse = GENERAL_GSON
-                                        .fromJson(errorBody, HttpErrorResponse.class);
-                                addMailboxKeyErrorResponse.postValue(
-                                        httpErrorResponse.getError().getError());
+                                HttpErrorResponse httpErrorResponse = GENERAL_GSON.fromJson(
+                                        errorBody, HttpErrorResponse.class);
+                                addMailboxKeyErrorResponse.postValue(httpErrorResponse.getError()
+                                        .getError());
                             } catch (IOException | JsonSyntaxException e) {
                                 Timber.e(e, "Can't parse error");
                             }
@@ -230,16 +206,81 @@ public class MailboxKeyViewModel extends ViewModel {
                 });
     }
 
-    public void deleteMailboxKey(long id, String passwordHash) {
-        List<Disposable> disposables = new ArrayList<>();
-        disposables.add(userRepository.deleteMailboxKey(id, new DeleteMailboxKeyRequest(passwordHash))
-                .subscribe(voidResponse -> {
+    public void importMailboxKey(long mailboxId, String privateKey, KeyType keyType,
+                                 String oldPassword, String password) {
+        final String username = userRepository.getUsername();
+
+        EncodeUtils.generatePublicKey(privateKey, oldPassword, password)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .flatMap((Function<PGPKeyEntity, Single<Response<MailboxKeyResponse>>>) pgpKeyEntity -> {
+                    CreateMailboxKeyRequest request = new CreateMailboxKeyRequest(
+                            pgpKeyEntity.getPrivateKey(),
+                            pgpKeyEntity.getPublicKey(),
+                            pgpKeyEntity.getFingerprint(),
+                            EncodeUtils.generateHash(username, password),
+                            keyType, mailboxId
+                    );
+                    return userRepository.createMailboxKey(request);
+                })
+                .subscribe(new SingleObserver<Response<MailboxKeyResponse>>() {
+                    @Override
+                    public void onSubscribe(@NotNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onSuccess(@NotNull Response<MailboxKeyResponse> response) {
+                        if (response.isSuccessful()) {
+                            importMailboxKeyResponseStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
+                            userRepository.saveMailboxKey(MailboxKeyMapper.map(response.body()));
+                            return;
+                        }
+
+                        if (response.errorBody() != null) {
+                            try {
+                                String errorBody = response.errorBody().string();
+                                HttpErrorResponse httpErrorResponse = GENERAL_GSON.fromJson(
+                                        errorBody, HttpErrorResponse.class);
+                                importMailboxKeyErrorResponse.postValue(httpErrorResponse.getError()
+                                        .getError());
+                            } catch (IOException | JsonSyntaxException e) {
+                                Timber.e(e, "Can't parse error");
+                            }
+                        }
+                        importMailboxKeyResponseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
+                    }
+
+                    @Override
+                    public void onError(@NotNull Throwable e) {
+                        Timber.e(e);
+                        importMailboxKeyResponseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
+                    }
+                });
+    }
+
+    public void updateMailboxPrimaryKey(long mailboxId, long mailboxKeyId) {
+        callAsync(
+                () -> updateMailboxPrimaryKeySync(mailboxId, mailboxKeyId),
+                () -> mailboxPrimaryResponseStatus.postValue(ResponseStatus.RESPONSE_COMPLETE),
+                e -> {
+                    Timber.e(e);
+                    mailboxPrimaryResponseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
+                }
+        );
+    }
+
+    public void deleteMailboxKey(long id, String password) {
+        final String username = userRepository.getUsername();
+        callAsyncWithResult(
+                () -> deleteMailboxKeySync(id, EncodeUtils.generateHash(username, password)),
+                (Response<Void> voidResponse) -> {
                     if (!voidResponse.isSuccessful()) {
                         if (voidResponse.errorBody() != null) {
                             try {
                                 String errorBody = voidResponse.errorBody().string();
-                                HttpErrorResponse httpErrorResponse = GENERAL_GSON
-                                        .fromJson(errorBody, HttpErrorResponse.class);
+                                HttpErrorResponse httpErrorResponse = GENERAL_GSON.fromJson(
+                                        errorBody, HttpErrorResponse.class);
                                 deleteMailboxErrorResponse.postValue(
                                         httpErrorResponse.getError().getError());
                             } catch (IOException | JsonSyntaxException e) {
@@ -249,74 +290,48 @@ public class MailboxKeyViewModel extends ViewModel {
                         deleteMailboxKeyResponseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
                         return;
                     }
-
-                    disposables.add(userRepository.getMailboxes(20, 0)
-                            .subscribe(mailboxesResponse -> {
-                                userRepository.saveMailboxes(MailboxMapper.map(mailboxesResponse.getMailboxesList()));
-                                disposables.add(userRepository.getMailboxKeys(20, 0)
-                                        .subscribe(response -> {
-                                            userRepository.saveMailboxKeys(MailboxKeyMapper.map(response.getResults()));
-                                            deleteMailboxKeyResponseStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
-                                            for (Disposable disposable : disposables) {
-                                                disposable.dispose();
-                                            }
-                                        }, e -> {
-                                            Timber.e(e);
-                                            deleteMailboxKeyResponseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
-                                            for (Disposable disposable : disposables) {
-                                                disposable.dispose();
-                                            }
-                                        }));
-                            }, e -> {
-                                Timber.e(e);
-                                deleteMailboxKeyResponseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
-                                for (Disposable disposable : disposables) {
-                                    disposable.dispose();
-                                }
-                            }));
-                }, e -> {
+                    deleteMailboxKeyResponseStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
+                },
+                e -> {
                     Timber.e(e);
                     deleteMailboxKeyResponseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
-                    for (Disposable disposable : disposables) {
-                        disposable.dispose();
-                    }
-                }));
+                }
+        );
     }
 
-    public void updateMailboxPrimaryKey(long mailboxId, long mailboxKeyId) {
-        List<Disposable> disposables = new ArrayList<>();
-        disposables.add(userRepository.updateMailboxPrimaryKey(new UpdateMailboxPrimaryKeyRequest(mailboxId, mailboxKeyId))
-                .subscribe(voidResponse -> {
-                    disposables.add(userRepository.getMailboxes(20, 0)
-                            .subscribe(mailboxesResponse -> {
-                                userRepository.saveMailboxes(MailboxMapper.map(mailboxesResponse.getMailboxesList()));
-                                disposables.add(userRepository.getMailboxKeys(20, 0)
-                                        .subscribe(response -> {
-                                            userRepository.saveMailboxKeys(MailboxKeyMapper.map(response.getResults()));
-                                            mailboxPrimaryResponseStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
-                                            for (Disposable disposable : disposables) {
-                                                disposable.dispose();
-                                            }
-                                        }, e -> {
-                                            Timber.e(e);
-                                            mailboxPrimaryResponseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
-                                            for (Disposable disposable : disposables) {
-                                                disposable.dispose();
-                                            }
-                                        }));
-                            }, e -> {
-                                Timber.e(e);
-                                mailboxPrimaryResponseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
-                                for (Disposable disposable : disposables) {
-                                    disposable.dispose();
-                                }
-                            }));
-                }, e -> {
-                    Timber.e(e);
-                    mailboxPrimaryResponseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
-                    for (Disposable disposable : disposables) {
-                        disposable.dispose();
-                    }
-                }));
+
+    private void updateMailboxesSync(int limit, int offset) {
+        updateMailboxesSync(limit, offset, true);
+    }
+
+    private void updateMailboxesSync(int limit, int offset, boolean updateMailboxKeys) {
+        MailboxesResponse mailboxesResponse = userRepository.getMailboxes(limit, offset).blockingFirst();
+        userRepository.saveMailboxes(MailboxMapper.map(mailboxesResponse.getMailboxesList()));
+        if (updateMailboxKeys) {
+            updateMailboxKeysSync(20, 0);
+        }
+    }
+
+    private MailboxKeysResponse updateMailboxKeysSync(int limit, int offset) {
+        MailboxKeysResponse mailboxKeysResponse = userRepository.getMailboxKeys(limit, offset).blockingGet();
+        userRepository.saveMailboxKeys(MailboxKeyMapper.map(mailboxKeysResponse.getResults()));
+        return mailboxKeysResponse;
+    }
+
+
+    public Response<Void> deleteMailboxKeySync(long id, String passwordHash) {
+        Response<Void> voidResponse = userRepository.deleteMailboxKey(id,
+                new DeleteMailboxKeyRequest(passwordHash)).blockingGet();
+        updateMailboxesSync(20, 0);
+        return voidResponse;
+    }
+
+
+    @SuppressLint("CheckResult")
+    private void updateMailboxPrimaryKeySync(long mailboxId, long mailboxKeyId) {
+        //noinspection ResultOfMethodCallIgnored
+        userRepository.updateMailboxPrimaryKey(new UpdateMailboxPrimaryKeyRequest(
+                mailboxId, mailboxKeyId)).blockingGet();
+        updateMailboxesSync(20, 0);
     }
 }

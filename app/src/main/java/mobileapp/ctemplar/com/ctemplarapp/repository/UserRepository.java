@@ -220,7 +220,7 @@ public class UserRepository {
     }
 
     public void saveMailboxes(List<MailboxEntity> mailboxes) {
-        if (mailboxes == null || mailboxes.size() == 0) {
+        if (mailboxes == null) {
             Timber.e("Mailboxes is null");
             return;
         }
@@ -238,7 +238,7 @@ public class UserRepository {
     }
 
     public void saveMailboxKeys(List<MailboxKeyEntity> mailboxKeys) {
-        if (mailboxKeys == null || mailboxKeys.size() == 0) {
+        if (mailboxKeys == null) {
             Timber.e("Mailbox keys is null");
             return;
         }
@@ -254,7 +254,7 @@ public class UserRepository {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<SignUpResponse> signUp(SignUpRequest request) {
+    public Single<SignUpResponse> signUp(SignUpRequest request) {
         return service.signUp(request)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
@@ -278,13 +278,13 @@ public class UserRepository {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<ResponseBody> changePassword(ChangePasswordRequest request) {
+    public Single<ResponseBody> changePassword(ChangePasswordRequest request) {
         return service.changePassword(request)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<RecoverPasswordResponse> resetPassword(RecoverPasswordRequest request) {
+    public Single<RecoverPasswordResponse> resetPassword(RecoverPasswordRequest request) {
         return service.resetPassword(request)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());

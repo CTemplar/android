@@ -8,11 +8,15 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.gson.JsonSyntaxException;
 
 import org.jetbrains.annotations.NotNull;
 
-import io.reactivex.Observable;
+import java.io.IOException;
+
 import io.reactivex.Observer;
+import io.reactivex.Single;
+import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Function;
@@ -28,6 +32,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.request.AddFirebaseTokenRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.RecoverPasswordRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SignInRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.AddFirebaseTokenResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.HttpErrorResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.RecoverPasswordResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.SignInResponse;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
@@ -35,7 +40,10 @@ import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EncodeUtils;
 import mobileapp.ctemplar.com.ctemplarapp.workers.WorkersHelper;
 import retrofit2.HttpException;
+import retrofit2.Response;
 import timber.log.Timber;
+
+import static mobileapp.ctemplar.com.ctemplarapp.utils.DateUtils.GENERAL_GSON;
 
 public class LoginActivityViewModel extends AndroidViewModel {
     private final UserRepository userRepository;
@@ -44,6 +52,7 @@ public class LoginActivityViewModel extends AndroidViewModel {
     private final MutableLiveData<LoginActivityActions> actions = new SingleLiveEvent<>();
     private final MutableLiveData<DialogState> dialogState = new SingleLiveEvent<>();
     private final MutableLiveData<ResponseStatus> responseStatus = new MutableLiveData<>();
+    private final MutableLiveData<String> loginResponseError = new MutableLiveData<>();
     private final MutableLiveData<ResponseStatus> addFirebaseTokenStatus = new MutableLiveData<>();
 
     public LoginActivityViewModel(@NonNull Application application) {
@@ -75,6 +84,10 @@ public class LoginActivityViewModel extends AndroidViewModel {
         return responseStatus;
     }
 
+    public MutableLiveData<String> getLoginResponseError() {
+        return loginResponseError;
+    }
+
     public void resetResponseStatus() {
         responseStatus.postValue(null);
     }
@@ -91,7 +104,7 @@ public class LoginActivityViewModel extends AndroidViewModel {
         return addFirebaseTokenStatus;
     }
 
-    public void clearAllTables() {
+    private void clearAllTables() {
         CTemplarApp.getAppDatabase().clearAllTables();
     }
 
@@ -113,6 +126,17 @@ public class LoginActivityViewModel extends AndroidViewModel {
                                 responseStatus.postValue(ResponseStatus.RESPONSE_ERROR_AUTH_FAILED);
                             } else {
                                 responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
+                            }
+                            Response<?> errorResponse = ((HttpException) e).response();
+                            if (errorResponse != null && errorResponse.errorBody() != null) {
+                                try {
+                                    String errorBody = errorResponse.errorBody().string();
+                                    HttpErrorResponse httpErrorResponse = GENERAL_GSON
+                                            .fromJson(errorBody, HttpErrorResponse.class);
+                                    loginResponseError.postValue(httpErrorResponse.getError().getError());
+                                } catch (IOException | JsonSyntaxException ex) {
+                                    Timber.e(ex, "Can't parse signIn error");
+                                }
                             }
                         } else {
                             responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
@@ -196,7 +220,7 @@ public class LoginActivityViewModel extends AndroidViewModel {
         EncodeUtils.getPGPKeyObservable(emailAddress, password)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .flatMap((Function<PGPKeyEntity, Observable<RecoverPasswordResponse>>) pgpKeyEntity -> {
+                .flatMap((Function<PGPKeyEntity, Single<RecoverPasswordResponse>>) pgpKeyEntity -> {
                     recoverPasswordRequest.setPrivateKey(pgpKeyEntity.getPrivateKey());
                     recoverPasswordRequest.setPublicKey(pgpKeyEntity.getPublicKey());
                     recoverPasswordRequest.setPassword(
@@ -204,38 +228,33 @@ public class LoginActivityViewModel extends AndroidViewModel {
                     );
 
                     return userRepository.resetPassword(recoverPasswordRequest);
-                }).subscribe(new Observer<RecoverPasswordResponse>() {
+                })
+                .subscribe(new SingleObserver<RecoverPasswordResponse>() {
+                    @Override
+                    public void onSubscribe(@NotNull Disposable d) {
 
-            @Override
-            public void onSubscribe(@NotNull Disposable d) {
-
-            }
-
-            @Override
-            public void onNext(@NotNull RecoverPasswordResponse recoverPasswordResponse) {
-                userRepository.saveUserToken(recoverPasswordResponse.getToken());
-                responseStatus.postValue(ResponseStatus.RESPONSE_NEXT_NEW_PASSWORD);
-            }
-
-            @Override
-            public void onError(@NotNull Throwable e) {
-                if (e instanceof HttpException) {
-                    HttpException exception = (HttpException) e;
-                    if (exception.code() == 400) {
-                        responseStatus.postValue(ResponseStatus.RESPONSE_ERROR_CODE_NOT_MATCH);
-                    } else {
-                        responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
                     }
-                } else {
-                    responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
-                }
-            }
 
-            @Override
-            public void onComplete() {
+                    @Override
+                    public void onSuccess(@NotNull RecoverPasswordResponse recoverPasswordResponse) {
+                        userRepository.saveUserToken(recoverPasswordResponse.getToken());
+                        responseStatus.postValue(ResponseStatus.RESPONSE_NEXT_NEW_PASSWORD);
+                    }
 
-            }
-        });
+                    @Override
+                    public void onError(@NotNull Throwable e) {
+                        if (e instanceof HttpException) {
+                            HttpException exception = (HttpException) e;
+                            if (exception.code() == 400) {
+                                responseStatus.postValue(ResponseStatus.RESPONSE_ERROR_CODE_NOT_MATCH);
+                            } else {
+                                responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
+                            }
+                        } else {
+                            responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
+                        }
+                    }
+                });
     }
 
     private void userAuthorized() {

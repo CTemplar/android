@@ -6,7 +6,6 @@ public class PGPKeyEntity {
     private String fingerprint;
 
     public PGPKeyEntity() {
-
     }
 
     public PGPKeyEntity(String publicKey, String privateKey, String fingerprint) {

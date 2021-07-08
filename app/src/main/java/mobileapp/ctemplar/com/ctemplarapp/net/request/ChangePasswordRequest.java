@@ -4,7 +4,8 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-import mobileapp.ctemplar.com.ctemplarapp.net.request.mailboxes.MailboxKey;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.mailboxes.MailboxExtraKeyRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.mailboxes.MailboxKeyRequest;
 
 public class ChangePasswordRequest {
     @SerializedName("old_password")
@@ -20,13 +21,21 @@ public class ChangePasswordRequest {
     private boolean deleteData;
 
     @SerializedName("new_keys")
-    private List<MailboxKey> mailboxesKeys;
+    private List<MailboxKeyRequest> newKeys;
 
-    public ChangePasswordRequest(String oldPassword, String password, String confirmPassword, Boolean deleteData) {
+    @SerializedName("extra_keys")
+    private List<MailboxExtraKeyRequest> extraKeys;
+
+    public ChangePasswordRequest() {
+    }
+
+    public ChangePasswordRequest(String oldPassword, String password, String confirmPassword, boolean deleteData, List<MailboxKeyRequest> newKeys, List<MailboxExtraKeyRequest> extraKeys) {
         this.oldPassword = oldPassword;
         this.password = password;
         this.confirmPassword = confirmPassword;
         this.deleteData = deleteData;
+        this.newKeys = newKeys;
+        this.extraKeys = extraKeys;
     }
 
     public void setOldPassword(String oldPassword) {
@@ -45,7 +54,11 @@ public class ChangePasswordRequest {
         this.deleteData = deleteData;
     }
 
-    public void setMailboxesKeys(List<MailboxKey> mailboxesKeys) {
-        this.mailboxesKeys = mailboxesKeys;
+    public void setNewKeys(List<MailboxKeyRequest> newKeys) {
+        this.newKeys = newKeys;
+    }
+
+    public void setExtraKeys(List<MailboxExtraKeyRequest> extraKeys) {
+        this.extraKeys = extraKeys;
     }
 }

@@ -87,4 +87,8 @@ public class EditTextUtils {
     public static boolean isNotEmpty(@Nullable CharSequence str) {
         return str != null && str.length() > 0;
     }
+
+    public static String removeBreaks(String text) {
+        return text.replaceAll("\n", "");
+    }
 }
