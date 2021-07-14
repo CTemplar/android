@@ -16,7 +16,7 @@
         app:showAsAction="ifRoom|collapseActionView" />
     <item
         android:id="@+id/action_empty_folder"
-        android:title="@string/action_empty_folder"
         android:orderInCategory="100"
+        android:title="@string/action_empty_folder"
         app:showAsAction="never" />
 </menu>
