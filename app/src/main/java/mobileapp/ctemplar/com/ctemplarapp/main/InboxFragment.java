@@ -12,26 +12,20 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.LinearLayoutCompat;
 import androidx.appcompat.widget.SearchView;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.android.gms.common.util.concurrent.HandlerExecutor;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
 import org.jetbrains.annotations.NotNull;
@@ -43,18 +37,17 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Executor;
 
-import butterknife.BindView;
-import butterknife.OnClick;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import mobileapp.ctemplar.com.ctemplarapp.BaseFragment;
 import mobileapp.ctemplar.com.ctemplarapp.R;
-import mobileapp.ctemplar.com.ctemplarapp.message.dialog.MoveDialogFragment;
+import mobileapp.ctemplar.com.ctemplarapp.databinding.FragmentInboxBinding;
 import mobileapp.ctemplar.com.ctemplarapp.message.SendMessageActivity;
 import mobileapp.ctemplar.com.ctemplarapp.message.SendMessageFragment;
 import mobileapp.ctemplar.com.ctemplarapp.message.ViewMessagesActivity;
 import mobileapp.ctemplar.com.ctemplarapp.message.ViewMessagesFragment;
+import mobileapp.ctemplar.com.ctemplarapp.message.dialog.MoveDialogFragment;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.ResponseMessagesData;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageProvider;
@@ -69,13 +62,11 @@ import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderN
 import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.SPAM;
 import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.TRASH;
 
-public class InboxFragment extends BaseFragment
-        implements InboxMessagesAdapter.OnReachedBottomCallback {
-    private static final int SWIPABLE_FOREGROUND_RESOURCE_ID = R.id.item_message_view_holder_foreground;
-    private static final int SWIPABLE_BACKGROUND_RESOURCE_ID = R.id.item_message_view_holder_background_layout;
+public class InboxFragment extends BaseFragment implements InboxMessagesAdapter.OnReachedBottomCallback {
+    public static WeakReference<InboxFragment> instanceReference = null;
     private static final int REQUEST_MESSAGES_COUNT = 10;
 
-    public static WeakReference<InboxFragment> instanceReference = null;
+    private FragmentInboxBinding binding;
 
     private InboxMessagesAdapter adapter;
     private MainActivityViewModel mainModel;
@@ -93,51 +84,6 @@ public class InboxFragment extends BaseFragment
     private int currentOffset = 0;
     private boolean isLoadingNewMessages = false;
 
-    @OnClick(R.id.fragment_inbox_send_layout)
-    void onClickComposeLayout() {
-        startSendMessageActivity();
-    }
-
-    @OnClick(R.id.fragment_inbox_send)
-    void onClickCompose() {
-        startSendMessageActivity();
-    }
-
-    @OnClick(R.id.fragment_inbox_fab_compose)
-    void onClickFabCompose() {
-        startSendMessageActivity();
-    }
-
-    @BindView(R.id.fragment_inbox_filtered_layout)
-    LinearLayoutCompat filteredLayout;
-
-    @BindView(R.id.fragment_inbox_filtered_categories_text_view)
-    TextView filteredCategoriesTextView;
-
-    @BindView(R.id.fragment_inbox_swiperefresh)
-    SwipeRefreshLayout swipeRefreshLayout;
-
-    @BindView(R.id.fragment_inbox_recycler_view)
-    RecyclerView recyclerView;
-
-    @BindView(R.id.fragment_inbox_title_empty)
-    TextView folderEmptyTextView;
-
-    @BindView(R.id.fragment_inbox_list_empty_layout)
-    ConstraintLayout listEmptyLayout;
-
-    @BindView(R.id.fragment_inbox_list_empty_search_layout)
-    ConstraintLayout listEmptySearchLayout;
-
-    @BindView(R.id.fragment_inbox_progress_layout)
-    ConstraintLayout progressLayout;
-
-    @BindView(R.id.fragment_inbox_send_layout)
-    FrameLayout frameCompose;
-
-    @BindView(R.id.fragment_inbox_fab_compose)
-    FloatingActionButton fabCompose;
-
     private final FilterDialogFragment.OnApplyClickListener onFilterApplyClickListener
             = new FilterDialogFragment.OnApplyClickListener() {
         @Override
@@ -153,8 +99,15 @@ public class InboxFragment extends BaseFragment
     };
 
     @Override
-    protected int getLayoutId() {
-        return R.layout.fragment_inbox;
+    public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        binding = FragmentInboxBinding.inflate(inflater, container, false);
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 
     @Override
@@ -207,9 +160,10 @@ public class InboxFragment extends BaseFragment
     public void onViewCreated(@NotNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         if (getActivity() == null) {
+            Timber.e("activity is null");
             return;
         }
-        swipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorAccent));
+        binding.swipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorAccent));
         mainModel.getResponseStatus().observe(getViewLifecycleOwner(), this::handleResponseStatus);
         mainModel.getMessagesResponse().observe(getViewLifecycleOwner(), this::handleMessagesList);
         mainModel.getSearchMessagesResponse().observe(getViewLifecycleOwner(), this::handleSearchMessagesList);
@@ -217,26 +171,26 @@ public class InboxFragment extends BaseFragment
         mainModel.getEmptyFolderStatus().observe(getViewLifecycleOwner(), this::updateMessagesResponse);
         mainModel.getCurrentFolder().observe(getViewLifecycleOwner(), folderName -> {
             currentFolder = folderName;
-            swipeRefreshLayout.setRefreshing(false);
+            binding.swipeRefreshLayout.setRefreshing(false);
             requestNewMessages();
-            folderEmptyTextView.setText(getString(R.string.title_empty_messages, folderName));
-            recyclerView.setAdapter(adapter);
+            binding.folderEmptySearchTextView.setText(getString(R.string.title_empty_messages, folderName));
+            binding.recyclerView.setAdapter(adapter);
             updateTouchListenerSwipeOptions(currentFolder);
         });
 
-        swipeRefreshLayout.setOnRefreshListener(() -> {
+        binding.swipeRefreshLayout.setOnRefreshListener(() -> {
             // display loader only if another is off
             if (isMainProgressLoaderVisible()) {
-                swipeRefreshLayout.setRefreshing(false);
+                binding.swipeRefreshLayout.setRefreshing(false);
             }
             requestNewMessages();
         });
 
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
-        recyclerView.setLayoutManager(mLayoutManager);
-        recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
-        recyclerView.setAdapter(adapter);
-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        binding.recyclerView.setLayoutManager(mLayoutManager);
+        binding.recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
+        binding.recyclerView.setAdapter(adapter);
+        binding.recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 int visibleItemCount = mLayoutManager.getChildCount();
@@ -248,6 +202,10 @@ public class InboxFragment extends BaseFragment
                 }
             }
         });
+
+        binding.fabCompose.setOnClickListener(v -> startSendMessageActivity());
+        binding.sendButton.setOnClickListener(v -> startSendMessageActivity());
+        binding.sendButtonLayout.setOnClickListener(v -> startSendMessageActivity());
 
         bindTouchListener();
     }
@@ -319,27 +277,34 @@ public class InboxFragment extends BaseFragment
             case R.id.action_search:
                 return true;
             case R.id.action_empty_folder:
-                if (getActivity() != null) {
-                    new AlertDialog.Builder(getActivity())
-                            .setTitle(getString(R.string.title_clear_folder))
-                            .setMessage(getString(R.string.txt_clear_folder))
-                            .setPositiveButton(getString(R.string.btn_confirm), (dialog, which)
-                                    -> mainModel.emptyFolder(currentFolder)
-                            )
-                            .setNeutralButton(getString(R.string.btn_cancel), null)
-                            .show();
+                FragmentActivity activity = getActivity();
+                if (activity == null) {
+                    Timber.e("onOptionsItemSelected: activity is null");
+                    return true;
                 }
+                new AlertDialog.Builder(getActivity())
+                        .setTitle(R.string.title_clear_folder)
+                        .setMessage(R.string.txt_clear_folder)
+                        .setPositiveButton(R.string.btn_confirm, (dialog, which) -> {
+                            if (currentFolder.equals(DRAFT)) {
+                                mainModel.deleteMessages(adapter.getAllMessagesIds());
+                                return;
+                            }
+                            mainModel.emptyFolder(currentFolder);
+                        })
+                        .setNeutralButton(R.string.btn_cancel, null)
+                        .show();
                 return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-
-        return super.onOptionsItemSelected(item);
     }
 
     private void requestNewMessages() {
         isLoadingNewMessages = false;
         currentOffset = 0;
         // display loader only if another is off
-        if (!swipeRefreshLayout.isRefreshing() && !isMainProgressLoaderVisible()) {
+        if (!binding.swipeRefreshLayout.isRefreshing() && !isMainProgressLoaderVisible()) {
             showMessagesListProgressLoader();
         }
         requestNextMessages();
@@ -375,7 +340,7 @@ public class InboxFragment extends BaseFragment
         currentOffset += REQUEST_MESSAGES_COUNT;
         isLoadingNewMessages = true;
         // display loader only if another is off
-        if (!swipeRefreshLayout.isRefreshing() && !isMainProgressLoaderVisible()) {
+        if (!binding.swipeRefreshLayout.isRefreshing() && !isMainProgressLoaderVisible()) {
             showNextMessagesProgressLoader();
         }
     }
@@ -412,9 +377,10 @@ public class InboxFragment extends BaseFragment
     }
 
     private void bindTouchListener() {
-        touchListener = new InboxMessagesTouchListener(getActivity(), recyclerView);
+        touchListener = new InboxMessagesTouchListener(getActivity(), binding.recyclerView);
         updateTouchListenerSwipeOptions(currentFolder);
-        touchListener.setSwipeable(SWIPABLE_FOREGROUND_RESOURCE_ID, SWIPABLE_BACKGROUND_RESOURCE_ID,
+        touchListener.setSwipeable(R.id.item_message_view_holder_foreground,
+                R.id.item_message_view_holder_background_layout,
                 (viewID, position) -> {
                     final String currentFolderFinal = currentFolder;
                     switch (viewID) {
@@ -474,25 +440,26 @@ public class InboxFragment extends BaseFragment
                             break;
                     }
                 });
-        recyclerView.addOnItemTouchListener(touchListener);
+        binding.recyclerView.addOnItemTouchListener(touchListener);
 
         mainModel.getMessageResponse().observe(getViewLifecycleOwner(), messageProvider -> {
             adapter.addMessage(messageProvider);
-            recyclerView.scrollToPosition(0);
+            binding.recyclerView.scrollToPosition(0);
             decryptSubject(messageProvider);
         });
     }
 
     private void showRestoreSnackBar(String message, Runnable onUndoClick) {
-        Snackbar.make(frameCompose, message, Snackbar.LENGTH_LONG)
+        Snackbar.make(binding.sendButtonLayout, message, Snackbar.LENGTH_LONG)
                 .setAction(getString(R.string.action_undo), view -> onUndoClick.run())
                 .setActionTextColor(Color.YELLOW)
                 .show();
     }
 
     private void showDeleteSnackBar(String message, Runnable onDismissed) {
-        Snackbar.make(frameCompose, message, Snackbar.LENGTH_LONG)
-                .setAction(getString(R.string.action_undo), v -> {})
+        Snackbar.make(binding.sendButtonLayout, message, Snackbar.LENGTH_LONG)
+                .setAction(getString(R.string.action_undo), v -> {
+                })
                 .setActionTextColor(Color.YELLOW)
                 .addCallback(new Snackbar.Callback() {
                     @Override
@@ -501,7 +468,8 @@ public class InboxFragment extends BaseFragment
                             onDismissed.run();
                         }
                     }
-                }).show();
+                })
+                .show();
     }
 
     private void startSendMessageActivity() {
@@ -633,7 +601,7 @@ public class InboxFragment extends BaseFragment
     }
 
     public void clearListAdapter() {
-        if (recyclerView != null && adapter != null) {
+        if (adapter != null) {
             adapter.clear();
         }
     }
@@ -672,55 +640,55 @@ public class InboxFragment extends BaseFragment
             filteredBy.add(getString(R.string.txt_with_attachments));
         }
         if (filteredBy.size() > 0) {
-            filteredCategoriesTextView.setText(TextUtils.join(", ", filteredBy));
-            filteredLayout.setVisibility(View.VISIBLE);
+            binding.filteredCategoriesTextView.setText(TextUtils.join(", ", filteredBy));
+            binding.filteredLayout.setVisibility(View.VISIBLE);
         } else {
-            filteredLayout.setVisibility(View.GONE);
+            binding.filteredLayout.setVisibility(View.GONE);
         }
     }
 
     private void showNextMessagesProgressLoader() {
-        progressLayout.setVisibility(View.VISIBLE);
-        swipeRefreshLayout.setRefreshing(false);
+        binding.progressLayout.setVisibility(View.VISIBLE);
+        binding.swipeRefreshLayout.setRefreshing(false);
     }
 
     private void showMessagesListProgressLoader() {
-        recyclerView.setVisibility(View.GONE);
-        fabCompose.hide();
-        listEmptyLayout.setVisibility(View.GONE);
-        listEmptySearchLayout.setVisibility(View.GONE);
-        progressLayout.setVisibility(View.VISIBLE);
-        swipeRefreshLayout.setRefreshing(false);
+        binding.recyclerView.setVisibility(View.GONE);
+        binding.fabCompose.hide();
+        binding.listEmptyLayout.setVisibility(View.GONE);
+        binding.listEmptySearchLayout.setVisibility(View.GONE);
+        binding.progressLayout.setVisibility(View.VISIBLE);
+        binding.swipeRefreshLayout.setRefreshing(false);
     }
 
     private void showMessagesListEmptyIcon() {
-        recyclerView.setVisibility(View.GONE);
-        fabCompose.hide();
-        listEmptyLayout.setVisibility(View.VISIBLE);
-        listEmptySearchLayout.setVisibility(View.GONE);
-        progressLayout.setVisibility(View.GONE);
-        swipeRefreshLayout.setRefreshing(false);
+        binding.recyclerView.setVisibility(View.GONE);
+        binding.fabCompose.hide();
+        binding.listEmptyLayout.setVisibility(View.VISIBLE);
+        binding.listEmptySearchLayout.setVisibility(View.GONE);
+        binding.progressLayout.setVisibility(View.GONE);
+        binding.swipeRefreshLayout.setRefreshing(false);
     }
 
     private void showSearchMessagesListEmptyIcon() {
-        recyclerView.setVisibility(View.GONE);
-        fabCompose.hide();
-        listEmptyLayout.setVisibility(View.GONE);
-        listEmptySearchLayout.setVisibility(View.VISIBLE);
-        progressLayout.setVisibility(View.GONE);
-        swipeRefreshLayout.setRefreshing(false);
+        binding.recyclerView.setVisibility(View.GONE);
+        binding.fabCompose.hide();
+        binding.listEmptyLayout.setVisibility(View.GONE);
+        binding.listEmptySearchLayout.setVisibility(View.VISIBLE);
+        binding.progressLayout.setVisibility(View.GONE);
+        binding.swipeRefreshLayout.setRefreshing(false);
     }
 
     private void showMessagesList() {
-        recyclerView.setVisibility(View.VISIBLE);
-        fabCompose.show();
-        listEmptyLayout.setVisibility(View.GONE);
-        listEmptySearchLayout.setVisibility(View.GONE);
-        progressLayout.setVisibility(View.GONE);
-        swipeRefreshLayout.setRefreshing(false);
+        binding.recyclerView.setVisibility(View.VISIBLE);
+        binding.fabCompose.show();
+        binding.listEmptyLayout.setVisibility(View.GONE);
+        binding.listEmptySearchLayout.setVisibility(View.GONE);
+        binding.progressLayout.setVisibility(View.GONE);
+        binding.swipeRefreshLayout.setRefreshing(false);
     }
 
     private boolean isMainProgressLoaderVisible() {
-        return progressLayout.getVisibility() == View.VISIBLE;
+        return binding.progressLayout.getVisibility() == View.VISIBLE;
     }
 }
