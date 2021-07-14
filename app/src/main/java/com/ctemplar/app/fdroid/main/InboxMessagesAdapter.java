@@ -241,7 +241,7 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesView
         return filteredList;
     }
 
-    public Long[] getAllIds() {
+    public Long[] getAllMessagesIds() {
         Long[] messageIds = new Long[filteredList.size()];
         for (int messageIt = 0; messageIt < messageIds.length; messageIt++) {
             messageIds[messageIt] = filteredList.get(messageIt).getId();

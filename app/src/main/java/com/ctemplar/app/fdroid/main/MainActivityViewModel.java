@@ -488,8 +488,7 @@ public class MainActivityViewModel extends AndroidViewModel {
     }
 
     public void deleteMessages(Long[] messageIds) {
-        String messageIdsString = TextUtils.join(",", messageIds);
-        userRepository.deleteMessages(messageIdsString)
+        userRepository.deleteMessages(TextUtils.join(",", messageIds))
                 .subscribe(new Observer<Response<Void>>() {
                     @Override
                     public void onSubscribe(@NotNull Disposable d) {
