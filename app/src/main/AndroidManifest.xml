@@ -127,6 +127,7 @@
         <activity android:name=".settings.keys.KeysActivity" />
         <activity android:name=".settings.keys.AddMailboxKeyActivity" />
         <activity android:name=".settings.keys.ImportMailboxKeyActivity" />
+        <activity android:name=".billing.view.SubscriptionActivity" />
 
         <meta-data
             android:name="firebase_analytics_collection_deactivated"

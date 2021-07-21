@@ -5,6 +5,10 @@
     <PreferenceCategory
         android:title="@string/settings_general">
 
+        <Preference
+            android:title="@string/subscription"
+            android:key="@string/subscription_key" />
+
         <PreferenceScreen
             android:title="@string/settings_notifications"
             android:fragment="mobileapp.ctemplar.com.ctemplarapp.settings.SettingsActivity$NotificationsFragment" />
