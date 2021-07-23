@@ -1,6 +1,7 @@
 package mobileapp.ctemplar.com.ctemplarapp.billing.view;
 
 import android.os.Bundle;
+import android.view.MenuItem;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import mobileapp.ctemplar.com.ctemplarapp.billing.BillingViewModel;
-import mobileapp.ctemplar.com.ctemplarapp.billing.PlanType;
+import mobileapp.ctemplar.com.ctemplarapp.billing.model.PlanType;
 import mobileapp.ctemplar.com.ctemplarapp.billing.model.PlanInfo;
 import mobileapp.ctemplar.com.ctemplarapp.databinding.ActivitySubscriptionBinding;
 import mobileapp.ctemplar.com.ctemplarapp.utils.ThemeUtils;
@@ -44,9 +45,18 @@ public class SubscriptionActivity extends AppCompatActivity implements ViewPager
         List<PlanInfo> itemsList = new ArrayList<>();
         itemsList.add(new PlanInfo(PlanType.PRIME, planJsonData));
         itemsList.add(new PlanInfo(PlanType.KNIGHT, planJsonData));
-        itemsList.add(new PlanInfo(PlanType.MARSHALL, planJsonData));
+        itemsList.add(new PlanInfo(PlanType.MARSHAL, planJsonData));
         itemsList.add(new PlanInfo(PlanType.CHAMPION, planJsonData));
         adapter.setItems(itemsList);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void subscribe(String sku) {

@@ -16,6 +16,7 @@ import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.billing.model.PlanData;
 import mobileapp.ctemplar.com.ctemplarapp.billing.model.PlanInfo;
 import mobileapp.ctemplar.com.ctemplarapp.databinding.SubscriptionLayoutBinding;
+import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 
 
 public class ViewPagerAdapter extends RecyclerView.Adapter<ViewPagerAdapter.ViewHolder> {
@@ -73,16 +74,14 @@ public class ViewPagerAdapter extends RecyclerView.Adapter<ViewPagerAdapter.View
         void update(PlanInfo planInfo) {
             binding.subscribeButton.setOnClickListener(v -> listener.onSubscribeClicked(planInfo.getPlanType().getProductIdMonthly()));
             PlanData planData = planInfo.getPlanData();
-            binding.sendingLimitsTextView.setText(context.getString(R.string.sending_limits_sub, planData.getMessagesPerDay()));
-            binding.attachmentsLimitTextView.setText(context.getString(R.string.attachments_limit_sub, planData.getAttachmentUploadLimit()));
-            binding.storageTextView.setText(context.getString(R.string.storage_sub, planData.getStorage()));
-            binding.aliasesTextView.setText(context.getString(R.string.aliases_sub, planData.getAliases()));
-            binding.customDomainsTextView.setText(context.getString(R.string.custom_domains_sub, planData.getCustomDomains()));
+            binding.attachmentsLimitValueTextView.setText(context.getString(R.string.attachments_limit_value, planData.getAttachmentUploadLimit()));
+            binding.storageValueTextView.setText(context.getString(R.string.storage_value, planData.getStorage()));
+            binding.aliasesValueTextView.setText(String.valueOf(planData.getAliases()));
+            binding.customDomainsValueTextView.setText(String.valueOf(planData.getCustomDomains()));
         }
     }
 
     public interface ViewPagerAdapterListener {
         void onSubscribeClicked(String sku);
     }
-
 }

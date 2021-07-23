@@ -39,7 +39,7 @@ public class BillingViewModel extends AndroidViewModel {
             return;
         }
         if (purchases.size() > 1) {
-            Timber.e("Multiple purchases?");
+            Timber.e("Multiple purchases???");
         }
         for (Purchase purchase : purchases) {
             if (purchase.isAcknowledged()) {

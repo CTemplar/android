@@ -11,7 +11,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-import mobileapp.ctemplar.com.ctemplarapp.billing.PlanType;
 import timber.log.Timber;
 
 import static mobileapp.ctemplar.com.ctemplarapp.utils.DateUtils.GENERAL_GSON;

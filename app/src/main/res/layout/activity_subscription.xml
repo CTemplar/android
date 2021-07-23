@@ -15,7 +15,7 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:fontFamily="@font/lato_bold"
-            app:title="Upgrade options" />
+            app:title="@string/upgrade_options" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -24,7 +24,8 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <com.google.android.material.tabs.TabLayout android:id="@+id/tabs"
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tabs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:tabMode="auto">
@@ -32,30 +33,32 @@
             <com.google.android.material.tabs.TabItem
                 android:layout_width="10dp"
                 android:layout_height="wrap_content"
-                android:text="" />
+                android:text="@string/free_plan" />
 
             <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="" />
+                android:text="@string/prime_plan" />
 
             <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="" />
+                android:text="@string/knight_plan" />
 
             <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="" />
+                android:text="@string/marshal_plan" />
 
             <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="" />
+                android:text="@string/champion_plan" />
+
         </com.google.android.material.tabs.TabLayout>
 
-        <androidx.viewpager2.widget.ViewPager2 android:id="@+id/view_pager"
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/view_pager"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1" />

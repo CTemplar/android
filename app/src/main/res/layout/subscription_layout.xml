@@ -1,63 +1,375 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="100dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="16dp"
+                android:fontFamily="@font/lato_bold"
+                android:text="@string/packages"
+                android:textAllCaps="true"
+                android:textColor="?android:textColorPrimary" />
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:orientation="vertical"
+                android:paddingStart="16dp"
+                android:paddingEnd="24dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/sending_limits"
+                        android:textColor="?android:textColorPrimary"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/sending_limits_value_text_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="end"
+                        android:text="@string/sending_limits_value"
+                        android:textColor="?android:textColorPrimary"
+                        android:textSize="16sp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/attachments_limit"
+                        android:textColor="?android:textColorPrimary"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/attachments_limit_value_text_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="end"
+                        android:text="@string/attachments_limit_value"
+                        android:textColor="?android:textColorPrimary"
+                        android:textSize="16sp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/storage"
+                        android:textColor="?android:textColorPrimary"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/storage_value_text_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="end"
+                        android:text="@string/storage_value"
+                        android:textColor="?android:textColorPrimary"
+                        android:textSize="16sp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/aliases"
+                        android:textColor="?android:textColorPrimary"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/aliases_value_text_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="end"
+                        android:text="0"
+                        android:textColor="?android:textColorPrimary"
+                        android:textSize="16sp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/custom_domains"
+                        android:textColor="?android:textColorPrimary"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/custom_domains_value_text_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="end"
+                        android:text="0"
+                        android:textColor="?android:textColorPrimary"
+                        android:textSize="16sp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/folders"
+                        android:textColor="?android:textColorPrimary"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/folders_unlimited_value_text_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="end"
+                        android:text="@string/unlimited"
+                        android:textColor="?android:textColorPrimary"
+                        android:textSize="16sp" />
+
+                </LinearLayout>
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="16dp"
+                android:fontFamily="@font/lato_bold"
+                android:text="@string/features"
+                android:textAllCaps="true"
+                android:textColor="?android:textColorPrimary" />
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:orientation="vertical"
+                android:paddingStart="16dp"
+                android:paddingEnd="24dp">
+
+                <TextView
+                    android:id="@+id/encryption_in_transit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/encryption_in_transit"
+                    android:textColor="?android:textColorSecondary"
+                    app:drawableEndCompat="@drawable/ic_check_selector" />
+
+                <TextView
+                    android:id="@+id/encryption_at_rest"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/encryption_at_rest"
+                    android:textColor="?android:textColorSecondary"
+                    app:drawableEndCompat="@drawable/ic_check_selector" />
+
+                <TextView
+                    android:id="@+id/encrypted_attachments"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/encrypted_attachments"
+                    android:textColor="?android:textColorSecondary"
+                    app:drawableEndCompat="@drawable/ic_check_selector" />
+
+                <TextView
+                    android:id="@+id/encrypted_subject"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/encrypted_subject_feature"
+                    android:textColor="?android:textColorSecondary"
+                    app:drawableEndCompat="@drawable/ic_check_selector" />
+
+                <TextView
+                    android:id="@+id/encrypted_body"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/encrypted_body"
+                    android:textColor="?android:textColorSecondary"
+                    app:drawableEndCompat="@drawable/ic_check_selector" />
+
+                <TextView
+                    android:id="@+id/virus_protection"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/virus_protection"
+                    android:textColor="?android:textColorSecondary"
+                    app:drawableEndCompat="@drawable/ic_check_selector" />
+
+                <TextView
+                    android:id="@+id/security_2fa"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/security_2fa"
+                    android:textColor="?android:textColorSecondary"
+                    app:drawableEndCompat="@drawable/ic_check_selector" />
+
+                <TextView
+                    android:id="@+id/anti_phishing_phrase"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/anti_phishing_phrase"
+                    android:textColor="?android:textColorSecondary"
+                    app:drawableEndCompat="@drawable/ic_check_selector" />
+
+                <TextView
+                    android:id="@+id/brute_force_proof"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/brute_force_proof"
+                    android:textColor="?android:textColorSecondary"
+                    app:drawableEndCompat="@drawable/ic_check_selector" />
+
+                <TextView
+                    android:id="@+id/zero_knowledge_privacy"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/zero_knowledge_privacy"
+                    android:textColor="?android:textColorSecondary"
+                    app:drawableEndCompat="@drawable/ic_check_selector" />
+
+                <TextView
+                    android:id="@+id/anonymized_ip"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/anonymized_ip"
+                    android:textColor="?android:textColorSecondary"
+                    app:drawableEndCompat="@drawable/ic_check_selector" />
+
+                <TextView
+                    android:id="@+id/self_destructing_emails"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/self_destructing_emails"
+                    android:textColor="?android:textColorSecondary"
+                    app:drawableEndCompat="@drawable/ic_check_selector" />
+
+                <TextView
+                    android:id="@+id/dead_man_timer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/dead_man_timer"
+                    android:textColor="?android:textColorSecondary"
+                    app:drawableEndCompat="@drawable/ic_check_selector" />
+
+                <TextView
+                    android:id="@+id/delayed_delivery"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/delayed_delivery"
+                    android:textColor="?android:textColorSecondary"
+                    app:drawableEndCompat="@drawable/ic_check_selector" />
+
+                <TextView
+                    android:id="@+id/catch_all_domains"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/catch_all_domains"
+                    android:textColor="?android:textColorSecondary"
+                    app:drawableEndCompat="@drawable/ic_check_selector" />
+
+                <TextView
+                    android:id="@+id/remote_encrypted_link"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/remote_encrypted_link"
+                    android:textColor="?android:textColorSecondary"
+                    app:drawableEndCompat="@drawable/ic_check_selector" />
+
+                <TextView
+                    android:id="@+id/exclusive_beta_access"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/exclusive_beta_access"
+                    android:textColor="?android:textColorSecondary"
+                    app:drawableEndCompat="@drawable/ic_check_selector" />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+        </LinearLayout>
+
+    </ScrollView>
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:background="@color/colorTransparentSurface"
+        android:gravity="center"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/colorDivider" />
 
         <Button
             android:id="@+id/subscribe_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Subscribe" />
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_margin="16dp"
+            android:layout_weight="1"
+            android:background="@drawable/button_background_premium"
+            android:fontFamily="@font/lato_bold"
+            android:text="@string/upgrade"
+            android:textColor="@color/colorWhiteLight"
+            android:textSize="16sp" />
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 
-    <androidx.appcompat.widget.LinearLayoutCompat
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/sending_limits_text_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/sending_limits_sub" />
-
-        <TextView
-            android:id="@+id/attachments_limit_text_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/attachments_limit_sub" />
-
-        <TextView
-            android:id="@+id/storage_text_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/storage_sub" />
-
-        <TextView
-            android:id="@+id/aliases_text_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/aliases_sub" />
-
-        <TextView
-            android:id="@+id/custom_domains_text_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/custom_domains_sub" />
-
-        <TextView
-            android:id="@+id/folders_unlimited_text_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/folders_unlimited" />
-
-    </androidx.appcompat.widget.LinearLayoutCompat>
-
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

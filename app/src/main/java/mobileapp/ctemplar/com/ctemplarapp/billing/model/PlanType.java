@@ -1,10 +1,12 @@
-package mobileapp.ctemplar.com.ctemplarapp.billing;
+package mobileapp.ctemplar.com.ctemplarapp.billing.model;
+
+import mobileapp.ctemplar.com.ctemplarapp.billing.BillingConstants;
 
 public enum PlanType {
     FREE(null, null),
     PRIME(BillingConstants.PRIME_MONTHLY_SKU, BillingConstants.PRIME_ANNUAL_SKU),
     KNIGHT(BillingConstants.KNIGHT_MONTHLY_SKU, BillingConstants.KNIGHT_ANNUAL_SKU),
-    MARSHALL(BillingConstants.MARSHALL_MONTHLY_SKU, BillingConstants.MARSHALL_ANNUAL_SKU),
+    MARSHAL(BillingConstants.MARSHAL_MONTHLY_SKU, BillingConstants.MARSHAL_ANNUAL_SKU),
     CHAMPION(BillingConstants.CHAMPION_MONTHLY_SKU, BillingConstants.CHAMPION_ANNUAL_SKU);
 
     PlanType(String productIdMonthly, String productIdAnnual) {

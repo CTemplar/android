@@ -184,6 +184,7 @@ public class BillingController implements PurchasesUpdatedListener,
                 Timber.i("onPurchasesUpdated: The user already owns this item");
                 break;
             case BillingClient.BillingResponseCode.DEVELOPER_ERROR:
+                Timber.e("onPurchasesUpdated: DEVELOPER_ERROR");
                 break;
         }
     }
@@ -200,7 +201,7 @@ public class BillingController implements PurchasesUpdatedListener,
         }
         subscriptionPurchases.postValue(purchasesList);
         if (purchasesList != null) {
-            //
+            // TODO
         }
     }
 
@@ -208,6 +209,8 @@ public class BillingController implements PurchasesUpdatedListener,
         final int expectedCount = LIST_OF_SKUS.size();
         if (skuDetailsList == null) {
             skuDetailMap.postValue(Collections.emptyMap());
+            Timber.e("onSkuDetailsResponse: " +
+                    "Expected " + expectedCount);
         } else {
             Map<String, SkuDetails> newSkusDetailList = new HashMap<>();
             for (SkuDetails skuDetails : skuDetailsList) {
@@ -218,7 +221,7 @@ public class BillingController implements PurchasesUpdatedListener,
             if (skuDetailsCount == expectedCount) {
                 Timber.i("onSkuDetailsResponse: Found " + skuDetailsCount + " SkuDetails");
             } else {
-                //
+                Timber.e("onSkuDetailsResponse: " + "Expected " + expectedCount + ", " + "Found " + skuDetailsCount + " SkuDetails. ");
             }
         }
     }

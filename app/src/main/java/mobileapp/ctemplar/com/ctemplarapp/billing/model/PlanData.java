@@ -67,7 +67,7 @@ public class PlanData {
     private final int attachmentUploadLimit;
 
     @SerializedName("brute_force_protection")
-    private final boolean brute_forceProtection;
+    private final boolean bruteForceProtection;
 
     @SerializedName("anonymized_ip")
     private final boolean anonymizedIp;
@@ -121,7 +121,7 @@ public class PlanData {
             boolean encryptionAtRest, boolean encryptedAttachments, boolean encryptedContent,
             boolean encryptedContacts, boolean encryptedSubjects, boolean encryptedBody,
             boolean encryptedMetadata, boolean twoFa, boolean antiPhishing,
-            int attachmentUploadLimit, boolean brute_forceProtection, boolean anonymizedIp,
+            int attachmentUploadLimit, boolean bruteForceProtection, boolean anonymizedIp,
             boolean remoteEncryptedLink, boolean zeroKnowledgePassword, boolean stripIps,
             boolean sri, boolean checksums, boolean multiUserSupport,
             boolean selfDestructingEmails, boolean deadManTimer, boolean delayedDelivery,
@@ -149,7 +149,7 @@ public class PlanData {
         this.twoFa = twoFa;
         this.antiPhishing = antiPhishing;
         this.attachmentUploadLimit = attachmentUploadLimit;
-        this.brute_forceProtection = brute_forceProtection;
+        this.bruteForceProtection = bruteForceProtection;
         this.anonymizedIp = anonymizedIp;
         this.remoteEncryptedLink = remoteEncryptedLink;
         this.zeroKnowledgePassword = zeroKnowledgePassword;
@@ -251,8 +251,8 @@ public class PlanData {
         return attachmentUploadLimit;
     }
 
-    public boolean isBrute_forceProtection() {
-        return brute_forceProtection;
+    public boolean isBruteForceProtection() {
+        return bruteForceProtection;
     }
 
     public boolean isAnonymizedIp() {
