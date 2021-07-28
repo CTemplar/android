@@ -4,14 +4,16 @@ import android.app.Activity;
 import android.app.Application;
 
 import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Transformations;
 
 import com.android.billingclient.api.BillingFlowParams;
 import com.android.billingclient.api.Purchase;
 import com.android.billingclient.api.SkuDetails;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import mobileapp.ctemplar.com.ctemplarapp.SingleLiveEvent;
 import timber.log.Timber;
 
 public class BillingViewModel extends AndroidViewModel {
@@ -29,6 +31,10 @@ public class BillingViewModel extends AndroidViewModel {
     public void onCleared() {
         billingController.dispose();
         billingController.getSubscriptionPurchases().removeObserver(this::handlePurchases);
+    }
+
+    public LiveData<List<SkuDetails>> getSkuDetailListLiveData() {
+        return Transformations.map(billingController.getSkuDetails(), input -> new ArrayList<>(input.values()));
     }
 
     private void handlePurchases(List<Purchase> purchases) {

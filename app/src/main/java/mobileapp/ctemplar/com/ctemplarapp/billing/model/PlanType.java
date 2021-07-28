@@ -7,7 +7,7 @@ public enum PlanType {
     PRIME(BillingConstants.PRIME_MONTHLY_SKU, BillingConstants.PRIME_ANNUAL_SKU),
     KNIGHT(BillingConstants.KNIGHT_MONTHLY_SKU, BillingConstants.KNIGHT_ANNUAL_SKU),
     MARSHAL(BillingConstants.MARSHAL_MONTHLY_SKU, BillingConstants.MARSHAL_ANNUAL_SKU),
-    CHAMPION(BillingConstants.CHAMPION_MONTHLY_SKU, BillingConstants.CHAMPION_ANNUAL_SKU);
+    CHAMPION(BillingConstants.CHAMPION_MONTHLY_SKU, null);
 
     PlanType(String productIdMonthly, String productIdAnnual) {
         this.productIdMonthly = productIdMonthly;

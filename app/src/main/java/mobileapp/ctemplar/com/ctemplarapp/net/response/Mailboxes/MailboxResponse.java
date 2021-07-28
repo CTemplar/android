@@ -52,6 +52,15 @@ public class MailboxResponse {
     @SerializedName("key_type")
     private KeyType keyType;
 
+    @SerializedName("debug")
+    private boolean debug;
+
+    @SerializedName("is_attach_public_key")
+    private boolean isAttachPublicKey;
+
+    @SerializedName("is_pgp_sign")
+    private boolean isPGPSign;
+
 
     public long getId() {
         return id;

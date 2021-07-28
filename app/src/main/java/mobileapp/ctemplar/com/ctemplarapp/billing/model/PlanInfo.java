@@ -4,6 +4,8 @@ import android.content.Context;
 
 import androidx.annotation.Nullable;
 
+import com.android.billingclient.api.SkuDetails;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -19,6 +21,8 @@ public class PlanInfo {
     private final PlanType planType;
     private final String name;
     private final PlanData planData;
+    private SkuDetails monthlyPlanSkuDetails;
+    private SkuDetails yearlyPlanSkuDetails;
 
     public PlanInfo(PlanType planType, String jsonData) {
         this.planType = planType;
@@ -63,5 +67,21 @@ public class PlanInfo {
 
     public PlanData getPlanData() {
         return planData;
+    }
+
+    public SkuDetails getMonthlyPlanSkuDetails() {
+        return monthlyPlanSkuDetails;
+    }
+
+    public void setMonthlyPlanSkuDetails(SkuDetails monthlyPlanSkuDetails) {
+        this.monthlyPlanSkuDetails = monthlyPlanSkuDetails;
+    }
+
+    public SkuDetails getYearlyPlanSkuDetails() {
+        return yearlyPlanSkuDetails;
+    }
+
+    public void setYearlyPlanSkuDetails(SkuDetails yearlyPlanSkuDetails) {
+        this.yearlyPlanSkuDetails = yearlyPlanSkuDetails;
     }
 }

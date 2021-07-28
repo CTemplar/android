@@ -15,7 +15,7 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:fontFamily="@font/lato_bold"
-            app:title="@string/upgrade_options" />
+            app:title="@string/plans" />
 
     </com.google.android.material.appbar.AppBarLayout>
 

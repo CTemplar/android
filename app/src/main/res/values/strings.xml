@@ -330,9 +330,10 @@
     <string name="txt_panel_normal">Normal</string>
 
     <!-- SUBSCRIPTIONS -->
+    <string name="plans">Plans</string>
     <string name="subscription">Subscription</string>
     <string name="upgrade">Upgrade</string>
-    <string name="upgrade_options">Upgrade options</string>
+    <string name="upgrade_button">Upgrade for %s</string>
     <string name="packages">Packages</string>
     <string name="sending_limits">Sending limits</string>
     <string name="attachments_limit">Attachments limit</string>
@@ -364,6 +365,7 @@
     <string name="catch_all_domains">Catch-all domains</string>
     <string name="remote_encrypted_link">Remote encrypted link</string>
     <string name="exclusive_beta_access">Exclusive beta access</string>
+    <string name="not_available_on_android">Not available on Android</string>
 
     <!-- SETTINGS -->
     <string name="settings_general">General settings</string>
@@ -562,6 +564,8 @@
     <string name="toast_undefined_error">Undefined error</string>
     <string name="whitelist">Whitelist</string>
     <string name="blacklist">Blacklist</string>
+    <string name="yearly">Yearly</string>
+    <string name="monthly">Monthly</string>
 
     <string-array name="filter_parameter_entries">
         <item>Subject</item>
