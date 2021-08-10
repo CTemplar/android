@@ -50,7 +50,7 @@ public class MyselfResult {
     private WhiteListContact[] whitelist;
 
     @SerializedName("custom_folders")
-    private String customFolders;
+    private Object customFolders;
 
     @SerializedName("abuse_warning_count")
     private int abuseWarningCount;
@@ -121,7 +121,7 @@ public class MyselfResult {
         return whitelist;
     }
 
-    public String getCustomFolders() {
+    public Object getCustomFolders() {
         return customFolders;
     }
 

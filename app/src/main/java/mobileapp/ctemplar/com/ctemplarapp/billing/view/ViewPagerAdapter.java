@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import mobileapp.ctemplar.com.ctemplarapp.R;
+import mobileapp.ctemplar.com.ctemplarapp.billing.model.CurrentPlanData;
 import mobileapp.ctemplar.com.ctemplarapp.billing.model.PlanData;
 import mobileapp.ctemplar.com.ctemplarapp.billing.model.PlanInfo;
 import mobileapp.ctemplar.com.ctemplarapp.billing.model.PlanType;
@@ -27,6 +28,7 @@ public class ViewPagerAdapter extends RecyclerView.Adapter<ViewPagerAdapter.View
     private final List<PlanInfo> items;
     private final ViewPagerAdapterListener listener;
     private boolean isYearlyPlanCycle = true;
+    private CurrentPlanData currentPlanData;
 
     public ViewPagerAdapter(ViewPagerAdapterListener listener) {
         this.listener = listener;
@@ -62,10 +64,24 @@ public class ViewPagerAdapter extends RecyclerView.Adapter<ViewPagerAdapter.View
         notifyDataSetChanged();
     }
 
-//    public void setCurrentPlan(PlanType plan)
+    public void setCurrentPlanData(CurrentPlanData currentPlanData) {
+        this.currentPlanData = currentPlanData;
+        notifyDataSetChanged();
+    }
 
     public String getItemTitle(int position) {
         return this.items.get(position).getName();
+    }
+
+    public int getItemIndexByPlanType(PlanType planType) {
+        int counter = 0;
+        for (PlanInfo item : items) {
+            if (item.getPlanType() == planType) {
+                return counter;
+            }
+            ++counter;
+        }
+        return -1;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -94,6 +110,14 @@ public class ViewPagerAdapter extends RecyclerView.Adapter<ViewPagerAdapter.View
             } else {
                 binding.subscribeButton.setText(context.getString(R.string.upgrade_button, skuDetails.getPrice()));
                 binding.subscribeButton.setEnabled(true);
+            }
+            if (currentPlanData != null) {
+                if (currentPlanData.planType == planInfo.getPlanType() && (planInfo.getPlanType() == PlanType.FREE || isYearlyPlanCycle == currentPlanData.paidData.isYearly)) {
+                    binding.subscribeButton.setText(R.string.current_plan);
+                    binding.subscribeButton.setEnabled(true);
+                    binding.subscribeButton.setOnClickListener(v ->
+                            listener.onOpenCurrentPlanClicked(currentPlanData));
+                }
             }
             String messagesPerDay = planData.getMessagesPerDay();
             if (EditTextUtils.isNumeric(messagesPerDay)) {
@@ -133,5 +157,7 @@ public class ViewPagerAdapter extends RecyclerView.Adapter<ViewPagerAdapter.View
 
     public interface ViewPagerAdapterListener {
         void onSubscribeClicked(String sku);
+
+        void onOpenCurrentPlanClicked(CurrentPlanData currentPlanData);
     }
 }

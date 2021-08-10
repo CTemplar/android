@@ -17,6 +17,7 @@ import java.util.List;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.billing.BillingConstants;
 import mobileapp.ctemplar.com.ctemplarapp.billing.BillingViewModel;
+import mobileapp.ctemplar.com.ctemplarapp.billing.model.CurrentPlanData;
 import mobileapp.ctemplar.com.ctemplarapp.billing.model.PlanType;
 import mobileapp.ctemplar.com.ctemplarapp.billing.model.PlanInfo;
 import mobileapp.ctemplar.com.ctemplarapp.databinding.ActivitySubscriptionBinding;
@@ -47,6 +48,7 @@ public class SubscriptionActivity extends AppCompatActivity implements ViewPager
         binding.viewPager.setAdapter(adapter);
         billingViewModel = new ViewModelProvider(this).get(BillingViewModel.class);
         billingViewModel.getSkuDetailListLiveData().observe(this, this::onSkuDetailsListUpdated);
+        billingViewModel.getCurrentPlanDataLiveData().observe(this, this::onCurrentPlanDataChanged);
         new TabLayoutMediator(binding.tabs, binding.viewPager, (tab, position) ->
                 tab.setText(adapter.getItemTitle(position))).attach();
     }
@@ -86,6 +88,11 @@ public class SubscriptionActivity extends AppCompatActivity implements ViewPager
     @Override
     public void onSubscribeClicked(String sku) {
         subscribe(sku);
+    }
+
+    @Override
+    public void onOpenCurrentPlanClicked(CurrentPlanData currentPlanData) {
+
     }
 
     @Override
@@ -133,5 +140,13 @@ public class SubscriptionActivity extends AppCompatActivity implements ViewPager
             }
         }
         adapter.setItems(itemsList);
+    }
+
+    private void onCurrentPlanDataChanged(CurrentPlanData currentPlanData) {
+        adapter.setCurrentPlanData(currentPlanData);
+        int index = adapter.getItemIndexByPlanType(currentPlanData.planType);
+        if (index >= 0) {
+            binding.tabs.selectTab(binding.tabs.getTabAt(index));
+        }
     }
 }

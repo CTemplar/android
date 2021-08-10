@@ -566,6 +566,7 @@
     <string name="blacklist">Blacklist</string>
     <string name="yearly">Yearly</string>
     <string name="monthly">Monthly</string>
+    <string name="current_plan">Current plan</string>
 
     <string-array name="filter_parameter_entries">
         <item>Subject</item>

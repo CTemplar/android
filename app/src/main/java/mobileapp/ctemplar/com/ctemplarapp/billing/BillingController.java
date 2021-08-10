@@ -221,7 +221,9 @@ public class BillingController implements PurchasesUpdatedListener,
             if (skuDetailsCount == expectedCount) {
                 Timber.i("onSkuDetailsResponse: Found " + skuDetailsCount + " SkuDetails");
             } else {
-                Timber.e("onSkuDetailsResponse: " + "Expected " + expectedCount + ", " + "Found " + skuDetailsCount + " SkuDetails. ");
+                Timber.e("onSkuDetailsResponse: " +
+                        "Expected " + expectedCount + ", " +
+                        "Found " + skuDetailsCount);
             }
         }
     }
