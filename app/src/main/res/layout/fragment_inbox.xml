@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/fragment_inbox"
@@ -9,7 +8,7 @@
     tools:context=".main.InboxFragment">
 
     <androidx.appcompat.widget.LinearLayoutCompat
-        android:id="@+id/fragment_inbox_filtered_layout"
+        android:id="@+id/filtered_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -20,24 +19,24 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
-            android:gravity="center"
             android:ellipsize="end"
             android:fontFamily="@font/lato_regular"
+            android:gravity="center"
             android:lines="1"
+            android:text="@string/filtered"
             android:textColor="?android:textColorPrimary"
             android:textSize="15sp"
-            android:text="@string/filtered"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintHorizontal_chainStyle="spread" />
 
         <TextView
-            android:id="@+id/fragment_inbox_filtered_categories_text_view"
+            android:id="@+id/filtered_categories_text_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="5dp"
-            android:gravity="center"
             android:ellipsize="end"
             android:fontFamily="@font/lato_regular"
+            android:gravity="center"
             android:lines="1"
             android:textColor="@color/colorAccent"
             android:textSize="14sp"
@@ -53,32 +52,32 @@
     </androidx.appcompat.widget.LinearLayoutCompat>
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/fragment_inbox_swiperefresh"
+        android:id="@+id/swipe_refresh_layout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/fragment_inbox_filtered_layout">
+        app:layout_constraintTop_toBottomOf="@id/filtered_layout">
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/fragment_inbox_recycler_view"
-            android:scrollbars="vertical"
+            android:id="@+id/recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layout_constraintTop_toTopOf="parent"
+            android:scrollbars="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             tools:listitem="@layout/item_message_view_holder" />
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/fragment_inbox_progress_layout"
+        android:id="@+id/progress_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <ProgressBar
-            android:id="@+id/fragment_inbox_progress_bar"
+            android:id="@+id/progress_bar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -89,7 +88,7 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/fragment_inbox_list_empty_search_layout"
+        android:id="@+id/list_empty_search_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone">
@@ -99,31 +98,31 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/icon_search_results_empty"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintVertical_chainStyle="packed"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/folder_empty_search_text_view"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/fragment_inbox_title_empty_search_text_view" />
+            app:layout_constraintVertical_chainStyle="packed" />
 
         <TextView
-            android:id="@+id/fragment_inbox_title_empty_search_text_view"
+            android:id="@+id/folder_empty_search_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:fontFamily="@font/lato_regular"
             android:text="@string/no_results_found"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintVertical_chainStyle="spread_inside"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/fragment_inbox_icon_empty_search_image_view" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/fragment_inbox_icon_empty_search_image_view"
+            app:layout_constraintVertical_chainStyle="spread_inside" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/fragment_inbox_list_empty_layout"
+        android:id="@+id/list_empty_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone">
@@ -133,12 +132,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/icon_inbox_empty"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintVertical_chainStyle="packed"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/fragment_inbox_title_empty"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/fragment_inbox_title_empty" />
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed" />
 
         <TextView
             android:id="@+id/fragment_inbox_title_empty"
@@ -147,15 +146,15 @@
             android:layout_marginTop="20dp"
             android:fontFamily="@font/lato_regular"
             android:text="@string/title_empty_inbox"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintVertical_chainStyle="spread_inside"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/fragment_inbox_icon_empty" />
+            app:layout_constraintTop_toBottomOf="@id/fragment_inbox_icon_empty"
+            app:layout_constraintVertical_chainStyle="spread_inside" />
 
         <FrameLayout
-            android:id="@+id/fragment_inbox_send_layout"
+            android:id="@+id/send_button_layout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:background="@drawable/selector_button_orange"
@@ -164,12 +163,11 @@
             app:layout_constraintRight_toRightOf="parent">
 
             <Button
-                android:id="@+id/fragment_inbox_send"
+                android:id="@+id/send_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:background="@null"
-                android:drawableLeft="@drawable/icon_compose"
                 android:drawableStart="@drawable/icon_compose"
                 android:drawablePadding="24dp"
                 android:fontFamily="@font/lato_regular"
@@ -182,19 +180,19 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fragment_inbox_fab_compose"
+        android:id="@+id/fab_compose"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"
         android:layout_margin="16dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
         android:layout_marginBottom="8dp"
+        android:contentDescription="FloatingActionButton"
         android:src="@drawable/icon_compose"
+        android:visibility="gone"
         app:backgroundTint="@color/colorOrangeLight"
         app:fabSize="normal"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:visibility="gone" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

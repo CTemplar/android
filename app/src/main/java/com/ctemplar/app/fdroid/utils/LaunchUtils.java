@@ -4,80 +4,15 @@ import android.app.ActivityManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.os.Build;
 import android.os.Bundle;
 
-import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
-
-import java.util.Collections;
-import java.util.List;
 
 import timber.log.Timber;
 
 public class LaunchUtils {
     private static final String EXTRA_NEED_FOREGROUND = "need_foreground";
-
-    public static boolean launchApp(Context context, String packageName) {
-        Timber.i( "launchApp(" + packageName + ")");
-        Intent launchIntent;
-        try {
-            launchIntent = getLaunchIntentForPackage(context.getPackageManager(), packageName);
-        } catch (Throwable e) {
-            Timber.e(e, "launchApp(" + packageName + "). Unhandled exception from getLaunchIntentForPackage");
-            return false;
-        }
-        if (launchIntent == null) {
-            Timber.e( "Launch App intent is null");
-            return false;
-        }
-        try {
-            context.startActivity(launchIntent);
-        } catch (Throwable e) {
-            Timber.e(e, "launchApp(" + packageName + ") error");
-            return false;
-        }
-        return true;
-    }
-
-    @Nullable
-    public static Intent getLaunchIntentForPackage(PackageManager packageManager, String packageName) {
-        Intent launchIntent = packageManager.getLaunchIntentForPackage(packageName);
-        if (launchIntent != null) {
-            return launchIntent.addFlags(
-                    Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
-        }
-
-        Intent main = new Intent(Intent.ACTION_MAIN, null);
-        main.setPackage(packageName);
-        main.addCategory(Intent.CATEGORY_LAUNCHER);
-        List<ResolveInfo> launchables = packageManager.queryIntentActivities(main, 0);
-
-        Collections.sort(launchables, new ResolveInfo.DisplayNameComparator(packageManager));
-
-        if (launchables == null || launchables.isEmpty()) {
-            return null;
-        }
-
-        ResolveInfo launchable = launchables.get(0);
-        ActivityInfo activityInfo = launchable.activityInfo;
-        ComponentName componentName =
-                new ComponentName(activityInfo.applicationInfo.packageName, activityInfo.name);
-        return new Intent(Intent.ACTION_MAIN)
-                .addCategory(Intent.CATEGORY_LAUNCHER)
-                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED)
-                .setComponent(componentName);
-    }
-
-
-    public static boolean launchNewActivity(Context context, Class<?> activityClass) {
-        Intent intent = new Intent(context, activityClass);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        return launchActivity(context, intent);
-    }
 
     public static boolean launchActivity(Context context, Class<?> cls) {
         return launchActivity(context, new Intent(context, cls));
