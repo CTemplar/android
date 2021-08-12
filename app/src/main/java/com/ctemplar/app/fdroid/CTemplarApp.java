@@ -63,7 +63,7 @@ public class CTemplarApp extends MultiDexApplication {
             if (activity instanceof SplashActivity) {
                 return;
             }
-            checkPINLock();
+            checkPINLock(activity);
         }
 
         @Override
@@ -193,25 +193,24 @@ public class CTemplarApp extends MultiDexApplication {
         }
     }
 
-    private void checkPINLock() {
+    private void checkPINLock(Activity activity) {
         if (!getUserStore().isPINLockEnabled()) {
             return;
         }
         if (userStore.isLocked()) {
-            launchLockScreen();
+            launchLockScreen(activity);
             return;
         }
         long currentTime = System.currentTimeMillis();
         if (currentTime - userStore.getLastPauseTime() >= getUserStore().getAutoLockTime()) {
             userStore.setLocked(true);
-            launchLockScreen();
+            launchLockScreen(activity);
         }
     }
 
-    private void launchLockScreen() {
+    private void launchLockScreen(Activity activity) {
         Intent intent = new Intent(this, PINLockActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        startActivity(intent);
+        activity.startActivity(intent);
     }
 
     public void onUnlocked() {

@@ -40,8 +40,9 @@ public class ViewMessagesActivity extends BaseActivity {
                     false);
             if (fromNotification) {
                 startActivity(new Intent(this, MainActivity.class)
-                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                        .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK)
                 );
+                finishAffinity();
             }
         }
     }
