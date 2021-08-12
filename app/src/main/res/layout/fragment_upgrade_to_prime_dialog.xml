@@ -170,7 +170,7 @@
             android:background="@drawable/button_background_premium"
             android:fontFamily="@font/lato_bold"
             android:text="@string/title_upgrade_to_prime"
-            android:textColor="@android:color/white"
+            android:textColor="@color/colorWhiteLight"
             android:textSize="16sp" />
 
         <TextView

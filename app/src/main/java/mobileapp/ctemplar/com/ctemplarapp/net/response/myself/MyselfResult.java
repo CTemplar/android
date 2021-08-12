@@ -16,6 +16,9 @@ public class MyselfResult {
     @SerializedName("is_prime")
     private boolean isPrime;
 
+    @SerializedName("is_lifetime_prime")
+    private boolean isLifetimePrime;
+
     @SerializedName("is_locked")
     private boolean isLocked;
 
@@ -24,6 +27,12 @@ public class MyselfResult {
 
     @SerializedName("is_deleted")
     private boolean isDeleted;
+
+    @SerializedName("email_limit_notice")
+    private boolean emailLimitNotice;
+
+    @SerializedName("has_notification")
+    private boolean hasNotification;
 
     @SerializedName("joined_date")
     private Date joinedDate;
@@ -40,6 +49,21 @@ public class MyselfResult {
     @SerializedName("whitelist")
     private WhiteListContact[] whitelist;
 
+    @SerializedName("custom_folders")
+    private Object customFolders;
+
+    @SerializedName("abuse_warning_count")
+    private int abuseWarningCount;
+
+    @SerializedName("payment_transaction")
+    private PaymentTransactionResponse paymentTransaction;
+
+    @SerializedName("deleted_at")
+    private Date dateAt;
+
+    @SerializedName("user_uuid")
+    private String userUUID;
+
 
     public long getId() {
         return id;
@@ -53,6 +77,10 @@ public class MyselfResult {
         return isPrime;
     }
 
+    public boolean isLifetimePrime() {
+        return isLifetimePrime;
+    }
+
     public boolean isLocked() {
         return isLocked;
     }
@@ -63,6 +91,14 @@ public class MyselfResult {
 
     public boolean isDeleted() {
         return isDeleted;
+    }
+
+    public boolean isEmailLimitNotice() {
+        return emailLimitNotice;
+    }
+
+    public boolean isHasNotification() {
+        return hasNotification;
     }
 
     public Date getJoinedDate() {
@@ -83,5 +119,25 @@ public class MyselfResult {
 
     public WhiteListContact[] getWhitelist() {
         return whitelist;
+    }
+
+    public Object getCustomFolders() {
+        return customFolders;
+    }
+
+    public int getAbuseWarningCount() {
+        return abuseWarningCount;
+    }
+
+    public PaymentTransactionResponse getPaymentTransaction() {
+        return paymentTransaction;
+    }
+
+    public Date getDateAt() {
+        return dateAt;
+    }
+
+    public String getUserUUID() {
+        return userUUID;
     }
 }
