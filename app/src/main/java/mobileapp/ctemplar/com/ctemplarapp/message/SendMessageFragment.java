@@ -973,8 +973,8 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
     }
 
     private void showUpgradeToPrimeDialog() {
-        // UpgradeToPrimeFragment upgradeToPrimeFragment = new UpgradeToPrimeFragment();
-        // upgradeToPrimeFragment.show(getParentFragmentManager(), "UpgradeToPrimeFragment");
+//        UpgradeToPrimeFragment upgradeToPrimeFragment = new UpgradeToPrimeFragment();
+//        upgradeToPrimeFragment.show(getParentFragmentManager(), "UpgradeToPrimeFragment");
     }
 
     private void showOnlyCTemplarRecipientsAlert() {

@@ -95,7 +95,7 @@ public class CloudMessagingService extends FirebaseMessagingService {
         String content = (isSubjectEncrypted) ? getString(R.string.txt_new_message) : subject;
 
         Intent intent = new Intent(this, ViewMessagesActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         intent.putExtra(PARENT_ID, id);
         intent.putExtra(FOLDER_NAME, folder);
         intent.putExtra(FROM_NOTIFICATION, true);
