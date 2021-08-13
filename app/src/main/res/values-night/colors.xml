@@ -4,6 +4,7 @@
     <color name="colorPrimary">#303030</color>
     <color name="colorPrimaryDark">#282828</color>
     <color name="colorSurface">#3c3c3c</color>
+    <color name="colorTransparentSurface">#663c3c3c</color>
 
     <color name="primaryTextColor">#ededed</color>
     <color name="secondaryTextColor">#e5e5e5</color>

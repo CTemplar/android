@@ -36,6 +36,7 @@ import mobileapp.ctemplar.com.ctemplarapp.BaseActivity;
 import mobileapp.ctemplar.com.ctemplarapp.BuildConfig;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.R;
+import mobileapp.ctemplar.com.ctemplarapp.billing.view.SubscriptionActivity;
 import mobileapp.ctemplar.com.ctemplarapp.settings.filters.FiltersActivity;
 import mobileapp.ctemplar.com.ctemplarapp.folders.ManageFoldersActivity;
 import mobileapp.ctemplar.com.ctemplarapp.settings.mailboxes.MailboxesActivity;
@@ -117,6 +118,13 @@ public class SettingsActivity extends BaseActivity {
                 if (EditTextUtils.isNotEmpty(recoveryEmail)) {
                     recoveryEmailPreferenceScreen.setSummary(recoveryEmail);
                 }
+            }
+            Preference subscriptionKey = findPreference(getString(R.string.subscription_key));
+            if (subscriptionKey != null) {
+                subscriptionKey.setOnPreferenceClickListener(preference -> {
+                    startActivity(new Intent(getActivity(), SubscriptionActivity.class));
+                    return false;
+                });
             }
             Preference passwordKey = findPreference(getString(R.string.password_key));
             if (passwordKey != null) {

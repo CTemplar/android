@@ -2,6 +2,10 @@ package mobileapp.ctemplar.com.ctemplarapp.net.response.myself;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.Date;
+
+import mobileapp.ctemplar.com.ctemplarapp.billing.model.PlanType;
+
 public class SettingsResponse {
     @SerializedName("id")
     private long id;
@@ -52,7 +56,7 @@ public class SettingsResponse {
     private boolean isPendingPayment;
 
     @SerializedName("plan_type")
-    private String planType;
+    private PlanType planType;
 
     @SerializedName("is_subject_encrypted")
     private boolean isSubjectEncrypted;
@@ -113,6 +117,60 @@ public class SettingsResponse {
 
     @SerializedName("notification_email")
     private String notificationEmail;
+
+    @SerializedName("is_deleted")
+    private boolean isDeleted;
+
+    @SerializedName("deleted_at")
+    private Date deletedAt;
+
+    @SerializedName("autosave_duration")
+    private int autoSaveDuration;
+
+    @SerializedName("notification_bounces")
+    private int notificationBounces;
+
+    @SerializedName("enable_copy_forwarding")
+    private boolean enableCopyForwarding;
+
+    @SerializedName("is_attachments_encrypted")
+    private boolean isAttachmentsEncrypted;
+
+    @SerializedName("include_original_message")
+    private boolean includeOriginalMessage;
+
+    @SerializedName("is_composer_full_screen")
+    private boolean isComposerFullScreen;
+
+    @SerializedName("is_conversation_mode")
+    private boolean isConversationMode;
+
+    @SerializedName("custom_css")
+    private boolean customCSS;
+
+    @SerializedName("is_subject_auto_decrypt")
+    private boolean isSubjectAutoDecrypt;
+
+    @SerializedName("referral_code")
+    private String referralCode;
+
+    @SerializedName("universal_spam_filter")
+    private boolean universalSpamFilter;
+
+    @SerializedName("default_color")
+    private boolean defaultColor;
+
+    @SerializedName("use_local_cache")
+    private String useLocalCache;
+
+    @SerializedName("show_plain_text")
+    private boolean showPlainText;
+
+    @SerializedName("is_hard_wrap")
+    private boolean isHardWrap;
+
+    @SerializedName("plain_text_font")
+    private String plainTextFont;
 
 
     public long getId() {
@@ -179,7 +237,7 @@ public class SettingsResponse {
         return isPendingPayment;
     }
 
-    public String getPlanType() {
+    public PlanType getPlanType() {
         return planType;
     }
 
@@ -261,5 +319,77 @@ public class SettingsResponse {
 
     public String getNotificationEmail() {
         return notificationEmail;
+    }
+
+    public boolean isDeleted() {
+        return isDeleted;
+    }
+
+    public Date getDeletedAt() {
+        return deletedAt;
+    }
+
+    public int getAutoSaveDuration() {
+        return autoSaveDuration;
+    }
+
+    public int getNotificationBounces() {
+        return notificationBounces;
+    }
+
+    public boolean isEnableCopyForwarding() {
+        return enableCopyForwarding;
+    }
+
+    public boolean isAttachmentsEncrypted() {
+        return isAttachmentsEncrypted;
+    }
+
+    public boolean isIncludeOriginalMessage() {
+        return includeOriginalMessage;
+    }
+
+    public boolean isComposerFullScreen() {
+        return isComposerFullScreen;
+    }
+
+    public boolean isConversationMode() {
+        return isConversationMode;
+    }
+
+    public boolean isCustomCSS() {
+        return customCSS;
+    }
+
+    public boolean isSubjectAutoDecrypt() {
+        return isSubjectAutoDecrypt;
+    }
+
+    public String getReferralCode() {
+        return referralCode;
+    }
+
+    public boolean isUniversalSpamFilter() {
+        return universalSpamFilter;
+    }
+
+    public boolean isDefaultColor() {
+        return defaultColor;
+    }
+
+    public String getUseLocalCache() {
+        return useLocalCache;
+    }
+
+    public boolean isShowPlainText() {
+        return showPlainText;
+    }
+
+    public boolean isHardWrap() {
+        return isHardWrap;
+    }
+
+    public String getPlainTextFont() {
+        return plainTextFont;
     }
 }

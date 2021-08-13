@@ -1,13 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ripple xmlns:android="http://schemas.android.com/apk/res/android"
-android:color="@color/colorOrangeDark2">
-<item>
-    <shape android:shape="rectangle">
-        <stroke android:width="1dp" android:color="@color/colorOrangeDark2" />
-        <gradient
-            android:startColor="@color/colorOrangeDark2"
-            android:endColor="@color/colorOrangeLight"
-            android:angle="0" />
-    </shape>
-</item>
+    android:color="@color/colorOrangeDark2">
+    <item>
+        <selector>
+            <item
+                android:drawable="@color/disabledTextColor"
+                android:state_enabled="false" />
+            <item>
+                <shape android:shape="rectangle">
+                    <stroke
+                        android:width="1dp"
+                        android:color="@color/colorOrangeDark2" />
+                    <gradient
+                        android:angle="0"
+                        android:endColor="@color/colorOrangeLight"
+                        android:startColor="@color/colorOrangeDark2" />
+                </shape>
+            </item>
+        </selector>
+    </item>
 </ripple>

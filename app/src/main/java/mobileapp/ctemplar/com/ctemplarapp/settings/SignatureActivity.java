@@ -255,8 +255,8 @@ public class SignatureActivity extends BaseActivity {
     }
 
     private void upgradeToPrimeDialog() {
-        UpgradeToPrimeFragment upgradeToPrimeFragment = new UpgradeToPrimeFragment();
-        upgradeToPrimeFragment.show(getSupportFragmentManager(), "UpgradeToPrimeFragment");
+//        UpgradeToPrimeFragment upgradeToPrimeFragment = new UpgradeToPrimeFragment();
+//        upgradeToPrimeFragment.show(getSupportFragmentManager(), "UpgradeToPrimeFragment");
     }
 
     @Override

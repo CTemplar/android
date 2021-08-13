@@ -329,6 +329,44 @@
     <string name="txt_panel_monospace">M</string>
     <string name="txt_panel_normal">Normal</string>
 
+    <!-- SUBSCRIPTIONS -->
+    <string name="plans">Plans</string>
+    <string name="subscription">Subscription</string>
+    <string name="upgrade">Upgrade</string>
+    <string name="upgrade_button">Upgrade for %s</string>
+    <string name="packages">Packages</string>
+    <string name="sending_limits">Sending limits</string>
+    <string name="attachments_limit">Attachments limit</string>
+    <string name="storage">Storage</string>
+    <string name="aliases">Aliases</string>
+    <string name="custom_domains">Custom domains</string>
+    <string name="folders">Folders</string>
+
+    <string name="sending_limits_value">%s/day</string>
+    <string name="attachments_limit_value">%d MB</string>
+    <string name="storage_value">%d GB</string>
+    <string name="unlimited">Unlimited</string>
+
+    <string name="features">Features</string>
+    <string name="encryption_in_transit">Encryption in transit</string>
+    <string name="encryption_at_rest">Encryption at rest</string>
+    <string name="encrypted_attachments">Encrypted attachments</string>
+    <string name="encrypted_subject_feature">Encrypted subject</string>
+    <string name="encrypted_body">Encrypted body</string>
+    <string name="virus_protection">Virus protection</string>
+    <string name="security_2fa">2FA security</string>
+    <string name="anti_phishing_phrase">Anti-phishing phrase</string>
+    <string name="brute_force_proof">Brute-force proof</string>
+    <string name="zero_knowledge_privacy">Zero-knowledge privacy</string>
+    <string name="anonymized_ip">Anonymized IP</string>
+    <string name="self_destructing_emails">Self-destructing emails</string>
+    <string name="dead_man_timer">Dead-man timer</string>
+    <string name="delayed_delivery">Delayed delivery</string>
+    <string name="catch_all_domains">Catch-all domains</string>
+    <string name="remote_encrypted_link">Remote encrypted link</string>
+    <string name="exclusive_beta_access">Exclusive beta access</string>
+    <string name="not_available_on_android">Not available on Android</string>
+
     <!-- SETTINGS -->
     <string name="settings_general">General settings</string>
     <string name="settings_recovery_email">Recovery email</string>
@@ -456,10 +494,11 @@
     <string translatable="false" name="url_prime_more">https://ctemplar.com/pricing</string>
     <string translatable="false" name="url_helpdesk">https://ctemplar.com/help/</string>
 
-    <!-- PREFERENCE KEYS -->
+    <!-- NOT TRANSLATABLE -->
     <string name="change_password_reset_data">Delete data</string>
     <string name="toast_email_not_valid">Email is not valid</string>
     <string name="storage_limit_info">%1$s of %2$s</string>
+    <string translatable="false" name="subscription_key">subscription_key</string>
     <string translatable="false" name="password_key">password_key</string>
     <string translatable="false" name="pin_lock_key">pin_lock_key</string>
     <string translatable="false" name="signature_key">signature_key</string>
@@ -487,6 +526,11 @@
     <string translatable="false" name="auto_save_contacts_enabled">auto_save_contacts_enabled</string>
     <string translatable="false" name="auto_save_drafts_enabled">auto_save_drafts_enabled</string>
     <string translatable="false" name="setting_id">setting_id</string>
+    <string translatable="false" name="free_plan">Free</string>
+    <string translatable="false" name="prime_plan">Prime</string>
+    <string translatable="false" name="knight_plan">Knight</string>
+    <string translatable="false" name="marshal_plan">Marshal</string>
+    <string translatable="false" name="champion_plan">Champion</string>
 
     <!-- ERRORS -->
     <string name="error_field_cannot_be_empty">This field cannot be empty.</string>
@@ -520,6 +564,9 @@
     <string name="toast_undefined_error">Undefined error</string>
     <string name="whitelist">Whitelist</string>
     <string name="blacklist">Blacklist</string>
+    <string name="yearly">Yearly</string>
+    <string name="monthly">Monthly</string>
+    <string name="current_plan">Current plan</string>
 
     <string-array name="filter_parameter_entries">
         <item>Subject</item>

@@ -13,7 +13,6 @@ public class BlackListContact {
     private String name;
 
     public BlackListContact() {
-
     }
 
     public BlackListContact(String name, String email) {

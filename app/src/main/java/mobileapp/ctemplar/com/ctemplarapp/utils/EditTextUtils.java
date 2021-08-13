@@ -91,4 +91,13 @@ public class EditTextUtils {
     public static String removeBreaks(String text) {
         return text.replaceAll("\n", "");
     }
+
+    public static boolean isNumeric(String str) {
+        try {
+            Double.parseDouble(str);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
 }
