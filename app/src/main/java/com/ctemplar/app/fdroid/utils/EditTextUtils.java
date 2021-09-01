@@ -91,4 +91,24 @@ public class EditTextUtils {
     public static String removeBreaks(String text) {
         return text.replaceAll("\n", "");
     }
+
+    public static boolean isNumeric(String value) {
+        try {
+            Double.parseDouble(value);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    public static String replaceNullString(String value) {
+        return replaceNullString(value, "");
+    }
+
+    public static String replaceNullString(String value, String defaultValue) {
+        if (value != null) {
+            return value;
+        }
+        return defaultValue;
+    }
 }
