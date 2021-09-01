@@ -29,12 +29,13 @@ import java.text.DecimalFormat;
 import java.util.Comparator;
 
 import com.ctemplar.app.fdroid.BuildConfig;
+
 import okhttp3.ResponseBody;
 import timber.log.Timber;
 
 public class FileUtils {
     public static final String DOCUMENTS_DIR = "documents";
-    public static final String AUTHORITY =  BuildConfig.APPLICATION_ID + ".fileprovider";
+    public static final String AUTHORITY = BuildConfig.APPLICATION_ID + ".fileprovider";
     public static final String HIDDEN_PREFIX = ".";
     /**
      * TAG for log messages.
@@ -232,6 +233,9 @@ public class FileUtils {
                 final int column_index = cursor.getColumnIndexOrThrow(column);
                 return cursor.getString(column_index);
             }
+        } catch (Throwable e) {
+            Timber.e(e);
+            return null;
         } finally {
             if (cursor != null)
                 cursor.close();
@@ -303,7 +307,8 @@ public class FileUtils {
                             if (path != null) {
                                 return path;
                             }
-                        } catch (Exception e) {}
+                        } catch (Exception e) {
+                        }
                     }
                 }
 
@@ -492,7 +497,7 @@ public class FileUtils {
     }
 
     private static void logDir(File dir) {
-        if(!DEBUG) return;
+        if (!DEBUG) return;
         Timber.d("Dir=%s", dir);
         File[] files = dir.listFiles();
         for (File file : files) {

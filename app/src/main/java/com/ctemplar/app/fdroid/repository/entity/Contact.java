@@ -12,6 +12,9 @@ import com.ctemplar.app.fdroid.net.response.contacts.EncryptContact;
 import com.ctemplar.app.fdroid.utils.EncryptUtils;
 
 import static com.ctemplar.app.fdroid.utils.DateUtils.GENERAL_GSON;
+import static com.ctemplar.app.fdroid.utils.EditTextUtils.replaceNullString;
+
+import timber.log.Timber;
 
 public class Contact {
     private long id;
@@ -151,28 +154,33 @@ public class Contact {
         if (entity.isEncrypted()) {
             String encryptedData = entity.getEncryptedData();
             String decryptedData = EncryptUtils.decryptData(encryptedData);
-            EncryptContact decryptedContact = GENERAL_GSON.fromJson(decryptedData, EncryptContact.class);
-            if (decryptedContact == null) {
+            EncryptContact decryptedContact;
+            try {
+                decryptedContact = GENERAL_GSON.fromJson(decryptedData, EncryptContact.class);
+            } catch (Throwable e) {
+                Timber.e(e, "Decryption failed");
+                decryptedContact = null;
+            }
+            if (decryptedContact != null) {
+                contact.setEmail(decryptedContact.getEmail());
+                contact.setName(decryptedContact.getName());
+                contact.setAddress(decryptedContact.getAddress());
+                contact.setNote(decryptedContact.getNote());
+                contact.setPhone(decryptedContact.getPhone());
+                contact.setPhone2(decryptedContact.getPhone2());
+                contact.setProvider(decryptedContact.getProvider());
+                contact.setEncrypted(false);
                 return contact;
             }
-            contact.setEmail(decryptedContact.getEmail());
-            contact.setName(decryptedContact.getName());
-            contact.setAddress(decryptedContact.getAddress());
-            contact.setNote(decryptedContact.getNote());
-            contact.setPhone(decryptedContact.getPhone());
-            contact.setPhone2(decryptedContact.getPhone2());
-            contact.setProvider(decryptedContact.getProvider());
-            contact.setEncrypted(false);
-        } else {
-            contact.setEmail(entity.getEmail());
-            contact.setName(entity.getName());
-            contact.setAddress(entity.getAddress());
-            contact.setNote(entity.getNote());
-            contact.setPhone(entity.getPhone());
-            contact.setPhone2(entity.getPhone2());
-            contact.setProvider(entity.getProvider());
-            contact.setEncrypted(true);
         }
+        contact.setEmail(replaceNullString(entity.getEmail()));
+        contact.setName(replaceNullString(entity.getName()));
+        contact.setAddress((entity.getAddress()));
+        contact.setNote((entity.getNote()));
+        contact.setPhone((entity.getPhone()));
+        contact.setPhone2((entity.getPhone2()));
+        contact.setProvider((entity.getProvider()));
+        contact.setEncrypted(false);
         return contact;
     }
 
