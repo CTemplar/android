@@ -386,7 +386,11 @@ public class MessagesRecyclerViewAdapter extends RecyclerView.Adapter<MessagesRe
                         @Override
                         public boolean shouldOverrideUrlLoading(WebView view, String url) {
                             Intent urlIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                            context.startActivity(urlIntent);
+                            try {
+                                context.startActivity(urlIntent);
+                            } catch (Throwable e) {
+                                Timber.e(e);
+                            }
                             return true;
                         }
                     });
