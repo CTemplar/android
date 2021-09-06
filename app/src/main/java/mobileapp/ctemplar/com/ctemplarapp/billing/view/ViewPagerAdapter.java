@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import mobileapp.ctemplar.com.ctemplarapp.R;
+import mobileapp.ctemplar.com.ctemplarapp.billing.BillingConstants;
 import mobileapp.ctemplar.com.ctemplarapp.billing.model.CurrentPlanData;
 import mobileapp.ctemplar.com.ctemplarapp.billing.model.PlanData;
 import mobileapp.ctemplar.com.ctemplarapp.billing.model.PlanInfo;
@@ -112,7 +113,11 @@ public class ViewPagerAdapter extends RecyclerView.Adapter<ViewPagerAdapter.View
                 binding.subscribeButton.setEnabled(true);
             }
             if (currentPlanData != null) {
-                if (currentPlanData.planType == planInfo.getPlanType() && (planInfo.getPlanType() == PlanType.FREE || isYearlyPlanCycle == currentPlanData.paidData.isYearly)) {
+                if (currentPlanData.getPlanType() == planInfo.getPlanType()
+                        && (planInfo.getPlanType() == PlanType.FREE
+                        || isYearlyPlanCycle == !currentPlanData.getPaymentTransactionDTO()
+                        .getPaymentType().equals(BillingConstants.MONTHLY))
+                ) {
                     binding.subscribeButton.setText(R.string.current_plan);
                     binding.subscribeButton.setEnabled(true);
                     binding.subscribeButton.setOnClickListener(v ->

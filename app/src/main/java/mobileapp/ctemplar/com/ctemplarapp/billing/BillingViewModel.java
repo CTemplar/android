@@ -26,6 +26,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.MyselfResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.MyselfResult;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.PaymentTransactionResponse;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
+import mobileapp.ctemplar.com.ctemplarapp.repository.dto.PaymentTransactionDTO;
 import timber.log.Timber;
 
 public class BillingViewModel extends AndroidViewModel {
@@ -75,14 +76,11 @@ public class BillingViewModel extends AndroidViewModel {
                 }
                 PaymentTransactionResponse paymentTransactionResponse = result.getPaymentTransaction();
                 if (paymentTransactionResponse == null) {
-                    Timber.e("Paid plan type does not contains payment transaction!!!");
+                    Timber.e("Paid plan type does not contains payment transaction");
                     return;
                 }
-                CurrentPlanData.PaidPlanData paidPlanData = new CurrentPlanData.PaidPlanData(
-                        paymentTransactionResponse.getBillingCycleEnds(),
-                        /*TODO*/"yearly".equals(paymentTransactionResponse.getPurchasedPlan())
-                );
-                currentPlanDataLiveData.setValue(new CurrentPlanData(planType, paidPlanData));
+                currentPlanDataLiveData.setValue(new CurrentPlanData(planType,
+                        PaymentTransactionDTO.fromResponse(paymentTransactionResponse)));
             }
 
             @Override

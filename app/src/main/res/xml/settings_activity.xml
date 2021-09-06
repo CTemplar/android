@@ -7,7 +7,6 @@
 
         <Preference
             android:title="@string/subscription"
-            app:isPreferenceVisible="false"
             android:key="@string/subscription_key" />
 
         <PreferenceScreen

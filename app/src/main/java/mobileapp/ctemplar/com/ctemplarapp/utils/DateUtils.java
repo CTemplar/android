@@ -2,11 +2,11 @@ package mobileapp.ctemplar.com.ctemplarapp.utils;
 
 import android.content.res.Resources;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -35,7 +35,7 @@ public class DateUtils {
             .setDateFormat(SERVER_DATE_PATTERN)
             .create();
 
-    @NonNull
+    @NotNull
     public static String displayMessageDate(@Nullable Date date, Resources resources) {
         if (date == null) {
             return "";
@@ -59,13 +59,21 @@ public class DateUtils {
         return yearFormat.format(date);
     }
 
-    @NonNull
+    @NotNull
     public static String messageFullDate(@Nullable Date date) {
         if (date == null) {
             return "";
         }
         DateFormat messageFullDateFormat = new SimpleDateFormat(MESSAGE_FULL_DATE_PATTERN, Locale.getDefault());
         return messageFullDateFormat.format(date);
+    }
+
+    @NotNull
+    public static String simpleDate(@Nullable Date date) {
+        if (date == null) {
+            return "";
+        }
+        return new SimpleDateFormat(MAIN_YEAR_PATTERN, Locale.getDefault()).format(date);
     }
 
     @Nullable
@@ -118,7 +126,7 @@ public class DateUtils {
         }
     }
 
-    @NonNull
+    @NotNull
     public static String getStringDate(@Nullable Date date) {
         if (date == null) {
             return "";
