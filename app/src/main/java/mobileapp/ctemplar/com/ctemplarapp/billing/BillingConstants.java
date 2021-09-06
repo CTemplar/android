@@ -33,6 +33,9 @@ public class BillingConstants {
             MARSHAL_ANNUAL_SKU
     };
 
+    public static final String ANNUALLY = "annually";
+    public static final String MONTHLY = "monthly";
+
     public static final String PLAY_STORE_SUBSCRIPTION_URL
             = "https://play.google.com/store/account/subscriptions";
     public static final String PLAY_STORE_SUBSCRIPTION_DEEPLINK_URL

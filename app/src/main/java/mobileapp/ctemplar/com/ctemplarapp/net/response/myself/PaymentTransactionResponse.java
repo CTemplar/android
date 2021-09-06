@@ -17,11 +17,17 @@ public class PaymentTransactionResponse {
     @SerializedName("transaction_id")
     private String transactionId;
 
+    @SerializedName("original_transaction_id")
+    private String originalTransactionId;
+
     @SerializedName("amount")
     private long amount;
 
     @SerializedName("currency")
     private String currency;
+
+    @SerializedName("stripe_plan")
+    private Object stripePlan;
 
     @SerializedName("purchased_plan")
     private String purchasedPlan;
@@ -32,8 +38,8 @@ public class PaymentTransactionResponse {
     @SerializedName("billing_cycle_ends")
     private Date billingCycleEnds;
 
-    @SerializedName("bitcoin")
-    private String bitcoin;
+    @SerializedName("payment_method")
+    private String paymentMethod;
 
     @SerializedName("payment_type")
     private String paymentType;
@@ -58,12 +64,20 @@ public class PaymentTransactionResponse {
         return transactionId;
     }
 
+    public String getOriginalTransactionId() {
+        return originalTransactionId;
+    }
+
     public long getAmount() {
         return amount;
     }
 
     public String getCurrency() {
         return currency;
+    }
+
+    public Object getStripePlan() {
+        return stripePlan;
     }
 
     public String getPurchasedPlan() {
@@ -78,8 +92,8 @@ public class PaymentTransactionResponse {
         return billingCycleEnds;
     }
 
-    public String getBitcoin() {
-        return bitcoin;
+    public String getPaymentMethod() {
+        return paymentMethod;
     }
 
     public String getPaymentType() {

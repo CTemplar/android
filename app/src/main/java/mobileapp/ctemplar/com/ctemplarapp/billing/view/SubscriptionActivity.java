@@ -1,5 +1,9 @@
 package mobileapp.ctemplar.com.ctemplarapp.billing.view;
 
+import static mobileapp.ctemplar.com.ctemplarapp.billing.view.MySubscriptionDialog.CURRENT_PLAN_DATA;
+import static mobileapp.ctemplar.com.ctemplarapp.message.ViewMessagesActivity.PARENT_ID;
+import static mobileapp.ctemplar.com.ctemplarapp.utils.DateUtils.GENERAL_GSON;
+
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,15 +25,19 @@ import mobileapp.ctemplar.com.ctemplarapp.billing.model.CurrentPlanData;
 import mobileapp.ctemplar.com.ctemplarapp.billing.model.PlanType;
 import mobileapp.ctemplar.com.ctemplarapp.billing.model.PlanInfo;
 import mobileapp.ctemplar.com.ctemplarapp.databinding.ActivitySubscriptionBinding;
+import mobileapp.ctemplar.com.ctemplarapp.message.dialog.MoveDialogFragment;
 import mobileapp.ctemplar.com.ctemplarapp.utils.ThemeUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.ToastUtils;
 import mobileapp.ctemplar.com.ctemplarapp.view.menu.BillingPlanCycleMenuItem;
 import timber.log.Timber;
 
-public class SubscriptionActivity extends AppCompatActivity implements ViewPagerAdapter.ViewPagerAdapterListener, BillingPlanCycleMenuItem.OnPlanCycleChangeListener {
+public class SubscriptionActivity extends AppCompatActivity implements ViewPagerAdapter.ViewPagerAdapterListener,
+        BillingPlanCycleMenuItem.OnPlanCycleChangeListener {
     private ActivitySubscriptionBinding binding;
+
     private BillingViewModel billingViewModel;
     private final ViewPagerAdapter adapter = new ViewPagerAdapter(this);
+
     private String planJsonData;
 
     @Override
@@ -92,7 +100,11 @@ public class SubscriptionActivity extends AppCompatActivity implements ViewPager
 
     @Override
     public void onOpenCurrentPlanClicked(CurrentPlanData currentPlanData) {
-
+        MySubscriptionDialog dialog = new MySubscriptionDialog();
+        Bundle bundle = new Bundle();
+        bundle.putString(CURRENT_PLAN_DATA, GENERAL_GSON.toJson(currentPlanData));
+        dialog.setArguments(bundle);
+        dialog.show(getSupportFragmentManager(), getClass().getSimpleName());
     }
 
     @Override
@@ -144,7 +156,7 @@ public class SubscriptionActivity extends AppCompatActivity implements ViewPager
 
     private void onCurrentPlanDataChanged(CurrentPlanData currentPlanData) {
         adapter.setCurrentPlanData(currentPlanData);
-        int index = adapter.getItemIndexByPlanType(currentPlanData.planType);
+        int index = adapter.getItemIndexByPlanType(currentPlanData.getPlanType());
         if (index >= 0) {
             binding.tabs.selectTab(binding.tabs.getTabAt(index));
         }
