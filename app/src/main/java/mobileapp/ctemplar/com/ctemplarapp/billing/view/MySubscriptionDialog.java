@@ -57,7 +57,7 @@ public class MySubscriptionDialog extends DialogFragment {
         }
         CurrentPlanData currentPlanData = GENERAL_GSON.fromJson(currentPlanDataString, CurrentPlanData.class);
         PaymentTransactionDTO paymentTransactionDTO = currentPlanData.getPaymentTransactionDTO();
-//
+
         binding.plansValueTextView.setText(currentPlanData.getPlanType().name());
         binding.billingCycleValueTextView.setText(paymentTransactionDTO.getPaymentType()
                 .equals(BillingConstants.MONTHLY) ? R.string.monthly : R.string.yearly);

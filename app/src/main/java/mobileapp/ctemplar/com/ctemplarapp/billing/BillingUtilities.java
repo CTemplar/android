@@ -8,8 +8,6 @@ import com.android.billingclient.api.SkuDetails;
 import java.util.List;
 import java.util.Map;
 
-import mobileapp.ctemplar.com.ctemplarapp.repository.entity.SubscriptionStatus;
-
 public class BillingUtilities {
     @Nullable
     public static SubscriptionStatus getSubscriptionForSku(

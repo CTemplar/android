@@ -1,31 +1,37 @@
 package mobileapp.ctemplar.com.ctemplarapp.billing.view;
 
 import static mobileapp.ctemplar.com.ctemplarapp.billing.view.MySubscriptionDialog.CURRENT_PLAN_DATA;
-import static mobileapp.ctemplar.com.ctemplarapp.message.ViewMessagesActivity.PARENT_ID;
 import static mobileapp.ctemplar.com.ctemplarapp.utils.DateUtils.GENERAL_GSON;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.android.billingclient.api.Purchase;
 import com.android.billingclient.api.SkuDetails;
 import com.google.android.material.tabs.TabLayoutMediator;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.SingleObserver;
+import io.reactivex.disposables.Disposable;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.billing.BillingConstants;
+import mobileapp.ctemplar.com.ctemplarapp.billing.BillingUtilities;
 import mobileapp.ctemplar.com.ctemplarapp.billing.BillingViewModel;
 import mobileapp.ctemplar.com.ctemplarapp.billing.model.CurrentPlanData;
 import mobileapp.ctemplar.com.ctemplarapp.billing.model.PlanType;
 import mobileapp.ctemplar.com.ctemplarapp.billing.model.PlanInfo;
 import mobileapp.ctemplar.com.ctemplarapp.databinding.ActivitySubscriptionBinding;
-import mobileapp.ctemplar.com.ctemplarapp.message.dialog.MoveDialogFragment;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.SubscriptionMobileUpgradeRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.SubscriptionMobileUpgradeResponse;
 import mobileapp.ctemplar.com.ctemplarapp.utils.ThemeUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.ToastUtils;
 import mobileapp.ctemplar.com.ctemplarapp.view.menu.BillingPlanCycleMenuItem;
@@ -39,6 +45,7 @@ public class SubscriptionActivity extends AppCompatActivity implements ViewPager
     private final ViewPagerAdapter adapter = new ViewPagerAdapter(this);
 
     private String planJsonData;
+    private Disposable nextPurchasesListenerDisposable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +66,71 @@ public class SubscriptionActivity extends AppCompatActivity implements ViewPager
         billingViewModel.getCurrentPlanDataLiveData().observe(this, this::onCurrentPlanDataChanged);
         new TabLayoutMediator(binding.tabs, binding.viewPager, (tab, position) ->
                 tab.setText(adapter.getItemTitle(position))).attach();
+        nextPurchasesListenerDisposable = billingViewModel.listenForNextPurchasesUpdate((purchasesToAck) -> {
+            ProgressDialog progressDialog = new ProgressDialog(this);
+            progressDialog.show();
+            if (purchasesToAck.length == 0) {
+                progressDialog.dismiss();
+                return;
+            }
+            if (purchasesToAck.length > 1) {
+                Timber.e("Purchases count is more than 1");
+            }
+            boolean requestedSubscription = false;
+            for (Purchase purchase : purchasesToAck) {
+                String subscription = BillingUtilities.getPurchaseSubscription(purchase);
+                if (subscription == null) {
+                    Timber.e("Subscription not found for purchase: %s", purchase.toString());
+                    continue;
+                }
+                PlanType planType = getPlanType(subscription);
+                if (planType == null) {
+                    Timber.e("Plan type not found for subscription %s", subscription);
+                    continue;
+                }
+                requestedSubscription = true;
+                billingViewModel.subscriptionUpgrade(new SubscriptionMobileUpgradeRequest(
+                        purchase.getPurchaseToken(),
+                        subscription,
+                        BillingConstants.GOOGLE,
+                        isMonthlySku(subscription) ? BillingConstants.MONTHLY : BillingConstants.ANNUALLY,
+                        planType.name()
+
+                )).subscribe(new SingleObserver<SubscriptionMobileUpgradeResponse>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onSuccess(@NonNull SubscriptionMobileUpgradeResponse subscriptionMobileUpgradeResponse) {
+                        if (!subscriptionMobileUpgradeResponse.isStatus()) {
+                            ToastUtils.showToast(SubscriptionActivity.this, getString(R.string.subscription_upgrade_fail));
+                        } else {
+                            ToastUtils.showToast(SubscriptionActivity.this, getString(R.string.subscription_upgrade_success));
+                            billingViewModel.updateUserSubscription();
+                        }
+                        if (progressDialog.isShowing()) {
+                            progressDialog.dismiss();
+                        }
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        Timber.e(e);
+                        ToastUtils.showToast(SubscriptionActivity.this,
+                                getString(R.string.subscription_upgrade_fail) + e.getMessage());
+                        if (progressDialog.isShowing()) {
+                            progressDialog.dismiss();
+                        }
+                    }
+                });
+            }
+            if (!requestedSubscription) {
+                ToastUtils.showToast(this, getString(R.string.error_connection));
+                progressDialog.dismiss();
+            }
+        });
     }
 
     @Override
@@ -83,6 +155,15 @@ public class SubscriptionActivity extends AppCompatActivity implements ViewPager
         view.setIsYearly(true);
         view.setOnChangeListener(this);
         return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (nextPurchasesListenerDisposable != null) {
+            nextPurchasesListenerDisposable.dispose();
+            nextPurchasesListenerDisposable = null;
+        }
     }
 
     private void subscribe(String sku) {
@@ -152,6 +233,38 @@ public class SubscriptionActivity extends AppCompatActivity implements ViewPager
             }
         }
         adapter.setItems(itemsList);
+    }
+
+    private static boolean isMonthlySku(String sku) {
+        switch (sku) {
+            case BillingConstants.PRIME_MONTHLY_SKU:
+            case BillingConstants.MARSHAL_MONTHLY_SKU:
+            case BillingConstants.KNIGHT_MONTHLY_SKU:
+            case BillingConstants.CHAMPION_MONTHLY_SKU:
+                return true;
+            case BillingConstants.PRIME_ANNUAL_SKU:
+            case BillingConstants.MARSHAL_ANNUAL_SKU:
+            case BillingConstants.KNIGHT_ANNUAL_SKU:
+            default:
+                return false;
+        }
+    }
+
+    private static PlanType getPlanType(String sku) {
+        switch (sku) {
+            case BillingConstants.PRIME_MONTHLY_SKU:
+            case BillingConstants.PRIME_ANNUAL_SKU:
+                return PlanType.PRIME;
+            case BillingConstants.MARSHAL_MONTHLY_SKU:
+            case BillingConstants.MARSHAL_ANNUAL_SKU:
+                return PlanType.MARSHAL;
+            case BillingConstants.KNIGHT_MONTHLY_SKU:
+            case BillingConstants.KNIGHT_ANNUAL_SKU:
+                return PlanType.KNIGHT;
+            case BillingConstants.CHAMPION_MONTHLY_SKU:
+                return PlanType.CHAMPION;
+        }
+        return null;
     }
 
     private void onCurrentPlanDataChanged(CurrentPlanData currentPlanData) {
