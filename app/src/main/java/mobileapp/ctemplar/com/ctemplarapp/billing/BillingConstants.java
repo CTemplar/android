@@ -20,21 +20,9 @@ public class BillingConstants {
             MARSHAL_ANNUAL_SKU
     };
 
-    public static final String[] MONTHLY_SUBSCRIPTIONS = new String[]{
-            PRIME_MONTHLY_SKU,
-            KNIGHT_MONTHLY_SKU,
-            MARSHAL_MONTHLY_SKU,
-            CHAMPION_MONTHLY_SKU
-    };
-
-    public static final String[] ANNUAL_SUBSCRIPTIONS = new String[]{
-            PRIME_ANNUAL_SKU,
-            KNIGHT_ANNUAL_SKU,
-            MARSHAL_ANNUAL_SKU
-    };
-
     public static final String ANNUALLY = "annually";
     public static final String MONTHLY = "monthly";
+    public static final String GOOGLE = "google";
 
     public static final String PLAY_STORE_SUBSCRIPTION_URL
             = "https://play.google.com/store/account/subscriptions";
