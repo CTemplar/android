@@ -374,6 +374,7 @@
     <string name="payment">Payment</string>
     <string name="subscription_upgrade_success">Subscription upgraded successfully</string>
     <string name="subscription_upgrade_fail">Failed to upgrade subscription. Please try again later</string>
+    <string name="subscription_upgrade_another_device">To upgrade the subscription, use the device on which it was issued</string>
 
     <!-- SETTINGS -->
     <string name="settings_general">General settings</string>

@@ -32,18 +32,22 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.MyselfResult;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.PaymentTransactionResponse;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.dto.PaymentTransactionDTO;
+import mobileapp.ctemplar.com.ctemplarapp.utils.BillingUtils;
 import timber.log.Timber;
 
 public class BillingViewModel extends AndroidViewModel {
     private final BillingController billingController;
     private final UserRepository userRepository;
     private final MutableLiveData<CurrentPlanData> currentPlanDataLiveData;
-    private final List<PurchasesUpdateListener> nextPurchasesUpdateListeners = new ArrayList();
+    private final List<PurchasesUpdateListener> nextPurchasesUpdateListeners = new ArrayList<>();
+    private List<Purchase> currentGooglePlayPurchases = new ArrayList<>();
+    private final MutableLiveData<Boolean> isPurchaseOwnerDeviceLiveData;
 //    private MediatorLiveData<List<SubscriptionStatus>> subscriptions;
 
     public BillingViewModel(Application application) {
         super(application);
         currentPlanDataLiveData = new MutableLiveData<>();
+        isPurchaseOwnerDeviceLiveData = new MutableLiveData<>(false);
         userRepository = CTemplarApp.getUserRepository();
         billingController = BillingController.getInstance(application);
         billingController.init();
@@ -91,6 +95,7 @@ public class BillingViewModel extends AndroidViewModel {
                 }
                 currentPlanDataLiveData.setValue(new CurrentPlanData(planType,
                         PaymentTransactionDTO.fromResponse(paymentTransactionResponse)));
+                updateIsPurchaseOwnerDevice();
             }
 
             @Override
@@ -116,17 +121,19 @@ public class BillingViewModel extends AndroidViewModel {
             Timber.e("Multiple purchases?");
         }
         List<Purchase> notAckedPurchases = new ArrayList<>();
+        List<Purchase> ackedPurchases = new ArrayList<>();
         for (Purchase purchase : purchases) {
             if (purchase.isAcknowledged()) {
+                ackedPurchases.add(purchase);
                 continue;
             }
-            String subscription = BillingUtilities.getPurchaseSubscription(purchase);
+            String subscription = BillingUtils.getPurchaseSubscription(purchase);
             if (subscription == null) {
                 continue;
             }
             notAckedPurchases.add(purchase);
-            Timber.e("Purchase needs to be requested to the server: %s", purchase.getPurchaseToken());
         }
+        onGooglePlayPurchasesUpdated(ackedPurchases);
         if (notAckedPurchases.isEmpty()) {
             return;
         }
@@ -145,12 +152,12 @@ public class BillingViewModel extends AndroidViewModel {
         if (planSku == null) {
             throw new NullPointerException("'planSku' must not be null");
         }
-        BillingUtilities.checkSubscriptionSku(planSku);
-        BillingUtilities.checkLoadedSubscriptionSku(billingController.getSkuDetails().getValue(), planSku);
-        Purchase currentSubscriptionPurchase = BillingUtilities.getCurrentSubscriptionPurchase(billingController.getSubscriptionPurchases().getValue());
+        BillingUtils.checkSubscriptionSku(planSku);
+        BillingUtils.checkLoadedSubscriptionSku(billingController.getSkuDetails().getValue(), planSku);
+        Purchase currentSubscriptionPurchase = BillingUtils.getCurrentSubscriptionPurchase(billingController.getSubscriptionPurchases().getValue());
         String currentSubscriptionSku = currentSubscriptionPurchase == null
                 ? null
-                : BillingUtilities.getPurchaseSubscription(currentSubscriptionPurchase);
+                : BillingUtils.getPurchaseSubscription(currentSubscriptionPurchase);
         if (planSku.equals(currentSubscriptionSku)) {
             throw new RuntimeException("Already owned subscription '" + planSku + "'");
         }
@@ -181,12 +188,12 @@ public class BillingViewModel extends AndroidViewModel {
         }
         if (skuDetails == null) {
             Timber.e("Could not find SkuDetails to make purchase.");
-            throw new RuntimeException("Could not find SkuDetails to make purhase");
+            throw new RuntimeException("Could not find SkuDetails to make purchase");
         }
         BillingFlowParams.Builder billingBuilder =
                 BillingFlowParams.newBuilder().setSkuDetails(skuDetails);
         if (oldPlanSku != null && !planSku.equals(oldPlanSku)) {
-            Purchase oldPurchase = BillingUtilities
+            Purchase oldPurchase = BillingUtils
                     .getPurchaseForSku(billingController.getSubscriptionPurchases().getValue(), oldPlanSku);
             if (oldPurchase != null) {
                 billingBuilder.setSubscriptionUpdateParams(
@@ -218,5 +225,37 @@ public class BillingViewModel extends AndroidViewModel {
 
     public Single<SubscriptionMobileUpgradeResponse> subscriptionUpgrade(SubscriptionMobileUpgradeRequest request) {
         return userRepository.subscriptionUpgrade(request);
+    }
+
+    private void onGooglePlayPurchasesUpdated(List<Purchase> purchases) {
+        currentGooglePlayPurchases = purchases;
+        updateIsPurchaseOwnerDevice();
+    }
+
+    private void updateIsPurchaseOwnerDevice() {
+        isPurchaseOwnerDeviceLiveData.postValue(isPurchaseOwnerDevice());
+    }
+
+    private boolean isPurchaseOwnerDevice() {
+        CurrentPlanData currentPlanData = currentPlanDataLiveData.getValue();
+        if (currentPlanData == null) {
+            return false;
+        }
+        if (currentPlanData.getPlanType() == PlanType.FREE) {
+            return true;
+        }
+        if (currentGooglePlayPurchases == null || currentGooglePlayPurchases.isEmpty() || currentPlanData.getPaymentTransactionDTO() == null) {
+            return false;
+        }
+        for (Purchase currentGooglePlayPurchase : currentGooglePlayPurchases) {
+            if (currentGooglePlayPurchase.getPurchaseToken().equals(currentPlanData.getPaymentTransactionDTO().getOriginalTransactionId())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public MutableLiveData<Boolean> getIsPurchaseOwnerDeviceLiveData() {
+        return isPurchaseOwnerDeviceLiveData;
     }
 }

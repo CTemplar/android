@@ -4,6 +4,8 @@ import static mobileapp.ctemplar.com.ctemplarapp.billing.view.MySubscriptionDial
 import static mobileapp.ctemplar.com.ctemplarapp.utils.DateUtils.GENERAL_GSON;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -24,7 +26,7 @@ import io.reactivex.SingleObserver;
 import io.reactivex.disposables.Disposable;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.billing.BillingConstants;
-import mobileapp.ctemplar.com.ctemplarapp.billing.BillingUtilities;
+import mobileapp.ctemplar.com.ctemplarapp.utils.BillingUtils;
 import mobileapp.ctemplar.com.ctemplarapp.billing.BillingViewModel;
 import mobileapp.ctemplar.com.ctemplarapp.billing.model.CurrentPlanData;
 import mobileapp.ctemplar.com.ctemplarapp.billing.model.PlanType;
@@ -46,6 +48,7 @@ public class SubscriptionActivity extends AppCompatActivity implements ViewPager
 
     private String planJsonData;
     private Disposable nextPurchasesListenerDisposable;
+    private BillingPlanCycleMenuItem billingPlanCycleMenuItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,7 +81,7 @@ public class SubscriptionActivity extends AppCompatActivity implements ViewPager
             }
             boolean requestedSubscription = false;
             for (Purchase purchase : purchasesToAck) {
-                String subscription = BillingUtilities.getPurchaseSubscription(purchase);
+                String subscription = BillingUtils.getPurchaseSubscription(purchase);
                 if (subscription == null) {
                     Timber.e("Subscription not found for purchase: %s", purchase.toString());
                     continue;
@@ -151,9 +154,9 @@ public class SubscriptionActivity extends AppCompatActivity implements ViewPager
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         MenuItem item = menu.findItem(R.id.plan_cycle_menu_item);
-        BillingPlanCycleMenuItem view = (BillingPlanCycleMenuItem) item.getActionView();
-        view.setIsYearly(true);
-        view.setOnChangeListener(this);
+        billingPlanCycleMenuItem = (BillingPlanCycleMenuItem) item.getActionView();
+        billingPlanCycleMenuItem.setIsYearly(true);
+        billingPlanCycleMenuItem.setOnChangeListener(this);
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -167,7 +170,27 @@ public class SubscriptionActivity extends AppCompatActivity implements ViewPager
     }
 
     private void subscribe(String sku) {
+        boolean isPurchaseOwnerDevice = billingViewModel.getIsPurchaseOwnerDeviceLiveData().getValue();
+        if (!isPurchaseOwnerDevice) {
+            ToastUtils.showToast(this, getString(R.string.subscription_upgrade_another_device));
+            return;
+        }
         try {
+            if (sku == null) {
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                CurrentPlanData currentPlanData = billingViewModel.getCurrentPlanDataLiveData().getValue();
+                if (currentPlanData != null) {
+                    boolean isMonthly = BillingConstants.MONTHLY.equals(currentPlanData.getPaymentTransactionDTO() == null
+                            ? null : currentPlanData.getPaymentTransactionDTO().getPaymentType());
+                    String currentSku = getPlanSku(currentPlanData.getPlanType(), isMonthly);
+                    intent.setData(Uri.parse(String.format(BillingConstants.PLAY_STORE_SUBSCRIPTION_DEEPLINK_URL,
+                            currentSku, getPackageName())));
+                    startActivity(intent);
+                } else {
+                    intent.setData(Uri.parse(BillingConstants.PLAY_STORE_SUBSCRIPTION_URL));
+                    startActivity(intent);
+                }
+            }
             billingViewModel.subscribe(this, sku);
         } catch (Throwable e) {
             ToastUtils.showToast(this, e.getMessage());
@@ -181,6 +204,9 @@ public class SubscriptionActivity extends AppCompatActivity implements ViewPager
 
     @Override
     public void onOpenCurrentPlanClicked(CurrentPlanData currentPlanData) {
+        if (currentPlanData.getPlanType() == PlanType.FREE) {
+            return;
+        }
         MySubscriptionDialog dialog = new MySubscriptionDialog();
         Bundle bundle = new Bundle();
         bundle.putString(CURRENT_PLAN_DATA, GENERAL_GSON.toJson(currentPlanData));
@@ -235,6 +261,22 @@ public class SubscriptionActivity extends AppCompatActivity implements ViewPager
         adapter.setItems(itemsList);
     }
 
+    private String getPlanSku(PlanType planType, boolean isMonthly) {
+        switch (planType) {
+            case FREE:
+                return null;
+            case PRIME:
+                return isMonthly ? BillingConstants.PRIME_MONTHLY_SKU : BillingConstants.PRIME_ANNUAL_SKU;
+            case KNIGHT:
+                return isMonthly ? BillingConstants.KNIGHT_MONTHLY_SKU : BillingConstants.KNIGHT_ANNUAL_SKU;
+            case MARSHAL:
+                return isMonthly ? BillingConstants.MARSHAL_MONTHLY_SKU : BillingConstants.MARSHAL_ANNUAL_SKU;
+            case CHAMPION:
+                return isMonthly ? BillingConstants.CHAMPION_MONTHLY_SKU : null;
+        }
+        return null;
+    }
+
     private static boolean isMonthlySku(String sku) {
         switch (sku) {
             case BillingConstants.PRIME_MONTHLY_SKU:
@@ -272,6 +314,14 @@ public class SubscriptionActivity extends AppCompatActivity implements ViewPager
         int index = adapter.getItemIndexByPlanType(currentPlanData.getPlanType());
         if (index >= 0) {
             binding.tabs.selectTab(binding.tabs.getTabAt(index));
+            if (currentPlanData.getPaymentTransactionDTO() != null) {
+                if (billingPlanCycleMenuItem == null) {
+                    return;
+                }
+                boolean isMonthlyType = BillingConstants.MONTHLY.equals(
+                        currentPlanData.getPaymentTransactionDTO().getPaymentType());
+                billingPlanCycleMenuItem.setIsYearly(!isMonthlyType);
+            }
         }
     }
 }
