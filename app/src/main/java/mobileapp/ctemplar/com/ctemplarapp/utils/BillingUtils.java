@@ -1,4 +1,4 @@
-package mobileapp.ctemplar.com.ctemplarapp.billing;
+package mobileapp.ctemplar.com.ctemplarapp.utils;
 
 import androidx.annotation.Nullable;
 
@@ -8,20 +8,9 @@ import com.android.billingclient.api.SkuDetails;
 import java.util.List;
 import java.util.Map;
 
-public class BillingUtilities {
-    @Nullable
-    public static SubscriptionStatus getSubscriptionForSku(
-            @Nullable List<SubscriptionStatus> subscriptions, String sku) {
-        if (subscriptions != null) {
-            for (SubscriptionStatus subscription : subscriptions) {
-                if (sku.equals(subscription.sku)) {
-                    return subscription;
-                }
-            }
-        }
-        return null;
-    }
+import mobileapp.ctemplar.com.ctemplarapp.billing.BillingConstants;
 
+public class BillingUtils {
     public static boolean isSubscriptionSku(String sku) {
         for (String subscription : BillingConstants.ALL_SUBSCRIPTIONS) {
             if (subscription.equals(sku)) {
@@ -89,42 +78,5 @@ public class BillingUtilities {
 
     public static boolean deviceHasGooglePlaySubscription(List<Purchase> purchases, String sku) {
         return getPurchaseForSku(purchases, sku) != null;
-    }
-
-    public static boolean serverHasSubscription(
-            List<SubscriptionStatus> subscriptions, String sku) {
-        return getSubscriptionForSku(subscriptions, sku) != null;
-    }
-
-    public static boolean isGracePeriod(@Nullable SubscriptionStatus subscription) {
-        return subscription != null &&
-                subscription.isEntitlementActive &&
-                subscription.isGracePeriod &&
-                !subscription.subAlreadyOwned;
-    }
-
-    public static boolean isSubscriptionRestore(@Nullable SubscriptionStatus subscription) {
-        return subscription != null &&
-                subscription.isEntitlementActive &&
-                !subscription.willRenew &&
-                !subscription.subAlreadyOwned;
-    }
-
-    public static boolean isAccountHold(SubscriptionStatus subscription) {
-        return subscription != null &&
-                !subscription.isEntitlementActive &&
-                subscription.isAccountHold &&
-                !subscription.subAlreadyOwned;
-    }
-
-    public static boolean isPaused(SubscriptionStatus subscription) {
-        return subscription != null &&
-                !subscription.isEntitlementActive &&
-                subscription.isPaused &&
-                !subscription.subAlreadyOwned;
-    }
-
-    public static boolean isTransferRequired(SubscriptionStatus subscription) {
-        return subscription != null && subscription.subAlreadyOwned;
     }
 }
