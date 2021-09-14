@@ -31,6 +31,7 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.navigation.NavigationView;
@@ -44,6 +45,8 @@ import java.util.List;
 
 import mobileapp.ctemplar.com.ctemplarapp.ActivityInterface;
 import mobileapp.ctemplar.com.ctemplarapp.R;
+import mobileapp.ctemplar.com.ctemplarapp.billing.model.PlanType;
+import mobileapp.ctemplar.com.ctemplarapp.billing.view.SubscriptionActivity;
 import mobileapp.ctemplar.com.ctemplarapp.folders.ManageFoldersActivity;
 import mobileapp.ctemplar.com.ctemplarapp.login.LoginActivity;
 import mobileapp.ctemplar.com.ctemplarapp.message.SendMessageActivity;
@@ -150,57 +153,58 @@ public class MainActivity extends AppCompatActivity
             loadFolders();
         });
 
-        mainModel.getResponseStatus().observe(this, this::handleResponseStatus);
-        mainModel.getFoldersResponse().observe(this, foldersResponse -> {
-            if (foldersResponse != null) {
-                handleFoldersResponse(navigationView, foldersResponse);
-            }
-        });
+        mailboxKeyViewModel.getMailboxesResponseStatus().observe(this,
+                responseStatus -> showMailboxDetailsInNavigationDrawer());
+        mainModel.getFoldersResponse().observe(this,
+                foldersResponse -> handleFoldersResponse(navigationView, foldersResponse));
 
+        mainModel.getUserPlanTypeResponse().observe(this, this::showPrimeDialog);
         mainModel.getUnreadFoldersBody().observe(this, unreadFoldersBody -> {
-            if (unreadFoldersBody != null) {
-                mainModel.getFolders(customFoldersShowCount, 0);
-                TextView inboxCounter = (TextView) navigationMenu.findItem(R.id.nav_inbox).getActionView();
-                TextView draftCounter = (TextView) navigationMenu.findItem(R.id.nav_draft).getActionView();
-                TextView outboxCounter = (TextView) navigationMenu.findItem(R.id.nav_outbox).getActionView();
-                TextView starredCounter = (TextView) navigationMenu.findItem(R.id.nav_starred).getActionView();
-                TextView spamCounter = (TextView) navigationMenu.findItem(R.id.nav_spam).getActionView();
-
-                int inbox = 0, draft = 0, starred = 0, spam = 0, outbox = 0;
-                try {
-                    String unreadFoldersString = unreadFoldersBody.string();
-                    unreadFolders = new JSONObject(unreadFoldersString);
-                    inbox = unreadFolders.getInt(INBOX);
-                    draft = unreadFolders.getInt(DRAFT);
-                    starred = unreadFolders.getInt(STARRED);
-                    spam = unreadFolders.getInt(SPAM);
-                    int outboxDead = unreadFolders.getInt(OUTBOX_DEAD_MAN);
-                    int outboxDelayed = unreadFolders.getInt(OUTBOX_DELAYED_DELIVERY);
-                    int outboxDestruct = unreadFolders.getInt(OUTBOX_SELF_DESTRUCT);
-                    outbox = outboxDelayed + outboxDead + outboxDestruct;
-                } catch (IOException | JSONException e) {
-                    Timber.e(e);
-                }
-                String inboxString = inbox > 0 ? String.valueOf(inbox) : "";
-                String draftString = draft > 0 ? String.valueOf(draft) : "";
-                String starredString = starred > 0 ? String.valueOf(starred) : "";
-                String spamString = spam > 0 ? String.valueOf(spam) : "";
-                String outboxString = outbox > 0 ? String.valueOf(outbox) : "";
-
-                inboxCounter.setText(inboxString);
-                draftCounter.setText(draftString);
-                starredCounter.setText(starredString);
-                spamCounter.setText(spamString);
-                outboxCounter.setText(outboxString);
+            if (unreadFoldersBody == null) {
+                Timber.e("unreadFoldersBody is null");
+                return;
             }
+            mainModel.getFolders(customFoldersShowCount, 0);
+            TextView inboxCounter = (TextView) navigationMenu.findItem(R.id.nav_inbox).getActionView();
+            TextView draftCounter = (TextView) navigationMenu.findItem(R.id.nav_draft).getActionView();
+            TextView outboxCounter = (TextView) navigationMenu.findItem(R.id.nav_outbox).getActionView();
+            TextView starredCounter = (TextView) navigationMenu.findItem(R.id.nav_starred).getActionView();
+            TextView spamCounter = (TextView) navigationMenu.findItem(R.id.nav_spam).getActionView();
+
+            int inbox = 0, draft = 0, starred = 0, spam = 0, outbox = 0;
+            try {
+                String unreadFoldersString = unreadFoldersBody.string();
+                unreadFolders = new JSONObject(unreadFoldersString);
+                inbox = unreadFolders.getInt(INBOX);
+                draft = unreadFolders.getInt(DRAFT);
+                starred = unreadFolders.getInt(STARRED);
+                spam = unreadFolders.getInt(SPAM);
+                int outboxDead = unreadFolders.getInt(OUTBOX_DEAD_MAN);
+                int outboxDelayed = unreadFolders.getInt(OUTBOX_DELAYED_DELIVERY);
+                int outboxDestruct = unreadFolders.getInt(OUTBOX_SELF_DESTRUCT);
+                outbox = outboxDelayed + outboxDead + outboxDestruct;
+            } catch (IOException | JSONException e) {
+                Timber.e(e);
+            }
+            String inboxString = inbox > 0 ? String.valueOf(inbox) : "";
+            String draftString = draft > 0 ? String.valueOf(draft) : "";
+            String starredString = starred > 0 ? String.valueOf(starred) : "";
+            String spamString = spam > 0 ? String.valueOf(spam) : "";
+            String outboxString = outbox > 0 ? String.valueOf(outbox) : "";
+
+            inboxCounter.setText(inboxString);
+            draftCounter.setText(draftString);
+            starredCounter.setText(starredString);
+            spamCounter.setText(spamString);
+            outboxCounter.setText(outboxString);
         });
 
         loadFolders();
         loadUserInfo();
+        handleSendToIntent(getIntent());
 
         // default folder
         setFolder(INBOX);
-        handleSendToIntent(getIntent());
     }
 
     @Override
@@ -420,7 +424,7 @@ public class MainActivity extends AppCompatActivity
             String dataString = Uri.decode(intent.getDataString());
             if (EditTextUtils.isNotEmpty(dataString)) {
                 email = dataString.substring(7);
-                sendToEmailIntent.putExtra(Intent.EXTRA_EMAIL, new String[] { email });
+                sendToEmailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{email});
             }
             if (EditTextUtils.isNotEmpty(intent.getStringExtra(Intent.EXTRA_SUBJECT))) {
                 subject = intent.getStringExtra(Intent.EXTRA_SUBJECT);
@@ -431,9 +435,9 @@ public class MainActivity extends AppCompatActivity
             Fragment fragmentSendToEmail = SendMessageFragment.newInstance(
                     subject,
                     compose,
-                    new String[] { email },
-                    new String[] {},
-                    new String[] {},
+                    new String[]{email},
+                    new String[]{},
+                    new String[]{},
                     null,
                     new AttachmentsEntity(),
                     null
@@ -443,6 +447,10 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void handleFoldersResponse(NavigationView navigationView, FoldersResponse foldersResponse) {
+        if (foldersResponse == null) {
+            Timber.e("foldersResponse is null");
+            return;
+        }
         customFoldersList = foldersResponse.getFoldersList();
         int customFoldersCount = foldersResponse.getTotalCount();
         Menu navigationMenu = navigationView.getMenu();
@@ -637,27 +645,28 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private void handleResponseStatus(ResponseStatus status) {
-        if (status == null) {
-            return;
-        }
-        if (status == ResponseStatus.RESPONSE_NEXT_MAILBOXES) {
-            showMailboxDetailsInNavigationDrawer();
-        }
-    }
-
     private void showMailboxDetailsInNavigationDrawer() {
         MailboxEntity defaultMailbox = EncryptUtils.getDefaultMailbox();
-        if (defaultMailbox != null) {
-            Timber.i("Standard startup");
-            View headerView = navigationView.getHeaderView(0);
-            navigationView.setCheckedItem(R.id.nav_inbox);
-
-            TextView navUsername = headerView.findViewById(R.id.main_activity_username);
-            TextView navEmail = headerView.findViewById(R.id.main_activity_email);
-            navUsername.setText(defaultMailbox.getDisplayName());
-            navEmail.setText(defaultMailbox.getEmail());
+        if (defaultMailbox == null) {
+            Timber.e("defaultMailbox is null");
+            return;
         }
+        View headerView = navigationView.getHeaderView(0);
+        navigationView.setCheckedItem(R.id.nav_inbox);
+
+        TextView navUsername = headerView.findViewById(R.id.main_activity_username);
+        TextView navEmail = headerView.findViewById(R.id.main_activity_email);
+        navUsername.setText(defaultMailbox.getDisplayName());
+        navEmail.setText(defaultMailbox.getEmail());
+    }
+
+    private void showPrimeDialog(PlanType planType) {
+        if (planType != PlanType.FREE || mainModel.isPrimeDialogShown()) {
+            return;
+        }
+        Intent intent = new Intent(this, SubscriptionActivity.class);
+        intent.putExtra(SubscriptionActivity.SELECT_PLAN_TYPE_KEY, PlanType.PRIME.name());
+        startActivity(intent);
     }
 
     private void startSignInActivity() {

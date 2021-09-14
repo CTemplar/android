@@ -207,6 +207,14 @@ public class UserRepository {
         return userStore.isKeepDecryptedSubjectsEnabled();
     }
 
+    public void setPrimeDialogShown(boolean value) {
+        userStore.setPrimeDialogShown(value);
+    }
+
+    public boolean isPrimeDialogShown() {
+        return userStore.isPrimeDialogShown();
+    }
+
     public void clearData() {
         userStore.logout();
         CTemplarApp.getAppDatabase().clearAllTables();

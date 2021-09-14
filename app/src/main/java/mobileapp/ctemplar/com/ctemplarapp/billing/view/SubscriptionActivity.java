@@ -41,6 +41,7 @@ import timber.log.Timber;
 
 public class SubscriptionActivity extends AppCompatActivity implements ViewPagerAdapter.ViewPagerAdapterListener,
         BillingPlanCycleMenuItem.OnPlanCycleChangeListener {
+    public static final String SELECT_PLAN_TYPE_KEY = "select_plan_type_key";
     private ActivitySubscriptionBinding binding;
 
     private BillingViewModel billingViewModel;
@@ -49,6 +50,7 @@ public class SubscriptionActivity extends AppCompatActivity implements ViewPager
     private String planJsonData;
     private Disposable nextPurchasesListenerDisposable;
     private BillingPlanCycleMenuItem billingPlanCycleMenuItem;
+    private String selectPlanType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +63,10 @@ public class SubscriptionActivity extends AppCompatActivity implements ViewPager
         if (actionBar != null) {
             actionBar.setHomeButtonEnabled(true);
             actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+        Intent intent = getIntent();
+        if (intent != null) {
+            selectPlanType = intent.getStringExtra(SELECT_PLAN_TYPE_KEY);
         }
         planJsonData = PlanInfo.getJSON(this);
         binding.viewPager.setAdapter(adapter);
@@ -311,7 +317,12 @@ public class SubscriptionActivity extends AppCompatActivity implements ViewPager
 
     private void onCurrentPlanDataChanged(CurrentPlanData currentPlanData) {
         adapter.setCurrentPlanData(currentPlanData);
-        int index = adapter.getItemIndexByPlanType(currentPlanData.getPlanType());
+        int index;
+        if (selectPlanType == null) {
+            index = adapter.getItemIndexByPlanType(currentPlanData.getPlanType());
+        } else {
+            index = adapter.getItemIndexByPlanType(PlanType.valueOf(selectPlanType));
+        }
         if (index >= 0) {
             binding.tabs.selectTab(binding.tabs.getTabAt(index));
             if (currentPlanData.getPaymentTransactionDTO() != null) {
