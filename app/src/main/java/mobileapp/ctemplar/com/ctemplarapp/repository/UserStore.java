@@ -80,4 +80,7 @@ public interface UserStore {
 
     void setLanguageKey(String key);
     String getLanguageKey();
+
+    void setPrimeDialogShown(boolean value);
+    boolean isPrimeDialogShown();
 }

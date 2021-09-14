@@ -42,6 +42,7 @@ public class UserStoreImpl implements UserStore {
     private static final String KEY_IS_LOCKED = "key_is_locked";
     private static final String KEY_LOCK_LAST_ATTEMPT_TIME = "key_lock_last_attempt_time";
     private static final String KEY_LOCK_ATTEMPTS_COUNT = "key_lock_attempts_count";
+    private static final String KEY_IS_PRIME_DIALOG_SHOWN = "key_is_prime_dialog_shown";
 
     private static final String KEY_DARK_MODE = "key_dark_mode";
     private static final String KEY_LANGUAGE = "key_language";
@@ -305,6 +306,16 @@ public class UserStoreImpl implements UserStore {
     @Override
     public int getLockAttemptsCount() {
         return preferences.getInt(KEY_LOCK_ATTEMPTS_COUNT, 0);
+    }
+
+    @Override
+    public void setPrimeDialogShown(boolean value) {
+        preferences.edit().putBoolean(KEY_IS_PRIME_DIALOG_SHOWN, value).apply();
+    }
+
+    @Override
+    public boolean isPrimeDialogShown() {
+        return preferences.getBoolean(KEY_IS_PRIME_DIALOG_SHOWN, false);
     }
 
     @Override

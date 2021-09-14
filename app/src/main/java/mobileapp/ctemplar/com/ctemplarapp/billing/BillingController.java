@@ -184,7 +184,7 @@ public class BillingController implements PurchasesUpdatedListener,
                 Timber.i("onPurchasesUpdated: The user already owns this item");
                 break;
             case BillingClient.BillingResponseCode.DEVELOPER_ERROR:
-                Timber.e("onPurchasesUpdated: DEVELOPER_ERROR");
+                Timber.e("onPurchasesUpdated: Developer error means that Google Play does not recognize the configuration");
                 break;
         }
     }
@@ -201,7 +201,7 @@ public class BillingController implements PurchasesUpdatedListener,
         }
         subscriptionPurchases.postValue(purchasesList);
         if (purchasesList != null) {
-            // TODO
+            logAcknowledgementStatus(purchasesList);
         }
     }
 
@@ -210,7 +210,8 @@ public class BillingController implements PurchasesUpdatedListener,
         if (skuDetailsList == null) {
             skuDetailMap.postValue(Collections.emptyMap());
             Timber.e("onSkuDetailsResponse: " +
-                    "Expected " + expectedCount);
+                    "Expected " + expectedCount + ", " +
+                    "Found null SkuDetails");
         } else {
             Map<String, SkuDetails> newSkusDetailList = new HashMap<>();
             for (SkuDetails skuDetails : skuDetailsList) {
@@ -223,9 +224,23 @@ public class BillingController implements PurchasesUpdatedListener,
             } else {
                 Timber.e("onSkuDetailsResponse: " +
                         "Expected " + expectedCount + ", " +
-                        "Found " + skuDetailsCount);
+                        "Found " + skuDetailsCount + " SkuDetails");
             }
         }
+    }
+
+    private void logAcknowledgementStatus(List<Purchase> purchasesList) {
+        int ackYes = 0;
+        int ackNo = 0;
+        for (Purchase purchase : purchasesList) {
+            if (purchase.isAcknowledged()) {
+                ackYes++;
+            } else {
+                ackNo++;
+            }
+        }
+        Timber.d("logAcknowledgementStatus: acknowledged=" + ackYes +
+                " unacknowledged=" + ackNo);
     }
 
     private boolean isUnchangedPurchaseList(List<Purchase> purchasesList) {

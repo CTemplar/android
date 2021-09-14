@@ -5,6 +5,7 @@ import javax.inject.Singleton;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.AddFirebaseTokenRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.SubscriptionMobileUpgradeRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.folders.AddFolderRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.AntiPhishingPhraseRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.AutoSaveContactEnabledRequest;
@@ -43,6 +44,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.AddFirebaseTokenResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.CaptchaResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.CaptchaVerifyResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.CheckUsernameResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.SubscriptionMobileUpgradeResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.keys.KeysResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.RecoverPasswordResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.SignInResponse;
@@ -121,6 +123,10 @@ public interface RestService {
 
     @POST("auth/captcha-verify/")
     Observable<CaptchaVerifyResponse> captchaVerify(@Body CaptchaVerifyRequest request);
+
+    @POST("auth/mobile-upgrade/")
+    Single<SubscriptionMobileUpgradeResponse> subscriptionUpgrade(
+            @Body SubscriptionMobileUpgradeRequest request);
 
     @Multipart
     @POST("emails/attachments/create/")

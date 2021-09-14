@@ -330,8 +330,8 @@
     <string name="txt_panel_normal">Normal</string>
 
     <!-- SUBSCRIPTIONS -->
-    <string name="plans">Plans</string>
     <string name="subscription">Subscription</string>
+    <string name="my_subscription">My Subscription</string>
     <string name="upgrade">Upgrade</string>
     <string name="upgrade_button">Upgrade for %s</string>
     <string name="packages">Packages</string>
@@ -366,6 +366,15 @@
     <string name="remote_encrypted_link">Remote encrypted link</string>
     <string name="exclusive_beta_access">Exclusive beta access</string>
     <string name="not_available_on_android">Not available on Android</string>
+
+    <string name="plans">Plans</string>
+    <string name="billing">Billing</string>
+    <string name="billing_cycle_end">Billing Cycle End</string>
+    <string name="recurring_billing">Recurring Billing</string>
+    <string name="payment">Payment</string>
+    <string name="subscription_upgrade_success">Subscription upgraded successfully</string>
+    <string name="subscription_upgrade_fail">Failed to upgrade subscription. Please try again later</string>
+    <string name="subscription_upgrade_another_device">To upgrade the subscription, use the device on which it was issued</string>
 
     <!-- SETTINGS -->
     <string name="settings_general">General settings</string>

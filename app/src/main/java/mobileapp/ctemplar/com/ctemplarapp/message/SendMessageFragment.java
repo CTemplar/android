@@ -1,5 +1,13 @@
 package mobileapp.ctemplar.com.ctemplarapp.message;
 
+import static mobileapp.ctemplar.com.ctemplarapp.message.SendMessageActivity.ATTACHMENT_LIST;
+import static mobileapp.ctemplar.com.ctemplarapp.message.SendMessageActivity.LAST_ACTION;
+import static mobileapp.ctemplar.com.ctemplarapp.message.SendMessageActivity.MESSAGE_ID;
+import static mobileapp.ctemplar.com.ctemplarapp.message.SendMessageActivity.PARENT_ID;
+import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.DRAFT;
+import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.OUTBOX;
+import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.SENT;
+
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -48,8 +56,9 @@ import java.util.UUID;
 import mobileapp.ctemplar.com.ctemplarapp.ActivityInterface;
 import mobileapp.ctemplar.com.ctemplarapp.BuildConfig;
 import mobileapp.ctemplar.com.ctemplarapp.R;
+import mobileapp.ctemplar.com.ctemplarapp.billing.model.PlanType;
+import mobileapp.ctemplar.com.ctemplarapp.billing.view.SubscriptionActivity;
 import mobileapp.ctemplar.com.ctemplarapp.contacts.ContactsViewModel;
-import mobileapp.ctemplar.com.ctemplarapp.main.UpgradeToPrimeFragment;
 import mobileapp.ctemplar.com.ctemplarapp.message.dialog.DeadMansDeliveryDialogFragment;
 import mobileapp.ctemplar.com.ctemplarapp.message.dialog.DelayedDeliveryDialogFragment;
 import mobileapp.ctemplar.com.ctemplarapp.message.dialog.DestructTimerDialogFragment;
@@ -78,14 +87,6 @@ import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import timber.log.Timber;
-
-import static mobileapp.ctemplar.com.ctemplarapp.message.SendMessageActivity.ATTACHMENT_LIST;
-import static mobileapp.ctemplar.com.ctemplarapp.message.SendMessageActivity.LAST_ACTION;
-import static mobileapp.ctemplar.com.ctemplarapp.message.SendMessageActivity.MESSAGE_ID;
-import static mobileapp.ctemplar.com.ctemplarapp.message.SendMessageActivity.PARENT_ID;
-import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.DRAFT;
-import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.OUTBOX;
-import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.SENT;
 
 public class SendMessageFragment extends Fragment implements View.OnClickListener, ActivityInterface {
     private EditText subjectEditText;
@@ -424,7 +425,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
                     break;
                 }
                 if (!userIsPrime) {
-                    showUpgradeToPrimeDialog();
+                    showSubscriptionPlans();
                     break;
                 }
                 if (!isCTemplarRecipients()) {
@@ -439,7 +440,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
                     break;
                 }
                 if (!userIsPrime) {
-                    showUpgradeToPrimeDialog();
+                    showSubscriptionPlans();
                     break;
                 }
                 delayedDeliveryDialogFragment.show(getParentFragmentManager(), "DelayedDeliveryDialogFragment");
@@ -450,7 +451,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
                     break;
                 }
                 if (!userIsPrime) {
-                    showUpgradeToPrimeDialog();
+                    showSubscriptionPlans();
                     break;
                 }
                 deadMansDeliveryDialogFragment.show(getParentFragmentManager(), "DeadMansDialogFragment");
@@ -972,9 +973,10 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         return toEmail.contains(domain) || ccEmail.contains(domain) || bccEmail.contains(domain);
     }
 
-    private void showUpgradeToPrimeDialog() {
-//        UpgradeToPrimeFragment upgradeToPrimeFragment = new UpgradeToPrimeFragment();
-//        upgradeToPrimeFragment.show(getParentFragmentManager(), "UpgradeToPrimeFragment");
+    private void showSubscriptionPlans() {
+        Intent intent = new Intent(getActivity(), SubscriptionActivity.class);
+        intent.putExtra(SubscriptionActivity.SELECT_PLAN_TYPE_KEY, PlanType.PRIME.name());
+        startActivity(intent);
     }
 
     private void showOnlyCTemplarRecipientsAlert() {

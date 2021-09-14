@@ -28,6 +28,7 @@ import io.reactivex.schedulers.Schedulers;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.DialogState;
 import mobileapp.ctemplar.com.ctemplarapp.SingleLiveEvent;
+import mobileapp.ctemplar.com.ctemplarapp.billing.model.PlanType;
 import mobileapp.ctemplar.com.ctemplarapp.executor.QueuedExecutor;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SignInRequest;
@@ -78,6 +79,7 @@ public class MainActivityViewModel extends AndroidViewModel {
     private final MutableLiveData<MyselfResponse> myselfResponse = new MutableLiveData<>();
     private final MutableLiveData<String> currentFolder = new MutableLiveData<>();
     private final MutableLiveData<ResponseStatus> logoutResponseStatus = new MutableLiveData<>();
+    private final MutableLiveData<PlanType> userPlanTypeResponse = new MutableLiveData<>();
     private final QueuedExecutor executor;
 
     public interface OnDecryptFinishedCallback {
@@ -236,6 +238,10 @@ public class MainActivityViewModel extends AndroidViewModel {
         return myselfResponse;
     }
 
+    public MutableLiveData<PlanType> getUserPlanTypeResponse() {
+        return userPlanTypeResponse;
+    }
+
     public void logout() {
         if (userRepository == null) {
             return;
@@ -280,6 +286,15 @@ public class MainActivityViewModel extends AndroidViewModel {
         WorkersHelper.cancelAllWork(getApplication());
         userRepository.clearData();
         actions.postValue(MainActivityActions.ACTION_LOGOUT);
+    }
+
+    public boolean isPrimeDialogShown() {
+        if (userRepository.isPrimeDialogShown()) {
+            return true;
+        } else {
+            userRepository.setPrimeDialogShown(true);
+            return false;
+        }
     }
 
     public void getMessage(long messageId, String folder) {
@@ -363,7 +378,6 @@ public class MainActivityViewModel extends AndroidViewModel {
                         ResponseMessagesData localMessagesData = new ResponseMessagesData(
                                 messageProviders, offset, folder);
                         if (localMessagesData.messages.size() > 0) {
-                            Timber.i("Loaded from DB: %s", System.currentTimeMillis() % 10000);
                             messagesResponse.postValue(localMessagesData);
                         }
                         responseStatus.postValue(ResponseStatus.RESPONSE_NEXT_MESSAGES);
@@ -687,6 +701,7 @@ public class MainActivityViewModel extends AndroidViewModel {
                         MyselfResult myselfResult = myselfResponse.getResult()[0];
                         SettingsResponse settingsResponse = myselfResult.getSettings();
 
+                        PlanType userPlanType = settingsResponse.getPlanType();
                         String timezone = settingsResponse.getTimezone();
                         boolean isContactsEncrypted = settingsResponse.isContactsEncrypted();
                         boolean isDisableLoadingImages = settingsResponse.isDisableLoadingImages();
@@ -701,6 +716,8 @@ public class MainActivityViewModel extends AndroidViewModel {
                                 settingsResponse.isNightMode(),
                                 userRepository.getUserStore()
                         );
+
+                        userPlanTypeResponse.postValue(userPlanType);
                     }
 
                     @Override

@@ -1,36 +1,56 @@
 package mobileapp.ctemplar.com.ctemplarapp.billing.view;
 
+import static mobileapp.ctemplar.com.ctemplarapp.billing.view.MySubscriptionDialog.CURRENT_PLAN_DATA;
+import static mobileapp.ctemplar.com.ctemplarapp.utils.DateUtils.GENERAL_GSON;
+
+import android.app.ProgressDialog;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.android.billingclient.api.Purchase;
 import com.android.billingclient.api.SkuDetails;
 import com.google.android.material.tabs.TabLayoutMediator;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.SingleObserver;
+import io.reactivex.disposables.Disposable;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.billing.BillingConstants;
+import mobileapp.ctemplar.com.ctemplarapp.utils.BillingUtils;
 import mobileapp.ctemplar.com.ctemplarapp.billing.BillingViewModel;
 import mobileapp.ctemplar.com.ctemplarapp.billing.model.CurrentPlanData;
 import mobileapp.ctemplar.com.ctemplarapp.billing.model.PlanType;
 import mobileapp.ctemplar.com.ctemplarapp.billing.model.PlanInfo;
 import mobileapp.ctemplar.com.ctemplarapp.databinding.ActivitySubscriptionBinding;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.SubscriptionMobileUpgradeRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.SubscriptionMobileUpgradeResponse;
 import mobileapp.ctemplar.com.ctemplarapp.utils.ThemeUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.ToastUtils;
 import mobileapp.ctemplar.com.ctemplarapp.view.menu.BillingPlanCycleMenuItem;
 import timber.log.Timber;
 
-public class SubscriptionActivity extends AppCompatActivity implements ViewPagerAdapter.ViewPagerAdapterListener, BillingPlanCycleMenuItem.OnPlanCycleChangeListener {
+public class SubscriptionActivity extends AppCompatActivity implements ViewPagerAdapter.ViewPagerAdapterListener,
+        BillingPlanCycleMenuItem.OnPlanCycleChangeListener {
+    public static final String SELECT_PLAN_TYPE_KEY = "select_plan_type_key";
     private ActivitySubscriptionBinding binding;
+
     private BillingViewModel billingViewModel;
     private final ViewPagerAdapter adapter = new ViewPagerAdapter(this);
+
     private String planJsonData;
+    private Disposable nextPurchasesListenerDisposable;
+    private BillingPlanCycleMenuItem billingPlanCycleMenuItem;
+    private String selectPlanType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +64,10 @@ public class SubscriptionActivity extends AppCompatActivity implements ViewPager
             actionBar.setHomeButtonEnabled(true);
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
+        Intent intent = getIntent();
+        if (intent != null) {
+            selectPlanType = intent.getStringExtra(SELECT_PLAN_TYPE_KEY);
+        }
         planJsonData = PlanInfo.getJSON(this);
         binding.viewPager.setAdapter(adapter);
         billingViewModel = new ViewModelProvider(this).get(BillingViewModel.class);
@@ -51,6 +75,71 @@ public class SubscriptionActivity extends AppCompatActivity implements ViewPager
         billingViewModel.getCurrentPlanDataLiveData().observe(this, this::onCurrentPlanDataChanged);
         new TabLayoutMediator(binding.tabs, binding.viewPager, (tab, position) ->
                 tab.setText(adapter.getItemTitle(position))).attach();
+        nextPurchasesListenerDisposable = billingViewModel.listenForNextPurchasesUpdate((purchasesToAck) -> {
+            ProgressDialog progressDialog = new ProgressDialog(this);
+            progressDialog.show();
+            if (purchasesToAck.length == 0) {
+                progressDialog.dismiss();
+                return;
+            }
+            if (purchasesToAck.length > 1) {
+                Timber.e("Purchases count is more than 1");
+            }
+            boolean requestedSubscription = false;
+            for (Purchase purchase : purchasesToAck) {
+                String subscription = BillingUtils.getPurchaseSubscription(purchase);
+                if (subscription == null) {
+                    Timber.e("Subscription not found for purchase: %s", purchase.toString());
+                    continue;
+                }
+                PlanType planType = getPlanType(subscription);
+                if (planType == null) {
+                    Timber.e("Plan type not found for subscription %s", subscription);
+                    continue;
+                }
+                requestedSubscription = true;
+                billingViewModel.subscriptionUpgrade(new SubscriptionMobileUpgradeRequest(
+                        purchase.getPurchaseToken(),
+                        subscription,
+                        BillingConstants.GOOGLE,
+                        isMonthlySku(subscription) ? BillingConstants.MONTHLY : BillingConstants.ANNUALLY,
+                        planType.name()
+
+                )).subscribe(new SingleObserver<SubscriptionMobileUpgradeResponse>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onSuccess(@NonNull SubscriptionMobileUpgradeResponse subscriptionMobileUpgradeResponse) {
+                        if (!subscriptionMobileUpgradeResponse.isStatus()) {
+                            ToastUtils.showToast(SubscriptionActivity.this, getString(R.string.subscription_upgrade_fail));
+                        } else {
+                            ToastUtils.showToast(SubscriptionActivity.this, getString(R.string.subscription_upgrade_success));
+                            billingViewModel.updateUserSubscription();
+                        }
+                        if (progressDialog.isShowing()) {
+                            progressDialog.dismiss();
+                        }
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        Timber.e(e);
+                        ToastUtils.showToast(SubscriptionActivity.this,
+                                getString(R.string.subscription_upgrade_fail) + e.getMessage());
+                        if (progressDialog.isShowing()) {
+                            progressDialog.dismiss();
+                        }
+                    }
+                });
+            }
+            if (!requestedSubscription) {
+                ToastUtils.showToast(this, getString(R.string.error_connection));
+                progressDialog.dismiss();
+            }
+        });
     }
 
     @Override
@@ -71,14 +160,43 @@ public class SubscriptionActivity extends AppCompatActivity implements ViewPager
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         MenuItem item = menu.findItem(R.id.plan_cycle_menu_item);
-        BillingPlanCycleMenuItem view = (BillingPlanCycleMenuItem) item.getActionView();
-        view.setIsYearly(true);
-        view.setOnChangeListener(this);
+        billingPlanCycleMenuItem = (BillingPlanCycleMenuItem) item.getActionView();
+        billingPlanCycleMenuItem.setIsYearly(true);
+        billingPlanCycleMenuItem.setOnChangeListener(this);
         return super.onPrepareOptionsMenu(menu);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (nextPurchasesListenerDisposable != null) {
+            nextPurchasesListenerDisposable.dispose();
+            nextPurchasesListenerDisposable = null;
+        }
+    }
+
     private void subscribe(String sku) {
+        boolean isPurchaseOwnerDevice = billingViewModel.getIsPurchaseOwnerDeviceLiveData().getValue();
+        if (!isPurchaseOwnerDevice) {
+            ToastUtils.showToast(this, getString(R.string.subscription_upgrade_another_device));
+            return;
+        }
         try {
+            if (sku == null) {
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                CurrentPlanData currentPlanData = billingViewModel.getCurrentPlanDataLiveData().getValue();
+                if (currentPlanData != null) {
+                    boolean isMonthly = BillingConstants.MONTHLY.equals(currentPlanData.getPaymentTransactionDTO() == null
+                            ? null : currentPlanData.getPaymentTransactionDTO().getPaymentType());
+                    String currentSku = getPlanSku(currentPlanData.getPlanType(), isMonthly);
+                    intent.setData(Uri.parse(String.format(BillingConstants.PLAY_STORE_SUBSCRIPTION_DEEPLINK_URL,
+                            currentSku, getPackageName())));
+                    startActivity(intent);
+                } else {
+                    intent.setData(Uri.parse(BillingConstants.PLAY_STORE_SUBSCRIPTION_URL));
+                    startActivity(intent);
+                }
+            }
             billingViewModel.subscribe(this, sku);
         } catch (Throwable e) {
             ToastUtils.showToast(this, e.getMessage());
@@ -92,7 +210,14 @@ public class SubscriptionActivity extends AppCompatActivity implements ViewPager
 
     @Override
     public void onOpenCurrentPlanClicked(CurrentPlanData currentPlanData) {
-
+        if (currentPlanData.getPlanType() == PlanType.FREE) {
+            return;
+        }
+        MySubscriptionDialog dialog = new MySubscriptionDialog();
+        Bundle bundle = new Bundle();
+        bundle.putString(CURRENT_PLAN_DATA, GENERAL_GSON.toJson(currentPlanData));
+        dialog.setArguments(bundle);
+        dialog.show(getSupportFragmentManager(), getClass().getSimpleName());
     }
 
     @Override
@@ -142,11 +267,72 @@ public class SubscriptionActivity extends AppCompatActivity implements ViewPager
         adapter.setItems(itemsList);
     }
 
+    private String getPlanSku(PlanType planType, boolean isMonthly) {
+        switch (planType) {
+            case FREE:
+                return null;
+            case PRIME:
+                return isMonthly ? BillingConstants.PRIME_MONTHLY_SKU : BillingConstants.PRIME_ANNUAL_SKU;
+            case KNIGHT:
+                return isMonthly ? BillingConstants.KNIGHT_MONTHLY_SKU : BillingConstants.KNIGHT_ANNUAL_SKU;
+            case MARSHAL:
+                return isMonthly ? BillingConstants.MARSHAL_MONTHLY_SKU : BillingConstants.MARSHAL_ANNUAL_SKU;
+            case CHAMPION:
+                return isMonthly ? BillingConstants.CHAMPION_MONTHLY_SKU : null;
+        }
+        return null;
+    }
+
+    private static boolean isMonthlySku(String sku) {
+        switch (sku) {
+            case BillingConstants.PRIME_MONTHLY_SKU:
+            case BillingConstants.MARSHAL_MONTHLY_SKU:
+            case BillingConstants.KNIGHT_MONTHLY_SKU:
+            case BillingConstants.CHAMPION_MONTHLY_SKU:
+                return true;
+            case BillingConstants.PRIME_ANNUAL_SKU:
+            case BillingConstants.MARSHAL_ANNUAL_SKU:
+            case BillingConstants.KNIGHT_ANNUAL_SKU:
+            default:
+                return false;
+        }
+    }
+
+    private static PlanType getPlanType(String sku) {
+        switch (sku) {
+            case BillingConstants.PRIME_MONTHLY_SKU:
+            case BillingConstants.PRIME_ANNUAL_SKU:
+                return PlanType.PRIME;
+            case BillingConstants.MARSHAL_MONTHLY_SKU:
+            case BillingConstants.MARSHAL_ANNUAL_SKU:
+                return PlanType.MARSHAL;
+            case BillingConstants.KNIGHT_MONTHLY_SKU:
+            case BillingConstants.KNIGHT_ANNUAL_SKU:
+                return PlanType.KNIGHT;
+            case BillingConstants.CHAMPION_MONTHLY_SKU:
+                return PlanType.CHAMPION;
+        }
+        return null;
+    }
+
     private void onCurrentPlanDataChanged(CurrentPlanData currentPlanData) {
         adapter.setCurrentPlanData(currentPlanData);
-        int index = adapter.getItemIndexByPlanType(currentPlanData.planType);
+        int index;
+        if (selectPlanType == null) {
+            index = adapter.getItemIndexByPlanType(currentPlanData.getPlanType());
+        } else {
+            index = adapter.getItemIndexByPlanType(PlanType.valueOf(selectPlanType));
+        }
         if (index >= 0) {
             binding.tabs.selectTab(binding.tabs.getTabAt(index));
+            if (currentPlanData.getPaymentTransactionDTO() != null) {
+                if (billingPlanCycleMenuItem == null) {
+                    return;
+                }
+                boolean isMonthlyType = BillingConstants.MONTHLY.equals(
+                        currentPlanData.getPaymentTransactionDTO().getPaymentType());
+                billingPlanCycleMenuItem.setIsYearly(!isMonthlyType);
+            }
         }
     }
 }

@@ -1,22 +1,21 @@
 package mobileapp.ctemplar.com.ctemplarapp.billing.model;
 
-import java.util.Date;
+import mobileapp.ctemplar.com.ctemplarapp.repository.dto.PaymentTransactionDTO;
 
 public class CurrentPlanData {
-    public final PlanType planType;
-    public final PaidPlanData paidData;
+    private final PlanType planType;
+    private final PaymentTransactionDTO paymentTransactionDTO;
 
-    public CurrentPlanData(PlanType planType, PaidPlanData paidData) {
+    public CurrentPlanData(PlanType planType, PaymentTransactionDTO paymentTransactionDTO) {
         this.planType = planType;
-        this.paidData = paidData;
+        this.paymentTransactionDTO = paymentTransactionDTO;
     }
 
-    public static class PaidPlanData {
-        public PaidPlanData(Date endsAt, boolean isYearly) {
-            this.endsAt = endsAt;
-            this.isYearly = isYearly;
-        }
-        public final Date endsAt;
-        public final boolean isYearly;
+    public PlanType getPlanType() {
+        return planType;
+    }
+
+    public PaymentTransactionDTO getPaymentTransactionDTO() {
+        return paymentTransactionDTO;
     }
 }

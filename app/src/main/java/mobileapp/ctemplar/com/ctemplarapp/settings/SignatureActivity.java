@@ -1,5 +1,6 @@
 package mobileapp.ctemplar.com.ctemplarapp.settings;
 
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.SpannableString;
@@ -33,7 +34,8 @@ import java.util.List;
 import butterknife.BindView;
 import mobileapp.ctemplar.com.ctemplarapp.BaseActivity;
 import mobileapp.ctemplar.com.ctemplarapp.R;
-import mobileapp.ctemplar.com.ctemplarapp.main.UpgradeToPrimeFragment;
+import mobileapp.ctemplar.com.ctemplarapp.billing.model.PlanType;
+import mobileapp.ctemplar.com.ctemplarapp.billing.view.SubscriptionActivity;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.MyselfResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.MyselfResult;
@@ -141,7 +143,7 @@ public class SignatureActivity extends BaseActivity {
             signatureSwitch.setEnabled(true);
             signatureEditText.setFocusableInTouchMode(true);
         } else {
-            signatureEditText.setOnClickListener(v -> upgradeToPrimeDialog());
+            signatureEditText.setOnClickListener(v -> showSubscriptionPlans());
         }
     }
 
@@ -254,9 +256,10 @@ public class SignatureActivity extends BaseActivity {
         signatureLayout.setVisibility(state ? View.VISIBLE : View.GONE);
     }
 
-    private void upgradeToPrimeDialog() {
-//        UpgradeToPrimeFragment upgradeToPrimeFragment = new UpgradeToPrimeFragment();
-//        upgradeToPrimeFragment.show(getSupportFragmentManager(), "UpgradeToPrimeFragment");
+    private void showSubscriptionPlans() {
+        Intent intent = new Intent(this, SubscriptionActivity.class);
+        intent.putExtra(SubscriptionActivity.SELECT_PLAN_TYPE_KEY, PlanType.PRIME.name());
+        startActivity(intent);
     }
 
     @Override
