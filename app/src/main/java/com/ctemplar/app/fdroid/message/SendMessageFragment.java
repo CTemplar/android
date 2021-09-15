@@ -49,7 +49,7 @@ import com.ctemplar.app.fdroid.ActivityInterface;
 import com.ctemplar.app.fdroid.BuildConfig;
 import com.ctemplar.app.fdroid.R;
 import com.ctemplar.app.fdroid.contacts.ContactsViewModel;
-import com.ctemplar.app.fdroid.main.UpgradeToPrimeFragment;
+import com.ctemplar.app.fdroid.main.UpgradeToPrimeWebFragment;
 import com.ctemplar.app.fdroid.message.dialog.DeadMansDeliveryDialogFragment;
 import com.ctemplar.app.fdroid.message.dialog.DelayedDeliveryDialogFragment;
 import com.ctemplar.app.fdroid.message.dialog.DestructTimerDialogFragment;
@@ -973,8 +973,8 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
     }
 
     private void showUpgradeToPrimeDialog() {
-        UpgradeToPrimeFragment upgradeToPrimeFragment = new UpgradeToPrimeFragment();
-        upgradeToPrimeFragment.show(getParentFragmentManager(), "UpgradeToPrimeFragment");
+        UpgradeToPrimeWebFragment upgradeToPrimeWebFragment = new UpgradeToPrimeWebFragment();
+        upgradeToPrimeWebFragment.show(getParentFragmentManager(), "UpgradeToPrimeFragment");
     }
 
     private void showOnlyCTemplarRecipientsAlert() {

@@ -15,7 +15,7 @@ import android.widget.TextView;
 
 import com.ctemplar.app.fdroid.R;
 
-public class UpgradeToPrimeFragment extends DialogFragment {
+public class UpgradeToPrimeWebFragment extends DialogFragment {
     @Override
     public void onResume() {
         super.onResume();
