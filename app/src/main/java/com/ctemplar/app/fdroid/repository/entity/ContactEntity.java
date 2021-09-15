@@ -14,7 +14,7 @@ public class ContactEntity {
     private final String phone;
     private final String phone2;
     private final String provider;
-    private boolean isEncrypted;
+    private final boolean isEncrypted;
     private final String encryptedData;
 
     public ContactEntity(

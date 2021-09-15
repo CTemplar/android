@@ -33,7 +33,7 @@ import java.util.List;
 import butterknife.BindView;
 import com.ctemplar.app.fdroid.BaseActivity;
 import com.ctemplar.app.fdroid.R;
-import com.ctemplar.app.fdroid.main.UpgradeToPrimeFragment;
+import com.ctemplar.app.fdroid.main.UpgradeToPrimeWebFragment;
 import com.ctemplar.app.fdroid.net.ResponseStatus;
 import com.ctemplar.app.fdroid.net.response.myself.MyselfResponse;
 import com.ctemplar.app.fdroid.net.response.myself.MyselfResult;
@@ -255,8 +255,8 @@ public class SignatureActivity extends BaseActivity {
     }
 
     private void upgradeToPrimeDialog() {
-        UpgradeToPrimeFragment upgradeToPrimeFragment = new UpgradeToPrimeFragment();
-        upgradeToPrimeFragment.show(getSupportFragmentManager(), "UpgradeToPrimeFragment");
+        UpgradeToPrimeWebFragment upgradeToPrimeWebFragment = new UpgradeToPrimeWebFragment();
+        upgradeToPrimeWebFragment.show(getSupportFragmentManager(), "UpgradeToPrimeFragment");
     }
 
     @Override

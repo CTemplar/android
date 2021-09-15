@@ -1,5 +1,20 @@
 package com.ctemplar.app.fdroid.main;
 
+import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.ALL_MAILS;
+import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.ARCHIVE;
+import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.CONTACT;
+import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.DRAFT;
+import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.INBOX;
+import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.OUTBOX;
+import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.OUTBOX_DEAD_MAN;
+import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.OUTBOX_DELAYED_DELIVERY;
+import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.OUTBOX_SELF_DESTRUCT;
+import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.SENT;
+import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.SPAM;
+import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.STARRED;
+import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.TRASH;
+import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.UNREAD;
+
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -33,22 +48,12 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.google.android.material.navigation.NavigationView;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.ctemplar.app.fdroid.ActivityInterface;
 import com.ctemplar.app.fdroid.R;
 import com.ctemplar.app.fdroid.folders.ManageFoldersActivity;
 import com.ctemplar.app.fdroid.login.LoginActivity;
 import com.ctemplar.app.fdroid.message.SendMessageActivity;
 import com.ctemplar.app.fdroid.message.SendMessageFragment;
-import com.ctemplar.app.fdroid.net.ResponseStatus;
 import com.ctemplar.app.fdroid.net.entity.AttachmentsEntity;
 import com.ctemplar.app.fdroid.net.response.folders.FoldersResponse;
 import com.ctemplar.app.fdroid.net.response.folders.FoldersResult;
@@ -60,22 +65,16 @@ import com.ctemplar.app.fdroid.utils.EncryptUtils;
 import com.ctemplar.app.fdroid.utils.LocaleUtils;
 import com.ctemplar.app.fdroid.utils.ThemeUtils;
 import com.ctemplar.app.fdroid.view.ResizeAnimation;
-import timber.log.Timber;
+import com.google.android.material.navigation.NavigationView;
 
-import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.ALL_MAILS;
-import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.ARCHIVE;
-import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.CONTACT;
-import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.DRAFT;
-import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.INBOX;
-import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.OUTBOX;
-import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.OUTBOX_DEAD_MAN;
-import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.OUTBOX_DELAYED_DELIVERY;
-import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.OUTBOX_SELF_DESTRUCT;
-import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.SENT;
-import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.SPAM;
-import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.STARRED;
-import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.TRASH;
-import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.UNREAD;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import timber.log.Timber;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -150,57 +149,57 @@ public class MainActivity extends AppCompatActivity
             loadFolders();
         });
 
-        mainModel.getResponseStatus().observe(this, this::handleResponseStatus);
-        mainModel.getFoldersResponse().observe(this, foldersResponse -> {
-            if (foldersResponse != null) {
-                handleFoldersResponse(navigationView, foldersResponse);
-            }
-        });
+        mailboxKeyViewModel.getMailboxesResponseStatus().observe(this,
+                responseStatus -> showMailboxDetailsInNavigationDrawer());
+        mainModel.getFoldersResponse().observe(this,
+                foldersResponse -> handleFoldersResponse(navigationView, foldersResponse));
 
         mainModel.getUnreadFoldersBody().observe(this, unreadFoldersBody -> {
-            if (unreadFoldersBody != null) {
-                mainModel.getFolders(customFoldersShowCount, 0);
-                TextView inboxCounter = (TextView) navigationMenu.findItem(R.id.nav_inbox).getActionView();
-                TextView draftCounter = (TextView) navigationMenu.findItem(R.id.nav_draft).getActionView();
-                TextView outboxCounter = (TextView) navigationMenu.findItem(R.id.nav_outbox).getActionView();
-                TextView starredCounter = (TextView) navigationMenu.findItem(R.id.nav_starred).getActionView();
-                TextView spamCounter = (TextView) navigationMenu.findItem(R.id.nav_spam).getActionView();
-
-                int inbox = 0, draft = 0, starred = 0, spam = 0, outbox = 0;
-                try {
-                    String unreadFoldersString = unreadFoldersBody.string();
-                    unreadFolders = new JSONObject(unreadFoldersString);
-                    inbox = unreadFolders.getInt(INBOX);
-                    draft = unreadFolders.getInt(DRAFT);
-                    starred = unreadFolders.getInt(STARRED);
-                    spam = unreadFolders.getInt(SPAM);
-                    int outboxDead = unreadFolders.getInt(OUTBOX_DEAD_MAN);
-                    int outboxDelayed = unreadFolders.getInt(OUTBOX_DELAYED_DELIVERY);
-                    int outboxDestruct = unreadFolders.getInt(OUTBOX_SELF_DESTRUCT);
-                    outbox = outboxDelayed + outboxDead + outboxDestruct;
-                } catch (IOException | JSONException e) {
-                    Timber.e(e);
-                }
-                String inboxString = inbox > 0 ? String.valueOf(inbox) : "";
-                String draftString = draft > 0 ? String.valueOf(draft) : "";
-                String starredString = starred > 0 ? String.valueOf(starred) : "";
-                String spamString = spam > 0 ? String.valueOf(spam) : "";
-                String outboxString = outbox > 0 ? String.valueOf(outbox) : "";
-
-                inboxCounter.setText(inboxString);
-                draftCounter.setText(draftString);
-                starredCounter.setText(starredString);
-                spamCounter.setText(spamString);
-                outboxCounter.setText(outboxString);
+            if (unreadFoldersBody == null) {
+                Timber.e("unreadFoldersBody is null");
+                return;
             }
+            mainModel.getFolders(customFoldersShowCount, 0);
+            TextView inboxCounter = (TextView) navigationMenu.findItem(R.id.nav_inbox).getActionView();
+            TextView draftCounter = (TextView) navigationMenu.findItem(R.id.nav_draft).getActionView();
+            TextView outboxCounter = (TextView) navigationMenu.findItem(R.id.nav_outbox).getActionView();
+            TextView starredCounter = (TextView) navigationMenu.findItem(R.id.nav_starred).getActionView();
+            TextView spamCounter = (TextView) navigationMenu.findItem(R.id.nav_spam).getActionView();
+
+            int inbox = 0, draft = 0, starred = 0, spam = 0, outbox = 0;
+            try {
+                String unreadFoldersString = unreadFoldersBody.string();
+                unreadFolders = new JSONObject(unreadFoldersString);
+                inbox = unreadFolders.getInt(INBOX);
+                draft = unreadFolders.getInt(DRAFT);
+                starred = unreadFolders.getInt(STARRED);
+                spam = unreadFolders.getInt(SPAM);
+                int outboxDead = unreadFolders.getInt(OUTBOX_DEAD_MAN);
+                int outboxDelayed = unreadFolders.getInt(OUTBOX_DELAYED_DELIVERY);
+                int outboxDestruct = unreadFolders.getInt(OUTBOX_SELF_DESTRUCT);
+                outbox = outboxDelayed + outboxDead + outboxDestruct;
+            } catch (IOException | JSONException e) {
+                Timber.e(e);
+            }
+            String inboxString = inbox > 0 ? String.valueOf(inbox) : "";
+            String draftString = draft > 0 ? String.valueOf(draft) : "";
+            String starredString = starred > 0 ? String.valueOf(starred) : "";
+            String spamString = spam > 0 ? String.valueOf(spam) : "";
+            String outboxString = outbox > 0 ? String.valueOf(outbox) : "";
+
+            inboxCounter.setText(inboxString);
+            draftCounter.setText(draftString);
+            starredCounter.setText(starredString);
+            spamCounter.setText(spamString);
+            outboxCounter.setText(outboxString);
         });
 
         loadFolders();
         loadUserInfo();
+        handleSendToIntent(getIntent());
 
         // default folder
         setFolder(INBOX);
-        handleSendToIntent(getIntent());
     }
 
     @Override
@@ -420,7 +419,7 @@ public class MainActivity extends AppCompatActivity
             String dataString = Uri.decode(intent.getDataString());
             if (EditTextUtils.isNotEmpty(dataString)) {
                 email = dataString.substring(7);
-                sendToEmailIntent.putExtra(Intent.EXTRA_EMAIL, new String[] { email });
+                sendToEmailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{email});
             }
             if (EditTextUtils.isNotEmpty(intent.getStringExtra(Intent.EXTRA_SUBJECT))) {
                 subject = intent.getStringExtra(Intent.EXTRA_SUBJECT);
@@ -431,9 +430,9 @@ public class MainActivity extends AppCompatActivity
             Fragment fragmentSendToEmail = SendMessageFragment.newInstance(
                     subject,
                     compose,
-                    new String[] { email },
-                    new String[] {},
-                    new String[] {},
+                    new String[]{email},
+                    new String[]{},
+                    new String[]{},
                     null,
                     new AttachmentsEntity(),
                     null
@@ -443,6 +442,10 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void handleFoldersResponse(NavigationView navigationView, FoldersResponse foldersResponse) {
+        if (foldersResponse == null) {
+            Timber.e("foldersResponse is null");
+            return;
+        }
         customFoldersList = foldersResponse.getFoldersList();
         int customFoldersCount = foldersResponse.getTotalCount();
         Menu navigationMenu = navigationView.getMenu();
@@ -637,27 +640,19 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private void handleResponseStatus(ResponseStatus status) {
-        if (status == null) {
-            return;
-        }
-        if (status == ResponseStatus.RESPONSE_NEXT_MAILBOXES) {
-            showMailboxDetailsInNavigationDrawer();
-        }
-    }
-
     private void showMailboxDetailsInNavigationDrawer() {
         MailboxEntity defaultMailbox = EncryptUtils.getDefaultMailbox();
-        if (defaultMailbox != null) {
-            Timber.i("Standard startup");
-            View headerView = navigationView.getHeaderView(0);
-            navigationView.setCheckedItem(R.id.nav_inbox);
-
-            TextView navUsername = headerView.findViewById(R.id.main_activity_username);
-            TextView navEmail = headerView.findViewById(R.id.main_activity_email);
-            navUsername.setText(defaultMailbox.getDisplayName());
-            navEmail.setText(defaultMailbox.getEmail());
+        if (defaultMailbox == null) {
+            Timber.e("defaultMailbox is null");
+            return;
         }
+        View headerView = navigationView.getHeaderView(0);
+        navigationView.setCheckedItem(R.id.nav_inbox);
+
+        TextView navUsername = headerView.findViewById(R.id.main_activity_username);
+        TextView navEmail = headerView.findViewById(R.id.main_activity_email);
+        navUsername.setText(defaultMailbox.getDisplayName());
+        navEmail.setText(defaultMailbox.getEmail());
     }
 
     private void startSignInActivity() {
