@@ -107,6 +107,7 @@
     <string name="title_empty_messages">You have no %1$s messages</string>
     <string name="title_empty_contacts">You have no contacts yet</string>
     <string name="title_empty_folders">You have no folders</string>
+    <string name="title_empty_filters">There are no messages match the filter</string>
     <string name="btn_login">Log in</string>
     <string name="btn_compose">Compose</string>
     <string name="btn_add_folder">Add folder</string>
