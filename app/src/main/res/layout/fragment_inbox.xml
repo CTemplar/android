@@ -94,7 +94,7 @@
         android:visibility="gone">
 
         <ImageView
-            android:id="@+id/fragment_inbox_icon_empty_search_image_view"
+            android:id="@+id/icon_empty_search_image_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/icon_search_results_empty"
@@ -116,7 +116,41 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/fragment_inbox_icon_empty_search_image_view"
+            app:layout_constraintTop_toBottomOf="@id/icon_empty_search_image_view"
+            app:layout_constraintVertical_chainStyle="spread_inside" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/list_empty_filter_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/icon_empty_filter_image_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/icon_filters_empty"
+            app:layout_constraintBottom_toTopOf="@id/folder_empty_filter_text_view"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed" />
+
+        <TextView
+            android:id="@+id/folder_empty_filter_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:fontFamily="@font/lato_regular"
+            android:text="@string/title_empty_filters"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/icon_empty_filter_image_view"
             app:layout_constraintVertical_chainStyle="spread_inside" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

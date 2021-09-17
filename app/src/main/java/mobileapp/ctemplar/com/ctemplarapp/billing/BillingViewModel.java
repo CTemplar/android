@@ -86,6 +86,7 @@ public class BillingViewModel extends AndroidViewModel {
                 PlanType planType = result.getSettings().getPlanType();
                 if (planType == PlanType.FREE) {
                     currentPlanDataLiveData.setValue(new CurrentPlanData(PlanType.FREE, null));
+                    updateIsPurchaseOwnerDevice();
                     return;
                 }
                 PaymentTransactionResponse paymentTransactionResponse = result.getPaymentTransaction();
