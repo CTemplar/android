@@ -25,7 +25,6 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="5dp"
-                android:layout_marginRight="5dp"
                 android:layout_weight="1"
                 android:ellipsize="end"
                 android:fontFamily="@font/lato_regular"
@@ -33,6 +32,14 @@
                 android:lines="1"
                 android:text="CTemplar"
                 android:textSize="14sp" />
+
+            <ImageView
+                android:id="@+id/item_message_view_collapsed_verified_mark_image_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="5dp"
+                android:src="@drawable/ic_check_success"
+                app:tint="@color/colorDarkGreen2" />
 
             <ImageView
                 android:id="@+id/item_message_view_holder_attachment_image_view"
