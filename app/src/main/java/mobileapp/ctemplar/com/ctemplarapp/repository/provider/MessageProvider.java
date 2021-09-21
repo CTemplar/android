@@ -47,6 +47,7 @@ public class MessageProvider {
     private boolean isEncrypted;
     private boolean isSubjectEncrypted;
     private boolean isProtected;
+    private boolean isVerified;
     private boolean isHtml;
     private String hash;
     private List<String> spamReason;
@@ -61,7 +62,7 @@ public class MessageProvider {
     public MessageProvider() {
     }
 
-    public MessageProvider(long id, EncryptionMessageProvider encryptionMessage, String sender, boolean hasAttachments, List<AttachmentProvider> attachments, Date createdAt, UserDisplayProvider senderDisplay, List<UserDisplayProvider> receiverDisplayList, List<UserDisplayProvider> ccDisplayList, List<UserDisplayProvider> bccDisplayList, boolean hasChildren, int childrenCount, String subject, String content, String[] receivers, String[] cc, String[] bcc, String folderName, Date updatedAt, Date destructDate, Date delayedDelivery, Long deadManDuration, boolean isRead, boolean send, boolean isStarred, Date sentAt, boolean isEncrypted, boolean isSubjectEncrypted, boolean isProtected, boolean isHtml, String hash, List<String> spamReason, String lastAction, String lastActionThread, long mailboxId, String parent, boolean isSubjectDecrypted, String decryptedSubject) {
+    public MessageProvider(long id, EncryptionMessageProvider encryptionMessage, String sender, boolean hasAttachments, List<AttachmentProvider> attachments, Date createdAt, UserDisplayProvider senderDisplay, List<UserDisplayProvider> receiverDisplayList, List<UserDisplayProvider> ccDisplayList, List<UserDisplayProvider> bccDisplayList, boolean hasChildren, int childrenCount, String subject, String content, String[] receivers, String[] cc, String[] bcc, String folderName, Date updatedAt, Date destructDate, Date delayedDelivery, Long deadManDuration, boolean isRead, boolean send, boolean isStarred, Date sentAt, boolean isEncrypted, boolean isSubjectEncrypted, boolean isProtected, boolean isVerified, boolean isHtml, String hash, List<String> spamReason, String lastAction, String lastActionThread, long mailboxId, String parent, boolean isSubjectDecrypted, String decryptedSubject) {
         this.id = id;
         this.encryptionMessage = encryptionMessage;
         this.sender = sender;
@@ -91,6 +92,7 @@ public class MessageProvider {
         this.isEncrypted = isEncrypted;
         this.isSubjectEncrypted = isSubjectEncrypted;
         this.isProtected = isProtected;
+        this.isVerified = isVerified;
         this.isHtml = isHtml;
         this.hash = hash;
         this.spamReason = spamReason;
@@ -109,6 +111,10 @@ public class MessageProvider {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public void setEncryptionMessage(EncryptionMessageProvider encryptionMessage) {
+        this.encryptionMessage = encryptionMessage;
     }
 
     public EncryptionMessageProvider getEncryptionMessage() {
@@ -333,6 +339,14 @@ public class MessageProvider {
 
     public void setProtected(boolean aProtected) {
         isProtected = aProtected;
+    }
+
+    public boolean isVerified() {
+        return isVerified;
+    }
+
+    public void setVerified(boolean verified) {
+        isVerified = verified;
     }
 
     public boolean isHtml() {
@@ -580,6 +594,7 @@ public class MessageProvider {
         messageProvider.isEncrypted = message.isEncrypted();
         messageProvider.isSubjectEncrypted = message.isSubjectEncrypted();
         messageProvider.isProtected = message.isProtected();
+        messageProvider.isVerified = message.isVerified();
         messageProvider.isHtml = message.isHtml();
         messageProvider.hash = message.getHash();
         messageProvider.spamReason = message.getSpamReason();
@@ -684,6 +699,7 @@ public class MessageProvider {
         messageEntity.setEncrypted(message.isEncrypted());
         messageEntity.setSubjectEncrypted(message.isSubjectEncrypted());
         messageEntity.setProtected(message.isProtected());
+        messageEntity.setVerified(message.isVerified());
         messageEntity.setHtml(message.isHtml());
         messageEntity.setHash(message.getHash());
         messageEntity.setSpamReason(message.getSpamReason());

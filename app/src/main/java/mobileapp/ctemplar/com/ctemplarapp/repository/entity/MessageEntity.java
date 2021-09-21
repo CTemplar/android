@@ -39,6 +39,7 @@ public class MessageEntity {
     private boolean isEncrypted;
     private boolean isSubjectEncrypted;
     private boolean isProtected;
+    private boolean isVerified;
     private boolean isHtml;
     private String hash;
     private List<String> spamReason;
@@ -58,7 +59,7 @@ public class MessageEntity {
     public MessageEntity() {
     }
 
-    public MessageEntity(long id, EncryptionMessageEntity encryptionMessage, String sender, boolean hasAttachments, List<AttachmentEntity> attachments, Date createdAt, UserDisplayEntity senderDisplay, List<UserDisplayEntity> receiverDisplayList, List<UserDisplayEntity> ccDisplayList, List<UserDisplayEntity> bccDisplayList, boolean hasChildren, int childrenCount, String subject, String content, List<String> receivers, List<String> cc, List<String> bcc, String folderName, Date updatedAt, Date destructDate, Date delayedDelivery, Long deadManDuration, boolean isRead, boolean send, boolean isStarred, Date sentAt, boolean isEncrypted, boolean isSubjectEncrypted, boolean isProtected, boolean isHtml, String hash, List<String> spamReason, String lastAction, String lastActionThread, long mailboxId, String parent, String decryptedSubject, boolean hasSentChild, boolean hasInboxChild) {
+    public MessageEntity(long id, EncryptionMessageEntity encryptionMessage, String sender, boolean hasAttachments, List<AttachmentEntity> attachments, Date createdAt, UserDisplayEntity senderDisplay, List<UserDisplayEntity> receiverDisplayList, List<UserDisplayEntity> ccDisplayList, List<UserDisplayEntity> bccDisplayList, boolean hasChildren, int childrenCount, String subject, String content, List<String> receivers, List<String> cc, List<String> bcc, String folderName, Date updatedAt, Date destructDate, Date delayedDelivery, Long deadManDuration, boolean isRead, boolean send, boolean isStarred, Date sentAt, boolean isEncrypted, boolean isSubjectEncrypted, boolean isProtected, boolean isVerified, boolean isHtml, String hash, List<String> spamReason, String lastAction, String lastActionThread, long mailboxId, String parent, String decryptedSubject, boolean hasSentChild, boolean hasInboxChild) {
         this.id = id;
         this.encryptionMessage = encryptionMessage;
         this.sender = sender;
@@ -88,6 +89,7 @@ public class MessageEntity {
         this.isEncrypted = isEncrypted;
         this.isSubjectEncrypted = isSubjectEncrypted;
         this.isProtected = isProtected;
+        this.isVerified = isVerified;
         this.isHtml = isHtml;
         this.hash = hash;
         this.spamReason = spamReason;
@@ -331,6 +333,14 @@ public class MessageEntity {
 
     public void setProtected(boolean aProtected) {
         isProtected = aProtected;
+    }
+
+    public boolean isVerified() {
+        return isVerified;
+    }
+
+    public void setVerified(boolean verified) {
+        isVerified = verified;
     }
 
     public boolean isHtml() {

@@ -100,6 +100,9 @@ public class MessagesResult {
     @SerializedName("is_protected")
     private boolean isProtected;
 
+    @SerializedName("is_verified")
+    private boolean isVerified;
+
     @SerializedName("is_html")
     private boolean isHtml;
 
@@ -246,6 +249,10 @@ public class MessagesResult {
 
     public boolean isProtected() {
         return isProtected;
+    }
+
+    public boolean isVerified() {
+        return isVerified;
     }
 
     public boolean isHtml() {

@@ -41,8 +41,15 @@
                 android:ellipsize="end"
                 android:fontFamily="@font/lato_regular"
                 android:layout_marginEnd="5dp"
-                android:layout_marginRight="5dp"
                 android:textSize="14sp" />
+
+            <ImageView
+                android:id="@+id/item_message_view_expanded_verified_mark_image_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="5dp"
+                android:src="@drawable/ic_check_success"
+                app:tint="@color/colorDarkGreen2" />
 
             <ImageView
                 android:id="@+id/item_message_view_expanded_attachment_image_view"
@@ -113,7 +120,6 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:layout_marginRight="5dp"
                 android:layout_marginEnd="5dp"
                 android:text="John asd sad sa sdasad"
                 android:ellipsize="end"
@@ -125,7 +131,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:minWidth="25dp"
-                android:layout_marginLeft="8dp"
                 android:layout_marginStart="8dp"
                 android:layout_gravity="center_vertical"
                 android:text="@string/txt_more_details"
@@ -150,7 +155,6 @@
                 android:id="@+id/item_message_view_expanded_status"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="4dp"
                 android:layout_marginStart="4dp"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
@@ -390,8 +394,6 @@
         android:padding="10dp"
         tools:listitem="@layout/item_message_attachment"
         android:background="@color/colorPrimary" />
-
-
 
     <View
         android:layout_width="match_parent"
