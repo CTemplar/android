@@ -193,12 +193,12 @@ public class ViewMessagesViewModel extends ViewModel {
         userRepository.markMessageAsRead(id, request)
                 .subscribe(new Observer<Response<Void>>() {
                     @Override
-                    public void onSubscribe(Disposable d) {
+                    public void onSubscribe(@androidx.annotation.NonNull Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(Response<Void> messageResponse) {
+                    public void onNext(@androidx.annotation.NonNull Response<Void> messageResponse) {
                         int resultCode = messageResponse.code();
                         if (resultCode == 204) {
                             messagesRepository.markMessageAsRead(id, isRead);
@@ -208,7 +208,7 @@ public class ViewMessagesViewModel extends ViewModel {
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onError(@androidx.annotation.NonNull Throwable e) {
                         Timber.e(e);
                     }
 
