@@ -8,7 +8,6 @@ import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.INBOX;
 import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.SPAM;
 import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.TRASH;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -376,8 +375,8 @@ public class InboxFragment extends BaseFragment implements InboxMessagesAdapter.
     private void bindTouchListener() {
         touchListener = new InboxMessagesTouchListener(getActivity(), binding.recyclerView);
         updateTouchListenerSwipeOptions(currentFolder);
-        touchListener.setSwipeable(R.id.item_message_view_holder_foreground,
-                R.id.item_message_view_holder_background_layout,
+        touchListener.setSwipeable(R.id.foreground_layout,
+                R.id.background_layout,
                 (viewID, position) -> {
                     final String currentFolderFinal = currentFolder;
                     switch (viewID) {
