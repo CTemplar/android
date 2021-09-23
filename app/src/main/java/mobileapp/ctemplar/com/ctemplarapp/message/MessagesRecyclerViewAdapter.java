@@ -1,9 +1,7 @@
 package mobileapp.ctemplar.com.ctemplarapp.message;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.Resources;
-import android.net.Uri;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.util.Base64;
@@ -39,6 +37,7 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.provider.EncryptionMessageP
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageProvider;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.UserDisplayProvider;
 import mobileapp.ctemplar.com.ctemplarapp.utils.DateUtils;
+import mobileapp.ctemplar.com.ctemplarapp.utils.DialogUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.HtmlUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.ThemeUtils;
@@ -399,12 +398,7 @@ public class MessagesRecyclerViewAdapter extends RecyclerView.Adapter<MessagesRe
 
                         @Override
                         public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                            Intent urlIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                            try {
-                                context.startActivity(urlIntent);
-                            } catch (Throwable e) {
-                                Timber.e(e);
-                            }
+                            DialogUtils.showOpenLinkDialog(context, url);
                             return true;
                         }
                     });

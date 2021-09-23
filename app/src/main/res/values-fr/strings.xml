@@ -112,7 +112,6 @@
     <string name="txt_add_contact">Ajouter un contact</string>
     <string name="txt_edit_contact">Modifier contact</string>
     <string name="txt_enter_valid_captcha">Saisir un captcha valide</string>
-    <string name="btn_confirm">CONFIRMER</string>
     <string name="title_clear_folder">Vider dossier</string>
     <string name="txt_clear_folder">Êtes-vous certain de vouloir supprimer tous les messages du dossier ?</string>
     <string name="username_is_available">Nom d\'utilisateur disponible</string>

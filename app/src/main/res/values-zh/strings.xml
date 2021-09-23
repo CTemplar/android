@@ -112,7 +112,6 @@
     <string name="txt_add_contact">添加联系人</string>
     <string name="txt_edit_contact">编辑联系人</string>
     <string name="txt_enter_valid_captcha">输入有效验证码</string>
-    <string name="btn_confirm">确认</string>
     <string name="title_clear_folder">清除文件夹</string>
     <string name="txt_clear_folder">您确定要删除文件夹中的所有消息吗？ </string>
     <string name="username_is_available">用户名可用</string>
