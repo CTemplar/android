@@ -429,30 +429,36 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
     }
 
     private void markNotSpam() {
-        if (parentMessage != null) {
-            UserDisplayProvider senderDisplay = parentMessage.getSenderDisplay();
-            String senderName = senderDisplay.getName();
-            String senderEmail = senderDisplay.getEmail();
-            viewModel.addWhitelistContact(senderName, senderEmail);
+        if (parentMessage == null) {
+            Timber.e("markNotSpam: parentMessage is null");
+            return;
         }
+        UserDisplayProvider senderDisplay = parentMessage.getSenderDisplay();
+        String senderName = senderDisplay.getName();
+        String senderEmail = senderDisplay.getEmail();
+        viewModel.addWhitelistContact(senderName, senderEmail);
     }
 
     private void showMoveDialog() {
-        if (parentMessage != null) {
-            MoveDialogFragment moveDialogFragment = new MoveDialogFragment();
-            Bundle moveFragmentBundle = new Bundle();
-            moveFragmentBundle.putLong(PARENT_ID, parentMessage.getId());
-            moveDialogFragment.setArguments(moveFragmentBundle);
-            moveDialogFragment.show(getActivity().getSupportFragmentManager(), "MoveDialogFragment");
+        if (parentMessage == null) {
+            Timber.e("showMoveDialog: parentMessage is null");
+            return;
         }
+        MoveDialogFragment moveDialogFragment = new MoveDialogFragment();
+        Bundle moveFragmentBundle = new Bundle();
+        moveFragmentBundle.putLong(PARENT_ID, parentMessage.getId());
+        moveDialogFragment.setArguments(moveFragmentBundle);
+        moveDialogFragment.show(getActivity().getSupportFragmentManager(), "MoveDialogFragment");
     }
 
     private void blockUI() {
         FragmentActivity activity = getActivity();
-        if (activity != null) {
-            activity.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+        if (activity == null) {
+            Timber.e("blockUI: activity is null");
+            return;
         }
+        activity.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
     }
 
     private void unlockUI() {

@@ -118,7 +118,6 @@
     <string name="txt_add_contact">Add contact</string>
     <string name="txt_edit_contact">Edit contact</string>
     <string name="txt_enter_valid_captcha">Enter valid captcha</string>
-    <string name="btn_confirm">CONFIRM</string>
     <string name="title_clear_folder">Clear folder</string>
     <string name="txt_clear_folder">Are you sure you want to delete all messages from the folder?</string>
     <string name="username_is_available">Username is available</string>
@@ -167,6 +166,8 @@
     <string name="txt_reply_all">Reply All</string>
     <string name="attachment_decryption">Attachment decryption…</string>
     <string name="no_results_found">No results found</string>
+    <string name="continue_to_link">Continue to link</string>
+    <string name="open_link_description">Do you trust the person who sent this link? This link takes you outside of CTemplar’s platform and we are not responsible for any third-party content.</string>
 
     <!-- CHANGE PASSWORD -->
     <string name="toast_password_changed">Password changed</string>

@@ -1,6 +1,7 @@
 package mobileapp.ctemplar.com.ctemplarapp.main;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -282,10 +283,10 @@ public class InboxFragment extends BaseFragment implements InboxMessagesAdapter.
                     Timber.e("onOptionsItemSelected: activity is null");
                     return true;
                 }
-                new AlertDialog.Builder(getActivity())
+                AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
                         .setTitle(R.string.title_clear_folder)
                         .setMessage(R.string.txt_clear_folder)
-                        .setPositiveButton(R.string.btn_confirm, (dialog, which) -> {
+                        .setPositiveButton(R.string.title_confirm, (dialog, which) -> {
                             if (currentFolder.equals(DRAFT)) {
                                 mainModel.deleteMessages(adapter.getAllMessagesIds());
                                 return;
@@ -294,6 +295,7 @@ public class InboxFragment extends BaseFragment implements InboxMessagesAdapter.
                         })
                         .setNeutralButton(R.string.btn_cancel, null)
                         .show();
+                alertDialog.getButton(DialogInterface.BUTTON_POSITIVE).setAllCaps(true);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

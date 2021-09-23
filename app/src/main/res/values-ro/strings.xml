@@ -112,7 +112,6 @@
     <string name="txt_add_contact">Adaugă un contact</string>
     <string name="txt_edit_contact">Editează un contact</string>
     <string name="txt_enter_valid_captcha">Introduceți codul potrivit CAPTCHA</string>
-    <string name="btn_confirm">CONFIRMĂ</string>
     <string name="title_clear_folder">Șterge conținutul dosarului</string>
     <string name="txt_clear_folder">Sunteți sigur/ă că vreți să ștergeți toate mesajele din acest dosar?</string>
     <string name="username_is_available">Nume disponibil</string>
