@@ -1,6 +1,7 @@
 package com.ctemplar.app.fdroid.settings;
 
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -447,16 +448,17 @@ public class SettingsActivity extends BaseActivity {
                 }
             });
 
-            new AlertDialog.Builder(getActivity())
+            AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
                     .setTitle(getActivity().getString(R.string.settings_disable_contacts_encryption))
                     .setMessage(getActivity().getString(R.string.settings_disable_contacts_encryption_note))
-                    .setPositiveButton(getActivity().getString(R.string.btn_confirm), (dialog, which) -> {
+                    .setPositiveButton(getActivity().getString(R.string.title_confirm), (dialog, which) -> {
                                 progressDialog.show();
                                 settingsModel.decryptContacts(listOffset[0]);
                             }
                     )
                     .setNeutralButton(getActivity().getString(R.string.btn_cancel), null)
                     .show();
+            alertDialog.getButton(DialogInterface.BUTTON_POSITIVE).setAllCaps(true);
         }
     }
 

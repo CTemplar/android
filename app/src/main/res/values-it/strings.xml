@@ -112,7 +112,6 @@
     <string name="txt_add_contact">Aggiungi contatto</string>
     <string name="txt_edit_contact">Modifica contatto</string>
     <string name="txt_enter_valid_captcha">Inserisci captcha valido</string>
-    <string name="btn_confirm">CONFERMA</string>
     <string name="title_clear_folder">Pulisci cartella</string>
     <string name="txt_clear_folder">Sei sicuro di voler eliminare tutti i messaggi dalla cartella?</string>
     <string name="username_is_available">Nome utente disponibile</string>

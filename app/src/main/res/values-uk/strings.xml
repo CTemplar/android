@@ -112,7 +112,6 @@
     <string name="txt_add_contact">Додати контакт</string>
     <string name="txt_edit_contact">Редагувати контакт</string>
     <string name="txt_enter_valid_captcha">Введіть дійсний код перевірки</string>
-    <string name="btn_confirm">ПІДТВЕРДИТИ</string>
     <string name="title_clear_folder">Очистити папку</string>
     <string name="txt_clear_folder">Ви впевнені, що хочете видалити всі повідомлення з цієї папки?</string>
     <string name="username_is_available">Ім\'я користувача доступно</string>
