@@ -5,6 +5,8 @@ import android.app.Application;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.multidex.MultiDexApplication;
 import androidx.room.Room;
 
@@ -14,6 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import java.security.Security;
 
 import io.sentry.android.core.SentryAndroid;
+import mobileapp.ctemplar.com.ctemplarapp.net.ProxyController;
 import mobileapp.ctemplar.com.ctemplarapp.net.RestClient;
 import mobileapp.ctemplar.com.ctemplarapp.repository.AppDatabase;
 import mobileapp.ctemplar.com.ctemplarapp.repository.ContactsRepository;
@@ -28,13 +31,14 @@ import timber.log.Timber;
 
 public class CTemplarApp extends MultiDexApplication {
     private static CTemplarApp instance = null;
-    private static RestClient restClient;
+    private static final MutableLiveData<RestClient> restClient = new MutableLiveData<>();
     private static UserStore userStore;
     private static UserRepository userRepository;
     private static MessagesRepository messagesRepository;
     private static ContactsRepository contactsRepository;
     private static ManageFoldersRepository manageFoldersRepository;
     private static AppDatabase appDatabase;
+    private static ProxyController proxyController;
 
     private final ActivityLifecycleCallbacks activityLifecycleCallbacks = new ActivityLifecycleCallbacks() {
         @Override
@@ -103,12 +107,16 @@ public class CTemplarApp extends MultiDexApplication {
         return instance;
     }
 
-    public static RestClient getRestClient() {
+    public static LiveData<RestClient> getRestClientLiveData() {
         return restClient;
     }
 
     public static UserStore getUserStore() {
         return userStore;
+    }
+
+    public static ProxyController getProxyController() {
+        return proxyController;
     }
 
     public static UserRepository getUserRepository() {
@@ -132,11 +140,11 @@ public class CTemplarApp extends MultiDexApplication {
     }
 
     private static synchronized void installProviders(Application application) {
-        if (restClient == null) {
-            restClient = RestClient.instance();
-        }
         if (userStore == null) {
             userStore = UserStoreImpl.getInstance(application);
+        }
+        if (proxyController == null) {
+            proxyController = new ProxyController(application, userStore, restClient);
         }
         if (userRepository == null) {
             userRepository = UserRepository.getInstance();

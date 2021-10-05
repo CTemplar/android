@@ -17,6 +17,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.CheckBoxPreference;
@@ -29,32 +30,36 @@ import androidx.preference.PreferenceManager;
 import androidx.preference.PreferenceScreen;
 import androidx.preference.SwitchPreference;
 
-import org.jetbrains.annotations.NotNull;
-
-import io.reactivex.Observer;
-import io.reactivex.disposables.Disposable;
 import mobileapp.ctemplar.com.ctemplarapp.BaseActivity;
 import mobileapp.ctemplar.com.ctemplarapp.BuildConfig;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.billing.view.SubscriptionActivity;
-import mobileapp.ctemplar.com.ctemplarapp.settings.filters.FiltersActivity;
 import mobileapp.ctemplar.com.ctemplarapp.folders.ManageFoldersActivity;
-import mobileapp.ctemplar.com.ctemplarapp.settings.mailboxes.MailboxesActivity;
+import mobileapp.ctemplar.com.ctemplarapp.net.ProxyController;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.MyselfResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.MyselfResult;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.SettingsResponse;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserStore;
+import mobileapp.ctemplar.com.ctemplarapp.settings.filters.FiltersActivity;
 import mobileapp.ctemplar.com.ctemplarapp.settings.keys.KeysActivity;
+import mobileapp.ctemplar.com.ctemplarapp.settings.mailboxes.MailboxesActivity;
 import mobileapp.ctemplar.com.ctemplarapp.settings.password.ChangePasswordActivity;
 import mobileapp.ctemplar.com.ctemplarapp.utils.DateUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EncodeUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.HtmlUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.ThemeUtils;
+import mobileapp.ctemplar.com.ctemplarapp.utils.ToastUtils;
 import mobileapp.ctemplar.com.ctemplarapp.wbl.WhiteBlackListActivity;
+
+import org.jetbrains.annotations.NotNull;
+
+import info.guardianproject.netcipher.proxy.OrbotHelper;
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
 import timber.log.Timber;
 
 public class SettingsActivity extends BaseActivity {
@@ -464,6 +469,107 @@ public class SettingsActivity extends BaseActivity {
                     .setNeutralButton(getActivity().getString(R.string.btn_cancel), null)
                     .show();
             alertDialog.getButton(DialogInterface.BUTTON_POSITIVE).setAllCaps(true);
+        }
+    }
+
+    public static class ProxyFragment extends BasePreferenceFragment {
+        @Override
+        public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+            setPreferencesFromResource(R.xml.proxy_settings, rootKey);
+
+            SwitchPreference useTorSwitchPreference = findPreference(getString(R.string.use_tor_key));
+            SwitchPreference useHttpProxySwitchPreference = findPreference(getString(R.string.use_http_proxy_key));
+            ProxyController proxyController = CTemplarApp.getProxyController();
+
+            FragmentActivity activity = getActivity();
+            if (useTorSwitchPreference != null & activity != null) {
+                useTorSwitchPreference.setOnPreferenceChangeListener((preference, newValue) -> {
+                    if ((boolean) newValue) {
+                        proxyController.enableTorProxy();
+                        ToastUtils.showToast(getActivity(), R.string.proxy_enabled);
+                        if (OrbotHelper.isOrbotInstalled(activity)) {
+                            OrbotHelper.get(activity).init();
+                        } else {
+                            OrbotHelper.get(activity).installOrbot(activity);
+                        }
+                        if (useHttpProxySwitchPreference != null) {
+                            useHttpProxySwitchPreference.setChecked(false);
+                        }
+                    } else {
+                        proxyController.disableTorProxy();
+                    }
+                    return true;
+                });
+                useTorSwitchPreference.setChecked(userStore.isProxyTorEnabled());
+            }
+
+            if (useHttpProxySwitchPreference != null) {
+                useHttpProxySwitchPreference.setOnPreferenceChangeListener((preference, newValue) -> {
+                    if ((boolean) newValue) {
+                        if (ProxyController.isProxyProvided(userStore)) {
+                            proxyController.enableHttpProxy();
+                            ToastUtils.showToast(getActivity(), R.string.proxy_enabled);
+                        } else {
+                            ToastUtils.showToast(getActivity(), R.string.fill_proxy_fields);
+                        }
+                        if (useTorSwitchPreference != null) {
+                            useTorSwitchPreference.setChecked(false);
+                        }
+                    } else {
+                        proxyController.disableHttpProxy();
+                    }
+                    return true;
+                });
+                useHttpProxySwitchPreference.setChecked(userStore.isProxyHttpEnabled());
+            }
+
+            EditTextPreference proxyHostEditTextPreference = findPreference(getString(R.string.proxy_host_key));
+            if (proxyHostEditTextPreference != null) {
+                proxyHostEditTextPreference.setOnPreferenceChangeListener((preference, newValue) -> {
+                    String value = (String) newValue;
+                    if (EditTextUtils.isIPAddress(value)) {
+                        proxyController.setHttpProxyIP(value);
+                        if (ProxyController.isProxyProvided(userStore)) {
+                            proxyController.enableHttpProxy();
+                            ToastUtils.showToast(getActivity(), R.string.proxy_enabled);
+                        } else {
+                            ToastUtils.showToast(getActivity(), R.string.fill_proxy_fields);
+                        }
+                    } else {
+                        ToastUtils.showToast(getActivity(), R.string.enter_correct_ip);
+                        return false;
+                    }
+                    return true;
+                });
+                proxyHostEditTextPreference.setText(userStore.getProxyIP());
+            }
+
+            EditTextPreference proxyPortEditTextPreference = findPreference(getString(R.string.proxy_port_key));
+            if (proxyPortEditTextPreference != null) {
+                proxyPortEditTextPreference.setOnPreferenceChangeListener((preference, newValue) -> {
+                    int value;
+                    try {
+                        value = Integer.parseInt((String) newValue);
+                    } catch (NumberFormatException e) {
+                        Timber.e(e);
+                        return false;
+                    }
+                    if (EditTextUtils.isPort(value)) {
+                        proxyController.setHttpProxyPort(value);
+                        if (ProxyController.isProxyProvided(userStore)) {
+                            proxyController.enableHttpProxy();
+                            ToastUtils.showToast(getActivity(), R.string.proxy_enabled);
+                        } else {
+                            ToastUtils.showToast(getActivity(), R.string.fill_proxy_fields);
+                        }
+                    } else {
+                        ToastUtils.showToast(getActivity(), R.string.enter_correct_port);
+                        return false;
+                    }
+                    return true;
+                });
+                proxyPortEditTextPreference.setText(String.valueOf(userStore.getProxyPort()));
+            }
         }
     }
 
