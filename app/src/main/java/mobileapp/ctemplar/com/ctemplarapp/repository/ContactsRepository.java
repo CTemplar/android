@@ -13,7 +13,7 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.entity.ContactEntity;
 import okhttp3.ResponseBody;
 
 public class ContactsRepository {
-    private final RestService service;
+    private RestService service;
 
     private static ContactsRepository instance = new ContactsRepository();
 
@@ -22,7 +22,7 @@ public class ContactsRepository {
     }
 
     public ContactsRepository() {
-        service = CTemplarApp.getRestClient().getRestService();
+        CTemplarApp.getRestClientLiveData().observeForever(instance -> service = instance.getRestService());
     }
 
     public Observable<ContactsResponse> getContacts(int limit, int offset, int[] ids) {

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <SwitchPreference
+        android:title="@string/use_tor"
+        android:key="@string/use_tor_key"
+        android:summary="@string/use_tor_description" />
+
+    <SwitchPreference
+        android:title="@string/http_proxy"
+        android:key="@string/use_http_proxy_key"
+        android:summary="@string/http_proxy_description" />
+
+    <EditTextPreference
+        android:title="@string/proxy_host"
+        android:key="@string/proxy_host_key"
+        android:summary="@string/proxy_host_description"
+        android:dependency="@string/use_http_proxy_key" />
+
+    <EditTextPreference
+        android:title="@string/proxy_port"
+        android:key="@string/proxy_port_key"
+        android:summary="@string/proxy_port_description"
+        android:dependency="@string/use_http_proxy_key" />
+
+    <Preference
+        android:title="@string/proxy_note" />
+
+</PreferenceScreen>

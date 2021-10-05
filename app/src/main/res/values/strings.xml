@@ -378,6 +378,23 @@
     <string name="subscription_upgrade_fail">Failed to upgrade subscription. Please try again later</string>
     <string name="subscription_upgrade_another_device">To upgrade the subscription, use the device on which it was issued</string>
 
+    <!-- PROXY -->
+    <string name="proxy">Proxy (beta)</string>
+    <string name="use_tor">Use Tor</string>
+    <string name="use_tor_description">Use Tor for network requests. Requires Orbot</string>
+    <string name="http_proxy">HTTP Proxy</string>
+    <string name="http_proxy_description">Use HTTP Proxy for network requests</string>
+    <string name="proxy_host">Proxy Host</string>
+    <string name="proxy_host_description">Proxy\'s address (e.g. 127.0.0.1)</string>
+    <string name="proxy_port">Proxy Port</string>
+    <string name="proxy_port_description">Proxy\'s port number (e.g. 8118)</string>
+    <string name="fill_proxy_fields">To activate the proxy, you must fill host and port fields</string>
+    <string name="fail_proxy_init">Failed to initialize proxy</string>
+    <string name="enter_correct_ip">Enter the correct IP address</string>
+    <string name="enter_correct_port">Enter the correct port</string>
+    <string name="proxy_enabled">Proxy enabled</string>
+    <string name="proxy_note"><font color="#939191">Note. The attachments downloading feature uses the Android download manager which does not support proxies for now. It will be replaced with our own download manager. Stay tuned for the next update.</font></string>
+
     <!-- SETTINGS -->
     <string name="settings_general">General settings</string>
     <string name="settings_recovery_email">Recovery email</string>
@@ -527,6 +544,10 @@
     <string translatable="false" name="anti_phishing_enabled">anti_phishing_enabled</string>
     <string translatable="false" name="anti_phishing_key">anti_phishing_key</string>
     <string translatable="false" name="anti_phishing_description_key">anti_phishing_description_key</string>
+    <string translatable="false" name="use_tor_key">use_tor_key</string>
+    <string translatable="false" name="use_http_proxy_key">use_http_proxy_key</string>
+    <string translatable="false" name="proxy_host_key">proxy_host_key</string>
+    <string translatable="false" name="proxy_port_key">proxy_port_key</string>
     <string translatable="false" name="setting_keys">setting_keys</string>
     <string translatable="false" name="email_addresses">email_addresses</string>
     <string translatable="false" name="helpdesk_key">helpdesk_key</string>

@@ -76,6 +76,10 @@
             android:title="@string/settings_phishing_protection"
             android:fragment="mobileapp.ctemplar.com.ctemplarapp.settings.SettingsActivity$PhishingProtectionFragment" />
 
+        <PreferenceScreen
+            android:title="@string/proxy"
+            android:fragment="mobileapp.ctemplar.com.ctemplarapp.settings.SettingsActivity$ProxyFragment" />
+
     </PreferenceCategory>
 
     <PreferenceCategory

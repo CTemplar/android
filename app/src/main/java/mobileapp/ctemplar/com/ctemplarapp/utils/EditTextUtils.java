@@ -2,6 +2,7 @@ package mobileapp.ctemplar.com.ctemplarapp.utils;
 
 import android.text.Editable;
 import android.text.TextUtils;
+import android.util.Patterns;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -110,5 +111,13 @@ public class EditTextUtils {
             return value;
         }
         return defaultValue;
+    }
+
+    public static boolean isIPAddress(String value) {
+        return Patterns.IP_ADDRESS.matcher(value).matches();
+    }
+
+    public static boolean isPort(int port) {
+        return port > 1023 && port < 65536;
     }
 }
