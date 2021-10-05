@@ -107,6 +107,7 @@
     <string name="title_empty_messages">You have no %1$s messages</string>
     <string name="title_empty_contacts">You have no contacts yet</string>
     <string name="title_empty_folders">You have no folders</string>
+    <string name="title_empty_filters">There are no messages match the filter</string>
     <string name="btn_login">Log in</string>
     <string name="btn_compose">Compose</string>
     <string name="btn_add_folder">Add folder</string>
@@ -117,7 +118,6 @@
     <string name="txt_add_contact">Add contact</string>
     <string name="txt_edit_contact">Edit contact</string>
     <string name="txt_enter_valid_captcha">Enter valid captcha</string>
-    <string name="btn_confirm">CONFIRM</string>
     <string name="title_clear_folder">Clear folder</string>
     <string name="txt_clear_folder">Are you sure you want to delete all messages from the folder?</string>
     <string name="username_is_available">Username is available</string>
@@ -166,6 +166,8 @@
     <string name="txt_reply_all">Reply All</string>
     <string name="attachment_decryption">Attachment decryption…</string>
     <string name="no_results_found">No results found</string>
+    <string name="continue_to_link">Continue to link</string>
+    <string name="open_link_description">Do you trust the person who sent this link? This link takes you outside of CTemplar’s platform and we are not responsible for any third-party content.</string>
 
     <!-- CHANGE PASSWORD -->
     <string name="toast_password_changed">Password changed</string>
@@ -376,6 +378,23 @@
     <string name="subscription_upgrade_fail">Failed to upgrade subscription. Please try again later</string>
     <string name="subscription_upgrade_another_device">To upgrade the subscription, use the device on which it was issued</string>
 
+    <!-- PROXY -->
+    <string name="proxy">Proxy (beta)</string>
+    <string name="use_tor">Use Tor</string>
+    <string name="use_tor_description">Use Tor for network requests. Requires Orbot</string>
+    <string name="http_proxy">HTTP Proxy</string>
+    <string name="http_proxy_description">Use HTTP Proxy for network requests</string>
+    <string name="proxy_host">Proxy Host</string>
+    <string name="proxy_host_description">Proxy\'s address (e.g. 127.0.0.1)</string>
+    <string name="proxy_port">Proxy Port</string>
+    <string name="proxy_port_description">Proxy\'s port number (e.g. 8118)</string>
+    <string name="fill_proxy_fields">To activate the proxy, you must fill host and port fields</string>
+    <string name="fail_proxy_init">Failed to initialize proxy</string>
+    <string name="enter_correct_ip">Enter the correct IP address</string>
+    <string name="enter_correct_port">Enter the correct port</string>
+    <string name="proxy_enabled">Proxy enabled</string>
+    <string name="proxy_note"><font color="#939191">Note. The attachments downloading feature uses the Android download manager which does not support proxies for now. It will be replaced with our own download manager. Stay tuned for the next update.</font></string>
+
     <!-- SETTINGS -->
     <string name="settings_general">General settings</string>
     <string name="settings_recovery_email">Recovery email</string>
@@ -525,6 +544,10 @@
     <string translatable="false" name="anti_phishing_enabled">anti_phishing_enabled</string>
     <string translatable="false" name="anti_phishing_key">anti_phishing_key</string>
     <string translatable="false" name="anti_phishing_description_key">anti_phishing_description_key</string>
+    <string translatable="false" name="use_tor_key">use_tor_key</string>
+    <string translatable="false" name="use_http_proxy_key">use_http_proxy_key</string>
+    <string translatable="false" name="proxy_host_key">proxy_host_key</string>
+    <string translatable="false" name="proxy_port_key">proxy_port_key</string>
     <string translatable="false" name="setting_keys">setting_keys</string>
     <string translatable="false" name="email_addresses">email_addresses</string>
     <string translatable="false" name="helpdesk_key">helpdesk_key</string>

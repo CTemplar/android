@@ -2,14 +2,6 @@ package mobileapp.ctemplar.com.ctemplarapp.repository;
 
 import com.google.firebase.messaging.FirebaseMessaging;
 
-import java.util.List;
-
-import javax.inject.Singleton;
-
-import io.reactivex.Observable;
-import io.reactivex.Single;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.net.RestService;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.AddFirebaseTokenRequest;
@@ -72,6 +64,15 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.whiteBlackList.WhiteListR
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxKeyEntity;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
+
+import java.util.List;
+
+import javax.inject.Singleton;
+
+import io.reactivex.Observable;
+import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
 import retrofit2.Response;
@@ -80,7 +81,7 @@ import timber.log.Timber;
 @Singleton
 public class UserRepository {
     private static UserRepository instance = new UserRepository();
-    private final RestService service;
+    private RestService service;
     private final UserStore userStore;
 
     public static UserRepository getInstance() {
@@ -91,7 +92,7 @@ public class UserRepository {
     }
 
     public UserRepository() {
-        service = CTemplarApp.getRestClient().getRestService();
+        CTemplarApp.getRestClientLiveData().observeForever(instance -> service = instance.getRestService());
         userStore = CTemplarApp.getUserStore();
     }
 

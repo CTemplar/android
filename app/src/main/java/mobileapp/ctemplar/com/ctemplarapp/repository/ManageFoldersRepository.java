@@ -15,7 +15,7 @@ import okhttp3.ResponseBody;
 import retrofit2.Response;
 
 public class ManageFoldersRepository {
-    private final RestService service;
+    private RestService service;
 
     private static final ManageFoldersRepository instance = new ManageFoldersRepository();
 
@@ -24,7 +24,7 @@ public class ManageFoldersRepository {
     }
 
     public ManageFoldersRepository() {
-        service = CTemplarApp.getRestClient().getRestService();
+        CTemplarApp.getRestClientLiveData().observeForever(instance -> service = instance.getRestService());
     }
 
     public Observable<FoldersResponse> getFoldersList(int limit, int offset) {

@@ -112,7 +112,6 @@
     <string name="txt_add_contact">Adicionar contacto</string>
     <string name="txt_edit_contact">Editar contacto</string>
     <string name="txt_enter_valid_captcha">Insira um captcha válido</string>
-    <string name="btn_confirm">CONFIRMAR</string>
     <string name="title_clear_folder">Limpar Pasta</string>
     <string name="txt_clear_folder">Tem a certeza que deseja apagar todas as mensagens desta pasta?</string>
     <string name="username_is_available">Este Nome de Utilizador está disponível</string>

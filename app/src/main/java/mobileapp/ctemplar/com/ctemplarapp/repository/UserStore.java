@@ -72,6 +72,18 @@ public interface UserStore {
     void setLockAttemptsCount(int attemptsCount);
     int getLockAttemptsCount();
 
+    void setProxyTorEnabled(boolean value);
+    boolean isProxyTorEnabled();
+
+    void setProxyHttpEnabled(boolean value);
+    boolean isProxyHttpEnabled();
+
+    void setProxyIP(String value);
+    String getProxyIP();
+
+    void setProxyPort(int value);
+    int getProxyPort();
+
     void setDarkModeValue(int value);
     int getDarkModeValue();
 

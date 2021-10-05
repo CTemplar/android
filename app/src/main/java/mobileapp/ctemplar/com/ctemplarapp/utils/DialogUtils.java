@@ -2,8 +2,14 @@ package mobileapp.ctemplar.com.ctemplarapp.utils;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
+
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AlertDialog;
+
+import mobileapp.ctemplar.com.ctemplarapp.R;
+import timber.log.Timber;
 
 public class DialogUtils {
     public static void showAlertDialog(Context context, @StringRes int titleResourceId, @StringRes int messageResourceId) {
@@ -24,6 +30,7 @@ public class DialogUtils {
                 .setOnDismissListener(dismissListener)
                 .show();
     }
+
     public static void showInfoDialog(Context context, @StringRes int titleResourceId, @StringRes int messageResourceId, boolean cancelable) {
         showInfoDialog(context, titleResourceId, messageResourceId, cancelable, null);
     }
@@ -36,5 +43,24 @@ public class DialogUtils {
                 .setCancelable(cancelable)
                 .setOnDismissListener(dismissListener)
                 .show();
+    }
+
+    public static void showOpenLinkDialog(Context context, String link) {
+        DialogInterface.OnClickListener onPositiveClick = (dialog, which) -> {
+            try {
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(link));
+                context.startActivity(intent);
+            } catch (Throwable e) {
+                Timber.e(e);
+            }
+        };
+        AlertDialog alertDialog = new AlertDialog.Builder(context)
+                .setTitle(R.string.title_confirm)
+                .setMessage(R.string.open_link_description)
+                .setPositiveButton(R.string.continue_to_link, onPositiveClick)
+                .setNegativeButton(R.string.action_cancel, null)
+                .show();
+        alertDialog.getButton(DialogInterface.BUTTON_POSITIVE).setAllCaps(true);
+        alertDialog.getButton(DialogInterface.BUTTON_NEGATIVE).setAllCaps(true);
     }
 }

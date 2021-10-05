@@ -18,19 +18,29 @@ import java.util.List;
 
 import io.reactivex.subjects.PublishSubject;
 import mobileapp.ctemplar.com.ctemplarapp.R;
+import mobileapp.ctemplar.com.ctemplarapp.databinding.ItemMessageViewHolderBinding;
 import mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames;
 import mobileapp.ctemplar.com.ctemplarapp.repository.constant.MessageActions;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageProvider;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.UserDisplayProvider;
 import mobileapp.ctemplar.com.ctemplarapp.utils.DateUtils;
 
-public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesViewHolder> {
-    private final PublishSubject<Long> onClickSubject = PublishSubject.create();
+public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesAdapter.InboxMessagesViewHolder> {
+    private LayoutInflater inflater;
+
     private final List<MessageProvider> messageList;
     private final List<MessageProvider> filteredList;
+    private final PublishSubject<Long> onClickSubject = PublishSubject.create();
+
     private final MainActivityViewModel mainModel;
+
     private OnReachedBottomCallback onReachedBottomCallback;
     private Handler onReachedBottomCallbackHandler;
+
+    @Override
+    public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
+        this.inflater = LayoutInflater.from(recyclerView.getContext());
+    }
 
     public InboxMessagesAdapter(MainActivityViewModel mainModel) {
         this.mainModel = mainModel;
@@ -40,10 +50,9 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesView
 
     @NonNull
     @Override
-    public InboxMessagesViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
+    public InboxMessagesViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
         ViewGroup view = (ViewGroup) inflater.inflate(R.layout.item_message_view_holder, viewGroup, false);
-        ViewGroup backOptionsLayout = view.findViewById(R.id.item_message_view_holder_background_layout);
+        ViewGroup backOptionsLayout = view.findViewById(R.id.background_layout);
         View backOptionsView;
 
         String currentFolder = mainModel.getCurrentFolder().getValue();
@@ -60,12 +69,12 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesView
                 ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT)
         );
 
-        return new InboxMessagesViewHolder(view);
+        return new InboxMessagesViewHolder(ItemMessageViewHolderBinding.inflate(inflater, viewGroup, false));
     }
 
     @Override
     public void onBindViewHolder(@NonNull final InboxMessagesViewHolder holder, int position) {
-        final Resources resources = holder.root.getResources();
+        final Resources resources = holder.binding.getRoot().getResources();
         if (position == getItemCount() - 1 && onReachedBottomCallback != null) {
             if (onReachedBottomCallbackHandler != null) {
                 onReachedBottomCallbackHandler.post(() -> onReachedBottomCallback.onReachedBottom());
@@ -88,128 +97,136 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesView
         UserDisplayProvider userDisplay = userDisplayList.get(0);
         String name = userDisplay.getName();
         if (name != null && !name.isEmpty()) {
-            holder.txtUsername.setText(userDisplay.getName());
+            holder.binding.usernameTextView.setText(userDisplay.getName());
         } else {
-            holder.txtUsername.setText(userDisplay.getEmail());
+            holder.binding.usernameTextView.setText(userDisplay.getEmail());
         }
 
-        holder.foreground.setOnClickListener(v -> onClickSubject.onNext(message.getId()));
+        holder.binding.foregroundLayout.setOnClickListener(v -> onClickSubject.onNext(message.getId()));
 
         // check for last action (reply, reply all, forward)
         String lastActionThread = message.getLastActionThread();
         if (TextUtils.isEmpty(lastActionThread)) {
-            holder.imgReply.setVisibility(View.GONE);
+            holder.binding.replyMarkImageView.setVisibility(View.GONE);
         } else {
             switch (lastActionThread) {
                 case MessageActions.REPLY:
-                    holder.imgReply.setImageResource(R.drawable.ic_reply_message);
+                    holder.binding.replyMarkImageView.setImageResource(R.drawable.ic_reply_message);
                     break;
                 case MessageActions.REPLY_ALL:
-                    holder.imgReply.setImageResource(R.drawable.ic_reply_all_message);
+                    holder.binding.replyMarkImageView.setImageResource(R.drawable.ic_reply_all_message);
                     break;
                 case MessageActions.FORWARD:
-                    holder.imgReply.setImageResource(R.drawable.ic_forward_message);
+                    holder.binding.replyMarkImageView.setImageResource(R.drawable.ic_forward_message);
                     break;
             }
-            holder.imgReply.setVisibility(View.VISIBLE);
+            holder.binding.replyMarkImageView.setVisibility(View.VISIBLE);
         }
 
         // check for children count
         if (message.isHasChildren()) {
             int chainCount = message.getChildrenCount() + 1;
-            holder.txtChildren.setText(String.valueOf(chainCount));
-            holder.txtChildren.setVisibility(View.VISIBLE);
+            holder.binding.childrenCounterTextView.setText(String.valueOf(chainCount));
+            holder.binding.childrenCounterTextView.setVisibility(View.VISIBLE);
         } else {
-            holder.txtChildren.setVisibility(View.GONE);
+            holder.binding.childrenCounterTextView.setVisibility(View.GONE);
         }
 
         // check for read/unread
         if (message.isRead()) {
-            holder.imgUnread.setVisibility(View.GONE);
-            holder.txtUsername.setTypeface(null, Typeface.NORMAL);
-            holder.foreground.setBackgroundColor(resources.getColor(R.color.colorPrimaryDark));
+            holder.binding.unreadMarkImageView.setVisibility(View.GONE);
+            holder.binding.usernameTextView.setTypeface(null, Typeface.NORMAL);
+            holder.binding.foregroundLayout.setBackgroundColor(
+                    resources.getColor(R.color.colorPrimaryDark));
         } else {
-            holder.imgUnread.setVisibility(View.VISIBLE);
-            holder.txtUsername.setTypeface(null, Typeface.BOLD);
-            holder.foreground.setBackgroundColor(resources.getColor(R.color.colorPrimary));
+            holder.binding.unreadMarkImageView.setVisibility(View.VISIBLE);
+            holder.binding.usernameTextView.setTypeface(null, Typeface.BOLD);
+            holder.binding.foregroundLayout.setBackgroundColor(
+                    resources.getColor(R.color.colorPrimary));
         }
 
+        // check is verified
+        holder.binding.verifiedMarkImageView.setVisibility(
+                message.isVerified() ? View.VISIBLE : View.GONE);
+
         // check for protection
-        holder.imgEncrypted.setSelected(message.isProtected());
+        holder.binding.encryptedImageView.setSelected(message.isProtected());
 
         // check for status (delivery in, delete in, dead mans in)
         if (message.getDelayedDelivery() != null) {
             String leftTime = DateUtils.elapsedTime(message.getDelayedDelivery());
             if (leftTime != null) {
-                holder.txtStatus.setText(resources.getString(R.string.txt_left_time_delay_delivery, leftTime));
-                holder.txtStatus.setBackgroundColor(resources.getColor(R.color.colorDarkGreen));
-                holder.txtStatus.setVisibility(View.VISIBLE);
+                holder.binding.statusTextView.setText(resources.getString(R.string.txt_left_time_delay_delivery, leftTime));
+                holder.binding.statusTextView.setBackgroundColor(
+                        resources.getColor(R.color.colorDarkGreen));
+                holder.binding.statusTextView.setVisibility(View.VISIBLE);
             } else {
-                holder.txtStatus.setVisibility(View.GONE);
+                holder.binding.statusTextView.setVisibility(View.GONE);
             }
         } else if (message.getDestructDate() != null) {
             String leftTime = DateUtils.elapsedTime(message.getDestructDate());
             if (leftTime != null) {
-                holder.txtStatus.setText(resources.getString(R.string.txt_left_time_destruct, leftTime));
-                holder.txtStatus.setVisibility(View.VISIBLE);
+                holder.binding.statusTextView.setText(resources.getString(R.string.txt_left_time_destruct, leftTime));
+                holder.binding.statusTextView.setVisibility(View.VISIBLE);
             } else {
-                holder.txtStatus.setVisibility(View.GONE);
+                holder.binding.statusTextView.setVisibility(View.GONE);
             }
         } else if (message.getDeadManDuration() != null) {
             String leftTime = DateUtils.deadMansTime(message.getDeadManDuration());
             if (leftTime != null) {
-                holder.txtStatus.setText(resources.getString(R.string.txt_left_time_dead_mans_timer, leftTime));
-                holder.txtStatus.setBackgroundColor(resources.getColor(R.color.colorRed0));
-                holder.txtStatus.setVisibility(View.VISIBLE);
+                holder.binding.statusTextView.setText(resources.getString(R.string.txt_left_time_dead_mans_timer, leftTime));
+                holder.binding.statusTextView.setBackgroundColor(
+                        resources.getColor(R.color.colorRed0));
+                holder.binding.statusTextView.setVisibility(View.VISIBLE);
             } else {
-                holder.txtStatus.setVisibility(View.GONE);
+                holder.binding.statusTextView.setVisibility(View.GONE);
             }
         } else {
-            holder.txtStatus.setVisibility(View.GONE);
+            holder.binding.statusTextView.setVisibility(View.GONE);
         }
 
         Date messageDate = DateUtils.getDeliveryDate(message);
-        holder.txtDate.setText(DateUtils.displayMessageDate(messageDate, resources));
+        holder.binding.dateTextView.setText(DateUtils.displayMessageDate(messageDate, resources));
 
-        holder.imgStarredLayout.setOnClickListener(v -> {
+        holder.binding.starredLayout.setOnClickListener(v -> {
             boolean isStarred = !message.isStarred();
             mainModel.markMessageIsStarred(message.getId(), isStarred);
             message.setStarred(isStarred);
-            holder.imgStarred.setSelected(isStarred);
+            holder.binding.starredImageView.setSelected(isStarred);
         });
 
-        holder.imgStarred.setSelected(message.isStarred());
+        holder.binding.starredImageView.setSelected(message.isStarred());
 
         // check for attachments
         if (message.isHasAttachments()) {
-            holder.imgAttachment.setVisibility(View.VISIBLE);
+            holder.binding.attachmentImageView.setVisibility(View.VISIBLE);
         } else {
-            holder.imgAttachment.setVisibility(View.GONE);
+            holder.binding.attachmentImageView.setVisibility(View.GONE);
         }
 
         // check for subject
         if (message.getEncryptionMessage() != null) {
-            holder.txtSubject.setVisibility(View.INVISIBLE);
-            holder.imgPasswordKey.setVisibility(View.VISIBLE);
-            holder.txtSubjectEncrypted.setVisibility(View.GONE);
-            holder.decryptionProgressBar.setVisibility(View.GONE);
+            holder.binding.subjectTextView.setVisibility(View.GONE);
+            holder.binding.keyImageView.setVisibility(View.VISIBLE);
+            holder.binding.subjectEncryptedTextView.setVisibility(View.GONE);
+            holder.binding.decryptionProgressBar.setVisibility(View.GONE);
         } else if (!message.isSubjectEncrypted() || message.isSubjectDecrypted()) {
-            holder.txtSubject.setText(message.getSubject());
-            holder.txtSubject.setVisibility(View.VISIBLE);
-            holder.imgPasswordKey.setVisibility(View.GONE);
-            holder.txtSubjectEncrypted.setVisibility(View.GONE);
-            holder.decryptionProgressBar.setVisibility(View.GONE);
+            holder.binding.subjectTextView.setText(message.getSubject());
+            holder.binding.subjectTextView.setVisibility(View.VISIBLE);
+            holder.binding.keyImageView.setVisibility(View.GONE);
+            holder.binding.subjectEncryptedTextView.setVisibility(View.GONE);
+            holder.binding.decryptionProgressBar.setVisibility(View.GONE);
         } else if (message.getDecryptedSubject() != null) {
-            holder.txtSubject.setText(message.getDecryptedSubject());
-            holder.txtSubject.setVisibility(View.VISIBLE);
-            holder.imgPasswordKey.setVisibility(View.GONE);
-            holder.txtSubjectEncrypted.setVisibility(View.GONE);
-            holder.decryptionProgressBar.setVisibility(View.GONE);
+            holder.binding.subjectTextView.setText(message.getDecryptedSubject());
+            holder.binding.subjectTextView.setVisibility(View.VISIBLE);
+            holder.binding.keyImageView.setVisibility(View.GONE);
+            holder.binding.subjectEncryptedTextView.setVisibility(View.GONE);
+            holder.binding.decryptionProgressBar.setVisibility(View.GONE);
         } else {
-            holder.txtSubject.setVisibility(View.INVISIBLE);
-            holder.imgPasswordKey.setVisibility(View.GONE);
-            holder.txtSubjectEncrypted.setVisibility(View.VISIBLE);
-            holder.decryptionProgressBar.setVisibility(View.VISIBLE);
+            holder.binding.subjectTextView.setVisibility(View.GONE);
+            holder.binding.keyImageView.setVisibility(View.GONE);
+            holder.binding.subjectEncryptedTextView.setVisibility(View.VISIBLE);
+            holder.binding.decryptionProgressBar.setVisibility(View.VISIBLE);
         }
     }
 
@@ -373,5 +390,14 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesView
 
     public interface OnReachedBottomCallback {
         void onReachedBottom();
+    }
+
+    public static class InboxMessagesViewHolder extends RecyclerView.ViewHolder {
+        final ItemMessageViewHolderBinding binding;
+
+        public InboxMessagesViewHolder(@NonNull ItemMessageViewHolderBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
+        }
     }
 }
