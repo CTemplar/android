@@ -42,6 +42,11 @@ public class UserStoreImpl implements UserStore {
     private static final String KEY_LOCK_LAST_ATTEMPT_TIME = "key_lock_last_attempt_time";
     private static final String KEY_LOCK_ATTEMPTS_COUNT = "key_lock_attempts_count";
 
+    private static final String KEY_PROXY_TOR_ENABLED = "key_proxy_tor_enabled";
+    private static final String KEY_PROXY_HTTP_ENABLED = "key_proxy_http_enabled";
+    private static final String KEY_PROXY_IP = "key_proxy_ip";
+    private static final String KEY_PROXY_PORT = "key_proxy_port";
+
     private static final String KEY_DARK_MODE = "key_dark_mode";
     private static final String KEY_LANGUAGE = "key_language";
 
@@ -294,6 +299,46 @@ public class UserStoreImpl implements UserStore {
     @Override
     public int getLockAttemptsCount() {
         return preferences.getInt(KEY_LOCK_ATTEMPTS_COUNT, 0);
+    }
+
+    @Override
+    public void setProxyTorEnabled(boolean value) {
+        preferences.edit().putBoolean(KEY_PROXY_TOR_ENABLED, value).apply();
+    }
+
+    @Override
+    public boolean isProxyTorEnabled() {
+        return preferences.getBoolean(KEY_PROXY_TOR_ENABLED, false);
+    }
+
+    @Override
+    public void setProxyHttpEnabled(boolean value) {
+        preferences.edit().putBoolean(KEY_PROXY_HTTP_ENABLED, value).apply();
+    }
+
+    @Override
+    public boolean isProxyHttpEnabled() {
+        return preferences.getBoolean(KEY_PROXY_HTTP_ENABLED, false);
+    }
+
+    @Override
+    public void setProxyIP(String value) {
+        preferences.edit().putString(KEY_PROXY_IP, value).apply();
+    }
+
+    @Override
+    public String getProxyIP() {
+        return preferences.getString(KEY_PROXY_IP, null);
+    }
+
+    @Override
+    public void setProxyPort(int value) {
+        preferences.edit().putInt(KEY_PROXY_PORT, value).apply();
+    }
+
+    @Override
+    public int getProxyPort() {
+        return preferences.getInt(KEY_PROXY_PORT, 0);
     }
 
     @Override

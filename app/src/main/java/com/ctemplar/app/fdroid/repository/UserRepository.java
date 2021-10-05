@@ -77,7 +77,7 @@ import timber.log.Timber;
 @Singleton
 public class UserRepository {
     private static UserRepository instance = new UserRepository();
-    private final RestService service;
+    private RestService service;
     private final UserStore userStore;
 
     public static UserRepository getInstance() {
@@ -88,7 +88,7 @@ public class UserRepository {
     }
 
     public UserRepository() {
-        service = CTemplarApp.getRestClient().getRestService();
+        CTemplarApp.getRestClientLiveData().observeForever(instance -> service = instance.getRestService());
         userStore = CTemplarApp.getUserStore();
     }
 

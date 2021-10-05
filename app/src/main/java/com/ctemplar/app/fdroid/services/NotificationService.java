@@ -40,6 +40,7 @@ public class NotificationService extends Service {
 
     private static final String ACTION_START = "com.ctemplar.service.notification.START";
     private static final String ACTION_STOP = "com.ctemplar.service.notification.STOP";
+    private static final String ACTION_RESTART = "com.ctemplar.service.notification.RESTART";
 
     private static final String NOTIFICATION_CHANNEL_ID = "com.ctemplar.emails";
     private static final String FOREGROUND_NOTIFICATION_CHANNEL_ID = "com.ctemplar.notification.foreground";
@@ -86,6 +87,11 @@ public class NotificationService extends Service {
         } else if (ACTION_START.equals(action)) {
             Timber.d("onStartCommand action START");
             startForegroundPriority();
+        } else if (ACTION_RESTART.equals(action)) {
+            if (LaunchUtils.needForeground(intent)) {
+                startForegroundPriority();
+            }
+            NotificationServiceWebSocket.getInstance().restart();
         } else {
             if (LaunchUtils.needForeground(intent)) {
                 startForegroundPriority();
@@ -289,6 +295,15 @@ public class NotificationService extends Service {
             start(context);
         } else {
             stop(context);
+        }
+    }
+
+    public static void restart(Context context) {
+        boolean active = CTemplarApp.getUserStore().isNotificationsEnabled();
+        if (active && CTemplarApp.isAuthorized()) {
+            Intent intent = new Intent(context, NotificationService.class);
+            intent.setAction(ACTION_RESTART);
+            LaunchUtils.launchService(context, intent);
         }
     }
 

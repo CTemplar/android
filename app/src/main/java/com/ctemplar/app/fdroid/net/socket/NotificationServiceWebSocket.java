@@ -6,7 +6,7 @@ import android.text.TextUtils;
 
 import com.ctemplar.app.fdroid.BuildConfig;
 import com.ctemplar.app.fdroid.CTemplarApp;
-import com.ctemplar.app.fdroid.net.UserAgentInterceptor;
+import com.ctemplar.app.fdroid.net.OkHttpClientFactory;
 import com.ctemplar.app.fdroid.net.response.messages.MessagesResult;
 import com.ctemplar.app.fdroid.net.response.notification.NotificationMessageResponse;
 import com.ctemplar.app.fdroid.repository.entity.MessageEntity;
@@ -30,7 +30,7 @@ public class NotificationServiceWebSocket extends WebSocketListener {
     private static NotificationServiceWebSocket instance;
     private final Gson gson = new GsonBuilder().create();
 
-    private OkHttpClient client;
+    private WebSocket socket;
     private NotificationServiceWebSocketCallback callback;
     private boolean safeShutDown;
     private final Handler handler;
@@ -63,14 +63,14 @@ public class NotificationServiceWebSocket extends WebSocketListener {
 
     @Override
     public void onOpen(@NotNull WebSocket webSocket, @NotNull Response response) {
-        Timber.i("started");
+        Timber.d("started");
     }
 
     @Override
     public void onClosing(@NotNull WebSocket webSocket, int code, @NotNull String reason) {
-        Timber.i("closed");
+        Timber.d("closed");
         if (safeShutDown) {
-            webSocket.close(1000, null);
+            closeWebSocket(webSocket);
             return;
         }
         reconnect();
@@ -82,21 +82,29 @@ public class NotificationServiceWebSocket extends WebSocketListener {
         if (safeShutDown) {
             return;
         }
+        if (socket != null && webSocket != socket) {
+            return;
+        }
         reconnect();
     }
 
     public void start(NotificationServiceWebSocketCallback callback) {
         this.callback = callback;
-        if (client == null) {
+        if (socket == null) {
             run();
         }
     }
 
+    public void restart() {
+        shutdown();
+        run();
+    }
+
     private void reconnect() {
-        Timber.i("reconnect");
-        if (client != null) {
-            client.dispatcher().executorService().shutdown();
-            client = null;
+        Timber.d("reconnect");
+        if (socket != null) {
+            closeWebSocket(socket);
+            socket = null;
         }
         handler.postDelayed(() -> {
             if (!safeShutDown) {
@@ -106,27 +114,24 @@ public class NotificationServiceWebSocket extends WebSocketListener {
     }
 
     public void shutdown() {
-        Timber.i("shutdown");
+        Timber.d("shutdown");
         safeShutDown = true;
-        if (client == null) {
+        if (socket == null) {
             return;
         }
-        // Trigger shutdown of the dispatcher's executor so this process can exit cleanly.
-        client.dispatcher().executorService().shutdown();
-        client = null;
+        closeWebSocket(socket);
+        socket = null;
     }
 
     private void run() {
-        Timber.i("run");
-
+        Timber.d("run");
         String token = CTemplarApp.getUserRepository().getUserToken();
         if (TextUtils.isEmpty(token)) {
             Timber.e("User token is null");
             return;
         }
 
-        client = new OkHttpClient.Builder()
-                .addInterceptor(new UserAgentInterceptor())
+        OkHttpClient client = OkHttpClientFactory.newClient().newBuilder()
                 .readTimeout(0,  TimeUnit.MILLISECONDS)
                 .build();
 
@@ -135,7 +140,7 @@ public class NotificationServiceWebSocket extends WebSocketListener {
                 .addHeader("Origin", BuildConfig.ORIGIN)
                 .build();
 
-        client.newWebSocket(request, this);
+        socket = client.newWebSocket(request, this);
     }
 
 
@@ -145,5 +150,21 @@ public class NotificationServiceWebSocket extends WebSocketListener {
             instance = new NotificationServiceWebSocket();
         }
         return instance;
+    }
+
+    private static void closeWebSocket(WebSocket socket) {
+        if (socket == null) {
+            return;
+        }
+        try {
+            socket.close(1000, null);
+        } catch (Throwable e) {
+            Timber.e(e);
+            try {
+                socket.cancel();
+            } catch (Throwable e1) {
+                Timber.e(e1);
+            }
+        }
     }
 }

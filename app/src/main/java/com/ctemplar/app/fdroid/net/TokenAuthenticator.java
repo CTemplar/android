@@ -50,7 +50,7 @@ public class TokenAuthenticator implements Authenticator {
 
     private String refreshToken(String userToken) throws IOException {
         Timber.d("Refreshing token...");
-        retrofit2.Response<SignInResponse> refreshResponse = new RestClient()
+        retrofit2.Response<SignInResponse> refreshResponse = RestClient.instance()
                 .getRestService()
                 .refreshToken(new TokenRefreshRequest(userToken))
                 .execute();
