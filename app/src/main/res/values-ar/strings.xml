@@ -112,7 +112,6 @@
     <string name="txt_add_contact">إضافة جهة اتصال</string>
     <string name="txt_edit_contact">تعديل جهة اتصال</string>
     <string name="txt_enter_valid_captcha">قم بإدخال رمز تحقق صالح</string>
-    <string name="btn_confirm">تأكيد</string>
     <string name="title_clear_folder">إفراغ مجلد</string>
     <string name="txt_clear_folder">هل أنت متأكد من رغبتك في حذف جميع الرسائل من المجلد؟</string>
     <string name="username_is_available">اسم المستخدم متاح</string>

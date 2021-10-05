@@ -165,13 +165,6 @@ public interface RestService {
             @Query("starred") boolean starred
     );
 
-    @GET("search/messages/")
-    Observable<MessagesResponse> searchMessages(
-            @Query("q") String query,
-            @Query("limit") int limit,
-            @Query("offset") int offset
-    );
-
     @GET("emails/messages/")
     Observable<MessagesResponse> getMessage(@Query("id") long id);
 
@@ -200,6 +193,13 @@ public interface RestService {
     Observable<Response<Void>> markMessageIsStarred(
             @Query("id__in") long id,
             @Body MarkMessageIsStarredRequest request
+    );
+
+    @GET("search/messages/")
+    Observable<MessagesResponse> searchMessages(
+            @Query("q") String query,
+            @Query("limit") int limit,
+            @Query("offset") int offset
     );
 
     @GET("emails/custom-folder/")

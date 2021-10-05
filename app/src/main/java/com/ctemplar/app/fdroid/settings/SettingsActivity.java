@@ -1,6 +1,7 @@
 package com.ctemplar.app.fdroid.settings;
 
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -16,6 +17,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.CheckBoxPreference;
@@ -33,6 +35,7 @@ import com.ctemplar.app.fdroid.BuildConfig;
 import com.ctemplar.app.fdroid.CTemplarApp;
 import com.ctemplar.app.fdroid.R;
 import com.ctemplar.app.fdroid.folders.ManageFoldersActivity;
+import com.ctemplar.app.fdroid.net.ProxyController;
 import com.ctemplar.app.fdroid.net.ResponseStatus;
 import com.ctemplar.app.fdroid.net.response.myself.MyselfResponse;
 import com.ctemplar.app.fdroid.net.response.myself.MyselfResult;
@@ -49,10 +52,12 @@ import com.ctemplar.app.fdroid.utils.EditTextUtils;
 import com.ctemplar.app.fdroid.utils.EncodeUtils;
 import com.ctemplar.app.fdroid.utils.HtmlUtils;
 import com.ctemplar.app.fdroid.utils.ThemeUtils;
+import com.ctemplar.app.fdroid.utils.ToastUtils;
 import com.ctemplar.app.fdroid.wbl.WhiteBlackListActivity;
 
 import org.jetbrains.annotations.NotNull;
 
+import info.guardianproject.netcipher.proxy.OrbotHelper;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 import timber.log.Timber;
@@ -447,16 +452,118 @@ public class SettingsActivity extends BaseActivity {
                 }
             });
 
-            new AlertDialog.Builder(getActivity())
+            AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
                     .setTitle(getActivity().getString(R.string.settings_disable_contacts_encryption))
                     .setMessage(getActivity().getString(R.string.settings_disable_contacts_encryption_note))
-                    .setPositiveButton(getActivity().getString(R.string.btn_confirm), (dialog, which) -> {
+                    .setPositiveButton(getActivity().getString(R.string.title_confirm), (dialog, which) -> {
                                 progressDialog.show();
                                 settingsModel.decryptContacts(listOffset[0]);
                             }
                     )
                     .setNeutralButton(getActivity().getString(R.string.btn_cancel), null)
                     .show();
+            alertDialog.getButton(DialogInterface.BUTTON_POSITIVE).setAllCaps(true);
+        }
+    }
+
+    public static class ProxyFragment extends BasePreferenceFragment {
+        @Override
+        public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+            setPreferencesFromResource(R.xml.proxy_settings, rootKey);
+
+            SwitchPreference useTorSwitchPreference = findPreference(getString(R.string.use_tor_key));
+            SwitchPreference useHttpProxySwitchPreference = findPreference(getString(R.string.use_http_proxy_key));
+            ProxyController proxyController = CTemplarApp.getProxyController();
+
+            FragmentActivity activity = getActivity();
+            if (useTorSwitchPreference != null & activity != null) {
+                useTorSwitchPreference.setOnPreferenceChangeListener((preference, newValue) -> {
+                    if ((boolean) newValue) {
+                        proxyController.enableTorProxy();
+                        ToastUtils.showToast(getActivity(), R.string.proxy_enabled);
+                        if (OrbotHelper.isOrbotInstalled(activity)) {
+                            OrbotHelper.get(activity).init();
+                        } else {
+                            OrbotHelper.get(activity).installOrbot(activity);
+                        }
+                        if (useHttpProxySwitchPreference != null) {
+                            useHttpProxySwitchPreference.setChecked(false);
+                        }
+                    } else {
+                        proxyController.disableTorProxy();
+                    }
+                    return true;
+                });
+                useTorSwitchPreference.setChecked(userStore.isProxyTorEnabled());
+            }
+
+            if (useHttpProxySwitchPreference != null) {
+                useHttpProxySwitchPreference.setOnPreferenceChangeListener((preference, newValue) -> {
+                    if ((boolean) newValue) {
+                        if (ProxyController.isProxyProvided(userStore)) {
+                            proxyController.enableHttpProxy();
+                            ToastUtils.showToast(getActivity(), R.string.proxy_enabled);
+                        } else {
+                            ToastUtils.showToast(getActivity(), R.string.fill_proxy_fields);
+                        }
+                        if (useTorSwitchPreference != null) {
+                            useTorSwitchPreference.setChecked(false);
+                        }
+                    } else {
+                        proxyController.disableHttpProxy();
+                    }
+                    return true;
+                });
+                useHttpProxySwitchPreference.setChecked(userStore.isProxyHttpEnabled());
+            }
+
+            EditTextPreference proxyHostEditTextPreference = findPreference(getString(R.string.proxy_host_key));
+            if (proxyHostEditTextPreference != null) {
+                proxyHostEditTextPreference.setOnPreferenceChangeListener((preference, newValue) -> {
+                    String value = (String) newValue;
+                    if (EditTextUtils.isIPAddress(value)) {
+                        proxyController.setHttpProxyIP(value);
+                        if (ProxyController.isProxyProvided(userStore)) {
+                            proxyController.enableHttpProxy();
+                            ToastUtils.showToast(getActivity(), R.string.proxy_enabled);
+                        } else {
+                            ToastUtils.showToast(getActivity(), R.string.fill_proxy_fields);
+                        }
+                    } else {
+                        ToastUtils.showToast(getActivity(), R.string.enter_correct_ip);
+                        return false;
+                    }
+                    return true;
+                });
+                proxyHostEditTextPreference.setText(userStore.getProxyIP());
+            }
+
+            EditTextPreference proxyPortEditTextPreference = findPreference(getString(R.string.proxy_port_key));
+            if (proxyPortEditTextPreference != null) {
+                proxyPortEditTextPreference.setOnPreferenceChangeListener((preference, newValue) -> {
+                    int value;
+                    try {
+                        value = Integer.parseInt((String) newValue);
+                    } catch (NumberFormatException e) {
+                        Timber.e(e);
+                        return false;
+                    }
+                    if (EditTextUtils.isPort(value)) {
+                        proxyController.setHttpProxyPort(value);
+                        if (ProxyController.isProxyProvided(userStore)) {
+                            proxyController.enableHttpProxy();
+                            ToastUtils.showToast(getActivity(), R.string.proxy_enabled);
+                        } else {
+                            ToastUtils.showToast(getActivity(), R.string.fill_proxy_fields);
+                        }
+                    } else {
+                        ToastUtils.showToast(getActivity(), R.string.enter_correct_port);
+                        return false;
+                    }
+                    return true;
+                });
+                proxyPortEditTextPreference.setText(String.valueOf(userStore.getProxyPort()));
+            }
         }
     }
 

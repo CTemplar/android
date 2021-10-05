@@ -1,9 +1,7 @@
 package com.ctemplar.app.fdroid.message;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.Resources;
-import android.net.Uri;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.util.Base64;
@@ -39,6 +37,7 @@ import com.ctemplar.app.fdroid.repository.provider.EncryptionMessageProvider;
 import com.ctemplar.app.fdroid.repository.provider.MessageProvider;
 import com.ctemplar.app.fdroid.repository.provider.UserDisplayProvider;
 import com.ctemplar.app.fdroid.utils.DateUtils;
+import com.ctemplar.app.fdroid.utils.DialogUtils;
 import com.ctemplar.app.fdroid.utils.EditTextUtils;
 import com.ctemplar.app.fdroid.utils.HtmlUtils;
 import com.ctemplar.app.fdroid.utils.ThemeUtils;
@@ -126,6 +125,7 @@ public class MessagesRecyclerViewAdapter extends RecyclerView.Adapter<MessagesRe
         final TextView collapsedContentTextView;
         final TextView collapsedShortDateTextView;
         final TextView collapsedFolderNameTextView;
+        final ImageView collapsedVerifiedMarkImageView;
         final ImageView collapsedHasAttachmentMessageImageView;
         final ImageView collapsedReplyMessageImageView;
 
@@ -141,6 +141,7 @@ public class MessagesRecyclerViewAdapter extends RecyclerView.Adapter<MessagesRe
         final View ccLayout;
         final TextView ccEmailTextView;
         final View bccLayout;
+        final ImageView verifiedMarkImageView;
         final ImageView hasAttachmentMessageImageView;
         final ImageView replyMessageImageView;
         final TextView bccEmailTextView;
@@ -170,6 +171,7 @@ public class MessagesRecyclerViewAdapter extends RecyclerView.Adapter<MessagesRe
             collapsedContentTextView = collapsedView.findViewById(R.id.item_message_view_collapsed_content);
             collapsedShortDateTextView = collapsedView.findViewById(R.id.item_message_view_short_date_text_view);
             collapsedFolderNameTextView = collapsedView.findViewById(R.id.item_message_view_collapsed_folder_text_view);
+            collapsedVerifiedMarkImageView = collapsedView.findViewById(R.id.item_message_view_collapsed_verified_mark_image_view);
             collapsedHasAttachmentMessageImageView = collapsedView.findViewById(R.id.item_message_view_holder_attachment_image_view);
             collapsedReplyMessageImageView = collapsedView.findViewById(R.id.item_message_view_holder_reply_image_view);
             encryptedMessageLockView = collapsedView.findViewById(R.id.encrypted_message_lock_image_view);
@@ -186,6 +188,7 @@ public class MessagesRecyclerViewAdapter extends RecyclerView.Adapter<MessagesRe
             ccLayout = expandedView.findViewById(R.id.item_message_view_CC_layout);
             ccEmailTextView = expandedView.findViewById(R.id.item_message_view_CC_email);
             bccLayout = expandedView.findViewById(R.id.item_message_view_BCC_layout);
+            verifiedMarkImageView = expandedView.findViewById(R.id.item_message_view_expanded_verified_mark_image_view);
             hasAttachmentMessageImageView = expandedView.findViewById(R.id.item_message_view_expanded_attachment_image_view);
             replyMessageImageView = expandedView.findViewById(R.id.item_message_view_expanded_reply_image_view);
             bccEmailTextView = expandedView.findViewById(R.id.item_message_view_BCC_email);
@@ -213,6 +216,7 @@ public class MessagesRecyclerViewAdapter extends RecyclerView.Adapter<MessagesRe
             Date messageDate = DateUtils.getDeliveryDate(item);
 
             boolean isHtml = item.isHtml();
+            boolean isVerified = item.isVerified();
             boolean isHasAttachment = item.isHasAttachments() || item.getAttachments().size() > 0;
 
             Resources resources = context.getResources();
@@ -302,6 +306,15 @@ public class MessagesRecyclerViewAdapter extends RecyclerView.Adapter<MessagesRe
                 bccLayout.setVisibility(View.GONE);
             }
 
+            // verified mark
+            if (isVerified) {
+                collapsedVerifiedMarkImageView.setVisibility(View.VISIBLE);
+                verifiedMarkImageView.setVisibility(View.VISIBLE);
+            } else {
+                collapsedVerifiedMarkImageView.setVisibility(View.GONE);
+                verifiedMarkImageView.setVisibility(View.GONE);
+            }
+
             // attachment
             if (isHasAttachment) {
                 collapsedHasAttachmentMessageImageView.setVisibility(View.VISIBLE);
@@ -385,12 +398,7 @@ public class MessagesRecyclerViewAdapter extends RecyclerView.Adapter<MessagesRe
 
                         @Override
                         public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                            Intent urlIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                            try {
-                                context.startActivity(urlIntent);
-                            } catch (Throwable e) {
-                                Timber.e(e);
-                            }
+                            DialogUtils.showOpenLinkDialog(context, url);
                             return true;
                         }
                     });

@@ -1,5 +1,15 @@
 package com.ctemplar.app.fdroid.message;
 
+import static android.content.Context.DOWNLOAD_SERVICE;
+import static com.ctemplar.app.fdroid.message.SendMessageActivity.ATTACHMENT_LIST;
+import static com.ctemplar.app.fdroid.message.ViewMessagesActivity.PARENT_ID;
+import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.ARCHIVE;
+import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.INBOX;
+import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.OUTBOX;
+import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.SENT;
+import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.SPAM;
+import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.TRASH;
+
 import android.app.Activity;
 import android.app.DownloadManager;
 import android.content.ActivityNotFoundException;
@@ -32,7 +42,6 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
@@ -57,7 +66,6 @@ import com.ctemplar.app.fdroid.message.dialog.PasswordEncryptedMessageDialogFrag
 import com.ctemplar.app.fdroid.net.ResponseStatus;
 import com.ctemplar.app.fdroid.net.entity.AttachmentsEntity;
 import com.ctemplar.app.fdroid.repository.constant.MessageActions;
-import com.ctemplar.app.fdroid.repository.entity.MailboxEntity;
 import com.ctemplar.app.fdroid.repository.provider.AttachmentProvider;
 import com.ctemplar.app.fdroid.repository.provider.MessageProvider;
 import com.ctemplar.app.fdroid.repository.provider.UserDisplayProvider;
@@ -70,16 +78,6 @@ import com.ctemplar.app.fdroid.utils.HtmlUtils;
 import com.ctemplar.app.fdroid.utils.PermissionUtils;
 import com.ctemplar.app.fdroid.utils.ToastUtils;
 import timber.log.Timber;
-
-import static android.content.Context.DOWNLOAD_SERVICE;
-import static com.ctemplar.app.fdroid.message.SendMessageActivity.ATTACHMENT_LIST;
-import static com.ctemplar.app.fdroid.message.ViewMessagesActivity.PARENT_ID;
-import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.ARCHIVE;
-import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.INBOX;
-import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.OUTBOX;
-import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.SENT;
-import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.SPAM;
-import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.TRASH;
 
 public class ViewMessagesFragment extends Fragment implements View.OnClickListener, ActivityInterface {
     public static final String FOLDER_NAME = "folder_name";
@@ -108,7 +106,6 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
                 if (result.containsValue(false)) {
                     return;
                 }
-                //
             });
 
     private final Map<Long, Pair<AttachmentProvider, MessageProvider>> downloadMap = new HashMap<>();
@@ -248,11 +245,6 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
             messagesRecyclerViewAdapter.setCallback(item ->
                     decryptDialogFragment.show(getParentFragmentManager(), item));
 
-            if (parentMessage != null && !parentMessage.isRead()) {
-                long parentMessageId = parentMessage.getId();
-                viewModel.markMessageAsRead(parentMessageId, true);
-            }
-
             loadProgress.setVisibility(View.GONE);
             activity.invalidateOptionsMenu();
         });
@@ -375,10 +367,12 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
                 snackbarDelete(TRASH, getResources().getString(R.string.action_message_removed));
                 return true;
             case R.id.menu_view_unread:
-                if (parentMessage != null) {
-                    viewModel.markMessageAsRead(parentMessage.getId(), false);
-                    Toast.makeText(getActivity(), getResources().getString(R.string.toast_message_marked_unread), Toast.LENGTH_SHORT).show();
+                if (parentMessage == null) {
+                    Timber.e("parentMessage is null");
+                    return true;
                 }
+                viewModel.markMessageAsRead(parentMessage.getId(), false);
+                Toast.makeText(getActivity(), R.string.toast_message_marked_unread, Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.menu_view_move:
                 showMoveDialog();
@@ -435,30 +429,36 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
     }
 
     private void markNotSpam() {
-        if (parentMessage != null) {
-            UserDisplayProvider senderDisplay = parentMessage.getSenderDisplay();
-            String senderName = senderDisplay.getName();
-            String senderEmail = senderDisplay.getEmail();
-            viewModel.addWhitelistContact(senderName, senderEmail);
+        if (parentMessage == null) {
+            Timber.e("markNotSpam: parentMessage is null");
+            return;
         }
+        UserDisplayProvider senderDisplay = parentMessage.getSenderDisplay();
+        String senderName = senderDisplay.getName();
+        String senderEmail = senderDisplay.getEmail();
+        viewModel.addWhitelistContact(senderName, senderEmail);
     }
 
     private void showMoveDialog() {
-        if (parentMessage != null) {
-            MoveDialogFragment moveDialogFragment = new MoveDialogFragment();
-            Bundle moveFragmentBundle = new Bundle();
-            moveFragmentBundle.putLong(PARENT_ID, parentMessage.getId());
-            moveDialogFragment.setArguments(moveFragmentBundle);
-            moveDialogFragment.show(getActivity().getSupportFragmentManager(), "MoveDialogFragment");
+        if (parentMessage == null) {
+            Timber.e("showMoveDialog: parentMessage is null");
+            return;
         }
+        MoveDialogFragment moveDialogFragment = new MoveDialogFragment();
+        Bundle moveFragmentBundle = new Bundle();
+        moveFragmentBundle.putLong(PARENT_ID, parentMessage.getId());
+        moveDialogFragment.setArguments(moveFragmentBundle);
+        moveDialogFragment.show(getActivity().getSupportFragmentManager(), "MoveDialogFragment");
     }
 
     private void blockUI() {
         FragmentActivity activity = getActivity();
-        if (activity != null) {
-            activity.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+        if (activity == null) {
+            Timber.e("blockUI: activity is null");
+            return;
         }
+        activity.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
     }
 
     private void unlockUI() {

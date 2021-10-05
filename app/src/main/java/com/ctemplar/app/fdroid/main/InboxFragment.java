@@ -1,6 +1,14 @@
 package com.ctemplar.app.fdroid.main;
 
-import android.app.Activity;
+import static com.ctemplar.app.fdroid.message.SendMessageActivity.MESSAGE_ID;
+import static com.ctemplar.app.fdroid.message.ViewMessagesActivity.PARENT_ID;
+import static com.ctemplar.app.fdroid.message.ViewMessagesFragment.FOLDER_NAME;
+import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.DRAFT;
+import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.INBOX;
+import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.SPAM;
+import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.TRASH;
+
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -42,7 +50,6 @@ import com.google.android.material.snackbar.Snackbar;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -53,14 +60,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
-
-import static com.ctemplar.app.fdroid.message.SendMessageActivity.MESSAGE_ID;
-import static com.ctemplar.app.fdroid.message.ViewMessagesActivity.PARENT_ID;
-import static com.ctemplar.app.fdroid.message.ViewMessagesFragment.FOLDER_NAME;
-import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.DRAFT;
-import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.INBOX;
-import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.SPAM;
-import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.TRASH;
 
 public class InboxFragment extends BaseFragment implements InboxMessagesAdapter.OnReachedBottomCallback {
     private static final int REQUEST_MESSAGES_COUNT = 10;
@@ -280,10 +279,10 @@ public class InboxFragment extends BaseFragment implements InboxMessagesAdapter.
                     Timber.e("onOptionsItemSelected: activity is null");
                     return true;
                 }
-                new AlertDialog.Builder(getActivity())
+                AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
                         .setTitle(R.string.title_clear_folder)
                         .setMessage(R.string.txt_clear_folder)
-                        .setPositiveButton(R.string.btn_confirm, (dialog, which) -> {
+                        .setPositiveButton(R.string.title_confirm, (dialog, which) -> {
                             if (currentFolder.equals(DRAFT)) {
                                 mainModel.deleteMessages(adapter.getAllMessagesIds());
                                 return;
@@ -292,6 +291,7 @@ public class InboxFragment extends BaseFragment implements InboxMessagesAdapter.
                         })
                         .setNeutralButton(R.string.btn_cancel, null)
                         .show();
+                alertDialog.getButton(DialogInterface.BUTTON_POSITIVE).setAllCaps(true);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -377,8 +377,8 @@ public class InboxFragment extends BaseFragment implements InboxMessagesAdapter.
     private void bindTouchListener() {
         touchListener = new InboxMessagesTouchListener(getActivity(), binding.recyclerView);
         updateTouchListenerSwipeOptions(currentFolder);
-        touchListener.setSwipeable(R.id.item_message_view_holder_foreground,
-                R.id.item_message_view_holder_background_layout,
+        touchListener.setSwipeable(R.id.foreground_layout,
+                R.id.background_layout,
                 (viewID, position) -> {
                     final String currentFolderFinal = currentFolder;
                     switch (viewID) {
@@ -592,28 +592,34 @@ public class InboxFragment extends BaseFragment implements InboxMessagesAdapter.
     }
 
     private boolean adapterIsNotEmpty() {
-        if (adapter != null) {
-            return adapter.getItemCount() > 0;
+        if (adapter == null) {
+            return false;
         }
-        return false;
+        return adapter.getItemCount() > 0;
     }
 
     public void clearListAdapter() {
-        if (adapter != null) {
-            adapter.clear();
+        if (adapter == null) {
+            Timber.e("clearListAdapter: adapter is null");
+            return;
         }
+        adapter.clear();
     }
 
     private void showResultIfNotEmpty(boolean isServerSearchResult) {
         if (adapterIsNotEmpty()) {
             showMessagesList();
-        } else {
-            if (filterIsStarred || filterIsUnread || filterWithAttachment || isServerSearchResult) {
-                showSearchMessagesListEmptyIcon();
-            } else if (currentOffset == 0 || TextUtils.isEmpty(filterText)) {
-                showMessagesListEmptyIcon();
-            }
+            return;
         }
+        if (filterIsStarred || filterIsUnread || filterWithAttachment) {
+            showFilteredMessagesListEmptyIcon();
+            return;
+        }
+        if (EditTextUtils.isNotEmpty(filterText) || isServerSearchResult) {
+            showSearchMessagesListEmptyIcon();
+            return;
+        }
+        showMessagesListEmptyIcon();
     }
 
     private void displayFilteredCategories() {
@@ -645,6 +651,7 @@ public class InboxFragment extends BaseFragment implements InboxMessagesAdapter.
         binding.fabCompose.hide();
         binding.listEmptyLayout.setVisibility(View.GONE);
         binding.listEmptySearchLayout.setVisibility(View.GONE);
+        binding.listEmptyFilterLayout.setVisibility(View.GONE);
         binding.progressLayout.setVisibility(View.VISIBLE);
         binding.swipeRefreshLayout.setRefreshing(false);
     }
@@ -654,6 +661,7 @@ public class InboxFragment extends BaseFragment implements InboxMessagesAdapter.
         binding.fabCompose.hide();
         binding.listEmptyLayout.setVisibility(View.VISIBLE);
         binding.listEmptySearchLayout.setVisibility(View.GONE);
+        binding.listEmptyFilterLayout.setVisibility(View.GONE);
         binding.progressLayout.setVisibility(View.GONE);
         binding.swipeRefreshLayout.setRefreshing(false);
     }
@@ -663,6 +671,17 @@ public class InboxFragment extends BaseFragment implements InboxMessagesAdapter.
         binding.fabCompose.hide();
         binding.listEmptyLayout.setVisibility(View.GONE);
         binding.listEmptySearchLayout.setVisibility(View.VISIBLE);
+        binding.listEmptyFilterLayout.setVisibility(View.GONE);
+        binding.progressLayout.setVisibility(View.GONE);
+        binding.swipeRefreshLayout.setRefreshing(false);
+    }
+
+    private void showFilteredMessagesListEmptyIcon() {
+        binding.recyclerView.setVisibility(View.GONE);
+        binding.fabCompose.hide();
+        binding.listEmptyLayout.setVisibility(View.GONE);
+        binding.listEmptySearchLayout.setVisibility(View.GONE);
+        binding.listEmptyFilterLayout.setVisibility(View.VISIBLE);
         binding.progressLayout.setVisibility(View.GONE);
         binding.swipeRefreshLayout.setRefreshing(false);
     }
@@ -672,6 +691,7 @@ public class InboxFragment extends BaseFragment implements InboxMessagesAdapter.
         binding.fabCompose.show();
         binding.listEmptyLayout.setVisibility(View.GONE);
         binding.listEmptySearchLayout.setVisibility(View.GONE);
+        binding.listEmptyFilterLayout.setVisibility(View.GONE);
         binding.progressLayout.setVisibility(View.GONE);
         binding.swipeRefreshLayout.setRefreshing(false);
     }

@@ -5,6 +5,8 @@ import android.app.Application;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.multidex.MultiDexApplication;
 import androidx.room.Room;
 
@@ -12,6 +14,8 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.jetbrains.annotations.NotNull;
 
 import io.sentry.android.core.SentryAndroid;
+
+import com.ctemplar.app.fdroid.net.ProxyController;
 import com.ctemplar.app.fdroid.net.RestClient;
 import com.ctemplar.app.fdroid.repository.AppDatabase;
 import com.ctemplar.app.fdroid.repository.ContactsRepository;
@@ -33,7 +37,7 @@ import timber.log.Timber;
 
 public class CTemplarApp extends MultiDexApplication {
     private static CTemplarApp instance = null;
-    private static RestClient restClient;
+    private static final MutableLiveData<RestClient> restClient = new MutableLiveData<>();
     private static UserStore userStore;
     private static UserRepository userRepository;
     private static MessagesRepository messagesRepository;
@@ -42,6 +46,7 @@ public class CTemplarApp extends MultiDexApplication {
     private static AppDatabase appDatabase;
     private static WeakReference<Activity> currentActivityReference;
     private static NotificationServiceBroadcastReceiver notificationServiceBroadcastReceiver;
+    private static ProxyController proxyController;
 
     private final ActivityLifecycleCallbacks activityLifecycleCallbacks = new ActivityLifecycleCallbacks() {
         @Override
@@ -131,12 +136,16 @@ public class CTemplarApp extends MultiDexApplication {
         return currentActivityReference.get();
     }
 
-    public static RestClient getRestClient() {
+    public static LiveData<RestClient> getRestClientLiveData() {
         return restClient;
     }
 
     public static UserStore getUserStore() {
         return userStore;
+    }
+
+    public static ProxyController getProxyController() {
+        return proxyController;
     }
 
     public static UserRepository getUserRepository() {
@@ -160,11 +169,11 @@ public class CTemplarApp extends MultiDexApplication {
     }
 
     private static synchronized void installProviders(Application application) {
-        if (restClient == null) {
-            restClient = RestClient.instance();
-        }
         if (userStore == null) {
             userStore = UserStoreImpl.getInstance(application);
+        }
+        if (proxyController == null) {
+            proxyController = new ProxyController(application, userStore, restClient);
         }
         if (userRepository == null) {
             userRepository = UserRepository.getInstance();

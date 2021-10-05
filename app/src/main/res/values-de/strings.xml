@@ -112,7 +112,6 @@
     <string name="txt_add_contact">Kontakt hinzufügen</string>
     <string name="txt_edit_contact">Kontakt bearbeiten</string>
     <string name="txt_enter_valid_captcha">Gültiges Captcha eingeben</string>
-    <string name="btn_confirm">BESTÄTIGEN</string>
     <string name="title_clear_folder">Ordner leeren</string>
     <string name="txt_clear_folder">Sind Sie sicher, dass Sie alle Nachrichten aus dem Ordner löschen möchten?</string>
     <string name="username_is_available">Benutzername verfügbar</string>

@@ -4,6 +4,7 @@
     <color name="colorPrimary">#ffffff</color>
     <color name="colorPrimaryDark">#f5f5f5</color>
     <color name="colorSurface">#fafafa</color>
+    <color name="colorTransparentSurface">#66fafafa</color>
 
     <color name="primaryTextColor">#091f35</color>
     <color name="secondaryTextColor">#17324d</color>
@@ -39,6 +40,7 @@
     <color name="colorDarkBlue6">#445b79</color>
     <color name="colorDarkBlue7">#1a4d92e2</color>
     <color name="colorDarkGreen">#007421</color>
+    <color name="colorDarkGreen2">#008000</color>
     <color name="colorGreen">#33b200</color>
     <color name="colorDarkYellow">#ffaa0e</color>
     <color name="colorOrangeLight">#e74c3c</color>
