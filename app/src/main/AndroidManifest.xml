@@ -23,9 +23,9 @@
         android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
+        android:taskAffinity=""
         android:theme="@style/AppTheme"
-        android:usesCleartextTraffic="true"
-        android:taskAffinity="">
+        android:usesCleartextTraffic="true">
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -60,6 +60,8 @@
                 <action android:name="com.ctemplar.service.email.send" />
             </intent-filter>
         </service>
+
+        <service android:name=".services.download.DownloadAttachmentService" />
 
         <receiver
             android:name=".services.NotificationServiceBroadcastReceiver"

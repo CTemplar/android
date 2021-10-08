@@ -249,6 +249,15 @@
     <string name="title_notification_service">Notification Service</string>
     <string name="title_service_running">Service is running</string>
 
+    <!-- DOWNLOAD ATTACHMENT SERVICE -->
+    <string name="download_attachment_service">Attachment download service</string>
+    <string name="downloading_attachments">Downloading %d attachments</string>
+    <string name="downloading">Downloading</string>
+    <string name="processing">Processing</string>
+    <string name="saved_successfully">Saved successfully</string>
+    <string name="failed_to_extract">Failed to extract</string>
+    <string name="download_all">Download all</string>
+
     <!-- CUSTOM FILTERS -->
     <string name="txt_filters_title">Filters</string>
     <string name="title_add_custom_filter">Add custom filter</string>

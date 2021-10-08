@@ -2,13 +2,13 @@ package com.ctemplar.app.fdroid.message;
 
 import android.content.Intent;
 import android.os.Bundle;
+
 import androidx.fragment.app.FragmentManager;
 
 import com.ctemplar.app.fdroid.BaseActivity;
 import com.ctemplar.app.fdroid.R;
 import com.ctemplar.app.fdroid.main.MainActivity;
-
-import static com.ctemplar.app.fdroid.services.NotificationService.FROM_NOTIFICATION;
+import com.ctemplar.app.fdroid.services.ServiceConstants;
 
 public class ViewMessagesActivity extends BaseActivity {
     public static final String PARENT_ID = "parent_id";
@@ -36,8 +36,8 @@ public class ViewMessagesActivity extends BaseActivity {
         if (!fragment.onBackPressed()) {
             super.onBackPressed();
             Intent intent = getIntent();
-            boolean fromNotification = intent != null && intent.getBooleanExtra(FROM_NOTIFICATION,
-                    false);
+            boolean fromNotification = intent != null && intent.getBooleanExtra(
+                    ServiceConstants.FROM_NOTIFICATION_SERVICE, false);
             if (fromNotification) {
                 startActivity(new Intent(this, MainActivity.class)
                         .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK)

@@ -47,7 +47,7 @@ import timber.log.Timber;
 public class MessagesRecyclerViewAdapter extends RecyclerView.Adapter<MessagesRecyclerViewAdapter.ViewHolder> {
     private final List<MessageProvider> items = new ArrayList<>();
     private final List<MessageProvider> expanded = new ArrayList<>();
-    private OnAttachmentDownloading onAttachmentDownloading;
+    private AttachmentDownloader attachmentDownloader;
     private MessageViewActionCallback callback;
     private final UserStore userStore;
     private Context context;
@@ -57,8 +57,8 @@ public class MessagesRecyclerViewAdapter extends RecyclerView.Adapter<MessagesRe
         userStore = CTemplarApp.getUserStore();
     }
 
-    public void setOnAttachmentDownloadingCallback(OnAttachmentDownloading onAttachmentDownloading) {
-        this.onAttachmentDownloading = onAttachmentDownloading;
+    public void setOnAttachmentDownloadingCallback(AttachmentDownloader attachmentDownloader) {
+        this.attachmentDownloader = attachmentDownloader;
     }
 
     public void setCallback(MessageViewActionCallback callback) {
@@ -423,8 +423,8 @@ public class MessagesRecyclerViewAdapter extends RecyclerView.Adapter<MessagesRe
                         ToastUtils.showToast(context, context.getString(R.string.firstly_decrypt_message));
                         return;
                     }
-                    AttachmentProvider attachmentProvider = messageAttachmentAdapter.getAttachment(position);
-                    onAttachmentDownloading.onStart(attachmentProvider, item);
+                    attachmentDownloader.downloadAttachment(item,
+                            messageAttachmentAdapter.getAttachment(position));
                 }
 
                 @Override
@@ -437,7 +437,6 @@ public class MessagesRecyclerViewAdapter extends RecyclerView.Adapter<MessagesRe
 
                 }
             });
-
         }
 
         private void switchVisibility(MessageProvider item) {

@@ -94,13 +94,25 @@ public class LaunchUtils {
     }
 
     public static boolean isServiceRunning(Context context, Class<?> serviceClass) {
+        return getRunningService(context, serviceClass) != null;
+    }
+
+    public static boolean isServiceRunningForeground(Context context, Class<?> serviceClass) {
+        ActivityManager.RunningServiceInfo service = getRunningService(context, serviceClass);
+        if (service == null) {
+            return false;
+        }
+        return service.foreground;
+    }
+
+    public static ActivityManager.RunningServiceInfo getRunningService(Context context, Class<?> serviceClass) {
         ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
         for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
             if (serviceClass.getName().equals(service.service.getClassName())) {
-                return true;
+                return service;
             }
         }
-        return false;
+        return null;
     }
 
     public static boolean launchForegroundService(Context context, Intent intent) {
