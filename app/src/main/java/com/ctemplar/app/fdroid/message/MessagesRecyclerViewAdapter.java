@@ -150,6 +150,7 @@ public class MessagesRecyclerViewAdapter extends RecyclerView.Adapter<MessagesRe
         final TextView contentText;
         final ProgressBar progressBar;
         final RecyclerView attachmentsRecyclerView;
+        final Button downloadAllButton;
         final ViewGroup expandedCredentialsLayout;
         final View credentialsDivider;
         final ViewGroup encryptedMessageLockLayout;
@@ -197,6 +198,7 @@ public class MessagesRecyclerViewAdapter extends RecyclerView.Adapter<MessagesRe
             contentText = expandedView.findViewById(R.id.item_message_text_view_expanded_content);
             progressBar = expandedView.findViewById(R.id.item_message_view_expanded_progress_bar);
             attachmentsRecyclerView = expandedView.findViewById(R.id.item_message_view_expanded_attachment);
+            downloadAllButton = expandedView.findViewById(R.id.item_message_view_expanded_download_all_button);
             expandedCredentialsLayout = expandedView.findViewById(R.id.item_message_view_expanded_credentials);
             credentialsDivider = expandedView.findViewById(R.id.item_message_view_expanded_credentials_divider);
             encryptedMessageLockLayout = expandedView.findViewById(R.id.encrypted_message_lock_layout);
@@ -437,6 +439,12 @@ public class MessagesRecyclerViewAdapter extends RecyclerView.Adapter<MessagesRe
 
                 }
             });
+
+            if (attachmentList.size() < 2) {
+                downloadAllButton.setVisibility(View.GONE);
+            }
+            downloadAllButton.setOnClickListener(v -> attachmentDownloader
+                    .downloadAttachments(item, attachmentList.toArray(new AttachmentProvider[0])));
         }
 
         private void switchVisibility(MessageProvider item) {

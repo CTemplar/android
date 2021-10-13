@@ -36,8 +36,8 @@ public class ViewMessagesActivity extends BaseActivity {
         if (!fragment.onBackPressed()) {
             super.onBackPressed();
             Intent intent = getIntent();
-            boolean fromNotification = intent != null && intent.getBooleanExtra(
-                    ServiceConstants.FROM_NOTIFICATION_SERVICE, false);
+            boolean fromNotification = intent != null && intent.getBooleanExtra(ServiceConstants.FROM_NOTIFICATION_SERVICE,
+                    false);
             if (fromNotification) {
                 startActivity(new Intent(this, MainActivity.class)
                         .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK)

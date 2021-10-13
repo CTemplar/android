@@ -43,6 +43,8 @@ import okio.Okio;
 import timber.log.Timber;
 
 public class DownloadAttachmentService extends Service {
+    private static final String TAG = "DownloadAttachmentService";
+
     private static final File externalFilesDir = Environment.getExternalStoragePublicDirectory(
             Environment.DIRECTORY_DOWNLOADS);
     private NotificationManager notificationManager;
@@ -55,7 +57,7 @@ public class DownloadAttachmentService extends Service {
         super.onCreate();
 
         notificationManager = (NotificationManager) getSystemService(Service.NOTIFICATION_SERVICE);
-        HandlerThread thread = new HandlerThread("");
+        HandlerThread thread = new HandlerThread(TAG);
         thread.start();
         taskLooper = thread.getLooper();
         taskHandler = new TaskHandler(taskLooper);
@@ -134,13 +136,51 @@ public class DownloadAttachmentService extends Service {
         if (task == null || task.attachments == null || task.attachments.length == 0) {
             return;
         }
+        Timber.d("Emitting the task");
         NotificationCompat.Builder notificationBuilder = createTaskNotificationBuilder(
                 getString(R.string.downloading_attachments, task.attachments.length));
         int notificationId = generateNotificationId();
         startForegroundPriority(notificationId, notificationBuilder.build());
-        // TODO
+        int attachmentCounter = 0;
+        int attachmentsCount = task.attachments.length;
+        NotificationCompat.BigTextStyle bigTextStyle = new NotificationCompat.BigTextStyle();
+        StringBuilder bigTextBuffer = new StringBuilder();
+        notificationBuilder.setStyle(bigTextStyle);
+        for (DownloadAttachmentInfo attachment : task.attachments) {
+            bigTextStyle.bigText(bigTextBuffer.append("\n").append(getString(R.string.downloading))
+                    .append(" '").append(attachment.name).append("' (").append(++attachmentCounter)
+                    .append("/").append(attachmentsCount).append(")"));
+            notificationManager.notify(notificationId, notificationBuilder.build());
+            File tempFile = downloadAttachment(attachment.url, ((progress, max) -> {
+                notificationBuilder.setProgress((int) (max / 100), (int) (progress / 100), false);
+                notificationManager.notify(notificationId, notificationBuilder.build());
+            }));
+            bigTextStyle.bigText(bigTextBuffer.append("\n").append(getString(R.string.processing))
+                    .append(" '").append(attachment.name).append("' (").append(++attachmentCounter)
+                    .append("/").append(attachmentsCount).append(")"));
+            notificationBuilder.setProgress(100, 100, true);
+            notificationManager.notify(notificationId, notificationBuilder.build());
+            boolean extractedSuccess = extractAttachment(tempFile, generateOutputAttachmentFile(attachment), attachment);
+            if (tempFile.exists()) {
+                if (!tempFile.delete()) {
+                    Timber.e("Temp file not deleted");
+                }
+            }
+            bigTextBuffer.append("\n").append(attachment.name).append(" ");
+            if (!extractedSuccess) {
+                bigTextBuffer.append(getString(R.string.failed_to_extract).toLowerCase());
+                Timber.e("Failed to extract attachment");
+            } else {
+                bigTextBuffer.append(getString(R.string.saved_successfully).toLowerCase());
+            }
+            notificationBuilder.setProgress(0, 0, false);
+            bigTextStyle.bigText(bigTextBuffer);
+            notificationManager.notify(notificationId, notificationBuilder.build());
+        }
+        notificationBuilder.setOngoing(false);
         stopForeground(true);
         notificationManager.notify(generateNotificationId(), notificationBuilder.build());
+        Timber.d("Finished the task");
     }
 
     private void executeTask(Intent intent) {
@@ -151,6 +191,66 @@ public class DownloadAttachmentService extends Service {
         } catch (IOException e) {
             Timber.e(e);
         }
+    }
+
+    private File downloadAttachment(String url, DownloadProgressCallback progressCallback) throws IOException {
+        Request request = new Request.Builder()
+                .url(url)
+                .get()
+                .build();
+        Call call = OkHttpClientFactory.newClient()
+                .newCall(request);
+        Response response = call.execute();
+        ResponseBody responseBody = response.body();
+        if (responseBody == null) {
+            throw new RuntimeException("Body is null");
+        }
+        long contentLength = responseBody.contentLength();
+        BufferedSource source = responseBody.source();
+        File downloadedFile = File.createTempFile("attachment-", null, getCacheDir());
+        BufferedSink sink = Okio.buffer(Okio.sink(downloadedFile));
+        Buffer sinkBuffer = sink.getBuffer();
+        long totalBytesRead = 0;
+        int bufferSize = 8 * 1024;
+        for (long bytesRead; (bytesRead = source.read(sinkBuffer, bufferSize)) != -1; ) {
+            sink.emit();
+            totalBytesRead += bytesRead;
+            progressCallback.onProgress(totalBytesRead, contentLength);
+        }
+        try {
+            sink.flush();
+        } catch (IOException ignore) {
+        }
+        try {
+            sink.close();
+        } catch (IOException ignore) {
+        }
+        try {
+            source.close();
+        } catch (IOException ignore) {
+        }
+        return downloadedFile;
+    }
+
+    private boolean extractAttachment(File rawAttachmentFile, File destinationFile, DownloadAttachmentInfo attachmentInfo) {
+        if (attachmentInfo.gpgEncryption != null) {
+            String password = attachmentInfo.gpgEncryption.password;
+            if (password == null) {
+                ToastUtils.showLongToast(this, getString(R.string.firstly_decrypt_message));
+                return false;
+            }
+            return EncryptUtils.decryptAttachmentGPG(
+                    rawAttachmentFile, destinationFile, password
+            );
+        }
+        if (attachmentInfo.pgpEncryption != null) {
+            long mailboxId = attachmentInfo.pgpEncryption.mailboxId;
+            String password = attachmentInfo.pgpEncryption.password;
+            return EncryptUtils.decryptAttachment(
+                    rawAttachmentFile, destinationFile, password, mailboxId
+            );
+        }
+        return rawAttachmentFile.renameTo(destinationFile);
     }
 
     private void startForegroundPriority(int id, Notification notification) {
@@ -179,6 +279,22 @@ public class DownloadAttachmentService extends Service {
                 .setAction(ServiceConstants.DOWNLOAD_ATTACHMENT_SERVICE_ADD_TO_QUEUE_ACTION)
                 .putExtra(ServiceConstants.DOWNLOAD_ATTACHMENT_SERVICE_TASK_EXTRA_KEY, GENERAL_GSON.toJson(task));
         LaunchUtils.launchService(context, intent);
+    }
+
+
+    private static File generateOutputAttachmentFile(DownloadAttachmentInfo attachment) {
+        String originalFileName = attachment.name == null
+                ? AppUtils.getFileNameFromURL(attachment.url) : attachment.name;
+        File file;
+        try {
+            file = FileUtils.generateFileName(originalFileName, externalFilesDir);
+        } catch (Throwable e) {
+            file = null;
+        }
+        if (file == null) {
+            file = new File(externalFilesDir, originalFileName);
+        }
+        return file;
     }
 
     private static int notificationCounter = 0;
