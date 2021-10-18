@@ -347,7 +347,11 @@ public class SendMailService extends IntentService {
             }
             if (attachmentsProvider.isEncrypted()) {
                 String password = CTemplarApp.getUserRepository().getUserPassword();
-                EncryptUtils.decryptAttachment(downloadedFile, decryptedFile, password, mailboxId);
+                try {
+                    EncryptUtils.decryptAttachment(downloadedFile, decryptedFile, password, mailboxId);
+                } catch (InterruptedException e) {
+                    Timber.e(e);
+                }
                 if (!downloadedFile.delete()) {
                     Timber.e("Downloaded file is not deleted after decryption error");
                 }

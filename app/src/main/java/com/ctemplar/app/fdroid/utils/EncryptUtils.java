@@ -58,7 +58,6 @@ public class EncryptUtils {
                 return "";
             }
             content = Cryptor.decryptPGP(content, privateKeys, password);
-//            content = PGPManager.decrypt(content, privateKey, password);
         }
         return content;
     }
@@ -118,7 +117,7 @@ public class EncryptUtils {
         return true;
     }
 
-    public static boolean decryptAttachment(File encryptedFile, File decryptedFile, String password, long mailboxId) {
+    public static boolean decryptAttachment(File encryptedFile, File decryptedFile, String password, long mailboxId) throws InterruptedException {
         List<String> privateKeys = getPrivateKeys(mailboxId);
         if (privateKeys == null) {
             return false;
@@ -139,6 +138,8 @@ public class EncryptUtils {
             bufferedOutputStream.write(encryptedBytes);
             bufferedOutputStream.flush();
             bufferedOutputStream.close();
+        } catch (InterruptedException e) {
+            throw e;
         } catch (Exception e) {
             Timber.e(e);
             return false;
@@ -170,7 +171,7 @@ public class EncryptUtils {
         return true;
     }
 
-    public static boolean decryptAttachmentGPG(File encryptedFile, File decryptedFile, String password) {
+    public static boolean decryptAttachmentGPG(File encryptedFile, File decryptedFile, String password) throws InterruptedException {
         int fileSize = (int) encryptedFile.length();
         byte[] fileBytes = new byte[fileSize];
         try {
@@ -187,6 +188,8 @@ public class EncryptUtils {
             bufferedOutputStream.write(encryptedBytes);
             bufferedOutputStream.flush();
             bufferedOutputStream.close();
+        } catch (InterruptedException e) {
+            throw e;
         } catch (Exception e) {
             Timber.e(e);
             return false;

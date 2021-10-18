@@ -34,6 +34,9 @@ import com.ctemplar.app.fdroid.utils.ToastUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InterruptedIOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import okhttp3.Call;
 import okhttp3.Request;
@@ -48,6 +51,7 @@ import timber.log.Timber;
 public class DownloadAttachmentService extends Service {
     private static final String TAG = "DownloadAttachmentService";
     private static final String CANCEL_NOTIFICATION_ID_EXTRA_KEY = "cancel-notification";
+    private static final String CANCEL_TASK_ACTION = "cancel-task";
 
     private static final File externalFilesDir = Environment.getExternalStoragePublicDirectory(
             Environment.DIRECTORY_DOWNLOADS);
@@ -93,6 +97,9 @@ public class DownloadAttachmentService extends Service {
             case ServiceConstants.DOWNLOAD_ATTACHMENT_SERVICE_ADD_TO_QUEUE_ACTION:
                 addTaskToQueue(intent, startId);
                 break;
+            case CANCEL_TASK_ACTION:
+                cancelTask();
+                break;
             default:
                 if (LaunchUtils.needForeground(intent)) {
                     startForegroundPriority(generateNotificationId(),
@@ -108,6 +115,7 @@ public class DownloadAttachmentService extends Service {
     @Override
     public void onDestroy() {
         taskLooper.quit();
+        stopForeground(true);
     }
 
     private void onRestarted() {
@@ -131,6 +139,8 @@ public class DownloadAttachmentService extends Service {
     }
 
     private NotificationCompat.Builder createTaskNotificationBuilder(String title) {
+        Intent cancelIntent = new Intent(this, DownloadAttachmentService.class);
+        cancelIntent.setAction(CANCEL_TASK_ACTION);
         return new NotificationCompat
                 .Builder(this, ServiceConstants.DOWNLOAD_ATTACHMENT_SERVICE_FOREGROUND_CHANNEL_ID)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
@@ -138,7 +148,11 @@ public class DownloadAttachmentService extends Service {
                 .setSmallIcon(R.drawable.ic_attachment_unchecked)
                 .setOngoing(true)
                 .setOnlyAlertOnce(true)
-                .setProgress(100, 0, false);
+                .setProgress(100, 0, false)
+                .addAction(0, "Cancel", PendingIntent.getService(getApplicationContext(),
+                        0, cancelIntent, Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+                                ? (PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_CANCEL_CURRENT)
+                                : PendingIntent.FLAG_CANCEL_CURRENT));
     }
 
     private void showAttachmentProcessedNotification(DownloadAttachmentInfo attachmentInfo, Uri fileUri) {
@@ -166,7 +180,7 @@ public class DownloadAttachmentService extends Service {
         Intent intent = new Intent(this, DownloadAttachmentService.class);
         intent.setAction(ServiceConstants.DOWNLOAD_ATTACHMENT_SERVICE_ADD_TO_QUEUE_ACTION);
         DownloadAttachmentTask task = new DownloadAttachmentTask();
-        task.attachments = new DownloadAttachmentInfo[] {attachmentInfo};
+        task.attachments = new DownloadAttachmentInfo[]{attachmentInfo};
         task.title = taskTitle.startsWith("Retrying") ? taskTitle : ("Retrying " + taskTitle);
         intent.putExtra(ServiceConstants.DOWNLOAD_ATTACHMENT_SERVICE_TASK_EXTRA_KEY, GENERAL_GSON.toJson(task));
         int id = generateNotificationId();
@@ -182,20 +196,16 @@ public class DownloadAttachmentService extends Service {
                                 0, intent, Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
                                         ? (PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_CANCEL_CURRENT)
                                         : PendingIntent.FLAG_CANCEL_CURRENT))
-//                        .setContentIntent(PendingIntent.getActivity(getApplicationContext(),
-//                                0, intent, Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
-//                                        ? (PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_CANCEL_CURRENT)
-//                                        : PendingIntent.FLAG_CANCEL_CURRENT))
                         .build()
         );
     }
 
-    private void emitTask(DownloadAttachmentTask task) throws IOException {
+    private void emitTask(DownloadAttachmentTask task) throws IOException, InterruptedException {
         if (task == null || task.attachments == null || task.attachments.length == 0) {
             return;
         }
-        NotificationCompat.Builder notificationBuilder = createTaskNotificationBuilder(
-                getString(R.string.downloading_attachments, task.attachments.length));
+        String title = getString(R.string.downloading_attachments, task.attachments.length);
+        NotificationCompat.Builder notificationBuilder = createTaskNotificationBuilder(title);
         int notificationId = generateNotificationId();
         startForegroundPriority(notificationId, notificationBuilder.build());
         int attachmentCounter = 0;
@@ -203,13 +213,34 @@ public class DownloadAttachmentService extends Service {
         NotificationCompat.BigTextStyle bigTextStyle = new NotificationCompat.BigTextStyle();
         notificationBuilder.setStyle(bigTextStyle);
         for (DownloadAttachmentInfo attachment : task.attachments) {
-            bigTextStyle.bigText(getString(R.string.downloading) + " '" + attachment.name + "' (" + ++attachmentCounter + "/" + attachmentsCount + ")");
+            String displayAttachmentCount = " (" + ++attachmentCounter + "/" + attachmentsCount + ")";
+            bigTextStyle.bigText(getString(R.string.downloading) + " '" + attachment.name + "'");
+            notificationBuilder.setContentTitle(title + displayAttachmentCount);
             notificationManager.notify(notificationId, notificationBuilder.build());
-            File tempFile = downloadAttachment(attachment.url, ((progress, max) -> {
-                notificationBuilder.setProgress((int) (max / 100), (int) (progress / 100), false);
-                notificationManager.notify(notificationId, notificationBuilder.build());
-            }));
-            bigTextStyle.bigText(getString(R.string.processing) + " '" + attachment.name + "' (" + attachmentCounter + "/" + attachmentsCount + ")");
+            File tempFile;
+            try {
+                tempFile = downloadAttachment(attachment.url, ((progress, max) -> {
+                    if (Thread.interrupted()) {
+                        throw new InterruptedException();
+                    }
+                    notificationBuilder.setProgress((int) (max / 100), (int) (progress / 100), false);
+                    notificationManager.notify(notificationId, notificationBuilder.build());
+
+                }));
+            } catch (InterruptedException | InterruptedIOException e) {
+                throw new InterruptedException();
+            } catch (Throwable e) {
+                Timber.e(e, "DAS download failed: %s", e.getMessage());
+                showAttachmentProcessingFailedNotification(attachment, task.title);
+                continue;
+            }
+            if (Thread.interrupted()) {
+                throw new InterruptedException();
+            }
+            tempFile.deleteOnExit();
+            registerTempFile(tempFile);
+            bigTextStyle.bigText(getString(R.string.processing) + " '" + attachment.name + "'");
+            notificationBuilder.setContentTitle(title + displayAttachmentCount);
             notificationBuilder.setProgress(100, 100, true);
             notificationManager.notify(notificationId, notificationBuilder.build());
             File outputFile = generateOutputAttachmentFile(attachment);
@@ -219,19 +250,50 @@ public class DownloadAttachmentService extends Service {
                     Timber.e("Temp file not deleted");
                 }
             }
-            if (!extractedSuccess || (attachmentCounter == 1 && task.attachments.length > 1)) {
+            unregisterTempFile(tempFile);
+            if (!extractedSuccess) {
                 Timber.e("Failed to extract attachment");
                 showAttachmentProcessingFailedNotification(attachment, task.title);
             } else {
-                Timber.e("Extract completed");
+                Timber.d("Extract completed");
                 Uri fileUri = FileProvider.getUriForFile(
                         this, FileUtils.AUTHORITY, outputFile
                 );
                 showAttachmentProcessedNotification(attachment, fileUri);
             }
         }
-        stopForeground(true);
-        Timber.d("Finished the task");
+    }
+
+    private final List<String> tempFiles = new ArrayList<>();
+
+    private void registerTempFile(File file) {
+        synchronized (tempFiles) {
+            tempFiles.add(file.getAbsolutePath());
+        }
+    }
+
+    private void unregisterTempFile(File file) {
+        synchronized (tempFiles) {
+            tempFiles.remove(file.getAbsolutePath());
+        }
+    }
+
+    private void cancelTask() {
+        synchronized (tempFiles) {
+            for (String tempFile : tempFiles) {
+                File file = new File(tempFile);
+                if (file.exists()) {
+                    try {
+                        file.delete();
+                    } catch (Throwable e) {
+                        Timber.e(e);
+                    }
+                }
+            }
+            tempFiles.clear();
+        }
+        Looper looper = taskHandler.getLooper();
+        looper.getThread().interrupt();
     }
 
     private void executeTask(Intent intent) {
@@ -239,12 +301,20 @@ public class DownloadAttachmentService extends Service {
         DownloadAttachmentTask task = parseTask(stringData);
         try {
             emitTask(task);
+        } catch (InterruptedException e) {
+            stopForeground(true);
+            stopSelf();
+            return;
         } catch (IOException e) {
             Timber.e(e);
+        } catch (Throwable e) {
+            Timber.e(e, "Unhandled error");
         }
+        stopForeground(true);
+        Timber.d("Finished the task");
     }
 
-    private File downloadAttachment(String url, DownloadProgressCallback progressCallback) throws IOException {
+    private File downloadAttachment(String url, DownloadProgressCallback progressCallback) throws IOException, InterruptedException {
         Request request = new Request.Builder()
                 .url(url)
                 .get()
@@ -283,7 +353,7 @@ public class DownloadAttachmentService extends Service {
         return downloadedFile;
     }
 
-    private boolean extractAttachment(File rawAttachmentFile, File destinationFile, DownloadAttachmentInfo attachmentInfo) {
+    private boolean extractAttachment(File rawAttachmentFile, File destinationFile, DownloadAttachmentInfo attachmentInfo) throws InterruptedException {
         if (attachmentInfo.gpgEncryption != null) {
             String password = attachmentInfo.gpgEncryption.password;
             if (password == null) {
@@ -349,9 +419,12 @@ public class DownloadAttachmentService extends Service {
     }
 
     private static int notificationCounter = 0;
+    private static final Object notificationIdMutex = new Object();
 
     private static int generateNotificationId() {
-        return 5000 + ++notificationCounter;
+        synchronized (notificationIdMutex) {
+            return 5000 + ++notificationCounter;
+        }
     }
 
     private class TaskHandler extends Handler {
@@ -367,6 +440,6 @@ public class DownloadAttachmentService extends Service {
     }
 
     private interface DownloadProgressCallback {
-        void onProgress(long progress, long max);
+        void onProgress(long progress, long max) throws InterruptedException;
     }
 }
