@@ -50,8 +50,6 @@ import timber.log.Timber;
 
 public class DownloadAttachmentService extends Service {
     private static final String TAG = "DownloadAttachmentService";
-    private static final String CANCEL_NOTIFICATION_ID_EXTRA_KEY = "cancel-notification";
-    private static final String CANCEL_TASK_ACTION = "cancel-task";
 
     private static final File externalFilesDir = Environment.getExternalStoragePublicDirectory(
             Environment.DIRECTORY_DOWNLOADS);
@@ -85,7 +83,8 @@ public class DownloadAttachmentService extends Service {
             onRestarted();
             return START_STICKY;
         }
-        int cancelNotificationId = intent.getIntExtra(CANCEL_NOTIFICATION_ID_EXTRA_KEY, -1);
+        int cancelNotificationId = intent.getIntExtra(
+                ServiceConstants.DOWNLOAD_ATTACHMENT_SERVICE_CANCEL_NOTIFICATION_ACTION, -1);
         if (cancelNotificationId != -1) {
             notificationManager.cancel(cancelNotificationId);
         }
@@ -97,7 +96,7 @@ public class DownloadAttachmentService extends Service {
             case ServiceConstants.DOWNLOAD_ATTACHMENT_SERVICE_ADD_TO_QUEUE_ACTION:
                 addTaskToQueue(intent, startId);
                 break;
-            case CANCEL_TASK_ACTION:
+            case ServiceConstants.DOWNLOAD_ATTACHMENT_SERVICE_CANCEL_TASK_ACTION:
                 cancelTask();
                 break;
             default:
@@ -140,7 +139,7 @@ public class DownloadAttachmentService extends Service {
 
     private NotificationCompat.Builder createTaskNotificationBuilder(String title) {
         Intent cancelIntent = new Intent(this, DownloadAttachmentService.class);
-        cancelIntent.setAction(CANCEL_TASK_ACTION);
+        cancelIntent.setAction(ServiceConstants.DOWNLOAD_ATTACHMENT_SERVICE_CANCEL_TASK_ACTION);
         return new NotificationCompat
                 .Builder(this, ServiceConstants.DOWNLOAD_ATTACHMENT_SERVICE_FOREGROUND_CHANNEL_ID)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
@@ -149,10 +148,11 @@ public class DownloadAttachmentService extends Service {
                 .setOngoing(true)
                 .setOnlyAlertOnce(true)
                 .setProgress(100, 0, false)
-                .addAction(0, "Cancel", PendingIntent.getService(getApplicationContext(),
-                        0, cancelIntent, Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
-                                ? (PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_CANCEL_CURRENT)
-                                : PendingIntent.FLAG_CANCEL_CURRENT));
+                .addAction(0, getString(R.string.action_cancel),
+                        PendingIntent.getService(getApplicationContext(), 0,
+                                cancelIntent, Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+                                        ? (PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_CANCEL_CURRENT)
+                                        : PendingIntent.FLAG_CANCEL_CURRENT));
     }
 
     private void showAttachmentProcessedNotification(DownloadAttachmentInfo attachmentInfo, Uri fileUri) {
@@ -164,7 +164,8 @@ public class DownloadAttachmentService extends Service {
         notificationManager.notify(generateNotificationId(),
                 new NotificationCompat.Builder(this, ServiceConstants.DOWNLOAD_ATTACHMENT_SERVICE_FOREGROUND_CHANNEL_ID)
                         .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                        .setContentText("Attachment downloaded " + attachmentInfo.name)
+                        .setContentTitle(attachmentInfo.name)
+                        .setContentText(getString(R.string.saved_successfully))
                         .setSmallIcon(R.drawable.ic_attachment_unchecked)
                         .setWhen(0)
                         .setAutoCancel(true)
@@ -181,21 +182,23 @@ public class DownloadAttachmentService extends Service {
         intent.setAction(ServiceConstants.DOWNLOAD_ATTACHMENT_SERVICE_ADD_TO_QUEUE_ACTION);
         DownloadAttachmentTask task = new DownloadAttachmentTask();
         task.attachments = new DownloadAttachmentInfo[]{attachmentInfo};
-        task.title = taskTitle.startsWith("Retrying") ? taskTitle : ("Retrying " + taskTitle);
+        task.title = taskTitle;
         intent.putExtra(ServiceConstants.DOWNLOAD_ATTACHMENT_SERVICE_TASK_EXTRA_KEY, GENERAL_GSON.toJson(task));
-        int id = generateNotificationId();
-        intent.putExtra(CANCEL_NOTIFICATION_ID_EXTRA_KEY, id);
-        notificationManager.notify(id,
+        int notificationId = generateNotificationId();
+        intent.putExtra(ServiceConstants.DOWNLOAD_ATTACHMENT_SERVICE_CANCEL_NOTIFICATION_ACTION, notificationId);
+        notificationManager.notify(notificationId,
                 new NotificationCompat.Builder(this, ServiceConstants.DOWNLOAD_ATTACHMENT_SERVICE_FOREGROUND_CHANNEL_ID)
                         .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                        .setContentText("Attachment failed: " + attachmentInfo.name)
+                        .setContentTitle(attachmentInfo.name)
+                        .setContentText(getString(R.string.operation_failed))
                         .setSmallIcon(R.drawable.ic_attachment_unchecked)
                         .setAutoCancel(true)
                         .setWhen(0)
-                        .addAction(0, "Retry", PendingIntent.getService(getApplicationContext(),
-                                0, intent, Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
-                                        ? (PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_CANCEL_CURRENT)
-                                        : PendingIntent.FLAG_CANCEL_CURRENT))
+                        .addAction(0, getString(R.string.retry),
+                                PendingIntent.getService(getApplicationContext(), 0,
+                                        intent, Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+                                                ? (PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_CANCEL_CURRENT)
+                                                : PendingIntent.FLAG_CANCEL_CURRENT))
                         .build()
         );
     }
@@ -204,8 +207,8 @@ public class DownloadAttachmentService extends Service {
         if (task == null || task.attachments == null || task.attachments.length == 0) {
             return;
         }
-        String title = getString(R.string.downloading_attachments, task.attachments.length);
-        NotificationCompat.Builder notificationBuilder = createTaskNotificationBuilder(title);
+        NotificationCompat.Builder notificationBuilder
+                = createTaskNotificationBuilder(getString(R.string.downloading_attachments));
         int notificationId = generateNotificationId();
         startForegroundPriority(notificationId, notificationBuilder.build());
         int attachmentCounter = 0;
@@ -215,7 +218,8 @@ public class DownloadAttachmentService extends Service {
         for (DownloadAttachmentInfo attachment : task.attachments) {
             String displayAttachmentCount = " (" + ++attachmentCounter + "/" + attachmentsCount + ")";
             bigTextStyle.bigText(getString(R.string.downloading) + " '" + attachment.name + "'");
-            notificationBuilder.setContentTitle(title + displayAttachmentCount);
+            notificationBuilder.setContentTitle(getString(R.string.downloading_attachments)
+                    + displayAttachmentCount);
             notificationManager.notify(notificationId, notificationBuilder.build());
             File tempFile;
             try {
@@ -240,7 +244,8 @@ public class DownloadAttachmentService extends Service {
             tempFile.deleteOnExit();
             registerTempFile(tempFile);
             bigTextStyle.bigText(getString(R.string.processing) + " '" + attachment.name + "'");
-            notificationBuilder.setContentTitle(title + displayAttachmentCount);
+            notificationBuilder.setContentTitle(getString(R.string.downloading_attachments)
+                    + displayAttachmentCount);
             notificationBuilder.setProgress(100, 100, true);
             notificationManager.notify(notificationId, notificationBuilder.build());
             File outputFile = generateOutputAttachmentFile(attachment);

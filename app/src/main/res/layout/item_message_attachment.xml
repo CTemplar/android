@@ -1,40 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
+    android:layout_width="120dp"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:paddingLeft="5dp"
-    android:paddingStart="5dp"
-    android:paddingRight="5dp"
-    android:paddingEnd="5dp">
+    android:layout_marginHorizontal="5dp"
+    android:background="@drawable/selector_surface"
+    android:padding="10dp">
 
-    <RelativeLayout
-        android:id="@+id/item_message_attachment_tile"
-        android:layout_width="120dp"
-        android:layout_height="72dp"
-        android:padding="10dp"
-        android:background="@drawable/item_attachment_background"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+    <TextView
+        android:id="@+id/name_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:fontFamily="@font/lato_regular"
+        android:lines="2"
+        android:text="Downloaded file name test 2.txt"
+        android:textColor="?android:textColorSecondary"
+        android:textSize="14sp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
-        <TextView
-            android:id="@+id/item_message_attachment_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="uploaded_file_text_name.txt"
-            android:fontFamily="@font/lato_regular"
-            android:textSize="14sp"
-            android:lines="2"
-            android:ellipsize="end"
-            android:textColor="?android:textColorSecondary" />
-
-        <ImageView
-            android:id="@+id/item_message_attachment_ext"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:src="@drawable/ic_other" />
-
-    </RelativeLayout>
+    <ImageView
+        android:id="@+id/ext_image_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:src="@drawable/ic_other"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/name_text_view"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

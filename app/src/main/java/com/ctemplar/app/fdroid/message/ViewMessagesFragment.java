@@ -171,6 +171,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
         }
         task.attachments = attachmentsList.toArray(new DownloadAttachmentInfo[0]);
         DownloadAttachmentService.start(context, task);
+        ToastUtils.showToast(getActivity(), R.string.toast_download_started);
     }
 
 
