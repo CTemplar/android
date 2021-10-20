@@ -13,6 +13,7 @@ import android.os.Build;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
 
 import com.ctemplar.app.fdroid.CTemplarApp;
 import com.ctemplar.app.fdroid.R;
@@ -146,6 +147,7 @@ public class SendMailService extends IntentService {
                 .setPriority(NotificationCompat.PRIORITY_LOW)
                 .setContentTitle(title)
                 .setSmallIcon(R.drawable.ic_message_send)
+                .setColor(ContextCompat.getColor(this, R.color.colorAccent))
                 .setOngoing(true)
                 .setProgress(100, 10, true);
         notificationManager.notify((int) messageId, notificationBuilder.build());

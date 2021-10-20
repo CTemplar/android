@@ -17,6 +17,7 @@ import android.os.SystemClock;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
 
 import com.ctemplar.app.fdroid.CTemplarApp;
 import com.ctemplar.app.fdroid.R;
@@ -106,11 +107,9 @@ public class NotificationService extends Service {
         PendingIntent restartServicePendingIntent = PendingIntent.getService(getApplicationContext(),
                 1, restartServiceIntent, PendingIntent.FLAG_ONE_SHOT);
         AlarmManager alarmService = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
-        alarmService.set(
-                AlarmManager.ELAPSED_REALTIME,
+        alarmService.set(AlarmManager.ELAPSED_REALTIME,
                 SystemClock.elapsedRealtime() + 1000,
-                restartServicePendingIntent
-        );
+                restartServicePendingIntent);
     }
 
     private void onRestarted() {
@@ -195,6 +194,7 @@ public class NotificationService extends Service {
                 .setContentText(content)
                 .setContentInfo(sender)
                 .setContentIntent(pendingIntent)
+                .setColor(ContextCompat.getColor(this, R.color.colorAccent))
                 .setAutoCancel(true)
                 .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
                 .setPriority(NotificationCompat.PRIORITY_HIGH)

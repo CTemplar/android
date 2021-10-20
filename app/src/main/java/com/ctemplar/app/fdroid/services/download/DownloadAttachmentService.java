@@ -21,6 +21,7 @@ import android.os.Message;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 
 import com.ctemplar.app.fdroid.R;
@@ -145,6 +146,7 @@ public class DownloadAttachmentService extends Service {
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setContentTitle(title)
                 .setSmallIcon(R.drawable.ic_attachment_unchecked)
+                .setColor(ContextCompat.getColor(this, R.color.colorAccent))
                 .setOngoing(true)
                 .setOnlyAlertOnce(true)
                 .setProgress(100, 0, false)
@@ -167,6 +169,7 @@ public class DownloadAttachmentService extends Service {
                         .setContentTitle(attachmentInfo.name)
                         .setContentText(getString(R.string.saved_successfully))
                         .setSmallIcon(R.drawable.ic_attachment_unchecked)
+                        .setColor(ContextCompat.getColor(this, R.color.colorAccent))
                         .setWhen(0)
                         .setAutoCancel(true)
                         .setContentIntent(PendingIntent.getActivity(getApplicationContext(),
@@ -192,6 +195,7 @@ public class DownloadAttachmentService extends Service {
                         .setContentTitle(attachmentInfo.name)
                         .setContentText(getString(R.string.operation_failed))
                         .setSmallIcon(R.drawable.ic_attachment_unchecked)
+                        .setColor(ContextCompat.getColor(this, R.color.colorAccent))
                         .setAutoCancel(true)
                         .setWhen(0)
                         .addAction(0, getString(R.string.retry),
