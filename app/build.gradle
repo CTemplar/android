@@ -27,11 +27,9 @@ android {
     buildFeatures {
         viewBinding true
     }
-
     applicationVariants.all { variant ->
         variant.resValue "string", "versionName", variant.versionName
     }
-
     flavorDimensions "version"
     productFlavors {
         development {
@@ -51,7 +49,6 @@ android {
             buildConfigField("String", "USER_AGENT", "\"CTemplar App v${versionName}\"")
         }
     }
-
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8

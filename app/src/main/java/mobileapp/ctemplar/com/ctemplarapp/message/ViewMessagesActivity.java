@@ -2,13 +2,13 @@ package mobileapp.ctemplar.com.ctemplarapp.message;
 
 import android.content.Intent;
 import android.os.Bundle;
+
 import androidx.fragment.app.FragmentManager;
 
 import mobileapp.ctemplar.com.ctemplarapp.BaseActivity;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.main.MainActivity;
-
-import static mobileapp.ctemplar.com.ctemplarapp.services.CloudMessagingService.FROM_NOTIFICATION;
+import mobileapp.ctemplar.com.ctemplarapp.services.ServiceConstants;
 
 public class ViewMessagesActivity extends BaseActivity {
     public static final String PARENT_ID = "parent_id";
@@ -36,7 +36,7 @@ public class ViewMessagesActivity extends BaseActivity {
         if (!fragment.onBackPressed()) {
             super.onBackPressed();
             Intent intent = getIntent();
-            boolean fromNotification = intent != null && intent.getBooleanExtra(FROM_NOTIFICATION,
+            boolean fromNotification = intent != null && intent.getBooleanExtra(ServiceConstants.FROM_NOTIFICATION_SERVICE,
                     false);
             if (fromNotification) {
                 startActivity(new Intent(this, MainActivity.class)

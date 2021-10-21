@@ -1,46 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
     <LinearLayout
         android:id="@+id/item_message_view_expanded_short"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:paddingTop="16dp"
-        android:paddingBottom="16dp"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="16dp">
 
         <LinearLayout
             android:id="@+id/item_message_view_expanded_sender_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/item_message_view_expanded_sender_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/txt_from"
                 android:fontFamily="@font/lato_regular"
-                android:textSize="14sp"/>
+                android:text="@string/txt_from"
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/item_message_view_expanded_sender_name"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="5dp"
                 android:layout_weight="1"
-                android:text="CTemplar"
                 android:ellipsize="end"
                 android:fontFamily="@font/lato_regular"
-                android:layout_marginEnd="5dp"
+                android:text="CTemplar"
                 android:textSize="14sp" />
 
             <ImageView
@@ -56,9 +53,9 @@
                 android:layout_width="36dp"
                 android:layout_height="36dp"
                 android:src="@drawable/ic_attachment_small"
-                app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@id/item_message_view_expanded_sender_name"
+                app:layout_constraintTop_toTopOf="parent"
                 app:tint="?android:textColorSecondary" />
 
             <ImageView
@@ -72,10 +69,8 @@
                 android:id="@+id/item_message_view_expanded_short_date_text_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginRight="10dp"
+                android:layout_marginHorizontal="10dp"
+                android:layout_marginVertical="10dp"
                 android:ellipsize="end"
                 android:fontFamily="@font/lato_regular"
                 android:lines="1"
@@ -87,15 +82,15 @@
                 android:id="@+id/item_message_view_expanded_folder_name_text_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:maxWidth="80dp"
-                android:gravity="center_vertical"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-                android:text="inbox"
                 android:background="@drawable/ic_message_status_blue"
-                android:maxLines="1"
                 android:ellipsize="end"
                 android:fontFamily="@font/lato_regular"
+                android:gravity="center_vertical"
+                android:maxWidth="80dp"
+                android:maxLines="1"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:text="inbox"
                 android:textColor="@color/colorWhiteLight"
                 android:textSize="14sp" />
 
@@ -111,33 +106,33 @@
                 android:id="@+id/item_message_view_expanded_receiver_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/txt_to"
                 android:fontFamily="@font/lato_regular"
+                android:text="@string/txt_to"
                 android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/item_message_view_expanded_receiver_name"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:layout_marginEnd="5dp"
-                android:text="John asd sad sa sdasad"
+                android:layout_weight="1"
                 android:ellipsize="end"
                 android:fontFamily="@font/lato_regular"
+                android:text="John asd sad sa sdasad"
                 android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/item_message_view_expanded_details"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:minWidth="25dp"
-                android:layout_marginStart="8dp"
                 android:layout_gravity="center_vertical"
+                android:layout_marginStart="8dp"
+                android:fontFamily="@font/lato_regular"
+                android:gravity="start"
+                android:minWidth="25dp"
                 android:text="@string/txt_more_details"
                 android:textColor="@color/colorBlue"
-                android:fontFamily="@font/lato_regular"
-                android:textSize="14sp"
-                android:gravity="start"/>
+                android:textSize="14sp" />
 
         </LinearLayout>
 
@@ -146,24 +141,24 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
-            android:paddingTop="4dp"
-            android:paddingBottom="4dp"
             android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp">
 
             <TextView
                 android:id="@+id/item_message_view_expanded_status"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-                android:text="Delete in 0d"
-                android:ellipsize="end"
-                android:gravity="center"
                 android:background="@drawable/ic_message_status_yellow"
+                android:ellipsize="end"
                 android:fontFamily="@font/lato_regular"
+                android:gravity="center"
                 android:maxLines="1"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:text="Delete in 0d"
                 android:textColor="@android:color/white"
                 android:textSize="13sp" />
 
@@ -176,44 +171,40 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@color/colorDivider"
-        app:layout_constraintTop_toBottomOf="@id/item_message_view_expanded_short"
-        android:visibility="visible"/>
+        android:visibility="visible"
+        app:layout_constraintTop_toBottomOf="@id/item_message_view_expanded_short" />
 
     <LinearLayout
         android:id="@+id/item_message_view_expanded_credentials"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:background="@color/colorPrimary"
-        android:paddingLeft="16dp"
-        android:paddingStart="16dp"
-        android:paddingRight="16dp"
-        android:paddingEnd="16dp"
-        android:paddingTop="16dp"
-        android:paddingBottom="16dp"
+        android:orientation="vertical"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="16dp"
         android:visibility="gone">
 
         <LinearLayout
             android:id="@+id/item_message_view_from_layout"
-            android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/item_message_view_from_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/txt_from"
                 android:fontFamily="@font/lato_regular"
+                android:text="@string/txt_from"
                 android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/item_message_view_from_email"
                 android:layout_width="0dp"
-                android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:text="CTemplar &lt;ctemplar@ctemplar.com&gt;"
+                android:layout_weight="1"
                 android:fontFamily="@font/lato_regular"
+                android:text="CTemplar &lt;ctemplar@ctemplar.com&gt;"
                 android:textSize="14sp" />
 
         </LinearLayout>
@@ -222,24 +213,24 @@
             android:id="@+id/item_message_view_to_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="5dp">
+            android:layout_marginTop="5dp"
+            android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/item_message_view_to_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/txt_to"
                 android:fontFamily="@font/lato_regular"
+                android:text="@string/txt_to"
                 android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/item_message_view_to_email"
                 android:layout_width="0dp"
-                android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:text="John &lt;john@ctemplar.com&gt;"
+                android:layout_weight="1"
                 android:fontFamily="@font/lato_regular"
+                android:text="John &lt;john@ctemplar.com&gt;"
                 android:textSize="14sp" />
 
         </LinearLayout>
@@ -248,25 +239,25 @@
             android:id="@+id/item_message_view_CC_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="5dp">
+            android:layout_marginTop="5dp"
+            android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/item_message_view_CC_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/txt_cc"
                 android:fontFamily="@font/lato_regular"
+                android:text="@string/txt_cc"
                 android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/item_message_view_CC_email"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="Sam &lt;samsmith@ctemplar.com&gt;"
+                android:layout_weight="1"
                 android:fontFamily="@font/lato_regular"
-                android:textSize="14sp"
-                android:layout_weight="1" />
+                android:text="Sam &lt;samsmith@ctemplar.com&gt;"
+                android:textSize="14sp" />
 
         </LinearLayout>
 
@@ -274,25 +265,25 @@
             android:id="@+id/item_message_view_BCC_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="5dp">
+            android:layout_marginTop="5dp"
+            android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/item_message_view_BCC_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/txt_bcc"
                 android:fontFamily="@font/lato_regular"
+                android:text="@string/txt_bcc"
                 android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/item_message_view_BCC_email"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="Support &lt;support@ctemplar.com&gt;"
+                android:layout_weight="1"
                 android:fontFamily="@font/lato_regular"
-                android:textSize="14sp"
-                android:layout_weight="1"/>
+                android:text="Support &lt;support@ctemplar.com&gt;"
+                android:textSize="14sp" />
 
         </LinearLayout>
 
@@ -301,8 +292,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
-            android:text="@string/txt_date_format"
             android:fontFamily="@font/lato_regular"
+            android:text="@string/txt_date_format"
             android:textSize="14sp" />
 
     </LinearLayout>
@@ -312,8 +303,8 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@color/colorDivider"
-        app:layout_constraintTop_toBottomOf="@id/item_message_view_expanded_credentials"
-        android:visibility="gone"/>
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/item_message_view_expanded_credentials" />
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -323,8 +314,8 @@
             android:id="@+id/content_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="gone"
-            android:padding="10dp">
+            android:padding="10dp"
+            android:visibility="gone">
 
             <WebView
                 android:id="@+id/item_message_view_expanded_content"
@@ -335,44 +326,47 @@
                 android:id="@+id/item_message_text_view_expanded_content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="16sp"
-                android:textColor="?android:textColorPrimary" />
+                android:textColor="?android:textColorPrimary"
+                android:textSize="16sp" />
 
         </FrameLayout>
 
-        <LinearLayout android:id="@+id/encrypted_message_lock_layout"
+        <LinearLayout
+            android:id="@+id/encrypted_message_lock_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="10dp"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:padding="10dp">
 
-            <TextView android:id="@+id/password_encrypted_message_hint_text_view"
+            <TextView
+                android:id="@+id/password_encrypted_message_hint_text_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:text="@string/message_encrypted_with_password" />
 
-            <Button android:id="@+id/password_encrypted_message_decrypt_button"
+            <Button
+                android:id="@+id/password_encrypted_message_decrypt_button"
+                style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                style="?android:attr/buttonBarButtonStyle"
-                android:fontFamily="@font/lato_regular"
-                android:textColor="@android:color/white"
-                android:background="@drawable/selector_button_blue"
                 android:layout_marginTop="4dp"
-                android:text="@string/decrypt"/>
+                android:background="@drawable/selector_button_blue"
+                android:fontFamily="@font/lato_regular"
+                android:text="@string/decrypt"
+                android:textColor="@android:color/white" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
+                android:text="@string/password_is_incorrect"
                 android:textColor="@color/colorAccent"
                 android:textSize="18sp"
-                android:visibility="gone"
-                android:text="@string/password_is_incorrect" />
-<!--            android:fontFamily="@font/lato_regular"-->
-<!--            android:textColor="@color/colorDarkBlue2"-->
-<!--            android:background="@drawable/dialog_cancel_button_background"-->
+                android:visibility="gone" />
+            <!--            android:fontFamily="@font/lato_regular"-->
+            <!--            android:textColor="@color/colorDarkBlue2"-->
+            <!--            android:background="@drawable/dialog_cancel_button_background"-->
 
         </LinearLayout>
 
@@ -381,23 +375,39 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
     </FrameLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/item_message_view_expanded_attachment"
-        android:orientation="horizontal"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:orientation="horizontal"
         android:padding="10dp"
-        tools:listitem="@layout/item_message_attachment"
-        android:background="@color/colorPrimary" />
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:listitem="@layout/item_message_attachment" />
+
+    <Button
+        android:id="@+id/item_message_view_expanded_download_all_button"
+        style="?android:attr/buttonBarButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="32dp"
+        android:layout_gravity="end"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/selector_button_blue"
+        android:fontFamily="@font/lato_regular"
+        android:paddingStart="15dp"
+        android:paddingEnd="15dp"
+        android:text="@string/download_all"
+        android:textColor="@android:color/white"
+        android:textSize="12sp" />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="2dp"
-        android:background="@color/colorDivider"/>
+        android:background="@color/colorDivider" />
 
 </LinearLayout>

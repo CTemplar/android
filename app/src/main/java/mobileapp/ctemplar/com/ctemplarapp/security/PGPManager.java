@@ -95,17 +95,19 @@ public class PGPManager {
         return new byte[0];
     }
 
-    public static String decryptGPG(String encryptedText, String passPhrase) {
+    public static String decryptGPG(String encryptedText, String passPhrase) throws InterruptedException {
         return new String(decryptGPG(encryptedText.getBytes(), passPhrase));
     }
 
-    public static byte[] decryptGPG(byte[] encryptedBytes, String passPhrase) {
+    public static byte[] decryptGPG(byte[] encryptedBytes, String passPhrase) throws InterruptedException {
         try {
             return PGPLib.decryptGPG(encryptedBytes, passPhrase);
         } catch (PGPException e) {
             Timber.d(e);
         } catch (IOException e) {
             Timber.w(e);
+        } catch (InterruptedException e) {
+            throw e;
         } catch (Exception e) {
             Timber.e(e);
             return encryptedBytes;
@@ -114,7 +116,7 @@ public class PGPManager {
     }
 
     public static String decryptGPGUnsafe(String encryptedData, String passPhrase)
-            throws IOException, PGPException {
+            throws IOException, PGPException, InterruptedException {
         return new String(PGPLib.decryptGPG(encryptedData.getBytes(), passPhrase));
     }
 
