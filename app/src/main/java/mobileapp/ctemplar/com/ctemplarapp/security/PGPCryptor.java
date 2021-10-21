@@ -37,7 +37,9 @@ class PGPCryptor {
     }
 
     static byte[] decrypt(byte[] content, List<String> privateKeys, String passPhrase)
-            throws PGPCryptorException, PGPBadPrivateKeyException, PGPCryptorPublicKeysNotFound, PGPCryptorPrivateKeyExtractFailed, PGPCryptorPrivateKeyNotFound, PGPCryptorDataNotFound, PGPCryptorReadDataFailed {
+            throws PGPCryptorException, PGPBadPrivateKeyException, PGPCryptorPublicKeysNotFound,
+            PGPCryptorPrivateKeyExtractFailed, PGPCryptorPrivateKeyNotFound, PGPCryptorDataNotFound,
+            PGPCryptorReadDataFailed, InterruptedException {
         Map<Long, PGPSecretKeyRing> secretKeyRingMap = new HashMap<>();
         Exception lastException = null;
         for (String privateKey : privateKeys) {
@@ -126,6 +128,9 @@ class PGPCryptor {
         try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             int ch;
             while ((ch = unc.read()) >= 0) {
+                if (Thread.interrupted()) {
+                    throw new InterruptedException();
+                }
                 out.write(ch);
             }
             returnBytes = out.toByteArray();

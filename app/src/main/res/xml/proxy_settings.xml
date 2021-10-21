@@ -23,7 +23,4 @@
         android:summary="@string/proxy_port_description"
         android:dependency="@string/use_http_proxy_key" />
 
-    <Preference
-        android:title="@string/proxy_note" />
-
 </PreferenceScreen>

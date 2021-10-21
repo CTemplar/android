@@ -47,7 +47,7 @@ import timber.log.Timber;
 public class MessagesRecyclerViewAdapter extends RecyclerView.Adapter<MessagesRecyclerViewAdapter.ViewHolder> {
     private final List<MessageProvider> items = new ArrayList<>();
     private final List<MessageProvider> expanded = new ArrayList<>();
-    private OnAttachmentDownloading onAttachmentDownloading;
+    private AttachmentDownloader attachmentDownloader;
     private MessageViewActionCallback callback;
     private final UserStore userStore;
     private Context context;
@@ -57,8 +57,8 @@ public class MessagesRecyclerViewAdapter extends RecyclerView.Adapter<MessagesRe
         userStore = CTemplarApp.getUserStore();
     }
 
-    public void setOnAttachmentDownloadingCallback(OnAttachmentDownloading onAttachmentDownloading) {
-        this.onAttachmentDownloading = onAttachmentDownloading;
+    public void setOnAttachmentDownloadingCallback(AttachmentDownloader attachmentDownloader) {
+        this.attachmentDownloader = attachmentDownloader;
     }
 
     public void setCallback(MessageViewActionCallback callback) {
@@ -150,6 +150,7 @@ public class MessagesRecyclerViewAdapter extends RecyclerView.Adapter<MessagesRe
         final TextView contentText;
         final ProgressBar progressBar;
         final RecyclerView attachmentsRecyclerView;
+        final Button downloadAllButton;
         final ViewGroup expandedCredentialsLayout;
         final View credentialsDivider;
         final ViewGroup encryptedMessageLockLayout;
@@ -197,6 +198,7 @@ public class MessagesRecyclerViewAdapter extends RecyclerView.Adapter<MessagesRe
             contentText = expandedView.findViewById(R.id.item_message_text_view_expanded_content);
             progressBar = expandedView.findViewById(R.id.item_message_view_expanded_progress_bar);
             attachmentsRecyclerView = expandedView.findViewById(R.id.item_message_view_expanded_attachment);
+            downloadAllButton = expandedView.findViewById(R.id.item_message_view_expanded_download_all_button);
             expandedCredentialsLayout = expandedView.findViewById(R.id.item_message_view_expanded_credentials);
             credentialsDivider = expandedView.findViewById(R.id.item_message_view_expanded_credentials_divider);
             encryptedMessageLockLayout = expandedView.findViewById(R.id.encrypted_message_lock_layout);
@@ -423,8 +425,8 @@ public class MessagesRecyclerViewAdapter extends RecyclerView.Adapter<MessagesRe
                         ToastUtils.showToast(context, context.getString(R.string.firstly_decrypt_message));
                         return;
                     }
-                    AttachmentProvider attachmentProvider = messageAttachmentAdapter.getAttachment(position);
-                    onAttachmentDownloading.onStart(attachmentProvider, item);
+                    attachmentDownloader.downloadAttachment(item,
+                            messageAttachmentAdapter.getAttachment(position));
                 }
 
                 @Override
@@ -438,6 +440,11 @@ public class MessagesRecyclerViewAdapter extends RecyclerView.Adapter<MessagesRe
                 }
             });
 
+            if (attachmentList.size() < 2) {
+                downloadAllButton.setVisibility(View.GONE);
+            }
+            downloadAllButton.setOnClickListener(v -> attachmentDownloader
+                    .downloadAttachments(item, attachmentList.toArray(new AttachmentProvider[0])));
         }
 
         private void switchVisibility(MessageProvider item) {

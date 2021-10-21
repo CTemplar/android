@@ -253,7 +253,7 @@ class PGPLib {
         return encOut.toByteArray();
     }
 
-    static byte[] decryptGPG(byte[] encryptedBytes, String passPhrase) throws IOException, PGPException {
+    static byte[] decryptGPG(byte[] encryptedBytes, String passPhrase) throws IOException, PGPException, InterruptedException {
         InputStream in = new ByteArrayInputStream(encryptedBytes);
         in = PGPUtil.getDecoderStream(in);
         JcaPGPObjectFactory pgpF = new JcaPGPObjectFactory(in);
@@ -275,13 +275,11 @@ class PGPLib {
         if (pbe == null) {
             return new byte[0];
         }
-
         InputStream clear = pbe.getDataStream(new JcePBEDataDecryptorFactoryBuilder(
                 new JcaPGPDigestCalculatorProviderBuilder()
                         .setProvider(new BouncyCastleProvider()).build())
                 .setProvider(new BouncyCastleProvider()).build(passPhrase.toCharArray())
         );
-
         JcaPGPObjectFactory pgpFact = new JcaPGPObjectFactory(clear);
         Object oData = pgpFact.nextObject();
         if (oData instanceof PGPCompressedData) {
@@ -293,6 +291,9 @@ class PGPLib {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         int ch;
         while ((ch = unc.read()) >= 0) {
+            if (Thread.interrupted()) {
+                throw new InterruptedException();
+            }
             out.write(ch);
         }
         byte[] returnBytes = out.toByteArray();

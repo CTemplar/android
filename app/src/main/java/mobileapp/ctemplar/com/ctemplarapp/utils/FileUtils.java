@@ -1,5 +1,6 @@
 package mobileapp.ctemplar.com.ctemplarapp.utils;
 
+import android.content.ActivityNotFoundException;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
@@ -701,5 +702,17 @@ public class FileUtils {
             outputStream.flush();
         }
     }
-}
 
+    private void openFile(Context context, Uri uri) {
+        try {
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            String fileType = context.getContentResolver().getType(uri);
+            intent.setDataAndType(uri, fileType);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            context.startActivity(intent);
+        } catch (ActivityNotFoundException e) {
+            Timber.e(e);
+        }
+    }
+}
