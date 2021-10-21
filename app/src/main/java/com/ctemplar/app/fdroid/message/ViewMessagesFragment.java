@@ -58,6 +58,7 @@ import com.ctemplar.app.fdroid.services.download.DownloadAttachmentTask;
 import com.ctemplar.app.fdroid.utils.DateUtils;
 import com.ctemplar.app.fdroid.utils.EditTextUtils;
 import com.ctemplar.app.fdroid.utils.HtmlUtils;
+import com.ctemplar.app.fdroid.utils.PermissionUtils;
 import com.ctemplar.app.fdroid.utils.ToastUtils;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
@@ -65,9 +66,7 @@ import com.google.android.material.snackbar.Snackbar;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import timber.log.Timber;
 
@@ -90,26 +89,40 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
     private ImageView starImageView;
     private View loadProgress;
     private ViewGroup messageActionsLayout;
+    private Pair<MessageProvider, AttachmentProvider[]> latestDownloadAttempt;
 
     private final ActivityResultLauncher<String[]> downloadAttachmentPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), result -> {
                 if (result.containsValue(false)) {
+                    Timber.e("Not all permissions granted");
                     return;
                 }
+                if (latestDownloadAttempt == null) {
+                    Timber.e("latestDownloadAttempt == null");
+                    return;
+                }
+                ViewMessagesFragment.this.downloadAttachments(getContext(),
+                        latestDownloadAttempt.first, latestDownloadAttempt.second);
             });
 
-    private final Map<Long, Pair<AttachmentProvider, MessageProvider>> downloadMap = new HashMap<>();
     private final AttachmentDownloader onAttachmentDownloading = new AttachmentDownloader() {
         @Override
         public void downloadAttachment(MessageProvider message, AttachmentProvider attachment) {
             Context context = getContext();
             if (context == null) {
-                Timber.e("Context is null");
+                Timber.e("context == null");
                 return;
             }
             String documentUrl = attachment.getDocumentUrl();
             if (documentUrl == null) {
+                Timber.e("documentUrl == null");
                 Toast.makeText(context, R.string.error_attachment_url, Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (!PermissionUtils.readExternalStorage(context) || !PermissionUtils.writeExternalStorage(context)) {
+                Timber.w("Storage permissions required");
+                latestDownloadAttempt = new Pair<>(message, new AttachmentProvider[]{attachment});
+                downloadAttachmentPermissionLauncher.launch(PermissionUtils.externalStoragePermissions());
                 return;
             }
             ViewMessagesFragment.this.downloadAttachments(context, message, attachment);
@@ -119,15 +132,22 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
         public void downloadAttachments(MessageProvider message, AttachmentProvider[] attachments) {
             Context context = getContext();
             if (context == null) {
-                Timber.e("Context is null");
+                Timber.e("context == null");
                 return;
             }
             for (AttachmentProvider attachment : attachments) {
                 String documentUrl = attachment.getDocumentUrl();
                 if (documentUrl == null) {
+                    Timber.e("documentUrl == null");
                     Toast.makeText(context, R.string.error_attachment_url, Toast.LENGTH_SHORT).show();
                     return;
                 }
+            }
+            if (!PermissionUtils.readExternalStorage(context) || !PermissionUtils.writeExternalStorage(context)) {
+                Timber.w("Storage permissions required");
+                latestDownloadAttempt = new Pair<>(message, attachments);
+                downloadAttachmentPermissionLauncher.launch(PermissionUtils.externalStoragePermissions());
+                return;
             }
             ViewMessagesFragment.this.downloadAttachments(context, message, attachments);
         }

@@ -388,7 +388,7 @@
     <string name="subscription_upgrade_another_device">To upgrade the subscription, use the device on which it was issued</string>
 
     <!-- PROXY -->
-    <string name="proxy">Proxy (beta)</string>
+    <string name="proxy">Proxy</string>
     <string name="use_tor">Use Tor</string>
     <string name="use_tor_description">Use Tor for network requests. Requires Orbot</string>
     <string name="http_proxy">HTTP Proxy</string>
@@ -402,7 +402,6 @@
     <string name="enter_correct_ip">Enter the correct IP address</string>
     <string name="enter_correct_port">Enter the correct port</string>
     <string name="proxy_enabled">Proxy enabled</string>
-    <string name="proxy_note"><font color="#939191">Note. The attachments downloading feature uses the Android download manager which does not support proxies for now. It will be replaced with our own download manager. Stay tuned for the next update.</font></string>
 
     <!-- SETTINGS -->
     <string name="settings_general">General settings</string>
