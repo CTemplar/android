@@ -60,6 +60,7 @@
                 <action android:name="com.ctemplar.service.email.send" />
             </intent-filter>
         </service>
+
         <service android:name=".services.download.DownloadAttachmentService" />
 
         <receiver

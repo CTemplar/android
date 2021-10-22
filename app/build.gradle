@@ -6,8 +6,8 @@ android {
         applicationId "com.ctemplar.app.fdroid"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 27
-        versionName "1.5.4"
+        versionCode 28
+        versionName "1.5.5"
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
