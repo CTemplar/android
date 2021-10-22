@@ -1,5 +1,7 @@
 package com.ctemplar.app.fdroid.services;
 
+import static com.ctemplar.app.fdroid.utils.DateUtils.GENERAL_GSON;
+
 import android.app.IntentService;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -11,7 +13,24 @@ import android.os.Build;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
 
+import com.ctemplar.app.fdroid.CTemplarApp;
+import com.ctemplar.app.fdroid.R;
+import com.ctemplar.app.fdroid.net.request.messages.EncryptionMessageRequest;
+import com.ctemplar.app.fdroid.net.request.messages.SendMessageRequest;
+import com.ctemplar.app.fdroid.net.response.messages.MessageAttachment;
+import com.ctemplar.app.fdroid.net.response.messages.MessagesResult;
+import com.ctemplar.app.fdroid.repository.provider.AttachmentProvider;
+import com.ctemplar.app.fdroid.repository.provider.EncryptionMessageProvider;
+import com.ctemplar.app.fdroid.repository.provider.SendMessageRequestProvider;
+import com.ctemplar.app.fdroid.security.PGPManager;
+import com.ctemplar.app.fdroid.utils.AppUtils;
+import com.ctemplar.app.fdroid.utils.EditTextUtils;
+import com.ctemplar.app.fdroid.utils.EncryptUtils;
+import com.ctemplar.app.fdroid.utils.FileUtils;
+import com.ctemplar.app.fdroid.utils.LaunchUtils;
+import com.ctemplar.app.fdroid.utils.ToastUtils;
 import com.google.gson.JsonSyntaxException;
 
 import java.io.BufferedInputStream;
@@ -29,36 +48,14 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-import com.ctemplar.app.fdroid.CTemplarApp;
-import com.ctemplar.app.fdroid.R;
-import com.ctemplar.app.fdroid.net.request.messages.EncryptionMessageRequest;
-import com.ctemplar.app.fdroid.net.request.messages.SendMessageRequest;
-import com.ctemplar.app.fdroid.net.response.messages.MessageAttachment;
-import com.ctemplar.app.fdroid.net.response.messages.MessagesResult;
-import com.ctemplar.app.fdroid.repository.entity.MailboxEntity;
-import com.ctemplar.app.fdroid.repository.provider.AttachmentProvider;
-import com.ctemplar.app.fdroid.repository.provider.EncryptionMessageProvider;
-import com.ctemplar.app.fdroid.repository.provider.SendMessageRequestProvider;
-import com.ctemplar.app.fdroid.security.PGPManager;
-import com.ctemplar.app.fdroid.utils.AppUtils;
-import com.ctemplar.app.fdroid.utils.EditTextUtils;
-import com.ctemplar.app.fdroid.utils.EncryptUtils;
-import com.ctemplar.app.fdroid.utils.FileUtils;
-import com.ctemplar.app.fdroid.utils.LaunchUtils;
-import com.ctemplar.app.fdroid.utils.ToastUtils;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.HttpException;
 import timber.log.Timber;
 
-import static com.ctemplar.app.fdroid.utils.DateUtils.GENERAL_GSON;
-
 public class SendMailService extends IntentService {
     private static final String TAG = "SendMailService";
-
-    private static final String SEND_MAIL_ACTION = "com.ctemplar.service.mail.send";
-    private static final String SEND_MAIL_NOTIFICATION_CHANNEL_ID = "com.ctemplar.mail.sending";
 
     private static final String MESSAGE_ID_EXTRA_KEY = "message_id";
     private static final String MESSAGE_PROVIDER_EXTRA_KEY = "message_provider";
@@ -81,7 +78,7 @@ public class SendMailService extends IntentService {
             return;
         }
         switch (action) {
-            case SEND_MAIL_ACTION:
+            case ServiceConstants.SEND_MAIL_SERVICE_ACTION:
                 long messageId = intent.getLongExtra(MESSAGE_ID_EXTRA_KEY, -1);
                 if (messageId < 0) {
                     Timber.e("Message id is null");
@@ -146,10 +143,11 @@ public class SendMailService extends IntentService {
         }
         createSendMailNotificationChannel(notificationManager, title);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat
-                .Builder(this, SEND_MAIL_NOTIFICATION_CHANNEL_ID)
+                .Builder(this, ServiceConstants.SEND_MAIL_SERVICE_CHANNEL_ID)
                 .setPriority(NotificationCompat.PRIORITY_LOW)
                 .setContentTitle(title)
                 .setSmallIcon(R.drawable.ic_message_send)
+                .setColor(ContextCompat.getColor(this, R.color.colorAccent))
                 .setOngoing(true)
                 .setProgress(100, 10, true);
         notificationManager.notify((int) messageId, notificationBuilder.build());
@@ -199,7 +197,7 @@ public class SendMailService extends IntentService {
     private void createSendMailNotificationChannel(NotificationManager notificationManager, String title) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(
-                    SEND_MAIL_NOTIFICATION_CHANNEL_ID,
+                    ServiceConstants.SEND_MAIL_SERVICE_CHANNEL_ID,
                     title, NotificationManager.IMPORTANCE_LOW
             );
             notificationManager.createNotificationChannel(channel);
@@ -351,7 +349,11 @@ public class SendMailService extends IntentService {
             }
             if (attachmentsProvider.isEncrypted()) {
                 String password = CTemplarApp.getUserRepository().getUserPassword();
-                EncryptUtils.decryptAttachment(downloadedFile, decryptedFile, password, mailboxId);
+                try {
+                    EncryptUtils.decryptAttachment(downloadedFile, decryptedFile, password, mailboxId);
+                } catch (InterruptedException e) {
+                    Timber.e(e);
+                }
                 if (!downloadedFile.delete()) {
                     Timber.e("Downloaded file is not deleted after decryption error");
                 }
@@ -434,7 +436,7 @@ public class SendMailService extends IntentService {
             final EncryptionMessageProvider encryptionMessageProvider,
             final boolean draftMessage
     ) {
-        Intent intent = new Intent(SEND_MAIL_ACTION);
+        Intent intent = new Intent(ServiceConstants.SEND_MAIL_SERVICE_ACTION);
         intent.setComponent(new ComponentName(context, SendMailService.class));
         intent.putExtra(MESSAGE_ID_EXTRA_KEY, messageId);
         intent.putExtra(MESSAGE_PROVIDER_EXTRA_KEY, GENERAL_GSON.toJson(sendMessageRequestProvider));

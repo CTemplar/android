@@ -16,7 +16,7 @@ public class MessageAttachmentHolder extends RecyclerView.ViewHolder {
     public MessageAttachmentHolder(@NonNull View itemView) {
         super(itemView);
         root = itemView;
-        txtName = itemView.findViewById(R.id.item_message_attachment_name);
-        imgExt = itemView.findViewById(R.id.item_message_attachment_ext);
+        txtName = itemView.findViewById(R.id.name_text_view);
+        imgExt = itemView.findViewById(R.id.ext_image_view);
     }
 }

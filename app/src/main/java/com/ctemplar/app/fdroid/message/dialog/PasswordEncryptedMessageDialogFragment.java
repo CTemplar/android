@@ -94,11 +94,13 @@ public class PasswordEncryptedMessageDialogFragment extends DialogFragment {
                 mainThreadHandler.post(() -> {
                     dismiss();
                     if (callback != null) {
-                        String decryptedSubject;
+                        String decryptedSubject = null;
                         if (message.getSubject() != null) {
-                            decryptedSubject = PGPManager.decryptGPG(message.getSubject(), passwordText);
-                        } else {
-                            decryptedSubject = null;
+                            try {
+                                decryptedSubject = PGPManager.decryptGPG(message.getSubject(), passwordText);
+                            } catch (InterruptedException e) {
+                                Timber.e(e);
+                            }
                         }
                         message.getEncryptionMessage().setPassword(passwordText);
                         callback.onDecrypted(message, decryptedMessage, decryptedSubject);
