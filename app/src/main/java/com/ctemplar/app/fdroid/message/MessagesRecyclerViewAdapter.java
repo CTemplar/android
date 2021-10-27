@@ -386,6 +386,8 @@ public class MessagesRecyclerViewAdapter extends RecyclerView.Adapter<MessagesRe
                     webViewSettings.setLoadWithOverviewMode(true);
                     webViewSettings.setJavaScriptEnabled(false);
                     webViewSettings.setAllowFileAccess(false);
+                    webViewSettings.setBuiltInZoomControls(true);
+                    webViewSettings.setDisplayZoomControls(false);
                     webViewSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
                     webViewSettings.setLoadsImagesAutomatically(!userStore.isBlockExternalImagesEnabled());
                     contentWebView.clearCache(true);
