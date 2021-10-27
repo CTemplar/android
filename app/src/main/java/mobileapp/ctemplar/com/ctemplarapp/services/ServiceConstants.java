@@ -4,6 +4,8 @@ public class ServiceConstants {
     public static final String SEND_MAIL_SERVICE_ACTION = "com.ctemplar.service.mail.send.action";
     public static final String SEND_MAIL_SERVICE_CHANNEL_ID = "com.ctemplar.service.mail.send.sending";
 
+    public static final String FROM_NOTIFICATION_SERVICE = "com.ctemplar.service.notification.from";
+
     public static final int DOWNLOAD_ATTACHMENT_SERVICE_FOREGROUND_ID = 103;
     public static final String DOWNLOAD_ATTACHMENT_SERVICE_FOREGROUND_CHANNEL_ID = "com.ctemplar.service.attachment.download.foreground";
     public static final String DOWNLOAD_ATTACHMENT_SERVICE_TASK_EXTRA_KEY = "com.ctemplar.service.attachment.download.key.extra.task";
