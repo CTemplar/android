@@ -1,6 +1,8 @@
 package mobileapp.ctemplar.com.ctemplarapp.repository.constant;
 
 public class MainFolderNames {
+    public static final String FOLDER_NAME = "folder_name";
+
     public static final String INBOX = "inbox";
     public static final String DRAFT = "draft";
     public static final String SENT = "sent";

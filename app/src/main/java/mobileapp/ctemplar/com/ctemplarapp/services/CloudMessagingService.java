@@ -35,7 +35,7 @@ import retrofit2.Response;
 import timber.log.Timber;
 
 import static mobileapp.ctemplar.com.ctemplarapp.message.ViewMessagesActivity.PARENT_ID;
-import static mobileapp.ctemplar.com.ctemplarapp.message.ViewMessagesFragment.FOLDER_NAME;
+import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.FOLDER_NAME;
 
 public class CloudMessagingService extends FirebaseMessagingService {
     public static final String FROM_NOTIFICATION = "from_notification";

@@ -5,6 +5,7 @@ import javax.inject.Singleton;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.AddFirebaseTokenRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.AutoReadEmailRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SubscriptionMobileUpgradeRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.folders.AddFolderRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.AntiPhishingPhraseRequest;
@@ -371,6 +372,12 @@ public interface RestService {
     Observable<SettingsResponse> updateAutoSaveEnabled(
             @Path("id") long settingId,
             @Body AutoSaveContactEnabledRequest request
+    );
+
+    @PATCH("users/settings/{id}/")
+    Observable<SettingsResponse> updateAutoReadEmail(
+            @Path("id") long settingId,
+            @Body AutoReadEmailRequest request
     );
 
     @PATCH("users/settings/{id}/")

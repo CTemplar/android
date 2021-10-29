@@ -14,6 +14,7 @@ import io.reactivex.disposables.Disposable;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.AntiPhishingPhraseRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.AutoReadEmailRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.AutoSaveContactEnabledRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.contacts.ContactsEncryptionRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.DarkModeRequest;
@@ -103,6 +104,37 @@ public class SettingsViewModel extends ViewModel {
                     @Override
                     public void onNext(@NotNull SettingsResponse settingsResponse) {
                         Timber.i("AutoSave contacts updated");
+                    }
+
+                    @Override
+                    public void onError(@NotNull Throwable e) {
+                        Timber.e(e);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    void updateAutoReadEmail(long settingId, boolean isEnabled) {
+        if (settingId == -1) {
+            return;
+        }
+        userRepository.updateAutoReadEmail(
+                settingId,
+                new AutoReadEmailRequest(isEnabled)
+        )
+                .subscribe(new Observer<SettingsResponse>() {
+                    @Override
+                    public void onSubscribe(@NotNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(@NotNull SettingsResponse settingsResponse) {
+                        Timber.i("Auto read email updated");
                     }
 
                     @Override

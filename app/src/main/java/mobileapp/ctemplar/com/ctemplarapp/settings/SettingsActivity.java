@@ -251,13 +251,12 @@ public class SettingsActivity extends BaseActivity {
     public static class AutoSaveFragment extends BasePreferenceFragment {
         @Override
         public void onCreatePreferences(Bundle bundle, String rootKey) {
-            setPreferencesFromResource(R.xml.auto_save_settings, rootKey);
+            setPreferencesFromResource(R.xml.automation_settings, rootKey);
 
             SwitchPreference autoSaveContactsPreference = findPreference(getString(R.string.auto_save_contacts_enabled));
             if (autoSaveContactsPreference != null) {
                 autoSaveContactsPreference.setOnPreferenceChangeListener((preference, newValue) -> {
-                    boolean isEnabled = (boolean) newValue;
-                    settingsModel.updateAutoSaveContactsEnabled(settingId, isEnabled);
+                    settingsModel.updateAutoSaveContactsEnabled(settingId, (boolean) newValue);
                     return true;
                 });
             }
@@ -270,6 +269,14 @@ public class SettingsActivity extends BaseActivity {
                 });
                 boolean isDraftsAutoSaveEnabled = userStore.isDraftsAutoSaveEnabled();
                 autoSaveDraftsPreference.setChecked(isDraftsAutoSaveEnabled);
+            }
+
+            SwitchPreference autoReadEmailPreference = findPreference(getString(R.string.key_auto_read_email_enabled));
+            if (autoReadEmailPreference != null) {
+                autoReadEmailPreference.setOnPreferenceChangeListener((preference, newValue) -> {
+                    settingsModel.updateAutoReadEmail(settingId, (boolean) newValue);
+                    return true;
+                });
             }
         }
     }
@@ -669,8 +676,6 @@ public class SettingsActivity extends BaseActivity {
         String usedStorage = DateUtils.memoryDisplay(settingsResponse.getUsedStorage());
         String allocatedStorage = DateUtils.memoryDisplay(settingsResponse.getAllocatedStorage());
         String recoveryEmail = settingsResponse.getRecoveryEmail();
-        boolean isDisableLoadingImages = settingsResponse.isDisableLoadingImages();
-        boolean isEnableReportBugs = settingsResponse.isEnableReportBugs();
 
         if (storageLimitPreference != null) {
             storageLimitPreference.setSummary(getString(
@@ -690,9 +695,10 @@ public class SettingsActivity extends BaseActivity {
                 .putString(getString(R.string.notification_email_key), settingsResponse.getNotificationEmail())
                 .putBoolean(getString(R.string.recovery_email_enabled), EditTextUtils.isNotEmpty(recoveryEmail))
                 .putBoolean(getString(R.string.auto_save_contacts_enabled), settingsResponse.isSaveContacts())
+                .putBoolean(getString(R.string.key_auto_read_email_enabled), settingsResponse.isAutoRead())
                 .putBoolean(getString(R.string.contacts_encryption_enabled), settingsResponse.isContactsEncrypted())
-                .putBoolean(getString(R.string.block_external_images_key), isDisableLoadingImages)
-                .putBoolean(getString(R.string.report_bugs_enabled), isEnableReportBugs)
+                .putBoolean(getString(R.string.block_external_images_key), settingsResponse.isDisableLoadingImages())
+                .putBoolean(getString(R.string.report_bugs_enabled), settingsResponse.isEnableReportBugs())
                 .apply();
     }
 

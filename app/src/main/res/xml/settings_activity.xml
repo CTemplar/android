@@ -14,7 +14,7 @@
             android:fragment="mobileapp.ctemplar.com.ctemplarapp.settings.SettingsActivity$NotificationsFragment" />
 
         <PreferenceScreen
-            android:title="@string/settings_auto_save"
+            android:title="@string/settings_automation"
             android:fragment="mobileapp.ctemplar.com.ctemplarapp.settings.SettingsActivity$AutoSaveFragment" />
 
         <PreferenceScreen

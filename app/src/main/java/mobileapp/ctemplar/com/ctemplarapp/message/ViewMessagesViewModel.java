@@ -38,6 +38,7 @@ public class ViewMessagesViewModel extends ViewModel {
     private final MutableLiveData<ResponseStatus> responseStatus = new MutableLiveData<>();
     private final MutableLiveData<List<MessageProvider>> messagesResponse = new MutableLiveData<>();
     private final MutableLiveData<Boolean> starredResponse = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> readResponse = new MutableLiveData<>();
     private final MutableLiveData<FoldersResponse> foldersResponse = new MutableLiveData<>();
     private final MutableLiveData<ResponseStatus> moveToFolderStatus = new MutableLiveData<>();
     private final MutableLiveData<ResponseStatus> addWhitelistStatus = new MutableLiveData<>();
@@ -60,6 +61,14 @@ public class ViewMessagesViewModel extends ViewModel {
         return userRepository.getUserPassword();
     }
 
+    public boolean isAutoReadEmailEnabled() {
+        return userRepository.isAutoReadEmailEnabled();
+    }
+
+    public void setAutoReadEmailEnabled(boolean isEnabled) {
+        userRepository.setAutoReadEmailEnabled(isEnabled);
+    }
+
     public MutableLiveData<ResponseStatus> getMoveToFolderStatus() {
         return moveToFolderStatus;
     }
@@ -70,6 +79,10 @@ public class ViewMessagesViewModel extends ViewModel {
 
     public MutableLiveData<Boolean> getStarredResponse() {
         return starredResponse;
+    }
+
+    public MutableLiveData<Boolean> getReadResponse() {
+        return readResponse;
     }
 
     public MutableLiveData<FoldersResponse> getFoldersResponse() {
@@ -202,6 +215,7 @@ public class ViewMessagesViewModel extends ViewModel {
                         int resultCode = messageResponse.code();
                         if (resultCode == 204) {
                             messagesRepository.markMessageAsRead(id, isRead);
+                            readResponse.postValue(isRead);
                         } else {
                             Timber.e("Update isRead response is not success: code = %s", resultCode);
                         }
