@@ -342,7 +342,7 @@
     <string name="settings_encryption">Criptare</string>
     <string name="settings_phishing_protection">Protecție împotriva phishing-ului</string>
     <string name="settings_phishing_protection_description"><![CDATA[<font color="#939191">Fraza de antiphishing permite utilizatorilor să leagă un cuvânt sau o frază de contul CTemplar. După setarea, dacă vă conectați la cont și fraza de antiphishing a fost schimbată sau nu există, aceasta poate însemna că ai căzut pradă phishingului. În cazul acesta trebuie să vă asigurați că vă găsiți la </font><font color="#4d92e2"><u>https://mail.ctemplar.com</u></font>. <font color="#939191">Dacă nu, un site răutacios are acces la contul dvs. Pentru a preveni mai multe daune, trebuie să vă duceți imediat la </font><font color="#4d92e2"><u>https://mail.ctemplar.com</u></font> <font color="#939191">și să schimbați parola.<br><br>Vă rugăm să rețineți că fraza de antiphishing va fi afișată numai în browser.</font>]]></string>
-    <string name="settings_auto_save">Salvare automată</string>
+    <string name="settings_automation">Automatizare</string>
     <string name="settings_auto_save_contacts">Salvează contactele automat</string>
     <string name="settings_auto_save_drafts">Salvează schițele automat</string>
     <string name="settings_filters">Filtre</string>

@@ -40,6 +40,9 @@ public class SettingsResponse {
     @SerializedName("save_contacts")
     private boolean saveContacts;
 
+    @SerializedName("auto_read")
+    private boolean autoRead;
+
     @SerializedName("show_snippets")
     private boolean showSnippets;
 
@@ -215,6 +218,10 @@ public class SettingsResponse {
 
     public boolean isSaveContacts() {
         return saveContacts;
+    }
+
+    public boolean isAutoRead() {
+        return autoRead;
     }
 
     public boolean isShowSnippets() {
