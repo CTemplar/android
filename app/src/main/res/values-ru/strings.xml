@@ -342,7 +342,7 @@
     <string name="settings_encryption">Шифрование</string>
     <string name="settings_phishing_protection">Защита от фишинга</string>
     <string name="settings_phishing_protection_description"><![CDATA[<font color="#939191">Антифишинговая фраза позволяет пользователям связать произвольное слово или фразу по вашему выбору с учетной записью CTemplar. Если после установки фразы при входе на страничку вашего почтового сервиса данная фраза отсутствует или неверна, вы рискуете стать жертвой фишинга. Вам следует немедленно убедится, что вы посещаете</font> <font color="#4d92e2"><u>https://mail.ctemplar.com</u></font> <font color="#939191">В противном случае вредоносный сайт может завладеть данными для входа в вашу учетную запись CTemplar. Чтобы не подвергать угрозе вашу учетную запись, вам следует немедленно посетить</font> <font color="#4d92e2"><u>https://mail.ctemplar.com</u></font> <font color="#939191">и поменять ваш пароль.<br><br>Обратите внимание, что антифишинговая фраза будет отображаться только при веб-входе.</font>]]></string>
-    <string name="settings_auto_save">Автосохранение</string>
+    <string name="settings_automation">Автоматизация</string>
     <string name="settings_auto_save_contacts">Автоматически сохранять контакты</string>
     <string name="settings_auto_save_drafts">Автоматически сохранять черновики</string>
     <string name="settings_filters">Фильтры</string>

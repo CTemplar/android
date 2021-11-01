@@ -342,7 +342,7 @@
     <string name="settings_encryption">Szyfrowanie</string>
     <string name="settings_phishing_protection">Ochrona przez phishingiem</string>
     <string name="settings_phishing_protection_description"><![CDATA[<font color="#939191">Fraza antyphishingowa pozwala użytkownikom na połączenie słowa lub frazy do konta CTemplar. Po ustawieniu, jeśli się zalogujesz na konto a fraza antyphishingowa jest zmieniona lub jej nie ma, może to znaczyć że padłeś/aś ofiarą phishingu. Powinieneś/aś się niezwłocznie upewnić że znajdujesz się na stronie </font><font color="#4d92e2"><u>https://mail.ctemplar.com</u></font>. <font color="#939191">Jeśli nie jesteś, znaczy to że złośliwa strona ma dostęp do twojego konta. Aby zapobiec dalszym szkodom, powinieneś/aś się udać natychmiastowo na stronę </font><font color="#4d92e2"><u>https://mail.ctemplar.com</u></font> <font color="#939191">i zmienić hasło.<br><br>Prosimy zauważyć iż fraza antyphishingowa będzie wyświetlona wyłącznie w przeglądarce.</font>]]></string>
-    <string name="settings_auto_save">Automatyczne zapisywanie</string>
+    <string name="settings_automation">Automatyzacja</string>
     <string name="settings_auto_save_contacts">Automatycznie zapisuj kontakty</string>
     <string name="settings_auto_save_drafts">Automatycznie zapisuj wersje robocze</string>
     <string name="settings_filters">Filtry</string>

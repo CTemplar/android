@@ -339,7 +339,6 @@ public class MainActivityViewModel extends AndroidViewModel {
                         ResponseMessagesData localMessagesData = new ResponseMessagesData(
                                 messageProviders, offset, folder);
                         if (localMessagesData.messages.size() > 0) {
-                            Timber.i("Loaded from DB: %s", System.currentTimeMillis() % 10000);
                             messagesResponse.postValue(localMessagesData);
                         }
                         responseStatus.postValue(ResponseStatus.RESPONSE_NEXT_MESSAGES);
@@ -663,15 +662,11 @@ public class MainActivityViewModel extends AndroidViewModel {
                         MyselfResult myselfResult = myselfResponse.getResult()[0];
                         SettingsResponse settingsResponse = myselfResult.getSettings();
 
-                        String timezone = settingsResponse.getTimezone();
-                        boolean isContactsEncrypted = settingsResponse.isContactsEncrypted();
-                        boolean isDisableLoadingImages = settingsResponse.isDisableLoadingImages();
-                        boolean isReportBugsEnabled = settingsResponse.isEnableReportBugs();
-
-                        userRepository.saveTimeZone(timezone);
-                        userRepository.setContactsEncryptionEnabled(isContactsEncrypted);
-                        userRepository.setBlockExternalImagesEnabled(isDisableLoadingImages);
-                        userRepository.setReportBugsEnabled(isReportBugsEnabled);
+                        userRepository.saveTimeZone(settingsResponse.getTimezone());
+                        userRepository.setContactsEncryptionEnabled(settingsResponse.isContactsEncrypted());
+                        userRepository.setAutoReadEmailEnabled(settingsResponse.isAutoRead());
+                        userRepository.setBlockExternalImagesEnabled(settingsResponse.isDisableLoadingImages());
+                        userRepository.setReportBugsEnabled(settingsResponse.isEnableReportBugs());
 
                         ThemeUtils.setDarkModeFromServer(
                                 settingsResponse.isNightMode(),

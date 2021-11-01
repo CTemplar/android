@@ -4,6 +4,7 @@ import com.ctemplar.app.fdroid.CTemplarApp;
 import com.ctemplar.app.fdroid.net.RestService;
 import com.ctemplar.app.fdroid.net.request.AddAppTokenRequest;
 import com.ctemplar.app.fdroid.net.request.AntiPhishingPhraseRequest;
+import com.ctemplar.app.fdroid.net.request.AutoReadEmailRequest;
 import com.ctemplar.app.fdroid.net.request.AutoSaveContactEnabledRequest;
 import com.ctemplar.app.fdroid.net.request.CaptchaVerifyRequest;
 import com.ctemplar.app.fdroid.net.request.ChangePasswordRequest;
@@ -170,6 +171,14 @@ public class UserRepository {
 
     public void setContactsEncryptionEnabled(boolean isContactsEncryptionEnabled) {
         userStore.setContactsEncryptionEnabled(isContactsEncryptionEnabled);
+    }
+
+    public boolean isAutoReadEmailEnabled() {
+        return userStore.isAutoReadEmailEnabled();
+    }
+
+    public void setAutoReadEmailEnabled(boolean isEnabled) {
+        userStore.setAutoReadEmailEnabled(isEnabled);
     }
 
     public boolean getContactsEncryptionEnabled() {
@@ -589,6 +598,15 @@ public class UserRepository {
             AutoSaveContactEnabledRequest request
     ) {
         return service.updateAutoSaveEnabled(settingId, request)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public Observable<SettingsResponse> updateAutoReadEmail(
+            long settingId,
+            AutoReadEmailRequest request
+    ) {
+        return service.updateAutoReadEmail(settingId, request)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }

@@ -26,6 +26,7 @@ import com.ctemplar.app.fdroid.message.ViewMessagesActivity;
 import com.ctemplar.app.fdroid.message.ViewMessagesFragment;
 import com.ctemplar.app.fdroid.net.socket.NotificationServiceWebSocket;
 import com.ctemplar.app.fdroid.net.socket.NotificationServiceWebSocketCallback;
+import com.ctemplar.app.fdroid.repository.constant.MainFolderNames;
 import com.ctemplar.app.fdroid.repository.provider.MessageProvider;
 import com.ctemplar.app.fdroid.utils.LaunchUtils;
 
@@ -181,7 +182,7 @@ public class NotificationService extends Service {
         Intent intent = new Intent(this, ViewMessagesActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         intent.putExtra(ViewMessagesActivity.PARENT_ID, id);
-        intent.putExtra(ViewMessagesFragment.FOLDER_NAME, folder);
+        intent.putExtra(MainFolderNames.FOLDER_NAME, folder);
         intent.putExtra(ServiceConstants.FROM_NOTIFICATION_SERVICE, true);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, notificationID, intent,
                 PendingIntent.FLAG_ONE_SHOT);

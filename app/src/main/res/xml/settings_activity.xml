@@ -10,7 +10,7 @@
             android:fragment="com.ctemplar.app.fdroid.settings.SettingsActivity$NotificationsFragment" />
 
         <PreferenceScreen
-            android:title="@string/settings_auto_save"
+            android:title="@string/settings_automation"
             android:fragment="com.ctemplar.app.fdroid.settings.SettingsActivity$AutoSaveFragment" />
 
         <PreferenceScreen

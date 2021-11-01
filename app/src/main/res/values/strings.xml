@@ -53,7 +53,7 @@
     <string name="menu_trash">Trash</string>
     <string name="menu_move_to_inbox">Move to Inbox</string>
     <string name="menu_move_to_archive">Move to Archive</string>
-    <string name="menu_mark_as_unread">Mark as Unread</string>
+    <string name="menu_mark_as_unread">Mark as unread</string>
 
     <!-- STRINGS -->
     <string translatable="false" name="encrypted_subject">...</string>
@@ -153,6 +153,7 @@
     <string name="txt_more_details">More details</string>
     <string name="txt_less_details">Less details</string>
     <string name="toast_message_marked_unread">Message marked as unread</string>
+    <string name="toast_message_marked_read">Message marked as read</string>
     <string name="toast_message_moved_to">Message moved to %1$s</string>
     <string name="toast_messages_doesnt_exist">Messages doesn\'t exists</string>
     <string name="toast_download_started">Download started</string>
@@ -422,9 +423,10 @@
     <string name="settings_encryption">Encryption</string>
     <string name="settings_phishing_protection">Phishing Protection</string>
     <string name="settings_phishing_protection_description"><![CDATA[<font color="#939191">The Anti-Phishing phrase allows users to link a custom word or phrase of your choice to your CTemplar account. Once set, if you ever log into your webmail and your Anti-Phishing phrase is either missing or incorrect, you may be the victim of phishing. You should immediately confirm that you are visiting</font> <font color="#4d92e2"><u>https://mail.ctemplar.com</u></font> <font color="#939191">If you are not, then a malicious site might have your login credentials for your CTemplar account. To prevent harm to your account, you should immediately visit</font> <font color="#4d92e2"><u>https://mail.ctemplar.com</u></font> <font color="#939191">and change your password.<br><br>Note that the Anti-Phishing phrase will be displayed when you log on web only.</font>]]></string>
-    <string name="settings_auto_save">AutoSave</string>
+    <string name="settings_automation">Automation</string>
     <string name="settings_auto_save_contacts">Automatically save contacts</string>
     <string name="settings_auto_save_drafts">Automatically save drafts</string>
+    <string name="settings_auto_read_email">Automatically read email</string>
     <string name="settings_filters">Filters</string>
     <string name="settings_wb_list">Whitelist/Blacklist</string>
     <string name="settings_dark_mode">Dark mode</string>
@@ -565,6 +567,7 @@
     <string translatable="false" name="keep_decrypted_subjects_enabled">keep_decrypted_subjects_enabled</string>
     <string translatable="false" name="auto_save_contacts_enabled">auto_save_contacts_enabled</string>
     <string translatable="false" name="auto_save_drafts_enabled">auto_save_drafts_enabled</string>
+    <string translatable="false" name="key_auto_read_email_enabled">key_auto_read_email_enabled</string>
     <string translatable="false" name="setting_id">setting_id</string>
     <string translatable="false" name="free_plan">Free</string>
     <string translatable="false" name="prime_plan">Prime</string>

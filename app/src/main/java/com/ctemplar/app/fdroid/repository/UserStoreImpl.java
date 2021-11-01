@@ -32,6 +32,7 @@ public class UserStoreImpl implements UserStore {
     private static final String KEY_CONTACTS_ENCRYPTION_ENABLED = "key_contacts_encryption_enabled";
     private static final String KEY_KEEP_DECRYPTED_SUBJECTS_ENABLED = "key_keep_decrypted_subjects_enabled";
     private static final String KEY_DRAFTS_AUTO_SAVE_ENABLED = "key_drafts_auto_save_enabled";
+    private static final String KEY_AUTO_READ_EMAIL_ENABLED = "key_auto_read_email_enabled";
     private static final String KEY_BLOCK_EXTERNAL_IMAGES_ENABLED = "key_block_external_images_enabled";
     private static final String KEY_REPORT_BUGS_ENABLED = "key_report_bugs_enabled";
 
@@ -200,6 +201,16 @@ public class UserStoreImpl implements UserStore {
     @Override
     public boolean isDraftsAutoSaveEnabled() {
         return preferences.getBoolean(KEY_DRAFTS_AUTO_SAVE_ENABLED, false);
+    }
+
+    @Override
+    public void setAutoReadEmailEnabled(boolean state) {
+        globalPreferences.edit().putBoolean(KEY_AUTO_READ_EMAIL_ENABLED, state).apply();
+    }
+
+    @Override
+    public boolean isAutoReadEmailEnabled() {
+        return globalPreferences.getBoolean(KEY_AUTO_READ_EMAIL_ENABLED, true);
     }
 
     @Override

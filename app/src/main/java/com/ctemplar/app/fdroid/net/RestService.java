@@ -2,6 +2,7 @@ package com.ctemplar.app.fdroid.net;
 
 import com.ctemplar.app.fdroid.net.request.AddAppTokenRequest;
 import com.ctemplar.app.fdroid.net.request.AntiPhishingPhraseRequest;
+import com.ctemplar.app.fdroid.net.request.AutoReadEmailRequest;
 import com.ctemplar.app.fdroid.net.request.AutoSaveContactEnabledRequest;
 import com.ctemplar.app.fdroid.net.request.CaptchaVerifyRequest;
 import com.ctemplar.app.fdroid.net.request.ChangePasswordRequest;
@@ -366,6 +367,12 @@ public interface RestService {
     Observable<SettingsResponse> updateAutoSaveEnabled(
             @Path("id") long settingId,
             @Body AutoSaveContactEnabledRequest request
+    );
+
+    @PATCH("users/settings/{id}/")
+    Observable<SettingsResponse> updateAutoReadEmail(
+            @Path("id") long settingId,
+            @Body AutoReadEmailRequest request
     );
 
     @PATCH("users/settings/{id}/")

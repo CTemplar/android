@@ -42,6 +42,9 @@ public interface UserStore {
     void setDraftsAutoSaveEnabled(boolean state);
     boolean isDraftsAutoSaveEnabled();
 
+    void setAutoReadEmailEnabled(boolean state);
+    boolean isAutoReadEmailEnabled();
+
     void setBlockExternalImagesEnabled(boolean state);
     boolean isBlockExternalImagesEnabled();
 

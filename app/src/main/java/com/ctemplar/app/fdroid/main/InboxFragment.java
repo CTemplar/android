@@ -2,8 +2,8 @@ package com.ctemplar.app.fdroid.main;
 
 import static com.ctemplar.app.fdroid.message.SendMessageActivity.MESSAGE_ID;
 import static com.ctemplar.app.fdroid.message.ViewMessagesActivity.PARENT_ID;
-import static com.ctemplar.app.fdroid.message.ViewMessagesFragment.FOLDER_NAME;
 import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.DRAFT;
+import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.FOLDER_NAME;
 import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.INBOX;
 import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.SPAM;
 import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.TRASH;
