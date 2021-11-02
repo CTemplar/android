@@ -59,7 +59,6 @@ import mobileapp.ctemplar.com.ctemplarapp.net.entity.AttachmentsEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.constant.MessageActions;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.AttachmentProvider;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageProvider;
-import mobileapp.ctemplar.com.ctemplarapp.repository.provider.UserDisplayProvider;
 import mobileapp.ctemplar.com.ctemplarapp.services.download.DownloadAttachmentInfo;
 import mobileapp.ctemplar.com.ctemplarapp.services.download.DownloadAttachmentService;
 import mobileapp.ctemplar.com.ctemplarapp.services.download.DownloadAttachmentTask;
@@ -387,7 +386,6 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
                 return true;
             case R.id.menu_view_not_spam:
                 snackbarMove(INBOX, getString(R.string.action_reported_as_not_spam));
-                markNotSpam();
                 return true;
             case R.id.menu_view_trash:
                 snackbarDelete(TRASH, getString(R.string.action_message_removed));
@@ -447,13 +445,6 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
         });
         snackbar.setActionTextColor(Color.YELLOW);
         snackbar.show();
-    }
-
-    private void markNotSpam() {
-        UserDisplayProvider senderDisplay = parentMessage.getSenderDisplay();
-        String senderName = senderDisplay.getName();
-        String senderEmail = senderDisplay.getEmail();
-        viewModel.addWhitelistContact(senderName, senderEmail);
     }
 
     private void showMoveDialog() {
