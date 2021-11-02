@@ -59,7 +59,6 @@ import com.ctemplar.app.fdroid.net.entity.AttachmentsEntity;
 import com.ctemplar.app.fdroid.repository.constant.MessageActions;
 import com.ctemplar.app.fdroid.repository.provider.AttachmentProvider;
 import com.ctemplar.app.fdroid.repository.provider.MessageProvider;
-import com.ctemplar.app.fdroid.repository.provider.UserDisplayProvider;
 import com.ctemplar.app.fdroid.services.download.DownloadAttachmentInfo;
 import com.ctemplar.app.fdroid.services.download.DownloadAttachmentService;
 import com.ctemplar.app.fdroid.services.download.DownloadAttachmentTask;
@@ -387,7 +386,6 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
                 return true;
             case R.id.menu_view_not_spam:
                 snackbarMove(INBOX, getString(R.string.action_reported_as_not_spam));
-                markNotSpam();
                 return true;
             case R.id.menu_view_trash:
                 snackbarDelete(TRASH, getString(R.string.action_message_removed));
@@ -447,13 +445,6 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
         });
         snackbar.setActionTextColor(Color.YELLOW);
         snackbar.show();
-    }
-
-    private void markNotSpam() {
-        UserDisplayProvider senderDisplay = parentMessage.getSenderDisplay();
-        String senderName = senderDisplay.getName();
-        String senderEmail = senderDisplay.getEmail();
-        viewModel.addWhitelistContact(senderName, senderEmail);
     }
 
     private void showMoveDialog() {
