@@ -342,7 +342,7 @@
     <string name="settings_encryption">Crittografia</string>
     <string name="settings_phishing_protection">Protezione phishing</string>
     <string name="settings_phishing_protection_description"><![CDATA[<font color="#939191">La frase Anti-Phishing permette agli utenti di collegare una parola personalizzata o una frase di tua scelta al loro account CTemplar. Una volta impostata, se non ti accedi alla tua email e la frase del filtro Anti-Phishing non è corretta o è mancante, potresti essere vittima di phishing. Devi quindi confermare immediatamente stai visitando</font> <font color="#4d92e2"><u>https://mail.ctemplar.com</u></font> <font color="#939191">Se non sei tu, quindi vuol dire che un sito dannoso potrebbe avere le credenziali di accesso per il tuo account CTemplar. Per prevenire danni al tuo account, dovresti immediatamente visitare</font> <font color="#4d92e2"><u>https://mail.ctemplar.com</u></font> <font color="#939191">e cambiare la tua password.<br><br>Nota che la frase Anti-Phishing verrà visualizzata solo quando tu ti colleghi al web.</font>]]></string>
-    <string name="settings_auto_save">Salvataggio automatico</string>
+    <string name="settings_automation">Automazione</string>
     <string name="settings_auto_save_contacts">Salva automaticamente i contatti</string>
     <string name="settings_auto_save_drafts">Salva automaticamente le bozze</string>
     <string name="settings_filters">Filtri</string>

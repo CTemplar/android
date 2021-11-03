@@ -6,7 +6,7 @@ import java.util.List;
 import timber.log.Timber;
 
 public class Cryptor {
-    public static byte[] decryptPGP(byte[] content, List<String> privateKeys, String passPhrase) {
+    public static byte[] decryptPGP(byte[] content, List<String> privateKeys, String passPhrase) throws InterruptedException {
         if (content == null) {
             throw new NullPointerException("content cannot be null");
         }
@@ -27,13 +27,15 @@ public class Cryptor {
             Timber.e(e, "Private key is deleted?");
         } catch (PGPCryptorException | PGPBadPrivateKeyException | PGPCryptorPublicKeysNotFound | PGPCryptorDataNotFound | PGPCryptorReadDataFailed e) {
             Timber.e(e, "Failed to decrypt (" + e.getClass().getSimpleName() + " exception)");
+        } catch (InterruptedException e) {
+            throw e;
         } catch (Throwable e) {
             Timber.e(e, "Unhandled exception detected");
         }
         return content;
     }
 
-    public static byte[] decryptPGP(byte[] content, String privateKey, String passPhrase) {
+    public static byte[] decryptPGP(byte[] content, String privateKey, String passPhrase) throws InterruptedException {
         return decryptPGP(content, Collections.singletonList(privateKey), passPhrase);
     }
 
@@ -41,7 +43,12 @@ public class Cryptor {
         if (content == null) {
             throw new NullPointerException("content cannot be null");
         }
-        byte[] result = decryptPGP(content.getBytes(), privateKeys, passPhrase);
+        byte[] result;
+        try {
+            result = decryptPGP(content.getBytes(), privateKeys, passPhrase);
+        } catch (InterruptedException e) {
+            return null;
+        }
         if (result == null) {
             return null;
         }

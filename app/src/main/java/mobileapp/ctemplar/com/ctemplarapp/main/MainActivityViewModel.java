@@ -701,23 +701,18 @@ public class MainActivityViewModel extends AndroidViewModel {
                         MyselfResult myselfResult = myselfResponse.getResult()[0];
                         SettingsResponse settingsResponse = myselfResult.getSettings();
 
-                        PlanType userPlanType = settingsResponse.getPlanType();
-                        String timezone = settingsResponse.getTimezone();
-                        boolean isContactsEncrypted = settingsResponse.isContactsEncrypted();
-                        boolean isDisableLoadingImages = settingsResponse.isDisableLoadingImages();
-                        boolean isReportBugsEnabled = settingsResponse.isEnableReportBugs();
-
-                        userRepository.saveTimeZone(timezone);
-                        userRepository.setContactsEncryptionEnabled(isContactsEncrypted);
-                        userRepository.setBlockExternalImagesEnabled(isDisableLoadingImages);
-                        userRepository.setReportBugsEnabled(isReportBugsEnabled);
+                        userRepository.saveTimeZone(settingsResponse.getTimezone());
+                        userRepository.setContactsEncryptionEnabled(settingsResponse.isContactsEncrypted());
+                        userRepository.setAutoReadEmailEnabled(settingsResponse.isAutoRead());
+                        userRepository.setBlockExternalImagesEnabled(settingsResponse.isDisableLoadingImages());
+                        userRepository.setReportBugsEnabled(settingsResponse.isEnableReportBugs());
 
                         ThemeUtils.setDarkModeFromServer(
                                 settingsResponse.isNightMode(),
                                 userRepository.getUserStore()
                         );
 
-                        userPlanTypeResponse.postValue(userPlanType);
+                        userPlanTypeResponse.postValue(settingsResponse.getPlanType());
                     }
 
                     @Override

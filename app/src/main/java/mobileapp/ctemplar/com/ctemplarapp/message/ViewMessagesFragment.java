@@ -1,9 +1,9 @@
 package mobileapp.ctemplar.com.ctemplarapp.message;
 
-import static android.content.Context.DOWNLOAD_SERVICE;
 import static mobileapp.ctemplar.com.ctemplarapp.message.SendMessageActivity.ATTACHMENT_LIST;
 import static mobileapp.ctemplar.com.ctemplarapp.message.ViewMessagesActivity.PARENT_ID;
 import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.ARCHIVE;
+import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.FOLDER_NAME;
 import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.INBOX;
 import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.OUTBOX;
 import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.SENT;
@@ -11,16 +11,10 @@ import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderN
 import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.TRASH;
 
 import android.app.Activity;
-import android.app.DownloadManager;
-import android.content.ActivityNotFoundException;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.text.TextUtils;
 import android.util.Pair;
 import android.view.LayoutInflater;
@@ -32,7 +26,6 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -42,7 +35,6 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProvider;
@@ -51,11 +43,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 
-import java.io.File;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 import mobileapp.ctemplar.com.ctemplarapp.ActivityInterface;
 import mobileapp.ctemplar.com.ctemplarapp.R;
@@ -68,27 +59,22 @@ import mobileapp.ctemplar.com.ctemplarapp.net.entity.AttachmentsEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.constant.MessageActions;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.AttachmentProvider;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageProvider;
-import mobileapp.ctemplar.com.ctemplarapp.repository.provider.UserDisplayProvider;
-import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
+import mobileapp.ctemplar.com.ctemplarapp.services.download.DownloadAttachmentInfo;
+import mobileapp.ctemplar.com.ctemplarapp.services.download.DownloadAttachmentService;
+import mobileapp.ctemplar.com.ctemplarapp.services.download.DownloadAttachmentTask;
 import mobileapp.ctemplar.com.ctemplarapp.utils.DateUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
-import mobileapp.ctemplar.com.ctemplarapp.utils.EncryptUtils;
-import mobileapp.ctemplar.com.ctemplarapp.utils.FileUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.HtmlUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.PermissionUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.ToastUtils;
 import timber.log.Timber;
 
 public class ViewMessagesFragment extends Fragment implements View.OnClickListener, ActivityInterface {
-    public static final String FOLDER_NAME = "folder_name";
-    public static final String ENCRYPTED_EXT = ".encrypted";
-
     private MainActivityViewModel mainModel;
     private ViewMessagesViewModel viewModel;
     private MessageProvider parentMessage;
     private MessageProvider lastMessage;
     private String currentFolder;
-    private final DownloadCompleteReceiver downloadReceiver = new DownloadCompleteReceiver();
     private final MessagesRecyclerViewAdapter messagesRecyclerViewAdapter
             = new MessagesRecyclerViewAdapter();
     private final PasswordEncryptedMessageDialogFragment decryptDialogFragment
@@ -100,54 +86,98 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
     private ImageView starImageView;
     private View loadProgress;
     private ViewGroup messageActionsLayout;
+    private Pair<MessageProvider, AttachmentProvider[]> latestDownloadAttempt;
 
     private final ActivityResultLauncher<String[]> downloadAttachmentPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), result -> {
                 if (result.containsValue(false)) {
+                    Timber.e("Not all permissions granted");
                     return;
                 }
+                if (latestDownloadAttempt == null) {
+                    Timber.e("latestDownloadAttempt == null");
+                    return;
+                }
+                ViewMessagesFragment.this.downloadAttachments(getContext(),
+                        latestDownloadAttempt.first, latestDownloadAttempt.second);
             });
 
-    private final Map<Long, Pair<AttachmentProvider, MessageProvider>> downloadMap = new HashMap<>();
-    private final OnAttachmentDownloading onAttachmentDownloading = (attachment, message) -> {
-        Context context = getContext();
-        if (context == null) {
-            Timber.e("Context is null");
-            return;
-        }
-        String documentUrl = attachment.getDocumentUrl();
-        if (documentUrl == null) {
-            Toast.makeText(context, R.string.error_attachment_url, Toast.LENGTH_SHORT).show();
-            return;
+    private final AttachmentDownloader onAttachmentDownloading = new AttachmentDownloader() {
+        @Override
+        public void downloadAttachment(MessageProvider message, AttachmentProvider attachment) {
+            Context context = getContext();
+            if (context == null) {
+                Timber.e("context == null");
+                return;
+            }
+            String documentUrl = attachment.getDocumentUrl();
+            if (documentUrl == null) {
+                Timber.e("documentUrl == null");
+                ToastUtils.showToast(context, R.string.error_attachment_url);
+                return;
+            }
+            if (!PermissionUtils.readExternalStorage(context) || !PermissionUtils.writeExternalStorage(context)) {
+                Timber.w("Storage permissions required");
+                latestDownloadAttempt = new Pair<>(message, new AttachmentProvider[]{attachment});
+                downloadAttachmentPermissionLauncher.launch(PermissionUtils.externalStoragePermissions());
+                return;
+            }
+            ViewMessagesFragment.this.downloadAttachments(context, message, attachment);
         }
 
-        File externalFilesDir = Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_DOWNLOADS);
-        String originalFileName = attachment.getName() == null
-                ? AppUtils.getFileNameFromURL(documentUrl) : attachment.getName();
-        File generatedFile = FileUtils.generateFileName(originalFileName, externalFilesDir);
-        String fileName = generatedFile == null ? originalFileName : generatedFile.getName();
-        String downloadFileName = attachment.isEncrypted() ? fileName + ENCRYPTED_EXT : fileName;
-
-        DownloadManager.Request documentRequest = new DownloadManager.Request(Uri.parse(documentUrl));
-        documentRequest.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, downloadFileName);
-        documentRequest.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-
-        if (!PermissionUtils.readExternalStorage(context) || !PermissionUtils.writeExternalStorage(context)) {
-            downloadAttachmentPermissionLauncher.launch(PermissionUtils.externalStoragePermissions());
-            return;
+        @Override
+        public void downloadAttachments(MessageProvider message, AttachmentProvider[] attachments) {
+            Context context = getContext();
+            if (context == null) {
+                Timber.e("context == null");
+                return;
+            }
+            for (AttachmentProvider attachment : attachments) {
+                String documentUrl = attachment.getDocumentUrl();
+                if (documentUrl == null) {
+                    Timber.e("documentUrl == null");
+                    ToastUtils.showToast(context, R.string.error_attachment_url);
+                    return;
+                }
+            }
+            if (!PermissionUtils.readExternalStorage(context) || !PermissionUtils.writeExternalStorage(context)) {
+                Timber.w("Storage permissions required");
+                latestDownloadAttempt = new Pair<>(message, attachments);
+                downloadAttachmentPermissionLauncher.launch(PermissionUtils.externalStoragePermissions());
+                return;
+            }
+            ViewMessagesFragment.this.downloadAttachments(context, message, attachments);
         }
-        DownloadManager downloadManager = (DownloadManager) context.getApplicationContext()
-                .getSystemService(DOWNLOAD_SERVICE);
-        if (downloadManager == null) {
-            Timber.e("downloadManager is null");
-            return;
-        }
-        long downloadId = downloadManager.enqueue(documentRequest);
-        attachment.setName(fileName);
-        downloadMap.put(downloadId, new Pair<>(attachment, message));
-        Toast.makeText(context, R.string.toast_download_started, Toast.LENGTH_SHORT).show();
     };
+
+    private void downloadAttachments(Context context, MessageProvider message, AttachmentProvider... attachments) {
+        DownloadAttachmentTask task = new DownloadAttachmentTask();
+        task.title = message.getSubject();
+        List<DownloadAttachmentInfo> attachmentsList = new ArrayList<>(attachments.length);
+        for (AttachmentProvider attachment : attachments) {
+            DownloadAttachmentInfo attachmentInfo = new DownloadAttachmentInfo(attachment.getDocumentUrl(), attachment.getName());
+            if (attachment.isEncrypted()) {
+                if (message.getEncryptionMessage() == null) {
+                    attachmentInfo.pgpEncryption = new DownloadAttachmentInfo.PgpEncryption();
+                    attachmentInfo.pgpEncryption.mailboxId = parentMessage != null
+                            ? parentMessage.getMailboxId()
+                            : viewModel.getDefaultMailbox().getId();
+                    attachmentInfo.pgpEncryption.password = viewModel.getUserPassword();
+                } else {
+                    attachmentInfo.gpgEncryption = new DownloadAttachmentInfo.GpgEncryption();
+                    attachmentInfo.gpgEncryption.password = message.getEncryptionMessage().getPassword();
+                    if (attachmentInfo.gpgEncryption.password == null) {
+                        ToastUtils.showLongToast(context, getString(R.string.firstly_decrypt_message));
+                        return;
+                    }
+                }
+            }
+            attachmentsList.add(attachmentInfo);
+        }
+        task.attachments = attachmentsList.toArray(new DownloadAttachmentInfo[0]);
+        DownloadAttachmentService.start(context, task);
+        ToastUtils.showToast(getActivity(), R.string.toast_download_started);
+    }
 
 
     public ViewMessagesFragment() {
@@ -171,7 +201,6 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
         if (activity == null) {
             return null;
         }
-
         View root = inflater.inflate(R.layout.fragment_view_messages, container, false);
 
         messagesRecyclerView = root.findViewById(R.id.activity_view_messages_messages_recycler_view);
@@ -215,8 +244,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
         viewModel.getMessagesResponse().observe(getViewLifecycleOwner(), messagesList -> {
             if (messagesList == null || messagesList.isEmpty()) {
                 Timber.e("Messages doesn't exists");
-                Toast.makeText(activity.getApplicationContext(),
-                        getString(R.string.toast_messages_doesnt_exist), Toast.LENGTH_SHORT).show();
+                ToastUtils.showToast(activity.getApplicationContext(), R.string.toast_messages_doesnt_exist);
                 activity.onBackPressed();
                 return;
             }
@@ -234,9 +262,10 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
             parentMessage = currentParentMessage;
 
             lastMessage = messagesList.get(messagesList.size() - 1);
-            if (parentMessage != null) {
-                encryptedImageView.setSelected(parentMessage.isProtected());
-                starImageView.setSelected(parentMessage.isStarred());
+            encryptedImageView.setSelected(parentMessage.isProtected());
+            starImageView.setSelected(parentMessage.isStarred());
+            if (viewModel.isAutoReadEmailEnabled()) {
+                parentMessage.setRead(true);
             }
 
             messagesRecyclerView.setAdapter(messagesRecyclerViewAdapter);
@@ -250,23 +279,30 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
         });
 
         viewModel.getStarredResponse().observe(getViewLifecycleOwner(), isStarred -> {
-            boolean starred = isStarred == null ? false : isStarred;
-            starImageView.setSelected(starred);
+            starImageView.setSelected(isStarred);
             if (parentMessage != null) {
-                parentMessage.setStarred(starred);
+                parentMessage.setStarred(isStarred);
             }
+        });
+        viewModel.getReadResponse().observe(getViewLifecycleOwner(), isRead -> {
+            if (parentMessage != null) {
+                parentMessage.setRead(isRead);
+            }
+            activity.invalidateOptionsMenu();
+            ToastUtils.showToast(getActivity(), isRead ? R.string.toast_message_marked_read
+                    : R.string.toast_message_marked_unread);
         });
         viewModel.getAddWhitelistStatus().observe(getViewLifecycleOwner(), responseStatus -> {
             if (responseStatus == ResponseStatus.RESPONSE_COMPLETE) {
-                Toast.makeText(getActivity(), getString(R.string.added_to_whitelist), Toast.LENGTH_SHORT).show();
+                ToastUtils.showToast(getActivity(), R.string.added_to_whitelist);
                 getActivity().onBackPressed();
             } else {
-                Toast.makeText(getActivity(), getString(R.string.adding_whitelist_contact_error), Toast.LENGTH_SHORT).show();
+                ToastUtils.showToast(getActivity(), R.string.adding_whitelist_contact_error);
             }
         });
         mainModel.getToFolderStatus().observe(getViewLifecycleOwner(), responseStatus -> {
             if (responseStatus == ResponseStatus.RESPONSE_ERROR) {
-                Toast.makeText(getActivity(), getString(R.string.error_connection), Toast.LENGTH_SHORT).show();
+                ToastUtils.showToast(getActivity(), R.string.error_connection);
             } else {
                 Activity viewActivity = getActivity();
                 viewActivity.onBackPressed();
@@ -274,29 +310,11 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
         });
         mainModel.getDeleteMessagesStatus().observe(getViewLifecycleOwner(), responseStatus -> {
             if (responseStatus == ResponseStatus.RESPONSE_ERROR) {
-                Toast.makeText(getActivity(), getString(R.string.error_connection), Toast.LENGTH_SHORT).show();
+                ToastUtils.showToast(getActivity(), R.string.error_connection);
             }
         });
 
         return root;
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        FragmentActivity activity = getActivity();
-        if (activity != null) {
-            activity.registerReceiver(downloadReceiver, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
-        }
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        FragmentActivity activity = getActivity();
-        if (activity != null) {
-            activity.unregisterReceiver(downloadReceiver);
-        }
     }
 
     @Override
@@ -306,11 +324,10 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
         if (currentFolder == null) {
             currentFolder = mainModel.getCurrentFolder().getValue();
             if (currentFolder == null) {
-                Timber.tag("ViewMessageFragment").wtf("Current folder is null");
+                Timber.e("currentFolder == null");
                 return;
             }
         }
-
         switch (currentFolder) {
             case INBOX:
                 menu.findItem(R.id.menu_view_inbox).setVisible(false);
@@ -319,7 +336,6 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
             case SENT:
             case OUTBOX:
                 menu.findItem(R.id.menu_view_inbox).setVisible(false);
-                menu.findItem(R.id.menu_view_unread).setVisible(false);
                 menu.findItem(R.id.menu_view_spam).setVisible(false);
                 menu.findItem(R.id.menu_view_not_spam).setVisible(false);
                 break;
@@ -335,53 +351,56 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
             case TRASH:
                 menu.findItem(R.id.menu_view_spam).setVisible(false);
                 menu.findItem(R.id.menu_view_not_spam).setVisible(false);
-                menu.findItem(R.id.menu_view_unread).setVisible(false);
                 break;
             default:
                 menu.findItem(R.id.menu_view_not_spam).setVisible(false);
                 menu.findItem(R.id.menu_view_spam).setVisible(false);
                 break;
         }
+        if (parentMessage != null && parentMessage.isRead()) {
+            menu.findItem(R.id.menu_view_unread).setVisible(true);
+            menu.findItem(R.id.menu_view_read).setVisible(false);
+        } else {
+            menu.findItem(R.id.menu_view_unread).setVisible(false);
+            menu.findItem(R.id.menu_view_read).setVisible(true);
+        }
         super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        switch (id) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        Activity activity = getActivity();
+        if (parentMessage == null || activity == null) {
+            Timber.e("parentMessage == null || activity == null");
+            return true;
+        }
+        switch (item.getItemId()) {
             case R.id.menu_view_archive:
-                snackbarMove(ARCHIVE, getResources().getString(R.string.action_archived));
+                snackbarMove(ARCHIVE, getString(R.string.action_archived));
                 return true;
             case R.id.menu_view_inbox:
-                snackbarMove(INBOX, getResources().getString(R.string.action_moved_to_inbox));
+                snackbarMove(INBOX, getString(R.string.action_moved_to_inbox));
                 return true;
             case R.id.menu_view_spam:
-                snackbarMove(SPAM, getResources().getString(R.string.action_reported_as_spam));
+                snackbarMove(SPAM, getString(R.string.action_reported_as_spam));
                 return true;
             case R.id.menu_view_not_spam:
-                snackbarMove(INBOX, getResources().getString(R.string.action_reported_as_not_spam));
-                markNotSpam();
+                snackbarMove(INBOX, getString(R.string.action_reported_as_not_spam));
                 return true;
             case R.id.menu_view_trash:
-                snackbarDelete(TRASH, getResources().getString(R.string.action_message_removed));
+                snackbarDelete(TRASH, getString(R.string.action_message_removed));
                 return true;
             case R.id.menu_view_unread:
-                if (parentMessage == null) {
-                    Timber.e("parentMessage is null");
-                    return true;
-                }
                 viewModel.markMessageAsRead(parentMessage.getId(), false);
-                Toast.makeText(getActivity(), R.string.toast_message_marked_unread, Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.menu_view_read:
+                viewModel.markMessageAsRead(parentMessage.getId(), true);
                 return true;
             case R.id.menu_view_move:
                 showMoveDialog();
                 return true;
             case android.R.id.home:
-                Activity activity = getActivity();
-                if (activity != null) {
-                    activity.onBackPressed();
-                }
+                activity.onBackPressed();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -428,17 +447,6 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
         snackbar.show();
     }
 
-    private void markNotSpam() {
-        if (parentMessage == null) {
-            Timber.e("markNotSpam: parentMessage is null");
-            return;
-        }
-        UserDisplayProvider senderDisplay = parentMessage.getSenderDisplay();
-        String senderName = senderDisplay.getName();
-        String senderEmail = senderDisplay.getEmail();
-        viewModel.addWhitelistContact(senderName, senderEmail);
-    }
-
     private void showMoveDialog() {
         if (parentMessage == null) {
             Timber.e("showMoveDialog: parentMessage is null");
@@ -458,7 +466,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
             return;
         }
         activity.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
     }
 
     private void unlockUI() {
@@ -616,90 +624,6 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
     @Override
     public boolean onBackPressed() {
         return false;
-    }
-
-
-    private class DownloadCompleteReceiver extends BroadcastReceiver {
-        public void onReceive(Context ctx, Intent intent) {
-            Toast.makeText(ctx, getString(R.string.toast_download_complete), Toast.LENGTH_SHORT).show();
-            Bundle extras = intent.getExtras();
-            if (extras == null) {
-                ToastUtils.showToast(ctx, "Download failed. Extras is null");
-                return;
-            }
-            long downloadId = extras.getLong("extra_download_id");
-            Pair<AttachmentProvider, MessageProvider> dataPair = downloadMap.remove(downloadId);
-            if (dataPair == null) {
-                ToastUtils.showToast(ctx, "Download failed. Attachment cannot be parsed");
-                return;
-            }
-            AttachmentProvider attachment = dataPair.first;
-            MessageProvider message = dataPair.second;
-            try {
-                File externalFilesDir = Environment.getExternalStoragePublicDirectory(
-                        Environment.DIRECTORY_DOWNLOADS);
-                String fileName = attachment.getName();
-
-                if (attachment.isEncrypted()) {
-                    Toast.makeText(ctx, getString(R.string.attachment_decryption), Toast.LENGTH_SHORT).show();
-
-                    File encryptedFile = new File(externalFilesDir, fileName + ENCRYPTED_EXT);
-                    File decryptedFile = new File(externalFilesDir, fileName);
-                    boolean attachmentDecrypted;
-                    if (message.getEncryptionMessage() == null) {
-                        long mailboxId = parentMessage == null
-                                ? viewModel.getDefaultMailbox().getId()
-                                : parentMessage.getMailboxId();
-                        String password = viewModel.getUserPassword();
-                        attachmentDecrypted = EncryptUtils.decryptAttachment(
-                                encryptedFile, decryptedFile, password, mailboxId
-                        );
-                    } else {
-                        String password = message.getEncryptionMessage().getPassword();
-                        if (password == null) {
-                            ToastUtils.showLongToast(ctx, getString(R.string.firstly_decrypt_message));
-                            return;
-                        }
-                        attachmentDecrypted = EncryptUtils.decryptAttachmentGPG(
-                                encryptedFile, decryptedFile, password
-                        );
-                    }
-                    encryptedFile.delete();
-
-                    Uri decryptedUri = FileProvider.getUriForFile(ctx,
-                            FileUtils.AUTHORITY, decryptedFile
-                    );
-                    if (attachmentDecrypted) {
-                        openFile(decryptedUri);
-                    }
-
-                } else {
-                    File downloadedFile = new File(externalFilesDir, fileName);
-                    Uri fileUri = FileProvider.getUriForFile(
-                            ctx, FileUtils.AUTHORITY, downloadedFile
-                    );
-                    openFile(fileUri);
-                }
-            } catch (Exception e) {
-                Timber.e(e);
-            }
-        }
-    }
-
-    private void openFile(Uri fileUri) {
-        if (getActivity() == null) {
-            return;
-        }
-        try {
-            Intent openIntent = new Intent(Intent.ACTION_VIEW);
-            String fileType = getActivity().getContentResolver().getType(fileUri);
-            openIntent.setDataAndType(fileUri, fileType);
-            openIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            openIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            getActivity().startActivity(openIntent);
-        } catch (ActivityNotFoundException e) {
-            Timber.e(e);
-        }
     }
 
 
