@@ -72,7 +72,7 @@ public class InboxFragment extends BaseFragment implements InboxMessagesAdapter.
     private InboxMessagesAdapter adapter;
     private MainActivityViewModel mainModel;
     private InboxMessagesTouchListener touchListener;
-    private FilterDialogFragment dialogFragment;
+    private SearchDialogFragment dialogFragment;
     private SearchView searchView;
     private String currentFolder;
     private Executor mainThreadExecutor;
@@ -85,8 +85,8 @@ public class InboxFragment extends BaseFragment implements InboxMessagesAdapter.
     private int currentOffset = 0;
     private boolean isLoadingNewMessages = false;
 
-    private final FilterDialogFragment.OnApplyClickListener onFilterApplyClickListener
-            = new FilterDialogFragment.OnApplyClickListener() {
+    private final SearchDialogFragment.OnApplyClickListener onFilterApplyClickListener
+            = new SearchDialogFragment.OnApplyClickListener() {
         @Override
         public void onApply(boolean isStarred, boolean isUnread, boolean withAttachment) {
             adapter.filter(isStarred, isUnread, withAttachment);
@@ -115,7 +115,7 @@ public class InboxFragment extends BaseFragment implements InboxMessagesAdapter.
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        dialogFragment = new FilterDialogFragment();
+        dialogFragment = new SearchDialogFragment();
         dialogFragment.setOnApplyClickListener(onFilterApplyClickListener);
 
         FragmentActivity activity = getActivity();
