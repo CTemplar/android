@@ -10,9 +10,9 @@
         android:layout_height="wrap_content"
         android:padding="10dp"
         android:src="@drawable/ic_manage_folders"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/item_folder_holder_name"
@@ -20,14 +20,14 @@
         android:layout_height="wrap_content"
         android:ellipsize="end"
         android:fontFamily="@font/lato_regular"
-        android:gravity="right"
+        android:gravity="end"
         android:lines="1"
         android:maxWidth="140dp"
-        android:text="Folder"
+        android:text="@string/folder"
         android:textColor="?android:textColorPrimary"
         android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@id/item_folder_holder_ico"
         app:layout_constraintLeft_toRightOf="@id/item_folder_holder_ico"
-        app:layout_constraintTop_toTopOf="@id/item_folder_holder_ico"
-        app:layout_constraintBottom_toBottomOf="@id/item_folder_holder_ico" />
+        app:layout_constraintTop_toTopOf="@id/item_folder_holder_ico" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

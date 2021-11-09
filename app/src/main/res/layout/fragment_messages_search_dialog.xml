@@ -1,0 +1,416 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimary"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/top_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/close_image_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:background="@drawable/state_pressed_ripple"
+            android:src="@drawable/ic_close"
+            app:tint="@color/secondaryTextColor" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <TextView
+            android:id="@+id/clear_all_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/state_pressed_ripple"
+            android:fontFamily="@font/lato_regular"
+            android:text="@string/txt_clear_all"
+            android:textColor="@color/secondaryTextColor"
+            android:textSize="16sp" />
+
+    </LinearLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginVertical="8dp"
+        android:layout_marginTop="@id/top_layout">
+
+        <TextView
+            android:id="@+id/keyword_title_text_view"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/lato_regular"
+            android:gravity="center_vertical"
+            android:text="@string/keyword"
+            android:textColor="@color/primaryTextColor"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@id/keyword_input_layout"
+            app:layout_constraintEnd_toEndOf="@id/start_date_title_text_view"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/keyword_input_layout" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/keyword_input_layout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            app:hintEnabled="false"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/keyword_title_text_view"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/keyword_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/text_input_field"
+                android:fontFamily="@font/lato_regular"
+                android:imeOptions="actionNext"
+                android:inputType="text"
+                android:nextFocusForward="@id/folder_spinner"
+                android:padding="10dp"
+                android:textColor="?android:textColorPrimary"
+                android:textSize="16sp" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:id="@+id/folder_title_text_view"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/lato_regular"
+            android:gravity="center_vertical"
+            android:text="@string/folder"
+            android:textColor="@color/primaryTextColor"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@id/folder_spinner"
+            app:layout_constraintEnd_toEndOf="@id/start_date_title_text_view"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/folder_spinner" />
+
+        <Spinner
+            android:id="@+id/folder_spinner"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:imeOptions="actionNext"
+            android:nextFocusForward="@id/from_edit_text"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/keyword_input_layout"
+            app:layout_constraintTop_toBottomOf="@id/keyword_input_layout"
+            tools:listitem="@layout/item_folders_holder" />
+
+        <TextView
+            android:id="@+id/from_title_text_view"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/lato_regular"
+            android:gravity="center_vertical"
+            android:text="From"
+            android:textColor="@color/primaryTextColor"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@id/from_input_layout"
+            app:layout_constraintEnd_toEndOf="@id/start_date_title_text_view"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/from_input_layout" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/from_input_layout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:hintEnabled="false"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/keyword_input_layout"
+            app:layout_constraintTop_toBottomOf="@id/folder_spinner">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/from_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/text_input_field"
+                android:fontFamily="@font/lato_regular"
+                android:imeOptions="actionNext"
+                android:inputType="text"
+                android:nextFocusForward="@id/to_edit_text"
+                android:padding="10dp"
+                android:textColor="?android:textColorPrimary"
+                android:textSize="16sp" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:id="@+id/to_title_text_view"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/lato_regular"
+            android:gravity="center_vertical"
+            android:text="To"
+            android:textColor="@color/primaryTextColor"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@id/to_input_layout"
+            app:layout_constraintEnd_toEndOf="@id/start_date_title_text_view"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/to_input_layout" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/to_input_layout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:hintEnabled="false"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/keyword_input_layout"
+            app:layout_constraintTop_toBottomOf="@id/from_input_layout">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/to_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/text_input_field"
+                android:fontFamily="@font/lato_regular"
+                android:imeOptions="actionNext"
+                android:inputType="text"
+                android:nextFocusForward="@id/size_condition_spinner"
+                android:padding="10dp"
+                android:textColor="?android:textColorPrimary"
+                android:textSize="16sp" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:id="@+id/size_title_text_view"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/lato_regular"
+            android:gravity="center_vertical"
+            android:text="@string/size"
+            android:textColor="@color/primaryTextColor"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@id/size_layout"
+            app:layout_constraintEnd_toEndOf="@id/start_date_title_text_view"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/size_layout" />
+
+        <LinearLayout
+            android:id="@+id/size_layout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/keyword_input_layout"
+            app:layout_constraintTop_toBottomOf="@id/to_input_layout">
+
+            <Spinner
+                android:id="@+id/size_condition_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:imeOptions="actionNext"
+                android:nextFocusForward="@id/size_input_layout"
+                tools:listitem="@layout/item_domain_spinner" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/size_input_layout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/size_measure_spinner"
+                    app:hintEnabled="false">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/size_edit_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/text_input_field"
+                        android:fontFamily="@font/lato_regular"
+                        android:imeOptions="actionNext"
+                        android:inputType="number"
+                        android:nextFocusForward="@id/size_measure_spinner"
+                        android:padding="10dp"
+                        android:textColor="?android:textColorPrimary"
+                        android:textSize="16sp" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <Spinner
+                    android:id="@+id/size_measure_spinner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:imeOptions="actionNext"
+                    android:nextFocusForward="@id/start_date_layout"
+                    tools:listitem="@layout/item_domain_spinner" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/start_date_title_text_view"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/lato_regular"
+            android:gravity="center_vertical"
+            android:text="@string/start_date"
+            android:textColor="@color/primaryTextColor"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@id/start_date_layout"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/start_date_layout" />
+
+        <FrameLayout
+            android:id="@+id/start_date_layout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/text_input_field"
+            android:gravity="center"
+            android:imeOptions="actionNext"
+            android:minHeight="45dp"
+            android:nextFocusForward="@id/end_date_layout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/start_date_title_text_view"
+            app:layout_constraintTop_toBottomOf="@id/size_layout">
+
+            <TextView
+                android:id="@+id/start_date_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:fontFamily="@font/lato_regular"
+                android:hint="YYYY-MM-DD"
+                android:textColor="@color/secondaryTextColor"
+                android:textSize="16sp" />
+
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/end_date_title_text_view"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/lato_regular"
+            android:gravity="center_vertical"
+            android:text="@string/end_date"
+            android:textColor="@color/primaryTextColor"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@id/end_date_layout"
+            app:layout_constraintEnd_toEndOf="@id/start_date_title_text_view"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/end_date_layout" />
+
+        <FrameLayout
+            android:id="@+id/end_date_layout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/text_input_field"
+            android:gravity="center"
+            android:imeOptions="actionNext"
+            android:minHeight="45dp"
+            android:nextFocusForward="@id/same_exactly_checkbox"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/keyword_input_layout"
+            app:layout_constraintTop_toBottomOf="@id/start_date_layout">
+
+            <TextView
+                android:id="@+id/end_date_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:fontFamily="@font/lato_regular"
+                android:hint="YYYY-MM-DD"
+                android:textColor="@color/secondaryTextColor"
+                android:textSize="16sp" />
+
+        </FrameLayout>
+
+        <LinearLayout
+            android:id="@+id/checkbox_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginTop="16dp"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toBottomOf="@id/end_date_layout">
+
+            <CheckBox
+                android:id="@+id/same_exactly_checkbox"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="@string/same_exactly"
+                android:textColor="@color/primaryTextColor" />
+
+            <CheckBox
+                android:id="@+id/has_attachment_checkbox"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginStart="16dp"
+                android:text="@string/has_attachment"
+                android:textColor="@color/primaryTextColor" />
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <LinearLayout
+        android:id="@+id/actions_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <Button
+            android:id="@+id/clear_filter_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="4dp"
+            android:layout_weight="1"
+            android:background="@drawable/dialog_cancel_button_background"
+            android:fontFamily="@font/lato_regular"
+            android:text="@string/clear_filter"
+            android:textColor="@color/colorDarkBlue2" />
+
+        <Button
+            android:id="@+id/search_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_weight="1"
+            android:background="@drawable/selector_button_blue"
+            android:fontFamily="@font/lato_regular"
+            android:text="@string/action_search"
+            android:textColor="@color/colorWhiteLight" />
+
+    </LinearLayout>
+
+</LinearLayout>

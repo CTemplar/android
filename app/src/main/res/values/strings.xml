@@ -45,6 +45,16 @@
     <string name="action_reported_as_not_spam">1 reported as not spam</string>
     <string name="action_message_removed">1 message removed</string>
 
+    <!-- ADVANCED SEARCH -->
+    <string name="keyword">Keyword</string>
+    <string name="folder">Folder</string>
+    <string name="size">Size</string>
+    <string name="start_date">Start Date</string>
+    <string name="end_date">End Date</string>
+    <string name="same_exactly">Same exactly</string>
+    <string name="has_attachment">Has attachment</string>
+    <string name="clear_filter">Clear filter</string>
+
     <!-- MENU -->
     <string name="menu_save">Save</string>
     <string name="menu_spam">Spam</string>
@@ -611,6 +621,39 @@
     <string name="monthly">Monthly</string>
     <string name="current_plan">Current plan</string>
 
+    <string-array name="auto_lock_time">
+        <item>Immediately</item>
+        <item>1 minute</item>
+        <item>5 minutes</item>
+        <item>10 minutes</item>
+        <item>1 hour</item>
+        <item>24 hours</item>
+    </string-array>
+
+    <string-array name="size_condition_entries">
+        <item>Greater than</item>
+        <item>Less than</item>
+        <item>Equal</item>
+    </string-array>
+
+    <string-array name="size_condition_values">
+        <item>GTE</item>
+        <item>LTE</item>
+        <item>EQUALS</item>
+    </string-array>
+
+    <string-array name="size_measure_entries">
+        <item>MB</item>
+        <item>KB</item>
+        <item>Bytes</item>
+    </string-array>
+
+    <string-array name="size_measure_values">
+        <item>mb</item>
+        <item>kb</item>
+        <item>bytes</item>
+    </string-array>
+
     <string-array name="filter_parameter_entries">
         <item>Subject</item>
         <item>Sender</item>
@@ -649,15 +692,6 @@
         <item>not_exactly</item>
         <item>pattern</item>
         <item>not_pattern</item>
-    </string-array>
-
-    <string-array name="auto_lock_time">
-        <item>Immediately</item>
-        <item>1 minute</item>
-        <item>5 minutes</item>
-        <item>10 minutes</item>
-        <item>1 hour</item>
-        <item>24 hours</item>
     </string-array>
 
     <string-array name="dark_mode_entries">
