@@ -27,6 +27,7 @@ public class DateUtils {
 
     private static final String MESSAGE_FULL_DATE_PATTERN = "MMM d, yyyy',' h:mm a";
     private static final String EMAIL_PATTERN = "EEE',' MMMM d, yyyy 'at' h:mm a";
+    private static final String FILTER_DATE_PATTERN = "yyyy-MM-dd";
 
     private static final String ELAPSED_TIME_FORMAT = "%2dd %02d:%02d";
     private static final String ELAPSED_TIME_SHORT_FORMAT = "%02d:%02d";
@@ -133,6 +134,10 @@ public class DateUtils {
         }
         DateFormat emailFormat = new SimpleDateFormat(EMAIL_PATTERN, Locale.getDefault());
         return emailFormat.format(date);
+    }
+
+    public static String getFilterDate(long timeInMillis) {
+        return new SimpleDateFormat(FILTER_DATE_PATTERN, Locale.getDefault()).format(timeInMillis);
     }
 
     public static String dateFormat(long timeInMillis) {

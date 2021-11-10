@@ -87,6 +87,7 @@
                 android:textColor="?android:textColorPrimary"
                 android:textSize="16sp" />
 
+            <requestFocus />
         </com.google.android.material.textfield.TextInputLayout>
 
         <TextView
@@ -233,9 +234,9 @@
                     android:id="@+id/size_input_layout"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    app:layout_constraintStart_toStartOf="parent"
+                    app:hintEnabled="false"
                     app:layout_constraintEnd_toStartOf="@id/size_measure_spinner"
-                    app:hintEnabled="false">
+                    app:layout_constraintStart_toStartOf="parent">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/size_edit_text"
@@ -256,10 +257,10 @@
                     android:id="@+id/size_measure_spinner"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
                     android:imeOptions="actionNext"
                     android:nextFocusForward="@id/start_date_layout"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
                     tools:listitem="@layout/item_domain_spinner" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
@@ -286,7 +287,6 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:background="@drawable/text_input_field"
-            android:gravity="center"
             android:imeOptions="actionNext"
             android:minHeight="45dp"
             android:nextFocusForward="@id/end_date_layout"
@@ -299,6 +299,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:gravity="center"
                 android:fontFamily="@font/lato_regular"
                 android:hint="YYYY-MM-DD"
                 android:textColor="@color/secondaryTextColor"
@@ -326,7 +327,6 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:background="@drawable/text_input_field"
-            android:gravity="center"
             android:imeOptions="actionNext"
             android:minHeight="45dp"
             android:nextFocusForward="@id/same_exactly_checkbox"
@@ -339,6 +339,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:gravity="center"
                 android:fontFamily="@font/lato_regular"
                 android:hint="YYYY-MM-DD"
                 android:textColor="@color/secondaryTextColor"

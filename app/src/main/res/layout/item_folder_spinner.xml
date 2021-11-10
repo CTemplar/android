@@ -4,9 +4,10 @@
     style="?android:attr/spinnerDropDownItemStyle"
     android:layout_width="match_parent"
     android:layout_height="40dp"
+    android:drawablePadding="5dp"
     android:ellipsize="marquee"
     android:singleLine="true"
     android:text="@string/folder"
-    android:textColor="?android:textColorSecondary" />
-    <!--    android:drawablePadding="5dp"-->
-    <!--    app:drawableStartCompat="@drawable/ic_manage_folders"-->
+    android:textColor="@color/secondaryTextColor"
+    app:drawableStartCompat="@drawable/ic_manage_folders"
+    app:drawableTint="@color/secondaryTextColor" />
