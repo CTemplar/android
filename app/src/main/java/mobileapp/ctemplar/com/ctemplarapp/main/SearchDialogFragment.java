@@ -19,6 +19,7 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,6 +37,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.databinding.FragmentMessagesSearchDialogBinding;
@@ -43,6 +45,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.folders.FoldersResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.folders.FoldersResult;
 import mobileapp.ctemplar.com.ctemplarapp.settings.filters.FiltersViewModel;
 import mobileapp.ctemplar.com.ctemplarapp.utils.DateUtils;
+import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 import timber.log.Timber;
 
 public class SearchDialogFragment extends DialogFragment {
@@ -176,6 +179,47 @@ public class SearchDialogFragment extends DialogFragment {
 //                dismiss();
 //            }
 //        });
+        String keyword = EditTextUtils.getText(binding.keywordEditText).trim();
+        String fromEmail = EditTextUtils.getText(binding.fromEditText).trim();
+        String toEmail = EditTextUtils.getText(binding.toEditText).trim();
+        if (EditTextUtils.isEmailListValid(fromEmail)) {
+            binding.fromInputLayout.setError(null);
+        } else {
+            binding.fromInputLayout.setError(getString(R.string.txt_enter_valid_email));
+        }
+        if (EditTextUtils.isEmailListValid(toEmail)) {
+            binding.toInputLayout.setError(null);
+        } else {
+            binding.toInputLayout.setError(getString(R.string.txt_enter_valid_email));
+        }
+        if (EditTextUtils.isNotEmpty(toEmail)) {
+            List<String> toEmailList = new ArrayList<>(EditTextUtils.getListFromString(toEmail));
+        }
+        if (EditTextUtils.isNotEmpty(fromEmail)) {
+            List<String> fromEmailList = new ArrayList<>(EditTextUtils.getListFromString(fromEmail));
+        }
+        if (EditTextUtils.isNotEmpty(EditTextUtils.getText(binding.startDateTextView))) {
+            String startDateString = DateUtils.getFilterDate(startDateCalendar.getTimeInMillis());
+        }
+        if (EditTextUtils.isNotEmpty(EditTextUtils.getText(binding.endDateTextView))) {
+            String endDateString = DateUtils.getFilterDate(endDateCalendar.getTimeInMillis());
+        }
+        if (EditTextUtils.isNotEmpty(EditTextUtils.getText(binding.sizeEditText))) {
+            int sizeValue = 0;
+            try {
+                sizeValue = Integer.parseInt(EditTextUtils.getText(binding.sizeEditText));
+            } catch (NumberFormatException e) {
+                Timber.e(e);
+            }
+            int sizeMeasurePosition = binding.sizeMeasureSpinner.getSelectedItemPosition();
+            int sizeMeasureMultiplier = 1;
+            try {
+                sizeMeasureMultiplier = Integer.parseInt(sizeMeasureValues[sizeMeasurePosition]);
+            } catch (NumberFormatException e) {
+                Timber.e(e);
+            }
+            int sizeFormattedValue = sizeValue * sizeMeasureMultiplier;
+        }
     }
 
     private void handleCustomFolders(FoldersResponse foldersResponse) {

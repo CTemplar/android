@@ -31,7 +31,7 @@ import mobileapp.ctemplar.com.ctemplarapp.main.RecycleDeleteSwiper;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.folders.FoldersResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.folders.FoldersResult;
-import mobileapp.ctemplar.com.ctemplarapp.utils.AccountTypeManager;
+import mobileapp.ctemplar.com.ctemplarapp.repository.AccountTypeManager;
 
 public class ManageFoldersActivity extends BaseActivity {
     private ManageFoldersViewModel manageFoldersModel;

@@ -649,9 +649,9 @@
     </string-array>
 
     <string-array name="size_measure_values">
-        <item>mb</item>
-        <item>kb</item>
-        <item>bytes</item>
+        <item>1048576</item>
+        <item>1024</item>
+        <item>1</item>
     </string-array>
 
     <string-array name="filter_parameter_entries">

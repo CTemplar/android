@@ -1,4 +1,4 @@
-package mobileapp.ctemplar.com.ctemplarapp.utils;
+package mobileapp.ctemplar.com.ctemplarapp.repository;
 
 import android.content.Context;
 import android.widget.Toast;
