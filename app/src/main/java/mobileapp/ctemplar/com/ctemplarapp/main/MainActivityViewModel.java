@@ -47,6 +47,7 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.MessagesRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.cache.MessageCacheProvider;
 import mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames;
+import mobileapp.ctemplar.com.ctemplarapp.repository.dto.SearchMessagesDTO;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MessageEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageProvider;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EncodeUtils;
@@ -450,11 +451,12 @@ public class MainActivityViewModel extends AndroidViewModel {
                 });
     }
 
-    public void searchMessages(String query, int limit, int offset) {
-        if (TextUtils.isEmpty(query)) {
-            return;
-        }
-        userRepository.searchMessages(query, limit, offset)
+    public void searchMessages(String searchText, int limit, int offset) {
+        searchMessages(new SearchMessagesDTO(searchText), limit, offset);
+    }
+
+    public void searchMessages(SearchMessagesDTO dto, int limit, int offset) {
+        userRepository.searchMessages(dto, limit, offset)
                 .subscribe(new Observer<MessagesResponse>() {
                     @Override
                     public void onSubscribe(@NotNull Disposable d) {

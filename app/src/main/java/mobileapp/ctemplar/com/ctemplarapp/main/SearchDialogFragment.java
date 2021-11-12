@@ -37,12 +37,12 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.databinding.FragmentMessagesSearchDialogBinding;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.folders.FoldersResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.folders.FoldersResult;
+import mobileapp.ctemplar.com.ctemplarapp.repository.dto.SearchMessagesDTO;
 import mobileapp.ctemplar.com.ctemplarapp.settings.filters.FiltersViewModel;
 import mobileapp.ctemplar.com.ctemplarapp.utils.DateUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
@@ -52,9 +52,10 @@ public class SearchDialogFragment extends DialogFragment {
     private FragmentMessagesSearchDialogBinding binding;
     private FiltersViewModel filtersModel;
 
-    private OnApplyClickListener onApplyClickListener;
+    private SearchClickListener searchClickListener;
 
-    private String searchFolder;
+    private SearchMessagesDTO searchMessages;
+
     private Calendar startDateCalendar;
     private Calendar endDateCalendar;
 
@@ -63,29 +64,23 @@ public class SearchDialogFragment extends DialogFragment {
     private String[] sizeMeasureEntries;
     private String[] sizeMeasureValues;
 
-    interface OnApplyClickListener {
-        void onApply(boolean isStarred, boolean isUnread, boolean withAttachment);
+    interface SearchClickListener {
+        void onSearch(SearchMessagesDTO searchMessages);
     }
 
-    public void setOnApplyClickListener(OnApplyClickListener onApplyClickListener) {
-        this.onApplyClickListener = onApplyClickListener;
+    public void setSearchClickListener(SearchClickListener searchClickListener) {
+        this.searchClickListener = searchClickListener;
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        Dialog dialog = getDialog();
-        if (dialog == null) {
-            Timber.e("dialog == null");
-            return;
-        }
-        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+    public void setSearchText(String searchText) {
+        binding.keywordEditText.setText(searchText);
     }
 
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         filtersModel = new ViewModelProvider(this).get(FiltersViewModel.class);
+        searchMessages = new SearchMessagesDTO();
     }
 
     @Nullable
@@ -113,8 +108,7 @@ public class SearchDialogFragment extends DialogFragment {
             DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(), 0,
                     (view1, year, month, dayOfMonth) -> {
                         startDateCalendar.set(year, month, dayOfMonth);
-                        binding.startDateTextView.setText(DateUtils.getFilterDate(
-                                startDateCalendar.getTimeInMillis()));
+                        setStartDateView(startDateCalendar);
                     }, startDateCalendar.get(Calendar.YEAR), startDateCalendar.get(Calendar.MONTH),
                     startDateCalendar.get(Calendar.DAY_OF_MONTH));
             datePickerDialog.show();
@@ -123,8 +117,7 @@ public class SearchDialogFragment extends DialogFragment {
             DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(), 0,
                     (view1, year, month, dayOfMonth) -> {
                         endDateCalendar.set(year, month, dayOfMonth);
-                        binding.endDateTextView.setText(DateUtils.getFilterDate(
-                                endDateCalendar.getTimeInMillis()));
+                        setEndDateView(endDateCalendar);
                     }, endDateCalendar.get(Calendar.YEAR), endDateCalendar.get(Calendar.MONTH),
                     endDateCalendar.get(Calendar.DAY_OF_MONTH));
             datePickerDialog.show();
@@ -152,57 +145,65 @@ public class SearchDialogFragment extends DialogFragment {
     }
 
     private void clearAll() {
-
+        binding.keywordEditText.setText("");
+        binding.fromEditText.setText("");
+        binding.toEditText.setText("");
+        binding.sizeEditText.setText("");
+        binding.sameExactlyCheckbox.setChecked(false);
+        binding.hasAttachmentCheckbox.setChecked(false);
+        binding.sizeConditionSpinner.setSelection(0);
+        binding.sizeMeasureSpinner.setSelection(0);
+        binding.folderSpinner.setSelection(0);
     }
 
     private void clearFilter() {
-//        final TextView clearAllSelected = view.findViewById(R.id.fragment_messages_filter_dialog_clear_all);
-//        clearAllSelected.setOnClickListener(v -> {
-//            if (onApplyClickListener != null) {
-//                checkBoxIsStarred.setChecked(false);
-//                checkBoxIsUnread.setChecked(false);
-//                checkBoxWithAttachment.setChecked(false);
-//                onApplyClickListener.onApply(false, false, false);
-//                dismiss();
-//            }
-//        });
+        if (searchClickListener == null) {
+            Timber.e("searchClickListener == null");
+            return;
+        }
+        clearAll();
+        searchClickListener.onSearch(null);
+        dismiss();
     }
 
     private void search() {
-//        Button buttonApply = view.findViewById(R.id.fragment_messages_filter_dialog_action_apply);
-//        buttonApply.setOnClickListener(v -> {
-//            if (onApplyClickListener != null) {
-//                boolean isStarred = checkBoxIsStarred.isChecked();
-//                boolean isUnread = checkBoxIsUnread.isChecked();
-//                boolean withAttachment = checkBoxWithAttachment.isChecked();
-//                onApplyClickListener.onApply(isStarred, isUnread, withAttachment);
-//                dismiss();
-//            }
-//        });
-        String keyword = EditTextUtils.getText(binding.keywordEditText).trim();
+        if (searchClickListener == null) {
+            Timber.e("searchClickListener == null");
+            return;
+        }
         String fromEmail = EditTextUtils.getText(binding.fromEditText).trim();
         String toEmail = EditTextUtils.getText(binding.toEditText).trim();
-        if (EditTextUtils.isEmailListValid(fromEmail)) {
+        if (EditTextUtils.isEmailListValid(fromEmail) || TextUtils.isEmpty(fromEmail)) {
             binding.fromInputLayout.setError(null);
         } else {
             binding.fromInputLayout.setError(getString(R.string.txt_enter_valid_email));
+            return;
         }
-        if (EditTextUtils.isEmailListValid(toEmail)) {
+        if (EditTextUtils.isEmailListValid(toEmail) || TextUtils.isEmpty(toEmail)) {
             binding.toInputLayout.setError(null);
         } else {
             binding.toInputLayout.setError(getString(R.string.txt_enter_valid_email));
+            return;
+        }
+        searchMessages.setQuery(EditTextUtils.getText(binding.keywordEditText).trim());
+        searchMessages.setExact(binding.sameExactlyCheckbox.isChecked());
+        searchMessages.setFolder(binding.folderSpinner.getSelectedItem().toString());
+        searchMessages.setHaveAttachment(binding.hasAttachmentCheckbox.isChecked());
+        if (EditTextUtils.isNotEmpty(fromEmail)) {
+            List<String> fromEmailList = new ArrayList<>(EditTextUtils.getListFromString(fromEmail));
+            searchMessages.setReceiver(EditTextUtils.getStringFromList(fromEmailList));
         }
         if (EditTextUtils.isNotEmpty(toEmail)) {
             List<String> toEmailList = new ArrayList<>(EditTextUtils.getListFromString(toEmail));
-        }
-        if (EditTextUtils.isNotEmpty(fromEmail)) {
-            List<String> fromEmailList = new ArrayList<>(EditTextUtils.getListFromString(fromEmail));
+            searchMessages.setSender(EditTextUtils.getStringFromList(toEmailList));
         }
         if (EditTextUtils.isNotEmpty(EditTextUtils.getText(binding.startDateTextView))) {
             String startDateString = DateUtils.getFilterDate(startDateCalendar.getTimeInMillis());
+            searchMessages.setStartDate(startDateString);
         }
         if (EditTextUtils.isNotEmpty(EditTextUtils.getText(binding.endDateTextView))) {
             String endDateString = DateUtils.getFilterDate(endDateCalendar.getTimeInMillis());
+            searchMessages.setEndDate(endDateString);
         }
         if (EditTextUtils.isNotEmpty(EditTextUtils.getText(binding.sizeEditText))) {
             int sizeValue = 0;
@@ -219,7 +220,20 @@ public class SearchDialogFragment extends DialogFragment {
                 Timber.e(e);
             }
             int sizeFormattedValue = sizeValue * sizeMeasureMultiplier;
+            searchMessages.setSize(sizeFormattedValue);
         }
+        int sizeConditionPosition = binding.sizeConditionSpinner.getSelectedItemPosition();
+        searchMessages.setSizeOperator(sizeConditionValues[sizeConditionPosition]);
+        searchClickListener.onSearch(searchMessages);
+        dismiss();
+    }
+
+    private void setStartDateView(Calendar calendar) {
+        binding.startDateTextView.setText(DateUtils.getFilterDate(calendar.getTimeInMillis()));
+    }
+
+    private void setEndDateView(Calendar calendar) {
+        binding.endDateTextView.setText(DateUtils.getFilterDate(calendar.getTimeInMillis()));
     }
 
     private void handleCustomFolders(FoldersResponse foldersResponse) {
@@ -258,7 +272,7 @@ public class SearchDialogFragment extends DialogFragment {
             }
         };
         binding.folderSpinner.setAdapter(foldersAdapter);
-        binding.folderSpinner.setSelection(folderList.indexOf(searchFolder));
+//        binding.folderSpinner.setSelection(folderList.indexOf(searchMessages.getFolder()));
     }
 
     private View getTextViewDrawableColor(View view, int color) {

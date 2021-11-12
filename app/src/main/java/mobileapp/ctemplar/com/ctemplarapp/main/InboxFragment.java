@@ -21,7 +21,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -59,8 +58,10 @@ import mobileapp.ctemplar.com.ctemplarapp.message.ViewMessagesFragment;
 import mobileapp.ctemplar.com.ctemplarapp.message.dialog.MoveDialogFragment;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.ResponseMessagesData;
+import mobileapp.ctemplar.com.ctemplarapp.repository.dto.SearchMessagesDTO;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageProvider;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
+import mobileapp.ctemplar.com.ctemplarapp.utils.ToastUtils;
 import timber.log.Timber;
 
 public class InboxFragment extends BaseFragment implements InboxMessagesAdapter.OnReachedBottomCallback {
@@ -72,31 +73,22 @@ public class InboxFragment extends BaseFragment implements InboxMessagesAdapter.
     private InboxMessagesAdapter adapter;
     private MainActivityViewModel mainModel;
     private InboxMessagesTouchListener touchListener;
-    private SearchDialogFragment dialogFragment;
+    private SearchDialogFragment searchDialogFragment;
     private SearchView searchView;
     private String currentFolder;
     private Executor mainThreadExecutor;
 
-    private boolean filterIsStarred;
-    private boolean filterIsUnread;
-    private boolean filterWithAttachment;
-    private String filterText;
+    private SearchMessagesDTO searchMessages;
+    private String searchText;
 
     private int currentOffset = 0;
     private boolean isLoadingNewMessages = false;
 
-    private final SearchDialogFragment.OnApplyClickListener onFilterApplyClickListener
-            = new SearchDialogFragment.OnApplyClickListener() {
-        @Override
-        public void onApply(boolean isStarred, boolean isUnread, boolean withAttachment) {
-            adapter.filter(isStarred, isUnread, withAttachment);
-            filterIsStarred = isStarred;
-            filterIsUnread = isUnread;
-            filterWithAttachment = withAttachment;
-            invalidateOptionsMenu();
-            showResultIfNotEmpty(false);
-            displayFilteredCategories();
-        }
+    private final SearchDialogFragment.SearchClickListener searchClickListener = searchMessages -> {
+        InboxFragment.this.searchMessages = searchMessages;
+        searchText = searchMessages.getQuery();
+        searchView.setQuery(searchText, false);
+        requestNewMessages();
     };
 
     @Override
@@ -115,8 +107,8 @@ public class InboxFragment extends BaseFragment implements InboxMessagesAdapter.
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        dialogFragment = new SearchDialogFragment();
-        dialogFragment.setOnApplyClickListener(onFilterApplyClickListener);
+        searchDialogFragment = new SearchDialogFragment();
+        searchDialogFragment.setSearchClickListener(searchClickListener);
 
         FragmentActivity activity = getActivity();
         if (activity == null) {
@@ -223,10 +215,10 @@ public class InboxFragment extends BaseFragment implements InboxMessagesAdapter.
         if (filterIcon == null) {
             return;
         }
-        if (filterIsStarred || filterIsUnread || filterWithAttachment) {
-            filterIcon.setIcon(R.drawable.ic_action_filter_on);
-        } else {
+        if (searchMessages == null) {
             filterIcon.setIcon(R.drawable.ic_action_filter_off);
+        } else {
+            filterIcon.setIcon(R.drawable.ic_action_filter_on);
         }
 
         MenuItem emptyFolder = menu.findItem(R.id.action_empty_folder);
@@ -249,8 +241,13 @@ public class InboxFragment extends BaseFragment implements InboxMessagesAdapter.
 
                 @Override
                 public boolean onQueryTextChange(String text) {
+                    if (searchMessages == null) {
+                        searchText = text;
+                    } else {
+                        searchMessages.setQuery(text);
+                        searchDialogFragment.setSearchText(text);
+                    }
                     adapter.filter(text);
-                    filterText = text;
                     if (TextUtils.isEmpty(text)) {
                         requestNewMessages();
                     }
@@ -271,8 +268,8 @@ public class InboxFragment extends BaseFragment implements InboxMessagesAdapter.
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_filter:
-                if (!dialogFragment.isAdded()) {
-                    dialogFragment.show(getParentFragmentManager(), null);
+                if (!searchDialogFragment.isAdded()) {
+                    searchDialogFragment.show(getParentFragmentManager(), null);
                 }
                 return true;
             case R.id.action_search:
@@ -321,14 +318,11 @@ public class InboxFragment extends BaseFragment implements InboxMessagesAdapter.
             Timber.e("RequestNextMessages: current folder is null");
             return;
         }
-//        if (filterIsStarred || filterIsUnread || filterWithAttachment) {
-//            return;
-//        }
 
-        currentFolder = mainModel.getCurrentFolder().getValue();
-        boolean isSearch = EditTextUtils.isNotEmpty(filterText);
-        if (isSearch) {
-            mainModel.searchMessages(filterText, REQUEST_MESSAGES_COUNT, currentOffset);
+        if (searchMessages != null) {
+            mainModel.searchMessages(searchMessages, REQUEST_MESSAGES_COUNT, currentOffset);
+        } else if (EditTextUtils.isNotEmpty(searchText)) {
+            mainModel.searchMessages(searchText, REQUEST_MESSAGES_COUNT, currentOffset);
         } else {
             Date lastMessageUpdateTime;
             MessageProvider messageProvider = adapter.getLast();
@@ -355,7 +349,7 @@ public class InboxFragment extends BaseFragment implements InboxMessagesAdapter.
 
     private void updateMessagesResponse(ResponseStatus responseStatus) {
         if (responseStatus == ResponseStatus.RESPONSE_ERROR) {
-            Toast.makeText(getActivity(), getString(R.string.error_connection), Toast.LENGTH_LONG).show();
+            ToastUtils.showToast(getActivity(), R.string.error_connection);
         }
         requestNewMessages();
     }
@@ -559,7 +553,9 @@ public class InboxFragment extends BaseFragment implements InboxMessagesAdapter.
         }
         decryptSubjects(messages);
         adapter.addMessages(messages);
-        applyFiltersToMessages();
+        adapter.clearFilter();
+        isLoadingNewMessages = false;
+        invalidateOptionsMenu();
         showResultIfNotEmpty(false);
     }
 
@@ -571,7 +567,9 @@ public class InboxFragment extends BaseFragment implements InboxMessagesAdapter.
         }
         decryptSubjects(messages);
         adapter.addMessages(messages);
-        applyFiltersToMessages();
+        adapter.clearFilter();
+        isLoadingNewMessages = false;
+        invalidateOptionsMenu();
         showResultIfNotEmpty(true);
     }
 
@@ -582,17 +580,6 @@ public class InboxFragment extends BaseFragment implements InboxMessagesAdapter.
 
     private void decryptSubject(MessageProvider message) {
         decryptSubjects(Collections.singletonList(message));
-    }
-
-    private void applyFiltersToMessages() {
-        if (filterIsStarred || filterIsUnread || filterWithAttachment) {
-            adapter.filter(filterIsStarred, filterIsUnread, filterWithAttachment);
-        }
-        if (EditTextUtils.isNotEmpty(filterText)) {
-            adapter.filter(filterText);
-        }
-        isLoadingNewMessages = false;
-        invalidateOptionsMenu();
     }
 
     private boolean adapterIsNotEmpty() {
@@ -625,11 +612,11 @@ public class InboxFragment extends BaseFragment implements InboxMessagesAdapter.
             showMessagesList();
             return;
         }
-        if (filterIsStarred || filterIsUnread || filterWithAttachment) {
+        if (searchMessages != null) {
             showFilteredMessagesListEmptyIcon();
             return;
         }
-        if (EditTextUtils.isNotEmpty(filterText) || isServerSearchResult) {
+        if (EditTextUtils.isNotEmpty(searchText) || isServerSearchResult) {
             showSearchMessagesListEmptyIcon();
             return;
         }
@@ -638,15 +625,6 @@ public class InboxFragment extends BaseFragment implements InboxMessagesAdapter.
 
     private void displayFilteredCategories() {
         List<String> filteredBy = new ArrayList<>();
-        if (filterIsStarred) {
-            filteredBy.add(getString(R.string.txt_starred));
-        }
-        if (filterIsUnread) {
-            filteredBy.add(getString(R.string.txt_unread));
-        }
-        if (filterWithAttachment) {
-            filteredBy.add(getString(R.string.txt_with_attachments));
-        }
         if (filteredBy.size() > 0) {
             binding.filteredCategoriesTextView.setText(TextUtils.join(", ", filteredBy));
             binding.filteredLayout.setVisibility(View.VISIBLE);

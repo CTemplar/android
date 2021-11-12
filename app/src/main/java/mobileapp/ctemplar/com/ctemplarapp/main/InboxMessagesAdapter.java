@@ -266,15 +266,7 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesAdap
         return messageIds;
     }
 
-    private boolean isStarred = false, isUnread = false, withAttachment = false;
     private String filterText = "";
-
-    void filter(boolean isStarred, boolean isUnread, boolean withAttachment) {
-        this.isStarred = isStarred;
-        this.isUnread = isUnread;
-        this.withAttachment = withAttachment;
-        filter();
-    }
 
     void filter(String filter) {
         if (TextUtils.isEmpty(filter)) {
@@ -282,6 +274,11 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesAdap
         } else {
             filterText = filter.toLowerCase();
         }
+        filter();
+    }
+
+    void clearFilter() {
+        filterText = "";
         filter();
     }
 
@@ -296,20 +293,7 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesAdap
     }
 
     private boolean matchFiltering(MessageProvider messageProvider) {
-        boolean messageIsStarred = messageProvider.isStarred();
-        boolean messageUnread = !messageProvider.isRead();
-
-        if (!isValidForFilter(messageProvider)) {
-            return false;
-        }
-
-        if ((isStarred && messageIsStarred) ||
-                (isUnread && messageUnread) ||
-                (withAttachment && messageProvider.isHasAttachments())) {
-            return true;
-        } else {
-            return !isStarred && !isUnread && !withAttachment;
-        }
+        return isValidForFilter(messageProvider);
     }
 
     private boolean isValidForFilter(MessageProvider messageProvider) {

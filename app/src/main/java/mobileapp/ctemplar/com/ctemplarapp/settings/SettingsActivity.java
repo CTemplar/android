@@ -30,6 +30,11 @@ import androidx.preference.PreferenceManager;
 import androidx.preference.PreferenceScreen;
 import androidx.preference.SwitchPreference;
 
+import org.jetbrains.annotations.NotNull;
+
+import info.guardianproject.netcipher.proxy.OrbotHelper;
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
 import mobileapp.ctemplar.com.ctemplarapp.BaseActivity;
 import mobileapp.ctemplar.com.ctemplarapp.BuildConfig;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
@@ -47,19 +52,13 @@ import mobileapp.ctemplar.com.ctemplarapp.settings.filters.FiltersActivity;
 import mobileapp.ctemplar.com.ctemplarapp.settings.keys.KeysActivity;
 import mobileapp.ctemplar.com.ctemplarapp.settings.mailboxes.MailboxesActivity;
 import mobileapp.ctemplar.com.ctemplarapp.settings.password.ChangePasswordActivity;
-import mobileapp.ctemplar.com.ctemplarapp.utils.DateUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EncodeUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.HtmlUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.ThemeUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.ToastUtils;
+import mobileapp.ctemplar.com.ctemplarapp.utils.UnitUtils;
 import mobileapp.ctemplar.com.ctemplarapp.wbl.WhiteBlackListActivity;
-
-import org.jetbrains.annotations.NotNull;
-
-import info.guardianproject.netcipher.proxy.OrbotHelper;
-import io.reactivex.Observer;
-import io.reactivex.disposables.Disposable;
 import timber.log.Timber;
 
 public class SettingsActivity extends BaseActivity {
@@ -673,8 +672,8 @@ public class SettingsActivity extends BaseActivity {
         isPrimeUser = myselfResult.isPrime();
         setSettingId(settingId);
 
-        String usedStorage = DateUtils.memoryDisplay(settingsResponse.getUsedStorage());
-        String allocatedStorage = DateUtils.memoryDisplay(settingsResponse.getAllocatedStorage());
+        String usedStorage = UnitUtils.memoryDisplay(settingsResponse.getUsedStorage());
+        String allocatedStorage = UnitUtils.memoryDisplay(settingsResponse.getAllocatedStorage());
         String recoveryEmail = settingsResponse.getRecoveryEmail();
 
         if (storageLimitPreference != null) {
