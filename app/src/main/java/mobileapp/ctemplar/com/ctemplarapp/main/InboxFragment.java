@@ -79,15 +79,14 @@ public class InboxFragment extends BaseFragment implements InboxMessagesAdapter.
     private Executor mainThreadExecutor;
 
     private SearchMessagesDTO searchMessages;
-    private String searchText;
 
     private int currentOffset = 0;
     private boolean isLoadingNewMessages = false;
 
     private final SearchDialogFragment.SearchClickListener searchClickListener = searchMessages -> {
         InboxFragment.this.searchMessages = searchMessages;
-        searchText = searchMessages.getQuery();
-        searchView.setQuery(searchText, false);
+        searchView.setQuery(searchMessages == null ? "" : searchMessages.getQuery(), false);
+        invalidateOptionsMenu();
         requestNewMessages();
     };
 
@@ -213,6 +212,7 @@ public class InboxFragment extends BaseFragment implements InboxMessagesAdapter.
     public void onPrepareOptionsMenu(@NonNull Menu menu) {
         MenuItem filterIcon = menu.findItem(R.id.action_filter);
         if (filterIcon == null) {
+            Timber.e("filterIcon is null");
             return;
         }
         if (searchMessages == null) {
@@ -241,10 +241,10 @@ public class InboxFragment extends BaseFragment implements InboxMessagesAdapter.
 
                 @Override
                 public boolean onQueryTextChange(String text) {
-                    if (searchMessages == null) {
-                        searchText = text;
-                    } else {
+                    if (searchMessages != null) {
                         searchMessages.setQuery(text);
+                    }
+                    if (searchDialogFragment != null) {
                         searchDialogFragment.setSearchText(text);
                     }
                     adapter.filter(text);
@@ -269,6 +269,7 @@ public class InboxFragment extends BaseFragment implements InboxMessagesAdapter.
         switch (item.getItemId()) {
             case R.id.action_filter:
                 if (!searchDialogFragment.isAdded()) {
+                    searchDialogFragment.setSearchText(getSearchViewText());
                     searchDialogFragment.show(getParentFragmentManager(), null);
                 }
                 return true;
@@ -321,8 +322,8 @@ public class InboxFragment extends BaseFragment implements InboxMessagesAdapter.
 
         if (searchMessages != null) {
             mainModel.searchMessages(searchMessages, REQUEST_MESSAGES_COUNT, currentOffset);
-        } else if (EditTextUtils.isNotEmpty(searchText)) {
-            mainModel.searchMessages(searchText, REQUEST_MESSAGES_COUNT, currentOffset);
+        } else if (EditTextUtils.isNotEmpty(getSearchViewText())) {
+            mainModel.searchMessages(getSearchViewText(), REQUEST_MESSAGES_COUNT, currentOffset);
         } else {
             Date lastMessageUpdateTime;
             MessageProvider messageProvider = adapter.getLast();
@@ -616,11 +617,18 @@ public class InboxFragment extends BaseFragment implements InboxMessagesAdapter.
             showFilteredMessagesListEmptyIcon();
             return;
         }
-        if (EditTextUtils.isNotEmpty(searchText) || isServerSearchResult) {
+        if (EditTextUtils.isNotEmpty(getSearchViewText()) || isServerSearchResult) {
             showSearchMessagesListEmptyIcon();
             return;
         }
         showMessagesListEmptyIcon();
+    }
+
+    private String getSearchViewText() {
+        if (searchView == null) {
+            return "";
+        }
+        return searchView.getQuery().toString().trim();
     }
 
     private void displayFilteredCategories() {

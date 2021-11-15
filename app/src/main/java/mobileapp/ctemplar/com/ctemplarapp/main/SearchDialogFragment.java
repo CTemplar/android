@@ -23,6 +23,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
@@ -58,6 +59,8 @@ public class SearchDialogFragment extends DialogFragment {
 
     private Calendar startDateCalendar;
     private Calendar endDateCalendar;
+    private String searchText;
+    private int selectedFolderPosition;
 
     private String[] sizeConditionEntries;
     private String[] sizeConditionValues;
@@ -73,7 +76,7 @@ public class SearchDialogFragment extends DialogFragment {
     }
 
     public void setSearchText(String searchText) {
-        binding.keywordEditText.setText(searchText);
+        this.searchText = searchText;
     }
 
     @Override
@@ -95,16 +98,29 @@ public class SearchDialogFragment extends DialogFragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        binding.keywordEditText.setText(searchText);
+        binding.keywordEditText.setSelection(searchText.length());
+    }
+
+    @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         binding.closeImageView.setOnClickListener(v -> dismiss());
         binding.clearAllTextView.setOnClickListener(v -> clearAll());
         binding.clearFilterButton.setOnClickListener(v -> clearFilter());
         binding.searchButton.setOnClickListener(v -> search());
-
-        startDateCalendar = Calendar.getInstance();
-        endDateCalendar = Calendar.getInstance();
+        if (startDateCalendar != null) {
+            setStartDateView(startDateCalendar);
+        }
+        if (endDateCalendar != null) {
+            setEndDateView(endDateCalendar);
+        }
         binding.startDateLayout.setOnClickListener(v -> {
+            if (startDateCalendar == null) {
+                startDateCalendar = Calendar.getInstance();
+            }
             DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(), 0,
                     (view1, year, month, dayOfMonth) -> {
                         startDateCalendar.set(year, month, dayOfMonth);
@@ -114,6 +130,9 @@ public class SearchDialogFragment extends DialogFragment {
             datePickerDialog.show();
         });
         binding.endDateLayout.setOnClickListener(v -> {
+            if (endDateCalendar == null) {
+                endDateCalendar = Calendar.getInstance();
+            }
             DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(), 0,
                     (view1, year, month, dayOfMonth) -> {
                         endDateCalendar.set(year, month, dayOfMonth);
@@ -145,24 +164,26 @@ public class SearchDialogFragment extends DialogFragment {
     }
 
     private void clearAll() {
-        binding.keywordEditText.setText("");
-        binding.fromEditText.setText("");
-        binding.toEditText.setText("");
-        binding.sizeEditText.setText("");
+        binding.keywordEditText.setText(null);
+        binding.fromEditText.setText(null);
+        binding.toEditText.setText(null);
+        binding.sizeEditText.setText(null);
+        binding.startDateTextView.setText(null);
+        binding.endDateTextView.setText(null);
+        startDateCalendar = null;
+        endDateCalendar = null;
         binding.sameExactlyCheckbox.setChecked(false);
         binding.hasAttachmentCheckbox.setChecked(false);
         binding.sizeConditionSpinner.setSelection(0);
         binding.sizeMeasureSpinner.setSelection(0);
         binding.folderSpinner.setSelection(0);
+        if (searchClickListener != null) {
+            searchClickListener.onSearch(null);
+        }
     }
 
     private void clearFilter() {
-        if (searchClickListener == null) {
-            Timber.e("searchClickListener == null");
-            return;
-        }
         clearAll();
-        searchClickListener.onSearch(null);
         dismiss();
     }
 
@@ -197,11 +218,11 @@ public class SearchDialogFragment extends DialogFragment {
             List<String> toEmailList = new ArrayList<>(EditTextUtils.getListFromString(toEmail));
             searchMessages.setSender(EditTextUtils.getStringFromList(toEmailList));
         }
-        if (EditTextUtils.isNotEmpty(EditTextUtils.getText(binding.startDateTextView))) {
+        if (startDateCalendar != null) {
             String startDateString = DateUtils.getFilterDate(startDateCalendar.getTimeInMillis());
             searchMessages.setStartDate(startDateString);
         }
-        if (EditTextUtils.isNotEmpty(EditTextUtils.getText(binding.endDateTextView))) {
+        if (endDateCalendar != null) {
             String endDateString = DateUtils.getFilterDate(endDateCalendar.getTimeInMillis());
             searchMessages.setEndDate(endDateString);
         }
@@ -272,7 +293,18 @@ public class SearchDialogFragment extends DialogFragment {
             }
         };
         binding.folderSpinner.setAdapter(foldersAdapter);
-//        binding.folderSpinner.setSelection(folderList.indexOf(searchMessages.getFolder()));
+        binding.folderSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                selectedFolderPosition = position;
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+        binding.folderSpinner.setSelection(selectedFolderPosition);
     }
 
     private View getTextViewDrawableColor(View view, int color) {
