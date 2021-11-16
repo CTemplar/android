@@ -213,14 +213,14 @@ public class InboxFragment extends BaseFragment implements InboxMessagesAdapter.
         MenuItem filterIcon = menu.findItem(R.id.action_filter);
         if (filterIcon == null) {
             Timber.e("filterIcon is null");
-            return;
+            super.onPrepareOptionsMenu(menu);
+            return ;
         }
         if (searchMessages == null) {
             filterIcon.setIcon(R.drawable.ic_action_filter_off);
         } else {
             filterIcon.setIcon(R.drawable.ic_action_filter_on);
         }
-
         MenuItem emptyFolder = menu.findItem(R.id.action_empty_folder);
         if (currentFolder != null) {
             boolean inTrash = currentFolder.equals(TRASH);
@@ -228,7 +228,12 @@ public class InboxFragment extends BaseFragment implements InboxMessagesAdapter.
             boolean inDraft = currentFolder.equals(DRAFT);
             emptyFolder.setVisible((inTrash || inSpam || inDraft) && adapterIsNotEmpty());
         }
+        super.onPrepareOptionsMenu(menu);
+    }
 
+    @Override
+    public void onCreateOptionsMenu(@NotNull Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.main, menu);
         MenuItem searchItem = menu.findItem(R.id.action_search);
         searchView = (SearchView) searchItem.getActionView();
         if (searchView != null) {
@@ -255,12 +260,6 @@ public class InboxFragment extends BaseFragment implements InboxMessagesAdapter.
                 }
             });
         }
-        super.onPrepareOptionsMenu(menu);
-    }
-
-    @Override
-    public void onCreateOptionsMenu(@NotNull Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.main, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
