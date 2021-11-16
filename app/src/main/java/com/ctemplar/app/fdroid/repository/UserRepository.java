@@ -58,6 +58,7 @@ import com.ctemplar.app.fdroid.net.response.myself.SettingsResponse;
 import com.ctemplar.app.fdroid.net.response.myself.WhiteListContact;
 import com.ctemplar.app.fdroid.net.response.whiteBlackList.BlackListResponse;
 import com.ctemplar.app.fdroid.net.response.whiteBlackList.WhiteListResponse;
+import com.ctemplar.app.fdroid.repository.dto.SearchMessagesDTO;
 import com.ctemplar.app.fdroid.repository.entity.MailboxEntity;
 import com.ctemplar.app.fdroid.repository.entity.MailboxKeyEntity;
 import com.ctemplar.app.fdroid.utils.EditTextUtils;
@@ -301,8 +302,21 @@ public class UserRepository {
                 .observeOn(Schedulers.computation());
     }
 
-    public Observable<MessagesResponse> searchMessages(String query, int limit, int offset) {
-        return service.searchMessages(query, limit, offset)
+    public Observable<MessagesResponse> searchMessages(
+            SearchMessagesDTO dto, int limit, int offset
+    ) {
+        return service.searchMessages(
+                dto.getQuery(),
+                dto.isExact(),
+                dto.getFolder(),
+                dto.getSender(),
+                dto.getReceiver(),
+                dto.isHaveAttachment(),
+                dto.getStartDate(),
+                dto.getEndDate(),
+                dto.getSize(),
+                dto.getSizeOperator(),
+                limit, offset)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.computation());
     }

@@ -2,11 +2,11 @@ package com.ctemplar.app.fdroid.utils;
 
 import android.content.res.Resources;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -27,6 +27,7 @@ public class DateUtils {
 
     private static final String MESSAGE_FULL_DATE_PATTERN = "MMM d, yyyy',' h:mm a";
     private static final String EMAIL_PATTERN = "EEE',' MMMM d, yyyy 'at' h:mm a";
+    private static final String FILTER_DATE_PATTERN = "yyyy-MM-dd";
 
     private static final String ELAPSED_TIME_FORMAT = "%2dd %02d:%02d";
     private static final String ELAPSED_TIME_SHORT_FORMAT = "%02d:%02d";
@@ -35,7 +36,7 @@ public class DateUtils {
             .setDateFormat(SERVER_DATE_PATTERN)
             .create();
 
-    @NonNull
+    @NotNull
     public static String displayMessageDate(@Nullable Date date, Resources resources) {
         if (date == null) {
             return "";
@@ -59,13 +60,21 @@ public class DateUtils {
         return yearFormat.format(date);
     }
 
-    @NonNull
+    @NotNull
     public static String messageFullDate(@Nullable Date date) {
         if (date == null) {
             return "";
         }
         DateFormat messageFullDateFormat = new SimpleDateFormat(MESSAGE_FULL_DATE_PATTERN, Locale.getDefault());
         return messageFullDateFormat.format(date);
+    }
+
+    @NotNull
+    public static String simpleDate(@Nullable Date date) {
+        if (date == null) {
+            return "";
+        }
+        return new SimpleDateFormat(MAIN_YEAR_PATTERN, Locale.getDefault()).format(date);
     }
 
     @Nullable
@@ -118,13 +127,17 @@ public class DateUtils {
         }
     }
 
-    @NonNull
+    @NotNull
     public static String getStringDate(@Nullable Date date) {
         if (date == null) {
             return "";
         }
         DateFormat emailFormat = new SimpleDateFormat(EMAIL_PATTERN, Locale.getDefault());
         return emailFormat.format(date);
+    }
+
+    public static String getFilterDate(long timeInMillis) {
+        return new SimpleDateFormat(FILTER_DATE_PATTERN, Locale.getDefault()).format(timeInMillis);
     }
 
     public static String dateFormat(long timeInMillis) {
@@ -135,21 +148,5 @@ public class DateUtils {
     public static String timeFormat(long timeInMillis) {
         DateFormat timeFormat = new SimpleDateFormat(MAIN_TIME_PATTERN, Locale.getDefault());
         return timeFormat.format(timeInMillis);
-    }
-
-    public static String memoryDisplay(long volume) {
-        double volumeKB = volume / 1024d;
-        double volumeMB = volumeKB / 1024d;
-        double volumeGB = volumeMB / 1024d;
-
-        if (volumeGB >= 1) {
-            return String.format(Locale.getDefault(), "%.2f GB", volumeGB);
-        } else if (volumeMB >= 1) {
-            return String.format(Locale.getDefault(), "%.2f MB", volumeMB);
-        } else if (volumeKB >= 1) {
-            return String.format(Locale.getDefault(), "%.2f KB", volumeKB);
-        }
-
-        return String.format(Locale.getDefault(), "%d B", volume);
     }
 }

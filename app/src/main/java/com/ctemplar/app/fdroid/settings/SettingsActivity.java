@@ -47,12 +47,12 @@ import com.ctemplar.app.fdroid.settings.filters.FiltersActivity;
 import com.ctemplar.app.fdroid.settings.keys.KeysActivity;
 import com.ctemplar.app.fdroid.settings.mailboxes.MailboxesActivity;
 import com.ctemplar.app.fdroid.settings.password.ChangePasswordActivity;
-import com.ctemplar.app.fdroid.utils.DateUtils;
 import com.ctemplar.app.fdroid.utils.EditTextUtils;
 import com.ctemplar.app.fdroid.utils.EncodeUtils;
 import com.ctemplar.app.fdroid.utils.HtmlUtils;
 import com.ctemplar.app.fdroid.utils.ThemeUtils;
 import com.ctemplar.app.fdroid.utils.ToastUtils;
+import com.ctemplar.app.fdroid.utils.UnitUtils;
 import com.ctemplar.app.fdroid.wbl.WhiteBlackListActivity;
 
 import org.jetbrains.annotations.NotNull;
@@ -667,8 +667,8 @@ public class SettingsActivity extends BaseActivity {
         isPrimeUser = myselfResult.isPrime();
         setSettingId(settingId);
 
-        String usedStorage = DateUtils.memoryDisplay(settingsResponse.getUsedStorage());
-        String allocatedStorage = DateUtils.memoryDisplay(settingsResponse.getAllocatedStorage());
+        String usedStorage = UnitUtils.memoryDisplay(settingsResponse.getUsedStorage());
+        String allocatedStorage = UnitUtils.memoryDisplay(settingsResponse.getAllocatedStorage());
         String recoveryEmail = settingsResponse.getRecoveryEmail();
 
         if (storageLimitPreference != null) {

@@ -199,6 +199,15 @@ public interface RestService {
     @GET("search/messages/")
     Observable<MessagesResponse> searchMessages(
             @Query("q") String query,
+            @Query("exact") boolean exact,
+            @Query("folder") String folder,
+            @Query("sender") String sender,
+            @Query("receiver") String receiver,
+            @Query("have_attachment") boolean haveAttachment,
+            @Query("start_date") String startDate, // YYYY-MM-DD
+            @Query("end_date") String endDate,
+            @Query("size") long size,
+            @Query("size_operator") String sizeOperator,
             @Query("limit") int limit,
             @Query("offset") int offset
     );

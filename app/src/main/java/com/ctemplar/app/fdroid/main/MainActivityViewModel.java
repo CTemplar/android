@@ -29,6 +29,7 @@ import com.ctemplar.app.fdroid.repository.MessagesRepository;
 import com.ctemplar.app.fdroid.repository.UserRepository;
 import com.ctemplar.app.fdroid.repository.cache.MessageCacheProvider;
 import com.ctemplar.app.fdroid.repository.constant.MainFolderNames;
+import com.ctemplar.app.fdroid.repository.dto.SearchMessagesDTO;
 import com.ctemplar.app.fdroid.repository.entity.MessageEntity;
 import com.ctemplar.app.fdroid.repository.provider.MessageProvider;
 import com.ctemplar.app.fdroid.services.NotificationService;
@@ -411,11 +412,12 @@ public class MainActivityViewModel extends AndroidViewModel {
                 });
     }
 
-    public void searchMessages(String query, int limit, int offset) {
-        if (TextUtils.isEmpty(query)) {
-            return;
-        }
-        userRepository.searchMessages(query, limit, offset)
+    public void searchMessages(String searchText, int limit, int offset) {
+        searchMessages(new SearchMessagesDTO(searchText), limit, offset);
+    }
+
+    public void searchMessages(SearchMessagesDTO dto, int limit, int offset) {
+        userRepository.searchMessages(dto, limit, offset)
                 .subscribe(new Observer<MessagesResponse>() {
                     @Override
                     public void onSubscribe(@NotNull Disposable d) {

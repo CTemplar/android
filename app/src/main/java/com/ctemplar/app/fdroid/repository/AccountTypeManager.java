@@ -1,4 +1,4 @@
-package com.ctemplar.app.fdroid.utils;
+package com.ctemplar.app.fdroid.repository;
 
 import android.content.Context;
 import android.widget.Toast;
