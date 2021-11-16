@@ -62,6 +62,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.SettingsResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.WhiteListContact;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.whiteBlackList.BlackListResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.whiteBlackList.WhiteListResponse;
+import mobileapp.ctemplar.com.ctemplarapp.repository.dto.SearchMessagesDTO;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxKeyEntity;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
@@ -322,8 +323,21 @@ public class UserRepository {
                 .observeOn(Schedulers.computation());
     }
 
-    public Observable<MessagesResponse> searchMessages(String query, int limit, int offset) {
-        return service.searchMessages(query, limit, offset)
+    public Observable<MessagesResponse> searchMessages(
+            SearchMessagesDTO dto, int limit, int offset
+    ) {
+        return service.searchMessages(
+                dto.getQuery(),
+                dto.isExact(),
+                dto.getFolder(),
+                dto.getSender(),
+                dto.getReceiver(),
+                dto.isHaveAttachment(),
+                dto.getStartDate(),
+                dto.getEndDate(),
+                dto.getSize(),
+                dto.getSizeOperator(),
+                limit, offset)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.computation());
     }

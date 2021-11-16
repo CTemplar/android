@@ -41,7 +41,7 @@ public class FiltersViewModel extends ViewModel {
     private final MutableLiveData<EmailFilterOrderListResponse> filterOrderListResponse = new MutableLiveData<>();
     private final MutableLiveData<String> filterOrderListErrorResponse = new MutableLiveData<>();
 
-    MutableLiveData<FoldersResponse> getFoldersResponse() {
+    public MutableLiveData<FoldersResponse> getFoldersResponse() {
         return foldersResponse;
     }
 
