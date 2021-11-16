@@ -2,12 +2,6 @@ package com.ctemplar.app.fdroid.repository.provider;
 
 import androidx.annotation.Nullable;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-
 import com.ctemplar.app.fdroid.net.response.messages.MessageAttachment;
 import com.ctemplar.app.fdroid.net.response.messages.MessagesResult;
 import com.ctemplar.app.fdroid.net.response.messages.UserDisplayResponse;
@@ -15,7 +9,14 @@ import com.ctemplar.app.fdroid.repository.constant.MainFolderNames;
 import com.ctemplar.app.fdroid.repository.entity.AttachmentEntity;
 import com.ctemplar.app.fdroid.repository.entity.MessageEntity;
 import com.ctemplar.app.fdroid.repository.entity.UserDisplayEntity;
+import com.ctemplar.app.fdroid.utils.EditTextUtils;
 import com.ctemplar.app.fdroid.utils.EncryptUtils;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 
 public class MessageProvider {
     private long id;
@@ -419,6 +420,23 @@ public class MessageProvider {
 
     public void setDecryptedSubject(String decryptedSubject) {
         this.decryptedSubject = decryptedSubject;
+    }
+
+    public String getSenderDisplayName() {
+        if (senderDisplay == null) {
+            if (sender == null) {
+                return "";
+            } else {
+                return sender;
+            }
+        }
+        if (EditTextUtils.isNotEmpty(senderDisplay.getName())) {
+            return senderDisplay.getName();
+        }
+        if (EditTextUtils.isNotEmpty(senderDisplay.getEmail())) {
+            return senderDisplay.getEmail();
+        }
+        return "";
     }
 
     private static AttachmentProvider convertFromResponseMessageAttachmentToAttachmentProvider(MessageAttachment attachment) {

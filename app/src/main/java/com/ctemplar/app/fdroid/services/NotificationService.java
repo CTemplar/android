@@ -165,7 +165,7 @@ public class NotificationService extends Service {
             }
         }
         showNotification(
-                messageProvider.getSender(),
+                messageProvider.getSenderDisplayName(),
                 messageProvider.getSubject(),
                 messageProvider.getFolderName(),
                 messageProvider.getId(), parentId,
