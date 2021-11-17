@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="@color/disabledTextColor" android:state_enabled="false" />
-    <item android:drawable="@color/colorPrimaryDark" android:state_pressed="true" />
-    <item android:drawable="@color/colorSurface" />
+    <item android:drawable="@color/colorControlHighlight" android:state_selected="true" />
+    <item android:drawable="@color/primaryTextColor" android:state_pressed="true" />
+    <item android:drawable="@android:color/transparent" />
 </selector>

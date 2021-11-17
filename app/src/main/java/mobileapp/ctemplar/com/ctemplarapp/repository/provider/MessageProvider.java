@@ -2,12 +2,6 @@ package mobileapp.ctemplar.com.ctemplarapp.repository.provider;
 
 import androidx.annotation.Nullable;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-
 import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.MessageAttachment;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.MessagesResult;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.UserDisplayResponse;
@@ -15,7 +9,14 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.AttachmentEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MessageEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.UserDisplayEntity;
+import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EncryptUtils;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 
 public class MessageProvider {
     private long id;
@@ -419,6 +420,23 @@ public class MessageProvider {
 
     public void setDecryptedSubject(String decryptedSubject) {
         this.decryptedSubject = decryptedSubject;
+    }
+
+    public String getSenderDisplayName() {
+        if (senderDisplay == null) {
+            if (sender == null) {
+                return "";
+            } else {
+                return sender;
+            }
+        }
+        if (EditTextUtils.isNotEmpty(senderDisplay.getName())) {
+            return senderDisplay.getName();
+        }
+        if (EditTextUtils.isNotEmpty(senderDisplay.getEmail())) {
+            return senderDisplay.getEmail();
+        }
+        return "";
     }
 
     private static AttachmentProvider convertFromResponseMessageAttachmentToAttachmentProvider(MessageAttachment attachment) {
