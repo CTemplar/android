@@ -61,16 +61,12 @@ public class MainFragment extends Fragment {
         if (actionBar != null) {
             actionBar.setHomeButtonEnabled(true);
             actionBar.setDisplayHomeAsUpEnabled(true);
-            if (getContext() != null) {
-                int menuColor = ContextCompat.getColor(getContext(), R.color.secondaryTextColor);
+                int menuColor = ContextCompat.getColor(activity, R.color.secondaryTextColor);
                 Drawable menuDrawable = ContextCompat.getDrawable(getActivity(), R.drawable.ic_drawer_menu);
                 if (menuDrawable != null) {
                     DrawableCompat.setTint(menuDrawable, menuColor);
                 }
                 actionBar.setHomeAsUpIndicator(menuDrawable);
-            } else {
-                actionBar.setHomeAsUpIndicator(R.drawable.ic_drawer_menu);
-            }
         }
         showFragment(inboxFragment);
     }

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_clear"
+        android:icon="@drawable/ic_close"
+        android:title="Clear all"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_select_all"
+        android:icon="@drawable/ic_check_selector"
+        android:title="Select all"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_move"
+        android:icon="@drawable/ic_move"
+        android:title="@string/menu_move"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_mark_as_read"
+        android:title="Mark as read"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_delete"
+        android:title="Delete all"
+        app:showAsAction="never" />
+
+</menu>

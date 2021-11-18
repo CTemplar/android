@@ -10,6 +10,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -38,11 +40,17 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesAdap
 
     private OnReachedBottomCallback onReachedBottomCallback;
     private Handler onReachedBottomCallbackHandler;
+    private boolean selectionState = false;
     private final Set<Long> selectedMessages = new HashSet<>();
+    private final MutableLiveData<Boolean> selectionStateLiveData = new MutableLiveData<>(false);
 
     @Override
     public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
         this.inflater = LayoutInflater.from(recyclerView.getContext());
+    }
+
+    public LiveData<Boolean> getSelectionState() {
+        return selectionStateLiveData;
     }
 
     public InboxMessagesAdapter(MainActivityViewModel mainModel) {
@@ -233,6 +241,42 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesAdap
         void onReachedBottom();
     }
 
+    public void setSelectionState() {
+        setSelectionState(true);
+    }
+
+    public void setSelectionState(boolean active) {
+        if (selectionState == active) {
+            return;
+        }
+        this.selectionState = active;
+        if (!active) {
+            this.selectedMessages.clear();
+        }
+        selectionStateLiveData.setValue(active);
+        notifyDataSetChanged();
+    }
+
+    public void selectAll() {
+        for (MessageProvider messageProvider : filteredList) {
+            selectedMessages.add(messageProvider.getId());
+        }
+        notifyDataSetChanged();
+    }
+
+    private void changeSelectState(MessageProvider messageProvider) {
+        long id = messageProvider.getId();
+        if (!selectedMessages.remove(id)) {
+            selectedMessages.add(id);
+        } else {
+            if (selectedMessages.isEmpty()) {
+                setSelectionState(false);
+                return;
+            }
+        }
+        notifyItemChanged(filteredList.indexOf(messageProvider));
+    }
+
     public class InboxMessagesViewHolder extends RecyclerView.ViewHolder {
         final ItemMessageViewHolderBinding binding;
 
@@ -382,12 +426,27 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesAdap
                 binding.subjectEncryptedTextView.setVisibility(View.VISIBLE);
                 binding.decryptionProgressBar.setVisibility(View.VISIBLE);
             }
-            binding.foregroundLayout.setOnClickListener(v -> onClickSubject.onNext(message.getId()));
+            binding.foregroundLayout.setOnClickListener(v -> {
+                if (selectionState) {
+                    changeSelectState(message);
+                } else {
+                    onClickSubject.onNext(message.getId());
+                }
+            });
             binding.foregroundLayout.setOnLongClickListener(v -> {
+                if (selectionState) {
+                    return false;
+                }
                 selectedMessages.add(message.getId());
-                binding.foregroundView.setBackgroundColor(resources.getColor(R.color.colorControlHighlight));
+                setSelectionState();
                 return false;
             });
+            if (selectionState) {
+                binding.selectionLayout.setVisibility(View.VISIBLE);
+                binding.checkbox.setChecked(selectedMessages.contains(message.getId()));
+            } else {
+                binding.selectionLayout.setVisibility(View.GONE);
+            }
         }
     }
 }

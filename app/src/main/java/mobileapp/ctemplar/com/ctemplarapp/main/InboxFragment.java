@@ -214,7 +214,7 @@ public class InboxFragment extends BaseFragment implements InboxMessagesAdapter.
         if (filterIcon == null) {
             Timber.e("filterIcon is null");
             super.onPrepareOptionsMenu(menu);
-            return ;
+            return;
         }
         if (searchMessages == null) {
             filterIcon.setIcon(R.drawable.ic_action_filter_off);
@@ -294,6 +294,24 @@ public class InboxFragment extends BaseFragment implements InboxMessagesAdapter.
                         .show();
                 alertDialog.getButton(DialogInterface.BUTTON_POSITIVE).setAllCaps(true);
                 return true;
+            case R.id.action_clear:
+                adapter.setSelectionState(false);
+                return true;
+            case R.id.action_select_all:
+                adapter.selectAll();
+                return true;
+            case R.id.action_delete:
+                adapter.setSelectionState(false);
+                return true;
+            case R.id.action_mark_as_read:
+                adapter.setSelectionState(false);
+                return true;
+            case android.R.id.home:
+                if (adapter.getSelectionState().getValue()) {
+                    adapter.setSelectionState(false);
+                    return true;
+                }
+                return super.onOptionsItemSelected(item);
             default:
                 return super.onOptionsItemSelected(item);
         }
