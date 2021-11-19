@@ -12,6 +12,7 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Looper;
 import android.text.TextUtils;
@@ -24,8 +25,13 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
+import androidx.core.content.ContextCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProvider;
@@ -200,6 +206,7 @@ public class InboxFragment extends BaseFragment implements InboxMessagesAdapter.
         binding.sendButtonLayout.setOnClickListener(v -> startSendMessageActivity());
 
         bindTouchListener();
+        adapter.getSelectionState().observe(getViewLifecycleOwner(), this::handleSelectableStateChange);
     }
 
     @Override
@@ -210,6 +217,11 @@ public class InboxFragment extends BaseFragment implements InboxMessagesAdapter.
 
     @Override
     public void onPrepareOptionsMenu(@NonNull Menu menu) {
+        boolean selectableState = adapter.getSelectionState().getValue();
+        if (selectableState) {
+            super.onPrepareOptionsMenu(menu);
+            return;
+        }
         MenuItem filterIcon = menu.findItem(R.id.action_filter);
         if (filterIcon == null) {
             Timber.e("filterIcon is null");
@@ -233,6 +245,11 @@ public class InboxFragment extends BaseFragment implements InboxMessagesAdapter.
 
     @Override
     public void onCreateOptionsMenu(@NotNull Menu menu, MenuInflater inflater) {
+        boolean selectableState = adapter.getSelectionState().getValue();
+        if (selectableState) {
+            inflater.inflate(R.menu.main_selectable, menu);
+            return;
+        }
         inflater.inflate(R.menu.main, menu);
         MenuItem searchItem = menu.findItem(R.id.action_search);
         searchView = (SearchView) searchItem.getActionView();
@@ -315,6 +332,36 @@ public class InboxFragment extends BaseFragment implements InboxMessagesAdapter.
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void handleSelectableStateChange(boolean selectableActive) {
+        FragmentActivity activity = getActivity();
+        if (activity == null) {
+            return;
+        }
+        DrawerLayout drawerLayout = activity.findViewById(R.id.drawer_layout);
+        ActionBar actionBar = ((AppCompatActivity) activity).getSupportActionBar();
+        if (actionBar == null) {
+            return;
+        }
+        if (selectableActive) {
+            int menuColor = ContextCompat.getColor(activity, R.color.secondaryTextColor);
+            Drawable menuDrawable = ContextCompat.getDrawable(getActivity(), R.drawable.ic_close);
+            if (menuDrawable != null) {
+                DrawableCompat.setTint(menuDrawable, menuColor);
+            }
+            actionBar.setHomeAsUpIndicator(menuDrawable);
+            drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        } else {
+            int menuColor = ContextCompat.getColor(activity, R.color.secondaryTextColor);
+            Drawable menuDrawable = ContextCompat.getDrawable(getActivity(), R.drawable.ic_drawer_menu);
+            if (menuDrawable != null) {
+                DrawableCompat.setTint(menuDrawable, menuColor);
+            }
+            actionBar.setHomeAsUpIndicator(menuDrawable);
+            drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+        }
+        invalidateOptionsMenu();
     }
 
     private void requestNewMessages() {

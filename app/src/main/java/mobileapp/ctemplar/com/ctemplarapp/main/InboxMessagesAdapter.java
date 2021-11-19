@@ -439,6 +439,7 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesAdap
                 }
                 selectedMessages.add(message.getId());
                 setSelectionState();
+//                binding.foregroundView.setSelected(!binding.foregroundView.isSelected());
                 return false;
             });
             if (selectionState) {
