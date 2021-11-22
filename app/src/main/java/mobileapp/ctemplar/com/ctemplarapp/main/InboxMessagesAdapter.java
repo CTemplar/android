@@ -8,6 +8,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
@@ -426,6 +427,14 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesAdap
                 binding.subjectEncryptedTextView.setVisibility(View.VISIBLE);
                 binding.decryptionProgressBar.setVisibility(View.VISIBLE);
             }
+            binding.foregroundLayout.setOnLongClickListener(v -> {
+                if (selectionState) {
+                    return false;
+                }
+                selectedMessages.add(message.getId());
+                setSelectionState();
+                return false;
+            });
             binding.foregroundLayout.setOnClickListener(v -> {
                 if (selectionState) {
                     changeSelectState(message);
@@ -433,21 +442,19 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesAdap
                     onClickSubject.onNext(message.getId());
                 }
             });
-            binding.foregroundLayout.setOnLongClickListener(v -> {
-                if (selectionState) {
-                    return false;
-                }
-                selectedMessages.add(message.getId());
-                setSelectionState();
-//                binding.foregroundView.setSelected(!binding.foregroundView.isSelected());
-                return false;
-            });
+//            binding.checkbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+//                if (selectionState) {
+//                    changeSelectState(message);
+//                }
+//            });
+            boolean isMessageSelected = selectedMessages.contains(message.getId());
             if (selectionState) {
                 binding.selectionLayout.setVisibility(View.VISIBLE);
-                binding.checkbox.setChecked(selectedMessages.contains(message.getId()));
+                binding.checkbox.setChecked(isMessageSelected);
             } else {
                 binding.selectionLayout.setVisibility(View.GONE);
             }
+            binding.foregroundView.setSelected(isMessageSelected);
         }
     }
 }

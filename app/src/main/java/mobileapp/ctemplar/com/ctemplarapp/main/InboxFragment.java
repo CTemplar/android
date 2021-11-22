@@ -244,7 +244,7 @@ public class InboxFragment extends BaseFragment implements InboxMessagesAdapter.
     }
 
     @Override
-    public void onCreateOptionsMenu(@NotNull Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(@NotNull Menu menu, @NonNull MenuInflater inflater) {
         boolean selectableState = adapter.getSelectionState().getValue();
         if (selectableState) {
             inflater.inflate(R.menu.main_selectable, menu);
@@ -310,9 +310,6 @@ public class InboxFragment extends BaseFragment implements InboxMessagesAdapter.
                         .setNeutralButton(R.string.btn_cancel, null)
                         .show();
                 alertDialog.getButton(DialogInterface.BUTTON_POSITIVE).setAllCaps(true);
-                return true;
-            case R.id.action_clear:
-                adapter.setSelectionState(false);
                 return true;
             case R.id.action_select_all:
                 adapter.selectAll();

@@ -3,6 +3,7 @@ package mobileapp.ctemplar.com.ctemplarapp.main;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -69,6 +70,15 @@ public class MainFragment extends Fragment {
                 actionBar.setHomeAsUpIndicator(menuDrawable);
         }
         showFragment(inboxFragment);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        Fragment fragment = getCurrentFragment();
+        if (fragment != null) {
+            return fragment.onOptionsItemSelected(item);
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Nullable
