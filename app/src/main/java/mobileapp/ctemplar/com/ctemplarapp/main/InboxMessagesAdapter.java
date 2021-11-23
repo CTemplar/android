@@ -8,7 +8,6 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
@@ -48,10 +47,6 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesAdap
     @Override
     public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
         this.inflater = LayoutInflater.from(recyclerView.getContext());
-    }
-
-    public LiveData<Boolean> getSelectionState() {
-        return selectionStateLiveData;
     }
 
     public InboxMessagesAdapter(MainActivityViewModel mainModel) {
@@ -278,6 +273,21 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesAdap
         notifyItemChanged(filteredList.indexOf(messageProvider));
     }
 
+    public LiveData<Boolean> getSelectionState() {
+        return selectionStateLiveData;
+    }
+
+    public boolean getSelectionStateValue() {
+        if (selectionStateLiveData.getValue() == null) {
+            return false;
+        }
+        return selectionStateLiveData.getValue();
+    }
+
+    public Long[] getSelectedMessages() {
+        return selectedMessages.toArray(new Long[0]);
+    }
+
     public class InboxMessagesViewHolder extends RecyclerView.ViewHolder {
         final ItemMessageViewHolderBinding binding;
 
@@ -335,17 +345,18 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesAdap
             }
 
             // check for read/unread
+            int backgroundColor;
             if (message.isRead()) {
                 binding.unreadMarkImageView.setVisibility(View.GONE);
                 binding.usernameTextView.setTypeface(null, Typeface.NORMAL);
-                binding.foregroundLayout.setBackgroundColor(
-                        resources.getColor(R.color.colorPrimaryDark));
+                backgroundColor = resources.getColor(R.color.colorPrimaryDark);
             } else {
                 binding.unreadMarkImageView.setVisibility(View.VISIBLE);
                 binding.usernameTextView.setTypeface(null, Typeface.BOLD);
-                binding.foregroundLayout.setBackgroundColor(
-                        resources.getColor(R.color.colorPrimary));
+                backgroundColor = resources.getColor(R.color.colorPrimary);
             }
+            binding.foregroundLayout.setBackgroundColor(backgroundColor);
+            binding.selectedLayout.setBackgroundColor(backgroundColor);
 
             // check is verified
             binding.verifiedMarkImageView.setVisibility(message.isVerified() ? View.VISIBLE : View.GONE);
@@ -427,6 +438,8 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesAdap
                 binding.subjectEncryptedTextView.setVisibility(View.VISIBLE);
                 binding.decryptionProgressBar.setVisibility(View.VISIBLE);
             }
+
+            boolean isMessageSelected = selectedMessages.contains(message.getId());
             binding.foregroundLayout.setOnLongClickListener(v -> {
                 if (selectionState) {
                     return false;
@@ -442,19 +455,14 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesAdap
                     onClickSubject.onNext(message.getId());
                 }
             });
-//            binding.checkbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
-//                if (selectionState) {
-//                    changeSelectState(message);
-//                }
-//            });
-            boolean isMessageSelected = selectedMessages.contains(message.getId());
             if (selectionState) {
-                binding.selectionLayout.setVisibility(View.VISIBLE);
+                binding.selectedLayout.setVisibility(View.VISIBLE);
+                binding.foregroundSelectedView.setSelected(isMessageSelected);
                 binding.checkbox.setChecked(isMessageSelected);
             } else {
-                binding.selectionLayout.setVisibility(View.GONE);
+                binding.selectedLayout.setVisibility(View.GONE);
             }
-            binding.foregroundView.setSelected(isMessageSelected);
+            binding.checkbox.setOnClickListener(v -> changeSelectState(message));
         }
     }
 }

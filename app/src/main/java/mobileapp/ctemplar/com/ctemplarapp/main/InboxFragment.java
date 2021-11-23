@@ -11,7 +11,6 @@ import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderN
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Looper;
@@ -217,8 +216,7 @@ public class InboxFragment extends BaseFragment implements InboxMessagesAdapter.
 
     @Override
     public void onPrepareOptionsMenu(@NonNull Menu menu) {
-        boolean selectableState = adapter.getSelectionState().getValue();
-        if (selectableState) {
+        if (adapter.getSelectionStateValue()) {
             super.onPrepareOptionsMenu(menu);
             return;
         }
@@ -245,8 +243,7 @@ public class InboxFragment extends BaseFragment implements InboxMessagesAdapter.
 
     @Override
     public void onCreateOptionsMenu(@NotNull Menu menu, @NonNull MenuInflater inflater) {
-        boolean selectableState = adapter.getSelectionState().getValue();
-        if (selectableState) {
+        if (adapter.getSelectionStateValue()) {
             inflater.inflate(R.menu.main_selectable, menu);
             return;
         }
@@ -311,17 +308,22 @@ public class InboxFragment extends BaseFragment implements InboxMessagesAdapter.
                         .show();
                 alertDialog.getButton(DialogInterface.BUTTON_POSITIVE).setAllCaps(true);
                 return true;
+            case R.id.action_move:
+                adapter.setSelectionState(false);
+                return true;
+            case R.id.action_delete:
+                mainModel.deleteMessages(adapter.getSelectedMessages());
+                adapter.setSelectionState(false);
+                return true;
             case R.id.action_select_all:
                 adapter.selectAll();
                 return true;
-            case R.id.action_delete:
-                adapter.setSelectionState(false);
-                return true;
             case R.id.action_mark_as_read:
+                mainModel.markMessagesAsRead(adapter.getSelectedMessages(), true);
                 adapter.setSelectionState(false);
                 return true;
             case android.R.id.home:
-                if (adapter.getSelectionState().getValue()) {
+                if (adapter.getSelectionStateValue()) {
                     adapter.setSelectionState(false);
                     return true;
                 }
@@ -334,11 +336,13 @@ public class InboxFragment extends BaseFragment implements InboxMessagesAdapter.
     private void handleSelectableStateChange(boolean selectableActive) {
         FragmentActivity activity = getActivity();
         if (activity == null) {
+            Timber.e("activity is null");
             return;
         }
         DrawerLayout drawerLayout = activity.findViewById(R.id.drawer_layout);
         ActionBar actionBar = ((AppCompatActivity) activity).getSupportActionBar();
         if (actionBar == null) {
+            Timber.e("actionBar is null");
             return;
         }
         if (selectableActive) {
@@ -510,15 +514,14 @@ public class InboxFragment extends BaseFragment implements InboxMessagesAdapter.
     private void showRestoreSnackBar(String message, Runnable onUndoClick) {
         Snackbar.make(binding.sendButtonLayout, message, Snackbar.LENGTH_LONG)
                 .setAction(getString(R.string.action_undo), view -> onUndoClick.run())
-                .setActionTextColor(Color.YELLOW)
+                .setActionTextColor(getResources().getColor(R.color.colorAccent))
                 .show();
     }
 
     private void showDeleteSnackBar(String message, Runnable onDismissed) {
         Snackbar.make(binding.sendButtonLayout, message, Snackbar.LENGTH_LONG)
-                .setAction(getString(R.string.action_undo), v -> {
-                })
-                .setActionTextColor(Color.YELLOW)
+                .setAction(getString(R.string.action_undo), null)
+                .setActionTextColor(getResources().getColor(R.color.colorAccent))
                 .addCallback(new Snackbar.Callback() {
                     @Override
                     public void onDismissed(Snackbar transientBottomBar, int event) {

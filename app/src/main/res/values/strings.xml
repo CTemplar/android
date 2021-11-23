@@ -64,6 +64,7 @@
     <string name="menu_move_to_inbox">Move to Inbox</string>
     <string name="menu_move_to_archive">Move to Archive</string>
     <string name="menu_mark_as_unread">Mark as unread</string>
+    <string name="menu_select_all">Select all</string>
 
     <!-- STRINGS -->
     <string translatable="false" name="encrypted_subject">...</string>
