@@ -14,6 +14,7 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Looper;
+import android.os.Message;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -45,9 +46,12 @@ import org.jetbrains.annotations.NotNull;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Executor;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -309,10 +313,11 @@ public class InboxFragment extends BaseFragment implements InboxMessagesAdapter.
                 alertDialog.getButton(DialogInterface.BUTTON_POSITIVE).setAllCaps(true);
                 return true;
             case R.id.action_move:
+//                mainModel.toFolder();
                 adapter.setSelectionState(false);
                 return true;
             case R.id.action_delete:
-                mainModel.deleteMessages(adapter.getSelectedMessages());
+                removeMessages(adapter.getSelectedMessagesMap());
                 adapter.setSelectionState(false);
                 return true;
             case R.id.action_select_all:
@@ -447,50 +452,33 @@ public class InboxFragment extends BaseFragment implements InboxMessagesAdapter.
                     final String currentFolderFinal = currentFolder;
                     switch (viewID) {
                         case R.id.item_message_view_holder_delete:
-                            final MessageProvider deletedMessage = adapter.removeAt(position);
-                            final String name = deletedMessage.getSubject();
-                            if (!currentFolderFinal.equals(TRASH)
-                                    && !currentFolderFinal.equals(SPAM)) {
-                                mainModel.toFolder(deletedMessage.getId(), TRASH);
-                                showRestoreSnackBar(getString(R.string.txt_name_removed, name), () -> {
-                                    mainModel.toFolder(deletedMessage.getId(), currentFolderFinal);
-                                    if (currentFolder.equals(currentFolderFinal)) {
-                                        adapter.restoreMessage(deletedMessage, position);
-                                    }
-                                });
-                            } else {
-                                showDeleteSnackBar(getString(R.string.txt_name_removed, name), () -> {
-                                    mainModel.deleteMessages(new Long[]{deletedMessage.getId()});
-                                });
-                            }
+                            MessageProvider deletedMessage = adapter.get(position);
+                            removeMessages(Collections.singletonMap(position, deletedMessage));
                             break;
-
                         case R.id.item_message_view_holder_spam:
                             if (!currentFolder.equals(SPAM)) {
-                                final MessageProvider spamMessage = adapter.removeAt(position);
+                                MessageProvider spamMessage = adapter.removeAt(position);
                                 mainModel.toFolder(spamMessage.getId(), SPAM);
                                 showRestoreSnackBar(getString(R.string.action_spam), () -> {
                                     mainModel.toFolder(spamMessage.getId(), currentFolderFinal);
                                     if (currentFolder.equals(currentFolderFinal)) {
-                                        adapter.restoreMessage(spamMessage, position);
+                                        adapter.restoreMessages(Collections.singletonMap(position, spamMessage));
                                     }
                                 });
                             }
                             break;
-
                         case R.id.item_message_view_holder_inbox:
                             if (currentFolder.equals(SPAM)) {
-                                final MessageProvider notSpamMessage = adapter.removeAt(position);
-                                mainModel.toFolder(notSpamMessage.getId(), INBOX);
+                                MessageProvider inboxMessage = adapter.removeAt(position);
+                                mainModel.toFolder(inboxMessage.getId(), INBOX);
                                 showRestoreSnackBar(getString(R.string.action_moved_to_inbox), () -> {
-                                    mainModel.toFolder(notSpamMessage.getId(), currentFolderFinal);
+                                    mainModel.toFolder(inboxMessage.getId(), currentFolderFinal);
                                     if (currentFolder.equals(currentFolderFinal)) {
-                                        adapter.restoreMessage(notSpamMessage, position);
+                                        adapter.restoreMessages(Collections.singletonMap(position, inboxMessage));
                                     }
                                 });
                             }
                             break;
-
                         case R.id.item_message_view_holder_move:
                             MessageProvider movedMessage = adapter.get(position);
                             MoveDialogFragment moveDialogFragment = new MoveDialogFragment();
@@ -511,14 +499,39 @@ public class InboxFragment extends BaseFragment implements InboxMessagesAdapter.
         });
     }
 
-    private void showRestoreSnackBar(String message, Runnable onUndoClick) {
+    private void removeMessages(Map<Integer, MessageProvider> selectedMessages) {
+        String currentFolderFinal = currentFolder;
+        Long[] selectedMessageIds = new Long[selectedMessages.size()];
+        Collection<MessageProvider> selectedMessagesValues = selectedMessages.values();
+        for (int i = 0; i < selectedMessagesValues.size(); i++) {
+            selectedMessageIds[i] = selectedMessagesValues.iterator().next().getId();
+        }
+        String messagesCount = String.valueOf(selectedMessageIds.length);
+        if (currentFolderFinal.equals(TRASH) || currentFolderFinal.equals(SPAM)) {
+            showDeleteSnackBar(getString(R.string.txt_name_removed, messagesCount), () -> {
+                adapter.removeMessages(selectedMessages.values());
+                mainModel.deleteMessages(selectedMessageIds);
+            });
+        } else {
+            adapter.removeMessages(selectedMessages.values());
+            mainModel.toFolder(selectedMessageIds, TRASH);
+            showRestoreSnackBar(getString(R.string.txt_name_removed, messagesCount), () -> {
+                mainModel.toFolder(selectedMessageIds, currentFolderFinal);
+                if (currentFolder.equals(currentFolderFinal)) {
+                    adapter.restoreMessages(selectedMessages);
+                }
+            });
+        }
+    }
+
+    private void showRestoreSnackBar(String message, Runnable dismissClick) {
         Snackbar.make(binding.sendButtonLayout, message, Snackbar.LENGTH_LONG)
-                .setAction(getString(R.string.action_undo), view -> onUndoClick.run())
+                .setAction(getString(R.string.action_undo), view -> dismissClick.run())
                 .setActionTextColor(getResources().getColor(R.color.colorAccent))
                 .show();
     }
 
-    private void showDeleteSnackBar(String message, Runnable onDismissed) {
+    private void showDeleteSnackBar(String message, Runnable notDismissed) {
         Snackbar.make(binding.sendButtonLayout, message, Snackbar.LENGTH_LONG)
                 .setAction(getString(R.string.action_undo), null)
                 .setActionTextColor(getResources().getColor(R.color.colorAccent))
@@ -526,7 +539,7 @@ public class InboxFragment extends BaseFragment implements InboxMessagesAdapter.
                     @Override
                     public void onDismissed(Snackbar transientBottomBar, int event) {
                         if (event != DISMISS_EVENT_ACTION) {
-                            onDismissed.run();
+                            notDismissed.run();
                         }
                     }
                 })

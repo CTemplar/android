@@ -363,8 +363,9 @@ public class UserRepository {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<Response<Void>> toFolder(long id, String folder) {
-        return service.toFolder(id, new MoveToFolderRequest(folder))
+    public Observable<Response<Void>> toFolder(Long[] messageIds, String folder) {
+        return service.toFolder(TextUtils.join(",", messageIds),
+                new MoveToFolderRequest(folder))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
@@ -375,11 +376,9 @@ public class UserRepository {
                 .observeOn(Schedulers.computation());
     }
 
-    public Observable<Response<Void>> markMessageAsRead(
-            Long[] messageIds,
-            MarkMessageAsReadRequest request
-    ) {
-        return service.markMessageAsRead(TextUtils.join(",", messageIds), request)
+    public Observable<Response<Void>> markMessageAsRead(Long[] messageIds, boolean isRead) {
+        return service.markMessageAsRead(TextUtils.join(",", messageIds),
+                new MarkMessageAsReadRequest(isRead))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }

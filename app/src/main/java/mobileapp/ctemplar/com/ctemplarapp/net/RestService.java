@@ -182,7 +182,7 @@ public interface RestService {
 
     @PATCH("emails/messages/")
     Observable<Response<Void>> toFolder(
-            @Query("id__in") long id,
+            @Query("id__in") String messageIds,
             @Body MoveToFolderRequest request
     );
 

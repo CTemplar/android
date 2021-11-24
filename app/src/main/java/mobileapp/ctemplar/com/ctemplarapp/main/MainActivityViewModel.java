@@ -563,7 +563,7 @@ public class MainActivityViewModel extends AndroidViewModel {
     }
 
     public void markMessagesAsRead(Long[] messageIds, boolean isRead) {
-        userRepository.markMessageAsRead(messageIds, new MarkMessageAsReadRequest(isRead))
+        userRepository.markMessageAsRead(messageIds, isRead)
                 .subscribe(new Observer<Response<Void>>() {
                     @Override
                     public void onSubscribe(@androidx.annotation.NonNull Disposable d) {
@@ -624,8 +624,12 @@ public class MainActivityViewModel extends AndroidViewModel {
                 });
     }
 
-    public void toFolder(final long messageId, final String folder) {
-        userRepository.toFolder(messageId, folder)
+    public void toFolder(long messageId, String folder) {
+        userRepository.toFolder(new Long[]{messageId}, folder);
+    }
+
+    public void toFolder(Long[] messageIds, String folder) {
+        userRepository.toFolder(messageIds, folder)
                 .subscribe(new Observer<Response<Void>>() {
                     @Override
                     public void onSubscribe(@NotNull Disposable d) {
@@ -634,7 +638,9 @@ public class MainActivityViewModel extends AndroidViewModel {
 
                     @Override
                     public void onNext(@NotNull Response<Void> voidResponse) {
-                        messagesRepository.updateMessageFolderName(messageId, folder);
+                        for (long messageId : messageIds) {
+                            messagesRepository.updateMessageFolderName(messageId, folder);
+                        }
                         toFolderStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
                     }
 

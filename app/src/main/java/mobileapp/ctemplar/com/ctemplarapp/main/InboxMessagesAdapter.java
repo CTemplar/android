@@ -15,8 +15,11 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import io.reactivex.subjects.PublishSubject;
@@ -96,12 +99,6 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesAdap
         return filteredList.size();
     }
 
-    MessageProvider removeAt(int position) {
-        MessageProvider removedMessage = filteredList.remove(position);
-        notifyItemRemoved(position);
-        return removedMessage;
-    }
-
     public MessageProvider get(int position) {
         return filteredList.get(position);
     }
@@ -110,9 +107,26 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesAdap
         return messageList.isEmpty() ? null : messageList.get(messageList.size() - 1);
     }
 
-    void restoreMessage(MessageProvider deletedMessage, int position) {
-        filteredList.add(position, deletedMessage);
-        notifyItemInserted(position);
+    public MessageProvider removeAt(int position) {
+        MessageProvider removedMessage = filteredList.remove(position);
+        notifyItemRemoved(position);
+        return removedMessage;
+    }
+
+    public void removeMessages(Collection<MessageProvider> messages) {
+        for (MessageProvider message : messages) {
+            int position = filteredList.indexOf(message);
+            filteredList.remove(message);
+            notifyItemRemoved(position);
+        }
+    }
+
+    public void restoreMessages(Map<Integer, MessageProvider> messages) {
+        for (Map.Entry<Integer, MessageProvider> messagesEntry : messages.entrySet()) {
+            int position = messagesEntry.getKey();
+            filteredList.add(position, messagesEntry.getValue());
+            notifyItemInserted(position);
+        }
     }
 
     public List<MessageProvider> getAll() {
@@ -286,6 +300,19 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesAdap
 
     public Long[] getSelectedMessages() {
         return selectedMessages.toArray(new Long[0]);
+    }
+
+    public Map<Integer, MessageProvider> getSelectedMessagesMap() {
+        Map<Integer, MessageProvider> selectedMessagesMap = new HashMap<>();
+        for (Long selectedMessage : selectedMessages) {
+            for (int i = 0; i < filteredList.size(); i++) {
+                MessageProvider messageProvider = filteredList.get(i);
+                if (selectedMessage.equals(messageProvider.getId())) {
+                    selectedMessagesMap.put(i, messageProvider);
+                }
+            }
+        }
+        return selectedMessagesMap;
     }
 
     public class InboxMessagesViewHolder extends RecyclerView.ViewHolder {

@@ -202,7 +202,7 @@ public class ViewMessagesViewModel extends ViewModel {
     }
 
     public void markMessageAsRead(long messageId, boolean isRead) {
-        userRepository.markMessageAsRead(new Long[]{messageId}, new MarkMessageAsReadRequest(isRead))
+        userRepository.markMessageAsRead(new Long[]{messageId}, isRead)
                 .subscribe(new Observer<Response<Void>>() {
                     @Override
                     public void onSubscribe(@androidx.annotation.NonNull Disposable d) {
@@ -257,8 +257,8 @@ public class ViewMessagesViewModel extends ViewModel {
                 });
     }
 
-    public void moveToFolder(final long messageId, final String folder) {
-        userRepository.toFolder(messageId, folder)
+    public void moveToFolder(long messageId, String folder) {
+        userRepository.toFolder(new Long[]{messageId}, folder)
                 .subscribe(new Observer<Response<Void>>() {
                     @Override
                     public void onSubscribe(@androidx.annotation.NonNull Disposable d) {
