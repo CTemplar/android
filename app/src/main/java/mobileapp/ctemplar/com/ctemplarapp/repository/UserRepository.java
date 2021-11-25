@@ -69,7 +69,9 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxKeyEntity;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.inject.Singleton;
 

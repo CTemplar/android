@@ -2,6 +2,7 @@ package mobileapp.ctemplar.com.ctemplarapp.main;
 
 import static mobileapp.ctemplar.com.ctemplarapp.message.SendMessageActivity.MESSAGE_ID;
 import static mobileapp.ctemplar.com.ctemplarapp.message.ViewMessagesActivity.PARENT_ID;
+import static mobileapp.ctemplar.com.ctemplarapp.message.dialog.MoveDialogFragment.MESSAGE_IDS;
 import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.DRAFT;
 import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.FOLDER_NAME;
 import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.INBOX;
@@ -14,7 +15,6 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Looper;
-import android.os.Message;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -49,7 +49,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executor;
@@ -170,6 +170,8 @@ public class InboxFragment extends BaseFragment implements InboxMessagesAdapter.
         mainModel.getSearchMessagesResponse().observe(getViewLifecycleOwner(), this::handleSearchMessagesList);
         mainModel.getDeleteMessagesStatus().observe(getViewLifecycleOwner(), this::updateMessagesResponse);
         mainModel.getEmptyFolderStatus().observe(getViewLifecycleOwner(), this::updateMessagesResponse);
+        mainModel.getDeleteMessagesStatus().observe(getViewLifecycleOwner(), this::handleDeleteMessagesStatus);
+        mainModel.getToFolderStatus().observe(getViewLifecycleOwner(), this::handleToFolderStatus);
         mainModel.getCurrentFolder().observe(getViewLifecycleOwner(), folderName -> {
             currentFolder = folderName;
             binding.swipeRefreshLayout.setRefreshing(false);
@@ -313,8 +315,7 @@ public class InboxFragment extends BaseFragment implements InboxMessagesAdapter.
                 alertDialog.getButton(DialogInterface.BUTTON_POSITIVE).setAllCaps(true);
                 return true;
             case R.id.action_move:
-//                mainModel.toFolder();
-                adapter.setSelectionState(false);
+                moveMessages(adapter.getSelectedMessagesMap());
                 return true;
             case R.id.action_delete:
                 removeMessages(adapter.getSelectedMessagesMap());
@@ -425,6 +426,18 @@ public class InboxFragment extends BaseFragment implements InboxMessagesAdapter.
         requestNewMessages();
     }
 
+    private void handleDeleteMessagesStatus(ResponseStatus responseStatus) {
+        if (responseStatus == ResponseStatus.RESPONSE_ERROR) {
+            ToastUtils.showToast(getActivity(), R.string.operation_failed);
+        }
+    }
+
+    private void handleToFolderStatus(ResponseStatus responseStatus) {
+        if (responseStatus == ResponseStatus.RESPONSE_ERROR) {
+            ToastUtils.showToast(getActivity(), R.string.operation_failed);
+        }
+    }
+
     private void updateTouchListenerSwipeOptions(String folder) {
         if (folder != null && folder.equals(DRAFT)) {
             touchListener.setSwipeOptionViews(R.id.item_message_view_holder_delete);
@@ -481,12 +494,7 @@ public class InboxFragment extends BaseFragment implements InboxMessagesAdapter.
                             break;
                         case R.id.item_message_view_holder_move:
                             MessageProvider movedMessage = adapter.get(position);
-                            MoveDialogFragment moveDialogFragment = new MoveDialogFragment();
-                            Bundle moveFragmentBundle = new Bundle();
-                            moveFragmentBundle.putLong(PARENT_ID, movedMessage.getId());
-                            moveDialogFragment.setArguments(moveFragmentBundle);
-                            moveDialogFragment.setOnMoveCallback(folderName -> adapter.removeAt(position));
-                            moveDialogFragment.show(getParentFragmentManager(), "MoveDialogFragment");
+                            moveMessages(Collections.singletonMap(position, movedMessage));
                             break;
                     }
                 });
@@ -502,9 +510,9 @@ public class InboxFragment extends BaseFragment implements InboxMessagesAdapter.
     private void removeMessages(Map<Integer, MessageProvider> selectedMessages) {
         String currentFolderFinal = currentFolder;
         Long[] selectedMessageIds = new Long[selectedMessages.size()];
-        Collection<MessageProvider> selectedMessagesValues = selectedMessages.values();
-        for (int i = 0; i < selectedMessagesValues.size(); i++) {
-            selectedMessageIds[i] = selectedMessagesValues.iterator().next().getId();
+        int i = 0;
+        for (Iterator<MessageProvider> it = selectedMessages.values().iterator(); it.hasNext(); ++i) {
+            selectedMessageIds[i] = it.next().getId();
         }
         String messagesCount = String.valueOf(selectedMessageIds.length);
         if (currentFolderFinal.equals(TRASH) || currentFolderFinal.equals(SPAM)) {
@@ -522,6 +530,23 @@ public class InboxFragment extends BaseFragment implements InboxMessagesAdapter.
                 }
             });
         }
+    }
+
+    private void moveMessages(Map<Integer, MessageProvider> selectedMessages) {
+        long[] selectedMessageIds = new long[selectedMessages.size()];
+        int i = 0;
+        for (Iterator<MessageProvider> it = selectedMessages.values().iterator(); it.hasNext(); ++i) {
+            selectedMessageIds[i] = it.next().getId();
+        }
+        Bundle moveMessagesBundle = new Bundle();
+        moveMessagesBundle.putLongArray(MESSAGE_IDS, selectedMessageIds);
+        MoveDialogFragment moveDialogFragment = new MoveDialogFragment();
+        moveDialogFragment.setArguments(moveMessagesBundle);
+        moveDialogFragment.setOnMoveCallback(folderName -> {
+            adapter.removeMessages(selectedMessages.values());
+            adapter.setSelectionState(false);
+        });
+        moveDialogFragment.show(getParentFragmentManager(), "MoveDialogFragment");
     }
 
     private void showRestoreSnackBar(String message, Runnable dismissClick) {

@@ -257,8 +257,8 @@ public class ViewMessagesViewModel extends ViewModel {
                 });
     }
 
-    public void moveToFolder(long messageId, String folder) {
-        userRepository.toFolder(new Long[]{messageId}, folder)
+    public void moveToFolder(Long[] messageIds, String folder) {
+        userRepository.toFolder(messageIds, folder)
                 .subscribe(new Observer<Response<Void>>() {
                     @Override
                     public void onSubscribe(@androidx.annotation.NonNull Disposable d) {
@@ -267,13 +267,16 @@ public class ViewMessagesViewModel extends ViewModel {
 
                     @Override
                     public void onNext(@androidx.annotation.NonNull Response<Void> voidResponse) {
-                        messagesRepository.updateMessageFolderName(messageId, folder);
+                        for (Long messageId : messageIds) {
+                            messagesRepository.updateMessageFolderName(messageId, folder);
+                        }
                         moveToFolderStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
                     }
 
                     @Override
                     public void onError(@androidx.annotation.NonNull Throwable e) {
-                        Timber.e(e, "Move message");
+                        Timber.e(e, "Move messages");
+                        moveToFolderStatus.postValue(ResponseStatus.RESPONSE_ERROR);
                     }
 
                     @Override
