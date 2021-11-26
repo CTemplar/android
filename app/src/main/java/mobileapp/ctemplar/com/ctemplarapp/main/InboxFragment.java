@@ -46,7 +46,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
@@ -319,7 +318,6 @@ public class InboxFragment extends BaseFragment implements InboxMessagesAdapter.
                 return true;
             case R.id.action_delete:
                 removeMessages(adapter.getSelectedMessagesMap());
-                adapter.setSelectionState(false);
                 return true;
             case R.id.action_select_all:
                 adapter.selectAll();
@@ -382,7 +380,7 @@ public class InboxFragment extends BaseFragment implements InboxMessagesAdapter.
     }
 
     private void requestNextMessages() {
-        if (isLoadingNewMessages) {
+        if (isLoadingNewMessages || adapter.getSelectionStateValue()) {
             return;
         }
         currentFolder = mainModel.getCurrentFolder().getValue();
@@ -530,6 +528,7 @@ public class InboxFragment extends BaseFragment implements InboxMessagesAdapter.
                 }
             });
         }
+        mainThreadExecutor.execute(() -> adapter.setSelectionState(false));
     }
 
     private void moveMessages(Map<Integer, MessageProvider> selectedMessages) {
@@ -544,7 +543,7 @@ public class InboxFragment extends BaseFragment implements InboxMessagesAdapter.
         moveDialogFragment.setArguments(moveMessagesBundle);
         moveDialogFragment.setOnMoveCallback(folderName -> {
             adapter.removeMessages(selectedMessages.values());
-            adapter.setSelectionState(false);
+            mainThreadExecutor.execute(() -> adapter.setSelectionState(false));
         });
         moveDialogFragment.show(getParentFragmentManager(), "MoveDialogFragment");
     }

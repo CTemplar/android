@@ -22,7 +22,6 @@ import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import java.util.Arrays;
 import java.util.List;
 
 import mobileapp.ctemplar.com.ctemplarapp.R;

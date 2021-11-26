@@ -488,6 +488,8 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesAdap
                 binding.checkbox.setChecked(isMessageSelected);
             } else {
                 binding.selectedLayout.setVisibility(View.GONE);
+                binding.foregroundSelectedView.setSelected(false);
+                binding.checkbox.setChecked(false);
             }
             binding.checkbox.setOnClickListener(v -> changeSelectState(message));
         }
