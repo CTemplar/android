@@ -115,7 +115,7 @@ public class SendMessageActivityViewModel extends ViewModel {
     }
 
     public LiveData<MessagesResult> getCreateMessageResponse() {
-        return  createMessageResponse;
+        return createMessageResponse;
     }
 
     public LiveData<ResponseStatus> getCreateMessageStatus() {
@@ -275,7 +275,7 @@ public class SendMessageActivityViewModel extends ViewModel {
     }
 
     public void deleteMessage(long messageId) {
-        userRepository.deleteMessages(String.valueOf(messageId))
+        userRepository.deleteMessages(new Long[]{messageId})
                 .subscribe(new Observer<Response<Void>>() {
                     @Override
                     public void onSubscribe(@NotNull Disposable d) {
@@ -387,8 +387,8 @@ public class SendMessageActivityViewModel extends ViewModel {
                     .uploadAttachment(document, message, isInline, isEncrypted, fileType, name, actualSize)
                     .blockingSingle();
         } catch (Throwable e) {
-            if(e instanceof HttpException) {
-                if (((HttpException)e).code() == 413) {
+            if (e instanceof HttpException) {
+                if (((HttpException) e).code() == 413) {
                     uploadAttachmentStatus.postValue(ResponseStatus.RESPONSE_ERROR_TOO_LARGE);
                 } else {
                     uploadAttachmentStatus.postValue(ResponseStatus.RESPONSE_ERROR);
@@ -451,7 +451,6 @@ public class SendMessageActivityViewModel extends ViewModel {
                     }
                 });
     }
-
 
 
     void grabForwardedAttachments(

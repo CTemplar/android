@@ -10,11 +10,17 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import io.reactivex.subjects.PublishSubject;
 import com.ctemplar.app.fdroid.R;
@@ -24,6 +30,7 @@ import com.ctemplar.app.fdroid.repository.constant.MessageActions;
 import com.ctemplar.app.fdroid.repository.provider.MessageProvider;
 import com.ctemplar.app.fdroid.repository.provider.UserDisplayProvider;
 import com.ctemplar.app.fdroid.utils.DateUtils;
+import com.ctemplar.app.fdroid.utils.EditTextUtils;
 
 public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesAdapter.InboxMessagesViewHolder> {
     private LayoutInflater inflater;
@@ -36,6 +43,9 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesAdap
 
     private OnReachedBottomCallback onReachedBottomCallback;
     private Handler onReachedBottomCallbackHandler;
+    private boolean selectionState = false;
+    private final Set<Long> selectedMessages = new HashSet<>();
+    private final MutableLiveData<Boolean> selectionStateLiveData = new MutableLiveData<>(false);
 
     @Override
     public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
@@ -74,7 +84,6 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesAdap
 
     @Override
     public void onBindViewHolder(@NonNull final InboxMessagesViewHolder holder, int position) {
-        final Resources resources = holder.binding.getRoot().getResources();
         if (position == getItemCount() - 1 && onReachedBottomCallback != null) {
             if (onReachedBottomCallbackHandler != null) {
                 onReachedBottomCallbackHandler.post(() -> onReachedBottomCallback.onReachedBottom());
@@ -82,163 +91,12 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesAdap
                 onReachedBottomCallback.onReachedBottom();
             }
         }
-        final MessageProvider message = filteredList.get(position);
-        String currentFolder = mainModel.getCurrentFolder().getValue();
-
-        List<UserDisplayProvider> userDisplayList = new ArrayList<>();
-        if (currentFolder != null && currentFolder.equals(MainFolderNames.SENT)) {
-            userDisplayList.addAll(message.getReceiverDisplayList());
-            userDisplayList.addAll(message.getCcDisplayList());
-            userDisplayList.addAll(message.getBccDisplayList());
-        }
-        if (userDisplayList.isEmpty()) {
-            userDisplayList.add(message.getSenderDisplay());
-        }
-        UserDisplayProvider userDisplay = userDisplayList.get(0);
-        String name = userDisplay.getName();
-        if (name != null && !name.isEmpty()) {
-            holder.binding.usernameTextView.setText(userDisplay.getName());
-        } else {
-            holder.binding.usernameTextView.setText(userDisplay.getEmail());
-        }
-
-        holder.binding.foregroundLayout.setOnClickListener(v -> onClickSubject.onNext(message.getId()));
-
-        // check for last action (reply, reply all, forward)
-        String lastActionThread = message.getLastActionThread();
-        if (TextUtils.isEmpty(lastActionThread)) {
-            holder.binding.replyMarkImageView.setVisibility(View.GONE);
-        } else {
-            switch (lastActionThread) {
-                case MessageActions.REPLY:
-                    holder.binding.replyMarkImageView.setImageResource(R.drawable.ic_reply_message);
-                    break;
-                case MessageActions.REPLY_ALL:
-                    holder.binding.replyMarkImageView.setImageResource(R.drawable.ic_reply_all_message);
-                    break;
-                case MessageActions.FORWARD:
-                    holder.binding.replyMarkImageView.setImageResource(R.drawable.ic_forward_message);
-                    break;
-            }
-            holder.binding.replyMarkImageView.setVisibility(View.VISIBLE);
-        }
-
-        // check for children count
-        if (message.isHasChildren()) {
-            int chainCount = message.getChildrenCount() + 1;
-            holder.binding.childrenCounterTextView.setText(String.valueOf(chainCount));
-            holder.binding.childrenCounterTextView.setVisibility(View.VISIBLE);
-        } else {
-            holder.binding.childrenCounterTextView.setVisibility(View.GONE);
-        }
-
-        // check for read/unread
-        if (message.isRead()) {
-            holder.binding.unreadMarkImageView.setVisibility(View.GONE);
-            holder.binding.usernameTextView.setTypeface(null, Typeface.NORMAL);
-            holder.binding.foregroundLayout.setBackgroundColor(
-                    resources.getColor(R.color.colorPrimaryDark));
-        } else {
-            holder.binding.unreadMarkImageView.setVisibility(View.VISIBLE);
-            holder.binding.usernameTextView.setTypeface(null, Typeface.BOLD);
-            holder.binding.foregroundLayout.setBackgroundColor(
-                    resources.getColor(R.color.colorPrimary));
-        }
-
-        // check is verified
-        holder.binding.verifiedMarkImageView.setVisibility(
-                message.isVerified() ? View.VISIBLE : View.GONE);
-
-        // check for protection
-        holder.binding.encryptedImageView.setSelected(message.isProtected());
-
-        // check for status (delivery in, delete in, dead mans in)
-        if (message.getDelayedDelivery() != null) {
-            String leftTime = DateUtils.elapsedTime(message.getDelayedDelivery());
-            if (leftTime != null) {
-                holder.binding.statusTextView.setText(resources.getString(R.string.txt_left_time_delay_delivery, leftTime));
-                holder.binding.statusTextView.setBackgroundColor(
-                        resources.getColor(R.color.colorDarkGreen));
-                holder.binding.statusTextView.setVisibility(View.VISIBLE);
-            } else {
-                holder.binding.statusTextView.setVisibility(View.GONE);
-            }
-        } else if (message.getDestructDate() != null) {
-            String leftTime = DateUtils.elapsedTime(message.getDestructDate());
-            if (leftTime != null) {
-                holder.binding.statusTextView.setText(resources.getString(R.string.txt_left_time_destruct, leftTime));
-                holder.binding.statusTextView.setVisibility(View.VISIBLE);
-            } else {
-                holder.binding.statusTextView.setVisibility(View.GONE);
-            }
-        } else if (message.getDeadManDuration() != null) {
-            String leftTime = DateUtils.deadMansTime(message.getDeadManDuration());
-            if (leftTime != null) {
-                holder.binding.statusTextView.setText(resources.getString(R.string.txt_left_time_dead_mans_timer, leftTime));
-                holder.binding.statusTextView.setBackgroundColor(
-                        resources.getColor(R.color.colorRed0));
-                holder.binding.statusTextView.setVisibility(View.VISIBLE);
-            } else {
-                holder.binding.statusTextView.setVisibility(View.GONE);
-            }
-        } else {
-            holder.binding.statusTextView.setVisibility(View.GONE);
-        }
-
-        Date messageDate = DateUtils.getDeliveryDate(message);
-        holder.binding.dateTextView.setText(DateUtils.displayMessageDate(messageDate, resources));
-
-        holder.binding.starredLayout.setOnClickListener(v -> {
-            boolean isStarred = !message.isStarred();
-            mainModel.markMessageIsStarred(message.getId(), isStarred);
-            message.setStarred(isStarred);
-            holder.binding.starredImageView.setSelected(isStarred);
-        });
-
-        holder.binding.starredImageView.setSelected(message.isStarred());
-
-        // check for attachments
-        if (message.isHasAttachments()) {
-            holder.binding.attachmentImageView.setVisibility(View.VISIBLE);
-        } else {
-            holder.binding.attachmentImageView.setVisibility(View.GONE);
-        }
-
-        // check for subject
-        if (message.getEncryptionMessage() != null) {
-            holder.binding.subjectTextView.setVisibility(View.GONE);
-            holder.binding.keyImageView.setVisibility(View.VISIBLE);
-            holder.binding.subjectEncryptedTextView.setVisibility(View.GONE);
-            holder.binding.decryptionProgressBar.setVisibility(View.GONE);
-        } else if (!message.isSubjectEncrypted() || message.isSubjectDecrypted()) {
-            holder.binding.subjectTextView.setText(message.getSubject());
-            holder.binding.subjectTextView.setVisibility(View.VISIBLE);
-            holder.binding.keyImageView.setVisibility(View.GONE);
-            holder.binding.subjectEncryptedTextView.setVisibility(View.GONE);
-            holder.binding.decryptionProgressBar.setVisibility(View.GONE);
-        } else if (message.getDecryptedSubject() != null) {
-            holder.binding.subjectTextView.setText(message.getDecryptedSubject());
-            holder.binding.subjectTextView.setVisibility(View.VISIBLE);
-            holder.binding.keyImageView.setVisibility(View.GONE);
-            holder.binding.subjectEncryptedTextView.setVisibility(View.GONE);
-            holder.binding.decryptionProgressBar.setVisibility(View.GONE);
-        } else {
-            holder.binding.subjectTextView.setVisibility(View.GONE);
-            holder.binding.keyImageView.setVisibility(View.GONE);
-            holder.binding.subjectEncryptedTextView.setVisibility(View.VISIBLE);
-            holder.binding.decryptionProgressBar.setVisibility(View.VISIBLE);
-        }
+        holder.update(filteredList.get(position));
     }
 
     @Override
     public int getItemCount() {
         return filteredList.size();
-    }
-
-    MessageProvider removeAt(int position) {
-        MessageProvider removedMessage = filteredList.remove(position);
-        notifyItemRemoved(position);
-        return removedMessage;
     }
 
     public MessageProvider get(int position) {
@@ -249,9 +107,26 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesAdap
         return messageList.isEmpty() ? null : messageList.get(messageList.size() - 1);
     }
 
-    void restoreMessage(MessageProvider deletedMessage, int position) {
-        filteredList.add(position, deletedMessage);
-        notifyItemInserted(position);
+    public MessageProvider removeAt(int position) {
+        MessageProvider removedMessage = filteredList.remove(position);
+        notifyItemRemoved(position);
+        return removedMessage;
+    }
+
+    public void removeMessages(Collection<MessageProvider> messages) {
+        for (MessageProvider message : messages) {
+            int position = filteredList.indexOf(message);
+            filteredList.remove(message);
+            notifyItemRemoved(position);
+        }
+    }
+
+    public void restoreMessages(Map<Integer, MessageProvider> messages) {
+        for (Map.Entry<Integer, MessageProvider> messagesEntry : messages.entrySet()) {
+            int position = messagesEntry.getKey();
+            filteredList.add(position, messagesEntry.getValue());
+            notifyItemInserted(position);
+        }
     }
 
     public List<MessageProvider> getAll() {
@@ -376,12 +251,247 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesAdap
         void onReachedBottom();
     }
 
-    public static class InboxMessagesViewHolder extends RecyclerView.ViewHolder {
+    public void setSelectionState() {
+        setSelectionState(true);
+    }
+
+    public void setSelectionState(boolean active) {
+        if (selectionState == active) {
+            return;
+        }
+        this.selectionState = active;
+        if (!active) {
+            this.selectedMessages.clear();
+        }
+        selectionStateLiveData.setValue(active);
+        notifyDataSetChanged();
+    }
+
+    public void selectAll() {
+        for (MessageProvider messageProvider : filteredList) {
+            selectedMessages.add(messageProvider.getId());
+        }
+        notifyDataSetChanged();
+    }
+
+    private void changeSelectState(MessageProvider messageProvider) {
+        long id = messageProvider.getId();
+        if (!selectedMessages.remove(id)) {
+            selectedMessages.add(id);
+        } else {
+            if (selectedMessages.isEmpty()) {
+                setSelectionState(false);
+                return;
+            }
+        }
+        notifyItemChanged(filteredList.indexOf(messageProvider));
+    }
+
+    public LiveData<Boolean> getSelectionState() {
+        return selectionStateLiveData;
+    }
+
+    public boolean getSelectionStateValue() {
+        if (selectionStateLiveData.getValue() == null) {
+            return false;
+        }
+        return selectionStateLiveData.getValue();
+    }
+
+    public Long[] getSelectedMessages() {
+        return selectedMessages.toArray(new Long[0]);
+    }
+
+    public Map<Integer, MessageProvider> getSelectedMessagesMap() {
+        Map<Integer, MessageProvider> selectedMessagesMap = new HashMap<>();
+        for (Long selectedMessage : selectedMessages) {
+            for (int i = 0; i < filteredList.size(); i++) {
+                MessageProvider messageProvider = filteredList.get(i);
+                if (selectedMessage.equals(messageProvider.getId())) {
+                    selectedMessagesMap.put(i, messageProvider);
+                }
+            }
+        }
+        return selectedMessagesMap;
+    }
+
+    public class InboxMessagesViewHolder extends RecyclerView.ViewHolder {
         final ItemMessageViewHolderBinding binding;
 
         public InboxMessagesViewHolder(@NonNull ItemMessageViewHolderBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
+        }
+
+        public void update(MessageProvider message) {
+            final Resources resources = binding.getRoot().getResources();
+            String currentFolder = mainModel.getCurrentFolder().getValue();
+
+            List<UserDisplayProvider> userDisplayList = new ArrayList<>();
+            if (currentFolder != null && currentFolder.equals(MainFolderNames.SENT)) {
+                userDisplayList.addAll(message.getReceiverDisplayList());
+                userDisplayList.addAll(message.getCcDisplayList());
+                userDisplayList.addAll(message.getBccDisplayList());
+            }
+            if (userDisplayList.isEmpty()) {
+                userDisplayList.add(message.getSenderDisplay());
+            }
+            UserDisplayProvider userDisplay = userDisplayList.get(0);
+            if (EditTextUtils.isNotEmpty(userDisplay.getName())) {
+                binding.usernameTextView.setText(userDisplay.getName());
+            } else {
+                binding.usernameTextView.setText(userDisplay.getEmail());
+            }
+
+            // check for last action (reply, reply all, forward)
+            String lastActionThread = message.getLastActionThread();
+            if (TextUtils.isEmpty(lastActionThread)) {
+                binding.replyMarkImageView.setVisibility(View.GONE);
+            } else {
+                switch (lastActionThread) {
+                    case MessageActions.REPLY:
+                        binding.replyMarkImageView.setImageResource(R.drawable.ic_reply_message);
+                        break;
+                    case MessageActions.REPLY_ALL:
+                        binding.replyMarkImageView.setImageResource(R.drawable.ic_reply_all_message);
+                        break;
+                    case MessageActions.FORWARD:
+                        binding.replyMarkImageView.setImageResource(R.drawable.ic_forward_message);
+                        break;
+                }
+                binding.replyMarkImageView.setVisibility(View.VISIBLE);
+            }
+
+            // check for children count
+            if (message.isHasChildren()) {
+                int chainCount = message.getChildrenCount() + 1;
+                binding.childrenCounterTextView.setText(String.valueOf(chainCount));
+                binding.childrenCounterTextView.setVisibility(View.VISIBLE);
+            } else {
+                binding.childrenCounterTextView.setVisibility(View.GONE);
+            }
+
+            // check for read/unread
+            int backgroundColor;
+            if (message.isRead()) {
+                binding.unreadMarkImageView.setVisibility(View.GONE);
+                binding.usernameTextView.setTypeface(null, Typeface.NORMAL);
+                backgroundColor = resources.getColor(R.color.colorPrimaryDark);
+            } else {
+                binding.unreadMarkImageView.setVisibility(View.VISIBLE);
+                binding.usernameTextView.setTypeface(null, Typeface.BOLD);
+                backgroundColor = resources.getColor(R.color.colorPrimary);
+            }
+            binding.foregroundLayout.setBackgroundColor(backgroundColor);
+            binding.selectedLayout.setBackgroundColor(backgroundColor);
+
+            // check is verified
+            binding.verifiedMarkImageView.setVisibility(message.isVerified() ? View.VISIBLE : View.GONE);
+
+            // check for protection
+            binding.encryptedImageView.setSelected(message.isProtected());
+
+            // check for status (delivery in, delete in, dead mans in)
+            if (message.getDelayedDelivery() != null) {
+                String leftTime = DateUtils.elapsedTime(message.getDelayedDelivery());
+                if (leftTime != null) {
+                    binding.statusTextView.setText(resources.getString(R.string.txt_left_time_delay_delivery, leftTime));
+                    binding.statusTextView.setBackgroundColor(resources.getColor(R.color.colorDarkGreen));
+                    binding.statusTextView.setVisibility(View.VISIBLE);
+                } else {
+                    binding.statusTextView.setVisibility(View.GONE);
+                }
+            } else if (message.getDestructDate() != null) {
+                String leftTime = DateUtils.elapsedTime(message.getDestructDate());
+                if (leftTime != null) {
+                    binding.statusTextView.setText(resources.getString(R.string.txt_left_time_destruct, leftTime));
+                    binding.statusTextView.setVisibility(View.VISIBLE);
+                } else {
+                    binding.statusTextView.setVisibility(View.GONE);
+                }
+            } else if (message.getDeadManDuration() != null) {
+                String leftTime = DateUtils.deadMansTime(message.getDeadManDuration());
+                if (leftTime != null) {
+                    binding.statusTextView.setText(resources.getString(R.string.txt_left_time_dead_mans_timer, leftTime));
+                    binding.statusTextView.setBackgroundColor(resources.getColor(R.color.colorRed0));
+                    binding.statusTextView.setVisibility(View.VISIBLE);
+                } else {
+                    binding.statusTextView.setVisibility(View.GONE);
+                }
+            } else {
+                binding.statusTextView.setVisibility(View.GONE);
+            }
+
+            binding.dateTextView.setText(
+                    DateUtils.displayMessageDate(DateUtils.getDeliveryDate(message), resources));
+
+            binding.starredLayout.setOnClickListener(v -> {
+                boolean isStarred = !message.isStarred();
+                mainModel.markMessageIsStarred(message.getId(), isStarred);
+                message.setStarred(isStarred);
+                binding.starredImageView.setSelected(isStarred);
+            });
+
+            binding.starredImageView.setSelected(message.isStarred());
+
+            // check for attachments
+            if (message.isHasAttachments()) {
+                binding.attachmentImageView.setVisibility(View.VISIBLE);
+            } else {
+                binding.attachmentImageView.setVisibility(View.GONE);
+            }
+
+            // check for subject
+            if (message.getEncryptionMessage() != null) {
+                binding.subjectTextView.setVisibility(View.GONE);
+                binding.keyImageView.setVisibility(View.VISIBLE);
+                binding.subjectEncryptedTextView.setVisibility(View.GONE);
+                binding.decryptionProgressBar.setVisibility(View.GONE);
+            } else if (!message.isSubjectEncrypted() || message.isSubjectDecrypted()) {
+                binding.subjectTextView.setText(message.getSubject());
+                binding.subjectTextView.setVisibility(View.VISIBLE);
+                binding.keyImageView.setVisibility(View.GONE);
+                binding.subjectEncryptedTextView.setVisibility(View.GONE);
+                binding.decryptionProgressBar.setVisibility(View.GONE);
+            } else if (message.getDecryptedSubject() != null) {
+                binding.subjectTextView.setText(message.getDecryptedSubject());
+                binding.subjectTextView.setVisibility(View.VISIBLE);
+                binding.keyImageView.setVisibility(View.GONE);
+                binding.subjectEncryptedTextView.setVisibility(View.GONE);
+                binding.decryptionProgressBar.setVisibility(View.GONE);
+            } else {
+                binding.subjectTextView.setVisibility(View.GONE);
+                binding.keyImageView.setVisibility(View.GONE);
+                binding.subjectEncryptedTextView.setVisibility(View.VISIBLE);
+                binding.decryptionProgressBar.setVisibility(View.VISIBLE);
+            }
+
+            boolean isMessageSelected = selectedMessages.contains(message.getId());
+            binding.foregroundLayout.setOnLongClickListener(v -> {
+                if (selectionState) {
+                    return false;
+                }
+                selectedMessages.add(message.getId());
+                setSelectionState();
+                return false;
+            });
+            binding.foregroundLayout.setOnClickListener(v -> {
+                if (selectionState) {
+                    changeSelectState(message);
+                } else {
+                    onClickSubject.onNext(message.getId());
+                }
+            });
+            if (selectionState) {
+                binding.selectedLayout.setVisibility(View.VISIBLE);
+                binding.foregroundSelectedView.setSelected(isMessageSelected);
+                binding.checkbox.setChecked(isMessageSelected);
+            } else {
+                binding.selectedLayout.setVisibility(View.GONE);
+                binding.foregroundSelectedView.setSelected(false);
+                binding.checkbox.setChecked(false);
+            }
+            binding.checkbox.setOnClickListener(v -> changeSelectState(message));
         }
     }
 }

@@ -247,8 +247,12 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (!(getCurrentFragment() instanceof MainFragment)) {
+        Fragment currentFragment = getCurrentFragment();
+        if (!(currentFragment instanceof MainFragment)) {
             return false;
+        }
+        if (currentFragment.onOptionsItemSelected(item)) {
+            return true;
         }
         int id = item.getItemId();
         if (id == android.R.id.home) {

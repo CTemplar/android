@@ -1,5 +1,7 @@
 package com.ctemplar.app.fdroid.repository;
 
+import android.text.TextUtils;
+
 import com.ctemplar.app.fdroid.CTemplarApp;
 import com.ctemplar.app.fdroid.net.RestService;
 import com.ctemplar.app.fdroid.net.request.AddAppTokenRequest;
@@ -90,7 +92,8 @@ public class UserRepository {
     }
 
     public UserRepository() {
-        CTemplarApp.getRestClientLiveData().observeForever(instance -> service = instance.getRestService());
+        CTemplarApp.getRestClientLiveData().observeForever(instance
+                -> service = instance.getRestService());
         userStore = CTemplarApp.getUserStore();
     }
 
@@ -327,8 +330,8 @@ public class UserRepository {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<Response<Void>> deleteMessages(String messageIds) {
-        return service.deleteMessages(messageIds)
+    public Observable<Response<Void>> deleteMessages(Long[] messageIds) {
+        return service.deleteMessages(TextUtils.join(",", messageIds))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
@@ -339,8 +342,9 @@ public class UserRepository {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<Response<Void>> toFolder(long id, String folder) {
-        return service.toFolder(id, new MoveToFolderRequest(folder))
+    public Observable<Response<Void>> toFolder(Long[] messageIds, String folder) {
+        return service.toFolder(TextUtils.join(",", messageIds),
+                new MoveToFolderRequest(folder))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
@@ -351,8 +355,9 @@ public class UserRepository {
                 .observeOn(Schedulers.computation());
     }
 
-    public Observable<Response<Void>> markMessageAsRead(long id, MarkMessageAsReadRequest request) {
-        return service.markMessageAsRead(id, request)
+    public Observable<Response<Void>> markMessageAsRead(Long[] messageIds, boolean isRead) {
+        return service.markMessageAsRead(TextUtils.join(",", messageIds),
+                new MarkMessageAsReadRequest(isRead))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }

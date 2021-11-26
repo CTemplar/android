@@ -174,12 +174,12 @@ public class ViewMessagesViewModel extends ViewModel {
         userRepository.markMessageIsStarred(id, isStarred)
                 .subscribe(new Observer<Response<Void>>() {
                     @Override
-                    public void onSubscribe(Disposable d) {
+                    public void onSubscribe(@androidx.annotation.NonNull Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(Response<Void> messageResponse) {
+                    public void onNext(@androidx.annotation.NonNull Response<Void> messageResponse) {
                         int resultCode = messageResponse.code();
                         if (resultCode == 204) {
                             messagesRepository.markMessageIsStarred(id, isStarred);
@@ -190,7 +190,7 @@ public class ViewMessagesViewModel extends ViewModel {
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onError(@androidx.annotation.NonNull Throwable e) {
                         Timber.e(e);
                     }
 
@@ -201,9 +201,8 @@ public class ViewMessagesViewModel extends ViewModel {
                 });
     }
 
-    public void markMessageAsRead(long id, boolean isRead) {
-        MarkMessageAsReadRequest request = new MarkMessageAsReadRequest(isRead);
-        userRepository.markMessageAsRead(id, request)
+    public void markMessageAsRead(long messageId, boolean isRead) {
+        userRepository.markMessageAsRead(new Long[]{messageId}, isRead)
                 .subscribe(new Observer<Response<Void>>() {
                     @Override
                     public void onSubscribe(@androidx.annotation.NonNull Disposable d) {
@@ -214,7 +213,7 @@ public class ViewMessagesViewModel extends ViewModel {
                     public void onNext(@androidx.annotation.NonNull Response<Void> messageResponse) {
                         int resultCode = messageResponse.code();
                         if (resultCode == 204) {
-                            messagesRepository.markMessageAsRead(id, isRead);
+                            messagesRepository.markMessageAsRead(messageId, isRead);
                             readResponse.postValue(isRead);
                         } else {
                             Timber.e("Update isRead response is not success: code = %s", resultCode);
@@ -237,17 +236,17 @@ public class ViewMessagesViewModel extends ViewModel {
         manageFoldersRepository.getFoldersList(limit, offset)
                 .subscribe(new Observer<FoldersResponse>() {
                     @Override
-                    public void onSubscribe(Disposable d) {
+                    public void onSubscribe(@androidx.annotation.NonNull Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(FoldersResponse response) {
+                    public void onNext(@androidx.annotation.NonNull FoldersResponse response) {
                         foldersResponse.postValue(response);
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onError(@androidx.annotation.NonNull Throwable e) {
                         Timber.e(e);
                     }
 
@@ -258,23 +257,26 @@ public class ViewMessagesViewModel extends ViewModel {
                 });
     }
 
-    public void moveToFolder(final long messageId, final String folder) {
-        userRepository.toFolder(messageId, folder)
+    public void moveToFolder(Long[] messageIds, String folder) {
+        userRepository.toFolder(messageIds, folder)
                 .subscribe(new Observer<Response<Void>>() {
                     @Override
-                    public void onSubscribe(Disposable d) {
+                    public void onSubscribe(@androidx.annotation.NonNull Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(Response<Void> voidResponse) {
-                        messagesRepository.updateMessageFolderName(messageId, folder);
+                    public void onNext(@androidx.annotation.NonNull Response<Void> voidResponse) {
+                        for (Long messageId : messageIds) {
+                            messagesRepository.updateMessageFolderName(messageId, folder);
+                        }
                         moveToFolderStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
                     }
 
                     @Override
-                    public void onError(Throwable e) {
-                        Timber.e(e, "Move message");
+                    public void onError(@androidx.annotation.NonNull Throwable e) {
+                        Timber.e(e, "Move messages");
+                        moveToFolderStatus.postValue(ResponseStatus.RESPONSE_ERROR);
                     }
 
                     @Override
@@ -288,17 +290,17 @@ public class ViewMessagesViewModel extends ViewModel {
         userRepository.addWhitelistContact(new WhiteListContact(name, email))
                 .subscribe(new Observer<WhiteListContact>() {
                     @Override
-                    public void onSubscribe(Disposable d) {
+                    public void onSubscribe(@androidx.annotation.NonNull Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(WhiteListContact whiteListContact) {
+                    public void onNext(@androidx.annotation.NonNull WhiteListContact whiteListContact) {
                         addWhitelistStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onError(@androidx.annotation.NonNull Throwable e) {
                         responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
                         Timber.e(e);
                     }

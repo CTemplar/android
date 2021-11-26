@@ -1,6 +1,7 @@
 package com.ctemplar.app.fdroid.message.dialog;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
@@ -11,15 +12,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -27,88 +25,108 @@ import androidx.lifecycle.ViewModelProvider;
 import java.util.List;
 
 import com.ctemplar.app.fdroid.R;
+import com.ctemplar.app.fdroid.databinding.FragmentMessagesMoveDialogBinding;
 import com.ctemplar.app.fdroid.folders.AddFolderActivity;
 import com.ctemplar.app.fdroid.folders.ManageFoldersActivity;
-import com.ctemplar.app.fdroid.message.ViewMessagesActivity;
 import com.ctemplar.app.fdroid.message.ViewMessagesViewModel;
 import com.ctemplar.app.fdroid.net.response.folders.FoldersResponse;
 import com.ctemplar.app.fdroid.net.response.folders.FoldersResult;
+import com.ctemplar.app.fdroid.utils.ToastUtils;
+import timber.log.Timber;
 
 public class MoveDialogFragment extends DialogFragment {
+    public static final String MESSAGE_IDS = "message_ids";
+
+    private FragmentMessagesMoveDialogBinding binding;
     private ViewMessagesViewModel viewMessagesModel;
     private List<FoldersResult> customFoldersList;
     private OnMoveListener callback;
 
     @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        viewMessagesModel = new ViewModelProvider(getActivity()).get(ViewMessagesViewModel.class);
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
+        Dialog dialog = getDialog();
+        if (dialog == null) {
+            Timber.e("dialog is null");
+            return;
+        }
         getCustomFolders();
-        getDialog().getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
     }
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        final View view = inflater.inflate(R.layout.fragment_messages_move_dialog, container, false);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup viewGroup, @Nullable Bundle savedInstanceState) {
+        binding = FragmentMessagesMoveDialogBinding.inflate(inflater, viewGroup, false);
+        return binding.getRoot();
+    }
 
-        Bundle bundleArguments = this.getArguments();
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        Bundle bundleArguments = getArguments();
         if (bundleArguments == null) {
-            return view;
+            Timber.e("bundleArguments is null");
+            return;
         }
-        final long parentMessageId = bundleArguments.getLong(ViewMessagesActivity.PARENT_ID, -1);
+        binding.closeImageView.setOnClickListener(v -> dismiss());
+        binding.cancelActionButton.setOnClickListener(v -> dismiss());
 
-        viewMessagesModel = new ViewModelProvider(getActivity()).get(ViewMessagesViewModel.class);
-        getCustomFolders();
-
-        viewMessagesModel.getFoldersResponse().observe(getViewLifecycleOwner(), foldersResponse -> {
-            if (foldersResponse != null) {
-                handleFoldersResponse(view, foldersResponse);
-            }
-        });
-
-        ImageView closeDialog = view.findViewById(R.id.fragment_messages_move_dialog_close);
-        closeDialog.setOnClickListener(v -> dismiss());
-
-        Button buttonCancel = view.findViewById(R.id.fragment_messages_move_dialog_action_cancel);
-        buttonCancel.setOnClickListener(v -> dismiss());
-
-        Button buttonApply = view.findViewById(R.id.fragment_messages_move_dialog_action_apply);
-        buttonApply.setOnClickListener(v -> {
-            RadioGroup foldersRadioGroup = view.findViewById(R.id.fragment_messages_move_dialog_group);
-            int checkedId = foldersRadioGroup.getCheckedRadioButtonId();
+        long[] messageIds = bundleArguments.getLongArray(MESSAGE_IDS);
+        Long[] messageObjectIds = new Long[messageIds.length];
+        for (int i = 0; i < messageIds.length; ++i) {
+            messageObjectIds[i] = messageIds[i];
+        }
+        binding.applyActionButton.setOnClickListener(v -> {
+            int checkedId = binding.foldersRadioGroup.getCheckedRadioButtonId();
             for (FoldersResult folderItem : customFoldersList) {
                 if (checkedId == folderItem.getId()) {
                     String folderName = folderItem.getName();
-                    viewMessagesModel.moveToFolder(parentMessageId, folderName);
+                    viewMessagesModel.moveToFolder(messageObjectIds, folderName);
                     if (callback != null) {
                         callback.onMove(folderName);
                     }
-                    Toast.makeText(getActivity(), getResources().getString(R.string.toast_message_moved_to, folderName),
-                            Toast.LENGTH_SHORT).show();
+                    ToastUtils.showToast(getActivity(), getString(R.string.toast_message_moved_to, folderName));
                     dismiss();
                 }
             }
         });
 
-        return view;
+        viewMessagesModel.getFoldersResponse().observe(getViewLifecycleOwner(),
+                foldersResponse -> handleFoldersResponse(view, foldersResponse));
+        getCustomFolders();
     }
 
     private void handleFoldersResponse(View view, FoldersResponse foldersResponse) {
+        if (foldersResponse == null) {
+            Timber.e("foldersResponse is null");
+            return;
+        }
         LayoutInflater inflater = LayoutInflater.from(getActivity());
-        LinearLayout foldersListLayout = view.findViewById(R.id.fragment_messages_move_dialog_group);
         customFoldersList = foldersResponse.getFoldersList();
-
-        foldersListLayout.removeAllViewsInLayout();
+        binding.foldersRadioGroup.removeAllViewsInLayout();
 
         for (FoldersResult folderItem : customFoldersList) {
-            View folderItemButton = inflater.inflate(R.layout.item_move_folder_radiobutton, foldersListLayout, false);
+            View folderItemButton = inflater.inflate(R.layout.item_move_folder_radiobutton,
+                    binding.foldersRadioGroup, false);
             RadioButton radioButton = folderItemButton.findViewById(R.id.radio_button);
             radioButton.setId(folderItem.getId());
             radioButton.setText(folderItem.getName());
 
             Resources resources = requireContext().getResources();
-            Drawable folderLeftDrawable = resources.getDrawable(R.drawable.ic_manage_folders);
-            Drawable folderRightDrawable = resources.getDrawable(R.drawable.selector_check);
+            Drawable folderLeftDrawable = ResourcesCompat.getDrawable(resources,
+                    R.drawable.ic_manage_folders, null);
+            Drawable folderRightDrawable = ResourcesCompat.getDrawable(resources,
+                    R.drawable.selector_check, null);
+            if (folderLeftDrawable == null || folderRightDrawable == null) {
+                continue;
+            }
             folderLeftDrawable.mutate();
             folderRightDrawable.mutate();
 
@@ -117,17 +135,20 @@ public class MoveDialogFragment extends DialogFragment {
             folderLeftDrawable.setColorFilter(folderColor, PorterDuff.Mode.SRC_IN);
             folderRightDrawable.setColorFilter(markColor, PorterDuff.Mode.SRC_IN);
             DrawableCompat.setTint(folderRightDrawable, markColor);
-            radioButton.setCompoundDrawablesWithIntrinsicBounds(folderLeftDrawable, null, folderRightDrawable, null);
-            foldersListLayout.addView(folderItemButton);
+            radioButton.setCompoundDrawablesWithIntrinsicBounds(folderLeftDrawable, null,
+                    folderRightDrawable, null);
+            binding.foldersRadioGroup.addView(folderItemButton);
         }
 
-        View addFolderLayout = inflater.inflate(R.layout.manage_folders_footer, foldersListLayout, false);
+        View addFolderLayout = inflater.inflate(R.layout.manage_folders_footer,
+                binding.foldersRadioGroup, false);
         Button addFolderButton = addFolderLayout.findViewById(R.id.manager_folders_footer_btn);
         addFolderButton.setOnClickListener(v -> {
             Intent addFolder = new Intent(getActivity(), AddFolderActivity.class);
             startActivity(addFolder);
         });
-        View manageFolderLayout = inflater.inflate(R.layout.item_manage_folders, foldersListLayout, false);
+        View manageFolderLayout = inflater.inflate(R.layout.item_manage_folders,
+                binding.foldersRadioGroup, false);
         TextView manageFolderButton = manageFolderLayout.findViewById(R.id.manager_folders);
         manageFolderButton.setOnClickListener(v -> {
             Intent managerFolderIntent = new Intent(getActivity(), ManageFoldersActivity.class);
@@ -135,12 +156,11 @@ public class MoveDialogFragment extends DialogFragment {
         });
 
         if (customFoldersList.isEmpty()) {
-            foldersListLayout.addView(addFolderLayout);
+            binding.foldersRadioGroup.addView(addFolderLayout);
         } else {
-            foldersListLayout.addView(manageFolderLayout);
+            binding.foldersRadioGroup.addView(manageFolderLayout);
         }
     }
-
 
     private void getCustomFolders() {
         viewMessagesModel.getFolders(200, 0);
