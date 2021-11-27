@@ -5,7 +5,7 @@
     <string name="navigation_drawer_close">Gezinti Çekmecesini kapat</string>
     <string name="nav_header_desc">Gezinti Başlığı</string>
     <string name="action_settings">Ayarlar</string>
-    <string name="action_undo">UNDO</string>
+    <string name="action_undo">GERİ AL</string>
 
     <!-- MAIN -->
     <string name="dialog_log_out">Çıkış Yap</string>
