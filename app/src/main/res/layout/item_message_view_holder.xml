@@ -22,10 +22,9 @@
 
     <FrameLayout
         android:id="@+id/selected_layout"
-        android:layout_width="50dp"
+        android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="?android:colorPrimary"
-        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">

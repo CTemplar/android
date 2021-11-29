@@ -181,9 +181,10 @@ public class InboxFragment extends BaseFragment implements InboxMessagesAdapter.
         });
 
         binding.swipeRefreshLayout.setOnRefreshListener(() -> {
-            // display loader only if another is off
-            if (isMainProgressLoaderVisible()) {
+            // display loader only if another is off or selection state active
+            if (isMainProgressLoaderVisible() || adapter.getSelectionStateValue()) {
                 binding.swipeRefreshLayout.setRefreshing(false);
+                return;
             }
             requestNewMessages();
         });
@@ -381,6 +382,7 @@ public class InboxFragment extends BaseFragment implements InboxMessagesAdapter.
 
     private void requestNextMessages() {
         if (isLoadingNewMessages || adapter.getSelectionStateValue()) {
+            // return if loading new messages or selection state active
             return;
         }
         currentFolder = mainModel.getCurrentFolder().getValue();
