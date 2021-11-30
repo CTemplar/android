@@ -20,13 +20,34 @@
 
     </FrameLayout>
 
+    <FrameLayout
+        android:id="@+id/selected_layout"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="?android:colorPrimary"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.appcompat.widget.AppCompatCheckBox
+            android:id="@+id/checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:button="@drawable/selector_check"
+            android:buttonTint="@color/primaryTextColor" />
+
+    </FrameLayout>
+
     <LinearLayout
         android:id="@+id/foreground_layout"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="?colorPrimary"
+        android:background="?android:colorPrimary"
         android:orientation="vertical"
         android:padding="16dp"
+        app:layout_constraintStart_toEndOf="@id/selected_layout"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -110,7 +131,7 @@
                 android:paddingStart="2dp"
                 android:paddingEnd="2dp"
                 android:text="Delete in 0d 00:00"
-                android:textColor="@android:color/white"
+                android:textColor="@color/colorWhiteLight"
                 android:textSize="12sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/date_text_view"
@@ -233,8 +254,18 @@
         android:layout_width="0dp"
         android:layout_height="4dp"
         android:indeterminate="true"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/foreground_selected_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/selector_surface"
+        app:layout_constraintBottom_toBottomOf="@id/foreground_layout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/foreground_layout" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
