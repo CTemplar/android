@@ -1,5 +1,8 @@
 package com.ctemplar.app.fdroid.main;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ValueAnimator;
 import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.os.Handler;
@@ -33,6 +36,8 @@ import com.ctemplar.app.fdroid.utils.DateUtils;
 import com.ctemplar.app.fdroid.utils.EditTextUtils;
 
 public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesAdapter.InboxMessagesViewHolder> {
+    private static final int SELECTION_MAX_WIDTH = 100;
+    private static final int SELECTION_MIN_WIDTH = 0;
     private LayoutInflater inflater;
 
     private final List<MessageProvider> messageList;
@@ -46,9 +51,13 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesAdap
     private boolean selectionState = false;
     private final Set<Long> selectedMessages = new HashSet<>();
     private final MutableLiveData<Boolean> selectionStateLiveData = new MutableLiveData<>(false);
+    private RecyclerView recyclerView;
+    private ValueAnimator selectionAnimator;
+
 
     @Override
     public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
+        this.recyclerView = recyclerView;
         this.inflater = LayoutInflater.from(recyclerView.getContext());
     }
 
@@ -263,6 +272,7 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesAdap
         if (!active) {
             this.selectedMessages.clear();
         }
+        animateSelection();
         selectionStateLiveData.setValue(active);
         notifyDataSetChanged();
     }
@@ -278,6 +288,10 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesAdap
         long id = messageProvider.getId();
         if (!selectedMessages.remove(id)) {
             selectedMessages.add(id);
+            if (!selectionState) {
+                setSelectionState();
+                return;
+            }
         } else {
             if (selectedMessages.isEmpty()) {
                 setSelectionState(false);
@@ -285,6 +299,38 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesAdap
             }
         }
         notifyItemChanged(filteredList.indexOf(messageProvider));
+    }
+
+    private void animateSelection() {
+        boolean expand = selectionState;
+        int startValue;
+        if (selectionAnimator != null) {
+            startValue = (int) selectionAnimator.getAnimatedValue();
+            selectionAnimator.cancel();
+        } else {
+            startValue = expand ? SELECTION_MIN_WIDTH : SELECTION_MAX_WIDTH;
+        }
+        int endValue = expand ? SELECTION_MAX_WIDTH : SELECTION_MIN_WIDTH;
+        ValueAnimator animator = ValueAnimator.ofInt(startValue, endValue);
+        selectionAnimator = animator;
+        animator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                if (selectionAnimator == animator) {
+                    selectionAnimator = null;
+                }
+            }
+        });
+        animator.addUpdateListener(valueAnimator -> {
+            for (int i = 0; i < getItemCount(); ++i) {
+                InboxMessagesViewHolder viewHolder = (InboxMessagesViewHolder) recyclerView.findViewHolderForAdapterPosition(i);
+                if (viewHolder != null) {
+                    viewHolder.setSelectionWidth((int) valueAnimator.getAnimatedValue());
+                }
+            }
+        });
+        animator.setDuration(250);
+        animator.start();
     }
 
     public LiveData<Boolean> getSelectionState() {
@@ -471,9 +517,8 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesAdap
                 if (selectionState) {
                     return false;
                 }
-                selectedMessages.add(message.getId());
-                setSelectionState();
-                return false;
+                changeSelectState(message);
+                return true;
             });
             binding.foregroundLayout.setOnClickListener(v -> {
                 if (selectionState) {
@@ -482,16 +527,37 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesAdap
                     onClickSubject.onNext(message.getId());
                 }
             });
+            binding.checkbox.setOnClickListener(null);
             if (selectionState) {
-                binding.selectedLayout.setVisibility(View.VISIBLE);
                 binding.foregroundSelectedView.setSelected(isMessageSelected);
                 binding.checkbox.setChecked(isMessageSelected);
             } else {
-                binding.selectedLayout.setVisibility(View.GONE);
                 binding.foregroundSelectedView.setSelected(false);
                 binding.checkbox.setChecked(false);
             }
             binding.checkbox.setOnClickListener(v -> changeSelectState(message));
+            if (selectionAnimator == null) {
+                if (selectionState) {
+                    setMaxSelection();
+                } else {
+                    setMinSelection();
+                }
+            }
+        }
+
+        private void setMinSelection() {
+            setSelectionWidth(SELECTION_MIN_WIDTH);
+        }
+
+        private void setMaxSelection() {
+            setSelectionWidth(SELECTION_MAX_WIDTH);
+        }
+
+        private void setSelectionWidth(int value) {
+            View view = binding.selectedLayout;
+            ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
+            layoutParams.width = value;
+            view.setLayoutParams(layoutParams);
         }
     }
 }
