@@ -38,6 +38,7 @@ android {
             buildConfigField("String", "DOMAIN", "\"dev.ctemplar.com\"")
             buildConfigField("String", "ORIGIN", "\"https://dev.ctemplar.net\"")
             buildConfigField("String", "BASE_URL", "\"https://devapi.ctemplar.net/\"")
+            buildConfigField("String", "BASE_TOR_URL", "\"https://devapi.ctemplar.net/\"")
             buildConfigField("String", "USER_AGENT", "\"CTemplar App v${versionMajor}.${versionMinor}.${versionBuild}-dev\"")
         }
         production {
@@ -46,6 +47,7 @@ android {
             buildConfigField("String", "DOMAIN", "\"ctemplar.com\"")
             buildConfigField("String", "ORIGIN", "\"https://mail.ctemplar.com\"")
             buildConfigField("String", "BASE_URL", "\"https://api.ctemplar.com/\"")
+            buildConfigField("String", "BASE_TOR_URL", "\"http://api.ctemplarpizuduxk3fkwrieizstx33kg5chlvrh37nz73pv5smsvl6ad.onion/\"")
             buildConfigField("String", "USER_AGENT", "\"CTemplar App v${versionName}\"")
         }
     }
