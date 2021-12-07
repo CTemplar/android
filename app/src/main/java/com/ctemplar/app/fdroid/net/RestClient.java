@@ -1,6 +1,9 @@
 package com.ctemplar.app.fdroid.net;
 
-import com.ctemplar.app.fdroid.BuildConfig;
+import static com.ctemplar.app.fdroid.utils.DateUtils.GENERAL_GSON;
+
+import com.ctemplar.app.fdroid.CTemplarApp;
+import com.ctemplar.app.fdroid.repository.UserStore;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -9,20 +12,19 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
 
-import static com.ctemplar.app.fdroid.utils.DateUtils.GENERAL_GSON;
-
 public class RestClient {
     private final RestService services;
+    private final UserStore userStore;
 
     public RestClient() {
+        userStore = CTemplarApp.getUserStore();
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(BuildConfig.BASE_URL)
+                .baseUrl(ProxyController.getBaseUrl(userStore))
                 .client(okHttpClient())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(ScalarsConverterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create(GENERAL_GSON))
                 .build();
-
         services = retrofit.create(RestService.class);
     }
 
@@ -30,7 +32,7 @@ public class RestClient {
         HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor();
         httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
 
-        OkHttpClient.Builder client = OkHttpClientFactory.newClient().newBuilder()
+        OkHttpClient.Builder client = OkHttpClientFactory.newClient(userStore).newBuilder()
                 .addInterceptor(new HttpTokenInterceptor())
                 .authenticator(new TokenAuthenticator())
                 .addInterceptor(httpLoggingInterceptor);

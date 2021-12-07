@@ -9,6 +9,7 @@ import com.ctemplar.app.fdroid.CTemplarApp;
 import com.ctemplar.app.fdroid.net.OkHttpClientFactory;
 import com.ctemplar.app.fdroid.net.response.messages.MessagesResult;
 import com.ctemplar.app.fdroid.net.response.notification.NotificationMessageResponse;
+import com.ctemplar.app.fdroid.repository.UserStore;
 import com.ctemplar.app.fdroid.repository.entity.MessageEntity;
 import com.ctemplar.app.fdroid.repository.provider.MessageProvider;
 import com.google.gson.Gson;
@@ -34,13 +35,15 @@ public class NotificationServiceWebSocket extends WebSocketListener {
     private NotificationServiceWebSocketCallback callback;
     private boolean safeShutDown;
     private final Handler handler;
+    private final UserStore userStore;
 
     private NotificationServiceWebSocket() {
-        if (Looper.myLooper() != null) {
-            handler = new Handler();
-        } else {
+        if (Looper.myLooper() == null) {
             handler = new Handler(Looper.getMainLooper());
+        } else {
+            handler = new Handler();
         }
+        userStore = CTemplarApp.getUserStore();
     }
 
     @Override
@@ -130,8 +133,7 @@ public class NotificationServiceWebSocket extends WebSocketListener {
             Timber.e("User token is null");
             return;
         }
-
-        OkHttpClient client = OkHttpClientFactory.newClient().newBuilder()
+        OkHttpClient client = OkHttpClientFactory.newClient(userStore).newBuilder()
                 .readTimeout(0,  TimeUnit.MILLISECONDS)
                 .build();
 
