@@ -2,6 +2,8 @@ package mobileapp.ctemplar.com.ctemplarapp.repository;
 
 import mobileapp.ctemplar.com.ctemplarapp.net.entity.UserEntity;
 
+import java.net.Proxy;
+
 public interface UserStore {
     void saveUserPref(String username, String password, String passwordHashed);
     UserEntity getUser();
@@ -78,8 +80,12 @@ public interface UserStore {
     void setProxyTorEnabled(boolean value);
     boolean isProxyTorEnabled();
 
-    void setProxyHttpEnabled(boolean value);
-    boolean isProxyHttpEnabled();
+    void setProxyCustomEnabled(boolean value);
+    boolean isProxyCustomEnabled();
+
+    void setProxyTypeIndex(int proxyType);
+    int getProxyTypeIndex();
+    Proxy.Type getProxyType();
 
     void setProxyIP(String value);
     String getProxyIP();
