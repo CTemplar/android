@@ -1,0 +1,7 @@
+* Customizable read status
+* Email display improvements
+* Advanced email search
+* Multiple message selection
+* SOCKS proxy support
+* External links dialog setting
+* Security and stability improvements
