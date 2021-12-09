@@ -754,6 +754,7 @@ public class MainActivityViewModel extends AndroidViewModel {
                         userRepository.setContactsEncryptionEnabled(settingsResponse.isContactsEncrypted());
                         userRepository.setAutoReadEmailEnabled(settingsResponse.isAutoRead());
                         userRepository.setBlockExternalImagesEnabled(settingsResponse.isDisableLoadingImages());
+                        userRepository.setWarnExternalLinkEnabled(settingsResponse.isWarnExternalLink());
                         userRepository.setReportBugsEnabled(settingsResponse.isEnableReportBugs());
 
                         ThemeUtils.setDarkModeFromServer(

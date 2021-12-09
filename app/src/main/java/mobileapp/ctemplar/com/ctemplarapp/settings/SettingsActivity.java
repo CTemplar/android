@@ -322,23 +322,6 @@ public class SettingsActivity extends BaseActivity {
         }
     }
 
-    public static class BlockExternalImagesFragment extends BasePreferenceFragment {
-        @Override
-        public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
-            setPreferencesFromResource(R.xml.block_external_images_settings, rootKey);
-
-            SwitchPreference blockExternalImagesPreference = findPreference(getString(R.string.block_external_images_key));
-            if (blockExternalImagesPreference != null) {
-                blockExternalImagesPreference.setOnPreferenceChangeListener((preference, newValue) -> {
-                    userStore.setBlockExternalImagesEnabled((boolean) newValue);
-                    settingsModel.updateDisableLoadingImages(settingId, (boolean) newValue);
-                    Toast.makeText(getActivity(), getString(R.string.toast_saved), Toast.LENGTH_SHORT).show();
-                    return true;
-                });
-            }
-        }
-    }
-
     public static class ReportBugsFragment extends BasePreferenceFragment {
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
@@ -350,6 +333,33 @@ public class SettingsActivity extends BaseActivity {
                     userStore.setReportBugsEnabled((boolean) newValue);
                     settingsModel.updateReportBugs(settingId, (boolean) newValue);
                     Toast.makeText(getActivity(), getString(R.string.please_restart_app_to_apply_changes), Toast.LENGTH_SHORT).show();
+                    return true;
+                });
+            }
+        }
+    }
+
+    public static class ExternalResourcesRestrictionsFragment extends BasePreferenceFragment {
+        @Override
+        public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+            setPreferencesFromResource(R.xml.external_restrictions_settings, rootKey);
+
+            SwitchPreference blockExternalImagesPreference = findPreference(getString(R.string.block_external_images_key));
+            SwitchPreference warnExternalLinkPreference = findPreference(getString(R.string.warn_external_link_key));
+
+            if (blockExternalImagesPreference != null) {
+                blockExternalImagesPreference.setOnPreferenceChangeListener((preference, newValue) -> {
+                    userStore.setBlockExternalImagesEnabled((boolean) newValue);
+                    settingsModel.updateDisableLoadingImages(settingId, (boolean) newValue);
+                    ToastUtils.showToast(getActivity(), R.string.toast_saved);
+                    return true;
+                });
+            }
+            if (warnExternalLinkPreference != null) {
+                warnExternalLinkPreference.setOnPreferenceChangeListener((preference, newValue) -> {
+                    userStore.setWarnExternalLinkEnabled((boolean) newValue);
+                    settingsModel.updateWarnExternalLink(settingId, (boolean) newValue);
+                    ToastUtils.showToast(getActivity(), R.string.toast_saved);
                     return true;
                 });
             }
@@ -721,6 +731,7 @@ public class SettingsActivity extends BaseActivity {
                 .putBoolean(getString(R.string.key_auto_read_email_enabled), settingsResponse.isAutoRead())
                 .putBoolean(getString(R.string.contacts_encryption_enabled), settingsResponse.isContactsEncrypted())
                 .putBoolean(getString(R.string.block_external_images_key), settingsResponse.isDisableLoadingImages())
+                .putBoolean(getString(R.string.warn_external_link_key), settingsResponse.isWarnExternalLink())
                 .putBoolean(getString(R.string.report_bugs_enabled), settingsResponse.isEnableReportBugs())
                 .apply();
     }

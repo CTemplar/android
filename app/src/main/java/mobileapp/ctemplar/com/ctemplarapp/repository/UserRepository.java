@@ -25,6 +25,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.request.SignatureRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SubjectEncryptedRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SubscriptionMobileUpgradeRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.UpdateReportBugsRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.WarnExternalLinkRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.contacts.ContactsEncryptionRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.filters.EmailFilterRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.folders.EmptyFolderRequest;
@@ -209,6 +210,14 @@ public class UserRepository {
 
     public boolean isBlockExternalImagesEnabled() {
         return userStore.isBlockExternalImagesEnabled();
+    }
+
+    public void setWarnExternalLinkEnabled(boolean state) {
+        userStore.setWarnExternalLinkEnabled(state);
+    }
+
+    public boolean isWarnExternalLinkEnabled() {
+        return userStore.isWarnExternalLinkEnabled();
     }
 
     public void setReportBugsEnabled(boolean isEnabled) {
@@ -676,6 +685,15 @@ public class UserRepository {
             DisableLoadingImagesRequest request
     ) {
         return service.updateDisableLoadingImages(settingId, request)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public Observable<SettingsResponse> updateWarnExternalLink(
+            long settingId,
+            WarnExternalLinkRequest request
+    ) {
+        return service.updateWarnExternalLink(settingId, request)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }

@@ -53,6 +53,9 @@ public interface UserStore {
     void setBlockExternalImagesEnabled(boolean state);
     boolean isBlockExternalImagesEnabled();
 
+    void setWarnExternalLinkEnabled(boolean state);
+    boolean isWarnExternalLinkEnabled();
+
     void setReportBugsEnabled(boolean state);
     boolean isReportBugsEnabled();
 

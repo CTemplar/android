@@ -402,7 +402,7 @@ public class MessagesRecyclerViewAdapter extends RecyclerView.Adapter<MessagesRe
 
                         @Override
                         public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                            DialogUtils.showOpenLinkDialog(context, url);
+                            DialogUtils.showOpenLinkDialog(context, url, userStore.isWarnExternalLinkEnabled());
                             return true;
                         }
                     });
