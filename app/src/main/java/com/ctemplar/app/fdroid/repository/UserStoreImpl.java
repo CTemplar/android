@@ -36,6 +36,7 @@ public class UserStoreImpl implements UserStore {
     private static final String KEY_DRAFTS_AUTO_SAVE_ENABLED = "key_drafts_auto_save_enabled";
     private static final String KEY_AUTO_READ_EMAIL_ENABLED = "key_auto_read_email_enabled";
     private static final String KEY_BLOCK_EXTERNAL_IMAGES_ENABLED = "key_block_external_images_enabled";
+    private static final String KEY_WARN_EXTERNAL_LINK_ENABLED = "key_warn_external_link_enabled";
     private static final String KEY_REPORT_BUGS_ENABLED = "key_report_bugs_enabled";
 
     private static final String KEY_PIN_LOCK = "key_pin_lock";
@@ -224,6 +225,16 @@ public class UserStoreImpl implements UserStore {
     @Override
     public boolean isBlockExternalImagesEnabled() {
         return globalPreferences.getBoolean(KEY_BLOCK_EXTERNAL_IMAGES_ENABLED, false);
+    }
+
+    @Override
+    public void setWarnExternalLinkEnabled(boolean state) {
+        globalPreferences.edit().putBoolean(KEY_WARN_EXTERNAL_LINK_ENABLED, state).apply();
+    }
+
+    @Override
+    public boolean isWarnExternalLinkEnabled() {
+        return globalPreferences.getBoolean(KEY_WARN_EXTERNAL_LINK_ENABLED, true);
     }
 
     @Override

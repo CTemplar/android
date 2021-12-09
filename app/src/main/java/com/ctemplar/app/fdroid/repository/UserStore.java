@@ -1,8 +1,8 @@
 package com.ctemplar.app.fdroid.repository;
 
-import com.ctemplar.app.fdroid.net.entity.UserEntity;
-
 import java.net.Proxy;
+
+import com.ctemplar.app.fdroid.net.entity.UserEntity;
 
 public interface UserStore {
     void saveUserPref(String username, String password, String passwordHashed);
@@ -49,6 +49,9 @@ public interface UserStore {
 
     void setBlockExternalImagesEnabled(boolean state);
     boolean isBlockExternalImagesEnabled();
+
+    void setWarnExternalLinkEnabled(boolean state);
+    boolean isWarnExternalLinkEnabled();
 
     void setReportBugsEnabled(boolean state);
     boolean isReportBugsEnabled();

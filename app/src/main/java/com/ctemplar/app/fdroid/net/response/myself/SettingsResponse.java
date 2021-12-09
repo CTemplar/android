@@ -158,6 +158,9 @@ public class SettingsResponse {
     @SerializedName("universal_spam_filter")
     private boolean universalSpamFilter;
 
+    @SerializedName("warn_external_link")
+    private boolean warnExternalLink;
+
     @SerializedName("default_color")
     private boolean defaultColor;
 
@@ -376,6 +379,10 @@ public class SettingsResponse {
 
     public boolean isUniversalSpamFilter() {
         return universalSpamFilter;
+    }
+
+    public boolean isWarnExternalLink() {
+        return warnExternalLink;
     }
 
     public boolean isDefaultColor() {

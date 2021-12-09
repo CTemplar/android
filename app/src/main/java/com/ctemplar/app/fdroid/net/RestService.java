@@ -20,6 +20,7 @@ import com.ctemplar.app.fdroid.net.request.SignatureRequest;
 import com.ctemplar.app.fdroid.net.request.SubjectEncryptedRequest;
 import com.ctemplar.app.fdroid.net.request.TokenRefreshRequest;
 import com.ctemplar.app.fdroid.net.request.UpdateReportBugsRequest;
+import com.ctemplar.app.fdroid.net.request.WarnExternalLinkRequest;
 import com.ctemplar.app.fdroid.net.request.contacts.ContactsEncryptionRequest;
 import com.ctemplar.app.fdroid.net.request.filters.EmailFilterOrderListRequest;
 import com.ctemplar.app.fdroid.net.request.filters.EmailFilterRequest;
@@ -400,6 +401,12 @@ public interface RestService {
     Observable<SettingsResponse> updateDisableLoadingImages(
             @Path("id") long settingId,
             @Body DisableLoadingImagesRequest request
+    );
+
+    @PATCH("users/settings/{id}/")
+    Observable<SettingsResponse> updateWarnExternalLink(
+            @Path("id") long settingId,
+            @Body WarnExternalLinkRequest request
     );
 
     @PATCH("users/settings/{id}/")
