@@ -29,6 +29,7 @@ import com.ctemplar.app.fdroid.repository.MessagesRepository;
 import com.ctemplar.app.fdroid.repository.UserRepository;
 import com.ctemplar.app.fdroid.repository.cache.MessageCacheProvider;
 import com.ctemplar.app.fdroid.repository.constant.MainFolderNames;
+import com.ctemplar.app.fdroid.repository.dto.SearchMessagesDTO;
 import com.ctemplar.app.fdroid.repository.entity.MessageEntity;
 import com.ctemplar.app.fdroid.repository.provider.MessageProvider;
 import com.ctemplar.app.fdroid.services.NotificationService;
@@ -70,6 +71,7 @@ public class MainActivityViewModel extends AndroidViewModel {
     private final MutableLiveData<ResponseMessagesData> searchMessagesResponse = new MutableLiveData<>();
     private final MutableLiveData<ResponseStatus> toFolderStatus = new MutableLiveData<>();
     private final MutableLiveData<ResponseStatus> deleteMessagesStatus = new MutableLiveData<>();
+    private final MutableLiveData<ResponseStatus> markMessagesAsReadStatus = new MutableLiveData<>();
     private final MutableLiveData<ResponseStatus> emptyFolderStatus = new MutableLiveData<>();
     private final MutableLiveData<FoldersResponse> foldersResponse = new MutableLiveData<>();
     private final MutableLiveData<ResponseBody> unreadFoldersBody = new MutableLiveData<>();
@@ -166,6 +168,10 @@ public class MainActivityViewModel extends AndroidViewModel {
 
     public LiveData<ResponseStatus> getDeleteMessagesStatus() {
         return deleteMessagesStatus;
+    }
+
+    public LiveData<ResponseStatus> getMarkMessagesAsReadStatus() {
+        return markMessagesAsReadStatus;
     }
 
     public LiveData<ResponseStatus> getEmptyFolderStatus() {
@@ -339,7 +345,6 @@ public class MainActivityViewModel extends AndroidViewModel {
                         ResponseMessagesData localMessagesData = new ResponseMessagesData(
                                 messageProviders, offset, folder);
                         if (localMessagesData.messages.size() > 0) {
-                            Timber.i("Loaded from DB: %s", System.currentTimeMillis() % 10000);
                             messagesResponse.postValue(localMessagesData);
                         }
                         responseStatus.postValue(ResponseStatus.RESPONSE_NEXT_MESSAGES);
@@ -412,11 +417,12 @@ public class MainActivityViewModel extends AndroidViewModel {
                 });
     }
 
-    public void searchMessages(String query, int limit, int offset) {
-        if (TextUtils.isEmpty(query)) {
-            return;
-        }
-        userRepository.searchMessages(query, limit, offset)
+    public void searchMessages(String searchText, int limit, int offset) {
+        searchMessages(new SearchMessagesDTO(searchText), limit, offset);
+    }
+
+    public void searchMessages(SearchMessagesDTO dto, int limit, int offset) {
+        userRepository.searchMessages(dto, limit, offset)
                 .subscribe(new Observer<MessagesResponse>() {
                     @Override
                     public void onSubscribe(@NotNull Disposable d) {
@@ -488,7 +494,7 @@ public class MainActivityViewModel extends AndroidViewModel {
     }
 
     public void deleteMessages(Long[] messageIds) {
-        userRepository.deleteMessages(TextUtils.join(",", messageIds))
+        userRepository.deleteMessages(messageIds)
                 .subscribe(new Observer<Response<Void>>() {
                     @Override
                     public void onSubscribe(@NotNull Disposable d) {
@@ -507,6 +513,41 @@ public class MainActivityViewModel extends AndroidViewModel {
                     public void onError(@NotNull Throwable e) {
                         deleteMessagesStatus.postValue(ResponseStatus.RESPONSE_ERROR);
                         Timber.e(e);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    public void markMessagesAsRead(Long[] messageIds, boolean isRead) {
+        userRepository.markMessageAsRead(messageIds, isRead)
+                .subscribe(new Observer<Response<Void>>() {
+                    @Override
+                    public void onSubscribe(@androidx.annotation.NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(@androidx.annotation.NonNull Response<Void> messageResponse) {
+                        int resultCode = messageResponse.code();
+                        if (resultCode == 204) {
+                            for (Long messageId : messageIds) {
+                                messagesRepository.markMessageAsRead(messageId, isRead);
+                            }
+                            markMessagesAsReadStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
+                        } else {
+                            markMessagesAsReadStatus.postValue(ResponseStatus.RESPONSE_ERROR);
+                            Timber.e("Update isRead response is not success: code = %s", resultCode);
+                        }
+                    }
+
+                    @Override
+                    public void onError(@androidx.annotation.NonNull Throwable e) {
+                        Timber.e(e);
+                        markMessagesAsReadStatus.postValue(ResponseStatus.RESPONSE_ERROR);
                     }
 
                     @Override
@@ -543,8 +584,12 @@ public class MainActivityViewModel extends AndroidViewModel {
                 });
     }
 
-    public void toFolder(final long messageId, final String folder) {
-        userRepository.toFolder(messageId, folder)
+    public void toFolder(long messageId, String folder) {
+        userRepository.toFolder(new Long[]{messageId}, folder);
+    }
+
+    public void toFolder(Long[] messageIds, String folder) {
+        userRepository.toFolder(messageIds, folder)
                 .subscribe(new Observer<Response<Void>>() {
                     @Override
                     public void onSubscribe(@NotNull Disposable d) {
@@ -553,7 +598,9 @@ public class MainActivityViewModel extends AndroidViewModel {
 
                     @Override
                     public void onNext(@NotNull Response<Void> voidResponse) {
-                        messagesRepository.updateMessageFolderName(messageId, folder);
+                        for (long messageId : messageIds) {
+                            messagesRepository.updateMessageFolderName(messageId, folder);
+                        }
                         toFolderStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
                     }
 
@@ -663,15 +710,12 @@ public class MainActivityViewModel extends AndroidViewModel {
                         MyselfResult myselfResult = myselfResponse.getResult()[0];
                         SettingsResponse settingsResponse = myselfResult.getSettings();
 
-                        String timezone = settingsResponse.getTimezone();
-                        boolean isContactsEncrypted = settingsResponse.isContactsEncrypted();
-                        boolean isDisableLoadingImages = settingsResponse.isDisableLoadingImages();
-                        boolean isReportBugsEnabled = settingsResponse.isEnableReportBugs();
-
-                        userRepository.saveTimeZone(timezone);
-                        userRepository.setContactsEncryptionEnabled(isContactsEncrypted);
-                        userRepository.setBlockExternalImagesEnabled(isDisableLoadingImages);
-                        userRepository.setReportBugsEnabled(isReportBugsEnabled);
+                        userRepository.saveTimeZone(settingsResponse.getTimezone());
+                        userRepository.setContactsEncryptionEnabled(settingsResponse.isContactsEncrypted());
+                        userRepository.setAutoReadEmailEnabled(settingsResponse.isAutoRead());
+                        userRepository.setBlockExternalImagesEnabled(settingsResponse.isDisableLoadingImages());
+                        userRepository.setWarnExternalLinkEnabled(settingsResponse.isWarnExternalLink());
+                        userRepository.setReportBugsEnabled(settingsResponse.isEnableReportBugs());
 
                         ThemeUtils.setDarkModeFromServer(
                                 settingsResponse.isNightMode(),

@@ -1,26 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <SwitchPreference
         android:title="@string/use_tor"
-        android:key="@string/use_tor_key"
-        android:summary="@string/use_tor_description" />
+        android:summary="@string/use_tor_description"
+        android:key="@string/use_tor_key" />
 
     <SwitchPreference
-        android:title="@string/http_proxy"
-        android:key="@string/use_http_proxy_key"
-        android:summary="@string/http_proxy_description" />
+        android:title="@string/custom_proxy"
+        android:summary="@string/custom_proxy_description"
+        android:key="@string/use_custom_proxy_key" />
+
+    <DropDownPreference
+        app:title="@string/proxy_type"
+        android:summary="@string/proxy_type_description"
+        android:dependency="@string/use_custom_proxy_key"
+        android:entries="@array/proxy_type_entries"
+        android:entryValues="@array/proxy_type_values"
+        android:key="@string/proxy_type_key" />
 
     <EditTextPreference
         android:title="@string/proxy_host"
-        android:key="@string/proxy_host_key"
         android:summary="@string/proxy_host_description"
-        android:dependency="@string/use_http_proxy_key" />
+        android:dependency="@string/use_custom_proxy_key"
+        android:key="@string/proxy_host_key" />
 
     <EditTextPreference
         android:title="@string/proxy_port"
-        android:key="@string/proxy_port_key"
         android:summary="@string/proxy_port_description"
-        android:dependency="@string/use_http_proxy_key" />
+        android:dependency="@string/use_custom_proxy_key"
+        android:key="@string/proxy_port_key" />
+
+    <Preference
+        android:title="@string/proxy_notes"
+        android:key="@string/proxy_notes_key" />
 
 </PreferenceScreen>

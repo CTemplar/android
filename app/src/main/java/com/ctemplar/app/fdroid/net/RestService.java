@@ -2,6 +2,7 @@ package com.ctemplar.app.fdroid.net;
 
 import com.ctemplar.app.fdroid.net.request.AddAppTokenRequest;
 import com.ctemplar.app.fdroid.net.request.AntiPhishingPhraseRequest;
+import com.ctemplar.app.fdroid.net.request.AutoReadEmailRequest;
 import com.ctemplar.app.fdroid.net.request.AutoSaveContactEnabledRequest;
 import com.ctemplar.app.fdroid.net.request.CaptchaVerifyRequest;
 import com.ctemplar.app.fdroid.net.request.ChangePasswordRequest;
@@ -19,6 +20,7 @@ import com.ctemplar.app.fdroid.net.request.SignatureRequest;
 import com.ctemplar.app.fdroid.net.request.SubjectEncryptedRequest;
 import com.ctemplar.app.fdroid.net.request.TokenRefreshRequest;
 import com.ctemplar.app.fdroid.net.request.UpdateReportBugsRequest;
+import com.ctemplar.app.fdroid.net.request.WarnExternalLinkRequest;
 import com.ctemplar.app.fdroid.net.request.contacts.ContactsEncryptionRequest;
 import com.ctemplar.app.fdroid.net.request.filters.EmailFilterOrderListRequest;
 import com.ctemplar.app.fdroid.net.request.filters.EmailFilterRequest;
@@ -176,7 +178,7 @@ public interface RestService {
 
     @PATCH("emails/messages/")
     Observable<Response<Void>> toFolder(
-            @Query("id__in") long id,
+            @Query("id__in") String messageIds,
             @Body MoveToFolderRequest request
     );
 
@@ -185,7 +187,7 @@ public interface RestService {
 
     @PATCH("emails/messages/")
     Observable<Response<Void>> markMessageAsRead(
-            @Query("id__in") long id,
+            @Query("id__in") String messageIds,
             @Body MarkMessageAsReadRequest request
     );
 
@@ -198,6 +200,15 @@ public interface RestService {
     @GET("search/messages/")
     Observable<MessagesResponse> searchMessages(
             @Query("q") String query,
+            @Query("exact") boolean exact,
+            @Query("folder") String folder,
+            @Query("sender") String sender,
+            @Query("receiver") String receiver,
+            @Query("have_attachment") boolean haveAttachment,
+            @Query("start_date") String startDate, // YYYY-MM-DD
+            @Query("end_date") String endDate,
+            @Query("size") long size,
+            @Query("size_operator") String sizeOperator,
             @Query("limit") int limit,
             @Query("offset") int offset
     );
@@ -369,6 +380,12 @@ public interface RestService {
     );
 
     @PATCH("users/settings/{id}/")
+    Observable<SettingsResponse> updateAutoReadEmail(
+            @Path("id") long settingId,
+            @Body AutoReadEmailRequest request
+    );
+
+    @PATCH("users/settings/{id}/")
     Observable<SettingsResponse> updateAntiPhishingPhrase(
             @Path("id") long settingId,
             @Body AntiPhishingPhraseRequest request
@@ -384,6 +401,12 @@ public interface RestService {
     Observable<SettingsResponse> updateDisableLoadingImages(
             @Path("id") long settingId,
             @Body DisableLoadingImagesRequest request
+    );
+
+    @PATCH("users/settings/{id}/")
+    Observable<SettingsResponse> updateWarnExternalLink(
+            @Path("id") long settingId,
+            @Body WarnExternalLinkRequest request
     );
 
     @PATCH("users/settings/{id}/")

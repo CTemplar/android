@@ -1,9 +1,12 @@
 package com.ctemplar.app.fdroid.repository;
 
+import android.text.TextUtils;
+
 import com.ctemplar.app.fdroid.CTemplarApp;
 import com.ctemplar.app.fdroid.net.RestService;
 import com.ctemplar.app.fdroid.net.request.AddAppTokenRequest;
 import com.ctemplar.app.fdroid.net.request.AntiPhishingPhraseRequest;
+import com.ctemplar.app.fdroid.net.request.AutoReadEmailRequest;
 import com.ctemplar.app.fdroid.net.request.AutoSaveContactEnabledRequest;
 import com.ctemplar.app.fdroid.net.request.CaptchaVerifyRequest;
 import com.ctemplar.app.fdroid.net.request.ChangePasswordRequest;
@@ -19,6 +22,7 @@ import com.ctemplar.app.fdroid.net.request.SignUpRequest;
 import com.ctemplar.app.fdroid.net.request.SignatureRequest;
 import com.ctemplar.app.fdroid.net.request.SubjectEncryptedRequest;
 import com.ctemplar.app.fdroid.net.request.UpdateReportBugsRequest;
+import com.ctemplar.app.fdroid.net.request.WarnExternalLinkRequest;
 import com.ctemplar.app.fdroid.net.request.contacts.ContactsEncryptionRequest;
 import com.ctemplar.app.fdroid.net.request.filters.EmailFilterRequest;
 import com.ctemplar.app.fdroid.net.request.folders.EmptyFolderRequest;
@@ -57,6 +61,7 @@ import com.ctemplar.app.fdroid.net.response.myself.SettingsResponse;
 import com.ctemplar.app.fdroid.net.response.myself.WhiteListContact;
 import com.ctemplar.app.fdroid.net.response.whiteBlackList.BlackListResponse;
 import com.ctemplar.app.fdroid.net.response.whiteBlackList.WhiteListResponse;
+import com.ctemplar.app.fdroid.repository.dto.SearchMessagesDTO;
 import com.ctemplar.app.fdroid.repository.entity.MailboxEntity;
 import com.ctemplar.app.fdroid.repository.entity.MailboxKeyEntity;
 import com.ctemplar.app.fdroid.utils.EditTextUtils;
@@ -88,7 +93,8 @@ public class UserRepository {
     }
 
     public UserRepository() {
-        CTemplarApp.getRestClientLiveData().observeForever(instance -> service = instance.getRestService());
+        CTemplarApp.getRestClientLiveData().observeForever(instance
+                -> service = instance.getRestService());
         userStore = CTemplarApp.getUserStore();
     }
 
@@ -172,6 +178,14 @@ public class UserRepository {
         userStore.setContactsEncryptionEnabled(isContactsEncryptionEnabled);
     }
 
+    public boolean isAutoReadEmailEnabled() {
+        return userStore.isAutoReadEmailEnabled();
+    }
+
+    public void setAutoReadEmailEnabled(boolean isEnabled) {
+        userStore.setAutoReadEmailEnabled(isEnabled);
+    }
+
     public boolean getContactsEncryptionEnabled() {
         return userStore.isContactsEncryptionEnabled();
     }
@@ -182,6 +196,14 @@ public class UserRepository {
 
     public boolean isBlockExternalImagesEnabled() {
         return userStore.isBlockExternalImagesEnabled();
+    }
+
+    public void setWarnExternalLinkEnabled(boolean state) {
+        userStore.setWarnExternalLinkEnabled(state);
+    }
+
+    public boolean isWarnExternalLinkEnabled() {
+        return userStore.isWarnExternalLinkEnabled();
     }
 
     public void setReportBugsEnabled(boolean isEnabled) {
@@ -292,8 +314,21 @@ public class UserRepository {
                 .observeOn(Schedulers.computation());
     }
 
-    public Observable<MessagesResponse> searchMessages(String query, int limit, int offset) {
-        return service.searchMessages(query, limit, offset)
+    public Observable<MessagesResponse> searchMessages(
+            SearchMessagesDTO dto, int limit, int offset
+    ) {
+        return service.searchMessages(
+                dto.getQuery(),
+                dto.isExact(),
+                dto.getFolder(),
+                dto.getSender(),
+                dto.getReceiver(),
+                dto.isHaveAttachment(),
+                dto.getStartDate(),
+                dto.getEndDate(),
+                dto.getSize(),
+                dto.getSizeOperator(),
+                limit, offset)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.computation());
     }
@@ -304,8 +339,8 @@ public class UserRepository {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<Response<Void>> deleteMessages(String messageIds) {
-        return service.deleteMessages(messageIds)
+    public Observable<Response<Void>> deleteMessages(Long[] messageIds) {
+        return service.deleteMessages(TextUtils.join(",", messageIds))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
@@ -316,8 +351,9 @@ public class UserRepository {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<Response<Void>> toFolder(long id, String folder) {
-        return service.toFolder(id, new MoveToFolderRequest(folder))
+    public Observable<Response<Void>> toFolder(Long[] messageIds, String folder) {
+        return service.toFolder(TextUtils.join(",", messageIds),
+                new MoveToFolderRequest(folder))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
@@ -328,8 +364,9 @@ public class UserRepository {
                 .observeOn(Schedulers.computation());
     }
 
-    public Observable<Response<Void>> markMessageAsRead(long id, MarkMessageAsReadRequest request) {
-        return service.markMessageAsRead(id, request)
+    public Observable<Response<Void>> markMessageAsRead(Long[] messageIds, boolean isRead) {
+        return service.markMessageAsRead(TextUtils.join(",", messageIds),
+                new MarkMessageAsReadRequest(isRead))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
@@ -593,6 +630,15 @@ public class UserRepository {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
+    public Observable<SettingsResponse> updateAutoReadEmail(
+            long settingId,
+            AutoReadEmailRequest request
+    ) {
+        return service.updateAutoReadEmail(settingId, request)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
     public Observable<SettingsResponse> updateAntiPhishingPhrase(
             long settingId,
             AntiPhishingPhraseRequest request
@@ -616,6 +662,15 @@ public class UserRepository {
             DisableLoadingImagesRequest request
     ) {
         return service.updateDisableLoadingImages(settingId, request)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public Observable<SettingsResponse> updateWarnExternalLink(
+            long settingId,
+            WarnExternalLinkRequest request
+    ) {
+        return service.updateWarnExternalLink(settingId, request)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }

@@ -12,7 +12,7 @@ import org.owasp.html.PolicyFactory;
 
 public class HtmlUtils {
     private static final PolicyFactory htmlPolicyFactory = new HtmlPolicyBuilder()
-            .allowElements("a", "b", "br", "div", "font", "h1", "h2", "h3", "h4", "h5", "h6", "hr", "img", "label", "li", "ol", "p", "span", "strong", "table", "td", "th", "tr", "u", "ul", "i")
+            .allowElements("a", "b", "br", "div", "font", "h1", "h2", "h3", "h4", "h5", "h6", "hr", "img", "label", "li", "ol", "p", "span", "strong", "table", "td", "th", "tr", "u", "ul", "i", "pre")
             .allowAttributes("style").onElements("a", "b", "br", "div", "font", "img", "label", "li", "ol", "p", "span", "strong", "table", "td", "th", "tr", "u", "ul")
             .allowAttributes("align", "dir", "id", "style").onElements("h1", "h2", "h3", "h4", "h5", "h6")
             .allowAttributes("dir").onElements("div", "li", "ol", "p", "table", "td", "th", "tr", "ul")
@@ -26,7 +26,7 @@ public class HtmlUtils {
             .allowAttributes("border").onElements("img", "table")
             .allowAttributes("frame, rules").onElements("table")
             .allowAttributes("color", "face").onElements("font")
-            .allowAttributes("href", "target").onElements("a")
+            .allowAttributes("href", "style", "target").onElements("a")
             .allowAttributes("colspan").onElements("td", "th")
             .allowAttributes("size").onElements("font", "hr")
             .allowAttributes("scope").onElements("td", "th")
@@ -36,7 +36,7 @@ public class HtmlUtils {
             .allowAttributes("background").onElements("th")
             .allowAttributes("id").onElements("label")
             .allowAttributes("src").onElements("img")
-            .allowUrlProtocols("https")
+            .allowUrlProtocols("http", "https")
             .requireRelNofollowOnLinks()
             .toFactory();
 

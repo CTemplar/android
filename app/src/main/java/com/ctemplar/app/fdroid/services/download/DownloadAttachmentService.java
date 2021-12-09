@@ -24,8 +24,10 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 
+import com.ctemplar.app.fdroid.CTemplarApp;
 import com.ctemplar.app.fdroid.R;
 import com.ctemplar.app.fdroid.net.OkHttpClientFactory;
+import com.ctemplar.app.fdroid.repository.UserStore;
 import com.ctemplar.app.fdroid.services.ServiceConstants;
 import com.ctemplar.app.fdroid.utils.AppUtils;
 import com.ctemplar.app.fdroid.utils.EncryptUtils;
@@ -57,7 +59,12 @@ public class DownloadAttachmentService extends Service {
     private NotificationManager notificationManager;
     private Looper taskLooper;
     private TaskHandler taskHandler;
+    private final UserStore userStore;
 
+    public DownloadAttachmentService() {
+        super();
+        userStore = CTemplarApp.getUserStore();
+    }
 
     @Override
     public void onCreate() {
@@ -324,12 +331,8 @@ public class DownloadAttachmentService extends Service {
     }
 
     private File downloadAttachment(String url, DownloadProgressCallback progressCallback) throws IOException, InterruptedException {
-        Request request = new Request.Builder()
-                .url(url)
-                .get()
-                .build();
-        Call call = OkHttpClientFactory.newClient()
-                .newCall(request);
+        Request request = new Request.Builder().url(url).get().build();
+        Call call = OkHttpClientFactory.newClient(userStore).newCall(request);
         Response response = call.execute();
         ResponseBody responseBody = response.body();
         if (responseBody == null) {

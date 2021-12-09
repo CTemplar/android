@@ -342,7 +342,7 @@
     <string name="settings_encryption">加密</string>
     <string name="settings_phishing_protection">网络钓鱼保护</string>
     <string name="settings_phishing_protection_description"><![CDATA[<font color="#939191">反网络钓鱼短语允许将您选择的自定义单词或短语链接到您的CTemplar帐户。一旦设置好，如果您登录到您的网页邮箱，而您的反钓鱼短语丢失或不正确，您可能会成为网络钓鱼的受害者。您应该立即确认您正在访问</font> <font color="#4d92e2"><u>https://mail.ctemplar.com</u></font> <font color="#939191">如果您不是正在访问该网站，那么恶意网站可能拥有您的CTemplar帐户的登录凭证了。为了防止您的帐户受到损害，您应该立即访问</font> <font color="#4d92e2"><u>https://mail.ctemplar.com</u></font> <font color="#939191">并更改您的密码。<br><br>请注意，只有当您在网页上登录邮箱时会显示防网络钓鱼短语。</font>]]></string>
-    <string name="settings_auto_save">自动保存</string>
+    <string name="settings_automation">自动化</string>
     <string name="settings_auto_save_contacts">自动保存联系人</string>
     <string name="settings_auto_save_drafts">自动保存草稿</string>
     <string name="settings_filters">过滤器</string>

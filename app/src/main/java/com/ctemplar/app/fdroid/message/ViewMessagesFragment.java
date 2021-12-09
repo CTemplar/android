@@ -3,6 +3,7 @@ package com.ctemplar.app.fdroid.message;
 import static com.ctemplar.app.fdroid.message.SendMessageActivity.ATTACHMENT_LIST;
 import static com.ctemplar.app.fdroid.message.ViewMessagesActivity.PARENT_ID;
 import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.ARCHIVE;
+import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.FOLDER_NAME;
 import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.INBOX;
 import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.OUTBOX;
 import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.SENT;
@@ -12,7 +13,6 @@ import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.TRASH;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Pair;
@@ -25,7 +25,6 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -40,6 +39,14 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.snackbar.BaseTransientBottomBar;
+import com.google.android.material.snackbar.Snackbar;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+
 import com.ctemplar.app.fdroid.ActivityInterface;
 import com.ctemplar.app.fdroid.R;
 import com.ctemplar.app.fdroid.main.MainActivity;
@@ -51,7 +58,6 @@ import com.ctemplar.app.fdroid.net.entity.AttachmentsEntity;
 import com.ctemplar.app.fdroid.repository.constant.MessageActions;
 import com.ctemplar.app.fdroid.repository.provider.AttachmentProvider;
 import com.ctemplar.app.fdroid.repository.provider.MessageProvider;
-import com.ctemplar.app.fdroid.repository.provider.UserDisplayProvider;
 import com.ctemplar.app.fdroid.services.download.DownloadAttachmentInfo;
 import com.ctemplar.app.fdroid.services.download.DownloadAttachmentService;
 import com.ctemplar.app.fdroid.services.download.DownloadAttachmentTask;
@@ -60,19 +66,9 @@ import com.ctemplar.app.fdroid.utils.EditTextUtils;
 import com.ctemplar.app.fdroid.utils.HtmlUtils;
 import com.ctemplar.app.fdroid.utils.PermissionUtils;
 import com.ctemplar.app.fdroid.utils.ToastUtils;
-import com.google.android.material.snackbar.BaseTransientBottomBar;
-import com.google.android.material.snackbar.Snackbar;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-
 import timber.log.Timber;
 
 public class ViewMessagesFragment extends Fragment implements View.OnClickListener, ActivityInterface {
-    public static final String FOLDER_NAME = "folder_name";
-
     private MainActivityViewModel mainModel;
     private ViewMessagesViewModel viewModel;
     private MessageProvider parentMessage;
@@ -116,7 +112,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
             String documentUrl = attachment.getDocumentUrl();
             if (documentUrl == null) {
                 Timber.e("documentUrl == null");
-                Toast.makeText(context, R.string.error_attachment_url, Toast.LENGTH_SHORT).show();
+                ToastUtils.showToast(context, R.string.error_attachment_url);
                 return;
             }
             if (!PermissionUtils.readExternalStorage(context) || !PermissionUtils.writeExternalStorage(context)) {
@@ -139,7 +135,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
                 String documentUrl = attachment.getDocumentUrl();
                 if (documentUrl == null) {
                     Timber.e("documentUrl == null");
-                    Toast.makeText(context, R.string.error_attachment_url, Toast.LENGTH_SHORT).show();
+                    ToastUtils.showToast(context, R.string.error_attachment_url);
                     return;
                 }
             }
@@ -204,7 +200,6 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
         if (activity == null) {
             return null;
         }
-
         View root = inflater.inflate(R.layout.fragment_view_messages, container, false);
 
         messagesRecyclerView = root.findViewById(R.id.activity_view_messages_messages_recycler_view);
@@ -248,8 +243,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
         viewModel.getMessagesResponse().observe(getViewLifecycleOwner(), messagesList -> {
             if (messagesList == null || messagesList.isEmpty()) {
                 Timber.e("Messages doesn't exists");
-                Toast.makeText(activity.getApplicationContext(),
-                        getString(R.string.toast_messages_doesnt_exist), Toast.LENGTH_SHORT).show();
+                ToastUtils.showToast(activity.getApplicationContext(), R.string.toast_messages_doesnt_exist);
                 activity.onBackPressed();
                 return;
             }
@@ -267,9 +261,10 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
             parentMessage = currentParentMessage;
 
             lastMessage = messagesList.get(messagesList.size() - 1);
-            if (parentMessage != null) {
-                encryptedImageView.setSelected(parentMessage.isProtected());
-                starImageView.setSelected(parentMessage.isStarred());
+            encryptedImageView.setSelected(parentMessage.isProtected());
+            starImageView.setSelected(parentMessage.isStarred());
+            if (viewModel.isAutoReadEmailEnabled()) {
+                parentMessage.setRead(true);
             }
 
             messagesRecyclerView.setAdapter(messagesRecyclerViewAdapter);
@@ -283,23 +278,30 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
         });
 
         viewModel.getStarredResponse().observe(getViewLifecycleOwner(), isStarred -> {
-            boolean starred = isStarred == null ? false : isStarred;
-            starImageView.setSelected(starred);
+            starImageView.setSelected(isStarred);
             if (parentMessage != null) {
-                parentMessage.setStarred(starred);
+                parentMessage.setStarred(isStarred);
             }
+        });
+        viewModel.getReadResponse().observe(getViewLifecycleOwner(), isRead -> {
+            if (parentMessage != null) {
+                parentMessage.setRead(isRead);
+            }
+            activity.invalidateOptionsMenu();
+            ToastUtils.showToast(getActivity(), isRead ? R.string.toast_message_marked_read
+                    : R.string.toast_message_marked_unread);
         });
         viewModel.getAddWhitelistStatus().observe(getViewLifecycleOwner(), responseStatus -> {
             if (responseStatus == ResponseStatus.RESPONSE_COMPLETE) {
-                Toast.makeText(getActivity(), getString(R.string.added_to_whitelist), Toast.LENGTH_SHORT).show();
+                ToastUtils.showToast(getActivity(), R.string.added_to_whitelist);
                 getActivity().onBackPressed();
             } else {
-                Toast.makeText(getActivity(), getString(R.string.adding_whitelist_contact_error), Toast.LENGTH_SHORT).show();
+                ToastUtils.showToast(getActivity(), R.string.adding_whitelist_contact_error);
             }
         });
         mainModel.getToFolderStatus().observe(getViewLifecycleOwner(), responseStatus -> {
             if (responseStatus == ResponseStatus.RESPONSE_ERROR) {
-                Toast.makeText(getActivity(), getString(R.string.error_connection), Toast.LENGTH_SHORT).show();
+                ToastUtils.showToast(getActivity(), R.string.error_connection);
             } else {
                 Activity viewActivity = getActivity();
                 viewActivity.onBackPressed();
@@ -307,7 +309,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
         });
         mainModel.getDeleteMessagesStatus().observe(getViewLifecycleOwner(), responseStatus -> {
             if (responseStatus == ResponseStatus.RESPONSE_ERROR) {
-                Toast.makeText(getActivity(), getString(R.string.error_connection), Toast.LENGTH_SHORT).show();
+                ToastUtils.showToast(getActivity(), R.string.error_connection);
             }
         });
 
@@ -321,11 +323,10 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
         if (currentFolder == null) {
             currentFolder = mainModel.getCurrentFolder().getValue();
             if (currentFolder == null) {
-                Timber.tag("ViewMessageFragment").wtf("Current folder is null");
+                Timber.e("currentFolder == null");
                 return;
             }
         }
-
         switch (currentFolder) {
             case INBOX:
                 menu.findItem(R.id.menu_view_inbox).setVisible(false);
@@ -334,7 +335,6 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
             case SENT:
             case OUTBOX:
                 menu.findItem(R.id.menu_view_inbox).setVisible(false);
-                menu.findItem(R.id.menu_view_unread).setVisible(false);
                 menu.findItem(R.id.menu_view_spam).setVisible(false);
                 menu.findItem(R.id.menu_view_not_spam).setVisible(false);
                 break;
@@ -350,53 +350,56 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
             case TRASH:
                 menu.findItem(R.id.menu_view_spam).setVisible(false);
                 menu.findItem(R.id.menu_view_not_spam).setVisible(false);
-                menu.findItem(R.id.menu_view_unread).setVisible(false);
                 break;
             default:
                 menu.findItem(R.id.menu_view_not_spam).setVisible(false);
                 menu.findItem(R.id.menu_view_spam).setVisible(false);
                 break;
         }
+        if (parentMessage != null && parentMessage.isRead()) {
+            menu.findItem(R.id.menu_view_unread).setVisible(true);
+            menu.findItem(R.id.menu_view_read).setVisible(false);
+        } else {
+            menu.findItem(R.id.menu_view_unread).setVisible(false);
+            menu.findItem(R.id.menu_view_read).setVisible(true);
+        }
         super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        switch (id) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        Activity activity = getActivity();
+        if (parentMessage == null || activity == null) {
+            Timber.e("parentMessage == null || activity == null");
+            return true;
+        }
+        switch (item.getItemId()) {
             case R.id.menu_view_archive:
-                snackbarMove(ARCHIVE, getResources().getString(R.string.action_archived));
+                snackbarMove(ARCHIVE, getString(R.string.action_archived));
                 return true;
             case R.id.menu_view_inbox:
-                snackbarMove(INBOX, getResources().getString(R.string.action_moved_to_inbox));
+                snackbarMove(INBOX, getString(R.string.action_moved_to_inbox));
                 return true;
             case R.id.menu_view_spam:
-                snackbarMove(SPAM, getResources().getString(R.string.action_reported_as_spam));
+                snackbarMove(SPAM, getString(R.string.action_reported_as_spam));
                 return true;
             case R.id.menu_view_not_spam:
-                snackbarMove(INBOX, getResources().getString(R.string.action_reported_as_not_spam));
-                markNotSpam();
+                snackbarMove(INBOX, getString(R.string.action_reported_as_not_spam));
                 return true;
             case R.id.menu_view_trash:
-                snackbarDelete(TRASH, getResources().getString(R.string.action_message_removed));
+                snackbarDelete(TRASH, getString(R.string.action_message_removed));
                 return true;
             case R.id.menu_view_unread:
-                if (parentMessage == null) {
-                    Timber.e("parentMessage is null");
-                    return true;
-                }
                 viewModel.markMessageAsRead(parentMessage.getId(), false);
-                Toast.makeText(getActivity(), R.string.toast_message_marked_unread, Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.menu_view_read:
+                viewModel.markMessageAsRead(parentMessage.getId(), true);
                 return true;
             case R.id.menu_view_move:
                 showMoveDialog();
                 return true;
             case android.R.id.home:
-                Activity activity = getActivity();
-                if (activity != null) {
-                    activity.onBackPressed();
-                }
+                activity.onBackPressed();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -423,7 +426,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
                 unlockUI();
             }
         });
-        snackbar.setActionTextColor(Color.YELLOW);
+        snackbar.setActionTextColor(getResources().getColor(R.color.colorAccent));
         snackbar.show();
     }
 
@@ -439,19 +442,8 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
                 unlockUI();
             }
         });
-        snackbar.setActionTextColor(Color.YELLOW);
+        snackbar.setActionTextColor(getResources().getColor(R.color.colorAccent));
         snackbar.show();
-    }
-
-    private void markNotSpam() {
-        if (parentMessage == null) {
-            Timber.e("markNotSpam: parentMessage is null");
-            return;
-        }
-        UserDisplayProvider senderDisplay = parentMessage.getSenderDisplay();
-        String senderName = senderDisplay.getName();
-        String senderEmail = senderDisplay.getEmail();
-        viewModel.addWhitelistContact(senderName, senderEmail);
     }
 
     private void showMoveDialog() {

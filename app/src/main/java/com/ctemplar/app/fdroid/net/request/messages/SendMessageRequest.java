@@ -74,14 +74,12 @@ public class SendMessageRequest {
     }
 
     public SendMessageRequest(String sender,
-                              String content,
                               ArrayList<String> receivers,
                               ArrayList<String> cc,
                               ArrayList<String> bcc,
                               String folder,
                               long mailbox) {
         this.sender = sender;
-        this.content = content;
         this.receivers = receivers;
         this.cc = cc;
         this.bcc = bcc;

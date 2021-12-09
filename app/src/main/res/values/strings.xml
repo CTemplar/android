@@ -45,6 +45,16 @@
     <string name="action_reported_as_not_spam">1 reported as not spam</string>
     <string name="action_message_removed">1 message removed</string>
 
+    <!-- ADVANCED SEARCH -->
+    <string name="keyword">Keyword</string>
+    <string name="folder">Folder</string>
+    <string name="size">Size</string>
+    <string name="start_date">Start Date</string>
+    <string name="end_date">End Date</string>
+    <string name="same_exactly">Same exactly</string>
+    <string name="has_attachment">Has attachment</string>
+    <string name="clear_filter">Clear filter</string>
+
     <!-- MENU -->
     <string name="menu_save">Save</string>
     <string name="menu_spam">Spam</string>
@@ -53,7 +63,8 @@
     <string name="menu_trash">Trash</string>
     <string name="menu_move_to_inbox">Move to Inbox</string>
     <string name="menu_move_to_archive">Move to Archive</string>
-    <string name="menu_mark_as_unread">Mark as Unread</string>
+    <string name="menu_mark_as_unread">Mark as unread</string>
+    <string name="menu_select_all">Select all</string>
 
     <!-- STRINGS -->
     <string translatable="false" name="encrypted_subject">...</string>
@@ -153,6 +164,7 @@
     <string name="txt_more_details">More details</string>
     <string name="txt_less_details">Less details</string>
     <string name="toast_message_marked_unread">Message marked as unread</string>
+    <string name="toast_message_marked_read">Message marked as read</string>
     <string name="toast_message_moved_to">Message moved to %1$s</string>
     <string name="toast_messages_doesnt_exist">Messages doesn\'t exists</string>
     <string name="toast_download_started">Download started</string>
@@ -321,6 +333,8 @@
     <string name="txt_type_your_name">Type your name</string>
     <string name="txt_type_signature">Type your signature</string>
     <string name="txt_signature_enabled">Signature enabled</string>
+    <string name="external_resources_restrictions">External resources restrictions</string>
+    <string name="warn_before_opening_external_links">Warn before opening external links</string>
 
     <!-- PIN LOCK -->
     <string name="pin_lock">PIN Lock</string>
@@ -390,9 +404,11 @@
     <!-- PROXY -->
     <string name="proxy">Proxy</string>
     <string name="use_tor">Use Tor</string>
-    <string name="use_tor_description">Use Tor for network requests. Requires Orbot</string>
-    <string name="http_proxy">HTTP Proxy</string>
-    <string name="http_proxy_description">Use HTTP Proxy for network requests</string>
+    <string name="use_tor_description">Use Tor for network requests. Requires Orbot with SOCKS port 9050</string>
+    <string name="custom_proxy">Custom Proxy</string>
+    <string name="custom_proxy_description">Use custom proxy for network requests</string>
+    <string name="proxy_type">Proxy Type</string>
+    <string name="proxy_type_description">Proxy\'s type (HTTP or SOCKS)</string>
     <string name="proxy_host">Proxy Host</string>
     <string name="proxy_host_description">Proxy\'s address (e.g. 127.0.0.1)</string>
     <string name="proxy_port">Proxy Port</string>
@@ -402,6 +418,7 @@
     <string name="enter_correct_ip">Enter the correct IP address</string>
     <string name="enter_correct_port">Enter the correct port</string>
     <string name="proxy_enabled">Proxy enabled</string>
+    <string name="proxy_notes"><![CDATA[<font color="#939191">Note. If after clicking on the \"Use Tor\" you see \"No such app found\", then you should allow an additional repository. Open the \"F-Droid -> Settings -> Repositories\" and switch on \"Guardian Project Official Releases\".</font>]]></string>
 
     <!-- SETTINGS -->
     <string name="settings_general">General settings</string>
@@ -422,9 +439,10 @@
     <string name="settings_encryption">Encryption</string>
     <string name="settings_phishing_protection">Phishing Protection</string>
     <string name="settings_phishing_protection_description"><![CDATA[<font color="#939191">The Anti-Phishing phrase allows users to link a custom word or phrase of your choice to your CTemplar account. Once set, if you ever log into your webmail and your Anti-Phishing phrase is either missing or incorrect, you may be the victim of phishing. You should immediately confirm that you are visiting</font> <font color="#4d92e2"><u>https://mail.ctemplar.com</u></font> <font color="#939191">If you are not, then a malicious site might have your login credentials for your CTemplar account. To prevent harm to your account, you should immediately visit</font> <font color="#4d92e2"><u>https://mail.ctemplar.com</u></font> <font color="#939191">and change your password.<br><br>Note that the Anti-Phishing phrase will be displayed when you log on web only.</font>]]></string>
-    <string name="settings_auto_save">AutoSave</string>
+    <string name="settings_automation">Automation</string>
     <string name="settings_auto_save_contacts">Automatically save contacts</string>
     <string name="settings_auto_save_drafts">Automatically save drafts</string>
+    <string name="settings_auto_read_email">Automatically read email</string>
     <string name="settings_filters">Filters</string>
     <string name="settings_wb_list">Whitelist/Blacklist</string>
     <string name="settings_dark_mode">Dark mode</string>
@@ -542,6 +560,7 @@
     <string translatable="false" name="dark_mode_key">dark_mode_key</string>
     <string translatable="false" name="language_key">language_key</string>
     <string translatable="false" name="block_external_images_key">block_external_images_key</string>
+    <string translatable="false" name="warn_external_link_key">warn_external_link_key</string>
     <string translatable="false" name="report_bugs_enabled">report_bugs_enabled</string>
     <string translatable="false" name="white_black_list">white_black_list</string>
     <string translatable="false" name="manage_folders">manage_folders</string>
@@ -552,8 +571,10 @@
     <string translatable="false" name="anti_phishing_enabled">anti_phishing_enabled</string>
     <string translatable="false" name="anti_phishing_key">anti_phishing_key</string>
     <string translatable="false" name="anti_phishing_description_key">anti_phishing_description_key</string>
+    <string translatable="false" name="proxy_notes_key">proxy_notes_key</string>
     <string translatable="false" name="use_tor_key">use_tor_key</string>
-    <string translatable="false" name="use_http_proxy_key">use_http_proxy_key</string>
+    <string translatable="false" name="use_custom_proxy_key">use_custom_proxy_key</string>
+    <string translatable="false" name="proxy_type_key">proxy_type_key</string>
     <string translatable="false" name="proxy_host_key">proxy_host_key</string>
     <string translatable="false" name="proxy_port_key">proxy_port_key</string>
     <string translatable="false" name="setting_keys">setting_keys</string>
@@ -565,6 +586,7 @@
     <string translatable="false" name="keep_decrypted_subjects_enabled">keep_decrypted_subjects_enabled</string>
     <string translatable="false" name="auto_save_contacts_enabled">auto_save_contacts_enabled</string>
     <string translatable="false" name="auto_save_drafts_enabled">auto_save_drafts_enabled</string>
+    <string translatable="false" name="key_auto_read_email_enabled">key_auto_read_email_enabled</string>
     <string translatable="false" name="setting_id">setting_id</string>
     <string translatable="false" name="free_plan">Free</string>
     <string translatable="false" name="prime_plan">Prime</string>
@@ -608,6 +630,49 @@
     <string name="monthly">Monthly</string>
     <string name="current_plan">Current plan</string>
 
+    <string-array name="proxy_type_entries">
+        <item>HTTP</item>
+        <item>SOCKS</item>
+    </string-array>
+
+    <string-array name="proxy_type_values">
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+
+    <string-array name="auto_lock_time">
+        <item>Immediately</item>
+        <item>1 minute</item>
+        <item>5 minutes</item>
+        <item>10 minutes</item>
+        <item>1 hour</item>
+        <item>24 hours</item>
+    </string-array>
+
+    <string-array name="size_condition_entries">
+        <item>Greater than</item>
+        <item>Less than</item>
+        <item>Equal</item>
+    </string-array>
+
+    <string-array name="size_condition_values">
+        <item>GTE</item>
+        <item>LTE</item>
+        <item>EQUALS</item>
+    </string-array>
+
+    <string-array name="size_measure_entries">
+        <item>MB</item>
+        <item>KB</item>
+        <item>Bytes</item>
+    </string-array>
+
+    <string-array name="size_measure_values">
+        <item>1048576</item>
+        <item>1024</item>
+        <item>1</item>
+    </string-array>
+
     <string-array name="filter_parameter_entries">
         <item>Subject</item>
         <item>Sender</item>
@@ -646,15 +711,6 @@
         <item>not_exactly</item>
         <item>pattern</item>
         <item>not_pattern</item>
-    </string-array>
-
-    <string-array name="auto_lock_time">
-        <item>Immediately</item>
-        <item>1 minute</item>
-        <item>5 minutes</item>
-        <item>10 minutes</item>
-        <item>1 hour</item>
-        <item>24 hours</item>
     </string-array>
 
     <string-array name="dark_mode_entries">

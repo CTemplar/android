@@ -9,4 +9,8 @@
         android:title="@string/settings_auto_save_drafts"
         android:key="@string/auto_save_drafts_enabled" />
 
+    <SwitchPreference
+        android:title="@string/settings_auto_read_email"
+        android:key="@string/key_auto_read_email_enabled" />
+
 </PreferenceScreen>

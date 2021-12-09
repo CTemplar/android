@@ -31,7 +31,7 @@ import com.ctemplar.app.fdroid.main.RecycleDeleteSwiper;
 import com.ctemplar.app.fdroid.net.ResponseStatus;
 import com.ctemplar.app.fdroid.net.response.folders.FoldersResponse;
 import com.ctemplar.app.fdroid.net.response.folders.FoldersResult;
-import com.ctemplar.app.fdroid.utils.AccountTypeManager;
+import com.ctemplar.app.fdroid.repository.AccountTypeManager;
 
 public class ManageFoldersActivity extends BaseActivity {
     private ManageFoldersViewModel manageFoldersModel;
