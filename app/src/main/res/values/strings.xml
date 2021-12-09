@@ -333,6 +333,8 @@
     <string name="txt_type_your_name">Type your name</string>
     <string name="txt_type_signature">Type your signature</string>
     <string name="txt_signature_enabled">Signature enabled</string>
+    <string name="external_resources_restrictions">External resources restrictions</string>
+    <string name="warn_before_opening_external_links">Warn before opening external links</string>
 
     <!-- PIN LOCK -->
     <string name="pin_lock">PIN Lock</string>
@@ -558,6 +560,7 @@
     <string translatable="false" name="dark_mode_key">dark_mode_key</string>
     <string translatable="false" name="language_key">language_key</string>
     <string translatable="false" name="block_external_images_key">block_external_images_key</string>
+    <string translatable="false" name="warn_external_link_key">warn_external_link_key</string>
     <string translatable="false" name="report_bugs_enabled">report_bugs_enabled</string>
     <string translatable="false" name="white_black_list">white_black_list</string>
     <string translatable="false" name="manage_folders">manage_folders</string>

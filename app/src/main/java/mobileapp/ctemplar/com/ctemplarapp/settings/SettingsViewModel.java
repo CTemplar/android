@@ -16,6 +16,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.AntiPhishingPhraseRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.AutoReadEmailRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.AutoSaveContactEnabledRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.WarnExternalLinkRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.contacts.ContactsEncryptionRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.DarkModeRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.DisableLoadingImagesRequest;
@@ -197,6 +198,35 @@ public class SettingsViewModel extends ViewModel {
                     @Override
                     public void onNext(@NotNull SettingsResponse settingsResponse) {
                         Timber.i("Disable loading images updated");
+                    }
+
+                    @Override
+                    public void onError(@NotNull Throwable e) {
+                        Timber.e(e);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    public void updateWarnExternalLink(long settingId, boolean state) {
+        if (settingId == -1) {
+            return;
+        }
+        userRepository.updateWarnExternalLink(settingId, new WarnExternalLinkRequest(state))
+                .subscribe(new Observer<SettingsResponse>() {
+                    @Override
+                    public void onSubscribe(@NotNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(@NotNull SettingsResponse settingsResponse) {
+                        Timber.d("Warn external link updated with %s",
+                                settingsResponse.isWarnExternalLink());
                     }
 
                     @Override

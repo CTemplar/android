@@ -7,6 +7,7 @@ import io.reactivex.Single;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.AddFirebaseTokenRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.AutoReadEmailRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SubscriptionMobileUpgradeRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.WarnExternalLinkRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.folders.AddFolderRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.AntiPhishingPhraseRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.AutoSaveContactEnabledRequest;
@@ -405,6 +406,12 @@ public interface RestService {
     Observable<SettingsResponse> updateDisableLoadingImages(
             @Path("id") long settingId,
             @Body DisableLoadingImagesRequest request
+    );
+
+    @PATCH("users/settings/{id}/")
+    Observable<SettingsResponse> updateWarnExternalLink(
+            @Path("id") long settingId,
+            @Body WarnExternalLinkRequest request
     );
 
     @PATCH("users/settings/{id}/")
