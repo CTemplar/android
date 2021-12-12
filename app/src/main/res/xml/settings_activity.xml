@@ -25,10 +25,6 @@
             android:title="@string/settings_language"
             android:fragment="mobileapp.ctemplar.com.ctemplarapp.settings.SettingsActivity$LanguagesFragment" />
 
-        <PreferenceScreen
-            android:title="@string/settings_block_external_images"
-            android:fragment="mobileapp.ctemplar.com.ctemplarapp.settings.SettingsActivity$BlockExternalImagesFragment" />
-
         <Preference
             android:title="@string/settings_filters"
             android:key="@string/filters_key" />
@@ -36,6 +32,10 @@
         <Preference
             android:title="@string/settings_wb_list"
             android:key="@string/white_black_list" />
+
+        <PreferenceScreen
+            android:title="@string/external_resources_restrictions"
+            android:fragment="mobileapp.ctemplar.com.ctemplarapp.settings.SettingsActivity$ExternalResourcesRestrictionsFragment" />
 
         <PreferenceScreen
             android:title="@string/settings_report_bugs"

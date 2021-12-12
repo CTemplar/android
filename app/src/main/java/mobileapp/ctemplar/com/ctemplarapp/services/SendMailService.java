@@ -213,16 +213,18 @@ public class SendMailService extends IntentService {
             final boolean isDraft
     ) {
         EncryptionMessageRequest encryptionMessage = request.getEncryptionMessage();
+        final String subject = request.getSubject();
+        final String content = request.getContent();
         if (encryptionMessage != null) {
             final String password = encryptionMessage.getPassword();
             encryptionMessage.setPassword(null);
             request.setEncryptionMessage(encryptionMessage);
-            request.setSubject(PGPManager.encryptGPG(request.getSubject(), password));
-            request.setContent(PGPManager.encryptGPG(request.getContent(), password));
+            request.setSubject(PGPManager.encryptGPG(subject, password));
+            request.setContent(PGPManager.encryptGPG(content, password));
         } else if (receiverPublicKeys.size() > 0) {
             String[] publicKeys = receiverPublicKeys.toArray(new String[0]);
-            request.setSubject(PGPManager.encrypt(request.getSubject(), publicKeys));
-            request.setContent(PGPManager.encrypt(request.getContent(), publicKeys));
+            request.setSubject(PGPManager.encrypt(subject, publicKeys));
+            request.setContent(PGPManager.encrypt(content, publicKeys));
         }
 
         boolean isMessageEncrypted = encryptionMessage != null || receiverPublicKeys.size() > 0;

@@ -13,7 +13,6 @@ import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderN
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Pair;
@@ -427,7 +426,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
                 unlockUI();
             }
         });
-        snackbar.setActionTextColor(Color.YELLOW);
+        snackbar.setActionTextColor(getResources().getColor(R.color.colorAccent));
         snackbar.show();
     }
 
@@ -443,7 +442,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
                 unlockUI();
             }
         });
-        snackbar.setActionTextColor(Color.YELLOW);
+        snackbar.setActionTextColor(getResources().getColor(R.color.colorAccent));
         snackbar.show();
     }
 

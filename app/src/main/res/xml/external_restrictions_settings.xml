@@ -5,4 +5,8 @@
         android:title="@string/settings_block_external_images"
         android:key="@string/block_external_images_key" />
 
+    <SwitchPreference
+        android:title="@string/warn_before_opening_external_links"
+        android:key="@string/warn_external_link_key"/>
+
 </PreferenceScreen>

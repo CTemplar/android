@@ -1,5 +1,7 @@
 package mobileapp.ctemplar.com.ctemplarapp.repository;
 
+import android.text.TextUtils;
+
 import com.google.firebase.messaging.FirebaseMessaging;
 
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
@@ -23,6 +25,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.request.SignatureRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SubjectEncryptedRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SubscriptionMobileUpgradeRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.UpdateReportBugsRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.WarnExternalLinkRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.contacts.ContactsEncryptionRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.filters.EmailFilterRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.folders.EmptyFolderRequest;
@@ -62,11 +65,14 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.SettingsResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.WhiteListContact;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.whiteBlackList.BlackListResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.whiteBlackList.WhiteListResponse;
+import mobileapp.ctemplar.com.ctemplarapp.repository.dto.SearchMessagesDTO;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxKeyEntity;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.inject.Singleton;
 
@@ -93,7 +99,8 @@ public class UserRepository {
     }
 
     public UserRepository() {
-        CTemplarApp.getRestClientLiveData().observeForever(instance -> service = instance.getRestService());
+        CTemplarApp.getRestClientLiveData().observeForever(instance
+                -> service = instance.getRestService());
         userStore = CTemplarApp.getUserStore();
     }
 
@@ -203,6 +210,14 @@ public class UserRepository {
 
     public boolean isBlockExternalImagesEnabled() {
         return userStore.isBlockExternalImagesEnabled();
+    }
+
+    public void setWarnExternalLinkEnabled(boolean state) {
+        userStore.setWarnExternalLinkEnabled(state);
+    }
+
+    public boolean isWarnExternalLinkEnabled() {
+        return userStore.isWarnExternalLinkEnabled();
     }
 
     public void setReportBugsEnabled(boolean isEnabled) {
@@ -322,8 +337,21 @@ public class UserRepository {
                 .observeOn(Schedulers.computation());
     }
 
-    public Observable<MessagesResponse> searchMessages(String query, int limit, int offset) {
-        return service.searchMessages(query, limit, offset)
+    public Observable<MessagesResponse> searchMessages(
+            SearchMessagesDTO dto, int limit, int offset
+    ) {
+        return service.searchMessages(
+                dto.getQuery(),
+                dto.isExact(),
+                dto.getFolder(),
+                dto.getSender(),
+                dto.getReceiver(),
+                dto.isHaveAttachment(),
+                dto.getStartDate(),
+                dto.getEndDate(),
+                dto.getSize(),
+                dto.getSizeOperator(),
+                limit, offset)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.computation());
     }
@@ -334,8 +362,8 @@ public class UserRepository {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<Response<Void>> deleteMessages(String messageIds) {
-        return service.deleteMessages(messageIds)
+    public Observable<Response<Void>> deleteMessages(Long[] messageIds) {
+        return service.deleteMessages(TextUtils.join(",", messageIds))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
@@ -346,8 +374,9 @@ public class UserRepository {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<Response<Void>> toFolder(long id, String folder) {
-        return service.toFolder(id, new MoveToFolderRequest(folder))
+    public Observable<Response<Void>> toFolder(Long[] messageIds, String folder) {
+        return service.toFolder(TextUtils.join(",", messageIds),
+                new MoveToFolderRequest(folder))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
@@ -358,8 +387,9 @@ public class UserRepository {
                 .observeOn(Schedulers.computation());
     }
 
-    public Observable<Response<Void>> markMessageAsRead(long id, MarkMessageAsReadRequest request) {
-        return service.markMessageAsRead(id, request)
+    public Observable<Response<Void>> markMessageAsRead(Long[] messageIds, boolean isRead) {
+        return service.markMessageAsRead(TextUtils.join(",", messageIds),
+                new MarkMessageAsReadRequest(isRead))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
@@ -655,6 +685,15 @@ public class UserRepository {
             DisableLoadingImagesRequest request
     ) {
         return service.updateDisableLoadingImages(settingId, request)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public Observable<SettingsResponse> updateWarnExternalLink(
+            long settingId,
+            WarnExternalLinkRequest request
+    ) {
+        return service.updateWarnExternalLink(settingId, request)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
