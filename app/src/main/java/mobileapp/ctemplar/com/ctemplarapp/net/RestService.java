@@ -8,6 +8,8 @@ import mobileapp.ctemplar.com.ctemplarapp.net.request.AddFirebaseTokenRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.AutoReadEmailRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SubscriptionMobileUpgradeRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.WarnExternalLinkRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.domains.CreateDomainRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.domains.UpdateDomainRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.folders.AddFolderRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.AntiPhishingPhraseRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.AutoSaveContactEnabledRequest;
@@ -47,6 +49,8 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.CaptchaResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.CaptchaVerifyResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.CheckUsernameResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.SubscriptionMobileUpgradeResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.domains.CustomDomainResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.domains.CustomDomainsResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.keys.KeysResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.RecoverPasswordResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.SignInResponse;
@@ -289,6 +293,21 @@ public interface RestService {
 
     @POST("emails/filter-order/")
     Observable<EmailFilterOrderListResponse> updateEmailFiltersOrder(@Body EmailFilterOrderListRequest request);
+
+    @GET("emails/domains/")
+    Single<CustomDomainsResponse> getCustomDomains();
+
+    @POST("emails/domains/")
+    Single<CustomDomainResponse> createCustomDomain(@Body CreateDomainRequest request);
+
+    @GET("emails/domains/{id}/")
+    Single<CustomDomainResponse> getCustomDomain(@Path("id") int id);
+
+    @PATCH("emails/domains/{id}/")
+    Single<CustomDomainResponse> updateCustomDomain(@Path("id") int id, @Body UpdateDomainRequest request);
+
+    @DELETE("emails/domains/{id}/")
+    Single<Response<Void>> deleteCustomDomain(@Path("id") int id);
 
     @GET("users/myself/")
     Observable<MyselfResponse> getMyself();

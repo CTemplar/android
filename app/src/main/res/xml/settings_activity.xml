@@ -85,6 +85,13 @@
     <PreferenceCategory
         android:title="@string/settings_mail">
 
+        <PreferenceScreen
+            android:title="@string/domains"
+            android:key="@string/domains_key" />
+
+<!--        <PreferenceScreen-->
+<!--            android:title="@string/users" />-->
+
         <Preference
             android:title="@string/settings_addresses"
             android:key="@string/email_addresses" />

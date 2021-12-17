@@ -420,6 +420,19 @@
     <string name="proxy_enabled">Proxy enabled</string>
     <string name="proxy_notes"><![CDATA[<font color="#939191">Note. If after clicking on the \"Use Tor\" you see \"No such app found\", then you should allow an additional repository. Open the \"F-Droid -> Settings -> Repositories\" and switch on \"Guardian Project Official Releases\".</font>]]></string>
 
+    <!-- DOMAINS -->
+    <string name="domain">Domain</string>
+    <string name="domains">Domains</string>
+    <string name="add_domain">Add domain</string>
+    <string name="verification">Verification</string>
+    <string name="mx">MX</string>
+    <string name="spf">SPF</string>
+    <string name="dkim">DKIM</string>
+    <string name="dmarc">DMARC</string>
+
+    <!-- USERS -->
+    <string name="users">Users</string>
+
     <!-- SETTINGS -->
     <string name="settings_general">General settings</string>
     <string name="settings_recovery_email">Recovery email</string>
@@ -578,6 +591,7 @@
     <string translatable="false" name="proxy_host_key">proxy_host_key</string>
     <string translatable="false" name="proxy_port_key">proxy_port_key</string>
     <string translatable="false" name="setting_keys">setting_keys</string>
+    <string translatable="false" name="domains_key">domains_key</string>
     <string translatable="false" name="email_addresses">email_addresses</string>
     <string translatable="false" name="helpdesk_key">helpdesk_key</string>
     <string translatable="false" name="local_storage_limit">local_storage_limit</string>
