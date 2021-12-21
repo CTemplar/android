@@ -507,14 +507,14 @@
     <string name="delete_key_title">Bu anahtarı/Key'i sileceğinizden emin misiniz?</string>
     <string name="delete_key_description">Bu anahtarı/Key'i sildikten sonra, bu anahtarla/Key'le şifrelenmiş herhangi bir iletinin şifresini çözemezsiniz. Veri kaybına neden olabilir</string>
     <string name="ecc_default">ECC (Varsayılan)</string>
-    <string name="add_new_key_message">Anahtar/Key başarıyla eklendi</string>
+    <string name="add_new_key_message">Key başarıyla eklendi</string>
     <string name="import_new_key_message">Anahtar/Key başarıyla içe aktarıldı</string>
-    <string name="your_public_key_saved">PGP Genel Anahtarınız/Key İndirilenler'e kaydedildi</string>
-    <string name="your_private_key_saved">PGP Özel Anahtarınız/Key İndirilenler'e kaydedildi</string>
+    <string name="your_public_key_saved">PGP Public Key İndirilenler'e kaydedildi</string>
+    <string name="your_private_key_saved">PGP Private Key İndirilenler'e kaydedildi</string>
 
     <!-- Deprecated -->
-    <string name="download_public_key">Genel anahtarı/Key'i indir (4096 Bit)</string>
-    <string name="download_private_key">Özel anahtarı/Key'i indir (4096 Bit)</string>
+    <string name="download_public_key">Public key'i indir (4096 Bit)</string>
+    <string name="download_private_key">Private key'i indir (4096 Bit)</string>
 
     <!-- UPGRADE TO PRIME -->
     <string name="title_upgrade_to_prime">Prime'a Yükseltme</string>
@@ -569,11 +569,11 @@
     <string translatable="false" name="auto_save_drafts_enabled">auto_save_drafts_enabled</string>
     <string translatable="false" name="key_auto_read_email_enabled">key_auto_read_email_enabled</string>
     <string translatable="false" name="setting_id">setting_id</string>
-    <string translatable="false" name="free_plan">Free/Ücretsiz</string>
-    <string translatable="false" name="prime_plan">Prime/Önemli</string>
-    <string translatable="false" name="knight_plan">Knight/Şövalye</string>
-    <string translatable="false" name="marshal_plan">Marshal/Şerif</string>
-    <string translatable="false" name="champion_plan">Champion/Şampiyon</string>
+    <string translatable="false" name="free_plan">Free</string>
+    <string translatable="false" name="prime_plan">Prime/</string>
+    <string translatable="false" name="knight_plan">Knight/</string>
+    <string translatable="false" name="marshal_plan">Marshal</string>
+    <string translatable="false" name="champion_plan">Champion</string>
 
     <!-- ERRORS -->
     <string name="error_field_cannot_be_empty">Bu alan boş olamaz..</string>
@@ -605,8 +605,8 @@
     <string name="title_activity_white_black_list">GüvenilirKaraListe</string>
     <string name="section_format">Bölümden Merhaba Dünya: %1$d</string>
     <string name="toast_undefined_error">Tanımlanmamış hata</string>
-    <string name="whitelist">Güvelir Liste</string>
-    <string name="blacklist">Kara Liste</string>
+    <string name="whitelist">White List</string>
+    <string name="blacklist">Black List</string>
     <string name="yearly">Yıllık</string>
     <string name="monthly">Aylık</string>
     <string name="current_plan">Mevcut plan</string>
