@@ -11,33 +11,47 @@ public class CustomDomainDTO {
     private DomainRecordDTO spfRecord;
     private DomainRecordDTO dkimRecord;
     private DomainRecordDTO dmarcRecord;
+    private int numberOfUsers;
+    private int numberOfAliases;
+    private boolean isDeleted;
+    private Date deletedAt;
     private String domain;
+    private String ace;
     private boolean isDomainVerified;
     private boolean isMxVerified;
     private boolean isSpfVerified;
     private boolean isDkimVerified;
     private boolean isDmarcVerified;
+    private boolean catchAll;
     private Date created;
     private Date verifiedAt;
+    private String catchAllEmail;
 
     public CustomDomainDTO() {
     }
 
-    public CustomDomainDTO(int id, DomainRecordDTO verificationRecord, DomainRecordDTO mxRecord, DomainRecordDTO spfRecord, DomainRecordDTO dkimRecord, DomainRecordDTO dmarcRecord, String domain, boolean isDomainVerified, boolean isMxVerified, boolean isSpfVerified, boolean isDkimVerified, boolean isDmarcVerified, Date created, Date verifiedAt) {
+    public CustomDomainDTO(int id, DomainRecordDTO verificationRecord, DomainRecordDTO mxRecord, DomainRecordDTO spfRecord, DomainRecordDTO dkimRecord, DomainRecordDTO dmarcRecord, int numberOfUsers, int numberOfAliases, boolean isDeleted, Date deletedAt, String domain, String ace, boolean isDomainVerified, boolean isMxVerified, boolean isSpfVerified, boolean isDkimVerified, boolean isDmarcVerified, boolean catchAll, Date created, Date verifiedAt, String catchAllEmail) {
         this.id = id;
         this.verificationRecord = verificationRecord;
         this.mxRecord = mxRecord;
         this.spfRecord = spfRecord;
         this.dkimRecord = dkimRecord;
         this.dmarcRecord = dmarcRecord;
+        this.numberOfUsers = numberOfUsers;
+        this.numberOfAliases = numberOfAliases;
+        this.isDeleted = isDeleted;
+        this.deletedAt = deletedAt;
         this.domain = domain;
+        this.ace = ace;
         this.isDomainVerified = isDomainVerified;
         this.isMxVerified = isMxVerified;
         this.isSpfVerified = isSpfVerified;
         this.isDkimVerified = isDkimVerified;
         this.isDmarcVerified = isDmarcVerified;
+        this.catchAll = catchAll;
         this.created = created;
         this.verifiedAt = verifiedAt;
+        this.catchAllEmail = catchAllEmail;
     }
 
     public int getId() {
@@ -88,12 +102,52 @@ public class CustomDomainDTO {
         this.dmarcRecord = dmarcRecord;
     }
 
+    public int getNumberOfUsers() {
+        return numberOfUsers;
+    }
+
+    public void setNumberOfUsers(int numberOfUsers) {
+        this.numberOfUsers = numberOfUsers;
+    }
+
+    public int getNumberOfAliases() {
+        return numberOfAliases;
+    }
+
+    public void setNumberOfAliases(int numberOfAliases) {
+        this.numberOfAliases = numberOfAliases;
+    }
+
+    public boolean isDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        isDeleted = deleted;
+    }
+
+    public Date getDeletedAt() {
+        return deletedAt;
+    }
+
+    public void setDeletedAt(Date deletedAt) {
+        this.deletedAt = deletedAt;
+    }
+
     public String getDomain() {
         return domain;
     }
 
     public void setDomain(String domain) {
         this.domain = domain;
+    }
+
+    public String getAce() {
+        return ace;
+    }
+
+    public void setAce(String ace) {
+        this.ace = ace;
     }
 
     public boolean isDomainVerified() {
@@ -136,6 +190,14 @@ public class CustomDomainDTO {
         isDmarcVerified = dmarcVerified;
     }
 
+    public boolean isCatchAll() {
+        return catchAll;
+    }
+
+    public void setCatchAll(boolean catchAll) {
+        this.catchAll = catchAll;
+    }
+
     public Date getCreated() {
         return created;
     }
@@ -152,6 +214,14 @@ public class CustomDomainDTO {
         this.verifiedAt = verifiedAt;
     }
 
+    public String getCatchAllEmail() {
+        return catchAllEmail;
+    }
+
+    public void setCatchAllEmail(String catchAllEmail) {
+        this.catchAllEmail = catchAllEmail;
+    }
+
     public static CustomDomainDTO get(CustomDomainResponse response) {
         return new CustomDomainDTO(
                 response.getId(),
@@ -160,14 +230,21 @@ public class CustomDomainDTO {
                 DomainRecordDTO.get(response.getSpfRecord()),
                 DomainRecordDTO.get(response.getDkimRecord()),
                 DomainRecordDTO.get(response.getDmarcRecord()),
+                response.getNumberOfUsers(),
+                response.getNumberOfAliases(),
+                response.isDeleted(),
+                response.getDeletedAt(),
                 response.getDomain(),
+                response.getAce(),
                 response.isDomainVerified(),
                 response.isMxVerified(),
                 response.isSpfVerified(),
                 response.isDkimVerified(),
                 response.isDmarcVerified(),
+                response.isCatchAll(),
                 response.getCreated(),
-                response.getVerifiedAt()
+                response.getVerifiedAt(),
+                response.getCatchAllEmail()
         );
     }
 

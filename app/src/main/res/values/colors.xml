@@ -43,6 +43,7 @@
     <color name="colorDarkGreen2">#008000</color>
     <color name="colorGreen">#33b200</color>
     <color name="colorGreen2">#993ab05d</color>
+    <color name="colorGreen3">#3ab05d</color>
     <color name="colorDarkYellow">#ffaa0e</color>
     <color name="colorOrangeLight">#e74c3c</color>
     <color name="colorOrangeLight2">#e1493a</color>
@@ -51,6 +52,7 @@
     <color name="colorOrangeDark2">#c0392b</color>
     <color name="colorRed0">#ff4f41</color>
     <color name="colorRed1">#99e74c3c</color>
+    <color name="colorRed2">#ffe1df</color>
     <color name="colorGrayDark">#b9c2ca</color>
     <color name="colorLinkBlue">#4d92e2</color>
     <color name="colorWhiteLight">#ffffff</color>

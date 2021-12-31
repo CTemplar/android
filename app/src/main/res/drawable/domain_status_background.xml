@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:state_activated="true">
-        <ripple android:color="@color/colorRed0">
+        <ripple android:color="@color/colorGreen">
             <item>
                 <shape android:shape="rectangle">
-                    <solid android:color="@color/colorRed1" />
+                    <solid android:color="@color/colorGreen2" />
                     <corners android:radius="20dp" />
                 </shape>
             </item>
         </ripple>
     </item>
     <item>
-        <ripple android:color="@color/colorGreen">
+        <ripple android:color="@color/colorRed0">
             <item>
                 <shape android:shape="rectangle">
-                    <solid android:color="@color/colorGreen2" />
+                    <solid android:color="@color/colorRed1" />
                     <corners android:radius="20dp" />
                 </shape>
             </item>

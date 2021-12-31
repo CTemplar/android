@@ -333,6 +333,9 @@
     <string name="txt_type_your_name">Type your name</string>
     <string name="txt_type_signature">Type your signature</string>
     <string name="txt_signature_enabled">Signature enabled</string>
+    <string name="change_password_reset_data">Delete data</string>
+    <string name="toast_email_not_valid">Email is not valid</string>
+    <string name="storage_limit_info">%1$s of %2$s</string>
     <string name="external_resources_restrictions">External resources restrictions</string>
     <string name="warn_before_opening_external_links">Warn before opening external links</string>
 
@@ -424,11 +427,30 @@
     <string name="domain">Domain</string>
     <string name="domains">Domains</string>
     <string name="add_domain">Add domain</string>
+    <string name="edit_domain">Edit domain</string>
     <string name="verification">Verification</string>
-    <string name="mx">MX</string>
-    <string name="spf">SPF</string>
-    <string name="dkim">DKIM</string>
-    <string name="dmarc">DMARC</string>
+    <string name="current_status">Current status</string>
+    <string name="catch_all_email">Catch All Email</string>
+    <string name="domain_name">Domain name</string>
+    <string name="verify">Verify</string>
+    <string name="required">Required</string>
+    <string name="recommended">Recommended</string>
+    <string name="optional_advanced">Optional, advanced</string>
+    <string name="add_domain_title">Add a domain that you own to your CTemplar account.</string>
+    <string name="verify_domain_title">For security reasons, we need to verify that you are the owner of your domain. Please add the following code into your DNS. Do not remove it even after successful verification. This can typically be done in the control panel of your domain name registrar.</string>
+    <string name="mx_domain_title">Before you can receive emails for your custom domain addresses at CTemplar, you need to add the following MX record to your DNS. This can typically be done in the control panel of your domain name registrar.</string>
+    <string name="spf_domain_title">SPF is used to specify who is allowed to send email for the domain so we strongly recommend including CTemplar in your SPF record. Please add the following TXT record into your DNS. This can typically be done in the control panel of your domain name registrar.</string>
+    <string name="dkim_domain_title">CTemplar supports DKIM signing for custom domains. To use DKIM authentication, please add the following TXT record into your DNS for this domain. This can typically be done in the control panel of your domain name registrar.</string>
+    <string name="please_add_txt_record">Please add the following TXT record. Note, DNS records can take several hours to update.</string>
+    <string name="failed_domain_verification">Domain verification failed, please add above TXT record in your host DNS and try again. DNS records can take several hours to update. Once domain is verified, you can proceed to next step.</string>
+    <string name="type">Type</string>
+    <string name="host_name">Host Name</string>
+    <string name="value_data_points_to">Value / Data / Points To</string>
+    <string name="priority">Priority</string>
+    <string name="success_copy_to_clipboard">Copied to clipboard successfully.</string>
+    <string name="delete">Delete</string>
+    <string name="delete_domain_title">Are you sure, you want to delete %s ?</string>
+    <string name="delete_domain_dsecription">Warning: All the associated data of this domain, including messages, will also be deleted.</string>
 
     <!-- USERS -->
     <string name="users">Users</string>
@@ -562,9 +584,6 @@
     <string translatable="false" name="url_helpdesk">https://ctemplar.com/help/</string>
 
     <!-- NOT TRANSLATABLE -->
-    <string name="change_password_reset_data">Delete data</string>
-    <string name="toast_email_not_valid">Email is not valid</string>
-    <string name="storage_limit_info">%1$s of %2$s</string>
     <string translatable="false" name="subscription_key">subscription_key</string>
     <string translatable="false" name="password_key">password_key</string>
     <string translatable="false" name="pin_lock_key">pin_lock_key</string>
@@ -607,6 +626,10 @@
     <string translatable="false" name="knight_plan">Knight</string>
     <string translatable="false" name="marshal_plan">Marshal</string>
     <string translatable="false" name="champion_plan">Champion</string>
+    <string translatable="false" name="mx">MX</string>
+    <string translatable="false" name="spf">SPF</string>
+    <string translatable="false" name="dkim">DKIM</string>
+    <string translatable="false" name="dmarc">DMARC</string>
 
     <!-- ERRORS -->
     <string name="error_field_cannot_be_empty">This field cannot be empty.</string>

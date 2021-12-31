@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="8dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/lato_regular"
+        android:text="@string/add_domain_title"
+        android:textColor="?android:textColorPrimary" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/domain_name_input_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        app:hintEnabled="false">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/domain_name_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/text_input_field"
+            android:fontFamily="@font/lato_regular"
+            android:hint="mydomain.com"
+            android:imeOptions="actionNext"
+            android:inputType="text"
+            android:minHeight="45dp"
+            android:padding="12dp"
+            android:textColor="?android:textColorPrimary"
+            android:textSize="16sp" />
+
+        <requestFocus />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <TextView
+        android:id="@+id/failed_domain_name_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:background="@color/colorRed2"
+        android:fontFamily="@font/lato_regular"
+        android:visibility="gone"
+        android:padding="5dp"
+        android:textColor="@color/secondaryTextColor" />
+
+    <View
+        android:id="@+id/empty_space_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <FrameLayout
+        android:id="@+id/progress_bar_layout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:visibility="gone">
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" />
+
+    </FrameLayout>
+
+    <Button
+        android:id="@+id/next_button"
+        style="?android:attr/buttonBarButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/selector_button_blue"
+        android:fontFamily="@font/lato_regular"
+        android:text="@string/title_next"
+        android:textColor="@color/colorWhiteLight" />
+
+</LinearLayout>

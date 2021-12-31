@@ -23,8 +23,23 @@ public class CustomDomainResponse {
     @SerializedName("dmarc_record")
     private DomainRecordResponse dmarcRecord;
 
+    @SerializedName("number_of_users")
+    private int numberOfUsers;
+
+    @SerializedName("number_of_aliases")
+    private int numberOfAliases;
+
+    @SerializedName("is_deleted")
+    private boolean isDeleted;
+
+    @SerializedName("deleted_at")
+    private Date deletedAt;
+
     @SerializedName("domain")
     private String domain;
+
+    @SerializedName("ace")
+    private String ace;
 
     @SerializedName("is_domain_verified")
     private boolean isDomainVerified;
@@ -41,12 +56,17 @@ public class CustomDomainResponse {
     @SerializedName("is_dmarc_verified")
     private boolean isDmarcVerified;
 
+    @SerializedName("catch_all")
+    private boolean catchAll;
+
     @SerializedName("created")
     private Date created;
 
     @SerializedName("verified_at")
     private Date verifiedAt;
 
+    @SerializedName("catch_all_email")
+    private String catchAllEmail;
 
     public int getId() {
         return id;
@@ -72,8 +92,28 @@ public class CustomDomainResponse {
         return dmarcRecord;
     }
 
+    public int getNumberOfUsers() {
+        return numberOfUsers;
+    }
+
+    public int getNumberOfAliases() {
+        return numberOfAliases;
+    }
+
+    public boolean isDeleted() {
+        return isDeleted;
+    }
+
+    public Date getDeletedAt() {
+        return deletedAt;
+    }
+
     public String getDomain() {
         return domain;
+    }
+
+    public String getAce() {
+        return ace;
     }
 
     public boolean isDomainVerified() {
@@ -96,11 +136,19 @@ public class CustomDomainResponse {
         return isDmarcVerified;
     }
 
+    public boolean isCatchAll() {
+        return catchAll;
+    }
+
     public Date getCreated() {
         return created;
     }
 
     public Date getVerifiedAt() {
         return verifiedAt;
+    }
+
+    public String getCatchAllEmail() {
+        return catchAllEmail;
     }
 }

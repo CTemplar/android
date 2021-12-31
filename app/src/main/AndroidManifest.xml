@@ -129,6 +129,7 @@
         <activity android:name=".settings.SignatureActivity" />
         <activity android:name=".settings.HelpdeskActivity" />
         <activity android:name=".settings.domains.DomainsActivity" />
+        <activity android:name=".settings.domains.DomainActivity" />
         <activity android:name=".settings.mailboxes.MailboxesActivity" />
         <activity android:name=".settings.mailboxes.AddMailboxActivity" />
         <activity android:name=".settings.keys.OldKeysActivity" />

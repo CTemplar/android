@@ -15,6 +15,10 @@ public class CreateDomainRequest {
     @SerializedName("catch_all_email")
     private String catchAllEmail;
 
+    public CreateDomainRequest(String domain) {
+        this.domain = domain;
+    }
+
     public CreateDomainRequest(String domain, String ace, boolean catchAll, String catchAllEmail) {
         this.domain = domain;
         this.ace = ace;

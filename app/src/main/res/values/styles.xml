@@ -85,4 +85,9 @@
         <item name="android:textColorSecondary">@color/colorWhiteLight</item>
         <item name="colorAccent">@color/colorWhiteLight</item>
     </style>
+
+    <style name="NoCapsDesignTab" parent="TextAppearance.Design.Tab">
+        <item name="textAllCaps">false</item>
+    </style>
+
 </resources>
