@@ -300,6 +300,9 @@ public interface RestService {
     @POST("emails/domains/")
     Single<CustomDomainResponse> createCustomDomain(@Body CreateDomainRequest request);
 
+    @GET("domains/verify/{id}")
+    Single<CustomDomainResponse> verifyCustomDomain(@Path("id") int id);
+
     @GET("emails/domains/{id}/")
     Single<CustomDomainResponse> getCustomDomain(@Path("id") int id);
 

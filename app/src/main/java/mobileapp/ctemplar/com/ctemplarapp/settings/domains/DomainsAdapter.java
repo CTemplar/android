@@ -2,7 +2,6 @@ package mobileapp.ctemplar.com.ctemplarapp.settings.domains;
 
 import android.content.Context;
 import android.content.Intent;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +14,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import mobileapp.ctemplar.com.ctemplarapp.R;
@@ -28,10 +26,15 @@ public class DomainsAdapter extends RecyclerView.Adapter<DomainsAdapter.ViewHold
     private LayoutInflater inflater;
     private ItemClickListener listener;
 
+    private final String[] addresses;
     private List<CustomDomainDTO> items = new ArrayList<>();
 
     public void setItemClickListener(ItemClickListener listener) {
         this.listener = listener;
+    }
+
+    public DomainsAdapter(String[] addresses) {
+        this.addresses = addresses;
     }
 
     @Override
@@ -82,18 +85,21 @@ public class DomainsAdapter extends RecyclerView.Adapter<DomainsAdapter.ViewHold
             binding.aliasesValueTextView.setText(String.valueOf(dto.getNumberOfAliases()));
             binding.usersValueTextView.setText(String.valueOf(dto.getNumberOfUsers()));
             binding.catchAllEmailCheckBox.setChecked(dto.isCatchAll());
+            binding.catchAllEmailSpinner.setEnabled(dto.isCatchAll());
 
-            String catchAllEmail = dto.getCatchAllEmail();
-            String[] catchAllEmailArray = dto.getCatchAllEmail() == null
-                    ? new String[0]
-                    : new String[]{dto.getCatchAllEmail()};
-            if (TextUtils.isEmpty(catchAllEmail)) {
+            List<String> domainAddresses = new ArrayList<>();
+            for (String address : addresses) {
+                if (address.contains(dto.getDomain())) {
+                    domainAddresses.add(address);
+                }
+            }
+            if (domainAddresses.isEmpty()) {
                 binding.catchAllEmailSpinner.setVisibility(View.GONE);
             } else {
                 SpinnerAdapter addressesAdapter = new ArrayAdapter<>(
                         context,
                         R.layout.item_domain_spinner,
-                        catchAllEmailArray
+                        domainAddresses
                 );
                 binding.catchAllEmailSpinner.setAdapter(addressesAdapter);
             }
@@ -109,20 +115,19 @@ public class DomainsAdapter extends RecyclerView.Adapter<DomainsAdapter.ViewHold
             });
 
             binding.catchAllEmailCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                int catchAllEmailPosition = binding.catchAllEmailSpinner.getSelectedItemPosition();
-                if (catchAllEmailPosition == -1) {
-                    return;
-                }
-                String catchAllEmailSelected = catchAllEmailArray[catchAllEmailPosition];
-                listener.onCatchAllEmail(dto.getId(), isChecked, catchAllEmailSelected);
+                listener.onCatchAll(dto.getId(), isChecked);
+                binding.catchAllEmailSpinner.setEnabled(isChecked);
             });
 
+            int selectionIndex = domainAddresses.indexOf(dto.getCatchAllEmail());
+            binding.catchAllEmailSpinner.setSelection(selectionIndex == -1 ? 0 : selectionIndex,
+                    false);
             binding.catchAllEmailSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    boolean catchAll = binding.catchAllEmailCheckBox.isChecked();
-                    String catchAllEmailSelected = catchAllEmailArray[position];
-                    listener.onCatchAllEmail(dto.getId(), catchAll, catchAllEmailSelected);
+                    if (position != -1) {
+                        listener.onCatchAllEmail(dto.getId(), domainAddresses.get(position));
+                    }
                 }
 
                 @Override
@@ -135,7 +140,10 @@ public class DomainsAdapter extends RecyclerView.Adapter<DomainsAdapter.ViewHold
     }
 
     public interface ItemClickListener {
-        void onCatchAllEmail(int domainId, boolean checked, String email);
+        void onCatchAll(int domainId, boolean catchAll);
+
+        void onCatchAllEmail(int domainId, String catchAllEmail);
+
         void onDelete(int domainId, String domainName);
     }
 }

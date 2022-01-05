@@ -35,12 +35,14 @@ public class DomainNameStepFragment extends StepFragment {
             domainsViewModel.createCustomDomain(EditTextUtils.getText(binding.domainNameEditText))
                     .observe(getActivity(), this::handleDomainCreateResponse);
             showProgressBar(true);
+            binding.nextButton.setEnabled(false);
         });
         binding.failedDomainNameTextView.setVisibility(View.GONE);
     }
 
     private void handleDomainCreateResponse(DTOResource<CustomDomainDTO> domainDTOResource) {
         showProgressBar(false);
+        binding.nextButton.setEnabled(true);
         if (!domainDTOResource.isSuccess()) {
             binding.failedDomainNameTextView.setText(domainDTOResource.getError());
             binding.failedDomainNameTextView.setVisibility(View.VISIBLE);

@@ -12,7 +12,9 @@ import androidx.lifecycle.ViewModelProvider;
 import mobileapp.ctemplar.com.ctemplarapp.BaseActivity;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.databinding.ActivityCustomDomainsBinding;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.domains.UpdateDomainRequest;
 import mobileapp.ctemplar.com.ctemplarapp.repository.dto.DTOResource;
+import mobileapp.ctemplar.com.ctemplarapp.repository.dto.domains.CustomDomainDTO;
 import mobileapp.ctemplar.com.ctemplarapp.repository.dto.domains.CustomDomainsDTO;
 import mobileapp.ctemplar.com.ctemplarapp.utils.ThemeUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.ToastUtils;
@@ -36,7 +38,7 @@ public class DomainsActivity extends BaseActivity implements DomainsAdapter.Item
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
         domainsViewModel = new ViewModelProvider(this).get(DomainsViewModel.class);
-        adapter = new DomainsAdapter();
+        adapter = new DomainsAdapter(domainsViewModel.getAddresses());
         adapter.setItemClickListener(this);
         binding.domainsRecyclerView.setAdapter(adapter);
         domainsViewModel.getCustomDomains().observe(this, this::handleCustomDomains);
@@ -48,7 +50,7 @@ public class DomainsActivity extends BaseActivity implements DomainsAdapter.Item
     @Override
     protected void onResume() {
         super.onResume();
-        domainsViewModel.customDomainsRequest();
+        customDomainRequest();
     }
 
     private void handleCustomDomains(DTOResource<CustomDomainsDTO> dtoResource) {
@@ -57,12 +59,23 @@ public class DomainsActivity extends BaseActivity implements DomainsAdapter.Item
             ToastUtils.showToast(this, dtoResource.getError());
             return;
         }
-        adapter.setItems(dtoResource.getDto().getResults());
+        CustomDomainDTO[] customDomains = dtoResource.getDto().getResults();
+        binding.emptyListImageView.setVisibility(customDomains.length > 0 ? View.GONE : View.VISIBLE);
+        adapter.setItems(customDomains);
     }
 
     @Override
-    public void onCatchAllEmail(int domainId, boolean catchAll, String catchAllEmail) {
-        domainsViewModel.updateCustomDomain(domainId, catchAll, catchAllEmail)
+    public void onCatchAll(int domainId, boolean catchAll) {
+        updateCustomDomain(domainId, new UpdateDomainRequest(catchAll));
+    }
+
+    @Override
+    public void onCatchAllEmail(int domainId, String catchAllEmail) {
+        updateCustomDomain(domainId, new UpdateDomainRequest(catchAllEmail));
+    }
+
+    private void updateCustomDomain(int domainId, UpdateDomainRequest request) {
+        domainsViewModel.updateCustomDomain(domainId, request)
                 .observe(this, domainDTO -> {
                     if (domainDTO != null) {
                         ToastUtils.showToast(this, R.string.saved_successfully);
@@ -86,8 +99,13 @@ public class DomainsActivity extends BaseActivity implements DomainsAdapter.Item
                 ToastUtils.showToast(this, booleanDTOResource.getError());
                 return;
             }
-            domainsViewModel.customDomainsRequest();
+            customDomainRequest();
         });
+    }
+
+    private void customDomainRequest() {
+        domainsViewModel.customDomainsRequest();
+        binding.progressBar.setVisibility(View.VISIBLE);
     }
 
     @Override

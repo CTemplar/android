@@ -27,7 +27,7 @@ public class DialogUtils {
                 .setTitle(context.getString(titleResourceId))
                 .setMessage(context.getString(messageResourceId))
                 .setPositiveButton(android.R.string.ok, null)
-//                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setIcon(android.R.drawable.ic_dialog_alert)
                 .setCancelable(cancelable)
                 .setOnDismissListener(dismissListener)
                 .show();

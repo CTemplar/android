@@ -80,10 +80,6 @@ public class DomainActivity extends BaseActivity implements StepFragment.StepAct
         }
         domainsViewModel.getCustomDomain().observe(this, this::handleCustomDomain);
         if (editDomainId == -1) {
-//            domainDTO = new CustomDomainDTO();
-//            for (StepFragment stepFragment : stepFragments) {
-//                stepFragment.setDomain(domainDTO);
-//            }
             init();
         } else {
             if (actionBar != null) {
@@ -283,7 +279,7 @@ public class DomainActivity extends BaseActivity implements StepFragment.StepAct
             Timber.e("editDomainId is -1");
             return;
         }
-        domainsViewModel.customDomainRequest(editDomainId);
+        domainsViewModel.verifyCustomDomainRequest(editDomainId);
     }
 
     @Override
@@ -294,6 +290,6 @@ public class DomainActivity extends BaseActivity implements StepFragment.StepAct
     @Override
     public void onDomainCreated(CustomDomainDTO domainDTO) {
         editDomainId = domainDTO.getId();
-        domainsViewModel.customDomainRequest(editDomainId);
+        domainsViewModel.verifyCustomDomainRequest(editDomainId);
     }
 }

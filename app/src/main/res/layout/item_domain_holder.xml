@@ -100,7 +100,7 @@
             android:paddingVertical="5dp"
             android:text="@string/spf"
             android:textAllCaps="true"
-            android:textColor="@drawable/selector_domain_status_text"
+            android:textColor="@color/domain_status_text_color"
             android:textSize="12sp"
             android:textStyle="bold" />
 
@@ -117,7 +117,7 @@
             android:paddingVertical="5dp"
             android:text="@string/dkim"
             android:textAllCaps="true"
-            android:textColor="@drawable/selector_domain_status_text"
+            android:textColor="@color/domain_status_text_color"
             android:textSize="12sp"
             android:textStyle="bold" />
 
@@ -134,7 +134,7 @@
             android:paddingVertical="5dp"
             android:text="@string/dmarc"
             android:textAllCaps="true"
-            android:textColor="@drawable/selector_domain_status_text"
+            android:textColor="@color/domain_status_text_color"
             android:textSize="12sp"
             android:textStyle="bold" />
 

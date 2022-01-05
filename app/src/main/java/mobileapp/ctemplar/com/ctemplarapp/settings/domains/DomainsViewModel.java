@@ -4,23 +4,39 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import java.util.List;
+
 import io.reactivex.SingleObserver;
 import io.reactivex.disposables.Disposable;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.domains.UpdateDomainRequest;
 import mobileapp.ctemplar.com.ctemplarapp.repository.DomainsRepository;
+import mobileapp.ctemplar.com.ctemplarapp.repository.MailboxDao;
 import mobileapp.ctemplar.com.ctemplarapp.repository.dto.DTOResource;
 import mobileapp.ctemplar.com.ctemplarapp.repository.dto.domains.CustomDomainDTO;
 import mobileapp.ctemplar.com.ctemplarapp.repository.dto.domains.CustomDomainsDTO;
+import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import timber.log.Timber;
 
 public class DomainsViewModel extends ViewModel {
     private final DomainsRepository domainsRepository;
+    private final MailboxDao mailboxDao;
 
     private final MutableLiveData<DTOResource<CustomDomainsDTO>> customDomains = new MutableLiveData<>();
     private final MutableLiveData<DTOResource<CustomDomainDTO>> customDomain = new MutableLiveData<>();
 
     public DomainsViewModel() {
         domainsRepository = CTemplarApp.getDomainsRepository();
+        mailboxDao = CTemplarApp.getAppDatabase().mailboxDao();
+    }
+
+    public String[] getAddresses() {
+        List<MailboxEntity> mailboxes = mailboxDao.getAll();
+        String[] addresses = new String[mailboxes.size()];
+        for (int i = 0; i < mailboxes.size(); ++i) {
+            addresses[i] = mailboxes.get(i).getEmail();
+        }
+        return addresses;
     }
 
     public MutableLiveData<DTOResource<CustomDomainsDTO>> getCustomDomains() {
@@ -47,6 +63,27 @@ public class DomainsViewModel extends ViewModel {
                     @Override
                     public void onError(@NonNull Throwable e) {
                         customDomains.postValue(DTOResource.error(e));
+                        Timber.e(e);
+                    }
+                });
+    }
+
+    public void verifyCustomDomainRequest(int id) {
+        domainsRepository.verifyCustomDomain(id)
+                .subscribe(new SingleObserver<CustomDomainDTO>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onSuccess(@NonNull CustomDomainDTO dto) {
+                        customDomain.postValue(DTOResource.success(dto));
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        customDomain.postValue(DTOResource.error(e));
                         Timber.e(e);
                     }
                 });
@@ -96,9 +133,9 @@ public class DomainsViewModel extends ViewModel {
         return result;
     }
 
-    public MutableLiveData<DTOResource<CustomDomainDTO>> updateCustomDomain(int id, boolean catchAll, String catchAllEmail) {
+    public MutableLiveData<DTOResource<CustomDomainDTO>> updateCustomDomain(int id, UpdateDomainRequest request) {
         MutableLiveData<DTOResource<CustomDomainDTO>> result = new MutableLiveData<>();
-        domainsRepository.updateCustomDomain(id, catchAll, catchAllEmail)
+        domainsRepository.updateCustomDomain(id, request)
                 .subscribe(new SingleObserver<CustomDomainDTO>() {
                     @Override
                     public void onSubscribe(@NonNull Disposable d) {

@@ -29,7 +29,11 @@ public class VerifyStepFragment extends StepFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         binding.nextButton.setOnClickListener(v -> {
-            next();
+            if (domainVerified) {
+                next();
+            } else {
+                verify();
+            }
             binding.failedDomainVerificationTextView.setVisibility(domainVerified ? View.GONE : View.VISIBLE);
         });
         binding.valueDataPointsToTextView.setOnClickListener(v -> AppUtils.setSystemClipboard(
