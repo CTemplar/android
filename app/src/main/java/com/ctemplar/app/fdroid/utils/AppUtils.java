@@ -1,5 +1,7 @@
 package com.ctemplar.app.fdroid.utils;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -13,6 +15,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
 
+import com.ctemplar.app.fdroid.R;
 import timber.log.Timber;
 
 public class AppUtils {
@@ -73,6 +76,12 @@ public class AppUtils {
         } else {
             vibrator.vibrate(milliseconds);
         }
+    }
+
+    public static void setSystemClipboard(Context context, String text) {
+        ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+        clipboard.setPrimaryClip(ClipData.newPlainText(text, text));
+        ToastUtils.showToast(context, R.string.success_copy_to_clipboard);
     }
 
     private boolean noConnection(Context context) {

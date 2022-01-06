@@ -19,6 +19,7 @@ import com.ctemplar.app.fdroid.net.ProxyController;
 import com.ctemplar.app.fdroid.net.RestClient;
 import com.ctemplar.app.fdroid.repository.AppDatabase;
 import com.ctemplar.app.fdroid.repository.ContactsRepository;
+import com.ctemplar.app.fdroid.repository.DomainsRepository;
 import com.ctemplar.app.fdroid.repository.ManageFoldersRepository;
 import com.ctemplar.app.fdroid.repository.MessagesRepository;
 import com.ctemplar.app.fdroid.repository.UserRepository;
@@ -40,6 +41,7 @@ public class CTemplarApp extends MultiDexApplication {
     private static final MutableLiveData<RestClient> restClient = new MutableLiveData<>();
     private static UserStore userStore;
     private static UserRepository userRepository;
+    private static DomainsRepository domainsRepository;
     private static MessagesRepository messagesRepository;
     private static ContactsRepository contactsRepository;
     private static ManageFoldersRepository manageFoldersRepository;
@@ -152,6 +154,10 @@ public class CTemplarApp extends MultiDexApplication {
         return userRepository;
     }
 
+    public static DomainsRepository getDomainsRepository() {
+        return domainsRepository;
+    }
+
     public static ContactsRepository getContactsRepository() {
         return contactsRepository;
     }
@@ -177,6 +183,9 @@ public class CTemplarApp extends MultiDexApplication {
         }
         if (userRepository == null) {
             userRepository = UserRepository.getInstance();
+        }
+        if (domainsRepository == null) {
+            domainsRepository = DomainsRepository.getInstance();
         }
         if (appDatabase == null) {
             appDatabase = Room.databaseBuilder(application, AppDatabase.class, "database")

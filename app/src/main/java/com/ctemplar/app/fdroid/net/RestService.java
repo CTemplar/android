@@ -22,6 +22,8 @@ import com.ctemplar.app.fdroid.net.request.TokenRefreshRequest;
 import com.ctemplar.app.fdroid.net.request.UpdateReportBugsRequest;
 import com.ctemplar.app.fdroid.net.request.WarnExternalLinkRequest;
 import com.ctemplar.app.fdroid.net.request.contacts.ContactsEncryptionRequest;
+import com.ctemplar.app.fdroid.net.request.domains.CreateDomainRequest;
+import com.ctemplar.app.fdroid.net.request.domains.UpdateDomainRequest;
 import com.ctemplar.app.fdroid.net.request.filters.EmailFilterOrderListRequest;
 import com.ctemplar.app.fdroid.net.request.filters.EmailFilterRequest;
 import com.ctemplar.app.fdroid.net.request.folders.AddFolderRequest;
@@ -46,6 +48,8 @@ import com.ctemplar.app.fdroid.net.response.SignInResponse;
 import com.ctemplar.app.fdroid.net.response.SignUpResponse;
 import com.ctemplar.app.fdroid.net.response.contacts.ContactData;
 import com.ctemplar.app.fdroid.net.response.contacts.ContactsResponse;
+import com.ctemplar.app.fdroid.net.response.domains.CustomDomainResponse;
+import com.ctemplar.app.fdroid.net.response.domains.CustomDomainsResponse;
 import com.ctemplar.app.fdroid.net.response.domains.DomainsResponse;
 import com.ctemplar.app.fdroid.net.response.filters.EmailFilterOrderListResponse;
 import com.ctemplar.app.fdroid.net.response.filters.EmailFilterResponse;
@@ -284,6 +288,24 @@ public interface RestService {
 
     @POST("emails/filter-order/")
     Observable<EmailFilterOrderListResponse> updateEmailFiltersOrder(@Body EmailFilterOrderListRequest request);
+
+    @GET("emails/domains/")
+    Single<CustomDomainsResponse> getCustomDomains();
+
+    @POST("emails/domains/")
+    Single<CustomDomainResponse> createCustomDomain(@Body CreateDomainRequest request);
+
+    @GET("domains/verify/{id}")
+    Single<CustomDomainResponse> verifyCustomDomain(@Path("id") int id);
+
+    @GET("emails/domains/{id}/")
+    Single<CustomDomainResponse> getCustomDomain(@Path("id") int id);
+
+    @PATCH("emails/domains/{id}/")
+    Single<CustomDomainResponse> updateCustomDomain(@Path("id") int id, @Body UpdateDomainRequest request);
+
+    @DELETE("emails/domains/{id}/")
+    Single<Response<Void>> deleteCustomDomain(@Path("id") int id);
 
     @GET("users/myself/")
     Observable<MyselfResponse> getMyself();
