@@ -49,6 +49,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.MyselfResult;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.SettingsResponse;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserStore;
+import mobileapp.ctemplar.com.ctemplarapp.settings.domains.DomainsActivity;
 import mobileapp.ctemplar.com.ctemplarapp.settings.filters.FiltersActivity;
 import mobileapp.ctemplar.com.ctemplarapp.settings.keys.KeysActivity;
 import mobileapp.ctemplar.com.ctemplarapp.settings.mailboxes.MailboxesActivity;
@@ -185,6 +186,14 @@ public class SettingsActivity extends BaseActivity {
                 manageFolders.setOnPreferenceClickListener(preference -> {
                     Intent manageFolders1 = new Intent(getActivity(), ManageFoldersActivity.class);
                     startActivity(manageFolders1);
+                    return true;
+                });
+            }
+            Preference domains = findPreference(getString(R.string.domains_key));
+            if (domains != null) {
+                domains.setOnPreferenceClickListener(preference -> {
+                    Intent domainsIntent = new Intent(getActivity(), DomainsActivity.class);
+                    startActivity(domainsIntent);
                     return true;
                 });
             }

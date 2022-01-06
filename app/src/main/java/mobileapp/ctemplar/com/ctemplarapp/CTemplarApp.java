@@ -20,6 +20,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.ProxyController;
 import mobileapp.ctemplar.com.ctemplarapp.net.RestClient;
 import mobileapp.ctemplar.com.ctemplarapp.repository.AppDatabase;
 import mobileapp.ctemplar.com.ctemplarapp.repository.ContactsRepository;
+import mobileapp.ctemplar.com.ctemplarapp.repository.DomainsRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.ManageFoldersRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.MessagesRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
@@ -34,6 +35,7 @@ public class CTemplarApp extends MultiDexApplication {
     private static final MutableLiveData<RestClient> restClient = new MutableLiveData<>();
     private static UserStore userStore;
     private static UserRepository userRepository;
+    private static DomainsRepository domainsRepository;
     private static MessagesRepository messagesRepository;
     private static ContactsRepository contactsRepository;
     private static ManageFoldersRepository manageFoldersRepository;
@@ -123,6 +125,10 @@ public class CTemplarApp extends MultiDexApplication {
         return userRepository;
     }
 
+    public static DomainsRepository getDomainsRepository() {
+        return domainsRepository;
+    }
+
     public static ContactsRepository getContactsRepository() {
         return contactsRepository;
     }
@@ -148,6 +154,9 @@ public class CTemplarApp extends MultiDexApplication {
         }
         if (userRepository == null) {
             userRepository = UserRepository.getInstance();
+        }
+        if (domainsRepository == null) {
+            domainsRepository = DomainsRepository.getInstance();
         }
         if (appDatabase == null) {
             appDatabase = Room.databaseBuilder(application, AppDatabase.class, "database")

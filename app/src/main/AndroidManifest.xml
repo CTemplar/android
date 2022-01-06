@@ -111,9 +111,6 @@
         <activity android:name=".message.ViewMessagesActivity" />
         <activity android:name=".contacts.AddContactActivity" />
         <activity android:name=".contacts.EditContactActivity" />
-        <activity android:name=".settings.filters.FiltersActivity" />
-        <activity android:name=".settings.filters.AddFilterActivity" />
-        <activity android:name=".settings.filters.EditFilterActivity" />
         <activity android:name=".folders.AddFolderActivity" />
         <activity android:name=".folders.EditFolderActivity" />
         <activity android:name=".folders.ManageFoldersActivity" />
@@ -123,11 +120,16 @@
         <activity
             android:name=".settings.SettingsActivity"
             android:theme="@style/PreferenceScreen" />
+        <activity android:name=".settings.filters.FiltersActivity" />
+        <activity android:name=".settings.filters.AddFilterActivity" />
+        <activity android:name=".settings.filters.EditFilterActivity" />
         <activity android:name=".settings.PINLockSettingsActivity" />
         <activity android:name=".settings.PINLockChangeActivity" />
         <activity android:name=".settings.password.ChangePasswordActivity" />
         <activity android:name=".settings.SignatureActivity" />
         <activity android:name=".settings.HelpdeskActivity" />
+        <activity android:name=".settings.domains.DomainsActivity" />
+        <activity android:name=".settings.domains.DomainActivity" />
         <activity android:name=".settings.mailboxes.MailboxesActivity" />
         <activity android:name=".settings.mailboxes.AddMailboxActivity" />
         <activity android:name=".settings.keys.OldKeysActivity" />
