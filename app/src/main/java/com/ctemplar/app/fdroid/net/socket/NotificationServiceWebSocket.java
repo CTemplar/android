@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.TimeUnit;
 
+import io.sentry.Sentry;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -82,6 +83,11 @@ public class NotificationServiceWebSocket extends WebSocketListener {
     @Override
     public void onFailure(@NotNull WebSocket webSocket, @NotNull Throwable t, Response response) {
         Timber.e(t, "failure");
+        Sentry.captureException(t);
+        if (response != null && response.code() == 403) {
+            shutdown();
+            return;
+        }
         if (safeShutDown) {
             return;
         }
@@ -93,6 +99,10 @@ public class NotificationServiceWebSocket extends WebSocketListener {
 
     public void start(NotificationServiceWebSocketCallback callback) {
         this.callback = callback;
+        start();
+    }
+
+    public void start() {
         if (socket == null) {
             run();
         }
@@ -113,7 +123,7 @@ public class NotificationServiceWebSocket extends WebSocketListener {
             if (!safeShutDown) {
                 run();
             }
-        }, 30_000);
+        }, 60_000);
     }
 
     public void shutdown() {
@@ -155,9 +165,6 @@ public class NotificationServiceWebSocket extends WebSocketListener {
     }
 
     private static void closeWebSocket(WebSocket socket) {
-        if (socket == null) {
-            return;
-        }
         try {
             socket.close(1000, null);
         } catch (Throwable e) {

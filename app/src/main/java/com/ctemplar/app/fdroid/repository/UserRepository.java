@@ -64,6 +64,7 @@ import com.ctemplar.app.fdroid.net.response.whiteBlackList.WhiteListResponse;
 import com.ctemplar.app.fdroid.repository.dto.SearchMessagesDTO;
 import com.ctemplar.app.fdroid.repository.entity.MailboxEntity;
 import com.ctemplar.app.fdroid.repository.entity.MailboxKeyEntity;
+import com.ctemplar.app.fdroid.services.NotificationService;
 import com.ctemplar.app.fdroid.utils.EditTextUtils;
 
 import java.util.List;
@@ -221,6 +222,7 @@ public class UserRepository {
     public void clearData() {
         userStore.logout();
         CTemplarApp.getAppDatabase().clearAllTables();
+        NotificationService.updateState(CTemplarApp.getInstance());
     }
 
     public void saveMailbox(MailboxEntity mailbox) {

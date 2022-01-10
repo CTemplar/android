@@ -38,6 +38,7 @@ import timber.log.Timber;
 
 public class NotificationService extends Service {
     private static Map<NotificationServiceListener, NotificationServiceConnection> listenerServiceConnectionMap;
+    private NotificationServiceWebSocket notificationServiceWebSocket;
 
     private final NotificationServiceBinder binder = new NotificationServiceBinder();
     private final NotificationServiceWebSocketCallback notificationServiceWebSocketCallback = messageProvider -> {
@@ -59,7 +60,7 @@ public class NotificationService extends Service {
     public void onCreate() {
         super.onCreate();
         Timber.d("onCreate");
-        NotificationServiceWebSocket notificationServiceWebSocket = NotificationServiceWebSocket.getInstance();
+        notificationServiceWebSocket = NotificationServiceWebSocket.getInstance();
         notificationServiceWebSocket.start(notificationServiceWebSocketCallback);
     }
 
@@ -71,7 +72,7 @@ public class NotificationService extends Service {
         }
         String action = intent.getAction();
         if (ServiceConstants.NOTIFICATION_SERVICE_ACTION_STOP.equals(action)) {
-            NotificationServiceWebSocket.getInstance().shutdown();
+            notificationServiceWebSocket.shutdown();
             stopForeground(true);
             stopSelf();
             LaunchUtils.shutdownService(this, getClass());
@@ -79,11 +80,12 @@ public class NotificationService extends Service {
         } else if (ServiceConstants.NOTIFICATION_SERVICE_ACTION_START.equals(action)) {
             Timber.d("onStartCommand action START");
             startForegroundPriority();
+            notificationServiceWebSocket.start();
         } else if (ServiceConstants.NOTIFICATION_SERVICE_ACTION_RESTART.equals(action)) {
             if (LaunchUtils.needForeground(intent)) {
                 startForegroundPriority();
             }
-            NotificationServiceWebSocket.getInstance().restart();
+            notificationServiceWebSocket.restart();
         } else {
             if (LaunchUtils.needForeground(intent)) {
                 startForegroundPriority();
@@ -95,7 +97,7 @@ public class NotificationService extends Service {
     @Override
     public void onDestroy() {
         Timber.d("onDestroy");
-        NotificationServiceWebSocket.getInstance().shutdown();
+        notificationServiceWebSocket.shutdown();
         NotificationServiceBroadcastReceiver.sendStartNotificationService(this);
     }
 

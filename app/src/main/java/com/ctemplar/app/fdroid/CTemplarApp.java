@@ -109,7 +109,6 @@ public class CTemplarApp extends MultiDexApplication {
         registerActivityLifecycleCallbacks(activityLifecycleCallbacks);
         notificationServiceBroadcastReceiver = new NotificationServiceBroadcastReceiver();
         notificationServiceBroadcastReceiver.register(this);
-        NotificationService.updateState(this);
         if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
             Security.addProvider(new BouncyCastleProvider());
         }
