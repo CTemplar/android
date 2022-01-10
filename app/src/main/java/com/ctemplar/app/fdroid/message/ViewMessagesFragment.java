@@ -2,6 +2,7 @@ package com.ctemplar.app.fdroid.message;
 
 import static com.ctemplar.app.fdroid.message.SendMessageActivity.ATTACHMENT_LIST;
 import static com.ctemplar.app.fdroid.message.ViewMessagesActivity.PARENT_ID;
+import static com.ctemplar.app.fdroid.message.dialog.MoveDialogFragment.MESSAGE_IDS;
 import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.ARCHIVE;
 import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.FOLDER_NAME;
 import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.INBOX;
@@ -453,7 +454,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
         }
         MoveDialogFragment moveDialogFragment = new MoveDialogFragment();
         Bundle moveFragmentBundle = new Bundle();
-        moveFragmentBundle.putLong(PARENT_ID, parentMessage.getId());
+        moveFragmentBundle.putLongArray(MESSAGE_IDS, new long[]{parentMessage.getId()});
         moveDialogFragment.setArguments(moveFragmentBundle);
         moveDialogFragment.show(getActivity().getSupportFragmentManager(), "MoveDialogFragment");
     }

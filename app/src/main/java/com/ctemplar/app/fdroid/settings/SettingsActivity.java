@@ -44,6 +44,7 @@ import com.ctemplar.app.fdroid.net.response.myself.SettingsResponse;
 import com.ctemplar.app.fdroid.repository.UserRepository;
 import com.ctemplar.app.fdroid.repository.UserStore;
 import com.ctemplar.app.fdroid.services.NotificationService;
+import com.ctemplar.app.fdroid.settings.domains.DomainsActivity;
 import com.ctemplar.app.fdroid.settings.filters.FiltersActivity;
 import com.ctemplar.app.fdroid.settings.keys.KeysActivity;
 import com.ctemplar.app.fdroid.settings.mailboxes.MailboxesActivity;
@@ -179,6 +180,14 @@ public class SettingsActivity extends BaseActivity {
                 manageFolders.setOnPreferenceClickListener(preference -> {
                     Intent manageFolders1 = new Intent(getActivity(), ManageFoldersActivity.class);
                     startActivity(manageFolders1);
+                    return true;
+                });
+            }
+            Preference domains = findPreference(getString(R.string.domains_key));
+            if (domains != null) {
+                domains.setOnPreferenceClickListener(preference -> {
+                    Intent domainsIntent = new Intent(getActivity(), DomainsActivity.class);
+                    startActivity(domainsIntent);
                     return true;
                 });
             }

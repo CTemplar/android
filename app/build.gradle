@@ -6,8 +6,8 @@ android {
         applicationId "com.ctemplar.app.fdroid"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 29
-        versionName "1.5.6"
+        versionCode 30
+        versionName "1.5.7"
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -74,6 +74,7 @@ dependencies {
     implementation 'com.google.android.material:material:1.4.0'
     implementation 'com.google.guava:guava:29.0-android'
     implementation 'com.google.dagger:dagger:2.37'
+    implementation 'com.google.android.flexbox:flexbox:3.0.0'
     implementation 'com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer:20200713.1'
 
     implementation 'com.jakewharton.timber:timber:4.7.1'

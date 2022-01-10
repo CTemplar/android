@@ -58,6 +58,7 @@ import com.ctemplar.app.fdroid.net.entity.AttachmentsEntity;
 import com.ctemplar.app.fdroid.net.response.folders.FoldersResponse;
 import com.ctemplar.app.fdroid.net.response.folders.FoldersResult;
 import com.ctemplar.app.fdroid.repository.entity.MailboxEntity;
+import com.ctemplar.app.fdroid.services.NotificationService;
 import com.ctemplar.app.fdroid.settings.SettingsActivity;
 import com.ctemplar.app.fdroid.settings.keys.MailboxKeyViewModel;
 import com.ctemplar.app.fdroid.utils.EditTextUtils;
@@ -119,6 +120,7 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         ThemeUtils.setTheme(this);
         setContentView(R.layout.activity_main);
+        NotificationService.updateState(this);
 
         drawer = findViewById(R.id.drawer_layout);
         contentContainer = findViewById(R.id.content_container);

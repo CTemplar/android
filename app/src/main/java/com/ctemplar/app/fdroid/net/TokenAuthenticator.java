@@ -11,6 +11,7 @@ import com.ctemplar.app.fdroid.CTemplarApp;
 import com.ctemplar.app.fdroid.net.request.TokenRefreshRequest;
 import com.ctemplar.app.fdroid.net.response.SignInResponse;
 import com.ctemplar.app.fdroid.repository.UserRepository;
+import com.ctemplar.app.fdroid.services.NotificationService;
 import com.ctemplar.app.fdroid.utils.EditTextUtils;
 import okhttp3.Authenticator;
 import okhttp3.Request;
@@ -41,6 +42,7 @@ public class TokenAuthenticator implements Authenticator {
             return response.request();
         }
         userRepository.saveUserToken(newToken);
+        NotificationService.updateState(CTemplarApp.getInstance());
 
         Timber.d("Token is refreshed: %s", newToken);
         return response.request().newBuilder()
