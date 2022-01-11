@@ -625,7 +625,7 @@ public class MainActivityViewModel extends AndroidViewModel {
     }
 
     public void toFolder(long messageId, String folder) {
-        userRepository.toFolder(new Long[]{messageId}, folder);
+        toFolder(new Long[]{messageId}, folder);
     }
 
     public void toFolder(Long[] messageIds, String folder) {
