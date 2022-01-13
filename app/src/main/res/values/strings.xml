@@ -1,49 +1,49 @@
 <resources>
     <string translatable="false" name="app_name">CTemplar</string>
     <string translatable="false" name="platform">android</string>
-    <string name="navigation_drawer_open">Open Navigation Drawer</string>
-    <string name="navigation_drawer_close">Close Navigation Drawer</string>
-    <string name="nav_header_desc">Navigation Header</string>
-    <string name="action_settings">Settings</string>
-    <string name="action_undo">UNDO</string>
+    <string name="navigation_drawer_open">Gezinti Çekmecesini Aç</string>
+    <string name="navigation_drawer_close">Gezinti Çekmecesini kapat</string>
+    <string name="nav_header_desc">Gezinti Başlığı</string>
+    <string name="action_settings">Ayarlar</string>
+    <string name="action_undo">Geri Al</string>
 
     <!-- MAIN -->
-    <string name="dialog_log_out">Log out</string>
-    <string name="dialog_log_out_confirm">"Are you sure you want to log out?"</string>
-    <string name="btn_log_out">LOG OUT</string>
+    <string name="dialog_log_out">Çıkış Yap</string>
+    <string name="dialog_log_out_confirm">"Oturumu Kapatmak İstediğinizden Emin misiniz?"</string>
+    <string name="btn_log_out">Çıkış Yap</string>
 
     <!-- NAVIGATION DRAWER -->
-    <string name="nav_drawer_inbox">Inbox</string>
-    <string name="nav_drawer_draft">Draft</string>
-    <string name="nav_drawer_sent">Sent</string>
-    <string name="nav_drawer_outbox">Outbox</string>
-    <string name="nav_drawer_starred">Starred</string>
-    <string name="nav_drawer_archive">Archive</string>
+    <string name="nav_drawer_inbox">Gelen Kutusu</string>
+    <string name="nav_drawer_draft">Taslak</string>
+    <string name="nav_drawer_sent">Gönderilmiş</string>
+    <string name="nav_drawer_outbox">Giden Kutusu</string>
+    <string name="nav_drawer_starred">Yıldızlı</string>
+    <string name="nav_drawer_archive">Arşiv</string>
     <string name="nav_drawer_spam">Spam</string>
-    <string name="nav_drawer_trash">Trash</string>
-    <string name="nav_drawer_all_mails">All Emails</string>
-    <string name="nav_drawer_unread">Unread</string>
-    <string name="nav_drawer_add_folder">Add Folder</string>
-    <string name="nav_drawer_add_label">Add Label</string>
-    <string name="nav_drawer_contact">Contacts</string>
-    <string name="nav_drawer_settings">Settings</string>
-    <string name="nav_drawer_help">Help</string>
-    <string name="nav_drawer_logout">Logout</string>
-    <string name="nav_drawer_manage_folders">Manage Folders</string>
-    <string name="nav_drawer_manage_folders_param">Manage Folders (%1$d)</string>
-    <string name="nav_drawer_folders_show_more">Show 10 more folders</string>
+    <string name="nav_drawer_trash">Çöp Kutusu</string>
+    <string name="nav_drawer_all_mails">Tüm E-postalar</string>
+    <string name="nav_drawer_unread">Okunmamış</string>
+    <string name="nav_drawer_add_folder">Klasör Ekle</string>
+    <string name="nav_drawer_add_label">Etiket Ekle</string>
+    <string name="nav_drawer_contact">Kişiler</string>
+    <string name="nav_drawer_settings">Ayarlar</string>
+    <string name="nav_drawer_help">Yardım</string>
+    <string name="nav_drawer_logout">ÇıkışYap</string>
+    <string name="nav_drawer_manage_folders">Klasörleri Yönet</string>
+    <string name="nav_drawer_manage_folders_param">Klasörleri Yönet (%1$d)</string>
+    <string name="nav_drawer_folders_show_more">10 Klasör Daha Göster</string>
 
     <!-- TOOLBAR -->
-    <string name="action_search">Search</string>
-    <string name="action_filter">Filter</string>
-    <string name="action_search_hint">Search mail</string>
-    <string name="action_empty_folder">Empty folder</string>
-    <string name="action_spam">1 reported as spam</string>
-    <string name="action_archived">1 archived</string>
-    <string name="action_moved_to_inbox">1 moved to inbox</string>
-    <string name="action_reported_as_spam">1 reported as spam</string>
-    <string name="action_reported_as_not_spam">1 reported as not spam</string>
-    <string name="action_message_removed">1 message removed</string>
+    <string name="action_search">Ara</string>
+    <string name="action_filter">Filtre</string>
+    <string name="action_search_hint">Mail ara</string>
+    <string name="action_empty_folder">Boş klasör</string>
+    <string name="action_spam">1 spam olarak bildirildi</string>
+    <string name="action_archived">1 arşivlendi</string>
+    <string name="action_moved_to_inbox">1 Gelen kutusuna taşındı</string>
+    <string name="action_reported_as_spam">1 spam olarak bildirildi</string>
+    <string name="action_reported_as_not_spam">1 spam olmadığı bildirildi</string>
+    <string name="action_message_removed">1 mesaj kaldırıldı</string>
 
     <!-- ADVANCED SEARCH -->
     <string name="keyword">Keyword</string>
@@ -56,283 +56,282 @@
     <string name="clear_filter">Clear filter</string>
 
     <!-- MENU -->
-    <string name="menu_save">Save</string>
+    <string name="menu_save">Kaydet</string>
     <string name="menu_spam">Spam</string>
-    <string name="menu_not_spam">Mark Not Spam</string>
-    <string name="menu_move">Move</string>
-    <string name="menu_trash">Trash</string>
-    <string name="menu_move_to_inbox">Move to Inbox</string>
-    <string name="menu_move_to_archive">Move to Archive</string>
-    <string name="menu_mark_as_unread">Mark as unread</string>
-    <string name="menu_select_all">Select all</string>
+    <string name="menu_not_spam">Spam değil olarak işaretle</string>
+    <string name="menu_move">Taşı</string>
+    <string name="menu_trash">Çöp Kutusu</string>
+    <string name="menu_move_to_inbox">Gelen Kutusuna Taşı</string>
+    <string name="menu_move_to_archive">Arşive Taşı</string>
+    <string name="menu_mark_as_unread">Okunmamış Olarak İşaretle</string>
 
     <!-- STRINGS -->
     <string translatable="false" name="encrypted_subject">...</string>
     <string translatable="false" name="subject_reply">Re: %s</string>
     <string translatable="false" name="subject_forward">Fwd: %s</string>
-    <string name="token_expired_title">Session expired</string>
-    <string name="token_expired_message">Your session has expired, please log in to CTemplar again.</string>
+    <string name="token_expired_title">Oturumun Süresi Doldu</string>
+    <string name="token_expired_message">Oturumunuzun süresi doldu, lütfen tekrar CTemplar'da oturum açın.</string>
     <string name="title_email">Email</string>
-    <string name="title_next">Next</string>
-    <string name="title_next_no_email">Next (No Email)</string>
-    <string name="title_password">Password</string>
-    <string name="title_username">Username</string>
-    <string name="title_2fa">2 FACTOR AUTHENTICATION</string>
-    <string name="title_2fa_code">Enter code generated by the app.</string>
+    <string name="title_next">Sonraki</string>
+    <string name="title_next_no_email">Sonraki (No Email)</string>
+    <string name="title_password">Şifre</string>
+    <string name="title_username">Kullanıcı Adı</string>
+    <string name="title_2fa">2 FAKTÖRLÜ KİMLİK DOĞRULAMA</string>
+    <string name="title_2fa_code">Uygulama tarafından oluşturulan kodu girin.</string>
     <string name="title_captcha">Captcha</string>
     <string name="title_ctemplar">CTEMPLAR</string>
-    <string name="title_forgot_password">Forgot password</string>
-    <string name="title_forgot_password_hint">We will send a reset link to your recovery email.</string>
-    <string name="title_choose_password">Choose password</string>
-    <string name="title_confirm_password">Confirm password</string>
-    <string name="title_ctemplar_username">CTemplar username to reset</string>
-    <string name="title_recovery_email">Recovery email</string>
-    <string name="title_security_check">Security check</string>
-    <string name="title_recovery_email_optional">Recovery email (Optional)</string>
-    <string name="title_reset_password">Reset password</string>
-    <string name="title_reset_code">Reset code</string>
-    <string name="title_confirm">Confirm</string>
-    <string name="title_confirm_reset_password">Confirm Reset Password</string>
-    <string name="title_invitation_code">Invitation code</string>
-    <string name="title_further_question_hint">If you have further questions please email <![CDATA[<u><a href="mailto:support@ctemplar.com">support@ctemplar.com</a></u>]]></string>
-    <string name="title_confirm_reset_password_hint">Your encryption key is connected to your password. Because of this <![CDATA[<font color="#e74c3c">you will not be able to decrypt old messages, attachments and contacts</font>]]> if you reset your password.</string>
-    <string name="title_confirm_reset_password_hint2">Are you sure you want to reset your password?</string>
-    <string name="title_reset_code_hint">We have sent a reset code to your <![CDATA[<u><a href="mailto:%1$s">recovery email</a></u>]]> to reset your password.</string>
-    <string name="title_reset_code_hint2">Enter it below for confirmation.</string>
-    <string name="title_new_password_hint">Don\'t forget this password, it can\'t be restored.</string>
-    <string name="title_forgot_username_underlined"><u>Forgot your username?</u></string>
-    <string name="title_keep_me_logged_in">Keep me logged in</string>
-    <string name="title_forgot_username">Forgot your username?</string>
-    <string name="title_forgot_username_hint">Enter your email address and we will send you your username.</string>
-    <string name="title_email_my_username">Email me my username</string>
-    <string name="title_username_and_domain">Username and domain</string>
-    <string name="title_step_username_hint">This will be your new CTemplar email address.</string>
-    <string name="title_step_password_hint">Your password must be at least 10 characters. Password can contain only Latin letters and cannot contain symbols such as «-+!@. etc.</string>
-    <string name="hint_step_email_recovery_long">By checking this box you understand that if you lose your password and do not set a recovery email, your account will not be recoverable. Your password is connected to your encryption key, if you change your password you will be issued a new encryption key and ALL contents of your account will be lost except for your email address. <![CDATA[<u><font color="blue">Less</font></u>]]></string>
-    <string name="hint_step_email_recovery_short">By checking this box you understand that if you lose your password and do not set a recovery email your account will not be recoverable. <![CDATA[<u><font color="blue">More info</font></u>]]></string>
-    <string name="title_step_email_hint">This is used to recover your account if you forget your password.</string>
-    <string name="title_step_email_check_hint">Please check this box if you agree to abide by our <![CDATA[<u><a href="https://ctemplar.com/terms">Terms and Conditions.</a></u>]]></string>
-    <string name="title_step_invitation_code_hint">You can get invitation code from any existing paid customer or you can request an invitation code from us. Why invite codes and how to get one? <![CDATA[<u><a href="https://ctemplar.com/email-creation-restriction/">Learn more</a></u>]]></string>
-    <string name="title_more_info_link"><u>More Info</u></string>
-    <string name="title_empty_inbox">You have no inbox messages</string>
-    <string name="title_empty_messages">You have no %1$s messages</string>
-    <string name="title_empty_contacts">You have no contacts yet</string>
-    <string name="title_empty_folders">You have no folders</string>
-    <string name="title_empty_filters">There are no messages match the filter</string>
-    <string name="btn_login">Log in</string>
-    <string name="btn_compose">Compose</string>
-    <string name="btn_add_folder">Add folder</string>
-    <string name="hint_captcha">Write text from image / Time display in clock (hh:mm) e.g.: 04:23</string>
-    <string name="txt_forgot_pass">Forgot Password?</string>
-    <string name="txt_create_acc"><u>Create account</u></string>
-    <string name="txt_loading">Loading…</string>
-    <string name="txt_add_contact">Add contact</string>
-    <string name="txt_edit_contact">Edit contact</string>
-    <string name="txt_enter_valid_captcha">Enter valid captcha</string>
-    <string name="title_clear_folder">Clear folder</string>
-    <string name="txt_clear_folder">Are you sure you want to delete all messages from the folder?</string>
-    <string name="username_is_available">Username is available</string>
-    <string name="username_is_not_available">Username is not available</string>
-    <string name="checking">Checking…</string>
+    <string name="title_forgot_password">Parolanızı mı Unuttunuz</string>
+    <string name="title_forgot_password_hint">Kurtarma e-postanıza bir sıfırlama bağlantısı göndereceğiz.</string>
+    <string name="title_choose_password">Şifrenizi Girin</string>
+    <string name="title_confirm_password">Şifreyi Onaylayın</string>
+    <string name="title_ctemplar_username">Sıfırlanacak Ctemplar kullanıcı adı</string>
+    <string name="title_recovery_email">Kurtarma Postası</string>
+    <string name="title_security_check">Gğvenlik Kontrolü</string>
+    <string name="title_recovery_email_optional">Kurtarma E-maili (Opsiyonel)</string>
+    <string name="title_reset_password">Şifreyi Yenile</string>
+    <string name="title_reset_code">Sıfırlama Kodu</string>
+    <string name="title_confirm">Onayla</string>
+    <string name="title_confirm_reset_password">Parolayı sıfırlamayı onaylayın</string>
+    <string name="title_invitation_code">Davetiye Kodu</string>
+    <string name="title_further_question_hint">Başka sorularınız varsa lütfen e-posta gönderin <![CDATA[<u><a href="mailto:support@ctemplar.com">support@ctemplar.com</a></u>]]></string>
+    <string name="title_confirm_reset_password_hint">Şifreleme anahtarınız şifrenize bağlı.  Bu nedenle <![CDATA[<font color="#e74c3c">you will not be able to decrypt old messages, attachments and contacts</font>]]> if you reset your password.</string>
+    <string name="title_confirm_reset_password_hint2">Şifrenizi sıfırlamak istediğinizden emin misiniz?</string>
+    <string name="title_reset_code_hint">Adresinize bir sıfırlama kodu gönderdik. <![CDATA[<u><a href="mailto:%1$s">Kurtarma E-postası</a></u>]]> Şifreni Sıfırlamak İçin</string>
+    <string name="title_reset_code_hint2">Onay için aşağıya girin.</string>
+    <string name="title_new_password_hint">Bu şifreyi unutmayın, geri kurtulamaz</string>
+    <string name="title_forgot_username_underlined"><u>Kullanıcı adını mı unuttun?</u></string>
+    <string name="title_keep_me_logged_in">Oturumumu açık tut</string>
+    <string name="title_forgot_username">Kullanıcı adını mı unuttun?</string>
+    <string name="title_forgot_username_hint">E-posta adresinizi girin, size kullanıcı adınızı gönderelim.</string>
+    <string name="title_email_my_username">Kullanıcı adımı bana e-posta ile gönder</string>
+    <string name="title_username_and_domain">Kullanıcı adı ve etki alanı(Domain)</string>
+    <string name="title_step_username_hint">Bu, yeni Ctemplar e-posta adresiniz olacak.</string>
+    <string name="title_step_password_hint">Şifreniz en az 10 karakter olmalıdır.  Parola yalnızca Latin harflerini içerebilir ve aşağıdaki gibi simgeler içeremez «-+!@. etc.</string>
+    <string name="hint_step_email_recovery_long">Bu kutuyu işaretleyerek, şifrenizi kaybederseniz ve bir kurtarma e-postası ayarlamazsanız hesabınızın kurtarılamayacağını anlamış olursunuz.  Şifreniz şifreleme anahtarınıza bağlıdır, şifrenizi değiştirirseniz size yeni bir şifreleme anahtarı verilir ve e-posta adresiniz dışında hesabınızın TÜM içeriği kaybolur. <![CDATA[<u><font color="blue">Less</font></u>]]></string>
+    <string name="hint_step_email_recovery_short">Bu kutuyu işaretleyerek, şifrenizi kaybederseniz ve bir kurtarma e-postası ayarlamazsanız hesabınızın kurtarılamayacağını anlamış olursunuz. <![CDATA[<u><font color="blue">More info</font></u>]]></string>
+    <string name="title_step_email_hint">Bu, şifrenizi unutursanız hesabınızı kurtarmak için kullanılır.</string>
+    <string name="title_step_email_check_hint">Şartlarımıza uymayı kabul ediyorsanız lütfen bu kutuyu işaretleyin. <![CDATA[<u><a href="https://ctemplar.com/terms">Şartlar ve koşullar.</a></u>]]></string>
+    <string name="title_step_invitation_code_hint">Mevcut herhangi bir ücretli müşterinizden davetiye kodu alabilir veya bizden davetiye kodu talep edebilirsiniz.  Neden bir davetiye koduna ihtiyacım var ve nasıl alınır? <![CDATA[<u><a href="https://ctemplar.com/email-creation-restriction/">Daha Fazla Bilgi Edinin</a></u>]]></string>
+    <string name="title_more_info_link"><u>Daha fazla bilgi</u></string>
+    <string name="title_empty_inbox">Gelen Kutusunda Mesaj Yok</string>
+    <string name="title_empty_messages">Mesjınız %1$s Yok</string>
+    <string name="title_empty_contacts">Kişiniz Yok</string>
+    <string name="title_empty_folders">Klasörün Yok</string>
+    <string name="title_empty_filters">Filtreyle eşleşen mesaj yok</string>
+    <string name="btn_login">Giriş yap</string>
+    <string name="btn_compose">Oluştur</string>
+    <string name="btn_add_folder">Klasör Ekle</string>
+    <string name="hint_captcha">Görüntüden metin yaz / Saatte zaman göstergesi (hh:mm) e.g.: 04:23</string>
+    <string name="txt_forgot_pass">Parolanızı mı unuttunuz?</string>
+    <string name="txt_create_acc"><u>Hesap Oluştur</u></string>
+    <string name="txt_loading">Yükleniyor…</string>
+    <string name="txt_add_contact">Kişi Ekle</string>
+    <string name="txt_edit_contact">Kişiyi Düzenle</string>
+    <string name="txt_enter_valid_captcha">Geçerli captcha girin</string>
+    <string name="title_clear_folder">Klasörü Temizle</string>
+    <string name="txt_clear_folder">Klasördeki tüm mesajları silmek istediğinizden emin misiniz?</string>
+    <string name="username_is_available">Kullanıcı adı kullanılabilir</string>
+    <string name="username_is_not_available">Kullanıcı adı kullanılabilir değil</string>
+    <string name="checking">Kontrol Ediliyor…</string>
 
     <!-- COMPOSE OPTIONS -->
-    <string name="txt_left_time_destruct">Delete in %1$s</string>
-    <string name="txt_left_time_delay_delivery">Delivery in %1$s</string>
-    <string name="txt_left_time_dead_mans_timer">Dead Man\'s in %1$s</string>
-    <string name="txt_encrypt_message_title">Set Password</string>
-    <string name="txt_destruct_message_title">Self-destructing Timer</string>
-    <string name="txt_destruct_timer_hint">Self Destruction is only for CTemplar recipients. Please add CTemplar recipients for self destruction feature</string>
-    <string name="txt_dead_mans_title">Dead Man\'s Timer</string>
-    <string name="txt_delayed_message_title">Delayed delivery</string>
-    <string name="txt_encrypt_message_summary">Encrypt for non-CTemplar Mail Users</string>
-    <string name="txt_delayed_message_summary">Email will be sent automatically at the set time.</string>
-    <string name="txt_destruct_message_summary">This email deletes itself from the receiver\'s account after</string>
-    <string name="txt_dead_mans_summary">If you do not log into your account after the set time email will be sent after</string>
-    <string name="txt_schedule">Schedule</string>
-    <string name="txt_encrypt">Encrypt</string>
-    <string name="txt_selected_datetime_is_past">Selected datetime is in past</string>
-    <string name="txt_yesterday">Yesterday</string>
-    <string name="txt_attachments_in_processing">Attachments in processing…</string>
-    <string name="message_encrypted_with_password">This message has been encrypted with password</string>
-    <string name="message_encrypted_with_password_title">Enter password</string>
-    <string name="password_hint">Password hint: %s</string>
-    <string name="decrypt">Decrypt</string>
-    <string name="password_is_incorrect">Password is incorrect</string>
-    <string name="firstly_decrypt_message">Firstly, decrypt the message</string>
+    <string name="txt_left_time_destruct">İçinde Sil %1$s</string>
+    <string name="txt_left_time_delay_delivery">Teslimat %1$s</string>
+    <string name="txt_left_time_dead_mans_timer">Ölü Adam\'s in %1$s</string>
+    <string name="txt_encrypt_message_title">Şifreyi Belirle</string>
+    <string name="txt_destruct_message_title">Kendi kendini imha eden Zamanlayıcı</string>
+    <string name="txt_destruct_timer_hint">Kendi Kendini Yok Etme yalnızca CTemplar alıcıları içindir.  Lütfen kendi kendini imha etme özelliği için Ctemplar alıcıları ekleyin</string>
+    <string name="txt_dead_mans_title">Ölü adam\'s Zamanlayıcı</string>
+    <string name="txt_delayed_message_title">Gecikmeli Teslimat</string>
+    <string name="txt_encrypt_message_summary">CTemplar olmayan Posta Kullanıcıları için Şifrele</string>
+    <string name="txt_delayed_message_summary">E-posta, ayarlanan zamanda otomatik olarak gönderilecektir.</string>
+    <string name="txt_destruct_message_summary">Bu e-posta kendini alıcının hesabından sonra siler</string>
+    <string name="txt_dead_mans_summary">Belirlenen süreden sonra hesabınıza giriş yapmazsanız, daha sonra e-posta gönderilecektir.</string>
+    <string name="txt_schedule">Takvim</string>
+    <string name="txt_encrypt">Şifrele</string>
+    <string name="txt_selected_datetime_is_past">Seçilen tarih saat geçmişte</string>
+    <string name="txt_yesterday">Dün</string>
+    <string name="txt_attachments_in_processing">İşlemdeki Ekler…</string>
+    <string name="message_encrypted_with_password">Bu mesaj şifre ile şifrelendi</string>
+    <string name="message_encrypted_with_password_title">Parolanı Gir</string>
+    <string name="password_hint">Parola ipucu: %s</string>
+    <string name="decrypt">Şifresini Çöz</string>
+    <string name="password_is_incorrect">Şifre Hatalı</string>
+    <string name="firstly_decrypt_message">İlk olarak, mesajın şifresini çözün</string>
 
     <!-- VIEW MESSAGES -->
-    <string name="txt_more_details">More details</string>
-    <string name="txt_less_details">Less details</string>
-    <string name="toast_message_marked_unread">Message marked as unread</string>
-    <string name="toast_message_marked_read">Message marked as read</string>
-    <string name="toast_message_moved_to">Message moved to %1$s</string>
-    <string name="toast_messages_doesnt_exist">Messages doesn\'t exists</string>
-    <string name="toast_download_started">Download started</string>
-    <string name="toast_download_complete">Download complete</string>
+    <string name="txt_more_details">Daha Fazla Detay</string>
+    <string name="txt_less_details">Daha az ayrıntı</string>
+    <string name="toast_message_marked_unread">Mesaj okunmadı olarak işaretlendi</string>
+    <string name="toast_message_marked_read">Mesaj okundu olarak işaretlendi</string>
+    <string name="toast_message_moved_to">İleti taşındı %1$s</string>
+    <string name="toast_messages_doesnt_exist">Mesajlar mevcut değil</string>
+    <string name="toast_download_started">İndirme Başladı</string>
+    <string name="toast_download_complete">İndirme tamamlandı</string>
     <string name="txt_user_wrote">\n\n-----------------------------------------------------------------------------------------------\nOn %1$s %2$s wrote:\n\n</string>
-    <string name="txt_forwarded_message">Forwarded message</string>
+    <string name="txt_forwarded_message">Yönlendirilmiş ileti</string>
     <string name="txt_from">From:&#160;</string>
-    <string name="txt_date">Date</string>
-    <string name="txt_subject">Subject</string>
+    <string name="txt_date">Tarih</string>
+    <string name="txt_subject">Konu</string>
     <string name="txt_to">To:&#160;</string>
-    <string name="txt_reply_all">Reply All</string>
-    <string name="attachment_decryption">Attachment decryption…</string>
-    <string name="no_results_found">No results found</string>
-    <string name="continue_to_link">Continue to link</string>
-    <string name="open_link_description">Do you trust the person who sent this link? This link takes you outside of CTemplar’s platform and we are not responsible for any third-party content.</string>
+    <string name="txt_reply_all">Hepsini cevapla</string>
+    <string name="attachment_decryption">Ek şifre çözme…</string>
+    <string name="no_results_found">Sonuç bulunamadı</string>
+    <string name="continue_to_link">Bağlantıya devam et</string>
+    <string name="open_link_description">Bu bağlantıyı gönderen kişiye güveniyor musunuz?  Bu bağlantı sizi CTemplar platformunun dışına çıkarır ve herhangi bir üçüncü taraf içeriğinden sorumlu değiliz.</string>
 
     <!-- CHANGE PASSWORD -->
-    <string name="toast_password_changed">Password changed</string>
-    <string name="toast_password_not_changed">Password not changed</string>
-    <string name="dialog_change_password">Change password</string>
-    <string name="title_current_password">Current password</string>
-    <string name="title_new_password">New password</string>
-    <string name="title_new_password_confirm">Confirm new password</string>
-    <string name="dialog_change_password_confirm">Are you sure you want change your  password?</string>
-    <string name="dialog_change_password_confirm_reset">Are you sure you want change your password? All data will be lost.</string>
-    <string name="btn_change">CHANGE</string>
-    <string name="btn_change_lowercase">Change</string>
-    <string name="title_message_password">Message Password</string>
-    <string name="title_message_password_confirm">Confirm Password</string>
-    <string name="title_message_password_hint">Password Hint</string>
-    <string name="title_message_password_expire_days">Days</string>
-    <string name="title_message_password_expire_hours">Hours</string>
-    <string name="txt_encrypt_message_password_expiration">Expiration Time</string>
+    <string name="toast_password_changed">Şifre değişti</string>
+    <string name="toast_password_not_changed">Şifre değiştirilmedi</string>
+    <string name="dialog_change_password">Şifreyi değiştir</string>
+    <string name="title_current_password">Şimdiki şifre</string>
+    <string name="title_new_password">Yeni Şifre</string>
+    <string name="title_new_password_confirm">Yeni şifreyi onayla</string>
+    <string name="dialog_change_password_confirm">Şifrenizi değiştirmek istediğinizden emin misiniz?</string>
+    <string name="dialog_change_password_confirm_reset">Şifrenizi değiştirmek istediğinizden emin misiniz?  Tüm veriler kaybolacak.</string>
+    <string name="btn_change">DEĞŞTİR</string>
+    <string name="btn_change_lowercase">Değiştir</string>
+    <string name="title_message_password">Mesaj Şifresi</string>
+    <string name="title_message_password_confirm">Şifreyi Onayla</string>
+    <string name="title_message_password_hint">Parola ipucu</string>
+    <string name="title_message_password_expire_days">Günler</string>
+    <string name="title_message_password_expire_hours">Saatler</string>
+    <string name="txt_encrypt_message_password_expiration">Son Kullanma Süresi</string>
 
     <!-- CONTACT -->
-    <string name="toast_not_saved">Not saved</string>
-    <string name="txt_enter_name">Enter name</string>
-    <string name="txt_enter_valid_email">Enter valid email address</string>
-    <string name="txt_name_removed">%1$s removed!</string>
-    <string name="txt_contact_loading_error">Contact loading error</string>
-    <string name="txt_delete_folder_quest_title">Delete folder?</string>
-    <string name="txt_delete_folder_quest_message">"Are you sure you want to delete folder?</string>
-    <string name="btn_delete">Delete</string>
-    <string name="btn_cancel">CANCEL</string>
+    <string name="toast_not_saved">Kaydedilmedi</string>
+    <string name="txt_enter_name">İsim gir</string>
+    <string name="txt_enter_valid_email">Geçerli bir e-posta adresi girin</string>
+    <string name="txt_name_removed">%1$s kaldırıldı!</string>
+    <string name="txt_contact_loading_error">Kişi yükleme hatası</string>
+    <string name="txt_delete_folder_quest_title">Klasörü sil?</string>
+    <string name="txt_delete_folder_quest_message">"Klasörü silmek istediğinizden emin misiniz?</string>
+    <string name="btn_delete">SİL</string>
+    <string name="btn_cancel">İPTAL</string>
     <string name="title_email_address">Email</string>
-    <string name="title_phone_number">Phone</string>
-    <string name="title_phone_number_second">Phone2</string>
-    <string name="title_address">Address</string>
-    <string name="title_note">Note</string>
-    <string name="txt_contacts_empty">Contacts empty</string>
+    <string name="title_phone_number">TELEFON</string>
+    <string name="title_phone_number_second">2.TELEFON</string>
+    <string name="title_address">Adres</string>
+    <string name="title_note">Not</string>
+    <string name="txt_contacts_empty">Kişiler boş</string>
 
     <!-- FOLDERS -->
-    <string name="toast_folder_created">Folder created</string>
-    <string name="toast_folder_not_created">Folder with the same name already exists.</string>
-    <string name="txt_folder_deleted">Folder deleted</string>
-    <string name="txt_folder_not_deleted">Folder not deleted</string>
-    <string name="txt_folder_edited">Folder edited</string>
-    <string name="txt_folder_not_edited">Folder not edited</string>
-    <string name="txt_folder_name_hint">Folder name must be between 1 and 30 letters and digits</string>
-    <string name="title_folder_name">Folder name</string>
-    <string name="title_choose_color">Choose color</string>
-    <string name="txt_edit_folder">Edit folder</string>
-    <string name="txt_delete_folder">Delete folder</string>
-    <string name="txt_manage_folders">Manage folders</string>
-    <string name="txt_folders_empty">Folders empty</string>
-    <string name="txt_create_folder_free_error">Free users can only create a maximum of 5 folders.</string>
+    <string name="toast_folder_created">Klasör oluşturuldu</string>
+    <string name="toast_folder_not_created">Aynı ada sahip klasör zaten var.</string>
+    <string name="txt_folder_deleted">Klasör silindi</string>
+    <string name="txt_folder_not_deleted">Klasör silinmedi</string>
+    <string name="txt_folder_edited">Klasör düzenlendi</string>
+    <string name="txt_folder_not_edited">Klasör düzenlenmedi</string>
+    <string name="txt_folder_name_hint">Klasör adı 1 ile 30 harf ve rakam arasında olmalıdır</string>
+    <string name="title_folder_name">Klasör adı</string>
+    <string name="title_choose_color">Renk seç</string>
+    <string name="txt_edit_folder">Klasörü düzenle</string>
+    <string name="txt_delete_folder">Klasörü sil</string>
+    <string name="txt_manage_folders">Klasörleri yönet</string>
+    <string name="txt_folders_empty">klasörler boş</string>
+    <string name="txt_create_folder_free_error">Ücretsiz kullanıcılar en fazla 5 klasör oluşturabilir.</string>
 
     <!-- SEND MESSAGE -->
-    <string name="toast_message_sent">Mail sent</string>
-    <string name="toast_message_not_sent">Mail not sent</string>
-    <string name="toast_message_saved_as_draft">Mail saved as a draft</string>
-    <string name="toast_message_not_created">Mail not created</string>
-    <string name="toast_message_not_loaded">Mail not loaded</string>
-    <string name="toast_attachment_unable_read_file">Unable to read file in selected path</string>
-    <string name="toast_attachment_unable_read_path">"Unable to read selected path"</string>
-    <string name="txt_sending_mail">Sending mail…</string>
-    <string name="txt_saving_mail">Saving mail…</string>
-    <string name="txt_uploading">Uploading…</string>
-    <string name="dialog_discard_mail">Discard mail</string>
-    <string name="dialog_discard_confirm">Are you sure you want to discard this mail?</string>
-    <string name="dialog_save_in_drafts">Save in drafts</string>
-    <string name="action_discard">Discard</string>
-    <string name="action_cancel">Cancel</string>
-    <string name="btn_add">Add</string>
-    <string name="txt_new_message">New message</string>
+    <string name="toast_message_sent">Mail gönderildi</string>
+    <string name="toast_message_not_sent">Mail göndeilemedi</string>
+    <string name="toast_message_saved_as_draft">Mail taslak olarak kaydedildi</string>
+    <string name="toast_message_not_created">Mail oluşturulamadı</string>
+    <string name="toast_message_not_loaded">Mail yüklenemedi</string>
+    <string name="toast_attachment_unable_read_file">Seçilen yoldaki dosya okunamıyor</string>
+    <string name="toast_attachment_unable_read_path">"Seçilen yol okunamıyor"</string>
+    <string name="txt_sending_mail">Mail gönderiliyor…</string>
+    <string name="txt_saving_mail">Mail kaydediliyor…</string>
+    <string name="txt_uploading">Yükleniyor…</string>
+    <string name="dialog_discard_mail">Mail'i sil</string>
+    <string name="dialog_discard_confirm">Bu e-maili silmek istediğinizden emin misiniz??</string>
+    <string name="dialog_save_in_drafts">Taslaklara kaydet</string>
+    <string name="action_discard">Yok Et</string>
+    <string name="action_cancel">İptal et</string>
+    <string name="btn_add">Ekle</string>
+    <string name="txt_new_message">Yeni Mesaj</string>
     <string name="txt_cc">Cc: &#160;</string>g>
     <string name="txt_bcc">Bcc: &#160;</string>
-    <string name="txt_date_format">Date: %1$s</string>
-    <string name="hint_compose">Compose email</string>
+    <string name="txt_date_format">Tarih: %1$s</string>
+    <string name="hint_compose">Email oluştur</string>
 
     <!-- NOTIFICATION SERVICE -->
     <string name="notification_channel_name">CTemplar</string>
-    <string name="notification_channel_description">New mail</string>
-    <string name="title_notification_service">Notification Service</string>
-    <string name="title_service_running">Service is running</string>
+    <string name="notification_channel_description">Yeni mail</string>
+    <string name="title_notification_service">Bildirim Hizmeti</string>
+    <string name="title_service_running">Hizmet çalışıyor</string>
 
     <!-- DOWNLOAD ATTACHMENT SERVICE -->
-    <string name="download_attachment_service">Attachment download service</string>
-    <string name="downloading_attachments">Downloading attachments</string>
-    <string name="downloading">Downloading</string>
-    <string name="processing">Processing</string>
-    <string name="saved_successfully">Saved successfully</string>
-    <string name="download_all">Download all</string>
-    <string name="retry">Retry</string>
+    <string name="download_attachment_service">Ek indirme hizmeti</string>
+    <string name="downloading_attachments">Ekler indiriliyor</string>
+    <string name="downloading">İndiriliyor</string>
+    <string name="processing">İşleniyor</string>
+    <string name="saved_successfully">Başarıyla kaydedildi</string>
+    <string name="download_all">Hepsini indir</string>
+    <string name="retry">Tekrar dene</string>
 
     <!-- CUSTOM FILTERS -->
-    <string name="txt_filters_title">Filters</string>
-    <string name="title_add_custom_filter">Add custom filter</string>
-    <string name="title_edit_custom_filter">Edit custom filter</string>
-    <string name="btn_add_custom_filter">Add custom filter</string>
-    <string name="txt_filter_name">Filter name</string>
+    <string name="txt_filters_title">Filtreler</string>
+    <string name="title_add_custom_filter">Özel filtre ekle</string>
+    <string name="title_edit_custom_filter">Özel filtreyi düzenle</string>
+    <string name="btn_add_custom_filter">Özel filtre ekle</string>
+    <string name="txt_filter_name">Filtre adı</string>
     <string name="txt_filter_conditions">Conditions</string>
-    <string name="txt_filter_actions">Actions</string>
-    <string name="txt_filter_move_to">Move to</string>
-    <string name="txt_filter_mark_as_read">Mark as read</string>
-    <string name="txt_filter_mark_as_starred">Mark as starred</string>
-    <string name="btn_submit">Submit</string>
-    <string name="add_condition">Add condition</string>
-    <string name="condition_text_hint">Condition text</string>
-    <string name="filter_already_exists">Filter with the same name already exists</string>
-    <string name="toast_filter_not_created">Filter not created</string>
-    <string name="toast_filter_created">Filter created</string>
-    <string name="txt_filter_name_hint">Filter name must be between 4 and 30 letters</string>
-    <string name="txt_filter_text_hint">Filter text must be between 1 and 30 letters</string>
-    <string name="txt_filter_not_deleted">Filter not deleted</string>
+    <string name="txt_filter_actions">Hareketler</string>
+    <string name="txt_filter_move_to">Şuraya taşı</string>
+    <string name="txt_filter_mark_as_read">Okundu olarak işaretle</string>
+    <string name="txt_filter_mark_as_starred">Yıldız olarak işaretle</string>
+    <string name="btn_submit">Sunmak</string>
+    <string name="add_condition">Koşul ekle</string>
+    <string name="condition_text_hint">Koşul metni</string>
+    <string name="filter_already_exists">Aynı ada sahip filtre zaten var</string>
+    <string name="toast_filter_not_created">Filtre oluşturulmadı</string>
+    <string name="toast_filter_created">Filtre oluşturuldu</string>
+    <string name="txt_filter_name_hint">Filtre adı 4 ila 30 karakter arasında olmalıdır</string>
+    <string name="txt_filter_text_hint">Filtre metni 1 ila 30 karakter arasında olmalıdır</string>
+    <string name="txt_filter_not_deleted">Filtre silinmedi</string>
     <string name="txt_filter_deleted">Filter deleted</string>
-    <string name="txt_filter_not_edited">Filter not edited</string>
-    <string name="txt_filter_edited">Filter edited</string>
-    <string name="txt_delete_filter_quest_title">Delete filter?</string>
-    <string name="txt_delete_filter_quest_message">"Are you sure you want to delete filter?</string>
-    <string name="txt_delete_filter">Delete filter</string>
+    <string name="txt_filter_not_edited">Filtre silindi</string>
+    <string name="txt_filter_edited">Filtre düzenlendi</string>
+    <string name="txt_delete_filter_quest_title">Filtreyi sil?</string>
+    <string name="txt_delete_filter_quest_message">"Filtreyi silmek istediğinizden emin misiniz?</string>
+    <string name="txt_delete_filter">Filtreyi sil</string>
 
     <!-- WHITE-BLACK LIST -->
-    <string name="adding_blacklist_contact_error">Error adding contact to blacklist</string>
-    <string name="adding_whitelist_contact_error">Error adding contact to whitelist</string>
-    <string name="added_to_whitelist">Email added to whitelist</string>
-    <string name="title_contact_name">Contact name</string>
-    <string name="title_contact_email">Contact email</string>
-    <string name="title_add_to_blacklist">Add to blacklist</string>
-    <string name="title_add_to_whitelist">Add to whitelist</string>
-    <string name="title_white_black_list">Whitelist / Blacklist</string>
-    <string name="txt_add_blacklist_contact">Add blacklist contact</string>
-    <string name="txt_add_whitelist_contact">Add whitelist contact</string>
+    <string name="adding_blacklist_contact_error">Kara listeye kişi ekleme hatası</string>
+    <string name="adding_whitelist_contact_error">Güvenilir listeye kişi ekleme hatası</string>
+    <string name="added_to_whitelist">Güvenilir listeye email eklendi</string>
+    <string name="title_contact_name">İletişim adı</string>
+    <string name="title_contact_email">İletişim emaili</string>
+    <string name="title_add_to_blacklist">Kara listeye ekle</string>
+    <string name="title_add_to_whitelist">Güvenilir listeye ekle</string>
+    <string name="title_white_black_list">Güvenilir Liste / Kara Liste</string>
+    <string name="txt_add_blacklist_contact">Kara listeye kişi ekle</string>
+    <string name="txt_add_whitelist_contact">Güvenilir listeye kişi ekle</string>
 
     <!-- FILTER DIALOG -->
-    <string name="filtered">Filtered</string>
-    <string name="txt_filters">Filters</string>
-    <string name="txt_clear_all">Clear all</string>
-    <string name="txt_select_filters">Select filters</string>
-    <string name="txt_starred">Starred</string>
-    <string name="txt_unread">Unread</string>
-    <string name="txt_with_attachments">With Attachments</string>
-    <string name="btn_apply">Apply</string>
+    <string name="filtered">Filtre</string>
+    <string name="txt_filters">Filtreler</string>
+    <string name="txt_clear_all">Tümünü temizle</string>
+    <string name="txt_select_filters">Filtreleri seç</string>
+    <string name="txt_starred">Yıldızlı</string>
+    <string name="txt_unread">Okumamış</string>
+    <string name="txt_with_attachments">Ekleri ile</string>
+    <string name="btn_apply">Uygula</string>
 
     <!-- MOVE TO -->
-    <string name="txt_move_to">Move to…</string>
-    <string name="txt_select_folder">Select folder</string>
-    <string name="forward_attachments">Confirm Forward Attachments</string>
-    <string name="forward_attachments_description">Do you want to forward attachments of this message?</string>
-    <string name="yes">Yes</string>
-    <string name="no">No</string>
+    <string name="txt_move_to">Şuraya taşı…</string>
+    <string name="txt_select_folder">Klasör seç</string>
+    <string name="forward_attachments">Ekleri iletmeyi Onayla</string>
+    <string name="forward_attachments_description">Bu iletinin eklerini iletmek ister misiniz?</string>
+    <string name="yes">Evet</string>
+    <string name="no">Hayır</string>
 
     <!-- SETTINGS -->
-    <string name="txt_settings">Settings</string>
-    <string name="txt_display_name">Display name</string>
-    <string name="txt_type_your_name">Type your name</string>
-    <string name="txt_type_signature">Type your signature</string>
-    <string name="txt_signature_enabled">Signature enabled</string>
+    <string name="txt_settings">Ayarlar</string>
+    <string name="txt_display_name">Görünen ad</string>
+    <string name="txt_type_your_name">İsim Gir</string>
+    <string name="txt_type_signature">İmzanızı yazın</string>
+    <string name="txt_signature_enabled">İmza etkin</string>
     <string name="change_password_reset_data">Delete data</string>
     <string name="toast_email_not_valid">Email is not valid</string>
     <string name="storage_limit_info">%1$s of %2$s</string>
@@ -340,15 +339,15 @@
     <string name="warn_before_opening_external_links">Warn before opening external links</string>
 
     <!-- PIN LOCK -->
-    <string name="pin_lock">PIN Lock</string>
-    <string name="pin_lock_enable">Enable PIN Lock</string>
-    <string name="change_pin">Change PIN</string>
-    <string name="auto_lock">Auto-Lock</string>
-    <string name="choose_pin">Enter a 4-digit PIN</string>
-    <string name="confirm_pin">Confirm your PIN</string>
-    <string name="invalid_pin">Invalid PIN</string>
-    <string name="invalid_pin_timeout">Please try again in %d second(s)</string>
-    <string name="pins_dont_match">PINs do not match</string>
+    <string name="pin_lock">PIN Kilidi</string>
+    <string name="pin_lock_enable">PIN Kilidini Etkinleştir</string>
+    <string name="change_pin">Pin kilidini Değiştir</string>
+    <string name="auto_lock">Otomatik-Kilit</string>
+    <string name="choose_pin">4 Basamaklı bir PIN girin</string>
+    <string name="confirm_pin">Pın'inizi onaylayın</string>
+    <string name="invalid_pin">Geçersiz PIN</string>
+    <string name="invalid_pin_timeout">Lütfen tekrar deneyin %d second(s)</string>
+    <string name="pins_dont_match">PIN'ler eşleşmiyor</string>
 
     <!-- SIGNATURE EDIT BAR -->
     <string name="txt_panel_bold">B</string>
@@ -358,69 +357,67 @@
     <string name="txt_panel_normal">Normal</string>
 
     <!-- SUBSCRIPTIONS -->
-    <string name="subscription">Subscription</string>
-    <string name="my_subscription">My Subscription</string>
-    <string name="upgrade">Upgrade</string>
-    <string name="upgrade_button">Upgrade for %s</string>
-    <string name="packages">Packages</string>
-    <string name="sending_limits">Sending limits</string>
-    <string name="attachments_limit">Attachments limit</string>
-    <string name="storage">Storage</string>
-    <string name="aliases">Aliases</string>
-    <string name="custom_domains">Custom domains</string>
-    <string name="folders">Folders</string>
+    <string name="subscription">Abonelik</string>
+    <string name="my_subscription">Aboneliğim</string>
+    <string name="upgrade">Yükselt</string>
+    <string name="upgrade_button">Yükseltmek için %s</string>
+    <string name="packages">Paketler</string>
+    <string name="sending_limits">Gönderme limitleri</string>
+    <string name="attachments_limit">Ek sınırı</string>
+    <string name="storage">Depolama</string>
+    <string name="aliases">Takma ad</string>
+    <string name="custom_domains">Özel alan adı</string>
+    <string name="folders">Klasörler</string>
 
     <string name="sending_limits_value">%s/day</string>
     <string name="attachments_limit_value">%d MB</string>
     <string name="storage_value">%d GB</string>
     <string name="unlimited">Unlimited</string>
 
-    <string name="features">Features</string>
-    <string name="encryption_in_transit">Encryption in transit</string>
-    <string name="encryption_at_rest">Encryption at rest</string>
-    <string name="encrypted_attachments">Encrypted attachments</string>
-    <string name="encrypted_subject_feature">Encrypted subject</string>
-    <string name="encrypted_body">Encrypted body</string>
-    <string name="virus_protection">Virus protection</string>
-    <string name="security_2fa">2FA security</string>
-    <string name="anti_phishing_phrase">Anti-phishing phrase</string>
-    <string name="brute_force_proof">Brute-force proof</string>
-    <string name="zero_knowledge_privacy">Zero-knowledge privacy</string>
-    <string name="anonymized_ip">Anonymized IP</string>
-    <string name="self_destructing_emails">Self-destructing emails</string>
-    <string name="dead_man_timer">Dead-man timer</string>
-    <string name="delayed_delivery">Delayed delivery</string>
-    <string name="catch_all_domains">Catch-all domains</string>
-    <string name="remote_encrypted_link">Remote encrypted link</string>
-    <string name="exclusive_beta_access">Exclusive beta access</string>
-    <string name="not_available_on_android">Not available on Android</string>
+    <string name="features">Özellikler</string>
+    <string name="encryption_in_transit">Geçişte şifreleme</string>
+    <string name="encryption_at_rest">Tekrar Şifreleme</string>
+    <string name="encrypted_attachments">Şifreli ekler</string>
+    <string name="encrypted_subject_feature">Şifreli konu</string>
+    <string name="encrypted_body">Şifreli gövde</string>
+    <string name="virus_protection">Virüs koruması</string>
+    <string name="security_2fa">2FA güvenlik</string>
+    <string name="anti_phishing_phrase">Kimlik avı önleme ifadesi</string>
+    <string name="brute_force_proof">Kaba kuvvet koruması</string>
+    <string name="zero_knowledge_privacy">Sıfır bilgi gizliliği</string>
+    <string name="anonymized_ip">Anonimleştirilmiş IP Adresi</string>
+    <string name="self_destructing_emails">Kendi kendini imha eden e-postalar</string>
+    <string name="dead_man_timer">Ölü adam zamanlayıcısı</string>
+    <string name="delayed_delivery">Gecikmeli gönderme</string>
+    <string name="catch_all_domains">Alan adlarının Tamamını Yakala</string>
+    <string name="remote_encrypted_link">Uzaktan şifreli bağlantı</string>
+    <string name="exclusive_beta_access">Özel beta erişimi</string>
+    <string name="not_available_on_android">Android'de mevcut değil</string>
 
-    <string name="plans">Plans</string>
-    <string name="billing">Billing</string>
-    <string name="billing_cycle_end">Billing Cycle End</string>
-    <string name="recurring_billing">Recurring Billing</string>
-    <string name="payment">Payment</string>
-    <string name="subscription_upgrade_success">Subscription upgraded successfully</string>
-    <string name="subscription_upgrade_fail">Failed to upgrade subscription. Please try again later</string>
-    <string name="subscription_upgrade_another_device">To upgrade the subscription, use the device on which it was issued</string>
+    <string name="plans">Planlar</string>
+    <string name="billing">Fatura</string>
+    <string name="billing_cycle_end">Faturalandırma Döngüsü Sonu</string>
+    <string name="recurring_billing">Yinelenen Faturalandırma</string>
+    <string name="payment">Ödeme</string>
+    <string name="subscription_upgrade_success">Abonelik başarıyla yükseltildi</string>
+    <string name="subscription_upgrade_fail">Abonelik yükseltilemedi. Lütfen daha sonra tekrar deneyin</string>
+    <string name="subscription_upgrade_another_device">Aboneliği yükseltmek için, aboneliğin verildiği cihazı kullanın</string>
 
     <!-- PROXY -->
-    <string name="proxy">Proxy</string>
-    <string name="use_tor">Use Tor</string>
-    <string name="use_tor_description">Use Tor for network requests. Requires Orbot with SOCKS port 9050</string>
-    <string name="custom_proxy">Custom Proxy</string>
-    <string name="custom_proxy_description">Use custom proxy for network requests</string>
-    <string name="proxy_type">Proxy Type</string>
-    <string name="proxy_type_description">Proxy\'s type (HTTP or SOCKS)</string>
-    <string name="proxy_host">Proxy Host</string>
-    <string name="proxy_host_description">Proxy\'s address (e.g. 127.0.0.1)</string>
+    <string name="proxy">Proxy/Vekil</string>
+    <string name="use_tor">Tor Kullan</string>
+    <string name="use_tor_description">Ağ istekleri için Tor'u kullanın. Orbot gerektirir</string>
+    <string name="http_proxy">HTTP Proxy</string>
+    <string name="http_proxy_description">Ağ istekleri için HTTP Proxy kullan</string>
+    <string name="proxy_host">Proxy Sunucusu</string>
+    <string name="proxy_host_description">Proxy adresi (örneğin 127.0.0.1)</string>
     <string name="proxy_port">Proxy Port</string>
-    <string name="proxy_port_description">Proxy\'s port number (e.g. 8118)</string>
-    <string name="fill_proxy_fields">To activate the proxy, you must fill host and port fields</string>
-    <string name="fail_proxy_init">Failed to initialize proxy</string>
-    <string name="enter_correct_ip">Enter the correct IP address</string>
-    <string name="enter_correct_port">Enter the correct port</string>
-    <string name="proxy_enabled">Proxy enabled</string>
+    <string name="proxy_port_description">Proxy port numarası (örneğin 8118)</string>
+    <string name="fill_proxy_fields">proxy'yi etkinleştirin, ana bilgisayar ve bağlantı noktası/Port alanlarını doldurmanız gerekir</string>
+    <string name="fail_proxy_init">Proxy başlatılamadı</string>
+    <string name="enter_correct_ip">Doğru IP adresini girin</string>
+    <string name="enter_correct_port">Doğru bağlantı/Port noktasını girin</string>
+    <string name="proxy_enabled">Proxy Etkin</string>
     <string name="proxy_notes"><![CDATA[<font color="#939191">Note. If after clicking on the \"Use Tor\" you see \"No such app found\", then you should allow an additional repository. Open the \"F-Droid -> Settings -> Repositories\" and switch on \"Guardian Project Official Releases\".</font>]]></string>
 
     <!-- DOMAINS -->
@@ -456,127 +453,127 @@
     <string name="users">Users</string>
 
     <!-- SETTINGS -->
-    <string name="settings_general">General settings</string>
-    <string name="settings_recovery_email">Recovery email</string>
+    <string name="settings_general">Genel ayarlar</string>
+    <string name="settings_recovery_email">Kurtarma e-postası</string>
     <string name="settings_enable_recovery_email">Enable recovery email</string>
-    <string name="settings_type_recovery_email">Type your recovery email</string>
-    <string name="settings_type_notification_email">Type your notification email</string>
-    <string name="settings_type_notification_email_description">Enter a notification email on which you would like to receive notification each day when you have new emails.</string>
-    <string name="settings_enabled_anti_phishing">Anti-Phishing</string>
-    <string name="settings_type_anti_phishing_phrase">Type your anti-phishing phrase</string>
-    <string name="settings_subject_encryption">Subject encryption</string>
-    <string name="settings_password">Password</string>
-    <string name="settings_language">Language</string>
-    <string name="settings_notifications">Notifications</string>
-    <string name="settings_enable_notifications">Enable push notifications</string>
-    <string name="settings_contacts_encryption">Contacts encryption</string>
-    <string name="settings_keep_decrypted_subjects">Keep decrypted subjects locally</string>
-    <string name="settings_encryption">Encryption</string>
-    <string name="settings_phishing_protection">Phishing Protection</string>
-    <string name="settings_phishing_protection_description"><![CDATA[<font color="#939191">The Anti-Phishing phrase allows users to link a custom word or phrase of your choice to your CTemplar account. Once set, if you ever log into your webmail and your Anti-Phishing phrase is either missing or incorrect, you may be the victim of phishing. You should immediately confirm that you are visiting</font> <font color="#4d92e2"><u>https://mail.ctemplar.com</u></font> <font color="#939191">If you are not, then a malicious site might have your login credentials for your CTemplar account. To prevent harm to your account, you should immediately visit</font> <font color="#4d92e2"><u>https://mail.ctemplar.com</u></font> <font color="#939191">and change your password.<br><br>Note that the Anti-Phishing phrase will be displayed when you log on web only.</font>]]></string>
-    <string name="settings_automation">Automation</string>
-    <string name="settings_auto_save_contacts">Automatically save contacts</string>
-    <string name="settings_auto_save_drafts">Automatically save drafts</string>
-    <string name="settings_auto_read_email">Automatically read email</string>
-    <string name="settings_filters">Filters</string>
-    <string name="settings_wb_list">Whitelist/Blacklist</string>
-    <string name="settings_dark_mode">Dark mode</string>
-    <string name="settings_block_external_images">Block external images</string>
-    <string name="settings_report_bugs">Report bugs</string>
-    <string name="settings_folders">Folders</string>
-    <string name="settings_manage_folders">Manage folders</string>
-    <string name="settings_security">Security</string>
+    <string name="settings_type_recovery_email">Kurtarma e-postasını etkinleştir</string>
+    <string name="settings_type_notification_email">Bildirim e-postanızı girin</string>
+    <string name="settings_type_notification_email_description">Her gün yeni e-postalarınız olduğunda bildirim almak istediğiniz bir bildirim e-postası girin.</string>
+    <string name="settings_enabled_anti_phishing">Kimlik Avı Önleme</string>
+    <string name="settings_type_anti_phishing_phrase">Kimlik avı önleme ifadelerini yazın</string>
+    <string name="settings_subject_encryption">Konu şifreleme</string>
+    <string name="settings_password">Şifre</string>
+    <string name="settings_language">Dil</string>
+    <string name="settings_notifications">Bildirim</string>
+    <string name="settings_enable_notifications">Push bildirimlerini etkinleştir</string>
+    <string name="settings_contacts_encryption">Kişileri şifrele</string>
+    <string name="settings_keep_decrypted_subjects">Şifresi çözülmüş konuları yerel olarak sakla</string>
+    <string name="settings_encryption">Şifreleme</string>
+    <string name="settings_phishing_protection">Kimlik Avı Koruması</string>
+    <string name="settings_phishing_protection_description"><![CDATA[<font color="#939191">Kimlik Avı Önleme ifadesi, kullanıcıların seçtiğiniz özel bir kelimeyi veya ifadeyi CTemplar hesabınıza bağlamasına olanak tanır. Ayarlandıktan sonra, web postanıza giriş yaparsanız ve Kimlik Avı Önleme ifadeniz eksik veya yanlışsa, kimlik avı kurbanı olabilirsiniz. Ziyaret ettiğinizi hemen onaylamalısınız</font> <font color="#4d92e2"><u>https://mail.ctemplar.com</u></font> <font color="#939191">Değilseniz, kötü amaçlı bir site CTemplar hesabınız için oturum açma kimlik bilgilerinize sahip olabilir. Hesabınıza zarar gelmesini önlemek için hemen ziyaret etmelisiniz</font> <font color="#4d92e2"><u>https://mail.ctemplar.com</u></font> <font color="#939191">ve şifrenizi değiştirin.<br><br>Yalnızca web'de oturum açtığınızda Kimlik Avı Önleme ifadesinin görüntüleneceğini unutmayın.</font>]]></string>
+    <string name="settings_automation">Otomasyon</string>
+    <string name="settings_auto_save_contacts">Kişileri otomatik olarak kaydet</string>
+    <string name="settings_auto_save_drafts">Taslakları otomatik olarak kaydet</string>
+    <string name="settings_auto_read_email">E-postayı otomatik olarak oku</string>
+    <string name="settings_filters">Filtreler</string>
+    <string name="settings_wb_list">Güvenilir Listeler/Kara Liste</string>
+    <string name="settings_dark_mode">Karanlık mod</string>
+    <string name="settings_block_external_images">Harici görüntüleri engelle</string>
+    <string name="settings_report_bugs">Hataları bildir</string>
+    <string name="settings_folders">Klasörler</string>
+    <string name="settings_manage_folders">Klasörleri yönet</string>
+    <string name="settings_security">Güvenlik</string>
     <string name="settings_mail">Mail</string>
-    <string name="settings_addresses">Addresses</string>
-    <string name="settings_signature">Signature</string>
-    <string name="settings_enable_signature">Enable signature</string>
-    <string name="settings_type_signature">Type your signature</string>
-    <string name="settings_keys">Keys</string>
-    <string name="settings_about">About</string>
-    <string name="settings_helpdesk">Helpdesk</string>
-    <string name="settings_local_storage_limit">Local storage limit</string>
-    <string name="settings_app_version">App version</string>
-    <string name="settings_disable_contacts_encryption">Are you sure you want to disable contacts encryption?</string>
-    <string name="settings_disable_contacts_encryption_note">Disabling contacts encryption can take several minutes depending upon the number of contacts you have. After you confirm, all your contacts will be decrypted on your device and saved on the server.</string>
-    <string name="txt_contact_decryption">Contact decryption..</string>
-    <string name="toast_saved">Saved</string>
-    <string name="toast_contacts_encrypted">Contacts are encrypted</string>
-    <string name="toast_contacts_decrypted">Contacts are decrypted</string>
-    <string name="toast_decryption_error">An error occurred while decrypting. Try again</string>
-    <string name="please_restart_app_to_apply_changes">Please, restart the app to apply changes</string>
+    <string name="settings_addresses">Adresleri</string>
+    <string name="settings_signature">İmza</string>
+    <string name="settings_enable_signature">İmzayı etkinleştir</string>
+    <string name="settings_type_signature">İmzanızı yazın</string>
+    <string name="settings_keys">Anahtarlar</string>
+    <string name="settings_about">Hakkında</string>
+    <string name="settings_helpdesk">Yardım Masası</string>
+    <string name="settings_local_storage_limit">Yerel depolama sınırı</string>
+    <string name="settings_app_version">Uygulama sürümü</string>
+    <string name="settings_disable_contacts_encryption">Kişi şifrelemesini devre dışı bırakmak istediğinizden emin misiniz?</string>
+    <string name="settings_disable_contacts_encryption_note">Kişiler şifrelemesini devre dışı bırakmak, sahip olduğunuz kişi sayısına bağlı olarak birkaç dakika sürebilir. Onayladıktan sonra, tüm kişilerinizin cihazınızda şifresi çözülecek ve sunucuya kaydedilecektir.</string>
+    <string name="txt_contact_decryption">Kişi şifre çözme..</string>
+    <string name="toast_saved">Kaydedildi</string>
+    <string name="toast_contacts_encrypted">Kişiler şifrelenir</string>
+    <string name="toast_contacts_decrypted">Kişilerin şifresi çözüldü</string>
+    <string name="toast_decryption_error">Şifre çözülürken bir hata oluştu. Tekrar dene</string>
+    <string name="please_restart_app_to_apply_changes">Değişiklikleri uygulamak için lütfen uygulamayı yeniden başlatın</string>
 
     <!-- MAILBOXES -->
-    <string name="addresses">Addresses</string>
-    <string name="add_address">Add address</string>
-    <string name="select_default_address">Select default address</string>
-    <string name="mailbox_add_address">Add address</string>
-    <string name="mailbox_enable">Enable</string>
-    <string name="mailbox_disable">Disable</string>
-    <string name="mailbox_add_title">Choose username and domain</string>
-    <string name="mailbox_create">Create address</string>
-    <string name="mailbox_alias_exists">Email alias already exists.</string>
-    <string name="mailbox_alias_creation_success">Email alias created successfully</string>
-    <string name="mailbox_alias_creation_paid">Please buy more email addresses to create more!</string>
-    <string name="mailbox_alias_creation_failed">Could not create email alias</string>
-    <string name="mailbox_alias_creation_progress">The e-mail alias is being created</string>
+    <string name="addresses">adresler</string>
+    <string name="add_address">Adres Ekle</string>
+    <string name="select_default_address">Varsayılan adresi seçin</string>
+    <string name="mailbox_add_address">Adres Ekle</string>
+    <string name="mailbox_enable">Etkinleştir</string>
+    <string name="mailbox_disable">Devre Dışı Bırak</string>
+    <string name="mailbox_add_title">Kullanıcı adı ve alan adını seçin</string>
+    <string name="mailbox_create">Adres oluştur</string>
+    <string name="mailbox_alias_exists">Bu E-posta takma adı zaten var.</string>
+    <string name="mailbox_alias_creation_success">E-posta takma adı başarıyla oluşturuldu</string>
+    <string name="mailbox_alias_creation_paid">Daha fazlasını oluşturmak için lütfen daha fazla e-posta adresi satın alın!</string>
+    <string name="mailbox_alias_creation_failed">E-posta takma adı oluşturulamadı</string>
+    <string name="mailbox_alias_creation_progress">E-posta takma adı oluşturuluyor</string>
 
     <!-- KEYS -->
     <string translatable="false" name="rsa4096">RSA4096</string>
-    <string name="email_address">E-mail address</string>
-    <string name="fingerprint">Fingerprint</string>
-    <string name="keys">Keys</string>
-    <string name="primary">Primary</string>
-    <string name="update_primary_key">Update primary key</string>
-    <string name="update_primary_key_description">After changed the primary key, all of messages with this alias will be encrypted with this key. Primary key will always be placed in the top of the key list. Are you sure you want to continue?</string>
-    <string name="set_as_primary">Set as primary</string>
-    <string name="make_as_primary">Make as primary</string>
-    <string name="key_type">Key type</string>
-    <string name="add_new_key">Add new key</string>
-    <string name="import_key">Import key</string>
-    <string name="import_private_key">Import private key</string>
-    <string name="download_key">Download key</string>
-    <string name="download_key_question">Do you want to download the public key or the private key?</string>
-    <string name="private_key">Private key</string>
-    <string name="public_key">Public key</string>
-    <string name="enter_your_password_to_continue">Please enter your account password to continue</string>
-    <string name="type_ctemplar_to_confirm">Please type CTEMPLAR to confirm.</string>
-    <string name="generate_keys">Generate keys</string>
-    <string name="import_private_key_description">Are you sure to import the private key? Please be ensure the private key is secure</string>
-    <string name="select_private_key_to_impport">Please select a private key to import</string>
-    <string name="enter_selected_private_key_password">Please input the password of private key that you selected</string>
-    <string name="add_key">Add key</string>
-    <string name="change_key">Change key</string>
-    <string name="select_mailbox_for_new_key">Please select a mailbox that you want to add new key</string>
-    <string name="select_mailbox_for_import_key">Please select a mailbox that you want to import key</string>
-    <string name="select_key_type">Please select a key type</string>
-    <string name="selected_key_is_not_valid">The selected key is not a valid PGP private key</string>
-    <string name="selected_key_already_in_active_use">The selected key is already in active use</string>
-    <string name="download">Download</string>
-    <string name="remove">Remove</string>
-    <string name="operation_failed">Operation failed</string>
-    <string name="yes_iam_sure">Yes, I am sure</string>
-    <string name="delete_key_title">Are you sure to delete this key?</string>
-    <string name="delete_key_description">After deleted this key, you will not be able to decrypt any message that was encrypted with this key. It may lead to data loss</string>
-    <string name="ecc_default">ECC (Default)</string>
-    <string name="add_new_key_message">Key has been added successfully</string>
-    <string name="import_new_key_message">Key has been imported successfully</string>
-    <string name="your_public_key_saved">Your PGP Public Key saved to Downloads</string>
-    <string name="your_private_key_saved">Your PGP Private Key saved to Downloads</string>
+    <string name="email_address">E-mail adresi</string>
+    <string name="fingerprint">Parmak izi</string>
+    <string name="keys">Anahtar</string>
+    <string name="primary">Birincil</string>
+    <string name="update_primary_key">Birincil anahtarı güncelle</string>
+    <string name="update_primary_key_description">Birincil anahtar değiştirildikten sonra, bu diğer ada sahip tüm iletiler bu anahtarla şifrelenir. Birincil anahtar her zaman anahtar listesinin en üstüne yerleştirilir. Devam etmek istediğine emin misin?</string>
+    <string name="set_as_primary">Birincil olarak ayarla</string>
+    <string name="make_as_primary">Birincil olarak yseç</string>
+    <string name="key_type">Anahtar türü</string>
+    <string name="add_new_key">Yeni anahtar ekle</string>
+    <string name="import_key">Anahtarı içe aktar</string>
+    <string name="import_private_key">Özel anahtarı içe aktar</string>
+    <string name="download_key">Anahtarı/Key yükle</string>
+    <string name="download_key_question">Ortak anahtar veya özel anahtar yüklemek istiyor musunuz?</string>
+    <string name="private_key">Özel anahtar</string>
+    <string name="public_key">Genel anahtar</string>
+    <string name="enter_your_password_to_continue">Devam etmek için lütfen hesap şifrenizi girin</string>
+    <string name="type_ctemplar_to_confirm">Onaylamak için lütfen CTEMPLAR yazın.</string>
+    <string name="generate_keys">Anahtar oluştur</string>
+    <string name="import_private_key_description">Özel anahtarı aldığınızdan emin misiniz? Lütfen özel anahtarın güvenli olduğundan emin olun</string>
+    <string name="select_private_key_to_impport">Lütfen içe aktarılacak özel bir anahtar seçin</string>
+    <string name="enter_selected_private_key_password">Lütfen seçtiğiniz özel anahtarın şifresini girin</string>
+    <string name="add_key">Key/Anahtar Ekle</string>
+    <string name="change_key">Anahtarı/Key'i değiştir</string>
+    <string name="select_mailbox_for_new_key">Lütfen yeni anahtar/KEY eklemek istediğiniz bir posta kutusu seçin</string>
+    <string name="select_mailbox_for_import_key">Lütfen anahtarı/Keyi almak istediğiniz bir posta kutusu seçin</string>
+    <string name="select_key_type">Lütfen bir anahtar/Key türü seçin</string>
+    <string name="selected_key_is_not_valid">Seçilen anahtar/Key geçerli bir PGP özel anahtarı değildir</string>
+    <string name="selected_key_already_in_active_use">Seçili anahtar/key zaten etkin durumda</string>
+    <string name="download">Download/İndir</string>
+    <string name="remove">Kaldır</string>
+    <string name="operation_failed">İşlem başarısız oldu</string>
+    <string name="yes_iam_sure">Evet, eminim</string>
+    <string name="delete_key_title">Bu anahtarı/Key'i sileceğinizden emin misiniz?</string>
+    <string name="delete_key_description">Bu anahtarı/Key'i sildikten sonra, bu anahtarla/Key'le şifrelenmiş herhangi bir iletinin şifresini çözemezsiniz. Veri kaybına neden olabilir</string>
+    <string name="ecc_default">ECC (Varsayılan)</string>
+    <string name="add_new_key_message">Key başarıyla eklendi</string>
+    <string name="import_new_key_message">Anahtar/Key başarıyla içe aktarıldı</string>
+    <string name="your_public_key_saved">PGP Public Key İndirilenler'e kaydedildi</string>
+    <string name="your_private_key_saved">PGP Private Key İndirilenler'e kaydedildi</string>
 
     <!-- Deprecated -->
-    <string name="download_public_key">Download public key (4096 Bit)</string>
-    <string name="download_private_key">Download private key (4096 Bit)</string>
+    <string name="download_public_key">Public key'i indir (4096 Bit)</string>
+    <string name="download_private_key">Private key'i indir (4096 Bit)</string>
 
     <!-- UPGRADE TO PRIME -->
-    <string name="title_upgrade_to_prime">Upgrade to Prime</string>
-    <string name="txt_one_user">1 User</string>
-    <string name="txt_from_five_gb_storage">from 5 Gb Storage</string>
-    <string name="txt_from_three_email_addresses">from 10 E-mail Addresses</string>
-    <string name="txt_from_one_custom_domain">from 1 Custom Domain</string>
-    <string name="txt_thousand_messages_per_day">2000 Messages per Day</string>
-    <string name="txt_five_hundred_folders">500 Folders</string><string name="txt_dead_mans_timer">Dead Man\'s Timer</string>
-    <string name="txt_and_more_features">and more features</string>
-    <string name="txt_not_now">Not now</string>
+    <string name="title_upgrade_to_prime">Prime'a Yükseltme</string>
+    <string name="txt_one_user">1 Kullanıcı</string>
+    <string name="txt_from_five_gb_storage">5 Gb Depolama Alanından</string>
+    <string name="txt_from_three_email_addresses">10 e-posta Adresinden</string>
+    <string name="txt_from_one_custom_domain">1 Özel alan adından</string>
+    <string name="txt_thousand_messages_per_day">Günde 2000 İleti</string>
+    <string name="txt_five_hundred_folders">500 Klasör</string><string name="txt_dead_mans_timer">Ölü Adamın Zamanlayıcısı</string>
+    <string name="txt_and_more_features">ve daha fazla özellik</string>
+    <string name="txt_not_now">Şimdi değil</string>
 
     <!-- EXTERNAL URLS -->
     <string translatable="false" name="url_prime_upgrade">https://ctemplar.com/mail/settings/dashboard-and-plans</string>
@@ -584,6 +581,9 @@
     <string translatable="false" name="url_helpdesk">https://ctemplar.com/help/</string>
 
     <!-- NOT TRANSLATABLE -->
+    <string name="change_password_reset_data">Verileri sil</string>
+    <string name="toast_email_not_valid">E-posta geçerli değil</string>
+    <string name="storage_limit_info">%1$s of %2$s</string>
     <string translatable="false" name="subscription_key">subscription_key</string>
     <string translatable="false" name="password_key">password_key</string>
     <string translatable="false" name="pin_lock_key">pin_lock_key</string>
@@ -622,8 +622,8 @@
     <string translatable="false" name="key_auto_read_email_enabled">key_auto_read_email_enabled</string>
     <string translatable="false" name="setting_id">setting_id</string>
     <string translatable="false" name="free_plan">Free</string>
-    <string translatable="false" name="prime_plan">Prime</string>
-    <string translatable="false" name="knight_plan">Knight</string>
+    <string translatable="false" name="prime_plan">Prime/</string>
+    <string translatable="false" name="knight_plan">Knight/</string>
     <string translatable="false" name="marshal_plan">Marshal</string>
     <string translatable="false" name="champion_plan">Champion</string>
     <string translatable="false" name="mx">MX</string>
@@ -632,40 +632,40 @@
     <string translatable="false" name="dmarc">DMARC</string>
 
     <!-- ERRORS -->
-    <string name="error_field_cannot_be_empty">This field cannot be empty.</string>
-    <string name="error_invalid_email">Please  select a valid email or select unrecoverable account.</string>
-    <string name="error_username_small">Minimum 4 characters</string>
-    <string name="error_username_small_two">Minimum 2 characters</string>
-    <string name="error_username_big">Maximum 64 characters</string>
-    <string name="error_password_small">Minimum 1 character</string>
-    <string name="error_password_big">Maximum 255 characters</string>
-    <string name="error_username_incorrect">The username must start with a letter and can contain only a–z, A–Z, 0–9 or ._-</string>
-    <string name="error_username_exists">Email already exists!</string>
-    <string name="error_password_not_match">Passwords do not match.</string>
-    <string name="error_current_password_not_match">Old password is not correct!</string>
-    <string name="error_empty_email">Empty email</string>
-    <string name="error_empty_password">Empty password</string>
-    <string name="error_enter_old_password">Please enter your old password.</string>
-    <string name="error_authentication_failed">Unable to log in with provided credentials.</string>
-    <string name="error_server">Server error</string>
-    <string name="error_connection">Connection error</string>
-    <string name="error_messages">Error receiving messages</string>
-    <string name="error_sign_in">Sign in error</string>
-    <string name="error_change_password">Password change error</string>
-    <string name="error_reset_password">Password reset error</string>
-    <string name="error_recover_password">Username or recovery email is not correct.</string>
-    <string name="error_upload_attachment">Failed to upload attachment</string>
-    <string name="error_attachment_url">Attachment url is empty</string>
-    <string name="error_upload_attachment_too_large">File too large</string>
-    <string name="error_too_many_requests">Too many requests. Please wait.</string>
-    <string name="title_activity_white_black_list">WhiteBlackList</string>
-    <string name="section_format">Hello World from section: %1$d</string>
-    <string name="toast_undefined_error">Undefined error</string>
-    <string name="whitelist">Whitelist</string>
-    <string name="blacklist">Blacklist</string>
-    <string name="yearly">Yearly</string>
-    <string name="monthly">Monthly</string>
-    <string name="current_plan">Current plan</string>
+    <string name="error_field_cannot_be_empty">Bu alan boş olamaz..</string>
+    <string name="error_invalid_email">Lütfen geçerli bir e-posta seçin veya kurtarılamayan hesap'ı seçin.</string>
+    <string name="error_username_small">En az 4 karakter</string>
+    <string name="error_username_small_two">En az 2 karakter</string>
+    <string name="error_username_big">Maksimum 64 karakter</string>
+    <string name="error_password_small">En az 1 karakter</string>
+    <string name="error_password_big">En fazla 255 karakter</string>
+    <string name="error_username_incorrect">Kullanıcı adı bir harfle başlamalı ve yalnızca a-z, A-Z, 0-9 veya bunları içerebilir._-</string>
+    <string name="error_username_exists">E-mail zaten var!</string>
+    <string name="error_password_not_match">Parolalar eşleşmiyor.</string>
+    <string name="error_current_password_not_match">Eski şifre doğru değil!</string>
+    <string name="error_empty_email">Boş email</string>
+    <string name="error_empty_password">Şifre boş</string>
+    <string name="error_enter_old_password">Lütfen eski şifrenizi girin.</string>
+    <string name="error_authentication_failed">Sağlanan kimlik bilgileriyle oturum açılamıyor.</string>
+    <string name="error_server">Sunucu hatası</string>
+    <string name="error_connection">Bağlantı hatası</string>
+    <string name="error_messages">Mesaj alınırken hata oluştu</string>
+    <string name="error_sign_in">Oturum açma hatası</string>
+    <string name="error_change_password">Parola değiştirme hatası</string>
+    <string name="error_reset_password">Parola sıfırlama hatası</string>
+    <string name="error_recover_password">Kullanıcı adı veya kurtarma e-postası doğru değil.</string>
+    <string name="error_upload_attachment">Ek yüklenemedi</string>
+    <string name="error_attachment_url">Ek url'si boş</string>
+    <string name="error_upload_attachment_too_large">Dosya çok büyük</string>
+    <string name="error_too_many_requests">Çok fazla denediniz,Lütfen Bekleyiniz</string>
+    <string name="title_activity_white_black_list">GüvenilirKaraListe</string>
+    <string name="section_format">Bölümden Merhaba Dünya: %1$d</string>
+    <string name="toast_undefined_error">Tanımlanmamış hata</string>
+    <string name="whitelist">White List</string>
+    <string name="blacklist">Black List</string>
+    <string name="yearly">Yıllık</string>
+    <string name="monthly">Aylık</string>
+    <string name="current_plan">Mevcut plan</string>
 
     <string-array name="proxy_type_entries">
         <item>HTTP</item>
@@ -711,30 +711,30 @@
     </string-array>
 
     <string-array name="filter_parameter_entries">
-        <item>Subject</item>
-        <item>Sender</item>
-        <item>Recipient</item>
-        <item>Header</item>
+        <item>Konu</item>
+        <item>Gönderen</item>
+        <item>Alıcı</item>
+        <item>Üstbilgi</item>
     </string-array>
 
     <string-array name="filter_parameter_values">
-        <item>subject</item>
-        <item>sender</item>
-        <item>recipient</item>
-        <item>header</item>
+        <item>konu</item>
+        <item>gönderen</item>
+        <item>alıcı</item>
+        <item>üstbilgi</item>
     </string-array>
 
     <string-array name="filter_condition_entries">
-        <item>Contains</item>
-        <item>Does Not Contain</item>
-        <item>Startswith</item>
-        <item>Does Not Startswith</item>
-        <item>Endswith</item>
-        <item>Does Not Endswith</item>
-        <item>Exactly</item>
-        <item>Does Not Exactly Match</item>
-        <item>Match</item>
-        <item>Does Not Match</item>
+        <item>İçeriyor</item>
+        <item>içermiyor</item>
+        <item>ileBaşlar</item>
+        <item>İle Başlamıyor</item>
+        <item>sonu</item>
+        <item>Sonu değil</item>
+        <item>Kesinlikle</item>
+        <item>Tam Olarak Eşleşmiyor</item>
+        <item>Eşleşiyor</item>
+        <item>Eşleşmiyor</item>
     </string-array>
 
     <string-array name="filter_condition_values">
@@ -750,21 +750,31 @@
         <item>not_pattern</item>
     </string-array>
 
+    <string-array name="auto_lock_time">
+        <item>Immediately</item>
+        <item>1 Dakika</item>
+        <item>5 Dakika</item>
+        <item>10 Dakika</item>
+        <item>1 Saat</item>
+        <item>24 Saat</item>
+    </string-array>
+
     <string-array name="dark_mode_entries">
-        <item>Auto (detect)</item>
-        <item>On</item>
-        <item>Off</item>
+        <item>Otomatik (Algıla)</item>
+        <item>Aç</item>
+        <item>Kapat</item>
     </string-array>
 
     <string-array name="dark_mode_values">
-        <item>auto</item>
-        <item>on</item>
-        <item>off</item>
+        <item>Otomatik</item>
+        <item>açık</item>
+        <item>kapalı</item>
     </string-array>
 
     <string-array name="language_entries">
         <item>Auto (detect)</item>
         <item>English</item>
+        <item>Türkçe</item>
         <item>Français</item>
         <item>Polski</item>
         <item>Português</item>
@@ -780,6 +790,7 @@
     <string-array name="language_values">
         <item>auto</item>
         <item>en</item>
+        <item>tr</item>
         <item>fr</item>
         <item>pl</item>
         <item>pt</item>
