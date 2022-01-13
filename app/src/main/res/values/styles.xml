@@ -1,4 +1,5 @@
 <resources>
+
     <style name="AppTheme" parent="Theme.AppCompat.DayNight">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
@@ -52,11 +53,12 @@
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="DialogAnimation" parent="Theme.AppCompat.Dialog.Alert">
+    <style name="DialogAnimation" parent="Theme.AppCompat.DayNight.Dialog.Alert">
         <item name="android:windowAnimationStyle">@style/Dialog.Window</item>
+        <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <style name="DialogTransparentAnimation" parent="Theme.AppCompat.Dialog.Alert">
+    <style name="DialogTransparentAnimation" parent="Theme.AppCompat.DayNight.Dialog.Alert">
         <item name="android:windowAnimationStyle">@style/Dialog.Window</item>
 
         <item name="android:windowNoTitle">true</item>
@@ -83,4 +85,9 @@
         <item name="android:textColorSecondary">@color/colorWhiteLight</item>
         <item name="colorAccent">@color/colorWhiteLight</item>
     </style>
+
+    <style name="NoCapsDesignTab" parent="TextAppearance.Design.Tab">
+        <item name="textAllCaps">false</item>
+    </style>
+
 </resources>

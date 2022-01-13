@@ -7,6 +7,9 @@ import io.reactivex.Single;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.AddFirebaseTokenRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.AutoReadEmailRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SubscriptionMobileUpgradeRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.WarnExternalLinkRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.domains.CreateDomainRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.domains.UpdateDomainRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.folders.AddFolderRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.AntiPhishingPhraseRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.AutoSaveContactEnabledRequest;
@@ -46,6 +49,8 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.CaptchaResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.CaptchaVerifyResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.CheckUsernameResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.SubscriptionMobileUpgradeResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.domains.CustomDomainResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.domains.CustomDomainsResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.keys.KeysResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.RecoverPasswordResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.SignInResponse;
@@ -182,7 +187,7 @@ public interface RestService {
 
     @PATCH("emails/messages/")
     Observable<Response<Void>> toFolder(
-            @Query("id__in") long id,
+            @Query("id__in") String messageIds,
             @Body MoveToFolderRequest request
     );
 
@@ -191,7 +196,7 @@ public interface RestService {
 
     @PATCH("emails/messages/")
     Observable<Response<Void>> markMessageAsRead(
-            @Query("id__in") long id,
+            @Query("id__in") String messageIds,
             @Body MarkMessageAsReadRequest request
     );
 
@@ -204,6 +209,15 @@ public interface RestService {
     @GET("search/messages/")
     Observable<MessagesResponse> searchMessages(
             @Query("q") String query,
+            @Query("exact") boolean exact,
+            @Query("folder") String folder,
+            @Query("sender") String sender,
+            @Query("receiver") String receiver,
+            @Query("have_attachment") boolean haveAttachment,
+            @Query("start_date") String startDate, // YYYY-MM-DD
+            @Query("end_date") String endDate,
+            @Query("size") long size,
+            @Query("size_operator") String sizeOperator,
             @Query("limit") int limit,
             @Query("offset") int offset
     );
@@ -279,6 +293,24 @@ public interface RestService {
 
     @POST("emails/filter-order/")
     Observable<EmailFilterOrderListResponse> updateEmailFiltersOrder(@Body EmailFilterOrderListRequest request);
+
+    @GET("emails/domains/")
+    Single<CustomDomainsResponse> getCustomDomains();
+
+    @POST("emails/domains/")
+    Single<CustomDomainResponse> createCustomDomain(@Body CreateDomainRequest request);
+
+    @GET("domains/verify/{id}")
+    Single<CustomDomainResponse> verifyCustomDomain(@Path("id") int id);
+
+    @GET("emails/domains/{id}/")
+    Single<CustomDomainResponse> getCustomDomain(@Path("id") int id);
+
+    @PATCH("emails/domains/{id}/")
+    Single<CustomDomainResponse> updateCustomDomain(@Path("id") int id, @Body UpdateDomainRequest request);
+
+    @DELETE("emails/domains/{id}/")
+    Single<Response<Void>> deleteCustomDomain(@Path("id") int id);
 
     @GET("users/myself/")
     Observable<MyselfResponse> getMyself();
@@ -396,6 +428,12 @@ public interface RestService {
     Observable<SettingsResponse> updateDisableLoadingImages(
             @Path("id") long settingId,
             @Body DisableLoadingImagesRequest request
+    );
+
+    @PATCH("users/settings/{id}/")
+    Observable<SettingsResponse> updateWarnExternalLink(
+            @Path("id") long settingId,
+            @Body WarnExternalLinkRequest request
     );
 
     @PATCH("users/settings/{id}/")

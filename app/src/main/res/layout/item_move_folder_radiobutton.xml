@@ -12,6 +12,4 @@
     android:button="@null"
     android:drawablePadding="10dp"
     android:drawableStart="@drawable/ic_manage_folders"
-    android:drawableLeft="@drawable/ic_manage_folders"
-    android:drawableRight="@drawable/selector_check"
     android:drawableEnd="@drawable/selector_check" />

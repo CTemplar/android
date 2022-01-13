@@ -12,6 +12,8 @@ import mobileapp.ctemplar.com.ctemplarapp.net.entity.UserEntity;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EncodeUtils;
 
+import java.net.Proxy;
+
 public class UserStoreImpl implements UserStore {
     private static UserStoreImpl instance;
 
@@ -35,6 +37,7 @@ public class UserStoreImpl implements UserStore {
     private static final String KEY_DRAFTS_AUTO_SAVE_ENABLED = "key_drafts_auto_save_enabled";
     private static final String KEY_AUTO_READ_EMAIL_ENABLED = "key_auto_read_email_enabled";
     private static final String KEY_BLOCK_EXTERNAL_IMAGES_ENABLED = "key_block_external_images_enabled";
+    private static final String KEY_WARN_EXTERNAL_LINK_ENABLED = "key_warn_external_link_enabled";
     private static final String KEY_REPORT_BUGS_ENABLED = "key_report_bugs_enabled";
 
     private static final String KEY_PIN_LOCK = "key_pin_lock";
@@ -46,7 +49,8 @@ public class UserStoreImpl implements UserStore {
     private static final String KEY_IS_PRIME_DIALOG_SHOWN = "key_is_prime_dialog_shown";
 
     private static final String KEY_PROXY_TOR_ENABLED = "key_proxy_tor_enabled";
-    private static final String KEY_PROXY_HTTP_ENABLED = "key_proxy_http_enabled";
+    private static final String KEY_PROXY_CUSTOM_ENABLED = "key_proxy_http_enabled";
+    private static final String KEY_PROXY_TYPE = "key_proxy_type";
     private static final String KEY_PROXY_IP = "key_proxy_ip";
     private static final String KEY_PROXY_PORT = "key_proxy_port";
 
@@ -236,6 +240,16 @@ public class UserStoreImpl implements UserStore {
     }
 
     @Override
+    public void setWarnExternalLinkEnabled(boolean state) {
+        globalPreferences.edit().putBoolean(KEY_WARN_EXTERNAL_LINK_ENABLED, state).apply();
+    }
+
+    @Override
+    public boolean isWarnExternalLinkEnabled() {
+        return globalPreferences.getBoolean(KEY_WARN_EXTERNAL_LINK_ENABLED, true);
+    }
+
+    @Override
     public void setReportBugsEnabled(boolean state) {
         preferences.edit().putBoolean(KEY_REPORT_BUGS_ENABLED, state).apply();
     }
@@ -345,13 +359,29 @@ public class UserStoreImpl implements UserStore {
     }
 
     @Override
-    public void setProxyHttpEnabled(boolean value) {
-        preferences.edit().putBoolean(KEY_PROXY_HTTP_ENABLED, value).apply();
+    public void setProxyCustomEnabled(boolean value) {
+        preferences.edit().putBoolean(KEY_PROXY_CUSTOM_ENABLED, value).apply();
     }
 
     @Override
-    public boolean isProxyHttpEnabled() {
-        return preferences.getBoolean(KEY_PROXY_HTTP_ENABLED, false);
+    public boolean isProxyCustomEnabled() {
+        return preferences.getBoolean(KEY_PROXY_CUSTOM_ENABLED, false);
+    }
+
+    @Override
+    public void setProxyTypeIndex(int proxyTypeIndex) {
+        preferences.edit().putInt(KEY_PROXY_TYPE, proxyTypeIndex).apply();
+    }
+
+    public int getProxyTypeIndex() {
+        return preferences.getInt(KEY_PROXY_TYPE, 0);
+    }
+
+    @Override
+    public Proxy.Type getProxyType() {
+        return preferences.getInt(KEY_PROXY_TYPE, 0) == 0
+                ? Proxy.Type.HTTP
+                : Proxy.Type.SOCKS;
     }
 
     @Override

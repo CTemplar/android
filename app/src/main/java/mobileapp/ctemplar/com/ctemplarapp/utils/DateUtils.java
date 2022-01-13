@@ -27,6 +27,7 @@ public class DateUtils {
 
     private static final String MESSAGE_FULL_DATE_PATTERN = "MMM d, yyyy',' h:mm a";
     private static final String EMAIL_PATTERN = "EEE',' MMMM d, yyyy 'at' h:mm a";
+    private static final String FILTER_DATE_PATTERN = "yyyy-MM-dd";
 
     private static final String ELAPSED_TIME_FORMAT = "%2dd %02d:%02d";
     private static final String ELAPSED_TIME_SHORT_FORMAT = "%02d:%02d";
@@ -135,6 +136,10 @@ public class DateUtils {
         return emailFormat.format(date);
     }
 
+    public static String getFilterDate(long timeInMillis) {
+        return new SimpleDateFormat(FILTER_DATE_PATTERN, Locale.getDefault()).format(timeInMillis);
+    }
+
     public static String dateFormat(long timeInMillis) {
         DateFormat dateFormat = new SimpleDateFormat(MAIN_DATE_PATTERN, Locale.getDefault());
         return dateFormat.format(timeInMillis);
@@ -143,21 +148,5 @@ public class DateUtils {
     public static String timeFormat(long timeInMillis) {
         DateFormat timeFormat = new SimpleDateFormat(MAIN_TIME_PATTERN, Locale.getDefault());
         return timeFormat.format(timeInMillis);
-    }
-
-    public static String memoryDisplay(long volume) {
-        double volumeKB = volume / 1024d;
-        double volumeMB = volumeKB / 1024d;
-        double volumeGB = volumeMB / 1024d;
-
-        if (volumeGB >= 1) {
-            return String.format(Locale.getDefault(), "%.2f GB", volumeGB);
-        } else if (volumeMB >= 1) {
-            return String.format(Locale.getDefault(), "%.2f MB", volumeMB);
-        } else if (volumeKB >= 1) {
-            return String.format(Locale.getDefault(), "%.2f KB", volumeKB);
-        }
-
-        return String.format(Locale.getDefault(), "%d B", volume);
     }
 }

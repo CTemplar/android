@@ -45,6 +45,16 @@
     <string name="action_reported_as_not_spam">1 spam olmadığı bildirildi</string>
     <string name="action_message_removed">1 mesaj kaldırıldı</string>
 
+    <!-- ADVANCED SEARCH -->
+    <string name="keyword">Keyword</string>
+    <string name="folder">Folder</string>
+    <string name="size">Size</string>
+    <string name="start_date">Start Date</string>
+    <string name="end_date">End Date</string>
+    <string name="same_exactly">Same exactly</string>
+    <string name="has_attachment">Has attachment</string>
+    <string name="clear_filter">Clear filter</string>
+
     <!-- MENU -->
     <string name="menu_save">Kaydet</string>
     <string name="menu_spam">Spam</string>
@@ -322,6 +332,11 @@
     <string name="txt_type_your_name">İsim Gir</string>
     <string name="txt_type_signature">İmzanızı yazın</string>
     <string name="txt_signature_enabled">İmza etkin</string>
+    <string name="change_password_reset_data">Delete data</string>
+    <string name="toast_email_not_valid">Email is not valid</string>
+    <string name="storage_limit_info">%1$s of %2$s</string>
+    <string name="external_resources_restrictions">External resources restrictions</string>
+    <string name="warn_before_opening_external_links">Warn before opening external links</string>
 
     <!-- PIN LOCK -->
     <string name="pin_lock">PIN Kilidi</string>
@@ -403,6 +418,39 @@
     <string name="enter_correct_ip">Doğru IP adresini girin</string>
     <string name="enter_correct_port">Doğru bağlantı/Port noktasını girin</string>
     <string name="proxy_enabled">Proxy Etkin</string>
+    <string name="proxy_notes"><![CDATA[<font color="#939191">Note. If after clicking on the \"Use Tor\" you see \"No such app found\", then you should allow an additional repository. Open the \"F-Droid -> Settings -> Repositories\" and switch on \"Guardian Project Official Releases\".</font>]]></string>
+
+    <!-- DOMAINS -->
+    <string name="domain">Domain</string>
+    <string name="domains">Domains</string>
+    <string name="add_domain">Add domain</string>
+    <string name="edit_domain">Edit domain</string>
+    <string name="verification">Verification</string>
+    <string name="current_status">Current status</string>
+    <string name="catch_all_email">Catch All Email</string>
+    <string name="domain_name">Domain name</string>
+    <string name="verify">Verify</string>
+    <string name="required">Required</string>
+    <string name="recommended">Recommended</string>
+    <string name="optional_advanced">Optional, advanced</string>
+    <string name="add_domain_title">Add a domain that you own to your CTemplar account.</string>
+    <string name="verify_domain_title">For security reasons, we need to verify that you are the owner of your domain. Please add the following code into your DNS. Do not remove it even after successful verification. This can typically be done in the control panel of your domain name registrar.</string>
+    <string name="mx_domain_title">Before you can receive emails for your custom domain addresses at CTemplar, you need to add the following MX record to your DNS. This can typically be done in the control panel of your domain name registrar.</string>
+    <string name="spf_domain_title">SPF is used to specify who is allowed to send email for the domain so we strongly recommend including CTemplar in your SPF record. Please add the following TXT record into your DNS. This can typically be done in the control panel of your domain name registrar.</string>
+    <string name="dkim_domain_title">CTemplar supports DKIM signing for custom domains. To use DKIM authentication, please add the following TXT record into your DNS for this domain. This can typically be done in the control panel of your domain name registrar.</string>
+    <string name="please_add_txt_record">Please add the following TXT record. Note, DNS records can take several hours to update.</string>
+    <string name="failed_domain_verification">Domain verification failed, please add above TXT record in your host DNS and try again. DNS records can take several hours to update. Once domain is verified, you can proceed to next step.</string>
+    <string name="type">Type</string>
+    <string name="host_name">Host Name</string>
+    <string name="value_data_points_to">Value / Data / Points To</string>
+    <string name="priority">Priority</string>
+    <string name="success_copy_to_clipboard">Copied to clipboard successfully.</string>
+    <string name="delete">Delete</string>
+    <string name="delete_domain_title">Are you sure, you want to delete %s ?</string>
+    <string name="delete_domain_dsecription">Warning: All the associated data of this domain, including messages, will also be deleted.</string>
+
+    <!-- USERS -->
+    <string name="users">Users</string>
 
     <!-- SETTINGS -->
     <string name="settings_general">Genel ayarlar</string>
@@ -544,6 +592,7 @@
     <string translatable="false" name="dark_mode_key">dark_mode_key</string>
     <string translatable="false" name="language_key">language_key</string>
     <string translatable="false" name="block_external_images_key">block_external_images_key</string>
+    <string translatable="false" name="warn_external_link_key">warn_external_link_key</string>
     <string translatable="false" name="report_bugs_enabled">report_bugs_enabled</string>
     <string translatable="false" name="white_black_list">white_black_list</string>
     <string translatable="false" name="manage_folders">manage_folders</string>
@@ -554,11 +603,14 @@
     <string translatable="false" name="anti_phishing_enabled">anti_phishing_enabled</string>
     <string translatable="false" name="anti_phishing_key">anti_phishing_key</string>
     <string translatable="false" name="anti_phishing_description_key">anti_phishing_description_key</string>
+    <string translatable="false" name="proxy_notes_key">proxy_notes_key</string>
     <string translatable="false" name="use_tor_key">use_tor_key</string>
-    <string translatable="false" name="use_http_proxy_key">use_http_proxy_key</string>
+    <string translatable="false" name="use_custom_proxy_key">use_custom_proxy_key</string>
+    <string translatable="false" name="proxy_type_key">proxy_type_key</string>
     <string translatable="false" name="proxy_host_key">proxy_host_key</string>
     <string translatable="false" name="proxy_port_key">proxy_port_key</string>
     <string translatable="false" name="setting_keys">setting_keys</string>
+    <string translatable="false" name="domains_key">domains_key</string>
     <string translatable="false" name="email_addresses">email_addresses</string>
     <string translatable="false" name="helpdesk_key">helpdesk_key</string>
     <string translatable="false" name="local_storage_limit">local_storage_limit</string>
@@ -574,6 +626,10 @@
     <string translatable="false" name="knight_plan">Knight/</string>
     <string translatable="false" name="marshal_plan">Marshal</string>
     <string translatable="false" name="champion_plan">Champion</string>
+    <string translatable="false" name="mx">MX</string>
+    <string translatable="false" name="spf">SPF</string>
+    <string translatable="false" name="dkim">DKIM</string>
+    <string translatable="false" name="dmarc">DMARC</string>
 
     <!-- ERRORS -->
     <string name="error_field_cannot_be_empty">Bu alan boş olamaz..</string>
@@ -610,6 +666,49 @@
     <string name="yearly">Yıllık</string>
     <string name="monthly">Aylık</string>
     <string name="current_plan">Mevcut plan</string>
+
+    <string-array name="proxy_type_entries">
+        <item>HTTP</item>
+        <item>SOCKS</item>
+    </string-array>
+
+    <string-array name="proxy_type_values">
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+
+    <string-array name="auto_lock_time">
+        <item>Immediately</item>
+        <item>1 minute</item>
+        <item>5 minutes</item>
+        <item>10 minutes</item>
+        <item>1 hour</item>
+        <item>24 hours</item>
+    </string-array>
+
+    <string-array name="size_condition_entries">
+        <item>Greater than</item>
+        <item>Less than</item>
+        <item>Equal</item>
+    </string-array>
+
+    <string-array name="size_condition_values">
+        <item>GTE</item>
+        <item>LTE</item>
+        <item>EQUALS</item>
+    </string-array>
+
+    <string-array name="size_measure_entries">
+        <item>MB</item>
+        <item>KB</item>
+        <item>Bytes</item>
+    </string-array>
+
+    <string-array name="size_measure_values">
+        <item>1048576</item>
+        <item>1024</item>
+        <item>1</item>
+    </string-array>
 
     <string-array name="filter_parameter_entries">
         <item>Konu</item>

@@ -26,7 +26,7 @@ public class HtmlUtils {
             .allowAttributes("border").onElements("img", "table")
             .allowAttributes("frame, rules").onElements("table")
             .allowAttributes("color", "face").onElements("font")
-            .allowAttributes("href", "target").onElements("a")
+            .allowAttributes("href", "style", "target").onElements("a")
             .allowAttributes("colspan").onElements("td", "th")
             .allowAttributes("size").onElements("font", "hr")
             .allowAttributes("scope").onElements("td", "th")
@@ -36,7 +36,7 @@ public class HtmlUtils {
             .allowAttributes("background").onElements("th")
             .allowAttributes("id").onElements("label")
             .allowAttributes("src").onElements("img")
-            .allowUrlProtocols("https")
+            .allowUrlProtocols("http", "https")
             .requireRelNofollowOnLinks()
             .toFactory();
 

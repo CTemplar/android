@@ -4,15 +4,17 @@ import android.app.Application;
 
 import androidx.lifecycle.MutableLiveData;
 
-import mobileapp.ctemplar.com.ctemplarapp.repository.UserStore;
+import java.net.Proxy;
 
 import info.guardianproject.netcipher.proxy.OrbotHelper;
 import info.guardianproject.netcipher.webkit.WebkitProxy;
+import mobileapp.ctemplar.com.ctemplarapp.BuildConfig;
+import mobileapp.ctemplar.com.ctemplarapp.repository.UserStore;
 import timber.log.Timber;
 
 public class ProxyController {
     private static final String TOR_PROXY_HOST = "127.0.0.1";
-    private static final int TOR_PROXY_PORT = 8118;
+    private static final int TOR_PROXY_PORT = 9050;
 
     private final UserStore userStore;
     private final MutableLiveData<RestClient> restClient;
@@ -33,7 +35,7 @@ public class ProxyController {
 
     public void enableTorProxy() {
         userStore.setProxyTorEnabled(true);
-        userStore.setProxyHttpEnabled(false);
+        userStore.setProxyCustomEnabled(false);
         restClient.setValue(RestClient.instance());
         enableWebKitProxy();
     }
@@ -44,23 +46,27 @@ public class ProxyController {
         disableWebKitProxy();
     }
 
-    public void setHttpProxyIP(String ip) {
+    public void setCustomProxyTypeIndex(int proxyTypeIndex) {
+        userStore.setProxyTypeIndex(proxyTypeIndex);
+    }
+
+    public void setCustomProxyIP(String ip) {
         userStore.setProxyIP(ip);
     }
 
-    public void setHttpProxyPort(int port) {
+    public void setCustomProxyPort(int port) {
         userStore.setProxyPort(port);
     }
 
-    public void enableHttpProxy() {
-        userStore.setProxyHttpEnabled(true);
+    public void enableCustomProxy() {
+        userStore.setProxyCustomEnabled(true);
         userStore.setProxyTorEnabled(false);
         restClient.setValue(RestClient.instance());
         enableWebKitProxy();
     }
 
-    public void disableHttpProxy() {
-        userStore.setProxyHttpEnabled(false);
+    public void disableCustomProxy() {
+        userStore.setProxyCustomEnabled(false);
         restClient.setValue(RestClient.instance());
         disableWebKitProxy();
     }
@@ -83,17 +89,27 @@ public class ProxyController {
     }
 
     public static boolean isProxyEnabled(UserStore userStore) {
-        return userStore.isProxyTorEnabled() || userStore.isProxyHttpEnabled();
+        return userStore.isProxyTorEnabled() || userStore.isProxyCustomEnabled();
     }
 
     public static boolean isProxyProvided(UserStore userStore) {
         return userStore.getProxyIP() != null && userStore.getProxyPort() != 0;
     }
 
+    public static Proxy.Type getProxyType(UserStore userStore) {
+        if (userStore.isProxyTorEnabled()) {
+            return Proxy.Type.SOCKS;
+        } else if (userStore.isProxyCustomEnabled()) {
+            return userStore.getProxyType();
+        }
+        return null;
+    }
+
     public static String getProxyIP(UserStore userStore) {
         if (userStore.isProxyTorEnabled()) {
             return TOR_PROXY_HOST;
-        } else if (userStore.isProxyHttpEnabled()) {
+        }
+        if (userStore.isProxyCustomEnabled()) {
             return userStore.getProxyIP();
         }
         return null;
@@ -102,9 +118,15 @@ public class ProxyController {
     public static int getProxyPort(UserStore userStore) {
         if (userStore.isProxyTorEnabled()) {
             return TOR_PROXY_PORT;
-        } else if (userStore.isProxyHttpEnabled()) {
+        } else if (userStore.isProxyCustomEnabled()) {
             return userStore.getProxyPort();
         }
         return 0;
+    }
+
+    public static String getBaseUrl(UserStore userStore) {
+        return userStore.isProxyTorEnabled()
+                ? BuildConfig.BASE_TOR_URL
+                : BuildConfig.BASE_URL;
     }
 }

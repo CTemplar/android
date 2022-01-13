@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/colorDivider"
+    android:orientation="vertical"
+    android:paddingHorizontal="8dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/lato_regular"
+            android:text="@string/domain"
+            android:textColor="?android:textColorSecondary"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/domain_value_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:fontFamily="@font/lato_regular"
+            android:text="domain.com"
+            android:textColor="?android:textColorSecondary"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+    <com.google.android.flexbox.FlexboxLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp"
+        app:alignContent="stretch"
+        app:alignItems="stretch"
+        app:flexWrap="wrap">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="3dp"
+            android:fontFamily="@font/lato_regular"
+            android:text="@string/current_status"
+            android:textColor="?android:textColorSecondary"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/verification_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="3dp"
+            android:background="@drawable/domain_status_background"
+            android:clickable="true"
+            android:focusable="true"
+            android:fontFamily="@font/lato_regular"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="5dp"
+            android:text="@string/verification"
+            android:textAllCaps="true"
+            android:textColor="@color/colorWhiteLight"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/mx_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="3dp"
+            android:background="@drawable/domain_status_background"
+            android:clickable="true"
+            android:focusable="true"
+            android:fontFamily="@font/lato_regular"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="5dp"
+            android:text="@string/mx"
+            android:textAllCaps="true"
+            android:textColor="@color/colorWhiteLight"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/spf_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="3dp"
+            android:background="@drawable/optional_domain_status_background"
+            android:clickable="true"
+            android:focusable="true"
+            android:fontFamily="@font/lato_regular"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="5dp"
+            android:text="@string/spf"
+            android:textAllCaps="true"
+            android:textColor="@color/domain_status_text_color"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/dkim_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="3dp"
+            android:background="@drawable/optional_domain_status_background"
+            android:clickable="true"
+            android:focusable="true"
+            android:fontFamily="@font/lato_regular"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="5dp"
+            android:text="@string/dkim"
+            android:textAllCaps="true"
+            android:textColor="@color/domain_status_text_color"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/dmarc_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="3dp"
+            android:background="@drawable/optional_domain_status_background"
+            android:clickable="true"
+            android:focusable="true"
+            android:fontFamily="@font/lato_regular"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="5dp"
+            android:text="@string/dmarc"
+            android:textAllCaps="true"
+            android:textColor="@color/domain_status_text_color"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+
+    </com.google.android.flexbox.FlexboxLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TableLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+
+            <TableRow>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/lato_regular"
+                        android:text="@string/aliases"
+                        android:textColor="?android:textColorSecondary"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/aliases_value_text_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:fontFamily="@font/lato_regular"
+                        android:text="0"
+                        android:textColor="?android:textColorSecondary" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/lato_regular"
+                        android:text="@string/users"
+                        android:textColor="?android:textColorSecondary"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/users_value_text_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:fontFamily="@font/lato_regular"
+                        android:text="0"
+                        android:textColor="?android:textColorSecondary" />
+
+                </LinearLayout>
+
+            </TableRow>
+
+            <TableRow>
+
+                <CheckBox
+                    android:id="@+id/catch_all_email_check_box"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/lato_regular"
+                    android:text="@string/catch_all_email"
+                    android:textColor="?android:textColorSecondary"
+                    android:textStyle="bold" />
+
+                <Spinner
+                    android:id="@+id/catch_all_email_spinner"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    tools:listitem="@layout/item_domain_spinner" />
+
+            </TableRow>
+
+        </TableLayout>
+
+        <ImageView
+            android:id="@+id/trash_image_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_trash"
+            app:tint="?android:textColorPrimary" />
+
+    </LinearLayout>
+
+</LinearLayout>

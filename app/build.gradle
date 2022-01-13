@@ -4,7 +4,7 @@ apply plugin: 'com.google.gms.google-services'
 ext {
     versionMajor = 1
     versionMinor = 5
-    versionBuild = 5
+    versionBuild = 7
 }
 
 android {
@@ -13,7 +13,7 @@ android {
         applicationId "mobileapp.ctemplar.com.ctemplarapp"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 63
+        versionCode 66
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -38,6 +38,7 @@ android {
             buildConfigField("String", "DOMAIN", "\"dev.ctemplar.com\"")
             buildConfigField("String", "ORIGIN", "\"https://dev.ctemplar.net\"")
             buildConfigField("String", "BASE_URL", "\"https://devapi.ctemplar.net/\"")
+            buildConfigField("String", "BASE_TOR_URL", "\"https://devapi.ctemplar.net/\"")
             buildConfigField("String", "USER_AGENT", "\"CTemplar App v${versionMajor}.${versionMinor}.${versionBuild}-dev\"")
         }
         production {
@@ -46,6 +47,7 @@ android {
             buildConfigField("String", "DOMAIN", "\"ctemplar.com\"")
             buildConfigField("String", "ORIGIN", "\"https://mail.ctemplar.com\"")
             buildConfigField("String", "BASE_URL", "\"https://api.ctemplar.com/\"")
+            buildConfigField("String", "BASE_TOR_URL", "\"http://api.ctemplarpizuduxk3fkwrieizstx33kg5chlvrh37nz73pv5smsvl6ad.onion/\"")
             buildConfigField("String", "USER_AGENT", "\"CTemplar App v${versionName}\"")
         }
     }
@@ -93,6 +95,7 @@ dependencies {
     implementation 'com.google.android.material:material:1.4.0'
     implementation 'com.google.guava:guava:29.0-android'
     implementation 'com.google.dagger:dagger:2.37'
+    implementation 'com.google.android.flexbox:flexbox:3.0.0'
     implementation 'com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer:20200713.1'
 
     implementation ('com.google.firebase:firebase-messaging:22.0.0') {

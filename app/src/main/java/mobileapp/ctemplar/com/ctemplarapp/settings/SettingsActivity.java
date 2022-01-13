@@ -21,6 +21,7 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.CheckBoxPreference;
+import androidx.preference.DropDownPreference;
 import androidx.preference.EditTextPreference;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
@@ -30,6 +31,11 @@ import androidx.preference.PreferenceManager;
 import androidx.preference.PreferenceScreen;
 import androidx.preference.SwitchPreference;
 
+import org.jetbrains.annotations.NotNull;
+
+import info.guardianproject.netcipher.proxy.OrbotHelper;
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
 import mobileapp.ctemplar.com.ctemplarapp.BaseActivity;
 import mobileapp.ctemplar.com.ctemplarapp.BuildConfig;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
@@ -43,23 +49,18 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.MyselfResult;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.SettingsResponse;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserStore;
+import mobileapp.ctemplar.com.ctemplarapp.settings.domains.DomainsActivity;
 import mobileapp.ctemplar.com.ctemplarapp.settings.filters.FiltersActivity;
 import mobileapp.ctemplar.com.ctemplarapp.settings.keys.KeysActivity;
 import mobileapp.ctemplar.com.ctemplarapp.settings.mailboxes.MailboxesActivity;
 import mobileapp.ctemplar.com.ctemplarapp.settings.password.ChangePasswordActivity;
-import mobileapp.ctemplar.com.ctemplarapp.utils.DateUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EncodeUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.HtmlUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.ThemeUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.ToastUtils;
+import mobileapp.ctemplar.com.ctemplarapp.utils.UnitUtils;
 import mobileapp.ctemplar.com.ctemplarapp.wbl.WhiteBlackListActivity;
-
-import org.jetbrains.annotations.NotNull;
-
-import info.guardianproject.netcipher.proxy.OrbotHelper;
-import io.reactivex.Observer;
-import io.reactivex.disposables.Disposable;
 import timber.log.Timber;
 
 public class SettingsActivity extends BaseActivity {
@@ -185,6 +186,14 @@ public class SettingsActivity extends BaseActivity {
                 manageFolders.setOnPreferenceClickListener(preference -> {
                     Intent manageFolders1 = new Intent(getActivity(), ManageFoldersActivity.class);
                     startActivity(manageFolders1);
+                    return true;
+                });
+            }
+            Preference domains = findPreference(getString(R.string.domains_key));
+            if (domains != null) {
+                domains.setOnPreferenceClickListener(preference -> {
+                    Intent domainsIntent = new Intent(getActivity(), DomainsActivity.class);
+                    startActivity(domainsIntent);
                     return true;
                 });
             }
@@ -322,23 +331,6 @@ public class SettingsActivity extends BaseActivity {
         }
     }
 
-    public static class BlockExternalImagesFragment extends BasePreferenceFragment {
-        @Override
-        public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
-            setPreferencesFromResource(R.xml.block_external_images_settings, rootKey);
-
-            SwitchPreference blockExternalImagesPreference = findPreference(getString(R.string.block_external_images_key));
-            if (blockExternalImagesPreference != null) {
-                blockExternalImagesPreference.setOnPreferenceChangeListener((preference, newValue) -> {
-                    userStore.setBlockExternalImagesEnabled((boolean) newValue);
-                    settingsModel.updateDisableLoadingImages(settingId, (boolean) newValue);
-                    Toast.makeText(getActivity(), getString(R.string.toast_saved), Toast.LENGTH_SHORT).show();
-                    return true;
-                });
-            }
-        }
-    }
-
     public static class ReportBugsFragment extends BasePreferenceFragment {
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
@@ -350,6 +342,33 @@ public class SettingsActivity extends BaseActivity {
                     userStore.setReportBugsEnabled((boolean) newValue);
                     settingsModel.updateReportBugs(settingId, (boolean) newValue);
                     Toast.makeText(getActivity(), getString(R.string.please_restart_app_to_apply_changes), Toast.LENGTH_SHORT).show();
+                    return true;
+                });
+            }
+        }
+    }
+
+    public static class ExternalResourcesRestrictionsFragment extends BasePreferenceFragment {
+        @Override
+        public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+            setPreferencesFromResource(R.xml.external_restrictions_settings, rootKey);
+
+            SwitchPreference blockExternalImagesPreference = findPreference(getString(R.string.block_external_images_key));
+            SwitchPreference warnExternalLinkPreference = findPreference(getString(R.string.warn_external_link_key));
+
+            if (blockExternalImagesPreference != null) {
+                blockExternalImagesPreference.setOnPreferenceChangeListener((preference, newValue) -> {
+                    userStore.setBlockExternalImagesEnabled((boolean) newValue);
+                    settingsModel.updateDisableLoadingImages(settingId, (boolean) newValue);
+                    ToastUtils.showToast(getActivity(), R.string.toast_saved);
+                    return true;
+                });
+            }
+            if (warnExternalLinkPreference != null) {
+                warnExternalLinkPreference.setOnPreferenceChangeListener((preference, newValue) -> {
+                    userStore.setWarnExternalLinkEnabled((boolean) newValue);
+                    settingsModel.updateWarnExternalLink(settingId, (boolean) newValue);
+                    ToastUtils.showToast(getActivity(), R.string.toast_saved);
                     return true;
                 });
             }
@@ -484,12 +503,16 @@ public class SettingsActivity extends BaseActivity {
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             setPreferencesFromResource(R.xml.proxy_settings, rootKey);
 
-            SwitchPreference useTorSwitchPreference = findPreference(getString(R.string.use_tor_key));
-            SwitchPreference useHttpProxySwitchPreference = findPreference(getString(R.string.use_http_proxy_key));
+            FragmentActivity activity = getActivity();
             ProxyController proxyController = CTemplarApp.getProxyController();
 
-            FragmentActivity activity = getActivity();
-            if (useTorSwitchPreference != null & activity != null) {
+            SwitchPreference useTorSwitchPreference = findPreference(getString(R.string.use_tor_key));
+            SwitchPreference useCustomProxySwitchPreference = findPreference(getString(R.string.use_custom_proxy_key));
+            DropDownPreference proxyTypeDropDownPreference = findPreference(getString(R.string.proxy_type_key));
+            EditTextPreference proxyHostEditTextPreference = findPreference(getString(R.string.proxy_host_key));
+            EditTextPreference proxyPortEditTextPreference = findPreference(getString(R.string.proxy_port_key));
+
+            if (useTorSwitchPreference != null && activity != null) {
                 useTorSwitchPreference.setOnPreferenceChangeListener((preference, newValue) -> {
                     if ((boolean) newValue) {
                         proxyController.enableTorProxy();
@@ -499,8 +522,8 @@ public class SettingsActivity extends BaseActivity {
                         } else {
                             OrbotHelper.get(activity).installOrbot(activity);
                         }
-                        if (useHttpProxySwitchPreference != null) {
-                            useHttpProxySwitchPreference.setChecked(false);
+                        if (useCustomProxySwitchPreference != null) {
+                            useCustomProxySwitchPreference.setChecked(false);
                         }
                     } else {
                         proxyController.disableTorProxy();
@@ -510,11 +533,11 @@ public class SettingsActivity extends BaseActivity {
                 useTorSwitchPreference.setChecked(userStore.isProxyTorEnabled());
             }
 
-            if (useHttpProxySwitchPreference != null) {
-                useHttpProxySwitchPreference.setOnPreferenceChangeListener((preference, newValue) -> {
+            if (useCustomProxySwitchPreference != null) {
+                useCustomProxySwitchPreference.setOnPreferenceChangeListener((preference, newValue) -> {
                     if ((boolean) newValue) {
                         if (ProxyController.isProxyProvided(userStore)) {
-                            proxyController.enableHttpProxy();
+                            proxyController.enableCustomProxy();
                             ToastUtils.showToast(getActivity(), R.string.proxy_enabled);
                         } else {
                             ToastUtils.showToast(getActivity(), R.string.fill_proxy_fields);
@@ -523,21 +546,41 @@ public class SettingsActivity extends BaseActivity {
                             useTorSwitchPreference.setChecked(false);
                         }
                     } else {
-                        proxyController.disableHttpProxy();
+                        proxyController.disableCustomProxy();
                     }
                     return true;
                 });
-                useHttpProxySwitchPreference.setChecked(userStore.isProxyHttpEnabled());
+                useCustomProxySwitchPreference.setChecked(userStore.isProxyCustomEnabled());
             }
 
-            EditTextPreference proxyHostEditTextPreference = findPreference(getString(R.string.proxy_host_key));
+            if (proxyTypeDropDownPreference != null) {
+                proxyTypeDropDownPreference.setOnPreferenceChangeListener((preference, newValue) -> {
+                    int value;
+                    try {
+                        value = Integer.parseInt((String) newValue);
+                    } catch (NumberFormatException e) {
+                        Timber.e(e);
+                        return false;
+                    }
+                    proxyController.setCustomProxyTypeIndex(value);
+                    if (ProxyController.isProxyProvided(userStore)) {
+                        proxyController.enableCustomProxy();
+                        ToastUtils.showToast(getActivity(), R.string.proxy_enabled);
+                    } else {
+                        ToastUtils.showToast(getActivity(), R.string.fill_proxy_fields);
+                    }
+                    return true;
+                });
+                proxyTypeDropDownPreference.setValueIndex(userStore.getProxyTypeIndex());
+            }
+
             if (proxyHostEditTextPreference != null) {
                 proxyHostEditTextPreference.setOnPreferenceChangeListener((preference, newValue) -> {
                     String value = (String) newValue;
                     if (EditTextUtils.isIPAddress(value)) {
-                        proxyController.setHttpProxyIP(value);
+                        proxyController.setCustomProxyIP(value);
                         if (ProxyController.isProxyProvided(userStore)) {
-                            proxyController.enableHttpProxy();
+                            proxyController.enableCustomProxy();
                             ToastUtils.showToast(getActivity(), R.string.proxy_enabled);
                         } else {
                             ToastUtils.showToast(getActivity(), R.string.fill_proxy_fields);
@@ -551,7 +594,6 @@ public class SettingsActivity extends BaseActivity {
                 proxyHostEditTextPreference.setText(userStore.getProxyIP());
             }
 
-            EditTextPreference proxyPortEditTextPreference = findPreference(getString(R.string.proxy_port_key));
             if (proxyPortEditTextPreference != null) {
                 proxyPortEditTextPreference.setOnPreferenceChangeListener((preference, newValue) -> {
                     int value;
@@ -562,9 +604,9 @@ public class SettingsActivity extends BaseActivity {
                         return false;
                     }
                     if (EditTextUtils.isPort(value)) {
-                        proxyController.setHttpProxyPort(value);
+                        proxyController.setCustomProxyPort(value);
                         if (ProxyController.isProxyProvided(userStore)) {
-                            proxyController.enableHttpProxy();
+                            proxyController.enableCustomProxy();
                             ToastUtils.showToast(getActivity(), R.string.proxy_enabled);
                         } else {
                             ToastUtils.showToast(getActivity(), R.string.fill_proxy_fields);
@@ -673,8 +715,8 @@ public class SettingsActivity extends BaseActivity {
         isPrimeUser = myselfResult.isPrime();
         setSettingId(settingId);
 
-        String usedStorage = DateUtils.memoryDisplay(settingsResponse.getUsedStorage());
-        String allocatedStorage = DateUtils.memoryDisplay(settingsResponse.getAllocatedStorage());
+        String usedStorage = UnitUtils.memoryDisplay(settingsResponse.getUsedStorage());
+        String allocatedStorage = UnitUtils.memoryDisplay(settingsResponse.getAllocatedStorage());
         String recoveryEmail = settingsResponse.getRecoveryEmail();
 
         if (storageLimitPreference != null) {
@@ -698,6 +740,7 @@ public class SettingsActivity extends BaseActivity {
                 .putBoolean(getString(R.string.key_auto_read_email_enabled), settingsResponse.isAutoRead())
                 .putBoolean(getString(R.string.contacts_encryption_enabled), settingsResponse.isContactsEncrypted())
                 .putBoolean(getString(R.string.block_external_images_key), settingsResponse.isDisableLoadingImages())
+                .putBoolean(getString(R.string.warn_external_link_key), settingsResponse.isWarnExternalLink())
                 .putBoolean(getString(R.string.report_bugs_enabled), settingsResponse.isEnableReportBugs())
                 .apply();
     }

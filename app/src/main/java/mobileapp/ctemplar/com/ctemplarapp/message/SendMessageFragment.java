@@ -643,7 +643,6 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
 
         SendMessageRequest createMessageRequest = new SendMessageRequest(
                 mailboxEmail,
-                "content",
                 new ArrayList<>(),
                 new ArrayList<>(),
                 new ArrayList<>(),

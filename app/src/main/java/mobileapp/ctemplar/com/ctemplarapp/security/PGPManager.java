@@ -69,7 +69,10 @@ public class PGPManager {
         return new String(encrypt(inputText.getBytes(), pubKeys, true));
     }
 
-    public static byte[] encrypt(byte[] inputBytes, String[] pubKeys, boolean asciiArmor) {
+    public static byte[] encrypt(@Nullable byte[] inputBytes, String[] pubKeys, boolean asciiArmor) {
+        if (inputBytes == null || inputBytes.length < 1) {
+            return new byte[0];
+        }
         try {
             PGPPublicKeyRing[] pgpPublicKeyRings = PGPLib.getPGPPublicKeyRings(pubKeys);
             if (pgpPublicKeyRings.length <= 0) {
@@ -86,7 +89,10 @@ public class PGPManager {
         return new String(encryptGPG(inputText.getBytes(), passPhrase, true));
     }
 
-    public static byte[] encryptGPG(byte[] inputBytes, String passPhrase, boolean asciiArmor) {
+    public static byte[] encryptGPG(@Nullable byte[] inputBytes, String passPhrase, boolean asciiArmor) {
+        if (inputBytes == null || inputBytes.length < 1) {
+            return new byte[0];
+        }
         try {
             return PGPLib.encryptGPG(inputBytes, passPhrase, asciiArmor);
         } catch (Exception e) {

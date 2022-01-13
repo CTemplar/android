@@ -2,6 +2,7 @@ package mobileapp.ctemplar.com.ctemplarapp.message;
 
 import static mobileapp.ctemplar.com.ctemplarapp.message.SendMessageActivity.ATTACHMENT_LIST;
 import static mobileapp.ctemplar.com.ctemplarapp.message.ViewMessagesActivity.PARENT_ID;
+import static mobileapp.ctemplar.com.ctemplarapp.message.dialog.MoveDialogFragment.MESSAGE_IDS;
 import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.ARCHIVE;
 import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.FOLDER_NAME;
 import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.INBOX;
@@ -13,7 +14,6 @@ import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderN
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Pair;
@@ -427,7 +427,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
                 unlockUI();
             }
         });
-        snackbar.setActionTextColor(Color.YELLOW);
+        snackbar.setActionTextColor(getResources().getColor(R.color.colorAccent));
         snackbar.show();
     }
 
@@ -443,7 +443,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
                 unlockUI();
             }
         });
-        snackbar.setActionTextColor(Color.YELLOW);
+        snackbar.setActionTextColor(getResources().getColor(R.color.colorAccent));
         snackbar.show();
     }
 
@@ -454,7 +454,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
         }
         MoveDialogFragment moveDialogFragment = new MoveDialogFragment();
         Bundle moveFragmentBundle = new Bundle();
-        moveFragmentBundle.putLong(PARENT_ID, parentMessage.getId());
+        moveFragmentBundle.putLongArray(MESSAGE_IDS, new long[]{parentMessage.getId()});
         moveDialogFragment.setArguments(moveFragmentBundle);
         moveDialogFragment.show(getActivity().getSupportFragmentManager(), "MoveDialogFragment");
     }
