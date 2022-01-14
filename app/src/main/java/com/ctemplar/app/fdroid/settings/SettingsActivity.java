@@ -282,6 +282,14 @@ public class SettingsActivity extends BaseActivity {
                     return true;
                 });
             }
+
+            SwitchPreference includeOriginalMessagePreference = findPreference(getString(R.string.key_include_original_message));
+            if (includeOriginalMessagePreference != null) {
+                includeOriginalMessagePreference.setOnPreferenceChangeListener((preference, newValue) -> {
+                    settingsModel.updateIncludeOriginalMessage(settingId, (boolean) newValue);
+                    return true;
+                });
+            }
         }
     }
 
@@ -738,6 +746,7 @@ public class SettingsActivity extends BaseActivity {
                 .putBoolean(getString(R.string.recovery_email_enabled), EditTextUtils.isNotEmpty(recoveryEmail))
                 .putBoolean(getString(R.string.auto_save_contacts_enabled), settingsResponse.isSaveContacts())
                 .putBoolean(getString(R.string.key_auto_read_email_enabled), settingsResponse.isAutoRead())
+                .putBoolean(getString(R.string.key_include_original_message), settingsResponse.isIncludeOriginalMessage())
                 .putBoolean(getString(R.string.contacts_encryption_enabled), settingsResponse.isContactsEncrypted())
                 .putBoolean(getString(R.string.block_external_images_key), settingsResponse.isDisableLoadingImages())
                 .putBoolean(getString(R.string.warn_external_link_key), settingsResponse.isWarnExternalLink())

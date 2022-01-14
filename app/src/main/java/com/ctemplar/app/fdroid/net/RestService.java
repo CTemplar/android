@@ -9,6 +9,7 @@ import com.ctemplar.app.fdroid.net.request.ChangePasswordRequest;
 import com.ctemplar.app.fdroid.net.request.CheckUsernameRequest;
 import com.ctemplar.app.fdroid.net.request.DarkModeRequest;
 import com.ctemplar.app.fdroid.net.request.DisableLoadingImagesRequest;
+import com.ctemplar.app.fdroid.net.request.IncludeOriginalMessageRequest;
 import com.ctemplar.app.fdroid.net.request.NotificationEmailRequest;
 import com.ctemplar.app.fdroid.net.request.PublicKeysRequest;
 import com.ctemplar.app.fdroid.net.request.RecoverPasswordRequest;
@@ -405,6 +406,12 @@ public interface RestService {
     Observable<SettingsResponse> updateAutoReadEmail(
             @Path("id") long settingId,
             @Body AutoReadEmailRequest request
+    );
+
+    @PATCH("users/settings/{id}/")
+    Single<SettingsResponse> updateIncludeOriginalMessage(
+            @Path("id") long settingId,
+            @Body IncludeOriginalMessageRequest request
     );
 
     @PATCH("users/settings/{id}/")

@@ -35,6 +35,7 @@ public class UserStoreImpl implements UserStore {
     private static final String KEY_KEEP_DECRYPTED_SUBJECTS_ENABLED = "key_keep_decrypted_subjects_enabled";
     private static final String KEY_DRAFTS_AUTO_SAVE_ENABLED = "key_drafts_auto_save_enabled";
     private static final String KEY_AUTO_READ_EMAIL_ENABLED = "key_auto_read_email_enabled";
+    private static final String KEY_INCLUDE_ORIGINAL_MESSAGE = "key_include_original_message";
     private static final String KEY_BLOCK_EXTERNAL_IMAGES_ENABLED = "key_block_external_images_enabled";
     private static final String KEY_WARN_EXTERNAL_LINK_ENABLED = "key_warn_external_link_enabled";
     private static final String KEY_REPORT_BUGS_ENABLED = "key_report_bugs_enabled";
@@ -215,6 +216,16 @@ public class UserStoreImpl implements UserStore {
     @Override
     public boolean isAutoReadEmailEnabled() {
         return globalPreferences.getBoolean(KEY_AUTO_READ_EMAIL_ENABLED, true);
+    }
+
+    @Override
+    public void setIncludeOriginalMessage(boolean state) {
+        globalPreferences.edit().putBoolean(KEY_INCLUDE_ORIGINAL_MESSAGE, state).apply();
+    }
+
+    @Override
+    public boolean isIncludeOriginalMessage() {
+        return globalPreferences.getBoolean(KEY_INCLUDE_ORIGINAL_MESSAGE, true);
     }
 
     @Override
