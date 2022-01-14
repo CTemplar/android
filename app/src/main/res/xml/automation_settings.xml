@@ -13,4 +13,8 @@
         android:title="@string/settings_auto_read_email"
         android:key="@string/key_auto_read_email_enabled" />
 
+    <SwitchPreference
+        android:title="@string/settings_include_original_message"
+        android:key="@string/key_include_original_message" />
+
 </PreferenceScreen>

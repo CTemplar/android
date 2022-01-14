@@ -15,6 +15,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.request.ChangePasswordRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.CheckUsernameRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.DarkModeRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.DisableLoadingImagesRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.IncludeOriginalMessageRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.NotificationEmailRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.PublicKeysRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.RecoverPasswordRequest;
@@ -160,16 +161,30 @@ public class UserRepository {
         return userStore.getUsername();
     }
 
-    public void saveTimeZone(String timezone) {
-        userStore.saveTimeZone(timezone);
+    public void setStoreSettings(SettingsResponse settingsResponse) {
+        userStore.saveTimeZone(settingsResponse.getTimezone());
+        userStore.setContactsEncryptionEnabled(settingsResponse.isContactsEncrypted());
+        userStore.setAutoReadEmailEnabled(settingsResponse.isAutoRead());
+        userStore.setIncludeOriginalMessage(settingsResponse.isIncludeOriginalMessage());
+        userStore.setBlockExternalImagesEnabled(settingsResponse.isDisableLoadingImages());
+        userStore.setWarnExternalLinkEnabled(settingsResponse.isWarnExternalLink());
+        userStore.setReportBugsEnabled(settingsResponse.isEnableReportBugs());
     }
 
-    public String getTimeZone() {
-        return userStore.getTimeZone();
+    public void setIncludeOriginalMessage(boolean value) {
+        userStore.setIncludeOriginalMessage(value);
     }
 
-    public void setSignatureEnabled(boolean isEnabled) {
-        userStore.setSignatureEnabled(isEnabled);
+    public void setPrimeDialogShown(boolean value) {
+        userStore.setPrimeDialogShown(value);
+    }
+
+    public void setSignatureEnabled(boolean value) {
+        userStore.setSignatureEnabled(value);
+    }
+
+    public void setAutoReadEmailEnabled(boolean value) {
+        userStore.setAutoReadEmailEnabled(value);
     }
 
     public boolean isSignatureEnabled() {
@@ -180,60 +195,16 @@ public class UserRepository {
         return userStore.isDraftsAutoSaveEnabled();
     }
 
-    public void setNotificationsEnabled(boolean isEnabled) {
-        userStore.setNotificationsEnabled(isEnabled);
-    }
-
-    public boolean isNotificationsEnabled() {
-        return userStore.isNotificationsEnabled();
-    }
-
-    public void setContactsEncryptionEnabled(boolean isContactsEncryptionEnabled) {
-        userStore.setContactsEncryptionEnabled(isContactsEncryptionEnabled);
-    }
-
     public boolean isAutoReadEmailEnabled() {
         return userStore.isAutoReadEmailEnabled();
-    }
-
-    public void setAutoReadEmailEnabled(boolean isEnabled) {
-        userStore.setAutoReadEmailEnabled(isEnabled);
-    }
-
-    public boolean getContactsEncryptionEnabled() {
-        return userStore.isContactsEncryptionEnabled();
-    }
-
-    public void setBlockExternalImagesEnabled(boolean isEnabled) {
-        userStore.setBlockExternalImagesEnabled(isEnabled);
-    }
-
-    public boolean isBlockExternalImagesEnabled() {
-        return userStore.isBlockExternalImagesEnabled();
-    }
-
-    public void setWarnExternalLinkEnabled(boolean state) {
-        userStore.setWarnExternalLinkEnabled(state);
-    }
-
-    public boolean isWarnExternalLinkEnabled() {
-        return userStore.isWarnExternalLinkEnabled();
-    }
-
-    public void setReportBugsEnabled(boolean isEnabled) {
-        userStore.setReportBugsEnabled(isEnabled);
-    }
-
-    public void setDarkModeValue(int value) {
-        userStore.setDarkModeValue(value);
     }
 
     public boolean isKeepDecryptedSubjectsEnabled() {
         return userStore.isKeepDecryptedSubjectsEnabled();
     }
 
-    public void setPrimeDialogShown(boolean value) {
-        userStore.setPrimeDialogShown(value);
+    public boolean isIncludeOriginalMessage() {
+        return userStore.isIncludeOriginalMessage();
     }
 
     public boolean isPrimeDialogShown() {
@@ -658,6 +629,15 @@ public class UserRepository {
             AutoReadEmailRequest request
     ) {
         return service.updateAutoReadEmail(settingId, request)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public Single<SettingsResponse> updateIncludeOriginalMessageText(
+            long settingId,
+            IncludeOriginalMessageRequest request
+    ) {
+        return service.updateIncludeOriginalMessage(settingId, request)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
