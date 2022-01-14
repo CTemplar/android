@@ -545,10 +545,11 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
         if (activity == null || parentMessage == null) {
             return;
         }
+        boolean includeOriginalMessage = mainModel.isIncludeOriginalMessage();
         boolean noEncryptionPhrase = parentMessage.getEncryptionMessage() == null;
         String replySubject = noEncryptionPhrase ? getString(R.string.subject_reply,
                 EditTextUtils.getText(subjectTextView)) : "";
-        String replyBody = noEncryptionPhrase ? replyHead()
+        String replyBody = noEncryptionPhrase && includeOriginalMessage ? replyHead()
                 + HtmlUtils.fromHtml(lastMessage.getContent()) : "";
         switch (id) {
             case R.id.activity_view_messages_reply:

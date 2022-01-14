@@ -6,6 +6,7 @@ import io.reactivex.Observable;
 import io.reactivex.Single;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.AddFirebaseTokenRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.AutoReadEmailRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.IncludeOriginalMessageRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SubscriptionMobileUpgradeRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.WarnExternalLinkRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.domains.CreateDomainRequest;
@@ -410,6 +411,12 @@ public interface RestService {
     Observable<SettingsResponse> updateAutoReadEmail(
             @Path("id") long settingId,
             @Body AutoReadEmailRequest request
+    );
+
+    @PATCH("users/settings/{id}/")
+    Single<SettingsResponse> updateIncludeOriginalMessage(
+            @Path("id") long settingId,
+            @Body IncludeOriginalMessageRequest request
     );
 
     @PATCH("users/settings/{id}/")

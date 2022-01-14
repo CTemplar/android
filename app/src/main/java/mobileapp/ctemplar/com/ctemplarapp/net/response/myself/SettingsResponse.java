@@ -118,6 +118,9 @@ public class SettingsResponse {
     @SerializedName("is_enable_report_bugs")
     private boolean isEnableReportBugs;
 
+    @SerializedName("include_original_message")
+    private boolean includeOriginalMessage;
+
     @SerializedName("notification_email")
     private String notificationEmail;
 
@@ -138,9 +141,6 @@ public class SettingsResponse {
 
     @SerializedName("is_attachments_encrypted")
     private boolean isAttachmentsEncrypted;
-
-    @SerializedName("include_original_message")
-    private boolean includeOriginalMessage;
 
     @SerializedName("is_composer_full_screen")
     private boolean isComposerFullScreen;

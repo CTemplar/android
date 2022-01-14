@@ -50,6 +50,9 @@ public interface UserStore {
     void setAutoReadEmailEnabled(boolean state);
     boolean isAutoReadEmailEnabled();
 
+    void setIncludeOriginalMessage(boolean state);
+    boolean isIncludeOriginalMessage();
+
     void setBlockExternalImagesEnabled(boolean state);
     boolean isBlockExternalImagesEnabled();
 
