@@ -4,7 +4,7 @@ apply plugin: 'com.google.gms.google-services'
 ext {
     versionMajor = 1
     versionMinor = 5
-    versionBuild = 6
+    versionBuild = 7
 }
 
 android {
@@ -13,7 +13,7 @@ android {
         applicationId "mobileapp.ctemplar.com.ctemplarapp"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 65
+        versionCode 66
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -90,11 +90,12 @@ dependencies {
 
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
     implementation 'io.reactivex.rxjava2:rxjava:2.2.9'
-    implementation 'io.sentry:sentry-android:5.0.1'
+    implementation 'io.sentry:sentry-android:5.5.2'
 
     implementation 'com.google.android.material:material:1.4.0'
     implementation 'com.google.guava:guava:29.0-android'
     implementation 'com.google.dagger:dagger:2.37'
+    implementation 'com.google.android.flexbox:flexbox:3.0.0'
     implementation 'com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer:20200713.1'
 
     implementation ('com.google.firebase:firebase-messaging:22.0.0') {

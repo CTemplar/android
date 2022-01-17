@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="8dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/lato_regular"
+        android:textColor="?android:textColorPrimary" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:fontFamily="@font/lato_regular"
+        android:text="@string/please_add_txt_record"
+        android:textColor="?android:textColorPrimary" />
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp">
+
+        <TableRow android:minHeight="45dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/text_input_field"
+                android:fontFamily="@font/lato_regular"
+                android:gravity="center"
+                android:paddingHorizontal="8dp"
+                android:text="@string/type"
+                android:textAllCaps="true"
+                android:textColor="@color/secondaryTextColor"
+                android:textSize="12sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/text_input_field"
+                android:fontFamily="@font/lato_regular"
+                android:gravity="center"
+                android:paddingHorizontal="8dp"
+                android:text="@string/host_name"
+                android:textAllCaps="true"
+                android:textColor="@color/secondaryTextColor"
+                android:textSize="12sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/text_input_field"
+                android:fontFamily="@font/lato_regular"
+                android:gravity="center"
+                android:paddingHorizontal="8dp"
+                android:text="@string/value_data_points_to"
+                android:textAllCaps="true"
+                android:textColor="@color/secondaryTextColor"
+                android:textSize="12sp" />
+
+        </TableRow>
+
+        <TableRow android:minHeight="45dp">
+
+            <TextView
+                android:id="@id/type_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/text_input_field"
+                android:fontFamily="@font/lato_regular"
+                android:gravity="center"
+                android:paddingHorizontal="8dp"
+                android:text="TXT"
+                android:textColor="@color/secondaryTextColor" />
+
+            <TextView
+                android:id="@+id/host_name_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/text_input_field"
+                android:fontFamily="@font/lato_regular"
+                android:gravity="center"
+                android:paddingHorizontal="8dp"
+                android:text="_dmarc"
+                android:textColor="@color/secondaryTextColor" />
+
+            <TextView
+                android:id="@+id/value_data_points_to_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/text_input_field"
+                android:drawablePadding="8dp"
+                android:fontFamily="@font/lato_regular"
+                android:gravity="center"
+                android:paddingHorizontal="8dp"
+                android:text="v=DMARC1; p=quarantine"
+                android:textColor="@color/secondaryTextColor"
+                app:drawableEndCompat="@drawable/ic_file_copy" />
+
+        </TableRow>
+
+    </TableLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <Button
+        android:id="@+id/next_button"
+        style="?android:attr/buttonBarButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/selector_button_blue"
+        android:fontFamily="@font/lato_regular"
+        android:text="@string/title_next"
+        android:textColor="@color/colorWhiteLight" />
+
+</LinearLayout>

@@ -249,6 +249,10 @@ public class MainActivityViewModel extends AndroidViewModel {
         return userPlanTypeResponse;
     }
 
+    public boolean isIncludeOriginalMessage() {
+        return userRepository.isIncludeOriginalMessage();
+    }
+
     public void logout() {
         if (userRepository == null) {
             return;
@@ -625,7 +629,7 @@ public class MainActivityViewModel extends AndroidViewModel {
     }
 
     public void toFolder(long messageId, String folder) {
-        userRepository.toFolder(new Long[]{messageId}, folder);
+        toFolder(new Long[]{messageId}, folder);
     }
 
     public void toFolder(Long[] messageIds, String folder) {
@@ -749,19 +753,11 @@ public class MainActivityViewModel extends AndroidViewModel {
                     public void onNext(@NotNull MyselfResponse myselfResponse) {
                         MyselfResult myselfResult = myselfResponse.getResult()[0];
                         SettingsResponse settingsResponse = myselfResult.getSettings();
-
-                        userRepository.saveTimeZone(settingsResponse.getTimezone());
-                        userRepository.setContactsEncryptionEnabled(settingsResponse.isContactsEncrypted());
-                        userRepository.setAutoReadEmailEnabled(settingsResponse.isAutoRead());
-                        userRepository.setBlockExternalImagesEnabled(settingsResponse.isDisableLoadingImages());
-                        userRepository.setWarnExternalLinkEnabled(settingsResponse.isWarnExternalLink());
-                        userRepository.setReportBugsEnabled(settingsResponse.isEnableReportBugs());
-
+                        userRepository.setStoreSettings(settingsResponse);
                         ThemeUtils.setDarkModeFromServer(
                                 settingsResponse.isNightMode(),
                                 userRepository.getUserStore()
                         );
-
                         userPlanTypeResponse.postValue(settingsResponse.getPlanType());
                     }
 

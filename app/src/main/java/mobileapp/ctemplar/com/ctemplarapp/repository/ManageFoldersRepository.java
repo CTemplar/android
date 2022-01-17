@@ -29,31 +29,31 @@ public class ManageFoldersRepository {
 
     public Observable<FoldersResponse> getFoldersList(int limit, int offset) {
         return service.getFolders(limit, offset)
-                .subscribeOn(io.reactivex.schedulers.Schedulers.io())
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
     public Observable<ResponseBody> getUnreadFoldersList() {
         return service.getUnreadFolders()
-                .subscribeOn(io.reactivex.schedulers.Schedulers.io())
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
     public Observable<ResponseBody> addFolder(AddFolderRequest request) {
         return service.addFolder(request)
-                .subscribeOn(io.reactivex.schedulers.Schedulers.io())
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
     public Observable<Response<Void>> deleteFolder(long id) {
         return service.deleteFolder(id)
-                .subscribeOn(io.reactivex.schedulers.Schedulers.io())
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
     public Observable<FoldersResult> editFolder(long id, EditFolderRequest request) {
         return service.editFolder(id, request)
-                .subscribeOn(io.reactivex.schedulers.Schedulers.io())
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 

@@ -49,6 +49,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.MyselfResult;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.SettingsResponse;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserStore;
+import mobileapp.ctemplar.com.ctemplarapp.settings.domains.DomainsActivity;
 import mobileapp.ctemplar.com.ctemplarapp.settings.filters.FiltersActivity;
 import mobileapp.ctemplar.com.ctemplarapp.settings.keys.KeysActivity;
 import mobileapp.ctemplar.com.ctemplarapp.settings.mailboxes.MailboxesActivity;
@@ -188,6 +189,14 @@ public class SettingsActivity extends BaseActivity {
                     return true;
                 });
             }
+            Preference domains = findPreference(getString(R.string.domains_key));
+            if (domains != null) {
+                domains.setOnPreferenceClickListener(preference -> {
+                    Intent domainsIntent = new Intent(getActivity(), DomainsActivity.class);
+                    startActivity(domainsIntent);
+                    return true;
+                });
+            }
             Preference mailboxes = findPreference(getString(R.string.email_addresses));
             if (mailboxes != null) {
                 mailboxes.setOnPreferenceClickListener(preference -> {
@@ -275,6 +284,14 @@ public class SettingsActivity extends BaseActivity {
             if (autoReadEmailPreference != null) {
                 autoReadEmailPreference.setOnPreferenceChangeListener((preference, newValue) -> {
                     settingsModel.updateAutoReadEmail(settingId, (boolean) newValue);
+                    return true;
+                });
+            }
+
+            SwitchPreference includeOriginalMessagePreference = findPreference(getString(R.string.key_include_original_message));
+            if (includeOriginalMessagePreference != null) {
+                includeOriginalMessagePreference.setOnPreferenceChangeListener((preference, newValue) -> {
+                    settingsModel.updateIncludeOriginalMessage(settingId, (boolean) newValue);
                     return true;
                 });
             }
@@ -729,6 +746,7 @@ public class SettingsActivity extends BaseActivity {
                 .putBoolean(getString(R.string.recovery_email_enabled), EditTextUtils.isNotEmpty(recoveryEmail))
                 .putBoolean(getString(R.string.auto_save_contacts_enabled), settingsResponse.isSaveContacts())
                 .putBoolean(getString(R.string.key_auto_read_email_enabled), settingsResponse.isAutoRead())
+                .putBoolean(getString(R.string.key_include_original_message), settingsResponse.isIncludeOriginalMessage())
                 .putBoolean(getString(R.string.contacts_encryption_enabled), settingsResponse.isContactsEncrypted())
                 .putBoolean(getString(R.string.block_external_images_key), settingsResponse.isDisableLoadingImages())
                 .putBoolean(getString(R.string.warn_external_link_key), settingsResponse.isWarnExternalLink())

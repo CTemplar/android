@@ -2,6 +2,7 @@ package mobileapp.ctemplar.com.ctemplarapp.message;
 
 import static mobileapp.ctemplar.com.ctemplarapp.message.SendMessageActivity.ATTACHMENT_LIST;
 import static mobileapp.ctemplar.com.ctemplarapp.message.ViewMessagesActivity.PARENT_ID;
+import static mobileapp.ctemplar.com.ctemplarapp.message.dialog.MoveDialogFragment.MESSAGE_IDS;
 import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.ARCHIVE;
 import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.FOLDER_NAME;
 import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.INBOX;
@@ -453,7 +454,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
         }
         MoveDialogFragment moveDialogFragment = new MoveDialogFragment();
         Bundle moveFragmentBundle = new Bundle();
-        moveFragmentBundle.putLong(PARENT_ID, parentMessage.getId());
+        moveFragmentBundle.putLongArray(MESSAGE_IDS, new long[]{parentMessage.getId()});
         moveDialogFragment.setArguments(moveFragmentBundle);
         moveDialogFragment.show(getActivity().getSupportFragmentManager(), "MoveDialogFragment");
     }
@@ -544,10 +545,11 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
         if (activity == null || parentMessage == null) {
             return;
         }
+        boolean includeOriginalMessage = mainModel.isIncludeOriginalMessage();
         boolean noEncryptionPhrase = parentMessage.getEncryptionMessage() == null;
         String replySubject = noEncryptionPhrase ? getString(R.string.subject_reply,
                 EditTextUtils.getText(subjectTextView)) : "";
-        String replyBody = noEncryptionPhrase ? replyHead()
+        String replyBody = noEncryptionPhrase && includeOriginalMessage ? replyHead()
                 + HtmlUtils.fromHtml(lastMessage.getContent()) : "";
         switch (id) {
             case R.id.activity_view_messages_reply:

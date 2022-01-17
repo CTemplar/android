@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 import io.reactivex.Observer;
+import io.reactivex.SingleObserver;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
@@ -16,6 +17,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.AntiPhishingPhraseRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.AutoReadEmailRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.AutoSaveContactEnabledRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.IncludeOriginalMessageRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.WarnExternalLinkRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.contacts.ContactsEncryptionRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.DarkModeRequest;
@@ -135,7 +137,7 @@ public class SettingsViewModel extends ViewModel {
 
                     @Override
                     public void onNext(@NotNull SettingsResponse settingsResponse) {
-                        Timber.i("Auto read email updated");
+                        userRepository.setAutoReadEmailEnabled(isEnabled);
                     }
 
                     @Override
@@ -146,6 +148,32 @@ public class SettingsViewModel extends ViewModel {
                     @Override
                     public void onComplete() {
 
+                    }
+                });
+    }
+
+    void updateIncludeOriginalMessage(long settingId, boolean isEnabled) {
+        if (settingId == -1) {
+            return;
+        }
+        userRepository.updateIncludeOriginalMessageText(
+                settingId,
+                new IncludeOriginalMessageRequest(isEnabled)
+        )
+                .subscribe(new SingleObserver<SettingsResponse>() {
+                    @Override
+                    public void onSubscribe(@androidx.annotation.NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onSuccess(@androidx.annotation.NonNull SettingsResponse settingsResponse) {
+                        userRepository.setIncludeOriginalMessage(isEnabled);
+                    }
+
+                    @Override
+                    public void onError(@androidx.annotation.NonNull Throwable e) {
+                        Timber.e(e);
                     }
                 });
     }
