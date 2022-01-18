@@ -527,7 +527,8 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
                 new String[]{},
                 MessageActions.FORWARD,
                 attachmentsEntity,
-                null
+                null,
+                lastMessage.getMailboxId()
         );
 
         FragmentActivity activity = getActivity();
@@ -559,6 +560,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
                 intentReply.putExtra(Intent.EXTRA_TEXT, replyBody);
                 intentReply.putExtra(SendMessageActivity.LAST_ACTION, MessageActions.REPLY);
                 intentReply.putExtra(SendMessageActivity.PARENT_ID, parentMessage.getId());
+                intentReply.putExtra(SendMessageActivity.MAILBOX_ID, lastMessage.getMailboxId());
 
                 Fragment fragmentReply = SendMessageFragment.newInstance(
                         replySubject,
@@ -568,7 +570,8 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
                         new String[]{},
                         MessageActions.REPLY,
                         new AttachmentsEntity(),
-                        parentMessage.getId()
+                        parentMessage.getId(),
+                        lastMessage.getMailboxId()
                 );
 
                 if (activity instanceof MainActivity) {
@@ -586,6 +589,7 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
                 intentReplyAll.putExtra(Intent.EXTRA_BCC, lastMessage.getBcc());
                 intentReplyAll.putExtra(SendMessageActivity.LAST_ACTION, MessageActions.REPLY);
                 intentReplyAll.putExtra(SendMessageActivity.PARENT_ID, parentMessage.getId());
+                intentReplyAll.putExtra(SendMessageActivity.MAILBOX_ID, lastMessage.getMailboxId());
 
                 Fragment fragmentReplyAll = SendMessageFragment.newInstance(
                         replySubject,
@@ -595,7 +599,8 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
                         lastMessage.getBcc(),
                         MessageActions.REPLY_ALL,
                         new AttachmentsEntity(),
-                        parentMessage.getId()
+                        parentMessage.getId(),
+                        lastMessage.getMailboxId()
                 );
 
                 if (activity instanceof MainActivity) {

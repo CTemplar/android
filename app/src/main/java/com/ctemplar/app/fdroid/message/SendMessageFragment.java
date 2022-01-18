@@ -1,5 +1,14 @@
 package com.ctemplar.app.fdroid.message;
 
+import static com.ctemplar.app.fdroid.message.SendMessageActivity.ATTACHMENT_LIST;
+import static com.ctemplar.app.fdroid.message.SendMessageActivity.LAST_ACTION;
+import static com.ctemplar.app.fdroid.message.SendMessageActivity.MAILBOX_ID;
+import static com.ctemplar.app.fdroid.message.SendMessageActivity.MESSAGE_ID;
+import static com.ctemplar.app.fdroid.message.SendMessageActivity.PARENT_ID;
+import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.DRAFT;
+import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.OUTBOX;
+import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.SENT;
+
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -36,15 +45,6 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
-
 import com.ctemplar.app.fdroid.ActivityInterface;
 import com.ctemplar.app.fdroid.BuildConfig;
 import com.ctemplar.app.fdroid.R;
@@ -74,18 +74,20 @@ import com.ctemplar.app.fdroid.utils.HtmlUtils;
 import com.ctemplar.app.fdroid.utils.PermissionUtils;
 import com.ctemplar.app.fdroid.utils.SpaceTokenizer;
 import com.ctemplar.app.fdroid.utils.ToastUtils;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
+
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import timber.log.Timber;
-
-import static com.ctemplar.app.fdroid.message.SendMessageActivity.ATTACHMENT_LIST;
-import static com.ctemplar.app.fdroid.message.SendMessageActivity.LAST_ACTION;
-import static com.ctemplar.app.fdroid.message.SendMessageActivity.MESSAGE_ID;
-import static com.ctemplar.app.fdroid.message.SendMessageActivity.PARENT_ID;
-import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.DRAFT;
-import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.OUTBOX;
-import static com.ctemplar.app.fdroid.repository.constant.MainFolderNames.SENT;
 
 public class SendMessageFragment extends Fragment implements View.OnClickListener, ActivityInterface {
     private EditText subjectEditText;
@@ -120,7 +122,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
     private final List<String> publicKeyList = new ArrayList<>();
 
     // COMPOSE OPTIONS
-    private final List<String> mailboxAddresses = new ArrayList<>();
+    private List<String> mailboxAddresses;
     private Date delayedDeliveryDate;
     private Date destructDeliveryDate;
     private Long deadDeliveryInHours;
@@ -274,6 +276,8 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         sendMessageEncryptIco = root.findViewById(R.id.fragment_send_message_encrypt_ico);
 
         composeEditText.setPaintFlags(composeEditText.getPaintFlags() & (~Paint.UNDERLINE_TEXT_FLAG));
+        messageSendAttachmentAdapter = new MessageSendAttachmentAdapter(activity);
+        messageAttachmentsRecycleView.setAdapter(messageSendAttachmentAdapter);
 
         // OnClick Listeners
         root.findViewById(R.id.fragment_send_message_send).setOnClickListener(this);
@@ -285,6 +289,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         root.findViewById(R.id.fragment_send_message_to_add_button).setOnClickListener(this);
         root.findViewById(R.id.fragment_send_message_back).setOnClickListener(this);
 
+        long bundleMailboxId = -1;
         Bundle args = getArguments();
         if (args != null) {
             String[] bundleEmails = args.getStringArray(Intent.EXTRA_EMAIL);
@@ -292,6 +297,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
             String[] bundleBCC = args.getStringArray(Intent.EXTRA_BCC);
             String bundleSubject = args.getString(Intent.EXTRA_SUBJECT);
             String bundleText = args.getString(Intent.EXTRA_TEXT);
+            bundleMailboxId = args.getLong(MAILBOX_ID, -1);
             lastAction = args.getString(LAST_ACTION);
             currentMessageId = args.getLong(MESSAGE_ID, -1);
             parentId = args.getLong(PARENT_ID, -1);
@@ -325,31 +331,22 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
             sendModel.openMessage(currentMessageId);
         }
 
-        int selectedAddress = 0;
-        int mailboxPosition = 0;
-        List<MailboxEntity> mailboxEntities = sendModel.getMailboxes();
-        for (MailboxEntity mailboxEntity : mailboxEntities) {
-            if (mailboxEntity.isEnabled()) {
-                mailboxAddresses.add(mailboxEntity.getEmail());
-                if (mailboxEntity.isDefault()) {
-                    selectedAddress = mailboxPosition;
-                }
-                ++mailboxPosition;
-            }
-        }
-
+        MailboxEntity defaultMailbox = EncryptUtils.getDefaultMailbox();
+        MailboxEntity bundleMailbox = sendModel.getMailboxById(bundleMailboxId);
+        mailboxAddresses = sendModel.getEnabledMailboxAddresses();
         SpinnerAdapter adapter = new ArrayAdapter<>(
                 activity,
                 R.layout.fragment_send_message_spinner,
                 mailboxAddresses
         );
         spinnerFrom.setAdapter(adapter);
-        spinnerFrom.setSelection(selectedAddress);
+        if (defaultMailbox != null) {
+            spinnerFrom.setSelection(mailboxAddresses.indexOf(defaultMailbox.getEmail()));
+        }
+        if (bundleMailbox != null) {
+            spinnerFrom.setSelection(mailboxAddresses.indexOf(bundleMailbox.getEmail()));
+        }
 
-        messageSendAttachmentAdapter = new MessageSendAttachmentAdapter(activity);
-        messageAttachmentsRecycleView.setAdapter(messageSendAttachmentAdapter);
-
-        MailboxEntity defaultMailbox = EncryptUtils.getDefaultMailbox();
         boolean isSignatureEnabled = sendModel.isSignatureEnabled();
         if (defaultMailbox != null && isSignatureEnabled) {
             String signatureText = defaultMailbox.getSignature();
@@ -1038,7 +1035,8 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
             @Nullable String[] bcc,
             @Nullable String lastAction,
             @Nullable AttachmentsEntity attachmentsEntity,
-            @Nullable Long parentId
+            @Nullable Long parentId,
+            long mailboxId
     ) {
         Bundle args = new Bundle();
         if (subject != null) {
@@ -1068,6 +1066,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         if (parentId != null) {
             args.putLong(PARENT_ID, parentId);
         }
+        args.putLong(MAILBOX_ID, mailboxId);
 
         SendMessageFragment fragment = new SendMessageFragment();
         fragment.setArguments(args);

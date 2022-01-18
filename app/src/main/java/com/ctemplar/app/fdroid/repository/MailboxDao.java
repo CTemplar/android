@@ -16,6 +16,9 @@ public interface MailboxDao {
     @Query("SELECT * FROM mailboxes")
     List<MailboxEntity> getAll();
 
+    @Query("SELECT email FROM mailboxes WHERE isEnabled = 1")
+    List<String> getEnabledMailboxAddresses();
+
     @Query("SELECT * FROM mailboxes WHERE isDefault = 1")
     MailboxEntity getDefault();
 

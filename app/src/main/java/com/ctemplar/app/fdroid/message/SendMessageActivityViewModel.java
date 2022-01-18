@@ -82,6 +82,14 @@ public class SendMessageActivityViewModel extends ViewModel {
         return mailboxDao.getAll();
     }
 
+    public List<String> getEnabledMailboxAddresses() {
+        return mailboxDao.getEnabledMailboxAddresses();
+    }
+
+    public MailboxEntity getDefaultMailbox() {
+        return mailboxDao.getDefault();
+    }
+
     public MailboxEntity getMailboxById(long id) {
         return mailboxDao.getById(id);
     }
