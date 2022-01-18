@@ -7,11 +7,11 @@ import mobileapp.ctemplar.com.ctemplarapp.BaseActivity;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 
 public class SendMessageActivity extends BaseActivity {
-
     public static final String PARENT_ID = "parent_id";
     public static final String MESSAGE_ID = "message_id";
     public static final String LAST_ACTION = "last_action";
     public static final String ATTACHMENT_LIST = "attachment_list";
+    public static final String MAILBOX_ID = "mailbox_id";
     private SendMessageFragment fragment;
 
     @Override
