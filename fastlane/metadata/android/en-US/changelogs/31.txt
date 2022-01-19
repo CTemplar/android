@@ -1,0 +1,3 @@
+* Include original message option
+* Turkish translation
+* Stability improvements and fixes
