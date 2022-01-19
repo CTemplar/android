@@ -65,10 +65,6 @@ public class ViewMessagesViewModel extends ViewModel {
         return userRepository.isAutoReadEmailEnabled();
     }
 
-    public void setAutoReadEmailEnabled(boolean isEnabled) {
-        userRepository.setAutoReadEmailEnabled(isEnabled);
-    }
-
     public MutableLiveData<ResponseStatus> getMoveToFolderStatus() {
         return moveToFolderStatus;
     }

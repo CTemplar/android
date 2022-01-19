@@ -478,6 +478,7 @@
     <string name="settings_auto_save_contacts">Automatically save contacts</string>
     <string name="settings_auto_save_drafts">Automatically save drafts</string>
     <string name="settings_auto_read_email">Automatically read email</string>
+    <string name="settings_include_original_message">Include original message text</string>
     <string name="settings_filters">Filters</string>
     <string name="settings_wb_list">Whitelist/Blacklist</string>
     <string name="settings_dark_mode">Dark mode</string>
@@ -620,6 +621,7 @@
     <string translatable="false" name="auto_save_contacts_enabled">auto_save_contacts_enabled</string>
     <string translatable="false" name="auto_save_drafts_enabled">auto_save_drafts_enabled</string>
     <string translatable="false" name="key_auto_read_email_enabled">key_auto_read_email_enabled</string>
+    <string translatable="false" name="key_include_original_message">key_original_message</string>
     <string translatable="false" name="setting_id">setting_id</string>
     <string translatable="false" name="free_plan">Free</string>
     <string translatable="false" name="prime_plan">Prime</string>
@@ -770,9 +772,10 @@
         <item>Português</item>
         <item>Deutsche</item>
         <item>Italiano</item>
+        <item>Română</item>
+        <item>Türkçe</item>
         <item>عربى</item>
         <item>中文</item>
-        <item>Română</item>
         <item>Русский</item>
         <item>Українська</item>
     </string-array>
@@ -785,9 +788,10 @@
         <item>pt</item>
         <item>de</item>
         <item>it</item>
+        <item>ro</item>
+        <item>tr</item>
         <item>ar</item>
         <item>zh</item>
-        <item>ro</item>
         <item>ru</item>
         <item>uk</item>
     </string-array>

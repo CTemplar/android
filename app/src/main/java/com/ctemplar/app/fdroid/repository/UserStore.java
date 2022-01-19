@@ -1,8 +1,8 @@
 package com.ctemplar.app.fdroid.repository;
 
-import java.net.Proxy;
-
 import com.ctemplar.app.fdroid.net.entity.UserEntity;
+
+import java.net.Proxy;
 
 public interface UserStore {
     void saveUserPref(String username, String password, String passwordHashed);
@@ -46,6 +46,9 @@ public interface UserStore {
 
     void setAutoReadEmailEnabled(boolean state);
     boolean isAutoReadEmailEnabled();
+
+    void setIncludeOriginalMessage(boolean state);
+    boolean isIncludeOriginalMessage();
 
     void setBlockExternalImagesEnabled(boolean state);
     boolean isBlockExternalImagesEnabled();
