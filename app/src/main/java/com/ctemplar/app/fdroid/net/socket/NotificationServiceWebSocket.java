@@ -20,7 +20,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.TimeUnit;
 
-import io.sentry.Sentry;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -80,10 +79,10 @@ public class NotificationServiceWebSocket extends WebSocketListener {
         reconnect();
     }
 
+    // If response != null then connection failure, otherwise - read/write failure
     @Override
     public void onFailure(@NotNull WebSocket webSocket, @NotNull Throwable t, Response response) {
         Timber.e(t, "failure");
-        Sentry.captureException(t);
         if (response != null && response.code() == 403) {
             shutdown();
             return;
@@ -145,6 +144,7 @@ public class NotificationServiceWebSocket extends WebSocketListener {
         }
         OkHttpClient client = OkHttpClientFactory.newClient(userStore).newBuilder()
                 .readTimeout(0,  TimeUnit.MILLISECONDS)
+                .pingInterval(25, TimeUnit.SECONDS)
                 .build();
 
         Request request = new Request.Builder()
