@@ -444,7 +444,8 @@ public class MainActivity extends AppCompatActivity
                     new String[]{},
                     null,
                     new AttachmentsEntity(),
-                    null
+                    null,
+                    -1
             );
             showActivityOrFragment(sendToEmailIntent, fragmentSendToEmail);
         }
