@@ -388,6 +388,8 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesAdap
             } else {
                 binding.usernameTextView.setText(userDisplay.getEmail());
             }
+            Map<String, String> participants = message.getParticipants();
+            binding.usernameTextView.setText(TextUtils.join(", ",participants.values()));
 
             // check for last action (reply, reply all, forward)
             String lastActionThread = message.getLastActionThread();

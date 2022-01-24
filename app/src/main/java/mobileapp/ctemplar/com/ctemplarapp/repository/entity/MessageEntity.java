@@ -6,6 +6,7 @@ import androidx.room.PrimaryKey;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Entity(tableName = "messages")
 public class MessageEntity {
@@ -20,6 +21,8 @@ public class MessageEntity {
     private List<UserDisplayEntity> receiverDisplayList;
     private List<UserDisplayEntity> ccDisplayList;
     private List<UserDisplayEntity> bccDisplayList;
+    private List<UserDisplayEntity> replyToDisplayList;
+    private Map<String, String> participants;
     private boolean hasChildren;
     private int childrenCount;
     private String subject;
@@ -59,7 +62,7 @@ public class MessageEntity {
     public MessageEntity() {
     }
 
-    public MessageEntity(long id, EncryptionMessageEntity encryptionMessage, String sender, boolean hasAttachments, List<AttachmentEntity> attachments, Date createdAt, UserDisplayEntity senderDisplay, List<UserDisplayEntity> receiverDisplayList, List<UserDisplayEntity> ccDisplayList, List<UserDisplayEntity> bccDisplayList, boolean hasChildren, int childrenCount, String subject, String content, List<String> receivers, List<String> cc, List<String> bcc, String folderName, Date updatedAt, Date destructDate, Date delayedDelivery, Long deadManDuration, boolean isRead, boolean send, boolean isStarred, Date sentAt, boolean isEncrypted, boolean isSubjectEncrypted, boolean isProtected, boolean isVerified, boolean isHtml, String hash, List<String> spamReason, String lastAction, String lastActionThread, long mailboxId, String parent, String decryptedSubject, boolean hasSentChild, boolean hasInboxChild) {
+    public MessageEntity(long id, EncryptionMessageEntity encryptionMessage, String sender, boolean hasAttachments, List<AttachmentEntity> attachments, Date createdAt, UserDisplayEntity senderDisplay, List<UserDisplayEntity> receiverDisplayList, List<UserDisplayEntity> ccDisplayList, List<UserDisplayEntity> bccDisplayList, List<UserDisplayEntity> replyToDisplayList, Map<String, String> participants, boolean hasChildren, int childrenCount, String subject, String content, List<String> receivers, List<String> cc, List<String> bcc, String folderName, Date updatedAt, Date destructDate, Date delayedDelivery, Long deadManDuration, boolean isRead, boolean send, boolean isStarred, Date sentAt, boolean isEncrypted, boolean isSubjectEncrypted, boolean isProtected, boolean isVerified, boolean isHtml, String hash, List<String> spamReason, String lastAction, String lastActionThread, long mailboxId, String parent, String decryptedSubject, boolean hasSentChild, boolean hasInboxChild) {
         this.id = id;
         this.encryptionMessage = encryptionMessage;
         this.sender = sender;
@@ -70,6 +73,8 @@ public class MessageEntity {
         this.receiverDisplayList = receiverDisplayList;
         this.ccDisplayList = ccDisplayList;
         this.bccDisplayList = bccDisplayList;
+        this.replyToDisplayList = replyToDisplayList;
+        this.participants = participants;
         this.hasChildren = hasChildren;
         this.childrenCount = childrenCount;
         this.subject = subject;
@@ -97,7 +102,6 @@ public class MessageEntity {
         this.lastActionThread = lastActionThread;
         this.mailboxId = mailboxId;
         this.parent = parent;
-
         this.decryptedSubject = decryptedSubject;
         this.hasSentChild = hasSentChild;
         this.hasInboxChild = hasInboxChild;
@@ -181,6 +185,22 @@ public class MessageEntity {
 
     public void setBccDisplayList(List<UserDisplayEntity> bccDisplayList) {
         this.bccDisplayList = bccDisplayList;
+    }
+
+    public List<UserDisplayEntity> getReplyToDisplayList() {
+        return replyToDisplayList;
+    }
+
+    public void setReplyToDisplayList(List<UserDisplayEntity> replyToDisplayList) {
+        this.replyToDisplayList = replyToDisplayList;
+    }
+
+    public Map<String, String> getParticipants() {
+        return participants;
+    }
+
+    public void setParticipants(Map<String, String> participants) {
+        this.participants = participants;
     }
 
     public boolean isHasChildren() {
