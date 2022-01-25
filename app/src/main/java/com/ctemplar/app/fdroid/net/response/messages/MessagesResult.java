@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 public class MessagesResult {
     @SerializedName("id")
@@ -39,6 +40,9 @@ public class MessagesResult {
 
     @SerializedName("reply_to_display")
     private List<UserDisplayResponse> replyToDisplay;
+
+    @SerializedName("participants")
+    private Map<String, String> participants;
 
     @SerializedName("has_children")
     private boolean hasChildren;
@@ -169,6 +173,10 @@ public class MessagesResult {
 
     public List<UserDisplayResponse> getReplyToDisplay() {
         return replyToDisplay;
+    }
+
+    public Map<String, String> getParticipants() {
+        return participants;
     }
 
     public boolean isHasChildren() {

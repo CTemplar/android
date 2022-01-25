@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 public class MessageProvider {
     private long id;
@@ -29,6 +30,8 @@ public class MessageProvider {
     private List<UserDisplayProvider> receiverDisplayList;
     private List<UserDisplayProvider> ccDisplayList;
     private List<UserDisplayProvider> bccDisplayList;
+    private List<UserDisplayProvider> replyToDisplayList;
+    private Map<String, String> participants;
     private boolean hasChildren;
     private int childrenCount;
     private String subject;
@@ -63,7 +66,7 @@ public class MessageProvider {
     public MessageProvider() {
     }
 
-    public MessageProvider(long id, EncryptionMessageProvider encryptionMessage, String sender, boolean hasAttachments, List<AttachmentProvider> attachments, Date createdAt, UserDisplayProvider senderDisplay, List<UserDisplayProvider> receiverDisplayList, List<UserDisplayProvider> ccDisplayList, List<UserDisplayProvider> bccDisplayList, boolean hasChildren, int childrenCount, String subject, String content, String[] receivers, String[] cc, String[] bcc, String folderName, Date updatedAt, Date destructDate, Date delayedDelivery, Long deadManDuration, boolean isRead, boolean send, boolean isStarred, Date sentAt, boolean isEncrypted, boolean isSubjectEncrypted, boolean isProtected, boolean isVerified, boolean isHtml, String hash, List<String> spamReason, String lastAction, String lastActionThread, long mailboxId, String parent, boolean isSubjectDecrypted, String decryptedSubject) {
+    public MessageProvider(long id, EncryptionMessageProvider encryptionMessage, String sender, boolean hasAttachments, List<AttachmentProvider> attachments, Date createdAt, UserDisplayProvider senderDisplay, List<UserDisplayProvider> receiverDisplayList, List<UserDisplayProvider> ccDisplayList, List<UserDisplayProvider> bccDisplayList, List<UserDisplayProvider> replyToDisplayList, Map<String, String> participants, boolean hasChildren, int childrenCount, String subject, String content, String[] receivers, String[] cc, String[] bcc, String folderName, Date updatedAt, Date destructDate, Date delayedDelivery, Long deadManDuration, boolean isRead, boolean send, boolean isStarred, Date sentAt, boolean isEncrypted, boolean isSubjectEncrypted, boolean isProtected, boolean isVerified, boolean isHtml, String hash, List<String> spamReason, String lastAction, String lastActionThread, long mailboxId, String parent, boolean isSubjectDecrypted, String decryptedSubject) {
         this.id = id;
         this.encryptionMessage = encryptionMessage;
         this.sender = sender;
@@ -74,6 +77,8 @@ public class MessageProvider {
         this.receiverDisplayList = receiverDisplayList;
         this.ccDisplayList = ccDisplayList;
         this.bccDisplayList = bccDisplayList;
+        this.replyToDisplayList = replyToDisplayList;
+        this.participants = participants;
         this.hasChildren = hasChildren;
         this.childrenCount = childrenCount;
         this.subject = subject;
@@ -102,7 +107,6 @@ public class MessageProvider {
         this.mailboxId = mailboxId;
         this.parent = parent;
         this.isSubjectDecrypted = isSubjectDecrypted;
-
         this.decryptedSubject = decryptedSubject;
     }
 
@@ -188,6 +192,22 @@ public class MessageProvider {
 
     public void setBccDisplayList(List<UserDisplayProvider> bccDisplayList) {
         this.bccDisplayList = bccDisplayList;
+    }
+
+    public List<UserDisplayProvider> getReplyToDisplayList() {
+        return replyToDisplayList;
+    }
+
+    public void setReplyToDisplayList(List<UserDisplayProvider> replyToDisplayList) {
+        this.replyToDisplayList = replyToDisplayList;
+    }
+
+    public Map<String, String> getParticipants() {
+        return participants;
+    }
+
+    public void setParticipants(Map<String, String> participants) {
+        this.participants = participants;
     }
 
     public boolean isHasChildren() {
@@ -577,6 +597,8 @@ public class MessageProvider {
         messageProvider.receiverDisplayList = convertUserDisplayListFromEntityToProvider(message.getReceiverDisplayList());
         messageProvider.ccDisplayList = convertUserDisplayListFromEntityToProvider(message.getCcDisplayList());
         messageProvider.bccDisplayList = convertUserDisplayListFromEntityToProvider(message.getBccDisplayList());
+        messageProvider.replyToDisplayList = convertUserDisplayListFromEntityToProvider(message.getReplyToDisplayList());
+        messageProvider.participants = message.getParticipants();
         messageProvider.hasChildren = message.isHasChildren();
         messageProvider.childrenCount = message.getChildrenCount();
         if (message.getEncryptionMessage() == null) {
@@ -697,6 +719,8 @@ public class MessageProvider {
         messageEntity.setReceiverDisplayList(convertUserDisplayListFromResponseToEntities(message.getReceiverDisplay()));
         messageEntity.setCcDisplayList(convertUserDisplayListFromResponseToEntities(message.getCcDisplay()));
         messageEntity.setBccDisplayList(convertUserDisplayListFromResponseToEntities(message.getBccDisplay()));
+        messageEntity.setReplyToDisplayList(convertUserDisplayListFromResponseToEntities(message.getReplyToDisplay()));
+        messageEntity.setParticipants(message.getParticipants());
         messageEntity.setHasChildren(message.isHasChildren());
         messageEntity.setChildrenCount(message.getChildrenCount());
         messageEntity.setSubject(message.getSubject());
