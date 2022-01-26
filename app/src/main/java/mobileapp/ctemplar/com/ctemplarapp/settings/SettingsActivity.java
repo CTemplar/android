@@ -630,6 +630,21 @@ public class SettingsActivity extends BaseActivity {
         }
     }
 
+    public static class PrivacyFragment extends BasePreferenceFragment {
+        @Override
+        public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+            setPreferencesFromResource(R.xml.privacy_settings, rootKey);
+            SwitchPreference hideAppPreviewSwitchPreference = findPreference(getString(R.string.hide_app_preview_enabled));
+            if (hideAppPreviewSwitchPreference != null) {
+                hideAppPreviewSwitchPreference.setOnPreferenceChangeListener((preference, newValue) -> {
+                    userStore.setHideAppPreview((boolean) newValue);
+                    ToastUtils.showToast(getActivity(), R.string.please_restart_app_to_apply_changes);
+                    return true;
+                });
+            }
+        }
+    }
+
     public static class PhishingProtectionFragment extends BasePreferenceFragment {
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {

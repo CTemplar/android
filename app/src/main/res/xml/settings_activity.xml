@@ -80,6 +80,10 @@
             android:title="@string/proxy"
             android:fragment="mobileapp.ctemplar.com.ctemplarapp.settings.SettingsActivity$ProxyFragment" />
 
+        <PreferenceScreen
+            android:title="@string/privacy"
+            android:fragment="mobileapp.ctemplar.com.ctemplarapp.settings.SettingsActivity$PrivacyFragment" />
+
     </PreferenceCategory>
 
     <PreferenceCategory

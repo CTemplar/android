@@ -327,18 +327,6 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
 
-    <!-- SETTINGS -->
-    <string name="txt_settings">Settings</string>
-    <string name="txt_display_name">Display name</string>
-    <string name="txt_type_your_name">Type your name</string>
-    <string name="txt_type_signature">Type your signature</string>
-    <string name="txt_signature_enabled">Signature enabled</string>
-    <string name="change_password_reset_data">Delete data</string>
-    <string name="toast_email_not_valid">Email is not valid</string>
-    <string name="storage_limit_info">%1$s of %2$s</string>
-    <string name="external_resources_restrictions">External resources restrictions</string>
-    <string name="warn_before_opening_external_links">Warn before opening external links</string>
-
     <!-- PIN LOCK -->
     <string name="pin_lock">PIN Lock</string>
     <string name="pin_lock_enable">Enable PIN Lock</string>
@@ -423,6 +411,10 @@
     <string name="proxy_enabled">Proxy enabled</string>
     <string name="proxy_notes"><![CDATA[<font color="#939191">Note. If after clicking on the \"Use Tor\" you see \"No such app found\", then you should allow an additional repository. Open the \"F-Droid -> Settings -> Repositories\" and switch on \"Guardian Project Official Releases\".</font>]]></string>
 
+    <!-- SECURITY -->
+    <string name="privacy">Privacy</string>
+    <string name="hide_app_preview">Hide app preview</string>
+
     <!-- DOMAINS -->
     <string name="domain">Domain</string>
     <string name="domains">Domains</string>
@@ -499,6 +491,16 @@
     <string name="settings_app_version">App version</string>
     <string name="settings_disable_contacts_encryption">Are you sure you want to disable contacts encryption?</string>
     <string name="settings_disable_contacts_encryption_note">Disabling contacts encryption can take several minutes depending upon the number of contacts you have. After you confirm, all your contacts will be decrypted on your device and saved on the server.</string>
+    <string name="txt_settings">Settings</string>
+    <string name="txt_display_name">Display name</string>
+    <string name="txt_type_your_name">Type your name</string>
+    <string name="txt_type_signature">Type your signature</string>
+    <string name="txt_signature_enabled">Signature enabled</string>
+    <string name="change_password_reset_data">Delete data</string>
+    <string name="toast_email_not_valid">Email is not valid</string>
+    <string name="storage_limit_info">%1$s of %2$s</string>
+    <string name="external_resources_restrictions">External resources restrictions</string>
+    <string name="warn_before_opening_external_links">Warn before opening external links</string>
     <string name="txt_contact_decryption">Contact decryption..</string>
     <string name="toast_saved">Saved</string>
     <string name="toast_contacts_encrypted">Contacts are encrypted</string>
@@ -610,6 +612,7 @@
     <string translatable="false" name="proxy_type_key">proxy_type_key</string>
     <string translatable="false" name="proxy_host_key">proxy_host_key</string>
     <string translatable="false" name="proxy_port_key">proxy_port_key</string>
+    <string translatable="false" name="hide_app_preview_enabled">hide_app_preview_enabled</string>
     <string translatable="false" name="setting_keys">setting_keys</string>
     <string translatable="false" name="domains_key">domains_key</string>
     <string translatable="false" name="email_addresses">email_addresses</string>
