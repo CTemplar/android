@@ -19,15 +19,13 @@ import com.ctemplar.app.fdroid.repository.UserStore;
 
 public class ThemeUtils {
     public static void setTheme(Activity activity) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
-                && Build.VERSION.SDK_INT < Build.VERSION_CODES.M
-        ) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             int color = ContextCompat.getColor(activity, R.color.colorDarkBlue);
             activity.getWindow().setStatusBarColor(color);
         }
         UserStore userStore = CTemplarApp.getUserStore();
         AppCompatDelegate.setDefaultNightMode(userStore.getDarkModeValue());
-        if (userStore.isPINLockEnabled()) {
+        if (userStore.isPINLockEnabled() || userStore.isHideAppPreview()) {
             activity.getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
                     WindowManager.LayoutParams.FLAG_SECURE);
         }

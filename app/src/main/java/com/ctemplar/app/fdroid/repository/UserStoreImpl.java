@@ -54,6 +54,7 @@ public class UserStoreImpl implements UserStore {
     private static final String KEY_PROXY_PORT = "key_proxy_port";
 
     private static final String KEY_DARK_MODE = "key_dark_mode";
+    private static final String KEY_HIDE_APP_PREVIEW = "key_hide_app_preview";
     private static final String KEY_LANGUAGE = "key_language";
 
     public static UserStoreImpl getInstance(Context context) {
@@ -432,6 +433,16 @@ public class UserStoreImpl implements UserStore {
             default:
                 return "auto";
         }
+    }
+
+    @Override
+    public void setHideAppPreview(boolean value) {
+        preferences.edit().putBoolean(KEY_HIDE_APP_PREVIEW, value).apply();
+    }
+
+    @Override
+    public boolean isHideAppPreview() {
+        return preferences.getBoolean(KEY_HIDE_APP_PREVIEW, false);
     }
 
     @Override
