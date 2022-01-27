@@ -49,6 +49,7 @@ import com.ctemplar.app.fdroid.settings.filters.FiltersActivity;
 import com.ctemplar.app.fdroid.settings.keys.KeysActivity;
 import com.ctemplar.app.fdroid.settings.mailboxes.MailboxesActivity;
 import com.ctemplar.app.fdroid.settings.password.ChangePasswordActivity;
+import com.ctemplar.app.fdroid.utils.AppUtils;
 import com.ctemplar.app.fdroid.utils.EditTextUtils;
 import com.ctemplar.app.fdroid.utils.EncodeUtils;
 import com.ctemplar.app.fdroid.utils.HtmlUtils;
@@ -347,6 +348,22 @@ public class SettingsActivity extends BaseActivity {
                     Toast.makeText(getActivity(), getString(R.string.please_restart_app_to_apply_changes), Toast.LENGTH_SHORT).show();
                     return true;
                 });
+            }
+        }
+    }
+
+    public static class ReferralCodeFragment extends BasePreferenceFragment {
+        @Override
+        public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+            setPreferencesFromResource(R.xml.referral_code_settings, rootKey);
+            Preference referralCodePreference = findPreference(getString(R.string.referral_code_key));
+            if (referralCodePreference != null) {
+                referralCodePreference.setOnPreferenceClickListener(preference -> {
+                    AppUtils.setSystemClipboard(getActivity(), referralCodePreference.getTitle().toString());
+                    return true;
+                });
+                referralCodePreference.setSummary(sharedPreferences.getString(
+                        getString(R.string.referral_code_key), getString(R.string.referral_code)));
             }
         }
     }
@@ -755,9 +772,10 @@ public class SettingsActivity extends BaseActivity {
 
         sharedPreferences.edit()
                 .putString(getString(R.string.recovery_email), recoveryEmail)
-                .putBoolean(getString(R.string.anti_phishing_enabled), settingsResponse.isAntiPhishingEnabled())
                 .putString(getString(R.string.anti_phishing_key), settingsResponse.getAntiPhishingPhrase())
                 .putString(getString(R.string.notification_email_key), settingsResponse.getNotificationEmail())
+                .putString(getString(R.string.referral_code_key), settingsResponse.getReferralCode())
+                .putBoolean(getString(R.string.anti_phishing_enabled), settingsResponse.isAntiPhishingEnabled())
                 .putBoolean(getString(R.string.recovery_email_enabled), EditTextUtils.isNotEmpty(recoveryEmail))
                 .putBoolean(getString(R.string.auto_save_contacts_enabled), settingsResponse.isSaveContacts())
                 .putBoolean(getString(R.string.key_auto_read_email_enabled), settingsResponse.isAutoRead())

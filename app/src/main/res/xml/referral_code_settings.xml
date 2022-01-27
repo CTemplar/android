@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <Preference
+        android:title="@string/referral_code"
+        android:summary="@string/referral_code"
+        android:key="@string/referral_code_key" />
+
+    <Preference
+        android:summary="@string/referral_code_description"
+        android:key="@string/referral_code_key" />
+</PreferenceScreen>
