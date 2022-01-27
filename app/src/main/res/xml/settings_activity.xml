@@ -41,6 +41,10 @@
             android:title="@string/settings_report_bugs"
             android:fragment="mobileapp.ctemplar.com.ctemplarapp.settings.SettingsActivity$ReportBugsFragment" />
 
+        <PreferenceScreen
+            android:title="@string/referral_code"
+            android:fragment="mobileapp.ctemplar.com.ctemplarapp.settings.SettingsActivity$ReferralCodeFragment" />
+
     </PreferenceCategory>
 
     <PreferenceCategory
