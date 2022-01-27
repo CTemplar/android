@@ -447,6 +447,11 @@
     <!-- USERS -->
     <string name="users">Users</string>
 
+    <!-- PROMO CODES -->
+    <string name="referral_code">Referral Code</string>
+    <string name="referral_code_description">Get one month of Prime membership free for every Prime sign up made using your referral code.</string>
+    <string name="invitation_codes">Invitation Codes</string>
+
     <!-- SETTINGS -->
     <string name="settings_general">General settings</string>
     <string name="settings_recovery_email">Recovery email</string>
@@ -617,6 +622,7 @@
     <string translatable="false" name="domains_key">domains_key</string>
     <string translatable="false" name="email_addresses">email_addresses</string>
     <string translatable="false" name="helpdesk_key">helpdesk_key</string>
+    <string translatable="false" name="referral_code_key">referral_code_key</string>
     <string translatable="false" name="local_storage_limit">local_storage_limit</string>
     <string translatable="false" name="recovery_email_holder">recovery_email_holder</string>
     <string translatable="false" name="contacts_encryption_enabled">contacts_encryption_enabled</string>
