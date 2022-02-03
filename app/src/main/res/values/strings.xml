@@ -163,6 +163,8 @@
     <!-- VIEW MESSAGES -->
     <string name="txt_more_details">More details</string>
     <string name="txt_less_details">Less details</string>
+    <string name="unsubscribe">Unsubscribe</string>
+    <string name="unsubscribe_mailing_description">Are you sure you\'d like to stop receiving similar messages?</string>
     <string name="toast_message_marked_unread">Message marked as unread</string>
     <string name="toast_message_marked_read">Message marked as read</string>
     <string name="toast_message_moved_to">Message moved to %1$s</string>

@@ -110,6 +110,15 @@ public class MessagesResult {
     @SerializedName("is_html")
     private boolean isHtml;
 
+    @SerializedName("is_autocrypt_encrypted")
+    private boolean isAutocryptEncrypted;
+
+    @SerializedName("isSignVerified")
+    private boolean isSignVerified;
+
+    @SerializedName("incoming_headers")
+    private String incomingHeaders;
+
     @SerializedName("hash")
     private String hash;
 
@@ -265,6 +274,18 @@ public class MessagesResult {
 
     public boolean isHtml() {
         return isHtml;
+    }
+
+    public boolean isAutocryptEncrypted() {
+        return isAutocryptEncrypted;
+    }
+
+    public boolean isSignVerified() {
+        return isSignVerified;
+    }
+
+    public String getIncomingHeaders() {
+        return incomingHeaders;
     }
 
     public String getHash() {
