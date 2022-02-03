@@ -46,6 +46,15 @@ public class EditTextUtils {
         return TextUtils.join(",", emails);
     }
 
+    public static String extractUnsubscribeUrl(CharSequence charSequence) {
+        Pattern pattern = Pattern.compile("http(s)[^>]+");
+        Matcher matcher = pattern.matcher(charSequence);
+        if (matcher.find()) {
+            return matcher.group();
+        }
+        return "";
+    }
+
     public static boolean isTextValid(String text) {
         Pattern pattern = Pattern.compile("^[a-zA-Z0-9-_. ]+$");
         Matcher matcher = pattern.matcher(text);
