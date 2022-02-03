@@ -32,6 +32,7 @@ import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserStore;
 import mobileapp.ctemplar.com.ctemplarapp.repository.constant.MessageActions;
+import mobileapp.ctemplar.com.ctemplarapp.repository.dto.header.IncomingHeadersDTO;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.AttachmentProvider;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.EncryptionMessageProvider;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageProvider;
@@ -136,6 +137,7 @@ public class MessagesRecyclerViewAdapter extends RecyclerView.Adapter<MessagesRe
         final TextView statusTextView;
         final TextView folderNameTextView;
         final TextView detailsTextView;
+        final TextView unsubscribeTextView;
         final TextView senderEmailTextView;
         final TextView receiverEmailTextView;
         final View ccLayout;
@@ -184,6 +186,7 @@ public class MessagesRecyclerViewAdapter extends RecyclerView.Adapter<MessagesRe
             statusTextView = expandedView.findViewById(R.id.item_message_view_expanded_status);
             folderNameTextView = expandedView.findViewById(R.id.item_message_view_expanded_folder_name_text_view);
             detailsTextView = expandedView.findViewById(R.id.item_message_view_expanded_details);
+            unsubscribeTextView = expandedView.findViewById(R.id.item_message_view_expanded_unsubscribe_text_view);
             senderEmailTextView = expandedView.findViewById(R.id.item_message_view_from_email);
             receiverEmailTextView = expandedView.findViewById(R.id.item_message_view_to_email);
             ccLayout = expandedView.findViewById(R.id.item_message_view_CC_layout);
@@ -216,6 +219,7 @@ public class MessagesRecyclerViewAdapter extends RecyclerView.Adapter<MessagesRe
             String lastAction = item.getLastAction();
             String folderName = item.getFolderName();
             Date messageDate = DateUtils.getDeliveryDate(item);
+            IncomingHeadersDTO incomingHeaders = item.getIncomingHeaders();
 
             boolean isHtml = item.isHtml();
             boolean isVerified = item.isVerified();
@@ -289,6 +293,14 @@ public class MessagesRecyclerViewAdapter extends RecyclerView.Adapter<MessagesRe
 
             String receiversDisplayString = userDisplayListToString(receiverDisplayList);
             receiverEmailTextView.setText(receiversDisplayString);
+
+            if (incomingHeaders == null || incomingHeaders.getUnsubscribeUrl() == null) {
+                unsubscribeTextView.setVisibility(View.GONE);
+            } else {
+                unsubscribeTextView.setVisibility(View.VISIBLE);
+                unsubscribeTextView.setOnClickListener(v -> DialogUtils.showUnsubscribeMailingDialog(
+                        context, incomingHeaders.getUnsubscribeUrl()));
+            }
 
             // check for cc
             if (!ccDisplayList.isEmpty()) {
