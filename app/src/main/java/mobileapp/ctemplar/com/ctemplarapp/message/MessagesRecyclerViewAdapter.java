@@ -32,7 +32,7 @@ import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserStore;
 import mobileapp.ctemplar.com.ctemplarapp.repository.constant.MessageActions;
-import mobileapp.ctemplar.com.ctemplarapp.repository.dto.header.IncomingHeadersDTO;
+import mobileapp.ctemplar.com.ctemplarapp.repository.dto.headers.IncomingHeadersDTO;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.AttachmentProvider;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.EncryptionMessageProvider;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageProvider;

@@ -51,6 +51,7 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserStore;
 import mobileapp.ctemplar.com.ctemplarapp.settings.domains.DomainsActivity;
 import mobileapp.ctemplar.com.ctemplarapp.settings.filters.FiltersActivity;
+import mobileapp.ctemplar.com.ctemplarapp.settings.invites.InvitationCodesActivity;
 import mobileapp.ctemplar.com.ctemplarapp.settings.keys.KeysActivity;
 import mobileapp.ctemplar.com.ctemplarapp.settings.mailboxes.MailboxesActivity;
 import mobileapp.ctemplar.com.ctemplarapp.settings.password.ChangePasswordActivity;
@@ -179,6 +180,13 @@ public class SettingsActivity extends BaseActivity {
                 whiteBlackList.setOnPreferenceClickListener(preference -> {
                     Intent whiteBlackList1 = new Intent(getActivity(), WhiteBlackListActivity.class);
                     startActivity(whiteBlackList1);
+                    return true;
+                });
+            }
+            Preference invitationCodes = findPreference(getString(R.string.invitation_codes_key));
+            if (invitationCodes != null) {
+                invitationCodes.setOnPreferenceClickListener(preference -> {
+                    startActivity(new Intent(getActivity(), InvitationCodesActivity.class));
                     return true;
                 });
             }

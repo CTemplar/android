@@ -13,7 +13,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.MessageAttachmen
 import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.MessagesResult;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.UserDisplayResponse;
 import mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames;
-import mobileapp.ctemplar.com.ctemplarapp.repository.dto.header.IncomingHeadersDTO;
+import mobileapp.ctemplar.com.ctemplarapp.repository.dto.headers.IncomingHeadersDTO;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.AttachmentEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MessageEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.UserDisplayEntity;

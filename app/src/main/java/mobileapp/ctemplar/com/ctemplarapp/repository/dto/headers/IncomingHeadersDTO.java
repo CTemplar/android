@@ -1,4 +1,4 @@
-package mobileapp.ctemplar.com.ctemplarapp.repository.dto.header;
+package mobileapp.ctemplar.com.ctemplarapp.repository.dto.headers;
 
 import java.util.Map;
 
