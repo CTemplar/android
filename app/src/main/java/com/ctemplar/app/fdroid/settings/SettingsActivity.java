@@ -176,6 +176,13 @@ public class SettingsActivity extends BaseActivity {
                     return true;
                 });
             }
+            Preference invitationCodes = findPreference(getString(R.string.invitation_codes_key));
+            if (invitationCodes != null) {
+                invitationCodes.setOnPreferenceClickListener(preference -> {
+                    startActivity(new Intent(getActivity(), InvitationCodesActivity.class));
+                    return true;
+                });
+            }
             Preference manageFolders = findPreference(getString(R.string.manage_folders));
             if (manageFolders != null) {
                 manageFolders.setOnPreferenceClickListener(preference -> {

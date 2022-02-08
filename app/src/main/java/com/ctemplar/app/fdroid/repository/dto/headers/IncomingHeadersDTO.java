@@ -1,4 +1,4 @@
-package com.ctemplar.app.fdroid.repository.dto.header;
+package com.ctemplar.app.fdroid.repository.dto.headers;
 
 import java.util.Map;
 

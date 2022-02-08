@@ -10,7 +10,7 @@ import java.util.Map;
 
 import javax.annotation.Nullable;
 
-import com.ctemplar.app.fdroid.repository.dto.header.IncomingHeadersDTO;
+import com.ctemplar.app.fdroid.repository.dto.headers.IncomingHeadersDTO;
 import timber.log.Timber;
 
 public class IncomingHeadersMapper {
@@ -30,7 +30,7 @@ public class IncomingHeadersMapper {
 
     @Nullable
     public static IncomingHeadersDTO mapToDTO(@Nullable String value) {
-        if (value == null) {
+        if (value == null || value.length() == 0) {
             return null;
         }
         JSONArray jsonArray;

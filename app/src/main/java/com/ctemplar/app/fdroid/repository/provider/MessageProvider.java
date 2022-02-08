@@ -13,7 +13,7 @@ import com.ctemplar.app.fdroid.net.response.messages.MessageAttachment;
 import com.ctemplar.app.fdroid.net.response.messages.MessagesResult;
 import com.ctemplar.app.fdroid.net.response.messages.UserDisplayResponse;
 import com.ctemplar.app.fdroid.repository.constant.MainFolderNames;
-import com.ctemplar.app.fdroid.repository.dto.header.IncomingHeadersDTO;
+import com.ctemplar.app.fdroid.repository.dto.headers.IncomingHeadersDTO;
 import com.ctemplar.app.fdroid.repository.entity.AttachmentEntity;
 import com.ctemplar.app.fdroid.repository.entity.MessageEntity;
 import com.ctemplar.app.fdroid.repository.entity.UserDisplayEntity;

@@ -32,7 +32,7 @@ import com.ctemplar.app.fdroid.CTemplarApp;
 import com.ctemplar.app.fdroid.R;
 import com.ctemplar.app.fdroid.repository.UserStore;
 import com.ctemplar.app.fdroid.repository.constant.MessageActions;
-import com.ctemplar.app.fdroid.repository.dto.header.IncomingHeadersDTO;
+import com.ctemplar.app.fdroid.repository.dto.headers.IncomingHeadersDTO;
 import com.ctemplar.app.fdroid.repository.provider.AttachmentProvider;
 import com.ctemplar.app.fdroid.repository.provider.EncryptionMessageProvider;
 import com.ctemplar.app.fdroid.repository.provider.MessageProvider;

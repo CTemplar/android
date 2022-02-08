@@ -449,4 +449,13 @@ public interface RestService {
 
     @DELETE("users/app-token/{token}/")
     Observable<Response<Void>> deleteAppToken(@Path("token") String token);
+
+    @POST("users/invites/")
+    Single<InviteCodeResponse> generateInviteCode();
+
+    @GET("users/invites/")
+    Single<PagableResponse<InviteCodeResponse>> getInviteCodes(
+            @Query("limit") int limit,
+            @Query("offset") int offset
+    );
 }
