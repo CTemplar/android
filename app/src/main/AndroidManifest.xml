@@ -136,6 +136,7 @@
         <activity android:name=".settings.keys.KeysActivity" />
         <activity android:name=".settings.keys.AddMailboxKeyActivity" />
         <activity android:name=".settings.keys.ImportMailboxKeyActivity" />
+        <activity android:name=".settings.invites.InvitationCodesActivity" />
         <activity android:name=".billing.view.SubscriptionActivity" />
 
         <meta-data

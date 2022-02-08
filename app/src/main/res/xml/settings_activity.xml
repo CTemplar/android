@@ -45,6 +45,10 @@
             android:title="@string/referral_code"
             android:fragment="mobileapp.ctemplar.com.ctemplarapp.settings.SettingsActivity$ReferralCodeFragment" />
 
+        <Preference
+            android:title="@string/invitation_codes"
+            android:key="@string/invitation_codes_key" />
+
     </PreferenceCategory>
 
     <PreferenceCategory

@@ -453,6 +453,10 @@
     <string name="referral_code">Referral Code</string>
     <string name="referral_code_description">Get one month of Prime membership free for every Prime sign up made using your referral code.</string>
     <string name="invitation_codes">Invitation Codes</string>
+    <string name="generate_code">Generate a code</string>
+    <string name="code">Code</string>
+    <string name="expiration_date">Expiration Date</string>
+    <string name="is_used">Is Used?</string>
 
     <!-- SETTINGS -->
     <string name="settings_general">General settings</string>
@@ -599,6 +603,7 @@
     <string translatable="false" name="pin_lock_key">pin_lock_key</string>
     <string translatable="false" name="signature_key">signature_key</string>
     <string translatable="false" name="filters_key">filters_key</string>
+    <string translatable="false" name="invitation_codes_key">invitation_codes_key</string>
     <string translatable="false" name="dark_mode_key">dark_mode_key</string>
     <string translatable="false" name="language_key">language_key</string>
     <string translatable="false" name="block_external_images_key">block_external_images_key</string>

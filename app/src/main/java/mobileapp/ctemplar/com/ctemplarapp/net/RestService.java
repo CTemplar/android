@@ -49,9 +49,11 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.AddFirebaseTokenResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.CaptchaResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.CaptchaVerifyResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.CheckUsernameResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.PagableResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.SubscriptionMobileUpgradeResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.domains.CustomDomainResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.domains.CustomDomainsResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.invites.InviteCodeResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.keys.KeysResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.RecoverPasswordResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.SignInResponse;
@@ -454,4 +456,13 @@ public interface RestService {
 
     @DELETE("users/app-token/{token}/")
     Observable<Response<Void>> deleteFirebaseToken(@Path("token") String token);
+
+    @POST("users/invites/")
+    Single<InviteCodeResponse> generateInviteCode();
+
+    @GET("users/invites/")
+    Single<PagableResponse<InviteCodeResponse>> getInviteCodes(
+            @Query("limit") int limit,
+            @Query("offset") int offset
+    );
 }
