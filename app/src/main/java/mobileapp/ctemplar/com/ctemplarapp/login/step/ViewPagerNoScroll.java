@@ -2,9 +2,10 @@ package mobileapp.ctemplar.com.ctemplarapp.login.step;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import androidx.viewpager.widget.ViewPager;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
+
+import androidx.viewpager.widget.ViewPager;
 
 public class ViewPagerNoScroll extends ViewPager {
     public ViewPagerNoScroll(Context context) {
