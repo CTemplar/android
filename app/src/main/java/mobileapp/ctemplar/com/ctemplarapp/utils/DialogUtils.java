@@ -67,7 +67,8 @@ public class DialogUtils {
         setAlertButtonStyle(context, alertDialog);
     }
 
-    public static void showUnsubscribeMailingDialog(Context context, String url) {
+    public static void showUnsubscribeMailingDialog(Context context, String url,
+                                                    DialogInterface.OnClickListener positiveListener) {
         if (url == null || url.isEmpty()) {
             Timber.e("showUnsubscribeMailingDialog: url is empty");
             return;
@@ -75,8 +76,7 @@ public class DialogUtils {
         AlertDialog alertDialog =new AlertDialog.Builder(context)
                 .setTitle(R.string.unsubscribe)
                 .setMessage(getResourceWithUrl(context, R.string.unsubscribe_mailing_description, url))
-                .setPositiveButton(R.string.unsubscribe, (dialog, which)
-                        -> context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url))))
+                .setPositiveButton(R.string.unsubscribe, positiveListener)
                 .setNeutralButton(R.string.btn_cancel, null)
                 .show();
         setAlertButtonStyle(context, alertDialog);

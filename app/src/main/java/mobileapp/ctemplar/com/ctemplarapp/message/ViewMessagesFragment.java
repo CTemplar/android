@@ -14,6 +14,7 @@ import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderN
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Pair;
@@ -37,6 +38,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -57,6 +59,7 @@ import mobileapp.ctemplar.com.ctemplarapp.message.dialog.PasswordEncryptedMessag
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.net.entity.AttachmentsEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.constant.MessageActions;
+import mobileapp.ctemplar.com.ctemplarapp.repository.dto.DTOResource;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.AttachmentProvider;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageProvider;
 import mobileapp.ctemplar.com.ctemplarapp.services.download.DownloadAttachmentInfo;
@@ -67,6 +70,7 @@ import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.HtmlUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.PermissionUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.ToastUtils;
+import retrofit2.Response;
 import timber.log.Timber;
 
 public class ViewMessagesFragment extends Fragment implements View.OnClickListener, ActivityInterface {
@@ -271,8 +275,22 @@ public class ViewMessagesFragment extends Fragment implements View.OnClickListen
             messagesRecyclerView.setAdapter(messagesRecyclerViewAdapter);
             messagesRecyclerViewAdapter.setItems(messagesList);
             messagesRecyclerViewAdapter.setOnAttachmentDownloadingCallback(onAttachmentDownloading);
-            messagesRecyclerViewAdapter.setCallback(item ->
-                    decryptDialogFragment.show(getParentFragmentManager(), item));
+            messagesRecyclerViewAdapter.setMessageViewActionCallback(new MessageViewActionCallback() {
+                @Override
+                public void onDecryptPasswordEncryptedMessageClick(MessageProvider item) {
+                    decryptDialogFragment.show(getParentFragmentManager(), item);
+                }
+
+                @Override
+                public void onUnsubscribeMailing(long mailboxId, String unsubscribeUrl, String mailto) {
+                    viewModel.unsubscribeMailing(mailboxId, mailto).observe(getViewLifecycleOwner(), resource -> {
+                        if (!resource.isSuccess()) {
+                            ToastUtils.showToast(getActivity(), resource.getError());
+                        }
+                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(unsubscribeUrl)));
+                    });
+                }
+            });
 
             loadProgress.setVisibility(View.GONE);
             activity.invalidateOptionsMenu();

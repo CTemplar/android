@@ -40,6 +40,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.request.SubscriptionMobileUpgradeR
 import mobileapp.ctemplar.com.ctemplarapp.net.request.UpdateReportBugsRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.WarnExternalLinkRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.contacts.ContactsEncryptionRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.emails.UnsubscribeMailingRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.filters.EmailFilterRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.folders.EmptyFolderRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.folders.MoveToFolderRequest;
@@ -97,10 +98,10 @@ import timber.log.Timber;
 @Singleton
 public class UserRepository {
     private static UserRepository instance = new UserRepository();
-    private RestService service;
     private final UserStore userStore;
+    private RestService service;
 
-    private MutableLiveData<DTOResource<PagableDTO<InviteCodeDTO>>> inviteCodesLiveData = new MutableLiveData<>();
+    private final MutableLiveData<DTOResource<PagableDTO<InviteCodeDTO>>> inviteCodesLiveData = new MutableLiveData<>();
 
     public static UserRepository getInstance() {
         if (instance == null) {
@@ -749,6 +750,30 @@ public class UserRepository {
                     @Override
                     public void onSuccess(InviteCodeResponse response) {
                         liveData.postValue(DTOResource.success(InviteCodeMapper.map(response)));
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        liveData.postValue(DTOResource.error(e));
+                    }
+                });
+        return liveData;
+    }
+
+    public MutableLiveData<DTOResource<Response<Void>>> unsubscribeMailing(long mailboxId, String mailto) {
+        MutableLiveData<DTOResource<Response<Void>>> liveData = new MutableLiveData<>();
+        service.unsubscribeMailing(new UnsubscribeMailingRequest(mailboxId, mailto))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new SingleObserver<Response<Void>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onSuccess(Response<Void> response) {
+                        liveData.postValue(DTOResource.success(response));
                     }
 
                     @Override
