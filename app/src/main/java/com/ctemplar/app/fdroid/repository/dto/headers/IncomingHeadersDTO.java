@@ -20,6 +20,7 @@ public class IncomingHeadersDTO {
     private String dkimSignature;
     private String listUnsubscribe;
     private String unsubscribeUrl;
+    private String mailTo;
 
     public IncomingHeadersDTO() {
     }
@@ -46,6 +47,10 @@ public class IncomingHeadersDTO {
             String url = EditTextUtils.extractUnsubscribeUrl(listUnsubscribe);
             if (url.length() > 0) {
                 this.unsubscribeUrl = url;
+            }
+            String address = EditTextUtils.extractAddress(listUnsubscribe);
+            if (address.length() > 0) {
+                this.mailTo = address;
             }
         }
     }
@@ -168,5 +173,13 @@ public class IncomingHeadersDTO {
 
     public void setUnsubscribeUrl(String unsubscribeUrl) {
         this.unsubscribeUrl = unsubscribeUrl;
+    }
+
+    public String getMailTo() {
+        return mailTo;
+    }
+
+    public void setMailTo(String mailTo) {
+        this.mailTo = mailTo;
     }
 }

@@ -25,6 +25,7 @@ import com.ctemplar.app.fdroid.net.request.WarnExternalLinkRequest;
 import com.ctemplar.app.fdroid.net.request.contacts.ContactsEncryptionRequest;
 import com.ctemplar.app.fdroid.net.request.domains.CreateDomainRequest;
 import com.ctemplar.app.fdroid.net.request.domains.UpdateDomainRequest;
+import com.ctemplar.app.fdroid.net.request.emails.UnsubscribeMailingRequest;
 import com.ctemplar.app.fdroid.net.request.filters.EmailFilterOrderListRequest;
 import com.ctemplar.app.fdroid.net.request.filters.EmailFilterRequest;
 import com.ctemplar.app.fdroid.net.request.folders.AddFolderRequest;
@@ -44,6 +45,7 @@ import com.ctemplar.app.fdroid.net.response.AddAppTokenResponse;
 import com.ctemplar.app.fdroid.net.response.CaptchaResponse;
 import com.ctemplar.app.fdroid.net.response.CaptchaVerifyResponse;
 import com.ctemplar.app.fdroid.net.response.CheckUsernameResponse;
+import com.ctemplar.app.fdroid.net.response.PagableResponse;
 import com.ctemplar.app.fdroid.net.response.RecoverPasswordResponse;
 import com.ctemplar.app.fdroid.net.response.SignInResponse;
 import com.ctemplar.app.fdroid.net.response.SignUpResponse;
@@ -57,6 +59,7 @@ import com.ctemplar.app.fdroid.net.response.filters.EmailFilterResponse;
 import com.ctemplar.app.fdroid.net.response.filters.EmailFilterResult;
 import com.ctemplar.app.fdroid.net.response.folders.FoldersResponse;
 import com.ctemplar.app.fdroid.net.response.folders.FoldersResult;
+import com.ctemplar.app.fdroid.net.response.invites.InviteCodeResponse;
 import com.ctemplar.app.fdroid.net.response.keys.KeysResponse;
 import com.ctemplar.app.fdroid.net.response.mailboxes.MailboxKeyResponse;
 import com.ctemplar.app.fdroid.net.response.mailboxes.MailboxKeysResponse;
@@ -307,6 +310,9 @@ public interface RestService {
 
     @DELETE("emails/domains/{id}/")
     Single<Response<Void>> deleteCustomDomain(@Path("id") int id);
+
+    @POST("/emails/list-unsubscribe/")
+    Single<Response<Void>> unsubscribeMailing(@Body UnsubscribeMailingRequest request);
 
     @GET("users/myself/")
     Observable<MyselfResponse> getMyself();

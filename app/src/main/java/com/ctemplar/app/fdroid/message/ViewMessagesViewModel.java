@@ -16,7 +16,6 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import com.ctemplar.app.fdroid.CTemplarApp;
 import com.ctemplar.app.fdroid.net.ResponseStatus;
-import com.ctemplar.app.fdroid.net.request.messages.MarkMessageAsReadRequest;
 import com.ctemplar.app.fdroid.net.response.folders.FoldersResponse;
 import com.ctemplar.app.fdroid.net.response.messages.MessagesResponse;
 import com.ctemplar.app.fdroid.net.response.messages.MessagesResult;
@@ -24,6 +23,7 @@ import com.ctemplar.app.fdroid.net.response.myself.WhiteListContact;
 import com.ctemplar.app.fdroid.repository.ManageFoldersRepository;
 import com.ctemplar.app.fdroid.repository.MessagesRepository;
 import com.ctemplar.app.fdroid.repository.UserRepository;
+import com.ctemplar.app.fdroid.repository.dto.DTOResource;
 import com.ctemplar.app.fdroid.repository.entity.MailboxEntity;
 import com.ctemplar.app.fdroid.repository.entity.MessageEntity;
 import com.ctemplar.app.fdroid.repository.provider.MessageProvider;
@@ -306,5 +306,9 @@ public class ViewMessagesViewModel extends ViewModel {
 
                     }
                 });
+    }
+
+    public MutableLiveData<DTOResource<Response<Void>>> unsubscribeMailing(long mailboxId, String mailto) {
+        return userRepository.unsubscribeMailing(mailboxId, mailto);
     }
 }

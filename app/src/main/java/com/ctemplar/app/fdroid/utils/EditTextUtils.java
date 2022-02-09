@@ -46,9 +46,19 @@ public class EditTextUtils {
         return TextUtils.join(",", emails);
     }
 
+    @NonNull
     public static String extractUnsubscribeUrl(CharSequence charSequence) {
         Pattern pattern = Pattern.compile("http(s)[^>]+");
         Matcher matcher = pattern.matcher(charSequence);
+        if (matcher.find()) {
+            return matcher.group();
+        }
+        return "";
+    }
+
+    @NonNull
+    public static String extractAddress(CharSequence charSequence) {
+        Matcher matcher = EMAIL_PATTERN.matcher(charSequence);
         if (matcher.find()) {
             return matcher.group();
         }

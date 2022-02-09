@@ -46,6 +46,7 @@ import com.ctemplar.app.fdroid.repository.UserStore;
 import com.ctemplar.app.fdroid.services.NotificationService;
 import com.ctemplar.app.fdroid.settings.domains.DomainsActivity;
 import com.ctemplar.app.fdroid.settings.filters.FiltersActivity;
+import com.ctemplar.app.fdroid.settings.invites.InvitationCodesActivity;
 import com.ctemplar.app.fdroid.settings.keys.KeysActivity;
 import com.ctemplar.app.fdroid.settings.mailboxes.MailboxesActivity;
 import com.ctemplar.app.fdroid.settings.password.ChangePasswordActivity;
