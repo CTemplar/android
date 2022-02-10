@@ -371,22 +371,13 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesAdap
 
         public void update(MessageProvider message) {
             final Resources resources = binding.getRoot().getResources();
-            String currentFolder = mainModel.getCurrentFolder().getValue();
 
-            List<UserDisplayProvider> userDisplayList = new ArrayList<>();
-            if (currentFolder != null && currentFolder.equals(MainFolderNames.SENT)) {
-                userDisplayList.addAll(message.getReceiverDisplayList());
-                userDisplayList.addAll(message.getCcDisplayList());
-                userDisplayList.addAll(message.getBccDisplayList());
-            }
-            if (userDisplayList.isEmpty()) {
-                userDisplayList.add(message.getSenderDisplay());
-            }
-            UserDisplayProvider userDisplay = userDisplayList.get(0);
-            if (EditTextUtils.isNotEmpty(userDisplay.getName())) {
-                binding.usernameTextView.setText(userDisplay.getName());
+            Map<String, String> participants = message.getParticipants();
+            Collection<String> participantNames = participants.values();
+            if (participantNames.isEmpty()) {
+                binding.usernameTextView.setText(message.getSenderDisplayName());
             } else {
-                binding.usernameTextView.setText(userDisplay.getEmail());
+                binding.usernameTextView.setText(TextUtils.join(", ", participantNames));
             }
 
             // check for last action (reply, reply all, forward)

@@ -10,16 +10,19 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.ctemplar.app.fdroid.BuildConfig;
 
 public class EditTextUtils {
-    private static final String EMAIL_PATTERN = "(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])";
-    private static final Pattern EMAIL_LIST = Pattern.compile("([, ]{0,}" + EMAIL_PATTERN + ")+");
-    private static final Pattern EMAIL_ADDRESS = Pattern.compile(EMAIL_PATTERN);
+    private static final String EMAIL_PATTERN_STRING = "(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])";
+    private static final Pattern EMAIL_PATTERN = Pattern.compile(EMAIL_PATTERN_STRING, Pattern.CASE_INSENSITIVE);
+    private static final Pattern EMAIL_LIST = Pattern.compile("([, ]{0,}" + EMAIL_PATTERN_STRING + ")+");
+    private static final Pattern EMAIL_ADDRESS = Pattern.compile(EMAIL_PATTERN_STRING);
 
     public static boolean isEmailListValid(String emailList) {
         Matcher matcher = EMAIL_LIST.matcher(emailList);
@@ -29,6 +32,37 @@ public class EditTextUtils {
     public static boolean isEmailValid(String email) {
         Matcher matcher = EMAIL_ADDRESS.matcher(email);
         return matcher.matches();
+    }
+
+    public static CharSequence parseInputEmails(CharSequence charSequence) {
+        Matcher matcher = EMAIL_PATTERN.matcher(charSequence);
+        Set<String> emails = new LinkedHashSet<>();
+        while (matcher.find()) {
+            emails.add(matcher.group());
+        }
+        if (emails.isEmpty()) {
+            return charSequence;
+        }
+        return TextUtils.join(",", emails);
+    }
+
+    @NonNull
+    public static String extractUnsubscribeUrl(CharSequence charSequence) {
+        Pattern pattern = Pattern.compile("http(s)[^>]+");
+        Matcher matcher = pattern.matcher(charSequence);
+        if (matcher.find()) {
+            return matcher.group();
+        }
+        return "";
+    }
+
+    @NonNull
+    public static String extractAddress(CharSequence charSequence) {
+        Matcher matcher = EMAIL_PATTERN.matcher(charSequence);
+        if (matcher.find()) {
+            return matcher.group();
+        }
+        return "";
     }
 
     public static boolean isTextValid(String text) {

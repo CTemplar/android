@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <SwitchPreference
+        android:title="@string/hide_app_preview"
+        android:key="@string/hide_app_preview_enabled" />
+
+</PreferenceScreen>

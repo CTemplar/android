@@ -37,6 +37,14 @@
             android:title="@string/settings_report_bugs"
             android:fragment="com.ctemplar.app.fdroid.settings.SettingsActivity$ReportBugsFragment" />
 
+        <PreferenceScreen
+            android:title="@string/referral_code"
+            android:fragment="com.ctemplar.app.fdroid.settings.SettingsActivity$ReferralCodeFragment" />
+
+        <Preference
+            android:title="@string/invitation_codes"
+            android:key="@string/invitation_codes_key" />
+
     </PreferenceCategory>
 
     <PreferenceCategory
@@ -75,6 +83,10 @@
         <PreferenceScreen
             android:title="@string/proxy"
             android:fragment="com.ctemplar.app.fdroid.settings.SettingsActivity$ProxyFragment" />
+
+        <PreferenceScreen
+            android:title="@string/privacy"
+            android:fragment="com.ctemplar.app.fdroid.settings.SettingsActivity$PrivacyFragment" />
 
     </PreferenceCategory>
 

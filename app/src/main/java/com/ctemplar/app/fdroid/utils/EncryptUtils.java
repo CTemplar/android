@@ -47,19 +47,19 @@ public class EncryptUtils {
         if (content == null || content.length() == 0) {
             return "";
         }
-        if (decrypt) {
-            List<String> privateKeys = getPrivateKeys(mailboxId);
-            if (privateKeys == null) {
-                return "";
-            }
-            MailboxEntity mailboxEntity = mailboxDao.getById(mailboxId);
-            String password = userStore.getUserPassword();
-            if (mailboxEntity == null || password == null || password.length() == 0) {
-                return "";
-            }
-            content = Cryptor.decryptPGP(content, privateKeys, password);
+        if (!decrypt) {
+            return content;
         }
-        return content;
+        List<String> privateKeys = getPrivateKeys(mailboxId);
+        if (privateKeys == null) {
+            return "";
+        }
+        MailboxEntity mailboxEntity = mailboxDao.getById(mailboxId);
+        String password = userStore.getUserPassword();
+        if (mailboxEntity == null || password == null || password.length() == 0) {
+            return "";
+        }
+        return Cryptor.decryptPGP(content, privateKeys, password);
     }
 
     public static String decryptSubject(String subject, long mailboxId) {

@@ -2,6 +2,8 @@ package com.ctemplar.app.fdroid.repository;
 
 import android.text.TextUtils;
 
+import androidx.lifecycle.MutableLiveData;
+
 import com.ctemplar.app.fdroid.CTemplarApp;
 import com.ctemplar.app.fdroid.net.RestService;
 import com.ctemplar.app.fdroid.net.request.AddAppTokenRequest;
@@ -25,6 +27,7 @@ import com.ctemplar.app.fdroid.net.request.SubjectEncryptedRequest;
 import com.ctemplar.app.fdroid.net.request.UpdateReportBugsRequest;
 import com.ctemplar.app.fdroid.net.request.WarnExternalLinkRequest;
 import com.ctemplar.app.fdroid.net.request.contacts.ContactsEncryptionRequest;
+import com.ctemplar.app.fdroid.net.request.emails.UnsubscribeMailingRequest;
 import com.ctemplar.app.fdroid.net.request.filters.EmailFilterRequest;
 import com.ctemplar.app.fdroid.net.request.folders.EmptyFolderRequest;
 import com.ctemplar.app.fdroid.net.request.folders.MoveToFolderRequest;
@@ -41,12 +44,14 @@ import com.ctemplar.app.fdroid.net.response.AddAppTokenResponse;
 import com.ctemplar.app.fdroid.net.response.CaptchaResponse;
 import com.ctemplar.app.fdroid.net.response.CaptchaVerifyResponse;
 import com.ctemplar.app.fdroid.net.response.CheckUsernameResponse;
+import com.ctemplar.app.fdroid.net.response.PagableResponse;
 import com.ctemplar.app.fdroid.net.response.RecoverPasswordResponse;
 import com.ctemplar.app.fdroid.net.response.SignInResponse;
 import com.ctemplar.app.fdroid.net.response.SignUpResponse;
 import com.ctemplar.app.fdroid.net.response.domains.DomainsResponse;
 import com.ctemplar.app.fdroid.net.response.filters.EmailFilterResponse;
 import com.ctemplar.app.fdroid.net.response.filters.EmailFilterResult;
+import com.ctemplar.app.fdroid.net.response.invites.InviteCodeResponse;
 import com.ctemplar.app.fdroid.net.response.keys.KeysResponse;
 import com.ctemplar.app.fdroid.net.response.mailboxes.MailboxKeyResponse;
 import com.ctemplar.app.fdroid.net.response.mailboxes.MailboxKeysResponse;
@@ -62,9 +67,14 @@ import com.ctemplar.app.fdroid.net.response.myself.SettingsResponse;
 import com.ctemplar.app.fdroid.net.response.myself.WhiteListContact;
 import com.ctemplar.app.fdroid.net.response.whiteBlackList.BlackListResponse;
 import com.ctemplar.app.fdroid.net.response.whiteBlackList.WhiteListResponse;
+import com.ctemplar.app.fdroid.repository.dto.DTOResource;
+import com.ctemplar.app.fdroid.repository.dto.PagableDTO;
 import com.ctemplar.app.fdroid.repository.dto.SearchMessagesDTO;
+import com.ctemplar.app.fdroid.repository.dto.invites.InviteCodeDTO;
 import com.ctemplar.app.fdroid.repository.entity.MailboxEntity;
 import com.ctemplar.app.fdroid.repository.entity.MailboxKeyEntity;
+import com.ctemplar.app.fdroid.repository.mapper.InviteCodeMapper;
+import com.ctemplar.app.fdroid.repository.mapper.PageableMapper;
 import com.ctemplar.app.fdroid.services.NotificationService;
 import com.ctemplar.app.fdroid.utils.EditTextUtils;
 
@@ -74,7 +84,9 @@ import javax.inject.Singleton;
 
 import io.reactivex.Observable;
 import io.reactivex.Single;
+import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
@@ -84,8 +96,10 @@ import timber.log.Timber;
 @Singleton
 public class UserRepository {
     private static UserRepository instance = new UserRepository();
-    private RestService service;
     private final UserStore userStore;
+    private RestService service;
+
+    private final MutableLiveData<DTOResource<PagableDTO<InviteCodeDTO>>> inviteCodesLiveData = new MutableLiveData<>();
 
     public static UserRepository getInstance() {
         if (instance == null) {
@@ -706,5 +720,80 @@ public class UserRepository {
         return service.deleteAppToken(token)
                 .subscribeOn(io.reactivex.schedulers.Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public MutableLiveData<DTOResource<InviteCodeDTO>> generateInviteCode() {
+        MutableLiveData<DTOResource<InviteCodeDTO>> liveData = new MutableLiveData<>();
+        service.generateInviteCode()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new SingleObserver<InviteCodeResponse>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onSuccess(InviteCodeResponse response) {
+                        liveData.postValue(DTOResource.success(InviteCodeMapper.map(response)));
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        liveData.postValue(DTOResource.error(e));
+                    }
+                });
+        return liveData;
+    }
+
+    public MutableLiveData<DTOResource<Response<Void>>> unsubscribeMailing(long mailboxId, String mailto) {
+        MutableLiveData<DTOResource<Response<Void>>> liveData = new MutableLiveData<>();
+        service.unsubscribeMailing(new UnsubscribeMailingRequest(mailboxId, mailto))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new SingleObserver<Response<Void>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onSuccess(Response<Void> response) {
+                        liveData.postValue(DTOResource.success(response));
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        liveData.postValue(DTOResource.error(e));
+                    }
+                });
+        return liveData;
+    }
+
+    public MutableLiveData<DTOResource<PagableDTO<InviteCodeDTO>>> getInviteCodesLiveData() {
+        return inviteCodesLiveData;
+    }
+
+    public void getInviteCodes(int limit, int offset) {
+        service.getInviteCodes(limit, offset)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new SingleObserver<PagableResponse<InviteCodeResponse>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onSuccess(PagableResponse<InviteCodeResponse> response) {
+                        inviteCodesLiveData.postValue(DTOResource.success(
+                                PageableMapper.map(InviteCodeMapper.class, response)));
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        inviteCodesLiveData.postValue(DTOResource.error(e));
+                    }
+                });
     }
 }
