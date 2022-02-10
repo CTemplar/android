@@ -1,0 +1,6 @@
+* Display participants of a thread on listing view
+* Unsubscribe mailing button
+* Setting to hide app preview
+* Invitation codes screen
+* Improved receiver field processing
+* Other improvements and fixes
