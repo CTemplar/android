@@ -457,6 +457,7 @@
     <string name="code">Code</string>
     <string name="expiration_date">Expiration Date</string>
     <string name="is_used">Is Used?</string>
+    <string name="invitation_codes_note">Note: Only paid customers can generate invitation codes.</string>
 
     <!-- SETTINGS -->
     <string name="settings_general">General settings</string>
