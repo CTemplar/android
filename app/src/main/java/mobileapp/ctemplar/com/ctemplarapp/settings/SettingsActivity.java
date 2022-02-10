@@ -186,7 +186,9 @@ public class SettingsActivity extends BaseActivity {
             Preference invitationCodes = findPreference(getString(R.string.invitation_codes_key));
             if (invitationCodes != null) {
                 invitationCodes.setOnPreferenceClickListener(preference -> {
-                    startActivity(new Intent(getActivity(), InvitationCodesActivity.class));
+                    Intent intent = new Intent(getActivity(), InvitationCodesActivity.class);
+                    intent.putExtra(USER_IS_PRIME, isPrimeUser);
+                    startActivity(intent);
                     return true;
                 });
             }
