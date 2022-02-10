@@ -1,5 +1,8 @@
 package com.ctemplar.app.fdroid.settings.invites;
 
+import static com.ctemplar.app.fdroid.settings.SettingsActivity.USER_IS_PRIME;
+
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,6 +19,8 @@ import com.ctemplar.app.fdroid.repository.dto.PagableDTO;
 import com.ctemplar.app.fdroid.repository.dto.invites.InviteCodeDTO;
 import com.ctemplar.app.fdroid.utils.ThemeUtils;
 import com.ctemplar.app.fdroid.utils.ToastUtils;
+
+import java.util.List;
 
 public class InvitationCodesActivity extends BaseActivity {
     private ActivityInvitationCodesBinding binding;
@@ -36,20 +41,29 @@ public class InvitationCodesActivity extends BaseActivity {
             actionBar.setHomeButtonEnabled(true);
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
+        Intent intent = getIntent();
+        if (intent != null) {
+            boolean prime = intent.getBooleanExtra(USER_IS_PRIME, false);
+            showNote(!prime);
+            binding.generateCodeButton.setEnabled(prime);
+        }
         invitationCodesAdapter = new InvitationCodesAdapter();
-        binding.invitationCodesRecyclerView.setAdapter(invitationCodesAdapter);
-        progressBar(false);
+        binding.codesRecyclerView.setAdapter(invitationCodesAdapter);
         binding.generateCodeButton.setOnClickListener(v -> generateInviteCode());
         viewModel.getInviteCodesLiveData().observe(this, this::handleInviteCodes);
         requestInviteCodes();
+        showList(false);
     }
 
     private void handleInviteCodes(DTOResource<PagableDTO<InviteCodeDTO>> resource) {
+        showProgressBar(false);
         if (!resource.isSuccess()) {
             ToastUtils.showToast(this, resource.getError());
             return;
         }
-        invitationCodesAdapter.setItems(resource.getDto().getResults());
+        List<InviteCodeDTO> items = resource.getDto().getResults();
+        invitationCodesAdapter.setItems(items);
+        showList(!items.isEmpty());
     }
 
     private void requestInviteCodes() {
@@ -57,9 +71,11 @@ public class InvitationCodesActivity extends BaseActivity {
     }
 
     private void generateInviteCode() {
-        progressBar(true);
+        showProgressBar(true);
+        binding.generateCodeButton.setEnabled(false);
         viewModel.generateInviteCode().observe(this, resource -> {
-            progressBar(false);
+            showProgressBar(false);
+            binding.generateCodeButton.setEnabled(true);
             if (!resource.isSuccess()) {
                 ToastUtils.showToast(getApplicationContext(), resource.getError());
                 return;
@@ -68,9 +84,17 @@ public class InvitationCodesActivity extends BaseActivity {
         });
     }
 
-    private void progressBar(boolean state) {
+    private void showProgressBar(boolean state) {
         binding.progressBar.setVisibility(state ? View.VISIBLE : View.GONE);
-        binding.generateCodeButton.setEnabled(!state);
+    }
+
+    private void showList(boolean state) {
+        binding.headerLinearLayout.setVisibility(state ? View.VISIBLE : View.GONE);
+        binding.codesRecyclerView.setVisibility(state ? View.VISIBLE : View.GONE);
+    }
+
+    private void showNote(boolean state) {
+        binding.noteTextView.setVisibility(state ? View.VISIBLE : View.GONE);
     }
 
     @Override
