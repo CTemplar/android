@@ -4,7 +4,7 @@ apply plugin: 'com.google.gms.google-services'
 ext {
     versionMajor = 1
     versionMinor = 5
-    versionBuild = 8
+    versionBuild = 9
 }
 
 android {
@@ -13,7 +13,7 @@ android {
         applicationId "mobileapp.ctemplar.com.ctemplarapp"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 67
+        versionCode 68
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"

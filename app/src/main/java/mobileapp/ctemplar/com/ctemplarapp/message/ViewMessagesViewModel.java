@@ -16,7 +16,6 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
-import mobileapp.ctemplar.com.ctemplarapp.net.request.messages.MarkMessageAsReadRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.folders.FoldersResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.MessagesResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.MessagesResult;
@@ -24,6 +23,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.WhiteListContact;
 import mobileapp.ctemplar.com.ctemplarapp.repository.ManageFoldersRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.MessagesRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
+import mobileapp.ctemplar.com.ctemplarapp.repository.dto.DTOResource;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MessageEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageProvider;
@@ -306,5 +306,9 @@ public class ViewMessagesViewModel extends ViewModel {
 
                     }
                 });
+    }
+
+    public MutableLiveData<DTOResource<Response<Void>>> unsubscribeMailing(long mailboxId, String mailto) {
+        return userRepository.unsubscribeMailing(mailboxId, mailto);
     }
 }

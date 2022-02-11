@@ -6,6 +6,7 @@ import androidx.room.PrimaryKey;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Entity(tableName = "messages")
 public class MessageEntity {
@@ -20,6 +21,8 @@ public class MessageEntity {
     private List<UserDisplayEntity> receiverDisplayList;
     private List<UserDisplayEntity> ccDisplayList;
     private List<UserDisplayEntity> bccDisplayList;
+    private List<UserDisplayEntity> replyToDisplayList;
+    private Map<String, String> participants;
     private boolean hasChildren;
     private int childrenCount;
     private String subject;
@@ -41,6 +44,9 @@ public class MessageEntity {
     private boolean isProtected;
     private boolean isVerified;
     private boolean isHtml;
+    private boolean isAutocryptEncrypted;
+    private boolean isSignVerified;
+    private String incomingHeaders;
     private String hash;
     private List<String> spamReason;
     private String lastAction;
@@ -59,7 +65,23 @@ public class MessageEntity {
     public MessageEntity() {
     }
 
-    public MessageEntity(long id, EncryptionMessageEntity encryptionMessage, String sender, boolean hasAttachments, List<AttachmentEntity> attachments, Date createdAt, UserDisplayEntity senderDisplay, List<UserDisplayEntity> receiverDisplayList, List<UserDisplayEntity> ccDisplayList, List<UserDisplayEntity> bccDisplayList, boolean hasChildren, int childrenCount, String subject, String content, List<String> receivers, List<String> cc, List<String> bcc, String folderName, Date updatedAt, Date destructDate, Date delayedDelivery, Long deadManDuration, boolean isRead, boolean send, boolean isStarred, Date sentAt, boolean isEncrypted, boolean isSubjectEncrypted, boolean isProtected, boolean isVerified, boolean isHtml, String hash, List<String> spamReason, String lastAction, String lastActionThread, long mailboxId, String parent, String decryptedSubject, boolean hasSentChild, boolean hasInboxChild) {
+    public MessageEntity(long id, EncryptionMessageEntity encryptionMessage, String sender,
+                         boolean hasAttachments, List<AttachmentEntity> attachments, Date createdAt,
+                         UserDisplayEntity senderDisplay,
+                         List<UserDisplayEntity> receiverDisplayList,
+                         List<UserDisplayEntity> ccDisplayList,
+                         List<UserDisplayEntity> bccDisplayList,
+                         List<UserDisplayEntity> replyToDisplayList,
+                         Map<String, String> participants, boolean hasChildren, int childrenCount,
+                         String subject, String content, List<String> receivers, List<String> cc,
+                         List<String> bcc, String folderName, Date updatedAt, Date destructDate,
+                         Date delayedDelivery, Long deadManDuration, boolean isRead, boolean send,
+                         boolean isStarred, Date sentAt, boolean isEncrypted,
+                         boolean isSubjectEncrypted, boolean isProtected, boolean isVerified,
+                         boolean isHtml, boolean isAutocryptEncrypted, boolean isSignVerified,
+                         String incomingHeaders, String hash, List<String> spamReason,
+                         String lastAction, String lastActionThread, long mailboxId, String parent,
+                         String decryptedSubject, boolean hasSentChild, boolean hasInboxChild) {
         this.id = id;
         this.encryptionMessage = encryptionMessage;
         this.sender = sender;
@@ -70,6 +92,8 @@ public class MessageEntity {
         this.receiverDisplayList = receiverDisplayList;
         this.ccDisplayList = ccDisplayList;
         this.bccDisplayList = bccDisplayList;
+        this.replyToDisplayList = replyToDisplayList;
+        this.participants = participants;
         this.hasChildren = hasChildren;
         this.childrenCount = childrenCount;
         this.subject = subject;
@@ -91,13 +115,15 @@ public class MessageEntity {
         this.isProtected = isProtected;
         this.isVerified = isVerified;
         this.isHtml = isHtml;
+        this.isAutocryptEncrypted = isAutocryptEncrypted;
+        this.isSignVerified = isSignVerified;
+        this.incomingHeaders = incomingHeaders;
         this.hash = hash;
         this.spamReason = spamReason;
         this.lastAction = lastAction;
         this.lastActionThread = lastActionThread;
         this.mailboxId = mailboxId;
         this.parent = parent;
-
         this.decryptedSubject = decryptedSubject;
         this.hasSentChild = hasSentChild;
         this.hasInboxChild = hasInboxChild;
@@ -181,6 +207,22 @@ public class MessageEntity {
 
     public void setBccDisplayList(List<UserDisplayEntity> bccDisplayList) {
         this.bccDisplayList = bccDisplayList;
+    }
+
+    public List<UserDisplayEntity> getReplyToDisplayList() {
+        return replyToDisplayList;
+    }
+
+    public void setReplyToDisplayList(List<UserDisplayEntity> replyToDisplayList) {
+        this.replyToDisplayList = replyToDisplayList;
+    }
+
+    public Map<String, String> getParticipants() {
+        return participants;
+    }
+
+    public void setParticipants(Map<String, String> participants) {
+        this.participants = participants;
     }
 
     public boolean isHasChildren() {
@@ -351,6 +393,30 @@ public class MessageEntity {
         isHtml = html;
     }
 
+    public boolean isAutocryptEncrypted() {
+        return isAutocryptEncrypted;
+    }
+
+    public void setAutocryptEncrypted(boolean autocryptEncrypted) {
+        isAutocryptEncrypted = autocryptEncrypted;
+    }
+
+    public boolean isSignVerified() {
+        return isSignVerified;
+    }
+
+    public void setSignVerified(boolean signVerified) {
+        isSignVerified = signVerified;
+    }
+
+    public String getIncomingHeaders() {
+        return incomingHeaders;
+    }
+
+    public void setIncomingHeaders(String incomingHeaders) {
+        this.incomingHeaders = incomingHeaders;
+    }
+
     public String getHash() {
         return hash;
     }
@@ -424,6 +490,11 @@ public class MessageEntity {
     }
 
     public boolean hasUpdate(MessageEntity entity) {
-        return updatedAt.before(entity.updatedAt) || entity.isStarred != isStarred || entity.isRead != isRead || entity.hasSentChild != hasSentChild || entity.childrenCount != childrenCount || entity.hasInboxChild != hasInboxChild;
+        return updatedAt.before(entity.updatedAt)
+                || entity.isStarred != isStarred
+                || entity.isRead != isRead
+                || entity.hasSentChild != hasSentChild
+                || entity.childrenCount != childrenCount
+                || entity.hasInboxChild != hasInboxChild;
     }
 }

@@ -163,6 +163,8 @@
     <!-- VIEW MESSAGES -->
     <string name="txt_more_details">More details</string>
     <string name="txt_less_details">Less details</string>
+    <string name="unsubscribe">Unsubscribe</string>
+    <string name="unsubscribe_mailing_description">Are you sure you\'d like to stop receiving similar messages?</string>
     <string name="toast_message_marked_unread">Message marked as unread</string>
     <string name="toast_message_marked_read">Message marked as read</string>
     <string name="toast_message_moved_to">Message moved to %1$s</string>
@@ -327,18 +329,6 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
 
-    <!-- SETTINGS -->
-    <string name="txt_settings">Settings</string>
-    <string name="txt_display_name">Display name</string>
-    <string name="txt_type_your_name">Type your name</string>
-    <string name="txt_type_signature">Type your signature</string>
-    <string name="txt_signature_enabled">Signature enabled</string>
-    <string name="change_password_reset_data">Delete data</string>
-    <string name="toast_email_not_valid">Email is not valid</string>
-    <string name="storage_limit_info">%1$s of %2$s</string>
-    <string name="external_resources_restrictions">External resources restrictions</string>
-    <string name="warn_before_opening_external_links">Warn before opening external links</string>
-
     <!-- PIN LOCK -->
     <string name="pin_lock">PIN Lock</string>
     <string name="pin_lock_enable">Enable PIN Lock</string>
@@ -423,6 +413,10 @@
     <string name="proxy_enabled">Proxy enabled</string>
     <string name="proxy_notes"><![CDATA[<font color="#939191">Note. If after clicking on the \"Use Tor\" you see \"No such app found\", then you should allow an additional repository. Open the \"F-Droid -> Settings -> Repositories\" and switch on \"Guardian Project Official Releases\".</font>]]></string>
 
+    <!-- SECURITY -->
+    <string name="privacy">Privacy</string>
+    <string name="hide_app_preview">Hide app preview</string>
+
     <!-- DOMAINS -->
     <string name="domain">Domain</string>
     <string name="domains">Domains</string>
@@ -454,6 +448,16 @@
 
     <!-- USERS -->
     <string name="users">Users</string>
+
+    <!-- PROMO CODES -->
+    <string name="referral_code">Referral Code</string>
+    <string name="referral_code_description">Get one month of Prime membership free for every Prime sign up made using your referral code.</string>
+    <string name="invitation_codes">Invitation Codes</string>
+    <string name="generate_code">Generate a code</string>
+    <string name="code">Code</string>
+    <string name="expiration_date">Expiration Date</string>
+    <string name="is_used">Is Used?</string>
+    <string name="invitation_codes_note">Note: Only paid customers can generate invitation codes.</string>
 
     <!-- SETTINGS -->
     <string name="settings_general">General settings</string>
@@ -499,6 +503,16 @@
     <string name="settings_app_version">App version</string>
     <string name="settings_disable_contacts_encryption">Are you sure you want to disable contacts encryption?</string>
     <string name="settings_disable_contacts_encryption_note">Disabling contacts encryption can take several minutes depending upon the number of contacts you have. After you confirm, all your contacts will be decrypted on your device and saved on the server.</string>
+    <string name="txt_settings">Settings</string>
+    <string name="txt_display_name">Display name</string>
+    <string name="txt_type_your_name">Type your name</string>
+    <string name="txt_type_signature">Type your signature</string>
+    <string name="txt_signature_enabled">Signature enabled</string>
+    <string name="change_password_reset_data">Delete data</string>
+    <string name="toast_email_not_valid">Email is not valid</string>
+    <string name="storage_limit_info">%1$s of %2$s</string>
+    <string name="external_resources_restrictions">External resources restrictions</string>
+    <string name="warn_before_opening_external_links">Warn before opening external links</string>
     <string name="txt_contact_decryption">Contact decryption..</string>
     <string name="toast_saved">Saved</string>
     <string name="toast_contacts_encrypted">Contacts are encrypted</string>
@@ -590,6 +604,7 @@
     <string translatable="false" name="pin_lock_key">pin_lock_key</string>
     <string translatable="false" name="signature_key">signature_key</string>
     <string translatable="false" name="filters_key">filters_key</string>
+    <string translatable="false" name="invitation_codes_key">invitation_codes_key</string>
     <string translatable="false" name="dark_mode_key">dark_mode_key</string>
     <string translatable="false" name="language_key">language_key</string>
     <string translatable="false" name="block_external_images_key">block_external_images_key</string>
@@ -610,10 +625,12 @@
     <string translatable="false" name="proxy_type_key">proxy_type_key</string>
     <string translatable="false" name="proxy_host_key">proxy_host_key</string>
     <string translatable="false" name="proxy_port_key">proxy_port_key</string>
+    <string translatable="false" name="hide_app_preview_enabled">hide_app_preview_enabled</string>
     <string translatable="false" name="setting_keys">setting_keys</string>
     <string translatable="false" name="domains_key">domains_key</string>
     <string translatable="false" name="email_addresses">email_addresses</string>
     <string translatable="false" name="helpdesk_key">helpdesk_key</string>
+    <string translatable="false" name="referral_code_key">referral_code_key</string>
     <string translatable="false" name="local_storage_limit">local_storage_limit</string>
     <string translatable="false" name="recovery_email_holder">recovery_email_holder</string>
     <string translatable="false" name="contacts_encryption_enabled">contacts_encryption_enabled</string>

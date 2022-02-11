@@ -32,6 +32,7 @@ import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserStore;
 import mobileapp.ctemplar.com.ctemplarapp.repository.constant.MessageActions;
+import mobileapp.ctemplar.com.ctemplarapp.repository.dto.headers.IncomingHeadersDTO;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.AttachmentProvider;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.EncryptionMessageProvider;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageProvider;
@@ -47,11 +48,12 @@ import timber.log.Timber;
 public class MessagesRecyclerViewAdapter extends RecyclerView.Adapter<MessagesRecyclerViewAdapter.ViewHolder> {
     private final List<MessageProvider> items = new ArrayList<>();
     private final List<MessageProvider> expanded = new ArrayList<>();
-    private AttachmentDownloader attachmentDownloader;
-    private MessageViewActionCallback callback;
     private final UserStore userStore;
     private Context context;
     private LayoutInflater inflater;
+
+    private AttachmentDownloader attachmentDownloader;
+    private MessageViewActionCallback messageViewActionCallback;
 
     MessagesRecyclerViewAdapter() {
         userStore = CTemplarApp.getUserStore();
@@ -61,8 +63,8 @@ public class MessagesRecyclerViewAdapter extends RecyclerView.Adapter<MessagesRe
         this.attachmentDownloader = attachmentDownloader;
     }
 
-    public void setCallback(MessageViewActionCallback callback) {
-        this.callback = callback;
+    public void setMessageViewActionCallback(MessageViewActionCallback messageViewActionCallback) {
+        this.messageViewActionCallback = messageViewActionCallback;
     }
 
     @Override
@@ -136,6 +138,7 @@ public class MessagesRecyclerViewAdapter extends RecyclerView.Adapter<MessagesRe
         final TextView statusTextView;
         final TextView folderNameTextView;
         final TextView detailsTextView;
+        final TextView unsubscribeTextView;
         final TextView senderEmailTextView;
         final TextView receiverEmailTextView;
         final View ccLayout;
@@ -166,7 +169,6 @@ public class MessagesRecyclerViewAdapter extends RecyclerView.Adapter<MessagesRe
             expandedView = itemView.findViewById(R.id.expanded);
             expandedShortView = expandedView.findViewById(R.id.item_message_view_expanded_short);
 
-
             // VIEW COLLAPSED
             collapsedSenderTextView = collapsedView.findViewById(R.id.item_message_view_collapsed_sender);
             collapsedContentTextView = collapsedView.findViewById(R.id.item_message_view_collapsed_content);
@@ -184,6 +186,7 @@ public class MessagesRecyclerViewAdapter extends RecyclerView.Adapter<MessagesRe
             statusTextView = expandedView.findViewById(R.id.item_message_view_expanded_status);
             folderNameTextView = expandedView.findViewById(R.id.item_message_view_expanded_folder_name_text_view);
             detailsTextView = expandedView.findViewById(R.id.item_message_view_expanded_details);
+            unsubscribeTextView = expandedView.findViewById(R.id.item_message_view_expanded_unsubscribe_text_view);
             senderEmailTextView = expandedView.findViewById(R.id.item_message_view_from_email);
             receiverEmailTextView = expandedView.findViewById(R.id.item_message_view_to_email);
             ccLayout = expandedView.findViewById(R.id.item_message_view_CC_layout);
@@ -213,9 +216,11 @@ public class MessagesRecyclerViewAdapter extends RecyclerView.Adapter<MessagesRe
             List<UserDisplayProvider> ccDisplayList = item.getCcDisplayList();
             List<UserDisplayProvider> bccDisplayList = item.getBccDisplayList();
 
+            long mailboxId = item.getMailboxId();
             String lastAction = item.getLastAction();
             String folderName = item.getFolderName();
             Date messageDate = DateUtils.getDeliveryDate(item);
+            IncomingHeadersDTO incomingHeaders = item.getIncomingHeaders();
 
             boolean isHtml = item.isHtml();
             boolean isVerified = item.isVerified();
@@ -290,6 +295,17 @@ public class MessagesRecyclerViewAdapter extends RecyclerView.Adapter<MessagesRe
             String receiversDisplayString = userDisplayListToString(receiverDisplayList);
             receiverEmailTextView.setText(receiversDisplayString);
 
+            if (incomingHeaders == null || incomingHeaders.getUnsubscribeUrl() == null) {
+                unsubscribeTextView.setVisibility(View.GONE);
+            } else {
+                String unsubscribeUrl = incomingHeaders.getUnsubscribeUrl();
+                String mailto = incomingHeaders.getMailTo();
+                unsubscribeTextView.setOnClickListener(v -> DialogUtils.showUnsubscribeMailingDialog(
+                        context, unsubscribeUrl, (dialog, which) -> messageViewActionCallback
+                                .onUnsubscribeMailing(mailboxId, unsubscribeUrl, mailto)));
+                unsubscribeTextView.setVisibility(View.VISIBLE);
+            }
+
             // check for cc
             if (!ccDisplayList.isEmpty()) {
                 String ccDisplayString = userDisplayListToString(ccDisplayList);
@@ -362,8 +378,8 @@ public class MessagesRecyclerViewAdapter extends RecyclerView.Adapter<MessagesRe
                 collapsedContentTextView.setVisibility(View.GONE);
                 encryptedMessageLockView.setVisibility(View.VISIBLE);
                 encryptedMessageDecryptButton.setOnClickListener(v -> {
-                    if (callback != null) {
-                        callback.onDecryptPasswordEncryptedMessageClick(item);
+                    if (messageViewActionCallback != null) {
+                        messageViewActionCallback.onDecryptPasswordEncryptedMessageClick(item);
                     }
                 });
             } else {

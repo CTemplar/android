@@ -51,9 +51,11 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserStore;
 import mobileapp.ctemplar.com.ctemplarapp.settings.domains.DomainsActivity;
 import mobileapp.ctemplar.com.ctemplarapp.settings.filters.FiltersActivity;
+import mobileapp.ctemplar.com.ctemplarapp.settings.invites.InvitationCodesActivity;
 import mobileapp.ctemplar.com.ctemplarapp.settings.keys.KeysActivity;
 import mobileapp.ctemplar.com.ctemplarapp.settings.mailboxes.MailboxesActivity;
 import mobileapp.ctemplar.com.ctemplarapp.settings.password.ChangePasswordActivity;
+import mobileapp.ctemplar.com.ctemplarapp.utils.AppUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EncodeUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.HtmlUtils;
@@ -178,6 +180,15 @@ public class SettingsActivity extends BaseActivity {
                 whiteBlackList.setOnPreferenceClickListener(preference -> {
                     Intent whiteBlackList1 = new Intent(getActivity(), WhiteBlackListActivity.class);
                     startActivity(whiteBlackList1);
+                    return true;
+                });
+            }
+            Preference invitationCodes = findPreference(getString(R.string.invitation_codes_key));
+            if (invitationCodes != null) {
+                invitationCodes.setOnPreferenceClickListener(preference -> {
+                    Intent intent = new Intent(getActivity(), InvitationCodesActivity.class);
+                    intent.putExtra(USER_IS_PRIME, isPrimeUser);
+                    startActivity(intent);
                     return true;
                 });
             }
@@ -352,6 +363,22 @@ public class SettingsActivity extends BaseActivity {
                     Toast.makeText(getActivity(), getString(R.string.please_restart_app_to_apply_changes), Toast.LENGTH_SHORT).show();
                     return true;
                 });
+            }
+        }
+    }
+
+    public static class ReferralCodeFragment extends BasePreferenceFragment {
+        @Override
+        public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+            setPreferencesFromResource(R.xml.referral_code_settings, rootKey);
+            Preference referralCodePreference = findPreference(getString(R.string.referral_code_key));
+            if (referralCodePreference != null) {
+                referralCodePreference.setOnPreferenceClickListener(preference -> {
+                    AppUtils.setSystemClipboard(getActivity(), referralCodePreference.getTitle().toString());
+                    return true;
+                });
+                referralCodePreference.setSummary(sharedPreferences.getString(
+                        getString(R.string.referral_code_key), getString(R.string.referral_code)));
             }
         }
     }
@@ -630,6 +657,21 @@ public class SettingsActivity extends BaseActivity {
         }
     }
 
+    public static class PrivacyFragment extends BasePreferenceFragment {
+        @Override
+        public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+            setPreferencesFromResource(R.xml.privacy_settings, rootKey);
+            SwitchPreference hideAppPreviewSwitchPreference = findPreference(getString(R.string.hide_app_preview_enabled));
+            if (hideAppPreviewSwitchPreference != null) {
+                hideAppPreviewSwitchPreference.setOnPreferenceChangeListener((preference, newValue) -> {
+                    userStore.setHideAppPreview((boolean) newValue);
+                    ToastUtils.showToast(getActivity(), R.string.please_restart_app_to_apply_changes);
+                    return true;
+                });
+            }
+        }
+    }
+
     public static class PhishingProtectionFragment extends BasePreferenceFragment {
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
@@ -740,9 +782,10 @@ public class SettingsActivity extends BaseActivity {
 
         sharedPreferences.edit()
                 .putString(getString(R.string.recovery_email), recoveryEmail)
-                .putBoolean(getString(R.string.anti_phishing_enabled), settingsResponse.isAntiPhishingEnabled())
                 .putString(getString(R.string.anti_phishing_key), settingsResponse.getAntiPhishingPhrase())
                 .putString(getString(R.string.notification_email_key), settingsResponse.getNotificationEmail())
+                .putString(getString(R.string.referral_code_key), settingsResponse.getReferralCode())
+                .putBoolean(getString(R.string.anti_phishing_enabled), settingsResponse.isAntiPhishingEnabled())
                 .putBoolean(getString(R.string.recovery_email_enabled), EditTextUtils.isNotEmpty(recoveryEmail))
                 .putBoolean(getString(R.string.auto_save_contacts_enabled), settingsResponse.isSaveContacts())
                 .putBoolean(getString(R.string.key_auto_read_email_enabled), settingsResponse.isAutoRead())

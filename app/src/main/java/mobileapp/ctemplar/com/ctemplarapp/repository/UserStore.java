@@ -105,6 +105,9 @@ public interface UserStore {
     void setDarkModeKey(String key);
     String getDarkModeKey();
 
+    void setHideAppPreview(boolean value);
+    boolean isHideAppPreview();
+
     void setLanguageKey(String key);
     String getLanguageKey();
 

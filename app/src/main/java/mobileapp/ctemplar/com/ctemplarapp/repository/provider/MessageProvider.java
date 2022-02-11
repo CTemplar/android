@@ -2,21 +2,24 @@ package mobileapp.ctemplar.com.ctemplarapp.repository.provider;
 
 import androidx.annotation.Nullable;
 
-import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.MessageAttachment;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.MessagesResult;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.UserDisplayResponse;
-import mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames;
-import mobileapp.ctemplar.com.ctemplarapp.repository.entity.AttachmentEntity;
-import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MessageEntity;
-import mobileapp.ctemplar.com.ctemplarapp.repository.entity.UserDisplayEntity;
-import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
-import mobileapp.ctemplar.com.ctemplarapp.utils.EncryptUtils;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+
+import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.MessageAttachment;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.MessagesResult;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.UserDisplayResponse;
+import mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames;
+import mobileapp.ctemplar.com.ctemplarapp.repository.dto.headers.IncomingHeadersDTO;
+import mobileapp.ctemplar.com.ctemplarapp.repository.entity.AttachmentEntity;
+import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MessageEntity;
+import mobileapp.ctemplar.com.ctemplarapp.repository.entity.UserDisplayEntity;
+import mobileapp.ctemplar.com.ctemplarapp.repository.mapper.IncomingHeadersMapper;
+import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
+import mobileapp.ctemplar.com.ctemplarapp.utils.EncryptUtils;
 
 public class MessageProvider {
     private long id;
@@ -29,6 +32,8 @@ public class MessageProvider {
     private List<UserDisplayProvider> receiverDisplayList;
     private List<UserDisplayProvider> ccDisplayList;
     private List<UserDisplayProvider> bccDisplayList;
+    private List<UserDisplayProvider> replyToDisplayList;
+    private Map<String, String> participants;
     private boolean hasChildren;
     private int childrenCount;
     private String subject;
@@ -50,6 +55,9 @@ public class MessageProvider {
     private boolean isProtected;
     private boolean isVerified;
     private boolean isHtml;
+    private boolean isAutocryptEncrypted;
+    private boolean isSignVerified;
+    private IncomingHeadersDTO incomingHeaders;
     private String hash;
     private List<String> spamReason;
     private String lastAction;
@@ -63,7 +71,24 @@ public class MessageProvider {
     public MessageProvider() {
     }
 
-    public MessageProvider(long id, EncryptionMessageProvider encryptionMessage, String sender, boolean hasAttachments, List<AttachmentProvider> attachments, Date createdAt, UserDisplayProvider senderDisplay, List<UserDisplayProvider> receiverDisplayList, List<UserDisplayProvider> ccDisplayList, List<UserDisplayProvider> bccDisplayList, boolean hasChildren, int childrenCount, String subject, String content, String[] receivers, String[] cc, String[] bcc, String folderName, Date updatedAt, Date destructDate, Date delayedDelivery, Long deadManDuration, boolean isRead, boolean send, boolean isStarred, Date sentAt, boolean isEncrypted, boolean isSubjectEncrypted, boolean isProtected, boolean isVerified, boolean isHtml, String hash, List<String> spamReason, String lastAction, String lastActionThread, long mailboxId, String parent, boolean isSubjectDecrypted, String decryptedSubject) {
+    public MessageProvider(long id, EncryptionMessageProvider encryptionMessage, String sender,
+                           boolean hasAttachments, List<AttachmentProvider> attachments,
+                           Date createdAt, UserDisplayProvider senderDisplay,
+                           List<UserDisplayProvider> receiverDisplayList,
+                           List<UserDisplayProvider> ccDisplayList,
+                           List<UserDisplayProvider> bccDisplayList,
+                           List<UserDisplayProvider> replyToDisplayList,
+                           Map<String, String> participants, boolean hasChildren, int childrenCount,
+                           String subject, String content, String[] receivers, String[] cc,
+                           String[] bcc, String folderName, Date updatedAt, Date destructDate,
+                           Date delayedDelivery, Long deadManDuration, boolean isRead, boolean send,
+                           boolean isStarred, Date sentAt, boolean isEncrypted,
+                           boolean isSubjectEncrypted, boolean isProtected, boolean isVerified,
+                           boolean isHtml, boolean isAutocryptEncrypted, boolean isSignVerified,
+                           IncomingHeadersDTO incomingHeaders, String hash, List<String> spamReason,
+                           String lastAction, String lastActionThread, long mailboxId, String parent,
+                           boolean isSubjectDecrypted, String decryptedSubject
+    ) {
         this.id = id;
         this.encryptionMessage = encryptionMessage;
         this.sender = sender;
@@ -74,6 +99,8 @@ public class MessageProvider {
         this.receiverDisplayList = receiverDisplayList;
         this.ccDisplayList = ccDisplayList;
         this.bccDisplayList = bccDisplayList;
+        this.replyToDisplayList = replyToDisplayList;
+        this.participants = participants;
         this.hasChildren = hasChildren;
         this.childrenCount = childrenCount;
         this.subject = subject;
@@ -95,6 +122,9 @@ public class MessageProvider {
         this.isProtected = isProtected;
         this.isVerified = isVerified;
         this.isHtml = isHtml;
+        this.isAutocryptEncrypted = isAutocryptEncrypted;
+        this.isSignVerified = isSignVerified;
+        this.incomingHeaders = incomingHeaders;
         this.hash = hash;
         this.spamReason = spamReason;
         this.lastAction = lastAction;
@@ -102,7 +132,6 @@ public class MessageProvider {
         this.mailboxId = mailboxId;
         this.parent = parent;
         this.isSubjectDecrypted = isSubjectDecrypted;
-
         this.decryptedSubject = decryptedSubject;
     }
 
@@ -188,6 +217,22 @@ public class MessageProvider {
 
     public void setBccDisplayList(List<UserDisplayProvider> bccDisplayList) {
         this.bccDisplayList = bccDisplayList;
+    }
+
+    public List<UserDisplayProvider> getReplyToDisplayList() {
+        return replyToDisplayList;
+    }
+
+    public void setReplyToDisplayList(List<UserDisplayProvider> replyToDisplayList) {
+        this.replyToDisplayList = replyToDisplayList;
+    }
+
+    public Map<String, String> getParticipants() {
+        return participants;
+    }
+
+    public void setParticipants(Map<String, String> participants) {
+        this.participants = participants;
     }
 
     public boolean isHasChildren() {
@@ -356,6 +401,30 @@ public class MessageProvider {
 
     public void setHtml(boolean html) {
         isHtml = html;
+    }
+
+    public boolean isAutocryptEncrypted() {
+        return isAutocryptEncrypted;
+    }
+
+    public void setAutocryptEncrypted(boolean autocryptEncrypted) {
+        isAutocryptEncrypted = autocryptEncrypted;
+    }
+
+    public boolean isSignVerified() {
+        return isSignVerified;
+    }
+
+    public void setSignVerified(boolean signVerified) {
+        isSignVerified = signVerified;
+    }
+
+    public IncomingHeadersDTO getIncomingHeaders() {
+        return incomingHeaders;
+    }
+
+    public void setIncomingHeaders(IncomingHeadersDTO incomingHeaders) {
+        this.incomingHeaders = incomingHeaders;
     }
 
     public String getHash() {
@@ -577,6 +646,8 @@ public class MessageProvider {
         messageProvider.receiverDisplayList = convertUserDisplayListFromEntityToProvider(message.getReceiverDisplayList());
         messageProvider.ccDisplayList = convertUserDisplayListFromEntityToProvider(message.getCcDisplayList());
         messageProvider.bccDisplayList = convertUserDisplayListFromEntityToProvider(message.getBccDisplayList());
+        messageProvider.replyToDisplayList = convertUserDisplayListFromEntityToProvider(message.getReplyToDisplayList());
+        messageProvider.participants = message.getParticipants();
         messageProvider.hasChildren = message.isHasChildren();
         messageProvider.childrenCount = message.getChildrenCount();
         if (message.getEncryptionMessage() == null) {
@@ -593,8 +664,7 @@ public class MessageProvider {
             messageProvider.subject = message.getSubject();
         }
         messageProvider.content = EncryptUtils.decryptContent(
-                message.getContent(),
-                message.getMailboxId(),
+                message.getContent(), message.getMailboxId(),
                 decryptContent && message.getEncryptionMessage() == null
         );
         messageProvider.receivers = listToArray(message.getReceivers());
@@ -614,13 +684,19 @@ public class MessageProvider {
         messageProvider.isProtected = message.isProtected();
         messageProvider.isVerified = message.isVerified();
         messageProvider.isHtml = message.isHtml();
+        messageProvider.isAutocryptEncrypted = message.isAutocryptEncrypted();
+        messageProvider.isSignVerified = message.isSignVerified();
+        String incomingHeaders = EncryptUtils.decryptContent(
+                message.getIncomingHeaders(), message.getMailboxId(),
+                decryptContent && message.getEncryptionMessage() == null
+        );
+        messageProvider.incomingHeaders = IncomingHeadersMapper.mapToDTO(incomingHeaders);
         messageProvider.hash = message.getHash();
         messageProvider.spamReason = message.getSpamReason();
         messageProvider.lastAction = message.getLastAction();
         messageProvider.lastActionThread = message.getLastActionThread();
         messageProvider.mailboxId = message.getMailboxId();
         messageProvider.parent = message.getParent();
-
         messageProvider.decryptedSubject = message.getDecryptedSubject();
 
         return messageProvider;
@@ -697,6 +773,8 @@ public class MessageProvider {
         messageEntity.setReceiverDisplayList(convertUserDisplayListFromResponseToEntities(message.getReceiverDisplay()));
         messageEntity.setCcDisplayList(convertUserDisplayListFromResponseToEntities(message.getCcDisplay()));
         messageEntity.setBccDisplayList(convertUserDisplayListFromResponseToEntities(message.getBccDisplay()));
+        messageEntity.setReplyToDisplayList(convertUserDisplayListFromResponseToEntities(message.getReplyToDisplay()));
+        messageEntity.setParticipants(message.getParticipants());
         messageEntity.setHasChildren(message.isHasChildren());
         messageEntity.setChildrenCount(message.getChildrenCount());
         messageEntity.setSubject(message.getSubject());
@@ -719,6 +797,9 @@ public class MessageProvider {
         messageEntity.setProtected(message.isProtected());
         messageEntity.setVerified(message.isVerified());
         messageEntity.setHtml(message.isHtml());
+        messageEntity.setAutocryptEncrypted(message.isAutocryptEncrypted());
+        messageEntity.setSignVerified(message.isSignVerified());
+        messageEntity.setIncomingHeaders(message.getIncomingHeaders());
         messageEntity.setHash(message.getHash());
         messageEntity.setSpamReason(message.getSpamReason());
         messageEntity.setLastAction(message.getLastAction());

@@ -5,6 +5,7 @@ import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
 
 import mobileapp.ctemplar.com.ctemplarapp.repository.converter.CommonConverter;
+import mobileapp.ctemplar.com.ctemplarapp.repository.converter.EmailConverter;
 import mobileapp.ctemplar.com.ctemplarapp.repository.converter.KeyTypeConverter;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.ContactEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
@@ -18,11 +19,12 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MessageEntity;
                 ContactEntity.class,
                 MessageEntity.class
         },
-        version = 15,
+        version = 16,
         exportSchema = false
 )
 @TypeConverters({
         CommonConverter.class,
+        EmailConverter.class,
         KeyTypeConverter.class
 })
 public abstract class AppDatabase extends RoomDatabase {
