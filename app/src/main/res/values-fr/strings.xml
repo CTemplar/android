@@ -477,7 +477,7 @@
 
     <string-array name="dark_mode_entries">
         <item>Auto (détecter)</item>
-        <item>Sur</item>
-        <item>De</item>
+        <item>Activé</item>
+        <item>Désactivé</item>
     </string-array>
 </resources>
