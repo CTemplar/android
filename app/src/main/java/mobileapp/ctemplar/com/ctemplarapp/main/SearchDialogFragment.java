@@ -41,12 +41,16 @@ import java.util.List;
 
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.databinding.FragmentMessagesSearchDialogBinding;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.folders.FoldersResponse;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.folders.FoldersResult;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.folders.CustomFolderResponse;
+import mobileapp.ctemplar.com.ctemplarapp.repository.dto.DTOResource;
+import mobileapp.ctemplar.com.ctemplarapp.repository.dto.PageableDTO;
 import mobileapp.ctemplar.com.ctemplarapp.repository.dto.SearchMessagesDTO;
+import mobileapp.ctemplar.com.ctemplarapp.repository.dto.folders.CustomFolderDTO;
 import mobileapp.ctemplar.com.ctemplarapp.settings.filters.FiltersViewModel;
 import mobileapp.ctemplar.com.ctemplarapp.utils.DateUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
+import mobileapp.ctemplar.com.ctemplarapp.utils.ToastUtils;
+
 import timber.log.Timber;
 
 public class SearchDialogFragment extends DialogFragment {
@@ -153,8 +157,8 @@ public class SearchDialogFragment extends DialogFragment {
                 sizeMeasureEntries
         );
         binding.sizeMeasureSpinner.setAdapter(sizeMeasureAdapter);
-        filtersModel.getFoldersResponse().observe(this, this::handleCustomFolders);
-        getCustomFolders();
+        filtersModel.getCustomFoldersLiveData().observe(this, this::handleCustomFolders);
+        filtersModel.getCustomFolders(200, 0);
     }
 
     @NonNull
@@ -257,19 +261,19 @@ public class SearchDialogFragment extends DialogFragment {
         binding.endDateTextView.setText(DateUtils.getFilterDate(calendar.getTimeInMillis()));
     }
 
-    private void handleCustomFolders(FoldersResponse foldersResponse) {
-        if (foldersResponse == null) {
-            Timber.d("foldersResponse is null");
+    private void handleCustomFolders(DTOResource<PageableDTO<CustomFolderDTO>> resource) {
+        if (!resource.isSuccess()) {
+            ToastUtils.showToast(getActivity(), resource.getError());
             return;
         }
-        List<FoldersResult> customFolderList = foldersResponse.getFoldersList();
+        List<CustomFolderDTO> customFolders = resource.getDto().getResults();
         List<String> folderList = new ArrayList<>(Arrays.asList(ALL_MAILS, ARCHIVE, DRAFT, INBOX,
                 OUTBOX, SENT, SPAM, STARRED, TRASH, UNREAD));
         List<Integer> folderColorList = new ArrayList<>(Collections.nCopies(folderList.size(), -1));
-        for (FoldersResult customFolder : customFolderList) {
-            folderList.add(customFolder.getName());
+        for (CustomFolderDTO folder : customFolders) {
+            folderList.add(folder.getName());
             try {
-                folderColorList.add(Color.parseColor(customFolder.getColor()));
+                folderColorList.add(Color.parseColor(folder.getColor()));
             } catch (IllegalArgumentException e) {
                 Timber.e(e);
             }
@@ -321,9 +325,5 @@ public class SearchDialogFragment extends DialogFragment {
             }
         }
         return view;
-    }
-
-    private void getCustomFolders() {
-        filtersModel.getFolders(200, 0);
     }
 }
