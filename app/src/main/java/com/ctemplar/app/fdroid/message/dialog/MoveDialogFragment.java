@@ -22,16 +22,18 @@ import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import java.util.List;
-
 import com.ctemplar.app.fdroid.R;
 import com.ctemplar.app.fdroid.databinding.FragmentMessagesMoveDialogBinding;
 import com.ctemplar.app.fdroid.folders.AddFolderActivity;
 import com.ctemplar.app.fdroid.folders.ManageFoldersActivity;
 import com.ctemplar.app.fdroid.message.ViewMessagesViewModel;
-import com.ctemplar.app.fdroid.net.response.folders.FoldersResponse;
-import com.ctemplar.app.fdroid.net.response.folders.FoldersResult;
+import com.ctemplar.app.fdroid.repository.dto.DTOResource;
+import com.ctemplar.app.fdroid.repository.dto.PageableDTO;
+import com.ctemplar.app.fdroid.repository.dto.folders.CustomFolderDTO;
 import com.ctemplar.app.fdroid.utils.ToastUtils;
+
+import java.util.List;
+
 import timber.log.Timber;
 
 public class MoveDialogFragment extends DialogFragment {
@@ -39,7 +41,7 @@ public class MoveDialogFragment extends DialogFragment {
 
     private FragmentMessagesMoveDialogBinding binding;
     private ViewMessagesViewModel viewMessagesModel;
-    private List<FoldersResult> customFoldersList;
+    private List<CustomFolderDTO> customFoldersList;
     private OnMoveListener callback;
 
     @Override
@@ -85,9 +87,9 @@ public class MoveDialogFragment extends DialogFragment {
         }
         binding.applyActionButton.setOnClickListener(v -> {
             int checkedId = binding.foldersRadioGroup.getCheckedRadioButtonId();
-            for (FoldersResult folderItem : customFoldersList) {
-                if (checkedId == folderItem.getId()) {
-                    String folderName = folderItem.getName();
+            for (CustomFolderDTO folder : customFoldersList) {
+                if (checkedId == folder.getId()) {
+                    String folderName = folder.getName();
                     viewMessagesModel.moveToFolder(messageObjectIds, folderName);
                     if (callback != null) {
                         callback.onMove(folderName);
@@ -98,26 +100,26 @@ public class MoveDialogFragment extends DialogFragment {
             }
         });
 
-        viewMessagesModel.getFoldersResponse().observe(getViewLifecycleOwner(),
+        viewMessagesModel.getCustomFoldersLiveData().observe(getViewLifecycleOwner(),
                 foldersResponse -> handleFoldersResponse(view, foldersResponse));
         getCustomFolders();
     }
 
-    private void handleFoldersResponse(View view, FoldersResponse foldersResponse) {
-        if (foldersResponse == null) {
-            Timber.e("foldersResponse is null");
+    private void handleFoldersResponse(View view, DTOResource<PageableDTO<CustomFolderDTO>> resource) {
+        if (!resource.isSuccess()) {
+            ToastUtils.showToast(getActivity(), resource.getError());
             return;
         }
-        LayoutInflater inflater = LayoutInflater.from(getActivity());
-        customFoldersList = foldersResponse.getFoldersList();
+        LayoutInflater inflater = getLayoutInflater();
+        customFoldersList = resource.getDto().getResults();
         binding.foldersRadioGroup.removeAllViewsInLayout();
 
-        for (FoldersResult folderItem : customFoldersList) {
+        for (CustomFolderDTO folder : customFoldersList) {
             View folderItemButton = inflater.inflate(R.layout.item_move_folder_radiobutton,
                     binding.foldersRadioGroup, false);
             RadioButton radioButton = folderItemButton.findViewById(R.id.radio_button);
-            radioButton.setId(folderItem.getId());
-            radioButton.setText(folderItem.getName());
+            radioButton.setId(folder.getId());
+            radioButton.setText(folder.getName());
 
             Resources resources = requireContext().getResources();
             Drawable folderLeftDrawable = ResourcesCompat.getDrawable(resources,
@@ -130,7 +132,7 @@ public class MoveDialogFragment extends DialogFragment {
             folderLeftDrawable.mutate();
             folderRightDrawable.mutate();
 
-            int folderColor = Color.parseColor(folderItem.getColor());
+            int folderColor = Color.parseColor(folder.getColor());
             int markColor = resources.getColor(R.color.secondaryTextColor);
             folderLeftDrawable.setColorFilter(folderColor, PorterDuff.Mode.SRC_IN);
             folderRightDrawable.setColorFilter(markColor, PorterDuff.Mode.SRC_IN);
@@ -142,7 +144,7 @@ public class MoveDialogFragment extends DialogFragment {
 
         View addFolderLayout = inflater.inflate(R.layout.manage_folders_footer,
                 binding.foldersRadioGroup, false);
-        Button addFolderButton = addFolderLayout.findViewById(R.id.manager_folders_footer_btn);
+        Button addFolderButton = addFolderLayout.findViewById(R.id.footer_button);
         addFolderButton.setOnClickListener(v -> {
             Intent addFolder = new Intent(getActivity(), AddFolderActivity.class);
             startActivity(addFolder);
@@ -163,7 +165,7 @@ public class MoveDialogFragment extends DialogFragment {
     }
 
     private void getCustomFolders() {
-        viewMessagesModel.getFolders(200, 0);
+        viewMessagesModel.getCustomFolders(200, 0);
     }
 
     @NonNull

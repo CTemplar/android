@@ -534,7 +534,6 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         contactsViewModel.getContactsResponse().observe(getViewLifecycleOwner(),
                 this::handleContactsList);
         contactsViewModel.getContacts(200, 0);
-        // Load keys before sending message
         sendModel.getKeyResponse().observe(getViewLifecycleOwner(), keysResponse -> {
             if (keysResponse == null || keysResponse.getKeys() == null) {
                 Timber.e("keyResponse is null");
@@ -546,8 +545,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
             }
             draftMessage = false;
             sendMessage();
-        });
-
+        }); // TODO
         sendModel.getGrabAttachmentStatus().observe(getViewLifecycleOwner(), aBoolean -> {
             messageAttachmentsProcessingTextView.setVisibility(View.GONE);
             attachmentsProcessingEnabled = false;

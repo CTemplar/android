@@ -34,9 +34,8 @@
                 android:id="@+id/activity_edit_folder_input_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
+                android:layout_marginHorizontal="16dp"
                 android:layout_marginTop="16dp"
-                android:layout_marginEnd="16dp"
                 android:orientation="vertical">
 
                 <TextView
@@ -88,12 +87,8 @@
                 android:id="@+id/activity_edit_folder_colors_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16sp"
-                android:layout_marginLeft="16sp"
-                android:layout_marginTop="16sp"
-                android:layout_marginEnd="16sp"
-                android:layout_marginRight="16sp"
-                android:layout_marginBottom="16sp">
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginVertical="16dp">
 
                 <TableRow>
 
@@ -565,11 +560,8 @@
                 android:id="@+id/activity_edit_folder_actions_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginTop="30dp"
-                android:layout_marginEnd="16dp"
-                android:layout_marginRight="16dp"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="10dp"
                 android:layout_marginBottom="16dp"
                 android:orientation="horizontal">
 
@@ -578,7 +570,6 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="4dp"
-                    android:layout_marginRight="4dp"
                     android:layout_weight="1"
                     android:background="@drawable/dialog_cancel_button_background"
                     android:fontFamily="@font/lato_regular"

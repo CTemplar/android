@@ -68,7 +68,7 @@ import com.ctemplar.app.fdroid.net.response.myself.WhiteListContact;
 import com.ctemplar.app.fdroid.net.response.whiteBlackList.BlackListResponse;
 import com.ctemplar.app.fdroid.net.response.whiteBlackList.WhiteListResponse;
 import com.ctemplar.app.fdroid.repository.dto.DTOResource;
-import com.ctemplar.app.fdroid.repository.dto.PagableDTO;
+import com.ctemplar.app.fdroid.repository.dto.PageableDTO;
 import com.ctemplar.app.fdroid.repository.dto.SearchMessagesDTO;
 import com.ctemplar.app.fdroid.repository.dto.invites.InviteCodeDTO;
 import com.ctemplar.app.fdroid.repository.entity.MailboxEntity;
@@ -99,7 +99,7 @@ public class UserRepository {
     private final UserStore userStore;
     private RestService service;
 
-    private final MutableLiveData<DTOResource<PagableDTO<InviteCodeDTO>>> inviteCodesLiveData = new MutableLiveData<>();
+    private final MutableLiveData<DTOResource<PageableDTO<InviteCodeDTO>>> inviteCodesLiveData = new MutableLiveData<>();
 
     public static UserRepository getInstance() {
         if (instance == null) {
@@ -770,7 +770,7 @@ public class UserRepository {
         return liveData;
     }
 
-    public MutableLiveData<DTOResource<PagableDTO<InviteCodeDTO>>> getInviteCodesLiveData() {
+    public MutableLiveData<DTOResource<PageableDTO<InviteCodeDTO>>> getInviteCodesLiveData() {
         return inviteCodesLiveData;
     }
 

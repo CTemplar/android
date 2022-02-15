@@ -1,5 +1,7 @@
 package com.ctemplar.app.fdroid.settings.filters;
 
+import static com.ctemplar.app.fdroid.utils.DateUtils.GENERAL_GSON;
+
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -23,6 +25,18 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.ctemplar.app.fdroid.BaseActivity;
+import com.ctemplar.app.fdroid.R;
+import com.ctemplar.app.fdroid.net.ResponseStatus;
+import com.ctemplar.app.fdroid.net.request.filters.EmailFilterConditionRequest;
+import com.ctemplar.app.fdroid.net.request.filters.EmailFilterRequest;
+import com.ctemplar.app.fdroid.net.response.filters.EmailFilterConditionResponse;
+import com.ctemplar.app.fdroid.repository.constant.MainFolderNames;
+import com.ctemplar.app.fdroid.repository.dto.DTOResource;
+import com.ctemplar.app.fdroid.repository.dto.PageableDTO;
+import com.ctemplar.app.fdroid.repository.dto.folders.CustomFolderDTO;
+import com.ctemplar.app.fdroid.utils.EditTextUtils;
+import com.ctemplar.app.fdroid.utils.ToastUtils;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.gson.JsonSyntaxException;
 
@@ -31,19 +45,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import butterknife.BindView;
-import com.ctemplar.app.fdroid.BaseActivity;
-import com.ctemplar.app.fdroid.R;
-import com.ctemplar.app.fdroid.net.ResponseStatus;
-import com.ctemplar.app.fdroid.net.request.filters.EmailFilterConditionRequest;
-import com.ctemplar.app.fdroid.net.request.filters.EmailFilterRequest;
-import com.ctemplar.app.fdroid.net.response.filters.EmailFilterConditionResponse;
-import com.ctemplar.app.fdroid.net.response.folders.FoldersResponse;
-import com.ctemplar.app.fdroid.net.response.folders.FoldersResult;
-import com.ctemplar.app.fdroid.repository.constant.MainFolderNames;
-import com.ctemplar.app.fdroid.utils.EditTextUtils;
 import timber.log.Timber;
-
-import static com.ctemplar.app.fdroid.utils.DateUtils.GENERAL_GSON;
 
 public class EditFilterActivity extends BaseActivity {
     public static final String ARG_ID = "id";
@@ -150,10 +152,10 @@ public class EditFilterActivity extends BaseActivity {
         markAsStarredCheckBox.setChecked(filterAsStarred);
         deleteMsgCheckBox.setChecked(filterDeleteMsg);
 
-        filtersModel.getFoldersResponse().observe(this, this::handleCustomFolders);
+        filtersModel.getCustomFoldersLiveData().observe(this, this::handleCustomFolders);
         filtersModel.getEditFilterResponseStatus().observe(this, this::handleEditFilterStatus);
         filtersModel.getDeleteFilterResponseStatus().observe(this, this::handleFilterDeletingStatus);
-        getCustomFolders();
+        filtersModel.getCustomFolders(200, 0);
         addListeners();
     }
 
@@ -209,16 +211,15 @@ public class EditFilterActivity extends BaseActivity {
         }
     }
 
-    private void handleCustomFolders(FoldersResponse foldersResponse) {
-        if (foldersResponse == null) {
-            Timber.d("foldersResponse is null");
-            return;
-        }
-        List<FoldersResult> customFolderList = foldersResponse.getFoldersList();
+    private void handleCustomFolders(DTOResource<PageableDTO<CustomFolderDTO>> resource) {
+       if (!resource.isSuccess()) {
+           ToastUtils.showToast(this, resource.getError());
+           return;
+       }
         List<String> folderList = new ArrayList<>(Arrays.asList(MainFolderNames.INBOX,
                 MainFolderNames.ARCHIVE, MainFolderNames.SPAM, MainFolderNames.TRASH));
-        for (FoldersResult customFolder : customFolderList) {
-            folderList.add(customFolder.getName());
+        for (CustomFolderDTO folder : resource.getDto().getResults()) {
+            folderList.add(folder.getName());
         }
 
         ArrayAdapter<String> foldersAdapter = new ArrayAdapter<>(
@@ -228,10 +229,6 @@ public class EditFilterActivity extends BaseActivity {
         );
         filterFolderSpinner.setAdapter(foldersAdapter);
         filterFolderSpinner.setSelection(folderList.indexOf(filterFolder));
-    }
-
-    private void getCustomFolders() {
-        filtersModel.getFolders(200, 0);
     }
 
     public void updateFilter() {

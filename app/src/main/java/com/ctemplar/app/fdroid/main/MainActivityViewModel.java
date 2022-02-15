@@ -17,7 +17,6 @@ import com.ctemplar.app.fdroid.net.request.SignInRequest;
 import com.ctemplar.app.fdroid.net.request.folders.EmptyFolderRequest;
 import com.ctemplar.app.fdroid.net.response.ResponseMessagesData;
 import com.ctemplar.app.fdroid.net.response.SignInResponse;
-import com.ctemplar.app.fdroid.net.response.folders.FoldersResponse;
 import com.ctemplar.app.fdroid.net.response.messages.EmptyFolderResponse;
 import com.ctemplar.app.fdroid.net.response.messages.MessagesResponse;
 import com.ctemplar.app.fdroid.net.response.messages.MessagesResult;
@@ -29,7 +28,10 @@ import com.ctemplar.app.fdroid.repository.MessagesRepository;
 import com.ctemplar.app.fdroid.repository.UserRepository;
 import com.ctemplar.app.fdroid.repository.cache.MessageCacheProvider;
 import com.ctemplar.app.fdroid.repository.constant.MainFolderNames;
+import com.ctemplar.app.fdroid.repository.dto.DTOResource;
+import com.ctemplar.app.fdroid.repository.dto.PageableDTO;
 import com.ctemplar.app.fdroid.repository.dto.SearchMessagesDTO;
+import com.ctemplar.app.fdroid.repository.dto.folders.CustomFolderDTO;
 import com.ctemplar.app.fdroid.repository.entity.MessageEntity;
 import com.ctemplar.app.fdroid.repository.provider.MessageProvider;
 import com.ctemplar.app.fdroid.services.NotificationService;
@@ -73,8 +75,6 @@ public class MainActivityViewModel extends AndroidViewModel {
     private final MutableLiveData<ResponseStatus> deleteMessagesStatus = new MutableLiveData<>();
     private final MutableLiveData<ResponseStatus> markMessagesAsReadStatus = new MutableLiveData<>();
     private final MutableLiveData<ResponseStatus> emptyFolderStatus = new MutableLiveData<>();
-    private final MutableLiveData<FoldersResponse> foldersResponse = new MutableLiveData<>();
-    private final MutableLiveData<ResponseBody> unreadFoldersBody = new MutableLiveData<>();
     private final MutableLiveData<MyselfResponse> myselfResponse = new MutableLiveData<>();
     private final MutableLiveData<String> currentFolder = new MutableLiveData<>();
     private final MutableLiveData<ResponseStatus> logoutResponseStatus = new MutableLiveData<>();
@@ -184,14 +184,6 @@ public class MainActivityViewModel extends AndroidViewModel {
 
     public LiveData<ResponseStatus> getToFolderStatus() {
         return toFolderStatus;
-    }
-
-    MutableLiveData<FoldersResponse> getFoldersResponse() {
-        return foldersResponse;
-    }
-
-    MutableLiveData<ResponseBody> getUnreadFoldersBody() {
-        return unreadFoldersBody;
     }
 
     public void setCurrentFolder(String currentFolder) {
@@ -649,58 +641,6 @@ public class MainActivityViewModel extends AndroidViewModel {
                 });
     }
 
-    public void getFolders(int limit, int offset) {
-        manageFoldersRepository.getFoldersList(limit, offset)
-                .subscribe(new Observer<FoldersResponse>() {
-                    @Override
-                    public void onSubscribe(@NotNull Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(@NotNull FoldersResponse response) {
-                        foldersResponse.postValue(response);
-                    }
-
-                    @Override
-                    public void onError(@NotNull Throwable e) {
-                        responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
-                        Timber.e(e.getCause());
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
-    }
-
-    public void getUnreadFoldersList() {
-        manageFoldersRepository.getUnreadFoldersList()
-                .subscribe(new Observer<ResponseBody>() {
-                    @Override
-                    public void onSubscribe(@NotNull Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(@NotNull ResponseBody responseBody) {
-                        unreadFoldersBody.postValue(responseBody);
-                    }
-
-                    @Override
-                    public void onError(@NotNull Throwable e) {
-                        responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
-                        Timber.e(e.getCause());
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
-    }
-
     public void getUserMyselfInfo() {
         userRepository.getMyselfInfo()
                 .subscribe(new Observer<MyselfResponse>() {
@@ -730,5 +670,21 @@ public class MainActivityViewModel extends AndroidViewModel {
 
                     }
                 });
+    }
+
+    public MutableLiveData<DTOResource<PageableDTO<CustomFolderDTO>>> getCustomFoldersLiveData() {
+        return manageFoldersRepository.getCustomFoldersLiveData();
+    }
+
+    public void getCustomFolders(int limit, int offset) {
+        manageFoldersRepository.getCustomFolders(limit, offset);
+    }
+
+    public MutableLiveData<DTOResource<ResponseBody>> getUnreadFoldersLiveData() {
+        return manageFoldersRepository.getUnreadFoldersLiveData();
+    }
+
+    public void getUnreadFolders() {
+        manageFoldersRepository.getUnreadFolders();
     }
 }

@@ -2,17 +2,17 @@ package com.ctemplar.app.fdroid.repository.dto;
 
 import java.util.List;
 
-public class PagableDTO<T> {
+public class PageableDTO<T> {
     private int totalCount;
     private int pageCount;
     private boolean next;
     private boolean previous;
     private List<T> results;
 
-    public PagableDTO() {
+    public PageableDTO() {
     }
 
-    public PagableDTO(int totalCount, int pageCount, boolean next, boolean previous, List<T> results) {
+    public PageableDTO(int totalCount, int pageCount, boolean next, boolean previous, List<T> results) {
         this.totalCount = totalCount;
         this.pageCount = pageCount;
         this.next = next;

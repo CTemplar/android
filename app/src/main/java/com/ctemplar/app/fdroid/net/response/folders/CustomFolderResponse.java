@@ -2,7 +2,7 @@ package com.ctemplar.app.fdroid.net.response.folders;
 
 import com.google.gson.annotations.SerializedName;
 
-public class FoldersResult {
+public class CustomFolderResponse {
     @SerializedName("id")
     private int id;
 
