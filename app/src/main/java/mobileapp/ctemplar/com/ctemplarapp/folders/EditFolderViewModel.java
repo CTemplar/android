@@ -15,7 +15,7 @@ import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.folders.EditFolderRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.HttpErrorResponse;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.folders.FoldersResult;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.folders.CustomFolderResponse;
 import mobileapp.ctemplar.com.ctemplarapp.repository.ManageFoldersRepository;
 import retrofit2.HttpException;
 import retrofit2.Response;
@@ -26,7 +26,7 @@ import static mobileapp.ctemplar.com.ctemplarapp.utils.DateUtils.GENERAL_GSON;
 public class EditFolderViewModel extends ViewModel {
     private final ManageFoldersRepository manageFoldersRepository;
     private final MutableLiveData<ResponseStatus> deletingStatus = new MutableLiveData<>();
-    private final MutableLiveData<FoldersResult> editResponse = new MutableLiveData<>();
+    private final MutableLiveData<CustomFolderResponse> editResponse = new MutableLiveData<>();
     private final MutableLiveData<String> editErrorResponse = new MutableLiveData<>();
 
     public EditFolderViewModel() {
@@ -37,7 +37,7 @@ public class EditFolderViewModel extends ViewModel {
         return deletingStatus;
     }
 
-    public MutableLiveData<FoldersResult> getEditResponse() {
+    public MutableLiveData<CustomFolderResponse> getEditResponse() {
         return editResponse;
     }
 
@@ -73,15 +73,15 @@ public class EditFolderViewModel extends ViewModel {
     public void editFolder(long folderId, String folderName, String folderColor) {
         EditFolderRequest request = new EditFolderRequest(folderId, folderName, folderColor);
         manageFoldersRepository.editFolder(folderId, request)
-                .subscribe(new Observer<FoldersResult>() {
+                .subscribe(new Observer<CustomFolderResponse>() {
                     @Override
                     public void onSubscribe(@NotNull Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(@NotNull FoldersResult foldersResult) {
-                        editResponse.postValue(foldersResult);
+                    public void onNext(@NotNull CustomFolderResponse customFolderResponse) {
+                        editResponse.postValue(customFolderResponse);
                     }
 
                     @Override

@@ -4,29 +4,27 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import io.reactivex.Observer;
-import io.reactivex.disposables.Disposable;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.folders.FoldersResponse;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.folders.FoldersResult;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.MyselfResponse;
 import mobileapp.ctemplar.com.ctemplarapp.repository.ManageFoldersRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
+import mobileapp.ctemplar.com.ctemplarapp.repository.dto.DTOResource;
+import mobileapp.ctemplar.com.ctemplarapp.repository.dto.PageableDTO;
+import mobileapp.ctemplar.com.ctemplarapp.repository.dto.folders.CustomFolderDTO;
+
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
 import retrofit2.Response;
 import timber.log.Timber;
 
 public class ManageFoldersViewModel extends ViewModel {
-    private ManageFoldersRepository manageFoldersRepository;
-    private UserRepository userRepository;
-    private MutableLiveData<ResponseStatus> responseStatus = new MutableLiveData<>();
-    private MutableLiveData<ResponseStatus> deletingStatus = new MutableLiveData<>();
-    private MutableLiveData<FoldersResponse> foldersResponse = new MutableLiveData<>();
-    private MutableLiveData<MyselfResponse> myselfResponse = new MutableLiveData<>();
+    private final ManageFoldersRepository manageFoldersRepository;
+    private final UserRepository userRepository;
 
-    public MutableLiveData<FoldersResponse> getFoldersResponse() {
-        return foldersResponse;
-    }
+    private final MutableLiveData<ResponseStatus> responseStatus = new MutableLiveData<>();
+    private final MutableLiveData<ResponseStatus> deletingStatus = new MutableLiveData<>();
+    private final MutableLiveData<MyselfResponse> myselfResponse = new MutableLiveData<>();
 
     public LiveData<ResponseStatus> getResponseStatus() {
         return responseStatus;
@@ -45,33 +43,16 @@ public class ManageFoldersViewModel extends ViewModel {
         userRepository = CTemplarApp.getUserRepository();
     }
 
-    public void getFolders(int limit, int offset) {
-        manageFoldersRepository.getFoldersList(limit, offset)
-                .subscribe(new Observer<FoldersResponse>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(FoldersResponse response) {
-                        foldersResponse.postValue(response);
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
+    public MutableLiveData<DTOResource<PageableDTO<CustomFolderDTO>>> getCustomFoldersLiveData() {
+        return manageFoldersRepository.getCustomFoldersLiveData();
     }
 
-    public void deleteFolder(FoldersResult foldersResult) {
-        manageFoldersRepository.deleteFolder(foldersResult.getId())
+    public void getCustomFolders(int limit, int offset) {
+        manageFoldersRepository.getCustomFolders(limit, offset);
+    }
+
+    public void deleteFolder(int folderId) {
+        manageFoldersRepository.deleteFolder(folderId)
                 .subscribe(new Observer<Response<Void>>() {
                     @Override
                     public void onSubscribe(Disposable d) {

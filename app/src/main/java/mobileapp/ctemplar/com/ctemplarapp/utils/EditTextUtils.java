@@ -123,6 +123,10 @@ public class EditTextUtils {
         return str != null && str.length() > 0;
     }
 
+    public static String intToStringPositive(int value) {
+        return value > 0 ? String.valueOf(value) : "";
+    }
+
     public static String removeBreaks(String text) {
         return text.replaceAll("\n", "");
     }

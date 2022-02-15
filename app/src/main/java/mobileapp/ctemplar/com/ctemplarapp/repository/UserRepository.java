@@ -82,7 +82,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.WhiteListContact;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.whiteBlackList.BlackListResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.whiteBlackList.WhiteListResponse;
 import mobileapp.ctemplar.com.ctemplarapp.repository.dto.DTOResource;
-import mobileapp.ctemplar.com.ctemplarapp.repository.dto.PagableDTO;
+import mobileapp.ctemplar.com.ctemplarapp.repository.dto.PageableDTO;
 import mobileapp.ctemplar.com.ctemplarapp.repository.dto.SearchMessagesDTO;
 import mobileapp.ctemplar.com.ctemplarapp.repository.dto.invites.InviteCodeDTO;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
@@ -101,7 +101,7 @@ public class UserRepository {
     private final UserStore userStore;
     private RestService service;
 
-    private final MutableLiveData<DTOResource<PagableDTO<InviteCodeDTO>>> inviteCodesLiveData = new MutableLiveData<>();
+    private final MutableLiveData<DTOResource<PageableDTO<InviteCodeDTO>>> inviteCodesLiveData = new MutableLiveData<>();
 
     public static UserRepository getInstance() {
         if (instance == null) {
@@ -784,7 +784,7 @@ public class UserRepository {
         return liveData;
     }
 
-    public MutableLiveData<DTOResource<PagableDTO<InviteCodeDTO>>> getInviteCodesLiveData() {
+    public MutableLiveData<DTOResource<PageableDTO<InviteCodeDTO>>> getInviteCodesLiveData() {
         return inviteCodesLiveData;
     }
 

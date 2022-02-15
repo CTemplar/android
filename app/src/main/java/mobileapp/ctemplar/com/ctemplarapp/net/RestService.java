@@ -63,8 +63,6 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.domains.DomainsResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.filters.EmailFilterOrderListResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.filters.EmailFilterResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.filters.EmailFilterResult;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.folders.FoldersResponse;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.folders.FoldersResult;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.invites.InviteCodeResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.keys.KeysResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.mailboxes.MailboxKeyResponse;
@@ -227,10 +225,13 @@ public interface RestService {
     );
 
     @GET("emails/custom-folder/")
-    Observable<FoldersResponse> getFolders(@Query("limit") int limit, @Query("offset") int offset);
+    Single<FoldersResponse> getFolders(
+            @Query("limit") int limit,
+            @Query("offset") int offset
+    );
 
     @GET("emails/unread/")
-    Observable<ResponseBody> getUnreadFolders();
+    Single<ResponseBody> getUnreadFolders();
 
     @POST("emails/custom-folder/")
     Observable<ResponseBody> addFolder(@Body AddFolderRequest request);
@@ -239,7 +240,7 @@ public interface RestService {
     Observable<Response<Void>> deleteFolder(@Path("id") long id);
 
     @PATCH("emails/custom-folder/{id}/")
-    Observable<FoldersResult> editFolder(@Path("id") long id, @Body EditFolderRequest request);
+    Observable<CustomFolderResponse> editFolder(@Path("id") long id, @Body EditFolderRequest request);
 
     @GET("emails/mailboxes/")
     Observable<MailboxesResponse> getMailboxes(

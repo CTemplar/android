@@ -3,6 +3,9 @@ package mobileapp.ctemplar.com.ctemplarapp.settings.filters;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import mobileapp.ctemplar.com.ctemplarapp.repository.dto.DTOResource;
+import mobileapp.ctemplar.com.ctemplarapp.repository.dto.PageableDTO;
+import mobileapp.ctemplar.com.ctemplarapp.repository.dto.folders.CustomFolderDTO;
 import com.google.gson.JsonSyntaxException;
 
 import org.jetbrains.annotations.NotNull;
@@ -20,7 +23,6 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.HttpErrorResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.filters.EmailFilterOrderListResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.filters.EmailFilterResult;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.filters.EmailFilterResponse;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.folders.FoldersResponse;
 import mobileapp.ctemplar.com.ctemplarapp.repository.ManageFoldersRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
 import retrofit2.HttpException;
@@ -34,16 +36,11 @@ public class FiltersViewModel extends ViewModel {
     private final ManageFoldersRepository manageFoldersRepository;
 
     private final MutableLiveData<EmailFilterResponse> filtersResponse = new MutableLiveData<>();
-    private final MutableLiveData<FoldersResponse> foldersResponse = new MutableLiveData<>();
     private final MutableLiveData<ResponseStatus> addFilterResponseStatus = new MutableLiveData<>();
     private final MutableLiveData<ResponseStatus> deleteFilterResponseStatus = new MutableLiveData<>();
     private final MutableLiveData<ResponseStatus> editFilterResponseStatus = new MutableLiveData<>();
     private final MutableLiveData<EmailFilterOrderListResponse> filterOrderListResponse = new MutableLiveData<>();
     private final MutableLiveData<String> filterOrderListErrorResponse = new MutableLiveData<>();
-
-    public MutableLiveData<FoldersResponse> getFoldersResponse() {
-        return foldersResponse;
-    }
 
     MutableLiveData<EmailFilterResponse> getFiltersResponse() {
         return filtersResponse;
@@ -174,31 +171,6 @@ public class FiltersViewModel extends ViewModel {
                 });
     }
 
-    public void getFolders(int limit, int offset) {
-        manageFoldersRepository.getFoldersList(limit, offset)
-                .subscribe(new Observer<FoldersResponse>() {
-                    @Override
-                    public void onSubscribe(@NotNull Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(@NotNull FoldersResponse response) {
-                        foldersResponse.postValue(response);
-                    }
-
-                    @Override
-                    public void onError(@NotNull Throwable e) {
-                        Timber.e(e);
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
-    }
-
     public void updateEmailFiltersOrder(EmailFilterOrderListRequest request) {
         manageFoldersRepository.updateEmailFiltersOrder(request)
                 .subscribe(new Observer<EmailFilterOrderListResponse>() {
@@ -235,5 +207,13 @@ public class FiltersViewModel extends ViewModel {
 
                     }
                 });
+    }
+
+    public MutableLiveData<DTOResource<PageableDTO<CustomFolderDTO>>> getCustomFoldersLiveData() {
+        return manageFoldersRepository.getCustomFoldersLiveData();
+    }
+
+    public void getCustomFolders(int limit, int offset) {
+        manageFoldersRepository.getCustomFolders(limit, offset);
     }
 }

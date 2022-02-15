@@ -16,7 +16,6 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.folders.FoldersResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.MessagesResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.MessagesResult;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.WhiteListContact;
@@ -24,6 +23,8 @@ import mobileapp.ctemplar.com.ctemplarapp.repository.ManageFoldersRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.MessagesRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.dto.DTOResource;
+import mobileapp.ctemplar.com.ctemplarapp.repository.dto.PageableDTO;
+import mobileapp.ctemplar.com.ctemplarapp.repository.dto.folders.CustomFolderDTO;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MessageEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageProvider;
@@ -39,7 +40,6 @@ public class ViewMessagesViewModel extends ViewModel {
     private final MutableLiveData<List<MessageProvider>> messagesResponse = new MutableLiveData<>();
     private final MutableLiveData<Boolean> starredResponse = new MutableLiveData<>();
     private final MutableLiveData<Boolean> readResponse = new MutableLiveData<>();
-    private final MutableLiveData<FoldersResponse> foldersResponse = new MutableLiveData<>();
     private final MutableLiveData<ResponseStatus> moveToFolderStatus = new MutableLiveData<>();
     private final MutableLiveData<ResponseStatus> addWhitelistStatus = new MutableLiveData<>();
 
@@ -79,10 +79,6 @@ public class ViewMessagesViewModel extends ViewModel {
 
     public MutableLiveData<Boolean> getReadResponse() {
         return readResponse;
-    }
-
-    public MutableLiveData<FoldersResponse> getFoldersResponse() {
-        return foldersResponse;
     }
 
     public MutableLiveData<ResponseStatus> getAddWhitelistStatus() {
@@ -228,31 +224,6 @@ public class ViewMessagesViewModel extends ViewModel {
                 });
     }
 
-    public void getFolders(int limit, int offset) {
-        manageFoldersRepository.getFoldersList(limit, offset)
-                .subscribe(new Observer<FoldersResponse>() {
-                    @Override
-                    public void onSubscribe(@androidx.annotation.NonNull Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(@androidx.annotation.NonNull FoldersResponse response) {
-                        foldersResponse.postValue(response);
-                    }
-
-                    @Override
-                    public void onError(@androidx.annotation.NonNull Throwable e) {
-                        Timber.e(e);
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
-    }
-
     public void moveToFolder(Long[] messageIds, String folder) {
         userRepository.toFolder(messageIds, folder)
                 .subscribe(new Observer<Response<Void>>() {
@@ -310,5 +281,13 @@ public class ViewMessagesViewModel extends ViewModel {
 
     public MutableLiveData<DTOResource<Response<Void>>> unsubscribeMailing(long mailboxId, String mailto) {
         return userRepository.unsubscribeMailing(mailboxId, mailto);
+    }
+
+    public MutableLiveData<DTOResource<PageableDTO<CustomFolderDTO>>> getCustomFoldersLiveData() {
+        return manageFoldersRepository.getCustomFoldersLiveData();
+    }
+
+    public void getCustomFolders(int limit, int offset) {
+        manageFoldersRepository.getCustomFolders(limit, offset);
     }
 }

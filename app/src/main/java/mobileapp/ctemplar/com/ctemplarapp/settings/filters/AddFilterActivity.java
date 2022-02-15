@@ -21,6 +21,17 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProvider;
 
+import mobileapp.ctemplar.com.ctemplarapp.BaseActivity;
+import mobileapp.ctemplar.com.ctemplarapp.R;
+import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.filters.EmailFilterConditionRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.filters.EmailFilterRequest;
+import mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames;
+import mobileapp.ctemplar.com.ctemplarapp.repository.dto.DTOResource;
+import mobileapp.ctemplar.com.ctemplarapp.repository.dto.PageableDTO;
+import mobileapp.ctemplar.com.ctemplarapp.repository.dto.folders.CustomFolderDTO;
+import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
+import mobileapp.ctemplar.com.ctemplarapp.utils.ToastUtils;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.ArrayList;
@@ -28,16 +39,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import butterknife.BindView;
-import mobileapp.ctemplar.com.ctemplarapp.BaseActivity;
-import mobileapp.ctemplar.com.ctemplarapp.R;
-import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
-import mobileapp.ctemplar.com.ctemplarapp.net.request.filters.EmailFilterConditionRequest;
-import mobileapp.ctemplar.com.ctemplarapp.net.request.filters.EmailFilterRequest;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.folders.FoldersResponse;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.folders.FoldersResult;
-import mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames;
-import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
-import timber.log.Timber;
 
 public class AddFilterActivity extends BaseActivity {
     @BindView(R.id.activity_add_filter_name_edit_text)
@@ -108,8 +109,8 @@ public class AddFilterActivity extends BaseActivity {
         conditionsHolder.removeAllViews();
         conditionViewsList.clear();
         addCondition();
-        filtersModel.getFoldersResponse().observe(this, this::handleCustomFolders);
-        getCustomFolders();
+        filtersModel.getCustomFoldersLiveData().observe(this, this::handleCustomFolders);
+        filtersModel.getCustomFolders(200, 0);
         addListeners();
     }
 
@@ -133,16 +134,15 @@ public class AddFilterActivity extends BaseActivity {
         }
     }
 
-    private void handleCustomFolders(FoldersResponse foldersResponse) {
-        if (foldersResponse == null) {
-            Timber.d("foldersResponse is null");
+    private void handleCustomFolders(DTOResource<PageableDTO<CustomFolderDTO>> resource) {
+        if (!resource.isSuccess()) {
+            ToastUtils.showToast(this, resource.getError());
             return;
         }
-        List<FoldersResult> customFolderList = foldersResponse.getFoldersList();
         List<String> folderList = new ArrayList<>(Arrays.asList(MainFolderNames.INBOX,
                 MainFolderNames.ARCHIVE, MainFolderNames.SPAM, MainFolderNames.TRASH));
-        for (FoldersResult customFolder : customFolderList) {
-            folderList.add(customFolder.getName());
+        for (CustomFolderDTO folder : resource.getDto().getResults()) {
+            folderList.add(folder.getName());
         }
 
         ArrayAdapter<String> foldersAdapter = new ArrayAdapter<>(
@@ -232,10 +232,6 @@ public class AddFilterActivity extends BaseActivity {
         addConditionButton.setOnClickListener(v -> addCondition());
         addCustomFilterButton.setOnClickListener(v -> createCustomFilter());
         cancelButton.setOnClickListener(v -> cancel());
-    }
-
-    private void getCustomFolders() {
-        filtersModel.getFolders(200, 0);
     }
 
     public void cancel() {
