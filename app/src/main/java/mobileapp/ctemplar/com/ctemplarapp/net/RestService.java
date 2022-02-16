@@ -33,8 +33,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.request.domains.UpdateDomainReques
 import mobileapp.ctemplar.com.ctemplarapp.net.request.emails.UnsubscribeMailingRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.filters.EmailFilterOrderListRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.filters.EmailFilterRequest;
-import mobileapp.ctemplar.com.ctemplarapp.net.request.folders.AddFolderRequest;
-import mobileapp.ctemplar.com.ctemplarapp.net.request.folders.EditFolderRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.folders.FolderRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.folders.EmptyFolderRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.folders.MoveToFolderRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.mailboxes.CreateMailboxKeyRequest;
@@ -63,6 +62,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.domains.DomainsResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.filters.EmailFilterOrderListResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.filters.EmailFilterResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.filters.EmailFilterResult;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.folders.CustomFolderResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.invites.InviteCodeResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.keys.KeysResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.mailboxes.MailboxKeyResponse;
@@ -225,7 +225,7 @@ public interface RestService {
     );
 
     @GET("emails/custom-folder/")
-    Single<FoldersResponse> getFolders(
+    Single<PagableResponse<CustomFolderResponse>> getCustomFolders(
             @Query("limit") int limit,
             @Query("offset") int offset
     );
@@ -234,13 +234,13 @@ public interface RestService {
     Single<ResponseBody> getUnreadFolders();
 
     @POST("emails/custom-folder/")
-    Observable<ResponseBody> addFolder(@Body AddFolderRequest request);
+    Single<CustomFolderResponse> addFolder(@Body FolderRequest request);
 
     @DELETE("emails/custom-folder/{id}/")
-    Observable<Response<Void>> deleteFolder(@Path("id") long id);
+    Single<Response<Void>> deleteFolder(@Path("id") long id);
 
     @PATCH("emails/custom-folder/{id}/")
-    Observable<CustomFolderResponse> editFolder(@Path("id") long id, @Body EditFolderRequest request);
+    Single<CustomFolderResponse> editFolder(@Path("id") long id, @Body FolderRequest request);
 
     @GET("emails/mailboxes/")
     Observable<MailboxesResponse> getMailboxes(

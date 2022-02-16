@@ -198,9 +198,7 @@
 
     <!-- FOLDERS -->
     <string name="toast_folder_created">文件夹已创建</string>
-    <string name="toast_folder_not_created">相同名称的文件夹已存在。</string>
     <string name="txt_folder_deleted">文件夹已删除</string>
-    <string name="txt_folder_not_deleted">文件夹未删除</string>
     <string name="txt_folder_edited">文件夹已编辑</string>
     <string name="txt_folder_not_edited">文件夹未编辑</string>
     <string name="txt_folder_name_hint">文件夹名称必须在4-30个字母和数字之间</string>
@@ -210,7 +208,6 @@
     <string name="txt_delete_folder">删除文件夹</string>
     <string name="txt_manage_folders">管理文件夹</string>
     <string name="txt_folders_empty">文件夹为空</string>
-    <string name="txt_create_folder_free_error">免费用户只能创建最多5个文件夹。</string>
 
     <!-- SEND MESSAGE -->
     <string name="toast_message_sent">邮件已发送</string>

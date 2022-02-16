@@ -198,9 +198,7 @@
 
     <!-- FOLDERS -->
     <string name="toast_folder_created">Pasta criada</string>
-    <string name="toast_folder_not_created">Uma pasta com o mesmo nome já existe.</string>
     <string name="txt_folder_deleted">Pasta eliminada</string>
-    <string name="txt_folder_not_deleted">A pasta não foi eliminada </string>
     <string name="txt_folder_edited">Pasta editada</string>
     <string name="txt_folder_not_edited">Pasta não editada</string>
     <string name="txt_folder_name_hint">O nome da pasta tem de ter entre 4 e 30 letras e dígitos</string>
@@ -210,7 +208,6 @@
     <string name="txt_delete_folder">Eliminar pasta</string>
     <string name="txt_manage_folders">Gerir pastas</string>
     <string name="txt_folders_empty">As Pastas estão vazias</string>
-    <string name="txt_create_folder_free_error">Utilizadores da versão gratuita só podem criar até 5 pastas.</string>
 
     <!-- SEND MESSAGE -->
     <string name="toast_message_sent">Email enviado</string>

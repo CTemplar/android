@@ -198,9 +198,7 @@
 
     <!-- FOLDERS -->
     <string name="toast_folder_created">Folder stworzony</string>
-    <string name="toast_folder_not_created">Folder z tą nazwą już istnieje</string>
     <string name="txt_folder_deleted">Folder usunięty</string>
-    <string name="txt_folder_not_deleted">Folder nie usunięty</string>
     <string name="txt_folder_edited">Folder edytowany</string>
     <string name="txt_folder_not_edited">Folder nie edytowany</string>
     <string name="txt_folder_name_hint">Nazwa folderu musi zawierać przynajmniej 4 i nie więcej niż 30 znaków</string>
@@ -210,7 +208,6 @@
     <string name="txt_delete_folder">Usuń folder</string>
     <string name="txt_manage_folders">Zarządzaj folderami</string>
     <string name="txt_folders_empty">Puste foldery</string>
-    <string name="txt_create_folder_free_error">Użytkownicy z darmowym kontem mogą stworzyć tylko 5 folderów.</string>
 
     <!-- SEND MESSAGE -->
     <string name="toast_message_sent">Wiadomość wysłana</string>
