@@ -220,9 +220,7 @@
 
     <!-- FOLDERS -->
     <string name="toast_folder_created">Folder created</string>
-    <string name="toast_folder_not_created">Folder with the same name already exists.</string>
     <string name="txt_folder_deleted">Folder deleted</string>
-    <string name="txt_folder_not_deleted">Folder not deleted</string>
     <string name="txt_folder_edited">Folder edited</string>
     <string name="txt_folder_not_edited">Folder not edited</string>
     <string name="txt_folder_name_hint">Folder name must be between 1 and 30 letters and digits</string>
@@ -232,7 +230,6 @@
     <string name="txt_delete_folder">Delete folder</string>
     <string name="txt_manage_folders">Manage folders</string>
     <string name="txt_folders_empty">Folders empty</string>
-    <string name="txt_create_folder_free_error">Free users can only create a maximum of 5 folders.</string>
 
     <!-- SEND MESSAGE -->
     <string name="toast_message_sent">Mail sent</string>

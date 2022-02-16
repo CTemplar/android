@@ -198,9 +198,7 @@
 
     <!-- FOLDERS -->
     <string name="toast_folder_created">Ordner erstellt</string>
-    <string name="toast_folder_not_created">Es existiert bereits ein Ordner mit dem gleichen Namen.</string>
     <string name="txt_folder_deleted">Ordner gelöscht</string>
-    <string name="txt_folder_not_deleted">Ordner nicht gelöscht</string>
     <string name="txt_folder_edited">Ordner bearbeitet</string>
     <string name="txt_folder_not_edited">Ordner nicht bearbeitet</string>
     <string name="txt_folder_name_hint">Der Ordnername muss 4 bis 30 Buchstaben und Ziffern lang sein</string>
@@ -210,7 +208,6 @@
     <string name="txt_delete_folder">Ordner löschen</string>
     <string name="txt_manage_folders">Ordner verwalten</string>
     <string name="txt_folders_empty">Ordner leer</string>
-    <string name="txt_create_folder_free_error">Kostenlose Nutzer können maximal 5 Ordner einrichten.</string>
 
     <!-- SEND MESSAGE -->
     <string name="toast_message_sent">Mail versandt</string>

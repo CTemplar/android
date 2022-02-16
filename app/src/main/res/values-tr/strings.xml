@@ -202,9 +202,7 @@
 
     <!-- FOLDERS -->
     <string name="toast_folder_created">Klasör oluşturuldu</string>
-    <string name="toast_folder_not_created">Aynı ada sahip klasör zaten var.</string>
     <string name="txt_folder_deleted">Klasör silindi</string>
-    <string name="txt_folder_not_deleted">Klasör silinmedi</string>
     <string name="txt_folder_edited">Klasör düzenlendi</string>
     <string name="txt_folder_not_edited">Klasör düzenlenmedi</string>
     <string name="txt_folder_name_hint">Klasör adı 1 ile 30 harf ve rakam arasında olmalıdır</string>
@@ -214,7 +212,6 @@
     <string name="txt_delete_folder">Klasörü sil</string>
     <string name="txt_manage_folders">Klasörleri yönet</string>
     <string name="txt_folders_empty">klasörler boş</string>
-    <string name="txt_create_folder_free_error">Ücretsiz kullanıcılar en fazla 5 klasör oluşturabilir.</string>
 
     <!-- SEND MESSAGE -->
     <string name="toast_message_sent">Mail gönderildi</string>

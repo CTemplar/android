@@ -28,9 +28,8 @@ import com.ctemplar.app.fdroid.net.request.domains.UpdateDomainRequest;
 import com.ctemplar.app.fdroid.net.request.emails.UnsubscribeMailingRequest;
 import com.ctemplar.app.fdroid.net.request.filters.EmailFilterOrderListRequest;
 import com.ctemplar.app.fdroid.net.request.filters.EmailFilterRequest;
-import com.ctemplar.app.fdroid.net.request.folders.AddFolderRequest;
-import com.ctemplar.app.fdroid.net.request.folders.EditFolderRequest;
 import com.ctemplar.app.fdroid.net.request.folders.EmptyFolderRequest;
+import com.ctemplar.app.fdroid.net.request.folders.FolderRequest;
 import com.ctemplar.app.fdroid.net.request.folders.MoveToFolderRequest;
 import com.ctemplar.app.fdroid.net.request.mailboxes.CreateMailboxKeyRequest;
 import com.ctemplar.app.fdroid.net.request.mailboxes.CreateMailboxRequest;
@@ -230,13 +229,13 @@ public interface RestService {
     Single<ResponseBody> getUnreadFolders();
 
     @POST("emails/custom-folder/")
-    Observable<ResponseBody> addFolder(@Body AddFolderRequest request);
+    Single<CustomFolderResponse> addFolder(@Body FolderRequest request);
 
     @DELETE("emails/custom-folder/{id}/")
-    Observable<Response<Void>> deleteFolder(@Path("id") long id);
+    Single<Response<Void>> deleteFolder(@Path("id") long id);
 
     @PATCH("emails/custom-folder/{id}/")
-    Observable<CustomFolderResponse> editFolder(@Path("id") long id, @Body EditFolderRequest request);
+    Single<CustomFolderResponse> editFolder(@Path("id") long id, @Body FolderRequest request);
 
     @GET("emails/mailboxes/")
     Observable<MailboxesResponse> getMailboxes(

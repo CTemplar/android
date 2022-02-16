@@ -13,24 +13,22 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.List;
+
 import com.ctemplar.app.fdroid.BaseActivity;
 import com.ctemplar.app.fdroid.R;
 import com.ctemplar.app.fdroid.databinding.ActivityManageFoldersBinding;
 import com.ctemplar.app.fdroid.main.RecycleDeleteSwiper;
-import com.ctemplar.app.fdroid.net.ResponseStatus;
-import com.ctemplar.app.fdroid.repository.AccountTypeManager;
 import com.ctemplar.app.fdroid.repository.dto.DTOResource;
 import com.ctemplar.app.fdroid.repository.dto.PageableDTO;
 import com.ctemplar.app.fdroid.repository.dto.folders.CustomFolderDTO;
 import com.ctemplar.app.fdroid.utils.ToastUtils;
-
-import java.util.List;
+import retrofit2.Response;
 
 public class ManageFoldersActivity extends BaseActivity {
     private ActivityManageFoldersBinding binding;
-    private ManageFoldersViewModel manageFoldersModel;
+    private ManageFoldersViewModel viewModel;
     private final ManageFoldersAdapter manageFoldersAdapter = new ManageFoldersAdapter();
-    private boolean isPrime = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,25 +48,12 @@ public class ManageFoldersActivity extends BaseActivity {
         binding.foldersRecyclerView.addItemDecoration(dividerItemDecoration);
         binding.foldersRecyclerView.setAdapter(manageFoldersAdapter);
 
-        manageFoldersModel = new ViewModelProvider(this).get(ManageFoldersViewModel.class);
-        manageFoldersModel.getCustomFoldersLiveData().observe(this, this::handleCustomFolders);
-        manageFoldersModel.getDeletingStatus().observe(this, this::handleDeletingStatus);
-        manageFoldersModel.getMySelfResponse().observe(this, myselfResponse -> {
-            isPrime = myselfResponse != null && myselfResponse.getResult()[0].isPrime();
-        });
+        viewModel = new ViewModelProvider(this).get(ManageFoldersViewModel.class);
+        viewModel.getCustomFoldersLiveData().observe(this, this::handleCustomFolders);
         getCustomFolders();
-        manageFoldersModel.getMyselfData();
         binding.manageFoldersFooter.getRoot().setVisibility(View.GONE);
         binding.manageFoldersFooter.footerButton.setOnClickListener(v -> addFolder());
         binding.addLayout.setOnClickListener(v -> addFolder());
-    }
-
-    private void handleDeletingStatus(ResponseStatus responseStatus) {
-        if (responseStatus == null || responseStatus == ResponseStatus.RESPONSE_ERROR) {
-            ToastUtils.showToast(getApplicationContext(), R.string.txt_folder_not_deleted);
-            return;
-        }
-        ToastUtils.showToast(getApplicationContext(), R.string.txt_folder_deleted);
     }
 
     @Override
@@ -78,7 +63,7 @@ public class ManageFoldersActivity extends BaseActivity {
     }
 
     private void getCustomFolders() {
-        manageFoldersModel.getCustomFolders(200, 0);
+        viewModel.getCustomFolders(200, 0);
     }
 
     private void handleCustomFolders(DTOResource<PageableDTO<CustomFolderDTO>> resource) {
@@ -111,7 +96,9 @@ public class ManageFoldersActivity extends BaseActivity {
                         .setTitle(R.string.txt_delete_folder_quest_title)
                         .setMessage(R.string.txt_delete_folder_quest_message)
                         .setPositiveButton(getString(R.string.btn_delete).toUpperCase(),
-                                (dialog, which) -> manageFoldersModel.deleteFolder(deletedFolder.getId()))
+                                (dialog, which) -> viewModel.deleteFolder(deletedFolder.getId())
+                                        .observe(ManageFoldersActivity.this,
+                                                resource -> handleDeleteFolderResponse(resource)))
                         .setNeutralButton(R.string.btn_cancel, (dialog, which)
                                 -> adapter.restoreItem(deletedIndex, deletedFolder))
                         .show();
@@ -121,12 +108,16 @@ public class ManageFoldersActivity extends BaseActivity {
         itemTouchHelper.attachToRecyclerView(binding.foldersRecyclerView);
     }
 
-    private void addFolder() {
-        int foldersCount = manageFoldersAdapter.getItemCount();
-        boolean canCreate = AccountTypeManager.createFolder(getBaseContext(), foldersCount, isPrime);
-        if (canCreate) {
-            startActivity(new Intent(this, AddFolderActivity.class));
+    private void handleDeleteFolderResponse(DTOResource<Response<Void>> resource) {
+        if (!resource.isSuccess()) {
+            ToastUtils.showToast(this, resource.getError());
+            return;
         }
+        ToastUtils.showToast(this, R.string.txt_folder_deleted);
+    }
+
+    private void addFolder() {
+        startActivity(new Intent(this, AddFolderActivity.class));
     }
 
     @Override
