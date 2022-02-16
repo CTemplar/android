@@ -198,9 +198,7 @@
 
     <!-- FOLDERS -->
     <string name="toast_folder_created">Cartella creata</string>
-    <string name="toast_folder_not_created">Esiste già una cartella con lo stesso nome.</string>
     <string name="txt_folder_deleted">Cartella eliminata</string>
-    <string name="txt_folder_not_deleted">Cartella non eliminata</string>
     <string name="txt_folder_edited">Cartella modificata</string>
     <string name="txt_folder_not_edited">Cartella non modificata</string>
     <string name="txt_folder_name_hint">Il nome della cartella deve essere tra 1 e 30 lettere e numeri</string>
@@ -210,7 +208,6 @@
     <string name="txt_delete_folder">Elimina cartella</string>
     <string name="txt_manage_folders">Gestisci cartelle</string>
     <string name="txt_folders_empty">Cartelle vuote</string>
-    <string name="txt_create_folder_free_error">Gli utenti gratuiti possono creare solo un massimo di 5 cartelle.</string>
 
     <!-- SEND MESSAGE -->
     <string name="toast_message_sent">Email inviata</string>
