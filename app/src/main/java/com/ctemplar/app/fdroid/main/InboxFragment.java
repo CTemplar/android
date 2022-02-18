@@ -50,6 +50,7 @@ import com.ctemplar.app.fdroid.message.dialog.MoveDialogFragment;
 import com.ctemplar.app.fdroid.net.ResponseStatus;
 import com.ctemplar.app.fdroid.net.response.ResponseMessagesData;
 import com.ctemplar.app.fdroid.repository.dto.SearchMessagesDTO;
+import com.ctemplar.app.fdroid.repository.enums.MainFolders;
 import com.ctemplar.app.fdroid.repository.provider.MessageProvider;
 import com.ctemplar.app.fdroid.utils.EditTextUtils;
 import com.ctemplar.app.fdroid.utils.ToastUtils;
@@ -171,7 +172,8 @@ public class InboxFragment extends BaseFragment implements InboxMessagesAdapter.
             currentFolder = folderName;
             binding.swipeRefreshLayout.setRefreshing(false);
             requestNewMessages();
-            binding.folderEmptySearchTextView.setText(getString(R.string.title_empty_messages, folderName));
+            binding.fragmentInboxTitleEmpty.setText(getString(R.string.title_empty_messages,
+                    getString(MainFolders.get(folderName).getDisplayNameResourceId())));
             binding.recyclerView.setAdapter(adapter);
             updateTouchListenerSwipeOptions(currentFolder);
         });
