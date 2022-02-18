@@ -422,6 +422,9 @@ public class MainActivity extends AppCompatActivity
                     UnreadFoldersResponse.class));
             Map<String, Integer> folderToUnreadCount = GENERAL_GSON.fromJson(responseString,
                     new TypeToken<Map<String, Integer>>() {}.getType());
+            if (unreadFoldersDTO == null) {
+                unreadFoldersDTO = new UnreadFoldersDTO();
+            }
             if (folderToUnreadCount != null) {
                 folderToUnread.putAll(folderToUnreadCount);
             }

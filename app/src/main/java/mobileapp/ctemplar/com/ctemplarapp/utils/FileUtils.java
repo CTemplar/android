@@ -60,7 +60,7 @@ public class FileUtils {
         return file.isFile() && !fileName.startsWith(HIDDEN_PREFIX);
     };
     /**
-     * Folder (directories) filter.
+     * MainFolders (directories) filter.
      */
     public static FileFilter sDirFilter = file -> {
         final String fileName = file.getName();

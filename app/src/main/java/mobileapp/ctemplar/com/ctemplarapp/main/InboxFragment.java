@@ -67,6 +67,7 @@ import mobileapp.ctemplar.com.ctemplarapp.message.dialog.MoveDialogFragment;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.ResponseMessagesData;
 import mobileapp.ctemplar.com.ctemplarapp.repository.dto.SearchMessagesDTO;
+import mobileapp.ctemplar.com.ctemplarapp.repository.enums.MainFolders;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageProvider;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.ToastUtils;
@@ -175,7 +176,8 @@ public class InboxFragment extends BaseFragment implements InboxMessagesAdapter.
             currentFolder = folderName;
             binding.swipeRefreshLayout.setRefreshing(false);
             requestNewMessages();
-            binding.folderEmptySearchTextView.setText(getString(R.string.title_empty_messages, folderName));
+            binding.fragmentInboxTitleEmpty.setText(getString(R.string.title_empty_messages,
+                    getString(MainFolders.get(folderName).getDisplayNameResourceId())));
             binding.recyclerView.setAdapter(adapter);
             updateTouchListenerSwipeOptions(currentFolder);
         });
