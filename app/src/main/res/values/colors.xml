@@ -39,12 +39,14 @@
     <color name="colorDarkBlue5">#34495e</color>
     <color name="colorDarkBlue6">#445b79</color>
     <color name="colorDarkBlue7">#1a4d92e2</color>
+    <color name="colorDarkBlue8">#2e4960</color>
     <color name="colorDarkGreen">#007421</color>
     <color name="colorDarkGreen2">#008000</color>
     <color name="colorGreen">#33b200</color>
     <color name="colorGreen2">#993ab05d</color>
     <color name="colorGreen3">#3ab05d</color>
     <color name="colorDarkYellow">#ffaa0e</color>
+    <color name="colorDarkYellow2">#f39c12</color>
     <color name="colorOrangeLight">#e74c3c</color>
     <color name="colorOrangeLight2">#e1493a</color>
     <color name="colorOrangeLight20">#33e74c3c</color>
