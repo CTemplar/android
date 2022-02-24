@@ -180,6 +180,9 @@
     <string name="txt_reply_all">Reply All</string>
     <string name="attachment_decryption">Attachment decryption…</string>
     <string name="no_results_found">No results found</string>
+    <string name="warning">Warning</string>
+    <string name="load">Load</string>
+    <string name="warning_external_images_blocked">This email contains external images, which have been blocked.</string>
     <string name="continue_to_link">Continue to link</string>
     <string name="open_link_description">Do you trust the person who sent this link? This link takes you outside of CTemplar’s platform and we are not responsible for any third-party content.</string>
 

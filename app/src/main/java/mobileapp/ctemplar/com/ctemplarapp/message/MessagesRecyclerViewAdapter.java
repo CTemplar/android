@@ -2,6 +2,9 @@ package mobileapp.ctemplar.com.ctemplarapp.message;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.util.Base64;
@@ -13,6 +16,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -149,6 +153,8 @@ public class MessagesRecyclerViewAdapter extends RecyclerView.Adapter<MessagesRe
         final ImageView replyMessageImageView;
         final TextView bccEmailTextView;
         final TextView fullDateEmailTextView;
+        final LinearLayout emailImagesLoadLayout;
+        final Button emailImagesLoadButton;
         final WebView contentWebView;
         final TextView contentText;
         final ProgressBar progressBar;
@@ -197,6 +203,8 @@ public class MessagesRecyclerViewAdapter extends RecyclerView.Adapter<MessagesRe
             replyMessageImageView = expandedView.findViewById(R.id.item_message_view_expanded_reply_image_view);
             bccEmailTextView = expandedView.findViewById(R.id.item_message_view_BCC_email);
             fullDateEmailTextView = expandedView.findViewById(R.id.item_message_view_date_text_view);
+            emailImagesLoadLayout = expandedView.findViewById(R.id.email_images_load_layout);
+            emailImagesLoadButton = expandedView.findViewById(R.id.email_images_load_button);
             contentWebView = expandedView.findViewById(R.id.item_message_view_expanded_content);
             contentText = expandedView.findViewById(R.id.item_message_text_view_expanded_content);
             progressBar = expandedView.findViewById(R.id.item_message_view_expanded_progress_bar);
@@ -365,11 +373,18 @@ public class MessagesRecyclerViewAdapter extends RecyclerView.Adapter<MessagesRe
                 collapsedReplyMessageImageView.setVisibility(View.VISIBLE);
             }
 
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-//            contentWebView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
-//        } else {
-//            contentWebView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-//        }
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+//                contentWebView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+//            } else {
+//                contentWebView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+//            }
+
+            boolean blockExternalImages = userStore.isBlockExternalImagesEnabled();
+            emailImagesLoadButton.setOnClickListener(v -> {
+                contentWebView.getSettings().setLoadsImagesAutomatically(true);
+                contentWebView.reload();
+                emailImagesLoadLayout.setVisibility(View.GONE);
+            });
             EncryptionMessageProvider encryptionMessage = item.getEncryptionMessage();
             boolean isPasswordEncrypted = encryptionMessage != null && !encryptionMessage.isMessageDecrypted();
             if (isPasswordEncrypted) {
@@ -393,6 +408,8 @@ public class MessagesRecyclerViewAdapter extends RecyclerView.Adapter<MessagesRe
                 } else {
                     messageContent = encryptionMessage.getDecryptedMessage();
                 }
+                emailImagesLoadLayout.setVisibility(messageContent.contains("<img")
+                        && blockExternalImages ? View.VISIBLE : View.GONE);
                 Spanned spannedMessageContent = HtmlUtils.fromHtml(messageContent);
                 collapsedContentTextView.setText(spannedMessageContent);
                 if (isHtml) {
@@ -405,7 +422,7 @@ public class MessagesRecyclerViewAdapter extends RecyclerView.Adapter<MessagesRe
                     webViewSettings.setBuiltInZoomControls(true);
                     webViewSettings.setDisplayZoomControls(false);
                     webViewSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
-                    webViewSettings.setLoadsImagesAutomatically(!userStore.isBlockExternalImagesEnabled());
+                    webViewSettings.setLoadsImagesAutomatically(!blockExternalImages);
                     contentWebView.clearCache(true);
                     contentWebView.loadData(encodedMessageContent, "text/html", "base64");
                     ThemeUtils.setWebViewDarkTheme(context, contentWebView);
