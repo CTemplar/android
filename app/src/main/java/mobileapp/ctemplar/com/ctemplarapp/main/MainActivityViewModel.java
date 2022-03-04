@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import io.reactivex.Observable;
 import io.reactivex.Observer;
@@ -41,6 +42,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.MessagesResult;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.MyselfResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.MyselfResult;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.SettingsResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.socket.WebSocketClient;
 import mobileapp.ctemplar.com.ctemplarapp.repository.ManageFoldersRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.MessagesRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
@@ -56,7 +58,6 @@ import mobileapp.ctemplar.com.ctemplarapp.utils.EncodeUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EncryptUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.ThemeUtils;
 import mobileapp.ctemplar.com.ctemplarapp.workers.WorkersHelper;
-import okhttp3.ResponseBody;
 import retrofit2.HttpException;
 import retrofit2.Response;
 import timber.log.Timber;
@@ -82,6 +83,7 @@ public class MainActivityViewModel extends AndroidViewModel {
     private final MutableLiveData<String> currentFolder = new MutableLiveData<>();
     private final MutableLiveData<ResponseStatus> logoutResponseStatus = new MutableLiveData<>();
     private final MutableLiveData<PlanType> userPlanTypeResponse = new MutableLiveData<>();
+    private final MutableLiveData<Map<String, Integer>> unreadCountSocketLiveData = new MutableLiveData<>();
     private final QueuedExecutor executor;
 
     public interface OnDecryptFinishedCallback {
@@ -161,6 +163,7 @@ public class MainActivityViewModel extends AndroidViewModel {
         executor = new QueuedExecutor();
         exitBroadcastReceiver = new ExitBroadcastReceiver();
         exitBroadcastReceiver.register(application);
+        new WebSocketClient(userRepository.getUserStore(), unreadCountSocketLiveData::postValue);
     }
 
     @Override
@@ -720,11 +723,15 @@ public class MainActivityViewModel extends AndroidViewModel {
         manageFoldersRepository.getCustomFolders(limit, offset);
     }
 
-    public MutableLiveData<DTOResource<ResponseBody>> getUnreadFoldersLiveData() {
+    public MutableLiveData<DTOResource<Map<String, Integer>>> getUnreadFoldersLiveData() {
         return manageFoldersRepository.getUnreadFoldersLiveData();
     }
 
     public void getUnreadFolders() {
         manageFoldersRepository.getUnreadFolders();
+    }
+
+    public MutableLiveData<Map<String, Integer>> getUnreadCountSocketLiveData() {
+        return unreadCountSocketLiveData;
     }
 }

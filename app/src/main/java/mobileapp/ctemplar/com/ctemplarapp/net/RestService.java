@@ -1,5 +1,7 @@
 package mobileapp.ctemplar.com.ctemplarapp.net;
 
+import java.util.Map;
+
 import javax.inject.Singleton;
 
 import io.reactivex.Observable;
@@ -231,7 +233,7 @@ public interface RestService {
     );
 
     @GET("emails/unread/")
-    Single<ResponseBody> getUnreadFolders();
+    Single<Map<String, Integer>> getUnreadFolders();
 
     @POST("emails/custom-folder/")
     Single<CustomFolderResponse> addFolder(@Body FolderRequest request);
