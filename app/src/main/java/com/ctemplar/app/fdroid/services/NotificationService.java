@@ -25,8 +25,8 @@ import com.ctemplar.app.fdroid.CTemplarApp;
 import com.ctemplar.app.fdroid.R;
 import com.ctemplar.app.fdroid.main.MainActivity;
 import com.ctemplar.app.fdroid.message.ViewMessagesActivity;
-import com.ctemplar.app.fdroid.net.socket.NotificationServiceWebSocket;
-import com.ctemplar.app.fdroid.net.socket.NotificationServiceWebSocketCallback;
+import com.ctemplar.app.fdroid.net.socket.WebSocketClient;
+import com.ctemplar.app.fdroid.net.socket.WebSocketClientCallback;
 import com.ctemplar.app.fdroid.repository.provider.MessageProvider;
 import com.ctemplar.app.fdroid.utils.LaunchUtils;
 
@@ -38,16 +38,26 @@ import timber.log.Timber;
 
 public class NotificationService extends Service {
     private static Map<NotificationServiceListener, NotificationServiceConnection> listenerServiceConnectionMap;
-    private NotificationServiceWebSocket notificationServiceWebSocket;
+    private WebSocketClient webSocketClient;
 
     private final NotificationServiceBinder binder = new NotificationServiceBinder();
-    private final NotificationServiceWebSocketCallback notificationServiceWebSocketCallback = messageProvider -> {
-        if (CTemplarApp.isInForeground()) {
+    private final WebSocketClientCallback webSocketClientCallback = new WebSocketClientCallback() {
+        @Override
+        public void onNewMessage(MessageProvider messageProvider) {
+            if (CTemplarApp.isInForeground()) {
+                for (NotificationServiceListener notificationServiceListener : binder.listenerList) {
+                    notificationServiceListener.onNewEmail(messageProvider);
+                }
+            }
+            showEmailNotification(messageProvider);
+        }
+
+        @Override
+        public void onUpdateUnreadCount(Map<String, Integer> unreadCount) {
             for (NotificationServiceListener notificationServiceListener : binder.listenerList) {
-                notificationServiceListener.onNewEmail(messageProvider);
+                notificationServiceListener.onUpdateUnreadCount(unreadCount);
             }
         }
-        showEmailNotification(messageProvider);
     };
 
     @Nullable
@@ -60,8 +70,8 @@ public class NotificationService extends Service {
     public void onCreate() {
         super.onCreate();
         Timber.d("onCreate");
-        notificationServiceWebSocket = NotificationServiceWebSocket.getInstance();
-        notificationServiceWebSocket.start(notificationServiceWebSocketCallback);
+        webSocketClient = WebSocketClient.getInstance();
+        webSocketClient.start(webSocketClientCallback);
     }
 
     @Override
@@ -72,7 +82,7 @@ public class NotificationService extends Service {
         }
         String action = intent.getAction();
         if (ServiceConstants.NOTIFICATION_SERVICE_ACTION_STOP.equals(action)) {
-            notificationServiceWebSocket.shutdown();
+            webSocketClient.shutdown();
             stopForeground(true);
             stopSelf();
             LaunchUtils.shutdownService(this, getClass());
@@ -80,12 +90,12 @@ public class NotificationService extends Service {
         } else if (ServiceConstants.NOTIFICATION_SERVICE_ACTION_START.equals(action)) {
             Timber.d("onStartCommand action START");
             startForegroundPriority();
-            notificationServiceWebSocket.start();
+            webSocketClient.start();
         } else if (ServiceConstants.NOTIFICATION_SERVICE_ACTION_RESTART.equals(action)) {
             if (LaunchUtils.needForeground(intent)) {
                 startForegroundPriority();
             }
-            notificationServiceWebSocket.restart();
+            webSocketClient.restart();
         } else {
             if (LaunchUtils.needForeground(intent)) {
                 startForegroundPriority();
@@ -97,7 +107,7 @@ public class NotificationService extends Service {
     @Override
     public void onDestroy() {
         Timber.d("onDestroy");
-        notificationServiceWebSocket.shutdown();
+        webSocketClient.shutdown();
         NotificationServiceBroadcastReceiver.sendStartNotificationService(this);
     }
 

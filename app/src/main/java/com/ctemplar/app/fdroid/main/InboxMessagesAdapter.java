@@ -413,11 +413,11 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesAdap
             if (message.isRead()) {
                 binding.unreadMarkImageView.setVisibility(View.GONE);
                 binding.usernameTextView.setTypeface(null, Typeface.NORMAL);
-                backgroundColor = resources.getColor(R.color.colorPrimaryDark);
+                backgroundColor = resources.getColor(R.color.colorPrimary);
             } else {
                 binding.unreadMarkImageView.setVisibility(View.VISIBLE);
                 binding.usernameTextView.setTypeface(null, Typeface.BOLD);
-                backgroundColor = resources.getColor(R.color.colorPrimary);
+                backgroundColor = resources.getColor(R.color.colorPrimaryDark);
             }
             binding.foregroundLayout.setBackgroundColor(backgroundColor);
             binding.selectedLayout.setBackgroundColor(backgroundColor);

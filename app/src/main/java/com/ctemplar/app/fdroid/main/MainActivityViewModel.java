@@ -47,6 +47,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import io.reactivex.Observable;
 import io.reactivex.Observer;
@@ -54,7 +55,6 @@ import io.reactivex.Single;
 import io.reactivex.SingleObserver;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
-import okhttp3.ResponseBody;
 import retrofit2.HttpException;
 import retrofit2.Response;
 import timber.log.Timber;
@@ -78,6 +78,7 @@ public class MainActivityViewModel extends AndroidViewModel {
     private final MutableLiveData<MyselfResponse> myselfResponse = new MutableLiveData<>();
     private final MutableLiveData<String> currentFolder = new MutableLiveData<>();
     private final MutableLiveData<ResponseStatus> logoutResponseStatus = new MutableLiveData<>();
+    private final MutableLiveData<Map<String, Integer>> unreadCountSocketLiveData = new MutableLiveData<>();
     private final QueuedExecutor executor;
 
     public interface OnDecryptFinishedCallback {
@@ -125,10 +126,18 @@ public class MainActivityViewModel extends AndroidViewModel {
         });
     }
 
-    private final NotificationServiceListener notificationServiceListener = message -> {
-        final String userFolderFinal = currentFolder.getValue();
-        if (userFolderFinal != null && userFolderFinal.equals(message.getFolderName())) {
-            getMessage(message.getId(), message.getFolderName());
+    private final NotificationServiceListener notificationServiceListener = new NotificationServiceListener() {
+        @Override
+        public void onNewEmail(MessageProvider message) {
+            final String userFolderFinal = currentFolder.getValue();
+            if (userFolderFinal != null && userFolderFinal.equals(message.getFolderName())) {
+                getMessage(message.getId(), message.getFolderName());
+            }
+        }
+
+        @Override
+        public void onUpdateUnreadCount(Map<String, Integer> unreadCount) {
+            unreadCountSocketLiveData.postValue(unreadCount);
         }
     };
 
@@ -680,11 +689,15 @@ public class MainActivityViewModel extends AndroidViewModel {
         manageFoldersRepository.getCustomFolders(limit, offset);
     }
 
-    public MutableLiveData<DTOResource<ResponseBody>> getUnreadFoldersLiveData() {
+    public MutableLiveData<DTOResource<Map<String, Integer>>> getUnreadFoldersLiveData() {
         return manageFoldersRepository.getUnreadFoldersLiveData();
     }
 
     public void getUnreadFolders() {
         manageFoldersRepository.getUnreadFolders();
+    }
+
+    public MutableLiveData<Map<String, Integer>> getUnreadCountSocketLiveData() {
+        return unreadCountSocketLiveData;
     }
 }

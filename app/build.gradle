@@ -26,8 +26,8 @@ android {
         buildConfigField("String", "DOMAIN", "\"ctemplar.com\"")
         buildConfigField("String", "ORIGIN", "\"https://mail.ctemplar.com\"")
         buildConfigField("String", "BASE_URL", "\"https://api.ctemplar.com/\"")
-        buildConfigField("String", "BASE_TOR_URL", "\"http://api.ctemplarpizuduxk3fkwrieizstx33kg5chlvrh37nz73pv5smsvl6ad.onion/\"")
         buildConfigField("String", "BASE_SOCKET_URL", "\"wss://api.ctemplar.com/\"")
+        buildConfigField("String", "BASE_TOR_URL", "\"http://api.ctemplarpizuduxk3fkwrieizstx33kg5chlvrh37nz73pv5smsvl6ad.onion/\"")
         buildConfigField("String", "USER_AGENT", "\"CTemplar F-Droid App v${versionName}\"")
     }
     compileOptions {

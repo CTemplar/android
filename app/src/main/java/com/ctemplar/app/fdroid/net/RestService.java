@@ -74,6 +74,8 @@ import com.ctemplar.app.fdroid.net.response.myself.WhiteListContact;
 import com.ctemplar.app.fdroid.net.response.whiteBlackList.BlackListResponse;
 import com.ctemplar.app.fdroid.net.response.whiteBlackList.WhiteListResponse;
 
+import java.util.Map;
+
 import javax.inject.Singleton;
 
 import io.reactivex.Observable;
@@ -226,7 +228,7 @@ public interface RestService {
     );
 
     @GET("emails/unread/")
-    Single<ResponseBody> getUnreadFolders();
+    Single<Map<String, Integer>> getUnreadFolders();
 
     @POST("emails/custom-folder/")
     Single<CustomFolderResponse> addFolder(@Body FolderRequest request);

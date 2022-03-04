@@ -2,11 +2,6 @@ package com.ctemplar.app.fdroid.repository;
 
 import androidx.lifecycle.MutableLiveData;
 
-import io.reactivex.Observable;
-import io.reactivex.SingleObserver;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
 import com.ctemplar.app.fdroid.CTemplarApp;
 import com.ctemplar.app.fdroid.net.RestService;
 import com.ctemplar.app.fdroid.net.request.filters.EmailFilterOrderListRequest;
@@ -19,7 +14,14 @@ import com.ctemplar.app.fdroid.repository.dto.PageableDTO;
 import com.ctemplar.app.fdroid.repository.dto.folders.CustomFolderDTO;
 import com.ctemplar.app.fdroid.repository.mapper.CustomFolderMapper;
 import com.ctemplar.app.fdroid.repository.mapper.PageableMapper;
-import okhttp3.ResponseBody;
+
+import java.util.Map;
+
+import io.reactivex.Observable;
+import io.reactivex.SingleObserver;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 import retrofit2.Response;
 
 public class ManageFoldersRepository {
@@ -28,7 +30,7 @@ public class ManageFoldersRepository {
     private static final ManageFoldersRepository instance = new ManageFoldersRepository();
 
     private final MutableLiveData<DTOResource<PageableDTO<CustomFolderDTO>>> customFoldersLiveData = new MutableLiveData<>();
-    private final MutableLiveData<DTOResource<ResponseBody>> unreadFoldersLiveData = new MutableLiveData<>();
+    private final MutableLiveData<DTOResource<Map<String, Integer>>> unreadFoldersLiveData = new MutableLiveData<>();
 
     public static ManageFoldersRepository getInstance() {
         return instance;
@@ -146,7 +148,7 @@ public class ManageFoldersRepository {
                 });
     }
 
-    public MutableLiveData<DTOResource<ResponseBody>> getUnreadFoldersLiveData() {
+    public MutableLiveData<DTOResource<Map<String, Integer>>> getUnreadFoldersLiveData() {
         return unreadFoldersLiveData;
     }
 
@@ -154,15 +156,15 @@ public class ManageFoldersRepository {
         service.getUnreadFolders()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new SingleObserver<ResponseBody>() {
+                .subscribe(new SingleObserver<Map<String, Integer>>() {
                     @Override
                     public void onSubscribe(Disposable d) {
 
                     }
 
                     @Override
-                    public void onSuccess(ResponseBody responseBody) {
-                        unreadFoldersLiveData.postValue(DTOResource.success(responseBody));
+                    public void onSuccess(Map<String, Integer> unreadFolders) {
+                        unreadFoldersLiveData.postValue(DTOResource.success(unreadFolders));
                     }
 
                     @Override

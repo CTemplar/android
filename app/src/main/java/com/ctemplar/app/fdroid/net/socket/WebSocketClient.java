@@ -8,7 +8,7 @@ import com.ctemplar.app.fdroid.BuildConfig;
 import com.ctemplar.app.fdroid.CTemplarApp;
 import com.ctemplar.app.fdroid.net.OkHttpClientFactory;
 import com.ctemplar.app.fdroid.net.response.messages.MessagesResult;
-import com.ctemplar.app.fdroid.net.response.notification.NotificationMessageResponse;
+import com.ctemplar.app.fdroid.net.response.messages.SocketMessageResponse;
 import com.ctemplar.app.fdroid.repository.UserStore;
 import com.ctemplar.app.fdroid.repository.entity.MessageEntity;
 import com.ctemplar.app.fdroid.repository.provider.MessageProvider;
@@ -18,6 +18,7 @@ import com.google.gson.JsonParseException;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
@@ -27,35 +28,44 @@ import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 import timber.log.Timber;
 
-public class NotificationServiceWebSocket extends WebSocketListener {
-    private static NotificationServiceWebSocket instance;
+public class WebSocketClient extends WebSocketListener {
+    private static WebSocketClient instance;
     private final Gson gson = new GsonBuilder().create();
 
-    private WebSocket socket;
-    private NotificationServiceWebSocketCallback callback;
-    private boolean safeShutDown;
-    private final Handler handler;
     private final UserStore userStore;
+    private WebSocketClientCallback callback;
+    private final Handler handler;
 
-    private NotificationServiceWebSocket() {
+    private WebSocket socket;
+    private boolean safeShutDown;
+
+    private WebSocketClient() {
+        userStore = CTemplarApp.getUserStore();
         if (Looper.myLooper() == null) {
             handler = new Handler(Looper.getMainLooper());
         } else {
             handler = new Handler();
         }
-        userStore = CTemplarApp.getUserStore();
     }
 
     @Override
     public void onMessage(@NotNull WebSocket webSocket, @NotNull String text) {
-        NotificationMessageResponse notificationMessageResponse;
+        if (!text.startsWith("{\"id\"")) {
+            Timber.w("onMessage: %s", text);
+            return;
+        }
+        SocketMessageResponse socketMessageResponse;
         try {
-            notificationMessageResponse = gson.fromJson(text, NotificationMessageResponse.class);
+            socketMessageResponse = gson.fromJson(text, SocketMessageResponse.class);
         } catch (JsonParseException e) {
             Timber.e(e, "onMessage parse error");
             return;
         }
-        MessagesResult mailResult = notificationMessageResponse.getMail();
+        Map<String, Integer> unreadCount = socketMessageResponse.getUnreadCount();
+        if (unreadCount != null) {
+            callback.onUpdateUnreadCount(unreadCount);
+        }
+        MessagesResult mailResult = socketMessageResponse.getMail();
         if (mailResult != null) {
             MessageEntity messageEntity = MessageProvider.fromMessagesResultToEntity(mailResult);
             MessageProvider messageProvider = MessageProvider.fromMessageEntity(messageEntity,
@@ -96,7 +106,7 @@ public class NotificationServiceWebSocket extends WebSocketListener {
         reconnect();
     }
 
-    public void start(NotificationServiceWebSocketCallback callback) {
+    public void start(WebSocketClientCallback callback) {
         this.callback = callback;
         start();
     }
@@ -137,7 +147,7 @@ public class NotificationServiceWebSocket extends WebSocketListener {
 
     private void run() {
         Timber.d("run");
-        String token = CTemplarApp.getUserRepository().getUserToken();
+        String token = userStore.getUserToken();
         if (TextUtils.isEmpty(token)) {
             Timber.e("User token is null");
             return;
@@ -155,15 +165,6 @@ public class NotificationServiceWebSocket extends WebSocketListener {
         socket = client.newWebSocket(request, this);
     }
 
-
-
-    public static NotificationServiceWebSocket getInstance() {
-        if (instance == null) {
-            instance = new NotificationServiceWebSocket();
-        }
-        return instance;
-    }
-
     private static void closeWebSocket(WebSocket socket) {
         try {
             socket.close(1000, null);
@@ -175,5 +176,13 @@ public class NotificationServiceWebSocket extends WebSocketListener {
                 Timber.e(e1);
             }
         }
+    }
+
+
+    public static WebSocketClient getInstance() {
+        if (instance == null) {
+            instance = new WebSocketClient();
+        }
+        return instance;
     }
 }
