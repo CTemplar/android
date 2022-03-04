@@ -1,24 +1,12 @@
 package mobileapp.ctemplar.com.ctemplarapp.main;
 
-import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.ALL_MAILS;
-import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.ARCHIVE;
-import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.CONTACT;
-import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.DRAFT;
 import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.INBOX;
-import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.OUTBOX;
-import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.SENT;
-import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.SPAM;
-import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.STARRED;
-import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.TRASH;
-import static mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames.UNREAD;
-import static mobileapp.ctemplar.com.ctemplarapp.utils.DateUtils.GENERAL_GSON;
 
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -40,6 +28,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.app.BaseContextWrapperDelegate;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.graphics.BlendModeColorFilterCompat;
+import androidx.core.graphics.BlendModeCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
@@ -47,29 +37,24 @@ import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.navigation.NavigationView;
-import com.google.gson.reflect.TypeToken;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import mobileapp.ctemplar.com.ctemplarapp.ActivityInterface;
 import mobileapp.ctemplar.com.ctemplarapp.R;
+import mobileapp.ctemplar.com.ctemplarapp.folders.FoldersManager;
 import mobileapp.ctemplar.com.ctemplarapp.folders.ManageFoldersActivity;
 import mobileapp.ctemplar.com.ctemplarapp.login.LoginActivity;
 import mobileapp.ctemplar.com.ctemplarapp.message.SendMessageActivity;
 import mobileapp.ctemplar.com.ctemplarapp.message.SendMessageFragment;
 import mobileapp.ctemplar.com.ctemplarapp.net.entity.AttachmentsEntity;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.emails.UnreadFoldersResponse;
 import mobileapp.ctemplar.com.ctemplarapp.repository.dto.DTOResource;
 import mobileapp.ctemplar.com.ctemplarapp.repository.dto.PageableDTO;
-import mobileapp.ctemplar.com.ctemplarapp.repository.dto.emails.UnreadFoldersDTO;
 import mobileapp.ctemplar.com.ctemplarapp.repository.dto.folders.CustomFolderDTO;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
-import mobileapp.ctemplar.com.ctemplarapp.repository.mapper.UnreadFoldersMapper;
 import mobileapp.ctemplar.com.ctemplarapp.settings.SettingsActivity;
 import mobileapp.ctemplar.com.ctemplarapp.settings.keys.MailboxKeyViewModel;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
@@ -78,7 +63,6 @@ import mobileapp.ctemplar.com.ctemplarapp.utils.LocaleUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.ThemeUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.ToastUtils;
 import mobileapp.ctemplar.com.ctemplarapp.view.ResizeAnimation;
-import okhttp3.ResponseBody;
 import timber.log.Timber;
 
 public class MainActivity extends AppCompatActivity
@@ -99,7 +83,6 @@ public class MainActivity extends AppCompatActivity
     private int customFoldersShowCount = 3;
     private final List<CustomFolderDTO> navigationViewCustomFolders = new ArrayList<>();
     private final List<CustomFolderDTO> customFolders = new ArrayList<>();
-    private final Map<String, Integer> folderToUnread = new HashMap<>();
 
     private final Handler handler = new Handler();
     private MainFragment mainFragment;
@@ -155,10 +138,11 @@ public class MainActivity extends AppCompatActivity
 
         mailboxKeyViewModel.getMailboxesResponseStatus().observe(this,
                 responseStatus -> showMailboxDetailsInNavigationDrawer());
-        mainModel.getUnreadFoldersLiveData().observe(this, this::handleUnreadFolders);
         mainModel.getCustomFoldersLiveData().observe(this, this::handleCustomFolders);
+        mainModel.getUnreadFoldersLiveData().observe(this, this::handleUnreadFolders);
+        mainModel.getUnreadCountSocketLiveData().observe(this, this::handleUnreadCount);
 
-        mainModel.getUnreadFolders();
+        getCustomFolders();
         loadUserInfo();
         handleSendToIntent(getIntent());
         // default folder
@@ -168,7 +152,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-        mainModel.getUnreadFolders();
+        getCustomFolders();
     }
 
     @Override
@@ -240,33 +224,17 @@ public class MainActivity extends AppCompatActivity
 //            return false;
 //        }
         int id = item.getItemId();
-        if (id == R.id.nav_inbox) {
-            setFolder(INBOX);
-        } else if (id == R.id.nav_draft) {
-            setFolder(DRAFT);
-        } else if (id == R.id.nav_sent) {
-            setFolder(SENT);
-        } else if (id == R.id.nav_outbox) {
-            setFolder(OUTBOX);
-        } else if (id == R.id.nav_all_mails) {
-            setFolder(ALL_MAILS);
-        } else if (id == R.id.nav_unread) {
-            setFolder(UNREAD);
-        } else if (id == R.id.nav_starred) {
-            setFolder(STARRED);
-        } else if (id == R.id.nav_archive) {
-            setFolder(ARCHIVE);
-        } else if (id == R.id.nav_spam) {
-            setFolder(SPAM);
-        } else if (id == R.id.nav_trash) {
-            setFolder(TRASH);
-        } else if (id == R.id.nav_contact) {
-            setFolder(CONTACT);
-        } else if (id == R.id.nav_settings) {
+        String folderName = FoldersManager.getNameByResourceId(id, customFolders);
+        if (folderName != null) {
+            setFolder(folderName);
+            return true;
+        }
+        if (id == R.id.nav_settings) {
             Intent settingsScreen = new Intent(this, SettingsActivity.class);
             startActivity(settingsScreen);
             return true;
-        } else if (id == R.id.nav_logout) {
+        }
+        if (id == R.id.nav_logout) {
             AlertDialog alertDialog = new AlertDialog.Builder(this)
                     .setTitle(R.string.dialog_log_out)
                     .setMessage(R.string.dialog_log_out_confirm)
@@ -276,57 +244,18 @@ public class MainActivity extends AppCompatActivity
             Button neutralButton = alertDialog.getButton(DialogInterface.BUTTON_NEUTRAL);
             neutralButton.setTextColor(getResources().getColor(R.color.colorBlue));
             return true;
-        } else if (id == R.id.nav_manage_folders) {
+        }
+        if (id == R.id.nav_manage_folders) {
             Intent manageFolders = new Intent(this, ManageFoldersActivity.class);
             startActivity(manageFolders);
             return true;
-        } else if (id == R.id.nav_manage_folders_more) {
+        }
+        if (id == R.id.nav_manage_folders_more) {
             customFoldersShowCount += CUSTOM_FOLDER_STEP;
             mainModel.getUnreadFolders();
             return true;
-        } else {
-            for (CustomFolderDTO folder : customFolders) {
-                if (id == folder.getId()) {
-                    setFolder(folder.getName(), folder.getName());
-                }
-            }
         }
         return true;
-    }
-
-    private int getFolderTitleId(String folder) {
-        switch (folder) {
-            case INBOX:
-                return R.string.nav_drawer_inbox;
-            case DRAFT:
-                return R.string.nav_drawer_draft;
-            case SENT:
-                return R.string.nav_drawer_sent;
-            case OUTBOX:
-                return R.string.nav_drawer_outbox;
-            case ALL_MAILS:
-                return R.string.nav_drawer_all_mails;
-            case UNREAD:
-                return R.string.nav_drawer_unread;
-            case STARRED:
-                return R.string.nav_drawer_starred;
-            case ARCHIVE:
-                return R.string.nav_drawer_archive;
-            case SPAM:
-                return R.string.nav_drawer_spam;
-            case CONTACT:
-                return R.string.nav_drawer_contact;
-            default:
-                return R.string.nav_drawer_trash;
-        }
-    }
-
-    private String getFolderTitle(String folder) {
-        return getString(getFolderTitleId(folder));
-    }
-
-    private void setFolder(String folder) {
-        setFolder(folder, getFolderTitle(folder));
     }
 
     private void setFolder(String folder, String title) {
@@ -352,6 +281,18 @@ public class MainActivity extends AppCompatActivity
         if (id != -1) {
             navigationView.setCheckedItem(id);
         }
+    }
+
+    private String getFolderTitle(String name) {
+        int resourceId = FoldersManager.getTitleResourceIdByName(name);
+        if (resourceId == -1) {
+            return name;
+        }
+        return getString(resourceId);
+    }
+
+    private void setFolder(String folder) {
+        setFolder(folder, getFolderTitle(folder));
     }
 
     private int getNavigationViewMenuItemId(String folder) {
@@ -409,45 +350,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private void handleUnreadFolders(DTOResource<ResponseBody> resource) {
-        if (!resource.isSuccess()) {
-            ToastUtils.showToast(this, resource.getError());
-            return;
-        }
-        ResponseBody response = resource.getDto();
-        UnreadFoldersDTO unreadFoldersDTO;
-        try {
-            String responseString = response.string();
-            unreadFoldersDTO = UnreadFoldersMapper.map(GENERAL_GSON.fromJson(responseString,
-                    UnreadFoldersResponse.class));
-            Map<String, Integer> folderToUnreadCount = GENERAL_GSON.fromJson(responseString,
-                    new TypeToken<Map<String, Integer>>() {}.getType());
-            if (unreadFoldersDTO == null) {
-                unreadFoldersDTO = new UnreadFoldersDTO();
-            }
-            if (folderToUnreadCount != null) {
-                folderToUnread.putAll(folderToUnreadCount);
-            }
-        } catch (IOException e) {
-            Timber.e(e, "unreadFoldersResponse parse error");
-            return;
-        }
-        Menu navigationMenu = navigationView.getMenu();
-        ((TextView) (navigationMenu.findItem(R.id.nav_inbox).getActionView()))
-                .setText(unreadFoldersDTO.getInboxString());
-        ((TextView) (navigationMenu.findItem(R.id.nav_inbox).getActionView()))
-                .setText(unreadFoldersDTO.getInboxString());
-        ((TextView) (navigationMenu.findItem(R.id.nav_draft).getActionView()))
-                .setText(unreadFoldersDTO.getDraftString());
-        ((TextView) (navigationMenu.findItem(R.id.nav_outbox).getActionView()))
-                .setText(unreadFoldersDTO.getOutboxString());
-        ((TextView) (navigationMenu.findItem(R.id.nav_starred).getActionView()))
-                .setText(unreadFoldersDTO.getStarredString());
-        ((TextView) (navigationMenu.findItem(R.id.nav_spam).getActionView()))
-                .setText(unreadFoldersDTO.getSpamString());
-        mainModel.getCustomFolders(customFoldersShowCount, 0);
-    }
-
     private void handleCustomFolders(DTOResource<PageableDTO<CustomFolderDTO>> resource) {
         if (!resource.isSuccess()) {
             ToastUtils.showToast(this, resource.getError());
@@ -461,37 +363,56 @@ public class MainActivity extends AppCompatActivity
         Menu navigationMenu = navigationView.getMenu();
         navigationMenu.findItem(R.id.nav_manage_folders).setTitle
                 (getString(R.string.nav_drawer_manage_folders_param, totalCount));
-
         MenuItem moreFolders = navigationMenu.findItem(R.id.nav_manage_folders_more);
         moreFolders.setVisible(customFoldersShowCount < totalCount);
-
         for (Iterator<CustomFolderDTO> it = navigationViewCustomFolders.iterator(); it.hasNext(); ) {
-            CustomFolderDTO folder = it.next();
-            navigationMenu.removeItem(folder.getId());
+            navigationMenu.removeItem(it.next().getId());
             it.remove();
         }
         for (CustomFolderDTO folder : customFolders) {
             String name = folder.getName();
             MenuItem menuItem = navigationMenu.add(
                     R.id.activity_main_drawer_folders,
-                    folder.getId(),
-                    folder.getSortOrder(),
-                    name
+                    folder.getId(), folder.getSortOrder(), name
             );
             menuItem.setCheckable(true);
             menuItem.setIcon(R.drawable.ic_manage_folders);
             menuItem.setActionView(R.layout.menu_message_counter);
-            Integer folderCount = folderToUnread.get(name);
-            ((TextView) menuItem.getActionView()).setText(folderCount == null ? ""
-                    : EditTextUtils.intToStringPositive(folderCount));
-            Drawable icon = menuItem.getIcon();
-            icon.mutate();
-            try {
-                icon.setColorFilter(Color.parseColor(folder.getColor()), PorterDuff.Mode.SRC_IN);
-            } catch (IllegalArgumentException e) {
-                Timber.e(e, "Can't set folder color");
-            }
+            Drawable iconDrawable = menuItem.getIcon().mutate();
+            iconDrawable.setColorFilter(BlendModeColorFilterCompat.createBlendModeColorFilterCompat(
+                    Color.parseColor(folder.getColor()), BlendModeCompat.SRC_IN));
             navigationViewCustomFolders.add(folder);
+        }
+        mainModel.getUnreadFolders();
+    }
+
+    private void handleUnreadFolders(DTOResource<Map<String, Integer>> resource) {
+        if (!resource.isSuccess()) {
+            ToastUtils.showToast(this, resource.getError());
+            return;
+        }
+        handleUnreadCount(resource.getDto());
+    }
+
+    private void handleUnreadCount(Map<String, Integer> unreadCount) {
+        Menu navigationMenu = navigationView.getMenu();
+        for (Map.Entry<String, Integer> nameToCount : unreadCount.entrySet()) {
+            String key = nameToCount.getKey();
+            Integer value = nameToCount.getValue();
+            int folderId = FoldersManager.getResourceIdByName(key, customFolders);
+            if (folderId == -1) {
+                continue;
+            }
+            MenuItem menuItem = navigationMenu.findItem(folderId);
+            if (menuItem == null) {
+                continue;
+            }
+            ((TextView) menuItem.getActionView()).setText(value == null ? ""
+                    : EditTextUtils.intToStringPositive(value));
+            if (key.equals(INBOX)) {
+                ((TextView) navigationMenu.findItem(R.id.nav_unread).getActionView())
+                        .setText(value == null ? "" : EditTextUtils.intToStringPositive(value));
+            }
         }
     }
 
@@ -618,6 +539,10 @@ public class MainActivity extends AppCompatActivity
         mailboxKeyViewModel.getMailboxes(20, 0);
         mailboxKeyViewModel.getMailboxKeys(20, 0);
         mainModel.getUserMyselfInfo();
+    }
+
+    private void getCustomFolders() {
+        mainModel.getCustomFolders(customFoldersShowCount, 0);
     }
 
     private void handleMainActions(MainActivityActions actions) {
