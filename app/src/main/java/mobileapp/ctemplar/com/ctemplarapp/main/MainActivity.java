@@ -45,6 +45,8 @@ import java.util.Map;
 
 import mobileapp.ctemplar.com.ctemplarapp.ActivityInterface;
 import mobileapp.ctemplar.com.ctemplarapp.R;
+import mobileapp.ctemplar.com.ctemplarapp.billing.model.PlanType;
+import mobileapp.ctemplar.com.ctemplarapp.billing.view.SubscriptionActivity;
 import mobileapp.ctemplar.com.ctemplarapp.folders.FoldersManager;
 import mobileapp.ctemplar.com.ctemplarapp.folders.ManageFoldersActivity;
 import mobileapp.ctemplar.com.ctemplarapp.login.LoginActivity;
@@ -138,6 +140,7 @@ public class MainActivity extends AppCompatActivity
 
         mailboxKeyViewModel.getMailboxesResponseStatus().observe(this,
                 responseStatus -> showMailboxDetailsInNavigationDrawer());
+        mainModel.getUserPlanTypeResponse().observe(this, this::showPrimeDialog);
         mainModel.getCustomFoldersLiveData().observe(this, this::handleCustomFolders);
         mainModel.getUnreadFoldersLiveData().observe(this, this::handleUnreadFolders);
         mainModel.getUnreadCountSocketLiveData().observe(this, this::handleUnreadCount);
@@ -568,6 +571,15 @@ public class MainActivity extends AppCompatActivity
         TextView navEmail = headerView.findViewById(R.id.main_activity_email);
         navUsername.setText(defaultMailbox.getDisplayName());
         navEmail.setText(defaultMailbox.getEmail());
+    }
+
+    private void showPrimeDialog(PlanType planType) {
+        if (planType != PlanType.FREE || mainModel.isPrimeDialogShown()) {
+            return;
+        }
+        Intent intent = new Intent(this, SubscriptionActivity.class);
+        intent.putExtra(SubscriptionActivity.SELECT_PLAN_TYPE_KEY, PlanType.PRIME.name());
+        startActivity(intent);
     }
 
     private void startSignInActivity() {
