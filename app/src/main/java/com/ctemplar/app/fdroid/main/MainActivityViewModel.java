@@ -522,7 +522,7 @@ public class MainActivityViewModel extends AndroidViewModel {
 
                     @Override
                     public void onComplete() {
-
+                        getUnreadFolders();
                     }
                 });
     }
@@ -557,7 +557,7 @@ public class MainActivityViewModel extends AndroidViewModel {
 
                     @Override
                     public void onComplete() {
-
+                        getUnreadFolders();
                     }
                 });
     }
@@ -584,7 +584,7 @@ public class MainActivityViewModel extends AndroidViewModel {
 
                     @Override
                     public void onComplete() {
-
+                        getUnreadFolders();
                     }
                 });
     }
@@ -617,7 +617,7 @@ public class MainActivityViewModel extends AndroidViewModel {
 
                     @Override
                     public void onComplete() {
-
+                        getUnreadFolders();
                     }
                 });
     }

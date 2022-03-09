@@ -138,6 +138,14 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesAdap
         }
     }
 
+    public void markAsReadMessages(Collection<MessageProvider> messages) {
+        for (MessageProvider message : messages) {
+            int position = filteredList.indexOf(message);
+            filteredList.get(position).setRead(true);
+            notifyItemRemoved(position);
+        }
+    }
+
     public List<MessageProvider> getAll() {
         return filteredList;
     }

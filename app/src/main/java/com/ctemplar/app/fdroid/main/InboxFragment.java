@@ -164,7 +164,6 @@ public class InboxFragment extends BaseFragment implements InboxMessagesAdapter.
         mainModel.getResponseStatus().observe(getViewLifecycleOwner(), this::handleResponseStatus);
         mainModel.getMessagesResponse().observe(getViewLifecycleOwner(), this::handleMessagesList);
         mainModel.getSearchMessagesResponse().observe(getViewLifecycleOwner(), this::handleSearchMessagesList);
-        mainModel.getDeleteMessagesStatus().observe(getViewLifecycleOwner(), this::updateMessagesResponse);
         mainModel.getEmptyFolderStatus().observe(getViewLifecycleOwner(), this::updateMessagesResponse);
         mainModel.getDeleteMessagesStatus().observe(getViewLifecycleOwner(), this::handleDeleteMessagesStatus);
         mainModel.getToFolderStatus().observe(getViewLifecycleOwner(), this::handleToFolderStatus);
@@ -327,6 +326,7 @@ public class InboxFragment extends BaseFragment implements InboxMessagesAdapter.
                 return true;
             case android.R.id.home:
                 if (adapter.getSelectionStateValue()) {
+                    adapter.markAsReadMessages(adapter.getSelectedMessagesMap().values());
                     adapter.setSelectionState(false);
                     return true;
                 }

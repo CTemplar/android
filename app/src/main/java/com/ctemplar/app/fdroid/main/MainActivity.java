@@ -36,14 +36,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.ctemplar.app.fdroid.services.NotificationService;
-import com.google.android.material.navigation.NavigationView;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 import com.ctemplar.app.fdroid.ActivityInterface;
 import com.ctemplar.app.fdroid.R;
 import com.ctemplar.app.fdroid.folders.FoldersManager;
@@ -56,6 +48,7 @@ import com.ctemplar.app.fdroid.repository.dto.DTOResource;
 import com.ctemplar.app.fdroid.repository.dto.PageableDTO;
 import com.ctemplar.app.fdroid.repository.dto.folders.CustomFolderDTO;
 import com.ctemplar.app.fdroid.repository.entity.MailboxEntity;
+import com.ctemplar.app.fdroid.services.NotificationService;
 import com.ctemplar.app.fdroid.settings.SettingsActivity;
 import com.ctemplar.app.fdroid.settings.keys.MailboxKeyViewModel;
 import com.ctemplar.app.fdroid.utils.EditTextUtils;
@@ -64,6 +57,13 @@ import com.ctemplar.app.fdroid.utils.LocaleUtils;
 import com.ctemplar.app.fdroid.utils.ThemeUtils;
 import com.ctemplar.app.fdroid.utils.ToastUtils;
 import com.ctemplar.app.fdroid.view.ResizeAnimation;
+import com.google.android.material.navigation.NavigationView;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 import timber.log.Timber;
 
 public class MainActivity extends AppCompatActivity
