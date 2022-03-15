@@ -46,18 +46,22 @@ public class DTOResource<T> {
     public void setError(Throwable e) {
         if (e instanceof HttpException) {
             Response<?> errorResponse = ((HttpException) e).response();
-            if (errorResponse != null && errorResponse.errorBody() != null) {
-                try {
-                    String errorBody = errorResponse.errorBody().string();
-                    HttpErrorResponse httpErrorResponse = GENERAL_GSON
-                            .fromJson(errorBody, HttpErrorResponse.class);
-                    if (httpErrorResponse.getError() == null) {
-                        return;
-                    }
-                    error = httpErrorResponse.getError().getError();
-                } catch (IOException | JsonSyntaxException ex) {
-                    Timber.e(ex, "Can't parse");
+            if (errorResponse == null || errorResponse.errorBody() == null) {
+                error = "";
+                return;
+            }
+            try {
+                String errorBody = errorResponse.errorBody().string();
+                HttpErrorResponse httpErrorResponse = GENERAL_GSON
+                        .fromJson(errorBody, HttpErrorResponse.class);
+                if (httpErrorResponse.getError() == null) {
+                    error = "";
+                    return;
                 }
+                error = httpErrorResponse.getError().getError();
+            } catch (IOException | JsonSyntaxException ex) {
+                Timber.e(ex, "Can't parse");
+                error = "The server returned an error, but it could not be read";
             }
         }
     }

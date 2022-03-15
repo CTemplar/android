@@ -532,32 +532,17 @@ public class MainActivityViewModel extends AndroidViewModel {
     }
 
     public void deleteMessages(Long[] messageIds) {
-        userRepository.deleteMessages(messageIds)
-                .subscribe(new Observer<Response<Void>>() {
-                    @Override
-                    public void onSubscribe(@NotNull Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(@NotNull Response<Void> response) {
-                        for (long messageId : messageIds) {
-                            messagesRepository.deleteMessageById(messageId);
-                        }
-                        deleteMessagesStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
-                    }
-
-                    @Override
-                    public void onError(@NotNull Throwable e) {
-                        deleteMessagesStatus.postValue(ResponseStatus.RESPONSE_ERROR);
-                        Timber.e(e);
-                    }
-
-                    @Override
-                    public void onComplete() {
-                        getUnreadFolders();
-                    }
-                });
+        userRepository.deleteMessages(messageIds).observeForever(resource -> {
+            getUnreadFolders();
+            if (resource.isSuccess()) {
+                for (long messageId : messageIds) {
+                    messagesRepository.deleteMessageById(messageId);
+                }
+                deleteMessagesStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
+                return;
+            }
+            deleteMessagesStatus.postValue(ResponseStatus.RESPONSE_ERROR);
+        });
     }
 
     public void markMessagesAsRead(Long[] messageIds, boolean isRead) {

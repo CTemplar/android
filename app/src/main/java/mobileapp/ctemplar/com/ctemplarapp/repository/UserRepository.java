@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.inject.Singleton;
 
@@ -344,10 +345,28 @@ public class UserRepository {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<Response<Void>> deleteMessages(Long[] messageIds) {
-        return service.deleteMessages(TextUtils.join(",", messageIds))
+    public MutableLiveData<DTOResource<Response<Void>>> deleteMessages(Long[] messageIds) {
+        MutableLiveData<DTOResource<Response<Void>>> liveData = new MutableLiveData<>();
+        service.deleteMessages(TextUtils.join(",", messageIds))
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread());
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new SingleObserver<Response<Void>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onSuccess(Response<Void> response) {
+                        liveData.postValue(DTOResource.success(response));
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        liveData.postValue(DTOResource.error(e));
+                    }
+                });
+        return liveData;
     }
 
     public Observable<EmptyFolderResponse> emptyFolder(EmptyFolderRequest request) {
@@ -418,20 +437,13 @@ public class UserRepository {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public MessagesResult updateMessageSync(long id, SendMessageRequest request) {
-        return service.updateMessage(id, request)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .blockingGet();
-    }
-
     public Observable<MessagesResult> sendMessage(SendMessageRequest request) {
         return service.sendMessage(request)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<MessageAttachment> uploadAttachment(
+    public DTOResource<MessageAttachment> uploadAttachmentSync(
             MultipartBody.Part document,
             long message,
             boolean isInline,
@@ -440,15 +452,15 @@ public class UserRepository {
             String name,
             long actualSize
     ) {
-        return service.uploadAttachment(
-                document, message, isInline, isEncrypted, fileType, name, actualSize
-        )
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread());
+        try {
+            return DTOResource.success(service.uploadAttachment(document, message, isInline,
+                    isEncrypted, fileType, name, actualSize).blockingGet());
+        } catch (Throwable e) {
+            return DTOResource.error(e);
+        }
     }
 
-    public Single<MessageAttachment> updateAttachment(
-            long id,
+    public MutableLiveData<DTOResource<MessageAttachment>> uploadAttachment(
             MultipartBody.Part document,
             long message,
             boolean isInline,
@@ -457,14 +469,47 @@ public class UserRepository {
             String name,
             long actualSize
     ) {
-        return service.updateAttachment(
-                id, document, message, isInline, isEncrypted, fileType, name, actualSize
-        )
+        MutableLiveData<DTOResource<MessageAttachment>> liveData = new MutableLiveData<>();
+        service.uploadAttachment(document, message, isInline, isEncrypted, fileType, name, actualSize)
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread());
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new SingleObserver<MessageAttachment>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onSuccess(MessageAttachment response) {
+                        liveData.postValue(DTOResource.success(response));
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        liveData.postValue(DTOResource.error(e));
+                    }
+                });
+        return liveData;
     }
 
-    public MessageAttachment updateAttachmentSync(
+    public DTOResource<KeysResponse> getEmailPublicKeysSync(Set<String> addresses) {
+        try {
+            return DTOResource.success(service.getKeys(new PublicKeysRequest(addresses))
+                    .blockingGet());
+        } catch (Throwable e) {
+            return DTOResource.error(e);
+        }
+    }
+
+    public DTOResource<MessagesResult> updateMessageSync(long id, SendMessageRequest request) {
+        try {
+            return DTOResource.success(service.updateMessage(id, request).blockingGet());
+        } catch (Throwable e) {
+            return DTOResource.error(e);
+        }
+    }
+
+    public DTOResource<MessageAttachment> updateAttachmentSync(
             long id,
             MultipartBody.Part document,
             long messageId,
@@ -474,24 +519,36 @@ public class UserRepository {
             String name,
             long actualSize
     ) {
-        return service.updateAttachment(
-                id, document, messageId, isInline, isEncrypted, fileType, name, actualSize
-        )
+        try {
+            return DTOResource.success(service.updateAttachment(id, document, messageId, isInline,
+                    isEncrypted, fileType, name, actualSize).blockingGet());
+        } catch (Throwable e) {
+            return DTOResource.error(e);
+        }
+    }
+
+    public MutableLiveData<DTOResource<Response<Void>>> deleteAttachment(long id) {
+        MutableLiveData<DTOResource<Response<Void>>> liveData = new MutableLiveData<>();
+        service.deleteAttachment(id)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .blockingGet();
-    }
+                .subscribe(new SingleObserver<Response<Void>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
 
-    public Observable<Response<Void>> deleteAttachment(long id) {
-        return service.deleteAttachment(id)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread());
-    }
+                    }
 
-    public Observable<KeysResponse> getEmailPublicKeys(PublicKeysRequest request) {
-        return service.getKeys(request)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread());
+                    @Override
+                    public void onSuccess(Response<Void> response) {
+                        liveData.postValue(DTOResource.success(response));
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        liveData.postValue(DTOResource.error(e));
+                    }
+                });
+        return liveData;
     }
 
     public Observable<EmailFilterResponse> getFilterList() {
