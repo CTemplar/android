@@ -135,7 +135,7 @@ public interface RestService {
 
     @Multipart
     @POST("emails/attachments/create/")
-    Observable<MessageAttachment> uploadAttachment(
+    Single<MessageAttachment> uploadAttachment(
             @Part MultipartBody.Part document,
             @Part("message") long message,
             @Part("is_inline") boolean isInline,
@@ -159,7 +159,7 @@ public interface RestService {
     );
 
     @DELETE("emails/attachments/{id}/")
-    Observable<Response<Void>> deleteAttachment(@Path("id") long id);
+    Single<Response<Void>> deleteAttachment(@Path("id") long id);
 
     @GET("emails/messages/")
     Observable<MessagesResponse> getMessages(
@@ -179,7 +179,7 @@ public interface RestService {
     Observable<MessagesResponse> getMessage(@Query("id") long id);
 
     @DELETE("emails/messages/")
-    Observable<Response<Void>> deleteMessages(@Query("id__in") String messageIds);
+    Single<Response<Void>> deleteMessages(@Query("id__in") String messageIds);
 
     @POST("emails/empty-folder/")
     Observable<EmptyFolderResponse> emptyFolder(@Body EmptyFolderRequest request);
@@ -264,7 +264,7 @@ public interface RestService {
     Single<Response<Void>> deleteMailboxKey(@Path("id") long id, @Body DeleteMailboxKeyRequest request);
 
     @POST("emails/keys/")
-    Observable<KeysResponse> getKeys(@Body PublicKeysRequest request);
+    Single<KeysResponse> getKeys(@Body PublicKeysRequest request);
 
     @POST("emails/messages/")
     Observable<MessagesResult> sendMessage(@Body SendMessageRequest request);

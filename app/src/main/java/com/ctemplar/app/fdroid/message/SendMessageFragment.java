@@ -26,29 +26,22 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
-import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.AppCompatMultiAutoCompleteTextView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.ctemplar.app.fdroid.ActivityInterface;
 import com.ctemplar.app.fdroid.BuildConfig;
 import com.ctemplar.app.fdroid.R;
 import com.ctemplar.app.fdroid.contacts.ContactsViewModel;
+import com.ctemplar.app.fdroid.databinding.FragmentSendMessageBinding;
 import com.ctemplar.app.fdroid.main.UpgradeToPrimeWebFragment;
 import com.ctemplar.app.fdroid.message.dialog.DeadMansDeliveryDialogFragment;
 import com.ctemplar.app.fdroid.message.dialog.DelayedDeliveryDialogFragment;
@@ -56,9 +49,7 @@ import com.ctemplar.app.fdroid.message.dialog.DestructTimerDialogFragment;
 import com.ctemplar.app.fdroid.message.dialog.EncryptMessageDialogFragment;
 import com.ctemplar.app.fdroid.net.ResponseStatus;
 import com.ctemplar.app.fdroid.net.entity.AttachmentsEntity;
-import com.ctemplar.app.fdroid.net.request.PublicKeysRequest;
 import com.ctemplar.app.fdroid.net.request.messages.SendMessageRequest;
-import com.ctemplar.app.fdroid.net.response.keys.KeyResponse;
 import com.ctemplar.app.fdroid.net.response.myself.MyselfResult;
 import com.ctemplar.app.fdroid.repository.entity.Contact;
 import com.ctemplar.app.fdroid.repository.entity.MailboxEntity;
@@ -90,36 +81,14 @@ import okhttp3.RequestBody;
 import timber.log.Timber;
 
 public class SendMessageFragment extends Fragment implements View.OnClickListener, ActivityInterface {
-    private EditText subjectEditText;
-    private EditText composeEditText;
-
-    private AppCompatMultiAutoCompleteTextView toEmailTextView;
-    private AppCompatMultiAutoCompleteTextView ccTextView;
-    private AppCompatMultiAutoCompleteTextView bccTextView;
-
-    private Spinner spinnerFrom;
-    private RelativeLayout ccLayout;
-    private RelativeLayout bccLayout;
-    private ImageView toAddIco;
-    private ImageView sendMessage;
-    private TextView messageAttachmentsProcessingTextView;
-    private RecyclerView messageAttachmentsRecycleView;
-
-    private ImageView sendMessageDestructIco;
-    private ImageView sendMessageDelayedIco;
-    private ImageView sendMessageDeadIco;
-    private ImageView sendMessageAttachmentIco;
-    private ImageView sendMessageEncryptIco;
-
+    private FragmentSendMessageBinding binding;
     private SendMessageActivityViewModel sendModel;
     private ContactsViewModel contactsViewModel;
-    private ProgressDialog sendingProgress;
-    private ProgressDialog uploadProgress;
 
+    private ProgressDialog uploadProgress;
     private boolean userIsPrime;
     private long currentMessageId = -1;
     private Long parentId;
-    private final List<String> publicKeyList = new ArrayList<>();
 
     // COMPOSE OPTIONS
     private List<String> mailboxAddresses;
@@ -149,18 +118,15 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
                 }
                 onClickPickAttachment();
             });
-
     private final ActivityResultLauncher<String> pickAttachmentResultLauncher =
             registerForActivityResult(new ActivityResultContracts.GetContent(), attachmentUri -> {
                 if (attachmentUri == null) {
-                    Toast.makeText(getActivity(), R.string.toast_attachment_unable_read_path,
-                            Toast.LENGTH_SHORT).show();
+                    ToastUtils.showToast(getActivity(), R.string.toast_attachment_unable_read_path);
                     Timber.e("onActivityResult attachmentUri is null");
                     return;
                 }
                 uploadAttachment(attachmentUri);
             });
-
     private final DelayedDeliveryDialogFragment.OnScheduleDelayedDelivery onScheduleDelayedDelivery
             = new DelayedDeliveryDialogFragment.OnScheduleDelayedDelivery() {
         @Override
@@ -169,10 +135,9 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
             if (getActivity() == null) {
                 return;
             }
-            sendMessageDelayedIco.setSelected(date != null);
+            binding.fragmentSendMessageDelayedIco.setSelected(date != null);
         }
     };
-
     private final DestructTimerDialogFragment.OnScheduleDestructTimerDelivery onScheduleDestructTimerDelivery
             = new DestructTimerDialogFragment.OnScheduleDestructTimerDelivery() {
         @Override
@@ -181,10 +146,9 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
                 return;
             }
             destructDeliveryDate = date;
-            sendMessageDestructIco.setSelected(date != null);
+            binding.fragmentSendMessageDestructIco.setSelected(date != null);
         }
     };
-
     private final DeadMansDeliveryDialogFragment.OnScheduleDeadMansDelivery onScheduleDeadMansDelivery
             = new DeadMansDeliveryDialogFragment.OnScheduleDeadMansDelivery() {
         @Override
@@ -193,10 +157,9 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
                 return;
             }
             deadDeliveryInHours = timeInHours;
-            sendMessageDeadIco.setSelected(timeInHours != null);
+            binding.fragmentSendMessageDeadIco.setSelected(timeInHours != null);
         }
     };
-
     private final EncryptMessageDialogFragment.OnSetEncryptMessagePassword onSetEncryptMessagePassword
             = new EncryptMessageDialogFragment.OnSetEncryptMessagePassword() {
         @Override
@@ -206,16 +169,13 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
                     return;
                 }
                 encryptionMessage = null;
-                ImageView sendMessageEncryptIco = getActivity().findViewById(R.id.fragment_send_message_encrypt_ico);
-                sendMessageEncryptIco.setSelected(false);
+                binding.fragmentSendMessageEncryptIco.setSelected(false);
                 return;
             }
-
             EncryptionMessageProvider encryptionMessage = new EncryptionMessageProvider();
             encryptionMessage.setPassword(password);
             encryptionMessage.setPasswordHint(passwordHint);
             encryptionMessage.setExpiryHours(expiryHours);
-
             MailboxEntity fromMailboxEntity = getCurrentSelectedMailbox();
             if (fromMailboxEntity == null) {
                 return;
@@ -224,7 +184,6 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
             SendMessageRequest sendMessageRequest = new SendMessageRequest();
             sendMessageRequest.setMailbox(mailboxId);
             sendMessageRequest.setEncryptionMessage(encryptionMessage.toRequest());
-
             sendModel.setEncryptionMessage(currentMessageId, sendMessageRequest);
         }
     };
@@ -232,16 +191,17 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         Bundle args = getArguments();
-        if (args != null) {
-            Serializable attachmentList = args.getSerializable(ATTACHMENT_LIST);
-            if (attachmentList instanceof AttachmentsEntity) {
-                AttachmentsEntity attachmentsEntity = (AttachmentsEntity) attachmentList;
-                List<AttachmentProvider> attachmentProviderList = attachmentsEntity.getAttachmentProviderList();
-                if (attachmentProviderList != null && !attachmentProviderList.isEmpty()) {
-                    forwardedAttachments = attachmentProviderList;
-                }
+        if (args == null) {
+            Timber.e("args is null");
+            return;
+        }
+        Serializable attachmentList = args.getSerializable(ATTACHMENT_LIST);
+        if (attachmentList instanceof AttachmentsEntity) {
+            AttachmentsEntity attachmentsEntity = (AttachmentsEntity) attachmentList;
+            List<AttachmentProvider> attachmentProviderList = attachmentsEntity.getAttachmentProviderList();
+            if (attachmentProviderList != null && !attachmentProviderList.isEmpty()) {
+                forwardedAttachments = attachmentProviderList;
             }
         }
     }
@@ -250,44 +210,11 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final FragmentActivity activity = getActivity();
-        if (activity == null) {
-            Timber.wtf("Activity is null");
-            return null;
-        }
-
-        View root = inflater.inflate(R.layout.fragment_send_message, container, false);
-
-        subjectEditText = root.findViewById(R.id.fragment_send_message_subject_input);
-        composeEditText = root.findViewById(R.id.fragment_send_message_compose_email_input);
-        toEmailTextView = root.findViewById(R.id.fragment_send_message_to_input);
-        ccTextView = root.findViewById(R.id.fragment_send_message_cc_input);
-        bccTextView = root.findViewById(R.id.fragment_send_message_bcc_input);
-        spinnerFrom = root.findViewById(R.id.fragment_send_message_from_input_spinner);
-        ccLayout = root.findViewById(R.id.fragment_send_message_cc_layout);
-        bccLayout = root.findViewById(R.id.fragment_send_message_bcc_layout);
-        toAddIco = root.findViewById(R.id.fragment_send_message_to_add_button);
-        sendMessage = root.findViewById(R.id.fragment_send_message_send);
-        messageAttachmentsProcessingTextView = root.findViewById(R.id.fragment_send_message_attachments_processing_text_view);
-        messageAttachmentsRecycleView = root.findViewById(R.id.fragment_send_message_attachments);
-        sendMessageDestructIco = root.findViewById(R.id.fragment_send_message_destruct_ico);
-        sendMessageDelayedIco = root.findViewById(R.id.fragment_send_message_delayed_ico);
-        sendMessageDeadIco = root.findViewById(R.id.fragment_send_message_dead_ico);
-        sendMessageAttachmentIco = root.findViewById(R.id.fragment_send_message_attachment_ico);
-        sendMessageEncryptIco = root.findViewById(R.id.fragment_send_message_encrypt_ico);
-
-        composeEditText.setPaintFlags(composeEditText.getPaintFlags() & (~Paint.UNDERLINE_TEXT_FLAG));
+        binding = FragmentSendMessageBinding.inflate(inflater, container, false);
+        binding.fragmentSendMessageComposeEmailInput.setPaintFlags(
+                binding.fragmentSendMessageComposeEmailInput.getPaintFlags() & (~Paint.UNDERLINE_TEXT_FLAG));
         messageSendAttachmentAdapter = new MessageSendAttachmentAdapter(activity);
-        messageAttachmentsRecycleView.setAdapter(messageSendAttachmentAdapter);
-
-        // OnClick Listeners
-        root.findViewById(R.id.fragment_send_message_send).setOnClickListener(this);
-        root.findViewById(R.id.fragment_send_message_attachment_layout).setOnClickListener(this);
-        root.findViewById(R.id.fragment_send_message_delayed_layout).setOnClickListener(this);
-        root.findViewById(R.id.fragment_send_message_destruct_layout).setOnClickListener(this);
-        root.findViewById(R.id.fragment_send_message_dead_layout).setOnClickListener(this);
-        root.findViewById(R.id.fragment_send_message_encrypt_layout).setOnClickListener(this);
-        root.findViewById(R.id.fragment_send_message_to_add_button).setOnClickListener(this);
-        root.findViewById(R.id.fragment_send_message_back).setOnClickListener(this);
+        binding.fragmentSendMessageAttachments.setAdapter(messageSendAttachmentAdapter);
 
         long bundleMailboxId = -1;
         Bundle args = getArguments();
@@ -305,24 +232,23 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
                 parentId = null;
             }
             if (bundleEmails != null && bundleEmails.length > 0) {
-                toEmailTextView.setText(EditTextUtils.getStringFromList(bundleEmails));
+                binding.fragmentSendMessageToInput.setText(EditTextUtils.getStringFromList(bundleEmails));
             }
             if (bundleCC != null && bundleCC.length > 0) {
-                ccLayout.setVisibility(View.VISIBLE);
-                ccTextView.setText(EditTextUtils.getStringFromList(bundleCC));
+                binding.fragmentSendMessageCcLayout.setVisibility(View.VISIBLE);
+                binding.fragmentSendMessageCcInput.setText(EditTextUtils.getStringFromList(bundleCC));
             }
             if (bundleBCC != null && bundleBCC.length > 0) {
-                bccLayout.setVisibility(View.VISIBLE);
-                bccTextView.setText(EditTextUtils.getStringFromList(bundleBCC));
+                binding.fragmentSendMessageBccLayout.setVisibility(View.VISIBLE);
+                binding.fragmentSendMessageBccInput.setText(EditTextUtils.getStringFromList(bundleBCC));
             }
             if (bundleSubject != null && !bundleSubject.isEmpty()) {
-                subjectEditText.setText(bundleSubject);
+                binding.fragmentSendMessageSubjectInput.setText(bundleSubject);
             }
             if (bundleText != null && !bundleText.isEmpty()) {
-                composeEditText.setText(bundleText);
+                binding.fragmentSendMessageComposeEmailInput.setText(bundleText);
             }
         }
-
         sendModel = new ViewModelProvider(getActivity()).get(SendMessageActivityViewModel.class);
         contactsViewModel = new ViewModelProvider(getActivity()).get(ContactsViewModel.class);
         if (currentMessageId == -1) {
@@ -330,7 +256,6 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         } else {
             sendModel.openMessage(currentMessageId);
         }
-
         MailboxEntity defaultMailbox = EncryptUtils.getDefaultMailbox();
         MailboxEntity bundleMailbox = sendModel.getMailboxById(bundleMailboxId);
         mailboxAddresses = sendModel.getEnabledMailboxAddresses();
@@ -339,40 +264,38 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
                 R.layout.fragment_send_message_spinner,
                 mailboxAddresses
         );
-        spinnerFrom.setAdapter(adapter);
+        binding.fragmentSendMessageFromInputSpinner.setAdapter(adapter);
         if (defaultMailbox != null) {
-            spinnerFrom.setSelection(mailboxAddresses.indexOf(defaultMailbox.getEmail()));
+            binding.fragmentSendMessageFromInputSpinner.setSelection(mailboxAddresses.indexOf(defaultMailbox.getEmail()));
         }
         if (bundleMailbox != null) {
-            spinnerFrom.setSelection(mailboxAddresses.indexOf(bundleMailbox.getEmail()));
+            binding.fragmentSendMessageFromInputSpinner.setSelection(mailboxAddresses.indexOf(bundleMailbox.getEmail()));
         }
-
         boolean isSignatureEnabled = sendModel.isSignatureEnabled();
         if (defaultMailbox != null && isSignatureEnabled) {
             String signatureText = defaultMailbox.getSignature();
             addSignature(signatureText);
         }
-
-        if (EditTextUtils.getText(toEmailTextView).isEmpty()) {
-            toEmailTextView.requestFocus();
+        if (EditTextUtils.getText(binding.fragmentSendMessageToInput).isEmpty()) {
+            binding.fragmentSendMessageToInput.requestFocus();
         } else {
-            composeEditText.requestFocus();
-            new Handler().post(() -> composeEditText.setSelection(0));
+            binding.fragmentSendMessageComposeEmailInput.requestFocus();
+            new Handler().post(() -> binding.fragmentSendMessageComposeEmailInput.setSelection(0));
         }
-
-        return root;
+        return binding.getRoot();
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        initResponses();
+        handleRequests();
         addListeners();
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        // prevent double sending
         if (draftMessage) {
             sendMessage();
         }
@@ -382,13 +305,6 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
     public boolean onBackPressed() {
         return !(finished || onHandleBackPressed());
     }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        cancelSendingProgressBar();
-    }
-
 
     @Override
     public void onClick(View v) {
@@ -457,52 +373,33 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
     }
 
     public void onClickSend() {
-        String toEmail = EditTextUtils.getText(toEmailTextView).trim();
-        String ccEmail = EditTextUtils.getText(ccTextView).trim();
-        String bccEmail = EditTextUtils.getText(bccTextView).trim();
-
+        String toEmail = EditTextUtils.getText(binding.fragmentSendMessageToInput).trim();
         if (TextUtils.isEmpty(toEmail) || EditTextUtils.isEmailListValid(toEmail)) {
-            toEmailTextView.setError(null);
+            binding.fragmentSendMessageToInput.setError(null);
         } else {
-            toEmailTextView.setError(getString(R.string.txt_enter_valid_email));
+            binding.fragmentSendMessageToInput.setError(getString(R.string.txt_enter_valid_email));
             return;
         }
+        String ccEmail = EditTextUtils.getText(binding.fragmentSendMessageCcInput).trim();
         if (TextUtils.isEmpty(ccEmail) || EditTextUtils.isEmailListValid(ccEmail)) {
-            ccTextView.setError(null);
+            binding.fragmentSendMessageCcInput.setError(null);
         } else {
-            ccTextView.setError(getString(R.string.txt_enter_valid_email));
+            binding.fragmentSendMessageCcInput.setError(getString(R.string.txt_enter_valid_email));
             return;
         }
+        String bccEmail = EditTextUtils.getText(binding.fragmentSendMessageBccInput).trim();
         if (TextUtils.isEmpty(bccEmail) || EditTextUtils.isEmailListValid(bccEmail)) {
-            bccTextView.setError(null);
+            binding.fragmentSendMessageBccInput.setError(null);
         } else {
-            bccTextView.setError(getString(R.string.txt_enter_valid_email));
+            binding.fragmentSendMessageBccInput.setError(getString(R.string.txt_enter_valid_email));
             return;
         }
         if (attachmentsProcessingEnabled) {
-            Toast.makeText(getActivity(), getString(R.string.txt_attachments_in_processing), Toast.LENGTH_SHORT).show();
+            ToastUtils.showToast(getActivity(), R.string.txt_attachments_in_processing);
             return;
         }
-
-        sendingProgress = new ProgressDialog(getActivity());
-        sendingProgress.setCanceledOnTouchOutside(false);
-        sendingProgress.setMessage(getString(R.string.txt_sending_mail));
-        sendingProgress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        sendingProgress.show();
-
-        List<String> receiverList = new ArrayList<>();
-        if (EditTextUtils.isNotEmpty(toEmail)) {
-            receiverList.addAll(EditTextUtils.getListFromString(toEmail));
-        }
-        if (EditTextUtils.isNotEmpty(ccEmail)) {
-            receiverList.addAll(EditTextUtils.getListFromString(ccEmail));
-        }
-        if (EditTextUtils.isNotEmpty(bccEmail)) {
-            receiverList.addAll(EditTextUtils.getListFromString(bccEmail));
-        }
-
-        PublicKeysRequest publicKeysRequest = new PublicKeysRequest(receiverList);
-        sendModel.getEmailPublicKeys(publicKeysRequest);
+        draftMessage = false;
+        sendMessage();
     }
 
     public void onClickPickAttachment() {
@@ -514,18 +411,18 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
     }
 
     public void onClickAddReceiver() {
-        if (ccLayout.getVisibility() == View.GONE) {
-            toAddIco.setImageResource(R.drawable.ic_remove);
-            ccLayout.setVisibility(View.VISIBLE);
-            bccLayout.setVisibility(View.VISIBLE);
+        if (binding.fragmentSendMessageCcLayout.getVisibility() == View.GONE) {
+            binding.fragmentSendMessageToAddButton.setImageResource(R.drawable.ic_remove);
+            binding.fragmentSendMessageCcLayout.setVisibility(View.VISIBLE);
+            binding.fragmentSendMessageBccLayout.setVisibility(View.VISIBLE);
         } else {
-            toAddIco.setImageResource(R.drawable.ic_add_active);
-            ccLayout.setVisibility(View.GONE);
-            bccLayout.setVisibility(View.GONE);
+            binding.fragmentSendMessageToAddButton.setImageResource(R.drawable.ic_add_active);
+            binding.fragmentSendMessageCcLayout.setVisibility(View.GONE);
+            binding.fragmentSendMessageBccLayout.setVisibility(View.GONE);
         }
     }
 
-    private void initResponses() {
+    private void handleRequests() {
         final Activity activity = getActivity();
         if (activity == null) {
             return;
@@ -534,97 +431,62 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         contactsViewModel.getContactsResponse().observe(getViewLifecycleOwner(),
                 this::handleContactsList);
         contactsViewModel.getContacts(200, 0);
-        sendModel.getKeyResponse().observe(getViewLifecycleOwner(), keysResponse -> {
-            if (keysResponse == null || keysResponse.getKeys() == null) {
-                Timber.e("keyResponse is null");
-                return;
-            }
-            for (KeyResponse keyResponse : keysResponse.getKeys()) {
-                String emailPublicKey = keyResponse.getPublicKey();
-                publicKeyList.add(emailPublicKey);
-            }
-            draftMessage = false;
-            sendMessage();
-        }); // TODO
         sendModel.getGrabAttachmentStatus().observe(getViewLifecycleOwner(), aBoolean -> {
-            messageAttachmentsProcessingTextView.setVisibility(View.GONE);
+            binding.fragmentSendMessageAttachmentsProcessingTextView.setVisibility(View.GONE);
             attachmentsProcessingEnabled = false;
         });
-
         sendModel.getCreateMessageStatus()
                 .observe(getViewLifecycleOwner(), responseStatus -> {
                     if (responseStatus == null || responseStatus == ResponseStatus.RESPONSE_ERROR) {
-                        Toast.makeText(activity, R.string.toast_message_not_created, Toast.LENGTH_SHORT).show();
+                        ToastUtils.showToast(activity, R.string.toast_message_not_created);
                         finish();
                     }
                 });
-
         sendModel.getCreateMessageResponse()
                 .observe(getViewLifecycleOwner(), messagesResult -> {
                     if (messagesResult != null) {
                         currentMessageId = messagesResult.getId();
                         grabForwardedAttachments();
                     } else {
-                        Toast.makeText(activity, R.string.toast_message_not_created, Toast.LENGTH_SHORT).show();
+                        ToastUtils.showToast(activity, R.string.toast_message_not_created);
                         finish();
                     }
                 });
-
         sendModel.getOpenMessageResponse().observe(getViewLifecycleOwner(), this::loadMessageHandler);
-
-        sendModel.getUploadAttachmentStatus()
-                .observe(getViewLifecycleOwner(), responseStatus -> {
-                    if (responseStatus == ResponseStatus.RESPONSE_ERROR_TOO_LARGE) {
-                        Toast.makeText(activity, R.string.error_upload_attachment_too_large, Toast.LENGTH_SHORT).show();
-                    } else if (responseStatus == ResponseStatus.RESPONSE_ERROR) {
-                        Toast.makeText(activity, R.string.error_upload_attachment, Toast.LENGTH_SHORT).show();
-                    }
-                    if (uploadProgress != null) {
-                        uploadProgress.dismiss();
-                    }
-                });
-
-        sendModel.getUploadAttachmentResponse()
+        sendModel.getGrabAttachmentResponse()
                 .observe(getViewLifecycleOwner(), messageAttachmentProvider -> {
                     messageSendAttachmentAdapter.addAttachment(messageAttachmentProvider);
                     if (messageSendAttachmentAdapter.getItemCount() > 0) {
-                        sendMessageAttachmentIco.setSelected(true);
-                        sendMessage.setEnabled(true);
+                        binding.fragmentSendMessageAttachmentIco.setSelected(true);
+                        binding.fragmentSendMessageSend.setEnabled(true);
                     }
                 });
-
         sendModel.getDeleteAttachmentStatus()
                 .observe(getViewLifecycleOwner(), responseStatus -> {
                     if (responseStatus == ResponseStatus.RESPONSE_COMPLETE) {
                         int attachmentCount = messageSendAttachmentAdapter.getItemCount();
                         if (attachmentCount < 1) {
-                            sendMessageAttachmentIco.setSelected(false);
+                            binding.fragmentSendMessageAttachmentIco.setSelected(false);
                         }
                     }
                 });
-
         sendModel.getMessageEncryptionResult()
                 .observe(getViewLifecycleOwner(), messagesResult -> {
                     if (messagesResult == null) {
-                        ToastUtils.showToast(getActivity(), getString(R.string.error_connection));
+                        ToastUtils.showToast(getActivity(), R.string.error_connection);
                     } else {
                         encryptionMessage = EncryptionMessageProvider.fromResponseToProvider(
                                 messagesResult.getEncryptionMessage());
-                        sendMessageEncryptIco.setSelected(encryptionMessage != null);
+                        binding.fragmentSendMessageEncryptIco.setSelected(encryptionMessage != null);
                     }
                 });
-
         sendModel.getMySelfResponse().observe(getViewLifecycleOwner(), myselfResponse -> {
             if (myselfResponse != null) {
                 MyselfResult myself = myselfResponse.getResult()[0];
                 userIsPrime = myself.isPrime();
-//                        String joinedDate = myself.joinedDate;
-//                        boolean userTrial = AppUtils.twoWeeksTrial(joinedDate);
-//                        boolean userPrime = myself.isPrime;
-//                        userIsPrime = userPrime || userTrial;
             }
         });
-        startupBodyContent = EditTextUtils.getText(composeEditText);
+        startupBodyContent = EditTextUtils.getText(binding.fragmentSendMessageComposeEmailInput);
     }
 
     private void createMessage() {
@@ -634,7 +496,6 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         }
         long mailboxId = fromMailboxEntity.getId();
         String mailboxEmail = fromMailboxEntity.getEmail();
-
         SendMessageRequest createMessageRequest = new SendMessageRequest(
                 mailboxEmail,
                 new ArrayList<>(),
@@ -643,7 +504,6 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
                 DRAFT,
                 mailboxId
         );
-
         sendModel.createMessage(createMessageRequest);
         sendModel.mySelfData();
     }
@@ -651,7 +511,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
     private void loadMessageHandler(@Nullable MessageProvider messageProvider) {
         if (messageProvider == null) {
             if (getActivity() != null) {
-                Toast.makeText(getActivity(), R.string.toast_message_not_loaded, Toast.LENGTH_SHORT).show();
+                ToastUtils.showToast(getActivity(), R.string.toast_message_not_loaded);
                 finish();
             }
             return;
@@ -669,43 +529,43 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
 
         if (messageSender != null && !messageSender.isEmpty()) {
             int senderPosition = mailboxAddresses.indexOf(messageSender);
-            spinnerFrom.setSelection(senderPosition);
+            binding.fragmentSendMessageFromInputSpinner.setSelection(senderPosition);
         }
         if (messageReceivers != null && messageReceivers.length > 0) {
-            toEmailTextView.setText(EditTextUtils.getStringFromList(messageReceivers));
+            binding.fragmentSendMessageToInput.setText(EditTextUtils.getStringFromList(messageReceivers));
         }
         if (messageCc != null && messageCc.length > 0) {
-            ccLayout.setVisibility(View.VISIBLE);
-            ccTextView.setText(EditTextUtils.getStringFromList(messageCc));
+            binding.fragmentSendMessageCcLayout.setVisibility(View.VISIBLE);
+            binding.fragmentSendMessageCcInput.setText(EditTextUtils.getStringFromList(messageCc));
         }
         if (messageBcc != null && messageBcc.length > 0) {
-            bccLayout.setVisibility(View.VISIBLE);
-            bccTextView.setText(EditTextUtils.getStringFromList(messageBcc));
+            binding.fragmentSendMessageBccLayout.setVisibility(View.VISIBLE);
+            binding.fragmentSendMessageBccInput.setText(EditTextUtils.getStringFromList(messageBcc));
         }
         if (messageSubject != null && !messageSubject.isEmpty()) {
-            subjectEditText.setText(messageSubject);
+            binding.fragmentSendMessageSubjectInput.setText(messageSubject);
         }
         if (messageContent != null && !messageContent.isEmpty()) {
             Spanned messageSpanned = HtmlUtils.fromHtml(messageContent);
-            composeEditText.setText(messageSpanned);
+            binding.fragmentSendMessageComposeEmailInput.setText(messageSpanned);
         }
         if (messageDestruct != null) {
-            sendMessageDestructIco.setSelected(true);
+            binding.fragmentSendMessageDestructIco.setSelected(true);
             destructDeliveryDate = messageDestruct;
         }
         if (messageDelayed != null) {
-            sendMessageDelayedIco.setSelected(true);
+            binding.fragmentSendMessageDelayedIco.setSelected(true);
             delayedDeliveryDate = messageDelayed;
         }
         if (messageDeadMan != null) {
-            sendMessageDeadIco.setSelected(true);
+            binding.fragmentSendMessageDeadIco.setSelected(true);
             deadDeliveryInHours = messageDeadMan;
         }
         if (messageAttachmentList != null) {
             messageSendAttachmentAdapter.setAttachments(messageAttachmentList);
         }
         if (messageSendAttachmentAdapter.getItemCount() > 0) {
-            sendMessageAttachmentIco.setSelected(true);
+            binding.fragmentSendMessageAttachmentIco.setSelected(true);
         }
     }
 
@@ -716,13 +576,13 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         RecipientsListAdapter recipientsAdapter = new RecipientsListAdapter(
                 getActivity(), R.layout.recipients_list_view_item, contactList
         );
-        toEmailTextView.setAdapter(recipientsAdapter);
-        ccTextView.setAdapter(recipientsAdapter);
-        bccTextView.setAdapter(recipientsAdapter);
+        binding.fragmentSendMessageToInput.setAdapter(recipientsAdapter);
+        binding.fragmentSendMessageCcInput.setAdapter(recipientsAdapter);
+        binding.fragmentSendMessageBccInput.setAdapter(recipientsAdapter);
 
-        toEmailTextView.setTokenizer(new SpaceTokenizer());
-        ccTextView.setTokenizer(new SpaceTokenizer());
-        bccTextView.setTokenizer(new SpaceTokenizer());
+        binding.fragmentSendMessageToInput.setTokenizer(new SpaceTokenizer());
+        binding.fragmentSendMessageCcInput.setTokenizer(new SpaceTokenizer());
+        binding.fragmentSendMessageBccInput.setTokenizer(new SpaceTokenizer());
     }
 
     private void sendMessage() {
@@ -732,8 +592,8 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         }
         long mailboxId = fromMailboxEntity.getId();
         String mailboxEmail = fromMailboxEntity.getEmail();
-        String subject = EditTextUtils.getText(subjectEditText);
-        String compose = EditTextUtils.getText(composeEditText);
+        String subject = EditTextUtils.getText(binding.fragmentSendMessageSubjectInput);
+        String compose = EditTextUtils.getText(binding.fragmentSendMessageComposeEmailInput);
         Spannable composeSpannable = new SpannableString(compose);
 
         SendMessageRequestProvider sendMessageRequest = new SendMessageRequestProvider();
@@ -765,22 +625,21 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
             sendMessageRequest.setSend(false);
             sendMessageRequest.setFolder(DRAFT);
         }
-
-        String toEmail = EditTextUtils.getText(toEmailTextView).trim();
+        String toEmail = EditTextUtils.getText(binding.fragmentSendMessageToInput).trim();
         List<String> toEmailList = new ArrayList<>();
         if (!toEmail.isEmpty()) {
             toEmailList = EditTextUtils.getListFromString(toEmail);
         }
         sendMessageRequest.setReceivers(toEmailList);
 
-        String ccEmail = EditTextUtils.getText(ccTextView).trim();
+        String ccEmail = EditTextUtils.getText(binding.fragmentSendMessageCcInput).trim();
         List<String> ccEmailList = new ArrayList<>();
         if (!ccEmail.isEmpty()) {
             ccEmailList = EditTextUtils.getListFromString(ccEmail);
         }
         sendMessageRequest.setCc(ccEmailList);
 
-        String bccEmail = EditTextUtils.getText(bccTextView).trim();
+        String bccEmail = EditTextUtils.getText(binding.fragmentSendMessageBccInput).trim();
         List<String> bccEmailList = new ArrayList<>();
         if (!bccEmail.isEmpty()) {
             bccEmailList = EditTextUtils.getListFromString(bccEmail);
@@ -791,20 +650,15 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         if (attachments == null) {
             attachments = new ArrayList<>();
         }
-
-        String senderPublicKey = fromMailboxEntity.getPublicKey();
-        publicKeyList.add(senderPublicKey);
-
         SendMailService.sendMessage(
                 getContext(),
                 currentMessageId,
                 sendMessageRequest,
-                publicKeyList.toArray(new String[0]),
+                fromMailboxEntity.getPublicKey(),
                 attachments.toArray(new AttachmentProvider[0]),
                 encryptionMessage,
                 draftMessage
         );
-        cancelSendingProgressBar();
         if (!draftMessage) {
             finish();
         }
@@ -829,8 +683,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
         try {
             attachmentFile = new File(attachmentPath);
         } catch (Exception e) {
-            Toast.makeText(getActivity(), R.string.toast_attachment_unable_read_file,
-                    Toast.LENGTH_SHORT).show();
+            ToastUtils.showToast(getActivity(), R.string.toast_attachment_unable_read_file);
             return;
         }
         String type = activity.getContentResolver().getType(attachmentUri);
@@ -855,15 +708,29 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
             Timber.e(e);
             return;
         }
-
         String attachmentName = attachmentFile.getName();
         MultipartBody.Part document = MultipartBody.Part
                 .createFormData("document", attachmentName, attachmentPart);
 
         sendModel.uploadAttachment(
                 document, currentMessageId, false, true, type,
-                attachmentFile.getName(), attachmentFile.length(), attachmentPath
-        );
+                attachmentFile.getName(), attachmentFile.length()
+        ).observe(getViewLifecycleOwner(), resource -> {
+            if (uploadProgress != null) {
+                uploadProgress.dismiss();
+            }
+            if (!resource.isSuccess()) {
+                ToastUtils.showToast(activity, resource.getError());
+                return;
+            }
+            AttachmentProvider attachmentProvider = AttachmentProvider.fromResponse(resource.getDto());
+            attachmentProvider.setFilePath(attachmentPath);
+            messageSendAttachmentAdapter.addAttachment(attachmentProvider);
+            if (messageSendAttachmentAdapter.getItemCount() > 0) {
+                binding.fragmentSendMessageAttachmentIco.setSelected(true);
+                binding.fragmentSendMessageSend.setEnabled(true);
+            }
+        });
 
         uploadProgress = new ProgressDialog(getActivity());
         uploadProgress.setCanceledOnTouchOutside(false);
@@ -909,7 +776,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
 
     @Nullable
     private MailboxEntity getCurrentSelectedMailbox() {
-        Object fromEmailItem = spinnerFrom.getSelectedItem();
+        Object fromEmailItem = binding.fragmentSendMessageFromInputSpinner.getSelectedItem();
         if (fromEmailItem != null) {
             MailboxEntity fromMailboxEntity = sendModel.getMailboxByEmail(fromEmailItem.toString());
             if (fromMailboxEntity != null) {
@@ -930,18 +797,18 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
     private void addSignature(String signatureText) {
         Spanned signatureSpanned = HtmlUtils.fromHtml(signatureText);
         if (EditTextUtils.isNotEmpty(signatureSpanned)) {
-            Editable compose = composeEditText.getText();
+            Editable compose = binding.fragmentSendMessageComposeEmailInput.getText();
             CharSequence signatureWithCompose = TextUtils.concat(compose, "\n\n", signatureSpanned);
-            composeEditText.setText(signatureWithCompose);
+            binding.fragmentSendMessageComposeEmailInput.setText(signatureWithCompose);
         }
     }
 
     private boolean isSentFieldsFilled() {
-        String toEmail = EditTextUtils.getText(toEmailTextView);
-        String ccEmail = EditTextUtils.getText(ccTextView);
-        String bccEmail = EditTextUtils.getText(bccTextView);
-        String subject = EditTextUtils.getText(subjectEditText);
-        String compose = EditTextUtils.getText(composeEditText);
+        String toEmail = EditTextUtils.getText(binding.fragmentSendMessageToInput);
+        String ccEmail = EditTextUtils.getText(binding.fragmentSendMessageCcInput);
+        String bccEmail = EditTextUtils.getText(binding.fragmentSendMessageBccInput);
+        String subject = EditTextUtils.getText(binding.fragmentSendMessageSubjectInput);
+        String compose = EditTextUtils.getText(binding.fragmentSendMessageComposeEmailInput);
 
         boolean receiversEmpty = toEmail.isEmpty() && ccEmail.isEmpty() && bccEmail.isEmpty();
         boolean contentEmpty = subject.isEmpty() && compose.isEmpty();
@@ -949,19 +816,19 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
     }
 
     private boolean isMessageBodyEmpty() {
-        String toEmail = EditTextUtils.getText(toEmailTextView);
-        String ccEmail = EditTextUtils.getText(ccTextView);
-        String bccEmail = EditTextUtils.getText(bccTextView);
-        String subject = EditTextUtils.getText(subjectEditText);
-        String compose = EditTextUtils.getText(composeEditText);
+        String toEmail = EditTextUtils.getText(binding.fragmentSendMessageToInput);
+        String ccEmail = EditTextUtils.getText(binding.fragmentSendMessageCcInput);
+        String bccEmail = EditTextUtils.getText(binding.fragmentSendMessageBccInput);
+        String subject = EditTextUtils.getText(binding.fragmentSendMessageSubjectInput);
+        String compose = EditTextUtils.getText(binding.fragmentSendMessageComposeEmailInput);
         return toEmail.isEmpty() && ccEmail.isEmpty() && bccEmail.isEmpty() && subject.isEmpty()
                 && compose.equals(startupBodyContent);
     }
 
     private boolean isCTemplarRecipients() {
-        String toEmail = EditTextUtils.getText(toEmailTextView);
-        String ccEmail = EditTextUtils.getText(ccTextView);
-        String bccEmail = EditTextUtils.getText(bccTextView);
+        String toEmail = EditTextUtils.getText(binding.fragmentSendMessageToInput);
+        String ccEmail = EditTextUtils.getText(binding.fragmentSendMessageCcInput);
+        String bccEmail = EditTextUtils.getText(binding.fragmentSendMessageBccInput);
         String domain = BuildConfig.DOMAIN;
         return toEmail.contains(domain) || ccEmail.contains(domain) || bccEmail.contains(domain);
     }
@@ -979,7 +846,16 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
     }
 
     private void addListeners() {
-        sendMessage.setEnabled(false);
+        binding.fragmentSendMessageSend.setOnClickListener(this);
+        binding.fragmentSendMessageAttachmentLayout.setOnClickListener(this);
+        binding.fragmentSendMessageDelayedLayout.setOnClickListener(this);
+        binding.fragmentSendMessageDestructLayout.setOnClickListener(this);
+        binding.fragmentSendMessageDeadLayout.setOnClickListener(this);
+        binding.fragmentSendMessageEncryptLayout.setOnClickListener(this);
+        binding.fragmentSendMessageToAddButton.setOnClickListener(this);
+        binding.fragmentSendMessageBack.setOnClickListener(this);
+
+        binding.fragmentSendMessageSend.setEnabled(false);
         TextWatcher textWatcher = new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -988,7 +864,7 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                sendMessage.setEnabled(isSentFieldsFilled());
+                binding.fragmentSendMessageSend.setEnabled(isSentFieldsFilled());
             }
 
             @Override
@@ -996,24 +872,18 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
 
             }
         };
-        toEmailTextView.addTextChangedListener(textWatcher);
-        ccTextView.addTextChangedListener(textWatcher);
-        bccTextView.addTextChangedListener(textWatcher);
-        subjectEditText.addTextChangedListener(textWatcher);
-        composeEditText.addTextChangedListener(textWatcher);
+        binding.fragmentSendMessageToInput.addTextChangedListener(textWatcher);
+        binding.fragmentSendMessageCcInput.addTextChangedListener(textWatcher);
+        binding.fragmentSendMessageBccInput.addTextChangedListener(textWatcher);
+        binding.fragmentSendMessageSubjectInput.addTextChangedListener(textWatcher);
+        binding.fragmentSendMessageComposeEmailInput.addTextChangedListener(textWatcher);
     }
 
     private void grabForwardedAttachments() {
         if (forwardedAttachments != null) {
             sendModel.grabForwardedAttachments(forwardedAttachments, currentMessageId);
-            messageAttachmentsProcessingTextView.setVisibility(View.VISIBLE);
+            binding.fragmentSendMessageAttachmentsProcessingTextView.setVisibility(View.VISIBLE);
             attachmentsProcessingEnabled = true;
-        }
-    }
-
-    private void cancelSendingProgressBar() {
-        if (sendingProgress != null && sendingProgress.isShowing()) {
-            sendingProgress.cancel();
         }
     }
 

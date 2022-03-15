@@ -19,8 +19,12 @@ import com.ctemplar.app.fdroid.CTemplarApp;
 import com.ctemplar.app.fdroid.R;
 import com.ctemplar.app.fdroid.net.request.messages.EncryptionMessageRequest;
 import com.ctemplar.app.fdroid.net.request.messages.SendMessageRequest;
+import com.ctemplar.app.fdroid.net.response.keys.KeyResponse;
+import com.ctemplar.app.fdroid.net.response.keys.KeysResponse;
 import com.ctemplar.app.fdroid.net.response.messages.MessageAttachment;
 import com.ctemplar.app.fdroid.net.response.messages.MessagesResult;
+import com.ctemplar.app.fdroid.repository.UserRepository;
+import com.ctemplar.app.fdroid.repository.dto.DTOResource;
 import com.ctemplar.app.fdroid.repository.provider.AttachmentProvider;
 import com.ctemplar.app.fdroid.repository.provider.EncryptionMessageProvider;
 import com.ctemplar.app.fdroid.repository.provider.SendMessageRequestProvider;
@@ -31,6 +35,7 @@ import com.ctemplar.app.fdroid.utils.EncryptUtils;
 import com.ctemplar.app.fdroid.utils.FileUtils;
 import com.ctemplar.app.fdroid.utils.LaunchUtils;
 import com.ctemplar.app.fdroid.utils.ToastUtils;
+
 import com.google.gson.JsonSyntaxException;
 
 import java.io.BufferedInputStream;
@@ -44,8 +49,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import okhttp3.MediaType;
@@ -59,10 +67,12 @@ public class SendMailService extends IntentService {
 
     private static final String MESSAGE_ID_EXTRA_KEY = "message_id";
     private static final String MESSAGE_PROVIDER_EXTRA_KEY = "message_provider";
-    private static final String PUBLIC_KEYS_EXTRA_KEY = "public_keys";
+    private static final String SENDER_PUBLIC_KEY = "sender_public_key";
     private static final String ATTACHMENTS_EXTRA_KEY = "attachments";
     private static final String EXTERNAL_ENCRYPTION_EXTRA_KEY = "external_encryption";
     private static final String DRAFT_MESSAGE = "draft_message";
+
+    private static final UserRepository userRepository = CTemplarApp.getUserRepository();
 
     public SendMailService() {
         super(TAG);
@@ -96,9 +106,9 @@ public class SendMailService extends IntentService {
                     Timber.e(e, "Cannot parse message provider");
                     return;
                 }
-                String[] publicKeys = intent.getStringArrayExtra(PUBLIC_KEYS_EXTRA_KEY);
-                if (publicKeys == null) {
-                    publicKeys = new String[0];
+                String senderPublicKey = intent.getStringExtra(SENDER_PUBLIC_KEY);
+                if (senderPublicKey == null) {
+                    senderPublicKey = "";
                 }
                 String[] attachmentsStringArray = intent.getStringArrayExtra(ATTACHMENTS_EXTRA_KEY);
                 if (attachmentsStringArray == null) {
@@ -122,17 +132,17 @@ public class SendMailService extends IntentService {
                     }
                 }
                 boolean draftMessage = intent.getBooleanExtra(DRAFT_MESSAGE, true);
-                sendMail(messageId, sendMessageRequestProvider, publicKeys, attachmentProviders, encryptionMessageProvider, draftMessage);
+                sendMail(messageId, sendMessageRequestProvider, senderPublicKey, attachmentProviders, encryptionMessageProvider, draftMessage);
         }
     }
 
     public void sendMail(
             final long messageId,
-            @NonNull final SendMessageRequestProvider sendMessageRequestProvider,
-            final String[] publicKeys,
+            final @NonNull SendMessageRequestProvider sendMessageRequestProvider,
+            final String senderPublicKey,
             final AttachmentProvider[] attachmentsProvider,
             @Nullable EncryptionMessageProvider encryptionMessageProvider,
-            final boolean draftMessage
+            boolean draftMessage
     ) {
         SendMessageRequest sendMessageRequest = sendMessageRequestProvider.toRequest();
         String title = draftMessage ? getString(R.string.txt_saving_mail) : getString(R.string.txt_sending_mail);
@@ -152,7 +162,18 @@ public class SendMailService extends IntentService {
                 .setProgress(100, 10, true);
         notificationManager.notify((int) messageId, notificationBuilder.build());
 
-        List<String> publicKeyList = new ArrayList<>(Arrays.asList(publicKeys));
+        List<String> publicKeyList = new ArrayList<>(Collections.singleton(senderPublicKey));
+        DTOResource<KeysResponse> keysResponse = userRepository.getEmailPublicKeysSync(
+                getRecipients(sendMessageRequest));
+        if (keysResponse.isSuccess()) {
+            for (KeyResponse keyResponse : keysResponse.getDto().getKeys()) {
+                publicKeyList.add(keyResponse.getPublicKey());
+            }
+        } else {
+            ToastUtils.showToast(this, keysResponse.getError());
+            draftMessage = true;
+        }
+
         if (draftMessage) {
             encryptionMessageProvider = null;
         }
@@ -168,7 +189,7 @@ public class SendMailService extends IntentService {
             publicKeyList.removeAll(Arrays.asList(null, ""));
         }
 
-        final List<MessageAttachment> messageAttachmentList = new ArrayList<>(attachmentsProvider.length);
+        final List<MessageAttachment> messageAttachmentList = new ArrayList<>();
         if (attachmentsProvider.length > 0) {
             if (!draftMessage) {
                 notificationBuilder.setContentText(getString(R.string.txt_attachments_in_processing));
@@ -183,7 +204,6 @@ public class SendMailService extends IntentService {
                     } else {
                         messageAttachmentList.add(messageAttachment);
                     }
-
                     notificationBuilder.setProgress(attachmentProvidersLength, i + 1, false);
                     notificationManager.notify((int) messageId, notificationBuilder.build());
                 }
@@ -192,6 +212,14 @@ public class SendMailService extends IntentService {
         }
 
         updateMessage(messageId, sendMessageRequest, publicKeyList, notificationManager, notificationBuilder, draftMessage);
+    }
+
+    private Set<String> getRecipients(SendMessageRequest sendMessageRequest) {
+        Set<String> recipients = new HashSet<>();
+        recipients.addAll(sendMessageRequest.getReceivers());
+        recipients.addAll(sendMessageRequest.getCc());
+        recipients.addAll(sendMessageRequest.getBcc());
+        return recipients;
     }
 
     private void createSendMailNotificationChannel(NotificationManager notificationManager, String title) {
@@ -232,26 +260,26 @@ public class SendMailService extends IntentService {
         request.setEncrypted(isMessageEncrypted);
         request.setUpdatedAt(new Date());
 
-        MessagesResult messagesResult;
-        try {
-            messagesResult = CTemplarApp.getUserRepository().updateMessageSync(messageId, request);
-        } catch (Throwable e) {
-            onFailedUpdateMessage(e, messageId, isDraft, notificationManager, notificationBuilder);
+        DTOResource<MessagesResult> messagesResult = userRepository.updateMessageSync(messageId,
+                request);
+        if (!messagesResult.isSuccess()) {
+            onFailedUpdateMessage(messagesResult.getError(), messageId, isDraft, notificationManager,
+                    notificationBuilder);
             return;
         }
-        onMessageSentSuccess(messagesResult, isDraft, notificationManager, notificationBuilder);
+        onMessageSentSuccess(messagesResult.getDto(), isDraft, notificationManager, notificationBuilder);
     }
 
     private void onFailedUpdateMessage(
-            final Throwable e,
+            final String error,
             final long messageId,
             final boolean isDraft,
             final NotificationManager notificationManager,
             final NotificationCompat.Builder notificationBuilder
     ) {
-        Timber.e(e, "onFailedUpdateMessage, draft: %s", isDraft);
-        String errorMessage = isDraft ? getString(R.string.toast_not_saved) : getString(R.string.toast_message_not_sent);
-        ToastUtils.showToast(getApplicationContext(), errorMessage);
+        Timber.e("onFailedUpdateMessage: %s ; Draft: %s", error, isDraft);
+        String errorMessage = isDraft ? getString(R.string.toast_not_saved) : error;
+        ToastUtils.showToast(this, errorMessage);
         notificationBuilder.setContentText(errorMessage).setOngoing(false);
         notificationManager.notify((int) messageId, notificationBuilder.build());
         notificationManager.cancel((int) messageId);
@@ -265,7 +293,7 @@ public class SendMailService extends IntentService {
     ) {
         Timber.d("onMessageSentSuccess");
         String displayMessage = isDraft ? getString(R.string.toast_message_saved_as_draft) : getString(R.string.toast_message_sent);
-        ToastUtils.showLongToast(getApplicationContext(), displayMessage);
+        ToastUtils.showLongToast(this, displayMessage);
         notificationBuilder.setContentText(displayMessage).setOngoing(false);
         notificationManager.notify((int) messagesResult.getId(), notificationBuilder.build());
         notificationManager.cancel((int) messagesResult.getId());
@@ -350,7 +378,7 @@ public class SendMailService extends IntentService {
                 return null;
             }
             if (attachmentsProvider.isEncrypted()) {
-                String password = CTemplarApp.getUserRepository().getUserPassword();
+                String password = userRepository.getUserPassword();
                 try {
                     EncryptUtils.decryptAttachment(downloadedFile, decryptedFile, password, mailboxId);
                 } catch (InterruptedException e) {
@@ -391,49 +419,37 @@ public class SendMailService extends IntentService {
         } else {
             attachmentPart = RequestBody.create(mediaType, decryptedFile);
         }
-
         final MultipartBody.Part document = MultipartBody.Part
                 .createFormData("document", fileName, attachmentPart);
 
-        MessageAttachment result;
-        try {
-            result = CTemplarApp.getUserRepository()
-                    .updateAttachmentSync(
-                            attachmentsProvider.getId(),
-                            document,
-                            messageId,
-                            false,
-                            true,
-                            type,
-                            fileName,
-                            decryptedFile.length()
-                    );
-        } catch (Throwable e) {
-            if (e instanceof HttpException) {
-                if (((HttpException) e).code() == 413) {
-                    ToastUtils.showLongToast(this, getString(R.string.error_upload_attachment_too_large));
-                } else {
-                    ToastUtils.showLongToast(this, getString(R.string.error_upload_attachment));
-                }
-            } else {
-                ToastUtils.showLongToast(this, getString(R.string.error_upload_attachment));
-            }
-            return null;
-        }
+        DTOResource<MessageAttachment> messageAttachment = userRepository.updateAttachmentSync(
+                attachmentsProvider.getId(),
+                document,
+                messageId,
+                false,
+                true,
+                type,
+                fileName,
+                decryptedFile.length()
+        );
         if (isCachedFile && !decryptedFile.delete()) {
             Timber.e("updateAttachment: delete decrypted cached file error");
         }
         if (!encryptedFile.delete()) {
             Timber.e("updateAttachment: delete encrypted cached file error");
         }
-        return result;
+        if (!messageAttachment.isSuccess()) {
+            ToastUtils.showToast(this, messageAttachment.getError());
+            return null;
+        }
+        return messageAttachment.getDto();
     }
 
     public static void sendMessage(
             final Context context,
             final long messageId,
             final SendMessageRequestProvider sendMessageRequestProvider,
-            final String[] publicKeyList,
+            final String senderPublicKey,
             final AttachmentProvider[] attachmentsProvider,
             final EncryptionMessageProvider encryptionMessageProvider,
             final boolean draftMessage
@@ -442,7 +458,7 @@ public class SendMailService extends IntentService {
         intent.setComponent(new ComponentName(context, SendMailService.class));
         intent.putExtra(MESSAGE_ID_EXTRA_KEY, messageId);
         intent.putExtra(MESSAGE_PROVIDER_EXTRA_KEY, GENERAL_GSON.toJson(sendMessageRequestProvider));
-        intent.putExtra(PUBLIC_KEYS_EXTRA_KEY, publicKeyList);
+        intent.putExtra(SENDER_PUBLIC_KEY, senderPublicKey);
         String[] attachmentsStringArray = new String[attachmentsProvider.length];
         for (int i = 0, count = attachmentsProvider.length; i < count; ++i) {
             AttachmentProvider attachmentProvider = attachmentsProvider[i];
