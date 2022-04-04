@@ -441,67 +441,57 @@ public class InboxFragment extends BaseFragment implements InboxMessagesAdapter.
     }
 
     private void updateTouchListenerSwipeOptions(String folder) {
-        if (folder != null && folder.equals(DRAFT)) {
+        if (DRAFT.equals(folder)) {
             touchListener.setSwipeOptionViews(R.id.item_message_view_holder_delete);
-        } else if (folder != null && folder.equals(SPAM)) {
-            touchListener.setSwipeOptionViews(
-                    R.id.item_message_view_holder_inbox,
-                    R.id.item_message_view_holder_move,
-                    R.id.item_message_view_holder_delete
-            );
+        } else if (SPAM.equals(folder)) {
+            touchListener.setSwipeOptionViews(R.id.item_message_view_holder_inbox,
+                    R.id.item_message_view_holder_move, R.id.item_message_view_holder_delete);
         } else {
-            touchListener.setSwipeOptionViews(
-                    R.id.item_message_view_holder_spam,
-                    R.id.item_message_view_holder_move,
-                    R.id.item_message_view_holder_delete
-            );
+            touchListener.setSwipeOptionViews(R.id.item_message_view_holder_spam,
+                    R.id.item_message_view_holder_move, R.id.item_message_view_holder_delete);
         }
+//        touchListener.invalidateSwipeOptions();
     }
 
     private void bindTouchListener() {
         touchListener = new InboxMessagesTouchListener(getActivity(), binding.recyclerView);
         updateTouchListenerSwipeOptions(currentFolder);
-        touchListener.setSwipeable(R.id.foreground_layout,
-                R.id.background_layout,
-                (viewID, position) -> {
-                    final String currentFolderFinal = currentFolder;
-                    switch (viewID) {
-                        case R.id.item_message_view_holder_delete:
-                            MessageProvider deletedMessage = adapter.get(position);
-                            removeMessages(Collections.singletonMap(position, deletedMessage));
-                            break;
-                        case R.id.item_message_view_holder_spam:
-                            if (!currentFolder.equals(SPAM)) {
-                                MessageProvider spamMessage = adapter.removeAt(position);
-                                mainModel.toFolder(spamMessage.getId(), SPAM);
-                                showRestoreSnackBar(getString(R.string.action_spam), () -> {
-                                    mainModel.toFolder(spamMessage.getId(), currentFolderFinal);
-                                    if (currentFolder.equals(currentFolderFinal)) {
-                                        adapter.restoreMessages(Collections.singletonMap(position, spamMessage));
-                                    }
-                                });
-                            }
-                            break;
-                        case R.id.item_message_view_holder_inbox:
-                            if (currentFolder.equals(SPAM)) {
-                                MessageProvider inboxMessage = adapter.removeAt(position);
-                                mainModel.toFolder(inboxMessage.getId(), INBOX);
-                                showRestoreSnackBar(getString(R.string.action_moved_to_inbox), () -> {
-                                    mainModel.toFolder(inboxMessage.getId(), currentFolderFinal);
-                                    if (currentFolder.equals(currentFolderFinal)) {
-                                        adapter.restoreMessages(Collections.singletonMap(position, inboxMessage));
-                                    }
-                                });
-                            }
-                            break;
-                        case R.id.item_message_view_holder_move:
-                            MessageProvider movedMessage = adapter.get(position);
-                            moveMessages(Collections.singletonMap(position, movedMessage));
-                            break;
-                    }
-                });
+        touchListener.setSwipeable(R.id.foreground_layout, R.id.background_layout, (viewID, position) -> {
+            final String currentFolderFinal = currentFolder;
+            switch (viewID) {
+                case R.id.item_message_view_holder_delete:
+                    MessageProvider deletedMessage = adapter.get(position);
+                    removeMessages(Collections.singletonMap(position, deletedMessage));
+                    break;
+                case R.id.item_message_view_holder_spam:
+                    MessageProvider spamMessage = adapter.removeAt(position);
+                    mainModel.toFolder(spamMessage.getId(), SPAM);
+                    showRestoreSnackBar(getString(R.string.action_spam), () -> {
+                        mainModel.toFolder(spamMessage.getId(), currentFolderFinal);
+                        if (currentFolder.equals(currentFolderFinal)) {
+                            adapter.restoreMessages(Collections.singletonMap(position,
+                                    spamMessage));
+                        }
+                    });
+                    break;
+                case R.id.item_message_view_holder_inbox:
+                    MessageProvider inboxMessage = adapter.removeAt(position);
+                    mainModel.toFolder(inboxMessage.getId(), INBOX);
+                    showRestoreSnackBar(getString(R.string.action_moved_to_inbox), () -> {
+                        mainModel.toFolder(inboxMessage.getId(), currentFolderFinal);
+                        if (currentFolder.equals(currentFolderFinal)) {
+                            adapter.restoreMessages(Collections.singletonMap(position,
+                                    inboxMessage));
+                        }
+                    });
+                    break;
+                case R.id.item_message_view_holder_move:
+                    MessageProvider movedMessage = adapter.get(position);
+                    moveMessages(Collections.singletonMap(position, movedMessage));
+                    break;
+            }
+        });
         binding.recyclerView.addOnItemTouchListener(touchListener);
-
         mainModel.getMessageResponse().observe(getViewLifecycleOwner(), messageProvider -> {
             adapter.addMessage(messageProvider);
             binding.recyclerView.scrollToPosition(0);
@@ -517,19 +507,20 @@ public class InboxFragment extends BaseFragment implements InboxMessagesAdapter.
             selectedMessageIds[i] = it.next().getId();
         }
         String messagesCount = String.valueOf(selectedMessageIds.length);
+        adapter.removeMessages(selectedMessages.values());
         if (currentFolderFinal.equals(TRASH) || currentFolderFinal.equals(SPAM)) {
             showDeleteSnackBar(getString(R.string.txt_name_removed, messagesCount), () -> {
-                adapter.removeMessages(selectedMessages.values());
-                mainModel.deleteMessages(selectedMessageIds);
-            });
-        } else {
-            adapter.removeMessages(selectedMessages.values());
-            mainModel.toFolder(selectedMessageIds, TRASH);
-            showRestoreSnackBar(getString(R.string.txt_name_removed, messagesCount), () -> {
-                mainModel.toFolder(selectedMessageIds, currentFolderFinal);
                 if (currentFolder.equals(currentFolderFinal)) {
                     adapter.restoreMessages(selectedMessages);
                 }
+            }, () -> mainModel.deleteMessages(selectedMessageIds));
+        } else {
+            mainModel.toFolder(selectedMessageIds, TRASH);
+            showRestoreSnackBar(getString(R.string.txt_name_removed, messagesCount), () -> {
+                if (currentFolder.equals(currentFolderFinal)) {
+                    adapter.restoreMessages(selectedMessages);
+                }
+                mainModel.toFolder(selectedMessageIds, currentFolderFinal);
             });
         }
         mainThreadExecutor.execute(() -> adapter.setSelectionState(false));
@@ -552,16 +543,16 @@ public class InboxFragment extends BaseFragment implements InboxMessagesAdapter.
         moveDialogFragment.show(getParentFragmentManager(), "MoveDialogFragment");
     }
 
-    private void showRestoreSnackBar(String message, Runnable dismissClick) {
+    private void showRestoreSnackBar(String message, Runnable undoClick) {
         Snackbar.make(binding.sendButtonLayout, message, Snackbar.LENGTH_LONG)
-                .setAction(getString(R.string.action_undo), view -> dismissClick.run())
+                .setAction(getString(R.string.action_undo), view -> undoClick.run())
                 .setActionTextColor(getResources().getColor(R.color.colorAccent))
                 .show();
     }
 
-    private void showDeleteSnackBar(String message, Runnable notDismissed) {
+    private void showDeleteSnackBar(String message, Runnable undoClick, Runnable notDismissed) {
         Snackbar.make(binding.sendButtonLayout, message, Snackbar.LENGTH_LONG)
-                .setAction(getString(R.string.action_undo), null)
+                .setAction(getString(R.string.action_undo), view -> undoClick.run())
                 .setActionTextColor(getResources().getColor(R.color.colorAccent))
                 .addCallback(new Snackbar.Callback() {
                     @Override

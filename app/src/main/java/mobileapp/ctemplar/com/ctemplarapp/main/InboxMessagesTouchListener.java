@@ -24,7 +24,8 @@ import java.util.Set;
 
 import timber.log.Timber;
 
-public class InboxMessagesTouchListener implements RecyclerView.OnItemTouchListener, OnActivityTouchListener {
+public class InboxMessagesTouchListener implements RecyclerView.OnItemTouchListener,
+        OnActivityTouchListener {
     final Handler handler = new Handler();
     Activity act;
     List<Integer> unSwipeableRows;
@@ -34,15 +35,15 @@ public class InboxMessagesTouchListener implements RecyclerView.OnItemTouchListe
     List<Integer> optionViews;
     Set<Integer> ignoredViewTypes;
 
-    private int touchSlop;
-    private int minFlingVel;
-    private int maxFlingVel;
-    private long ANIMATION_STANDARD = 300;
-    private long ANIMATION_CLOSE = 150;
+    private final int touchSlop;
+    private final int minFlingVel;
+    private final int maxFlingVel;
+    private final long ANIMATION_STANDARD = 300;
+    private final long ANIMATION_CLOSE = 150;
 
-    private RecyclerView rView;
+    private final RecyclerView rView;
 
-    private int bgWidth = 1, bgWidthLeft = 1; // 1 and not 0 to prevent dividing by zero
+    private int bgWidth = 1; // 1 and not 0 to prevent dividing by zero
 
     private int mDismissAnimationRefCount = 0;
     private float touchedX;

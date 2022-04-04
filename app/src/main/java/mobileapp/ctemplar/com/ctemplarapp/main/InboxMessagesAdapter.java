@@ -31,26 +31,25 @@ import mobileapp.ctemplar.com.ctemplarapp.databinding.ItemMessageViewHolderBindi
 import mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames;
 import mobileapp.ctemplar.com.ctemplarapp.repository.constant.MessageActions;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageProvider;
-import mobileapp.ctemplar.com.ctemplarapp.repository.provider.UserDisplayProvider;
 import mobileapp.ctemplar.com.ctemplarapp.utils.DateUtils;
-import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
 
 public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesAdapter.InboxMessagesViewHolder> {
     private static final int SELECTION_MAX_WIDTH = 100;
     private static final int SELECTION_MIN_WIDTH = 0;
+
     private LayoutInflater inflater;
+    private final MainActivityViewModel mainModel;
+
+    private OnReachedBottomCallback onReachedBottomCallback;
+    private Handler onReachedBottomCallbackHandler;
 
     private final List<MessageProvider> messageList;
     private final List<MessageProvider> filteredList;
     private final PublishSubject<Long> onClickSubject = PublishSubject.create();
 
-    private final MainActivityViewModel mainModel;
-
-    private OnReachedBottomCallback onReachedBottomCallback;
-    private Handler onReachedBottomCallbackHandler;
-    private boolean selectionState = false;
     private final Set<Long> selectedMessages = new HashSet<>();
     private final MutableLiveData<Boolean> selectionStateLiveData = new MutableLiveData<>(false);
+    private boolean selectionState = false;
     private RecyclerView recyclerView;
     private ValueAnimator selectionAnimator;
 
@@ -70,25 +69,10 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesAdap
     @NonNull
     @Override
     public InboxMessagesViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
-        ViewGroup view = (ViewGroup) inflater.inflate(R.layout.item_message_view_holder, viewGroup, false);
-        ViewGroup backOptionsLayout = view.findViewById(R.id.background_layout);
-        View backOptionsView;
-
-        String currentFolder = mainModel.getCurrentFolder().getValue();
-        if (currentFolder != null && currentFolder.equals(MainFolderNames.DRAFT)) {
-            backOptionsView = inflater.inflate(R.layout.swipe_actions_draft, backOptionsLayout, false);
-        } else if (currentFolder != null && currentFolder.equals(MainFolderNames.SPAM)) {
-            backOptionsView = inflater.inflate(R.layout.swipe_actions_spam, backOptionsLayout, false);
-        } else {
-            backOptionsView = inflater.inflate(R.layout.swipe_actions, backOptionsLayout, false);
-        }
-
-        backOptionsLayout.removeAllViews();
-        backOptionsLayout.addView(backOptionsView, new ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT)
-        );
-
-        return new InboxMessagesViewHolder(ItemMessageViewHolderBinding.inflate(inflater, viewGroup, false));
+        ItemMessageViewHolderBinding binding = ItemMessageViewHolderBinding.inflate(inflater,
+                viewGroup, false);
+        updateBackOptionsLayout(binding.getRoot());
+        return new InboxMessagesViewHolder(binding);
     }
 
     @Override
@@ -101,11 +85,30 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesAdap
             }
         }
         holder.update(filteredList.get(position));
+        holder.updateBackOptions();
     }
 
     @Override
     public int getItemCount() {
         return filteredList.size();
+    }
+
+    private void updateBackOptionsLayout(View view) {
+        if (view == null) {
+            return;
+        }
+        String currentFolder = mainModel.getCurrentFolder().getValue();
+        ViewGroup backOptionsLayout = view.findViewById(R.id.background_layout);
+        View backOptionsView;
+        if (MainFolderNames.DRAFT.equals(currentFolder)) {
+            backOptionsView = inflater.inflate(R.layout.swipe_actions_draft, backOptionsLayout, false);
+        } else if (MainFolderNames.SPAM.equals(currentFolder)) {
+            backOptionsView = inflater.inflate(R.layout.swipe_actions_spam, backOptionsLayout, false);
+        } else {
+            backOptionsView = inflater.inflate(R.layout.swipe_actions, backOptionsLayout, false);
+        }
+        backOptionsLayout.removeAllViews();
+        backOptionsLayout.addView(backOptionsView);
     }
 
     public MessageProvider get(int position) {
@@ -118,6 +121,7 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesAdap
 
     public MessageProvider removeAt(int position) {
         MessageProvider removedMessage = filteredList.remove(position);
+        messageList.remove(removedMessage);
         notifyItemRemoved(position);
         return removedMessage;
     }
@@ -128,12 +132,14 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesAdap
             filteredList.remove(message);
             notifyItemRemoved(position);
         }
+        messageList.removeAll(messages);
     }
 
     public void restoreMessages(Map<Integer, MessageProvider> messages) {
         for (Map.Entry<Integer, MessageProvider> messagesEntry : messages.entrySet()) {
             int position = messagesEntry.getKey();
             filteredList.add(position, messagesEntry.getValue());
+            messageList.add(position, messagesEntry.getValue());
             notifyItemInserted(position);
         }
     }
@@ -331,7 +337,8 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesAdap
         });
         animator.addUpdateListener(valueAnimator -> {
             for (int i = 0; i < getItemCount(); ++i) {
-                InboxMessagesViewHolder viewHolder = (InboxMessagesViewHolder) recyclerView.findViewHolderForAdapterPosition(i);
+                InboxMessagesViewHolder viewHolder = (InboxMessagesViewHolder) recyclerView
+                        .findViewHolderForAdapterPosition(i);
                 if (viewHolder != null) {
                     viewHolder.setSelectionWidth((int) valueAnimator.getAnimatedValue());
                 }
@@ -375,6 +382,10 @@ public class InboxMessagesAdapter extends RecyclerView.Adapter<InboxMessagesAdap
         public InboxMessagesViewHolder(@NonNull ItemMessageViewHolderBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
+        }
+
+        public void updateBackOptions() {
+            updateBackOptionsLayout(binding.getRoot());
         }
 
         public void update(MessageProvider message) {
