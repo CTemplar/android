@@ -8,12 +8,34 @@ import android.app.NotificationManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
+
+import com.google.common.io.Files;
+import com.google.gson.JsonSyntaxException;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.R;
@@ -35,31 +57,9 @@ import mobileapp.ctemplar.com.ctemplarapp.utils.EncryptUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.FileUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.LaunchUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.ToastUtils;
-
-import com.google.gson.JsonSyntaxException;
-
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
-
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
-import retrofit2.HttpException;
 import timber.log.Timber;
 
 public class SendMailService extends IntentService {
@@ -299,6 +299,69 @@ public class SendMailService extends IntentService {
         notificationManager.cancel((int) messagesResult.getId());
     }
 
+    private File downloadAttachment(String attachmentUrl) {
+        File cacheDir = getCacheDir();
+        URL url;
+        try {
+            url = new URL(attachmentUrl);
+        } catch (MalformedURLException e) {
+            Timber.e(e, "downloadAttachment: MalformedURLException");
+            return null;
+        }
+        InputStream inputStream;
+        try {
+            inputStream = url.openStream();
+        } catch (IOException e) {
+            Timber.e(e, "downloadAttachment: download inputStream error");
+            return null;
+        }
+        BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
+        File downloadedFile;
+        try {
+            downloadedFile = File.createTempFile(UUID.randomUUID().toString(), null, cacheDir);
+        } catch (IOException e) {
+            Timber.e(e, "downloadAttachment: create downloaded tmp file error");
+            return null;
+        }
+        FileOutputStream fileOutputStream;
+        try {
+            fileOutputStream = new FileOutputStream(downloadedFile);
+        } catch (FileNotFoundException e) {
+            Timber.wtf(e, "downloadAttachment: downloaded tmp file not found");
+            if (!downloadedFile.delete()) {
+                Timber.e("downloadAttachment: downloaded file is not deleted after error");
+            }
+            return null;
+        }
+        BufferedOutputStream outputBufferedStream = new BufferedOutputStream(fileOutputStream);
+        try {
+            FileUtils.copyBytes(bufferedInputStream, outputBufferedStream);
+        } catch (IOException e) {
+            Timber.e(e, "downloadAttachment: copyBytes error");
+            if (!downloadedFile.delete()) {
+                Timber.e("downloadAttachment: downloaded file is not deleted after error");
+            }
+            return null;
+        } finally {
+            try {
+                inputStream.close();
+            } catch (IOException e) {
+                Timber.e(e, "downloadAttachment: close inputStream error");
+            }
+            try {
+                outputBufferedStream.close();
+            } catch (IOException e) {
+                Timber.e(e, "downloadAttachment: close outputBufferedStream error");
+            }
+            try {
+                fileOutputStream.close();
+            } catch (IOException e) {
+                Timber.e(e, "downloadAttachment: close fileOutputStream error");
+            }
+        }
+        return downloadedFile;
+    }
+
     private MessageAttachment updateAttachment(
             final AttachmentProvider attachmentsProvider,
             final List<String> publicKeyList,
@@ -306,95 +369,51 @@ public class SendMailService extends IntentService {
             final long mailboxId,
             final EncryptionMessageProvider encryptionMessageProvider
     ) {
-        File cacheDir = getCacheDir();
         File decryptedFile = null;
-        boolean isCachedFile = false;
-
-        String localFilePath = attachmentsProvider.getFilePath();
-        if (EditTextUtils.isNotEmpty(localFilePath)) {
-            decryptedFile = new File(localFilePath);
+        String filePath = attachmentsProvider.getFilePath();
+        if (EditTextUtils.isNotEmpty(filePath)) {
+            decryptedFile = new File(filePath);
         }
 
         if (decryptedFile == null || !decryptedFile.exists()) {
-            URL url;
-            try {
-                url = new URL(attachmentsProvider.getDocumentUrl());
-            } catch (MalformedURLException e) {
-                Timber.e(e, "updateAttachment: MalformedURLException");
+            File downloadedFile = downloadAttachment(attachmentsProvider.getDocumentUrl());
+            if (downloadedFile == null) {
+                Timber.e("updateAttachment: download attachment error");
                 return null;
             }
-            InputStream inputStream;
             try {
-                inputStream = url.openStream();
-            } catch (IOException e) {
-                Timber.e(e, "updateAttachment: download inputStream error");
-                return null;
-            }
-            BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
-            File downloadedFile;
-            try {
-                downloadedFile = File.createTempFile(UUID.randomUUID().toString(), null, cacheDir);
-            } catch (IOException e) {
-                Timber.e(e, "updateAttachment: create downloaded tmp file error");
-                return null;
-            }
-            FileOutputStream fileOutputStream;
-            try {
-                fileOutputStream = new FileOutputStream(downloadedFile);
-            } catch (FileNotFoundException e) {
-                Timber.wtf(e, "updateAttachment: downloaded tmp file not found");
-                if (!downloadedFile.delete()) {
-                    Timber.e("Downloaded file is not deleted after error");
-                }
-                return null;
-            }
-            BufferedOutputStream outputBufferedStream = new BufferedOutputStream(fileOutputStream);
-            try {
-                FileUtils.copyBytes(bufferedInputStream, outputBufferedStream);
-            } catch (IOException e) {
-                Timber.e(e, "updateAttachment: copyBytes error");
-                return null;
-            } finally {
-                try {
-                    inputStream.close();
-                } catch (IOException e) {
-                    Timber.e(e, "updateAttachment: close inputStream error");
-                }
-                try {
-                    outputBufferedStream.close();
-                } catch (IOException e) {
-                    Timber.e(e, "updateAttachment: close outputBufferedStream error");
-                }
-                try {
-                    fileOutputStream.close();
-                } catch (IOException e) {
-                    Timber.e(e, "updateAttachment: close fileOutputStream error");
-                }
-            }
-            try {
-                decryptedFile = File.createTempFile(UUID.randomUUID().toString(), null, cacheDir);
+                decryptedFile = File.createTempFile(UUID.randomUUID().toString(), null,
+                        getCacheDir());
             } catch (IOException e) {
                 Timber.e(e, "updateAttachment: create decrypted tmp file error");
                 return null;
             }
             if (attachmentsProvider.isEncrypted()) {
-                String password = userRepository.getUserPassword();
                 try {
-                    EncryptUtils.decryptAttachment(downloadedFile, decryptedFile, password, mailboxId);
+                    EncryptUtils.decryptAttachment(downloadedFile, decryptedFile,
+                            userRepository.getUserPassword(), mailboxId);
                 } catch (InterruptedException e) {
-                    Timber.e(e);
+                    Timber.e(e, "updateAttachment: downloaded file decryption fail");
+                    return null;
                 }
-                if (!downloadedFile.delete()) {
-                    Timber.e("Downloaded file is not deleted after decryption error");
+            } else {
+                try {
+                    Files.copy(downloadedFile, decryptedFile);
+                } catch (IOException e) {
+                    Timber.e(e, "updateAttachment: unencrypted file copy fail");
+                    return null;
                 }
             }
-            isCachedFile = true;
+            if (!downloadedFile.delete()) {
+                Timber.e("updateAttachment: downloaded file is not deleted");
+            }
         }
 
         String documentUrl = attachmentsProvider.getDocumentUrl();
         String type = attachmentsProvider.getFileType() == null
                 ? AppUtils.getMimeType(documentUrl) : attachmentsProvider.getFileType();
         if (type == null) {
+            Timber.w("updateAttachment: type is null");
             type = "";
         }
         String fileName = attachmentsProvider.getName() == null
@@ -403,7 +422,8 @@ public class SendMailService extends IntentService {
 
         File encryptedFile;
         try {
-            encryptedFile = File.createTempFile(UUID.randomUUID().toString(), null, cacheDir);
+            encryptedFile = File.createTempFile(UUID.randomUUID().toString(), null,
+                    getCacheDir());
         } catch (IOException e) {
             Timber.e(e, "updateAttachment: create encrypted attachment error");
             return null;
@@ -412,12 +432,12 @@ public class SendMailService extends IntentService {
         if (encryptionMessageProvider != null) {
             final String password = encryptionMessageProvider.getPassword();
             EncryptUtils.encryptAttachmentGPG(decryptedFile, encryptedFile, password);
-            attachmentPart = RequestBody.create(mediaType, encryptedFile);
+            attachmentPart = RequestBody.create(encryptedFile, mediaType);
         } else if (publicKeyList.size() > 0) {
             EncryptUtils.encryptAttachment(decryptedFile, encryptedFile, publicKeyList);
-            attachmentPart = RequestBody.create(mediaType, encryptedFile);
+            attachmentPart = RequestBody.create(encryptedFile, mediaType);
         } else {
-            attachmentPart = RequestBody.create(mediaType, decryptedFile);
+            attachmentPart = RequestBody.create(decryptedFile, mediaType);
         }
         final MultipartBody.Part document = MultipartBody.Part
                 .createFormData("document", fileName, attachmentPart);
@@ -432,7 +452,7 @@ public class SendMailService extends IntentService {
                 fileName,
                 decryptedFile.length()
         );
-        if (isCachedFile && !decryptedFile.delete()) {
+        if (!decryptedFile.delete()) {
             Timber.e("updateAttachment: delete decrypted cached file error");
         }
         if (!encryptedFile.delete()) {
