@@ -24,9 +24,13 @@ public class AttachmentProvider implements Serializable {
     // Local object
     private String filePath;
 
-    public AttachmentProvider() { }
+    public AttachmentProvider() {
+    }
 
-    public AttachmentProvider(long id, long fileSize, String documentUrl, boolean isDeleted, Date deletedAt, String name, boolean isInline, boolean isEncrypted, boolean isForwarded, boolean isPGPMime, String contentId, String fileType, long actualSize, long message) {
+    public AttachmentProvider(long id, long fileSize, String documentUrl, boolean isDeleted,
+                              Date deletedAt, String name, boolean isInline, boolean isEncrypted,
+                              boolean isForwarded, boolean isPGPMime, String contentId,
+                              String fileType, long actualSize, long message) {
         this.id = id;
         this.fileSize = fileSize;
         this.documentUrl = documentUrl;
