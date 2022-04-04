@@ -67,7 +67,9 @@ import com.ctemplar.app.fdroid.utils.SpaceTokenizer;
 import com.ctemplar.app.fdroid.utils.ToastUtils;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -674,47 +676,48 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
             Timber.e("attachmentUri is null");
             return;
         }
-        String attachmentPath = FileUtils.getPath(activity, attachmentUri);
-        File attachmentFile;
-        if (attachmentPath == null) {
-            Timber.e("attachmentPath is null");
+        InputStream attachmentInputStream;
+        try {
+            attachmentInputStream = activity.getContentResolver().openInputStream(attachmentUri);
+        } catch (FileNotFoundException e) {
+            ToastUtils.showToast(getActivity(), R.string.toast_attachment_unable_read_file);
+            Timber.e(e, "attachment content resolver");
             return;
         }
-        try {
-            attachmentFile = new File(attachmentPath);
-        } catch (Exception e) {
-            ToastUtils.showToast(getActivity(), R.string.toast_attachment_unable_read_file);
+        File attachmentFile = FileUtils.getFileFromInputStream(getActivity(), attachmentInputStream);
+        if (attachmentFile == null) {
+            Timber.e("attachment temp creation fail");
             return;
         }
         String type = activity.getContentResolver().getType(attachmentUri);
         if (type == null) {
+            Timber.w("attachment type is null");
             type = "";
         }
         MediaType mediaType = MediaType.parse(type);
-
         MailboxEntity fromMailboxEntity = getCurrentSelectedMailbox();
         if (fromMailboxEntity == null) {
             return;
         }
-        String mailboxPublicKey = fromMailboxEntity.getPublicKey();
-
         RequestBody attachmentPart;
+        File encryptedFile;
         try {
-            File cacheDir = getActivity().getCacheDir();
-            File encryptedFile = File.createTempFile(UUID.randomUUID().toString(), null, cacheDir);
-            EncryptUtils.encryptAttachment(attachmentFile, encryptedFile, Collections.singletonList(mailboxPublicKey));
-            attachmentPart = RequestBody.create(mediaType, encryptedFile);
+            encryptedFile = File.createTempFile(UUID.randomUUID().toString(), null,
+                    getActivity().getCacheDir());
+            EncryptUtils.encryptAttachment(attachmentFile, encryptedFile,
+                    Collections.singletonList(fromMailboxEntity.getPublicKey()));
+            attachmentPart = RequestBody.create(encryptedFile, mediaType);
         } catch (IOException e) {
             Timber.e(e);
             return;
         }
-        String attachmentName = attachmentFile.getName();
-        MultipartBody.Part document = MultipartBody.Part
-                .createFormData("document", attachmentName, attachmentPart);
+        String attachmentName = FileUtils.getFileName(activity, attachmentUri);
+        MultipartBody.Part document = MultipartBody.Part.createFormData("document",
+                attachmentName, attachmentPart);
 
         sendModel.uploadAttachment(
-                document, currentMessageId, false, true, type,
-                attachmentFile.getName(), attachmentFile.length()
+                document, currentMessageId, false, true, type, attachmentName,
+                encryptedFile.length()
         ).observe(getViewLifecycleOwner(), resource -> {
             if (uploadProgress != null) {
                 uploadProgress.dismiss();
@@ -724,14 +727,17 @@ public class SendMessageFragment extends Fragment implements View.OnClickListene
                 return;
             }
             AttachmentProvider attachmentProvider = AttachmentProvider.fromResponse(resource.getDto());
-            attachmentProvider.setFilePath(attachmentPath);
+            attachmentProvider.setFilePath(attachmentFile.getAbsolutePath());
+            attachmentProvider.setActualSize(attachmentFile.length());
             messageSendAttachmentAdapter.addAttachment(attachmentProvider);
             if (messageSendAttachmentAdapter.getItemCount() > 0) {
                 binding.fragmentSendMessageAttachmentIco.setSelected(true);
                 binding.fragmentSendMessageSend.setEnabled(true);
             }
+            if (!encryptedFile.delete()) {
+                Timber.w("Uploaded encrypted file not deleted");
+            }
         });
-
         uploadProgress = new ProgressDialog(getActivity());
         uploadProgress.setCanceledOnTouchOutside(false);
         uploadProgress.setMessage(getString(R.string.txt_uploading));
