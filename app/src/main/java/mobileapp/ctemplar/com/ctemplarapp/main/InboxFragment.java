@@ -450,7 +450,7 @@ public class InboxFragment extends BaseFragment implements InboxMessagesAdapter.
             touchListener.setSwipeOptionViews(R.id.item_message_view_holder_spam,
                     R.id.item_message_view_holder_move, R.id.item_message_view_holder_delete);
         }
-//        touchListener.invalidateSwipeOptions();
+        touchListener.invalidateSwipeOptions();
     }
 
     private void bindTouchListener() {
