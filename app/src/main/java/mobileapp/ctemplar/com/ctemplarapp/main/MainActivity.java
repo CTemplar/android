@@ -255,7 +255,7 @@ public class MainActivity extends AppCompatActivity
         }
         if (id == R.id.nav_manage_folders_more) {
             customFoldersShowCount += CUSTOM_FOLDER_STEP;
-            mainModel.getUnreadFolders();
+            getCustomFolders();
             return true;
         }
         return true;
