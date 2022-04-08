@@ -1,0 +1,7 @@
+* Button for load blocked images directly on the view screen
+* Better support attachment sending for the latest Android versions
+* Improved email sending flow
+* Improved swipes handling
+* Real-time folder counters update. Improved custom folders render
+* Removed custom folder limits
+* Other stability and UI improvements
