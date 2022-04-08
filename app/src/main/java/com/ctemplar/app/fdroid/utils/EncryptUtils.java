@@ -63,7 +63,8 @@ public class EncryptUtils {
     }
 
     public static String decryptSubject(String subject, long mailboxId) {
-        return decryptContent(subject, mailboxId, true).replaceAll("<img.+?>", "");
+        return decryptContent(subject, mailboxId, true)
+                .replaceAll("<img.+?>", "");
     }
 
     public static String encryptData(String content) {
@@ -89,24 +90,24 @@ public class EncryptUtils {
         return decryptContent(content, mailboxEntity.getId(), true);
     }
 
-    public static boolean encryptAttachment(File originalFile, File encryptedFile, List<String> publicKeyList) {
-        int fileSize = (int) originalFile.length();
-        byte[] fileBytes = new byte[fileSize];
+    public static boolean encryptAttachment(File originalFile, File encryptedFile,
+                                            List<String> publicKeyList) {
+        byte[] fileBytes;
         try {
-            BufferedInputStream bufferedInputStream = new BufferedInputStream(new FileInputStream(originalFile));
+            fileBytes = new byte[(int) originalFile.length()];
+            BufferedInputStream bufferedInputStream = new BufferedInputStream(
+                    new FileInputStream(originalFile));
             bufferedInputStream.read(fileBytes, 0, fileBytes.length);
             bufferedInputStream.close();
         } catch (IOException e) {
             Timber.e(e);
             return false;
         }
-        byte[] encryptedBytes = PGPManager.encrypt(
-                fileBytes,
-                publicKeyList.toArray(new String[0]),
-                true
-        );
+        byte[] encryptedBytes = PGPManager.encrypt(fileBytes, publicKeyList.toArray(new String[0]),
+                true);
         try {
-            BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(encryptedFile));
+            BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(
+                    new FileOutputStream(encryptedFile));
             bufferedOutputStream.write(encryptedBytes);
             bufferedOutputStream.flush();
             bufferedOutputStream.close();
@@ -117,15 +118,16 @@ public class EncryptUtils {
         return true;
     }
 
-    public static boolean decryptAttachment(File encryptedFile, File decryptedFile, String password, long mailboxId) throws InterruptedException {
+    public static boolean decryptAttachment(File encryptedFile, File decryptedFile, String password,
+                                            long mailboxId) throws InterruptedException {
         List<String> privateKeys = getPrivateKeys(mailboxId);
         if (privateKeys == null) {
             return false;
         }
-        int fileSize = (int) encryptedFile.length();
-        byte[] fileBytes = new byte[fileSize];
+        byte[] fileBytes = new byte[(int) encryptedFile.length()];
         try {
-            BufferedInputStream bufferedInputStream = new BufferedInputStream(new FileInputStream(encryptedFile));
+            BufferedInputStream bufferedInputStream = new BufferedInputStream(
+                    new FileInputStream(encryptedFile));
             bufferedInputStream.read(fileBytes, 0, fileBytes.length);
             bufferedInputStream.close();
         } catch (IOException e) {
@@ -134,7 +136,8 @@ public class EncryptUtils {
         }
         try {
             byte[] encryptedBytes = Cryptor.decryptPGP(fileBytes, privateKeys, password);
-            BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(decryptedFile));
+            BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(
+                    new FileOutputStream(decryptedFile));
             bufferedOutputStream.write(encryptedBytes);
             bufferedOutputStream.flush();
             bufferedOutputStream.close();
@@ -147,11 +150,13 @@ public class EncryptUtils {
         return true;
     }
 
-    public static boolean encryptAttachmentGPG(File originalFile, File encryptedFile, String passPhrase) {
+    public static boolean encryptAttachmentGPG(File originalFile, File encryptedFile,
+                                               String passPhrase) {
         int fileSize = (int) originalFile.length();
         byte[] fileBytes = new byte[fileSize];
         try {
-            BufferedInputStream bufferedInputStream = new BufferedInputStream(new FileInputStream(originalFile));
+            BufferedInputStream bufferedInputStream = new BufferedInputStream(
+                    new FileInputStream(originalFile));
             bufferedInputStream.read(fileBytes, 0, fileBytes.length);
             bufferedInputStream.close();
         } catch (IOException e) {
@@ -160,7 +165,8 @@ public class EncryptUtils {
         }
         byte[] encryptedBytes = PGPManager.encryptGPG(fileBytes, passPhrase, true);
         try {
-            BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(encryptedFile));
+            BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(
+                    new FileOutputStream(encryptedFile));
             bufferedOutputStream.write(encryptedBytes);
             bufferedOutputStream.flush();
             bufferedOutputStream.close();
@@ -171,11 +177,13 @@ public class EncryptUtils {
         return true;
     }
 
-    public static boolean decryptAttachmentGPG(File encryptedFile, File decryptedFile, String password) throws InterruptedException {
+    public static boolean decryptAttachmentGPG(File encryptedFile, File decryptedFile,
+                                               String password) throws InterruptedException {
         int fileSize = (int) encryptedFile.length();
         byte[] fileBytes = new byte[fileSize];
         try {
-            BufferedInputStream bufferedInputStream = new BufferedInputStream(new FileInputStream(encryptedFile));
+            BufferedInputStream bufferedInputStream = new BufferedInputStream(
+                    new FileInputStream(encryptedFile));
             bufferedInputStream.read(fileBytes, 0, fileBytes.length);
             bufferedInputStream.close();
         } catch (IOException e) {
@@ -184,7 +192,8 @@ public class EncryptUtils {
         }
         try {
             byte[] encryptedBytes = PGPManager.decryptGPG(fileBytes, password);
-            BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(decryptedFile));
+            BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(
+                    new FileOutputStream(decryptedFile));
             bufferedOutputStream.write(encryptedBytes);
             bufferedOutputStream.flush();
             bufferedOutputStream.close();

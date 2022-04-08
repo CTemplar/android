@@ -2,14 +2,14 @@ package com.ctemplar.app.fdroid.net.request.folders;
 
 import com.google.gson.annotations.SerializedName;
 
-public class AddFolderRequest {
+public class FolderRequest {
     @SerializedName("name")
     private String name;
 
     @SerializedName("color")
     private String color;
 
-    public AddFolderRequest(String name, String color) {
+    public FolderRequest(String name, String color) {
         this.name = name;
         this.color = color;
     }

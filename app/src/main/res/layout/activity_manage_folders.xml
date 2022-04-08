@@ -6,13 +6,13 @@
     android:layout_height="match_parent">
 
     <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/activity_manage_folders_toolbar_layout"
+        android:id="@+id/toolbar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.appcompat.widget.Toolbar
-            android:id="@+id/activity_manage_folders_toolbar"
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:fontFamily="@font/lato_bold"
@@ -23,8 +23,8 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@id/activity_manage_folders_add_layout"
-        app:layout_constraintTop_toBottomOf="@id/activity_manage_folders_toolbar_layout">
+        app:layout_constraintBottom_toTopOf="@id/add_layout"
+        app:layout_constraintTop_toBottomOf="@id/toolbar_layout">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -32,34 +32,36 @@
             android:orientation="vertical">
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/activity_manage_folders_recycler_view"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                android:id="@+id/folders_recycler_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                tools:listitem="@layout/item_folders_holder"
-                android:divider="@drawable/dialog_divider" />
+                android:divider="@drawable/dialog_divider"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/item_folders_holder" />
 
-            <include layout="@layout/manage_folders_footer" />
+            <include
+                android:id="@+id/manage_folders_footer"
+                layout="@layout/manage_folders_footer" />
 
         </LinearLayout>
 
     </ScrollView>
 
     <ImageView
-        android:id="@+id/activity_manage_folders_icon_empty"
+        android:id="@+id/icon_empty_image_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:contentDescription="@string/txt_folders_empty"
         android:src="@drawable/icon_folders_empty"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/activity_manage_folders_title_empty"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/title_empty_text_view"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        android:contentDescription="@string/txt_folders_empty"
-        app:layout_constraintVertical_chainStyle="packed"  />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed" />
 
     <TextView
-        android:id="@+id/activity_manage_folders_title_empty"
+        android:id="@+id/title_empty_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
@@ -69,11 +71,11 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/activity_manage_folders_icon_empty"
+        app:layout_constraintTop_toBottomOf="@id/icon_empty_image_view"
         app:layout_constraintVertical_chainStyle="spread_inside" />
 
     <FrameLayout
-        android:id="@+id/activity_manage_folders_add_layout"
+        android:id="@+id/add_layout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@drawable/selector_button_orange"
@@ -88,14 +90,13 @@
             android:layout_gravity="center"
             android:layout_margin="10dp"
             android:background="@null"
-            android:drawableLeft="@drawable/ic_add_btn"
-            android:drawableStart="@drawable/ic_add_btn"
             android:drawablePadding="10dp"
             android:fontFamily="@font/lato_regular"
             android:gravity="center"
             android:text="@string/btn_add_folder"
             android:textAllCaps="false"
-            android:textColor="@color/colorWhiteLight" />
+            android:textColor="@color/colorWhiteLight"
+            app:drawableStartCompat="@drawable/ic_add_btn" />
 
     </FrameLayout>
 

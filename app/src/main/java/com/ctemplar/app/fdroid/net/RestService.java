@@ -28,9 +28,8 @@ import com.ctemplar.app.fdroid.net.request.domains.UpdateDomainRequest;
 import com.ctemplar.app.fdroid.net.request.emails.UnsubscribeMailingRequest;
 import com.ctemplar.app.fdroid.net.request.filters.EmailFilterOrderListRequest;
 import com.ctemplar.app.fdroid.net.request.filters.EmailFilterRequest;
-import com.ctemplar.app.fdroid.net.request.folders.AddFolderRequest;
-import com.ctemplar.app.fdroid.net.request.folders.EditFolderRequest;
 import com.ctemplar.app.fdroid.net.request.folders.EmptyFolderRequest;
+import com.ctemplar.app.fdroid.net.request.folders.FolderRequest;
 import com.ctemplar.app.fdroid.net.request.folders.MoveToFolderRequest;
 import com.ctemplar.app.fdroid.net.request.mailboxes.CreateMailboxKeyRequest;
 import com.ctemplar.app.fdroid.net.request.mailboxes.CreateMailboxRequest;
@@ -57,8 +56,7 @@ import com.ctemplar.app.fdroid.net.response.domains.DomainsResponse;
 import com.ctemplar.app.fdroid.net.response.filters.EmailFilterOrderListResponse;
 import com.ctemplar.app.fdroid.net.response.filters.EmailFilterResponse;
 import com.ctemplar.app.fdroid.net.response.filters.EmailFilterResult;
-import com.ctemplar.app.fdroid.net.response.folders.FoldersResponse;
-import com.ctemplar.app.fdroid.net.response.folders.FoldersResult;
+import com.ctemplar.app.fdroid.net.response.folders.CustomFolderResponse;
 import com.ctemplar.app.fdroid.net.response.invites.InviteCodeResponse;
 import com.ctemplar.app.fdroid.net.response.keys.KeysResponse;
 import com.ctemplar.app.fdroid.net.response.mailboxes.MailboxKeyResponse;
@@ -75,6 +73,8 @@ import com.ctemplar.app.fdroid.net.response.myself.SettingsResponse;
 import com.ctemplar.app.fdroid.net.response.myself.WhiteListContact;
 import com.ctemplar.app.fdroid.net.response.whiteBlackList.BlackListResponse;
 import com.ctemplar.app.fdroid.net.response.whiteBlackList.WhiteListResponse;
+
+import java.util.Map;
 
 import javax.inject.Singleton;
 
@@ -135,7 +135,7 @@ public interface RestService {
 
     @Multipart
     @POST("emails/attachments/create/")
-    Observable<MessageAttachment> uploadAttachment(
+    Single<MessageAttachment> uploadAttachment(
             @Part MultipartBody.Part document,
             @Part("message") long message,
             @Part("is_inline") boolean isInline,
@@ -159,7 +159,7 @@ public interface RestService {
     );
 
     @DELETE("emails/attachments/{id}/")
-    Observable<Response<Void>> deleteAttachment(@Path("id") long id);
+    Single<Response<Void>> deleteAttachment(@Path("id") long id);
 
     @GET("emails/messages/")
     Observable<MessagesResponse> getMessages(
@@ -179,7 +179,7 @@ public interface RestService {
     Observable<MessagesResponse> getMessage(@Query("id") long id);
 
     @DELETE("emails/messages/")
-    Observable<Response<Void>> deleteMessages(@Query("id__in") String messageIds);
+    Single<Response<Void>> deleteMessages(@Query("id__in") String messageIds);
 
     @POST("emails/empty-folder/")
     Observable<EmptyFolderResponse> emptyFolder(@Body EmptyFolderRequest request);
@@ -222,19 +222,22 @@ public interface RestService {
     );
 
     @GET("emails/custom-folder/")
-    Observable<FoldersResponse> getFolders(@Query("limit") int limit, @Query("offset") int offset);
+    Single<PagableResponse<CustomFolderResponse>> getCustomFolders(
+            @Query("limit") int limit,
+            @Query("offset") int offset
+    );
 
     @GET("emails/unread/")
-    Observable<ResponseBody> getUnreadFolders();
+    Single<Map<String, Integer>> getUnreadFolders();
 
     @POST("emails/custom-folder/")
-    Observable<ResponseBody> addFolder(@Body AddFolderRequest request);
+    Single<CustomFolderResponse> addFolder(@Body FolderRequest request);
 
     @DELETE("emails/custom-folder/{id}/")
-    Observable<Response<Void>> deleteFolder(@Path("id") long id);
+    Single<Response<Void>> deleteFolder(@Path("id") long id);
 
     @PATCH("emails/custom-folder/{id}/")
-    Observable<FoldersResult> editFolder(@Path("id") long id, @Body EditFolderRequest request);
+    Single<CustomFolderResponse> editFolder(@Path("id") long id, @Body FolderRequest request);
 
     @GET("emails/mailboxes/")
     Observable<MailboxesResponse> getMailboxes(
@@ -261,7 +264,7 @@ public interface RestService {
     Single<Response<Void>> deleteMailboxKey(@Path("id") long id, @Body DeleteMailboxKeyRequest request);
 
     @POST("emails/keys/")
-    Observable<KeysResponse> getKeys(@Body PublicKeysRequest request);
+    Single<KeysResponse> getKeys(@Body PublicKeysRequest request);
 
     @POST("emails/messages/")
     Observable<MessagesResult> sendMessage(@Body SendMessageRequest request);

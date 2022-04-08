@@ -2,17 +2,17 @@ package com.ctemplar.app.fdroid.net.request;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.util.List;
+import java.util.Set;
 
 public class PublicKeysRequest {
     @SerializedName("emails")
-    private List<String> emails;
+    private Set<String> emails;
 
-    public PublicKeysRequest(List<String> emails) {
+    public PublicKeysRequest(Set<String> emails) {
         this.emails = emails;
     }
 
-    public void setEmails(List<String> emails) {
+    public void setEmails(Set<String> emails) {
         this.emails = emails;
     }
 }

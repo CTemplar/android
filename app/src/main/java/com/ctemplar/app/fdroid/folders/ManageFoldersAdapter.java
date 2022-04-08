@@ -1,47 +1,42 @@
 package com.ctemplar.app.fdroid.folders;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.view.LayoutInflater;
+import android.view.ViewGroup;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+
+import com.ctemplar.app.fdroid.databinding.ItemFoldersHolderBinding;
+import com.ctemplar.app.fdroid.repository.dto.folders.CustomFolderDTO;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import com.ctemplar.app.fdroid.R;
-import com.ctemplar.app.fdroid.net.response.folders.FoldersResult;
+public class ManageFoldersAdapter extends RecyclerView.Adapter<ManageFoldersAdapter.ViewHolder> {
+    private Context context;
+    private LayoutInflater inflater;
 
-public class ManageFoldersAdapter extends RecyclerView.Adapter<ManageFoldersViewHolder> {
-    private final List<FoldersResult> items = new ArrayList<>();
+    private final List<CustomFolderDTO> items = new ArrayList<>();
 
-    ManageFoldersAdapter() {
-
+    @Override
+    public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
+        this.context = recyclerView.getContext();
+        this.inflater = LayoutInflater.from(context);
     }
 
     @NonNull
     @Override
-    public ManageFoldersViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_folders_holder, viewGroup, false);
-
-        return new ManageFoldersViewHolder(view);
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        return new ViewHolder(ItemFoldersHolderBinding.inflate(inflater, parent, false));
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final ManageFoldersViewHolder holder, int position) {
-        final FoldersResult folder = items.get(position);
-        holder.txtName.setText(folder.getName());
-        final int folderColor = Color.parseColor(folder.getColor());
-        holder.icoFolder.setColorFilter(folderColor, PorterDuff.Mode.SRC_IN);
-        holder.root.setOnClickListener(v -> {
-            Intent editFolderIntent = new Intent(holder.root.getContext(), EditFolderActivity.class);
-            editFolderIntent.putExtra(EditFolderActivity.ARG_ID, folder.getId());
-            editFolderIntent.putExtra(EditFolderActivity.ARG_NAME, folder.getName());
-            holder.root.getContext().startActivity(editFolderIntent);
-        });
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        holder.update(items.get(position));
     }
 
     @Override
@@ -49,20 +44,41 @@ public class ManageFoldersAdapter extends RecyclerView.Adapter<ManageFoldersView
         return items.size();
     }
 
-    public void setItems(List<FoldersResult> items) {
+    public void setItems(List<CustomFolderDTO> items) {
         this.items.clear();
         this.items.addAll(items);
         notifyDataSetChanged();
     }
 
-    public FoldersResult removeAt(int position) {
-        FoldersResult deletedFolder = items.remove(position);
+    public CustomFolderDTO removeAt(int position) {
+        CustomFolderDTO deletedFolder = items.remove(position);
         notifyItemRemoved(position);
         return deletedFolder;
     }
 
-    public void restoreItem(int position, FoldersResult foldersResult) {
-        items.add(position, foldersResult);
+    public void restoreItem(int position, CustomFolderDTO customFolderDTO) {
+        items.add(position, customFolderDTO);
         notifyItemInserted(position);
+    }
+
+    public class ViewHolder extends RecyclerView.ViewHolder {
+        private final ItemFoldersHolderBinding binding;
+
+        public ViewHolder(ItemFoldersHolderBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
+        }
+
+        public void update(CustomFolderDTO customFolderDTO) {
+            binding.itemFolderHolderName.setText(customFolderDTO.getName());
+            binding.itemFolderHolderIco.setColorFilter(Color.parseColor(customFolderDTO.getColor()),
+                    PorterDuff.Mode.SRC_IN);
+            binding.getRoot().setOnClickListener(v -> {
+                Intent editFolderIntent = new Intent(context, EditFolderActivity.class);
+                editFolderIntent.putExtra(EditFolderActivity.ARG_ID, customFolderDTO.getId());
+                editFolderIntent.putExtra(EditFolderActivity.ARG_NAME, customFolderDTO.getName());
+                context.startActivity(editFolderIntent);
+            });
+        }
     }
 }

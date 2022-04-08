@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel;
 import com.ctemplar.app.fdroid.CTemplarApp;
 import com.ctemplar.app.fdroid.repository.UserRepository;
 import com.ctemplar.app.fdroid.repository.dto.DTOResource;
-import com.ctemplar.app.fdroid.repository.dto.PagableDTO;
+import com.ctemplar.app.fdroid.repository.dto.PageableDTO;
 import com.ctemplar.app.fdroid.repository.dto.invites.InviteCodeDTO;
 
 public class InvitationCodesViewModel extends ViewModel {
@@ -20,7 +20,7 @@ public class InvitationCodesViewModel extends ViewModel {
         return userRepository.generateInviteCode();
     }
 
-    public MutableLiveData<DTOResource<PagableDTO<InviteCodeDTO>>> getInviteCodesLiveData() {
+    public MutableLiveData<DTOResource<PageableDTO<InviteCodeDTO>>> getInviteCodesLiveData() {
         return userRepository.getInviteCodesLiveData();
     }
 

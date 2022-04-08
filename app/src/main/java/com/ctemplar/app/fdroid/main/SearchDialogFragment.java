@@ -41,12 +41,16 @@ import java.util.List;
 
 import com.ctemplar.app.fdroid.R;
 import com.ctemplar.app.fdroid.databinding.FragmentMessagesSearchDialogBinding;
-import com.ctemplar.app.fdroid.net.response.folders.FoldersResponse;
-import com.ctemplar.app.fdroid.net.response.folders.FoldersResult;
+import com.ctemplar.app.fdroid.net.response.folders.CustomFolderResponse;
+import com.ctemplar.app.fdroid.repository.dto.DTOResource;
+import com.ctemplar.app.fdroid.repository.dto.PageableDTO;
 import com.ctemplar.app.fdroid.repository.dto.SearchMessagesDTO;
+import com.ctemplar.app.fdroid.repository.dto.folders.CustomFolderDTO;
 import com.ctemplar.app.fdroid.settings.filters.FiltersViewModel;
 import com.ctemplar.app.fdroid.utils.DateUtils;
 import com.ctemplar.app.fdroid.utils.EditTextUtils;
+import com.ctemplar.app.fdroid.utils.ToastUtils;
+
 import timber.log.Timber;
 
 public class SearchDialogFragment extends DialogFragment {
@@ -153,8 +157,8 @@ public class SearchDialogFragment extends DialogFragment {
                 sizeMeasureEntries
         );
         binding.sizeMeasureSpinner.setAdapter(sizeMeasureAdapter);
-        filtersModel.getFoldersResponse().observe(this, this::handleCustomFolders);
-        getCustomFolders();
+        filtersModel.getCustomFoldersLiveData().observe(this, this::handleCustomFolders);
+        filtersModel.getCustomFolders(200, 0);
     }
 
     @NonNull
@@ -257,19 +261,19 @@ public class SearchDialogFragment extends DialogFragment {
         binding.endDateTextView.setText(DateUtils.getFilterDate(calendar.getTimeInMillis()));
     }
 
-    private void handleCustomFolders(FoldersResponse foldersResponse) {
-        if (foldersResponse == null) {
-            Timber.d("foldersResponse is null");
+    private void handleCustomFolders(DTOResource<PageableDTO<CustomFolderDTO>> resource) {
+        if (!resource.isSuccess()) {
+            ToastUtils.showToast(getActivity(), resource.getError());
             return;
         }
-        List<FoldersResult> customFolderList = foldersResponse.getFoldersList();
+        List<CustomFolderDTO> customFolders = resource.getDto().getResults();
         List<String> folderList = new ArrayList<>(Arrays.asList(ALL_MAILS, ARCHIVE, DRAFT, INBOX,
                 OUTBOX, SENT, SPAM, STARRED, TRASH, UNREAD));
         List<Integer> folderColorList = new ArrayList<>(Collections.nCopies(folderList.size(), -1));
-        for (FoldersResult customFolder : customFolderList) {
-            folderList.add(customFolder.getName());
+        for (CustomFolderDTO folder : customFolders) {
+            folderList.add(folder.getName());
             try {
-                folderColorList.add(Color.parseColor(customFolder.getColor()));
+                folderColorList.add(Color.parseColor(folder.getColor()));
             } catch (IllegalArgumentException e) {
                 Timber.e(e);
             }
@@ -321,9 +325,5 @@ public class SearchDialogFragment extends DialogFragment {
             }
         }
         return view;
-    }
-
-    private void getCustomFolders() {
-        filtersModel.getFolders(200, 0);
     }
 }

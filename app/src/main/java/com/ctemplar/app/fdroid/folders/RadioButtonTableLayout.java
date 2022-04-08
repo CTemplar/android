@@ -13,7 +13,6 @@ import android.widget.TableRow;
 import com.ctemplar.app.fdroid.R;
 
 public class RadioButtonTableLayout extends TableLayout implements OnClickListener {
-
     private RadioButton activeRadioButton;
 
     public RadioButtonTableLayout(Context context) {
@@ -68,7 +67,6 @@ public class RadioButtonTableLayout extends TableLayout implements OnClickListen
         if (activeRadioButton != null) {
             return activeRadioButton.getId();
         }
-
         return -1;
     }
 

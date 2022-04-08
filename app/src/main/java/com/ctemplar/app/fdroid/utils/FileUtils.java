@@ -28,6 +28,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.DecimalFormat;
 import java.util.Comparator;
+import java.util.UUID;
 
 import com.ctemplar.app.fdroid.BuildConfig;
 
@@ -618,6 +619,32 @@ public class FileUtils {
                 e.printStackTrace();
             }
         }
+    }
+
+    @Nullable
+    public static File getFileFromInputStream(Context context, InputStream is) {
+        File file = null;
+        BufferedOutputStream bos = null;
+        try {
+            file = File.createTempFile(UUID.randomUUID().toString(), null,
+                    context.getCacheDir());
+            bos = new BufferedOutputStream(new FileOutputStream(file));
+            byte[] buf = new byte[1024];
+            is.read(buf);
+            do {
+                bos.write(buf);
+            } while (is.read(buf) != -1);
+        } catch (IOException e) {
+            Timber.e(e);
+        } finally {
+            try {
+                if (is != null) is.close();
+                if (bos != null) bos.close();
+            } catch (IOException e) {
+                Timber.e(e);
+            }
+        }
+        return file;
     }
 
     public static byte[] readBytesFromFile(String filePath) {
