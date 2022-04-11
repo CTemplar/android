@@ -180,6 +180,9 @@
     <string name="txt_reply_all">Reply All</string>
     <string name="attachment_decryption">Attachment decryption…</string>
     <string name="no_results_found">No results found</string>
+    <string name="warning">Warning</string>
+    <string name="load">Load</string>
+    <string name="warning_external_images_blocked">This email contains external images, which have been blocked.</string>
     <string name="continue_to_link">Continue to link</string>
     <string name="open_link_description">Do you trust the person who sent this link? This link takes you outside of CTemplar’s platform and we are not responsible for any third-party content.</string>
 
@@ -220,9 +223,7 @@
 
     <!-- FOLDERS -->
     <string name="toast_folder_created">Folder created</string>
-    <string name="toast_folder_not_created">Folder with the same name already exists.</string>
     <string name="txt_folder_deleted">Folder deleted</string>
-    <string name="txt_folder_not_deleted">Folder not deleted</string>
     <string name="txt_folder_edited">Folder edited</string>
     <string name="txt_folder_not_edited">Folder not edited</string>
     <string name="txt_folder_name_hint">Folder name must be between 1 and 30 letters and digits</string>
@@ -232,7 +233,6 @@
     <string name="txt_delete_folder">Delete folder</string>
     <string name="txt_manage_folders">Manage folders</string>
     <string name="txt_folders_empty">Folders empty</string>
-    <string name="txt_create_folder_free_error">Free users can only create a maximum of 5 folders.</string>
 
     <!-- SEND MESSAGE -->
     <string name="toast_message_sent">Mail sent</string>
@@ -256,6 +256,7 @@
     <string name="txt_bcc">Bcc: &#160;</string>
     <string name="txt_date_format">Date: %1$s</string>
     <string name="hint_compose">Compose email</string>
+    <string name="error_message_sent">Failed to send message</string>
 
     <!-- NOTIFICATION SERVICE -->
     <string name="notification_channel_name">CTemplar</string>

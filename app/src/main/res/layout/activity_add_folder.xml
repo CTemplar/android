@@ -5,13 +5,13 @@
     android:layout_height="match_parent">
 
     <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/app_bar_layout"
+        android:id="@+id/toolbar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.appcompat.widget.Toolbar
-            android:id="@+id/activity_add_folder_toolbar"
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:fontFamily="@font/lato_bold"
@@ -23,7 +23,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/app_bar_layout">
+        app:layout_constraintTop_toBottomOf="@id/toolbar_layout">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -31,14 +31,11 @@
             android:orientation="vertical">
 
             <LinearLayout
-                android:id="@+id/activity_add_folder_input_layout"
+                android:id="@+id/add_folder_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginLeft="16dp"
+                android:layout_marginHorizontal="16dp"
                 android:layout_marginTop="16dp"
-                android:layout_marginEnd="16dp"
-                android:layout_marginRight="16dp"
                 android:orientation="vertical">
 
                 <TextView
@@ -51,14 +48,14 @@
                     android:textSize="14sp" />
 
                 <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/activity_add_folder_text_input_layout"
+                    android:id="@+id/folder_name_input_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     app:hintEnabled="false">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/activity_add_folder_input"
+                        android:id="@+id/folder_name_edit_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@drawable/text_input_field"
@@ -66,7 +63,7 @@
                         android:imeOptions="actionNext"
                         android:inputType="text"
                         android:minHeight="45dp"
-                        android:nextFocusForward="@id/activity_add_folder_action_add"
+                        android:nextFocusForward="@id/add_folder_button"
                         android:padding="16dp"
                         android:textColor="?android:textColorPrimary"
                         android:textSize="16sp" />
@@ -76,7 +73,6 @@
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <TextView
-                    android:id="@+id/activity_add_folder_colors_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="25dp"
@@ -88,15 +84,11 @@
             </LinearLayout>
 
             <mobileapp.ctemplar.com.ctemplarapp.folders.RadioButtonTableLayout
-                android:id="@+id/activity_add_folder_colors_layout"
+                android:id="@+id/folder_colors_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16sp"
-                android:layout_marginLeft="16sp"
-                android:layout_marginTop="16sp"
-                android:layout_marginEnd="16sp"
-                android:layout_marginRight="16sp"
-                android:layout_marginBottom="16sp">
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginVertical="16dp">
 
                 <TableRow>
 
@@ -565,24 +557,19 @@
             </mobileapp.ctemplar.com.ctemplarapp.folders.RadioButtonTableLayout>
 
             <LinearLayout
-                android:id="@+id/activity_add_folder_actions_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginTop="30dp"
-                android:layout_marginEnd="16dp"
-                android:layout_marginRight="16dp"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="10dp"
                 android:layout_marginBottom="16dp"
                 android:orientation="horizontal">
 
                 <Button
-                    android:id="@+id/activity_add_folder_action_cancel"
+                    android:id="@+id/cancel_button"
                     style="?android:attr/buttonBarButtonStyle"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="4dp"
-                    android:layout_marginRight="4dp"
                     android:layout_weight="1"
                     android:background="@drawable/dialog_cancel_button_background"
                     android:fontFamily="@font/lato_regular"
@@ -592,12 +579,11 @@
                     android:textSize="18sp" />
 
                 <Button
-                    android:id="@+id/activity_add_folder_action_add"
+                    android:id="@+id/add_folder_button"
                     style="?android:attr/buttonBarButtonStyle"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="4dp"
-                    android:layout_marginLeft="4dp"
                     android:layout_weight="1"
                     android:background="@drawable/selector_button_blue"
                     android:fontFamily="@font/lato_regular"
@@ -611,5 +597,14 @@
         </LinearLayout>
 
     </ScrollView>
+
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

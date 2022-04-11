@@ -8,77 +8,83 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.MenuItem;
-import android.widget.Button;
-import android.widget.EditText;
+import android.view.View;
 import android.widget.RadioButton;
 import android.widget.TableRow;
-import android.widget.Toast;
 
-import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 
-import butterknife.BindInt;
-import butterknife.BindView;
-import butterknife.OnClick;
 import mobileapp.ctemplar.com.ctemplarapp.BaseActivity;
 import mobileapp.ctemplar.com.ctemplarapp.R;
-import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
+import mobileapp.ctemplar.com.ctemplarapp.databinding.ActivityAddFolderBinding;
+import mobileapp.ctemplar.com.ctemplarapp.repository.dto.DTOResource;
+import mobileapp.ctemplar.com.ctemplarapp.repository.dto.folders.CustomFolderDTO;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EditTextUtils;
+import mobileapp.ctemplar.com.ctemplarapp.utils.ToastUtils;
 
 public class AddFolderActivity extends BaseActivity {
-    @BindView(R.id.activity_add_folder_action_add)
-    Button buttonAddFolder;
+    private ActivityAddFolderBinding binding;
+    private ManageFoldersViewModel viewModel;
 
-    @BindView(R.id.activity_add_folder_colors_layout)
-    RadioButtonTableLayout radioGroupLayout;
-
-    @BindView(R.id.folder_color_1)
-    RadioButton firstRadioButton;
-
-    @BindView(R.id.activity_add_folder_input)
-    EditText editTextFolderName;
-
-    @BindInt(R.integer.restriction_folder_name_min)
-    int FOLDER_NAME_MIN;
-
-    @BindInt(R.integer.restriction_folder_name_max)
-    int FOLDER_NAME_MAX;
-
-    final private static String[] PICK_COLORS = new String[]{
+    private final static String[] PICK_COLORS = new String[]{
             "#ced4da", "#868e96", "#212529", "#da77f2", "#be4bdb", "#8e44ad", "#f783ac", "#e64980", "#a61e4d",
             "#748ffc", "#4c6ef5", "#364fc7", "#9775fa", "#7950f2", "#5f3dc4", "#ff8787", "#fa5252", "#c0392b",
             "#4dabf7", "#3498db", "#1864ab", "#2ecc71", "#27ae60", "#16a085", "#ffd43b", "#fab005", "#e67e22",
             "#3bc9db", "#15aabf", "#0b7285", "#a9e34b", "#82c91e", "#5c940d", "#f39c12", "#fd7e14", "#e74c3c"
     };
 
-    private AddFolderViewModel addFolderModel;
-
-    @Override
-    protected int getLayoutId() {
-        return R.layout.activity_add_folder;
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Toolbar toolbar = findViewById(R.id.activity_add_folder_toolbar);
-        setSupportActionBar(toolbar);
+        binding = ActivityAddFolderBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+        setSupportActionBar(binding.toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setHomeButtonEnabled(true);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
+        viewModel = new ViewModelProvider(this).get(ManageFoldersViewModel.class);
+        fillPalette(this, binding.folderColorsLayout);
+        binding.addFolderButton.setBackgroundResource(R.color.colorGreyLight3);
+        binding.folderColorsLayout.setActive(binding.folderColor1);
+        setListeners();
+        showProgressBar(false);
+    }
 
-        addFolderModel = new ViewModelProvider(this).get(AddFolderViewModel.class);
-        addFolderModel.getResponseStatus().observe(this, responseStatus -> {
-            if (responseStatus == null || responseStatus == ResponseStatus.RESPONSE_ERROR) {
-                Toast.makeText(this, R.string.toast_folder_not_created, Toast.LENGTH_SHORT).show();
-            } else if (responseStatus == ResponseStatus.RESPONSE_COMPLETE) {
-                Toast.makeText(this, R.string.toast_folder_created, Toast.LENGTH_SHORT).show();
-                onBackPressed();
-            }
-        });
-        editTextFolderName.addTextChangedListener(new TextWatcher() {
+    private void addFolder() {
+        String folderColor = "";
+        if (binding.folderColorsLayout.getCheckedRadioButtonId() != -1) {
+            int selectedColor = binding.folderColorsLayout.getCheckedRadioButtonId();
+            folderColor = getPickerColor(selectedColor);
+        }
+        String folderName = EditTextUtils.getText(binding.folderNameEditText);
+        if (EditTextUtils.isTextLength(folderName,
+                getResources().getInteger(R.integer.restriction_folder_name_min),
+                getResources().getInteger(R.integer.restriction_folder_name_max))) {
+            viewModel.addFolder(folderName, folderColor).observe(this,
+                    this::handleAddFolderResponse);
+            binding.folderNameEditText.setError(null);
+            showProgressBar(true);
+        } else {
+            binding.folderNameEditText.setError(getString(R.string.txt_folder_name_hint));
+        }
+    }
+
+    private void handleAddFolderResponse(DTOResource<CustomFolderDTO> resource) {
+        showProgressBar(false);
+        if (!resource.isSuccess()) {
+            ToastUtils.showToast(this, resource.getError());
+            return;
+        }
+        ToastUtils.showToast(this, R.string.toast_folder_created);
+        onBackPressed();
+    }
+
+    private void setListeners() {
+        binding.cancelButton.setOnClickListener(v -> onBackPressed());
+        binding.addFolderButton.setOnClickListener(v -> addFolder());
+        binding.folderNameEditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -86,10 +92,12 @@ public class AddFolderActivity extends BaseActivity {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
-                if (EditTextUtils.isTextLength(charSequence, FOLDER_NAME_MIN, FOLDER_NAME_MAX)) {
-                    buttonAddFolder.setBackgroundResource(R.color.colorDarkBlue2);
+                if (EditTextUtils.isTextLength(charSequence,
+                        getResources().getInteger(R.integer.restriction_folder_name_min),
+                        getResources().getInteger(R.integer.restriction_folder_name_max))) {
+                    binding.addFolderButton.setBackgroundResource(R.color.colorDarkBlue2);
                 } else {
-                    buttonAddFolder.setBackgroundResource(R.color.colorGreyLight3);
+                    binding.addFolderButton.setBackgroundResource(R.color.colorGreyLight3);
                 }
             }
 
@@ -98,32 +106,10 @@ public class AddFolderActivity extends BaseActivity {
 
             }
         });
-        fillPalette(this, radioGroupLayout);
-        buttonAddFolder.setBackgroundResource(R.color.colorGreyLight3);
-        radioGroupLayout.setActive(firstRadioButton);
-    }
-
-    @OnClick(R.id.activity_add_folder_action_add)
-    public void OnClickAddFolder() {
-        String folderName = editTextFolderName.getText().toString();
-        String folderColor = "";
-
-        if (radioGroupLayout.getCheckedRadioButtonId() != -1) {
-            int selectedColor = radioGroupLayout.getCheckedRadioButtonId();
-            folderColor = getPickerColor(selectedColor);
-        }
-
-        if (EditTextUtils.isTextLength(folderName, FOLDER_NAME_MIN, FOLDER_NAME_MAX)) {
-            addFolderModel.addFolder(folderName, folderColor);
-            editTextFolderName.setError(null);
-        } else {
-            editTextFolderName.setError(getString(R.string.txt_folder_name_hint));
-        }
     }
 
     public static String getPickerColor(int selectedColor) {
         String folderColor = PICK_COLORS[0];
-
         switch (selectedColor) {
             case R.id.folder_color_2:
                 folderColor = PICK_COLORS[1];
@@ -231,7 +217,6 @@ public class AddFolderActivity extends BaseActivity {
                 folderColor = PICK_COLORS[35];
                 break;
         }
-
         return folderColor;
     }
 
@@ -251,9 +236,9 @@ public class AddFolderActivity extends BaseActivity {
         }
     }
 
-    @OnClick(R.id.activity_add_folder_action_cancel)
-    public void OnClickCancel() {
-        onBackPressed();
+    private void showProgressBar(boolean value) {
+        binding.progressBar.setVisibility(value ? View.VISIBLE : View.GONE);
+        binding.addFolderButton.setEnabled(!value);
     }
 
     @Override

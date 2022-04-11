@@ -15,9 +15,8 @@ import mobileapp.ctemplar.com.ctemplarapp.BaseActivity;
 import mobileapp.ctemplar.com.ctemplarapp.R;
 import mobileapp.ctemplar.com.ctemplarapp.databinding.ActivityInvitationCodesBinding;
 import mobileapp.ctemplar.com.ctemplarapp.repository.dto.DTOResource;
-import mobileapp.ctemplar.com.ctemplarapp.repository.dto.PagableDTO;
+import mobileapp.ctemplar.com.ctemplarapp.repository.dto.PageableDTO;
 import mobileapp.ctemplar.com.ctemplarapp.repository.dto.invites.InviteCodeDTO;
-import mobileapp.ctemplar.com.ctemplarapp.utils.ThemeUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.ToastUtils;
 
 import java.util.List;
@@ -30,7 +29,6 @@ public class InvitationCodesActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ThemeUtils.setTheme(this);
         binding = ActivityInvitationCodesBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         viewModel = new ViewModelProvider(this).get(InvitationCodesViewModel.class);
@@ -55,7 +53,7 @@ public class InvitationCodesActivity extends BaseActivity {
         showList(false);
     }
 
-    private void handleInviteCodes(DTOResource<PagableDTO<InviteCodeDTO>> resource) {
+    private void handleInviteCodes(DTOResource<PageableDTO<InviteCodeDTO>> resource) {
         showProgressBar(false);
         if (!resource.isSuccess()) {
             ToastUtils.showToast(this, resource.getError());

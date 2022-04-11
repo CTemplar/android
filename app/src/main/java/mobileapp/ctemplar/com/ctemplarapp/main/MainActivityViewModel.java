@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import io.reactivex.Observable;
 import io.reactivex.Observer;
@@ -33,29 +34,30 @@ import mobileapp.ctemplar.com.ctemplarapp.executor.QueuedExecutor;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.SignInRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.folders.EmptyFolderRequest;
-import mobileapp.ctemplar.com.ctemplarapp.net.request.messages.MarkMessageAsReadRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.ResponseMessagesData;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.SignInResponse;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.folders.FoldersResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.EmptyFolderResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.MessagesResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.MessagesResult;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.MyselfResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.MyselfResult;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.SettingsResponse;
+import mobileapp.ctemplar.com.ctemplarapp.net.socket.WebSocketClient;
 import mobileapp.ctemplar.com.ctemplarapp.repository.ManageFoldersRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.MessagesRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.cache.MessageCacheProvider;
 import mobileapp.ctemplar.com.ctemplarapp.repository.constant.MainFolderNames;
+import mobileapp.ctemplar.com.ctemplarapp.repository.dto.DTOResource;
+import mobileapp.ctemplar.com.ctemplarapp.repository.dto.PageableDTO;
 import mobileapp.ctemplar.com.ctemplarapp.repository.dto.SearchMessagesDTO;
+import mobileapp.ctemplar.com.ctemplarapp.repository.dto.folders.CustomFolderDTO;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MessageEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.MessageProvider;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EncodeUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.EncryptUtils;
 import mobileapp.ctemplar.com.ctemplarapp.utils.ThemeUtils;
 import mobileapp.ctemplar.com.ctemplarapp.workers.WorkersHelper;
-import okhttp3.ResponseBody;
 import retrofit2.HttpException;
 import retrofit2.Response;
 import timber.log.Timber;
@@ -77,12 +79,11 @@ public class MainActivityViewModel extends AndroidViewModel {
     private final MutableLiveData<ResponseStatus> deleteMessagesStatus = new MutableLiveData<>();
     private final MutableLiveData<ResponseStatus> markMessagesAsReadStatus = new MutableLiveData<>();
     private final MutableLiveData<ResponseStatus> emptyFolderStatus = new MutableLiveData<>();
-    private final MutableLiveData<FoldersResponse> foldersResponse = new MutableLiveData<>();
-    private final MutableLiveData<ResponseBody> unreadFoldersBody = new MutableLiveData<>();
     private final MutableLiveData<MyselfResponse> myselfResponse = new MutableLiveData<>();
     private final MutableLiveData<String> currentFolder = new MutableLiveData<>();
     private final MutableLiveData<ResponseStatus> logoutResponseStatus = new MutableLiveData<>();
     private final MutableLiveData<PlanType> userPlanTypeResponse = new MutableLiveData<>();
+    private final MutableLiveData<Map<String, Integer>> unreadCountSocketLiveData = new MutableLiveData<>();
     private final QueuedExecutor executor;
 
     public interface OnDecryptFinishedCallback {
@@ -162,6 +163,7 @@ public class MainActivityViewModel extends AndroidViewModel {
         executor = new QueuedExecutor();
         exitBroadcastReceiver = new ExitBroadcastReceiver();
         exitBroadcastReceiver.register(application);
+        new WebSocketClient(userRepository.getUserStore(), unreadCountSocketLiveData::postValue);
     }
 
     @Override
@@ -207,14 +209,6 @@ public class MainActivityViewModel extends AndroidViewModel {
 
     public LiveData<ResponseStatus> getToFolderStatus() {
         return toFolderStatus;
-    }
-
-    MutableLiveData<FoldersResponse> getFoldersResponse() {
-        return foldersResponse;
-    }
-
-    MutableLiveData<ResponseBody> getUnreadFoldersBody() {
-        return unreadFoldersBody;
     }
 
     public void setCurrentFolder(String currentFolder) {
@@ -538,32 +532,17 @@ public class MainActivityViewModel extends AndroidViewModel {
     }
 
     public void deleteMessages(Long[] messageIds) {
-        userRepository.deleteMessages(messageIds)
-                .subscribe(new Observer<Response<Void>>() {
-                    @Override
-                    public void onSubscribe(@NotNull Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(@NotNull Response<Void> response) {
-                        for (long messageId : messageIds) {
-                            messagesRepository.deleteMessageById(messageId);
-                        }
-                        deleteMessagesStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
-                    }
-
-                    @Override
-                    public void onError(@NotNull Throwable e) {
-                        deleteMessagesStatus.postValue(ResponseStatus.RESPONSE_ERROR);
-                        Timber.e(e);
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
+        userRepository.deleteMessages(messageIds).observeForever(resource -> {
+            getUnreadFolders();
+            if (resource.isSuccess()) {
+                for (long messageId : messageIds) {
+                    messagesRepository.deleteMessageById(messageId);
+                }
+                deleteMessagesStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
+                return;
+            }
+            deleteMessagesStatus.postValue(ResponseStatus.RESPONSE_ERROR);
+        });
     }
 
     public void markMessagesAsRead(Long[] messageIds, boolean isRead) {
@@ -596,7 +575,7 @@ public class MainActivityViewModel extends AndroidViewModel {
 
                     @Override
                     public void onComplete() {
-
+                        getUnreadFolders();
                     }
                 });
     }
@@ -623,7 +602,7 @@ public class MainActivityViewModel extends AndroidViewModel {
 
                     @Override
                     public void onComplete() {
-
+                        getUnreadFolders();
                     }
                 });
     }
@@ -656,7 +635,7 @@ public class MainActivityViewModel extends AndroidViewModel {
 
                     @Override
                     public void onComplete() {
-
+                        getUnreadFolders();
                     }
                 });
     }
@@ -680,58 +659,6 @@ public class MainActivityViewModel extends AndroidViewModel {
                     @Override
                     public void onError(@NotNull Throwable e) {
                         Timber.e(e);
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
-    }
-
-    public void getFolders(int limit, int offset) {
-        manageFoldersRepository.getFoldersList(limit, offset)
-                .subscribe(new Observer<FoldersResponse>() {
-                    @Override
-                    public void onSubscribe(@NotNull Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(@NotNull FoldersResponse response) {
-                        foldersResponse.postValue(response);
-                    }
-
-                    @Override
-                    public void onError(@NotNull Throwable e) {
-                        responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
-                        Timber.e(e.getCause());
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
-    }
-
-    public void getUnreadFoldersList() {
-        manageFoldersRepository.getUnreadFoldersList()
-                .subscribe(new Observer<ResponseBody>() {
-                    @Override
-                    public void onSubscribe(@NotNull Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(@NotNull ResponseBody responseBody) {
-                        unreadFoldersBody.postValue(responseBody);
-                    }
-
-                    @Override
-                    public void onError(@NotNull Throwable e) {
-                        responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
-                        Timber.e(e.getCause());
                     }
 
                     @Override
@@ -771,5 +698,25 @@ public class MainActivityViewModel extends AndroidViewModel {
 
                     }
                 });
+    }
+
+    public MutableLiveData<DTOResource<PageableDTO<CustomFolderDTO>>> getCustomFoldersLiveData() {
+        return manageFoldersRepository.getCustomFoldersLiveData();
+    }
+
+    public void getCustomFolders(int limit, int offset) {
+        manageFoldersRepository.getCustomFolders(limit, offset);
+    }
+
+    public MutableLiveData<DTOResource<Map<String, Integer>>> getUnreadFoldersLiveData() {
+        return manageFoldersRepository.getUnreadFoldersLiveData();
+    }
+
+    public void getUnreadFolders() {
+        manageFoldersRepository.getUnreadFolders();
+    }
+
+    public MutableLiveData<Map<String, Integer>> getUnreadCountSocketLiveData() {
+        return unreadCountSocketLiveData;
     }
 }

@@ -1,7 +1,6 @@
 package mobileapp.ctemplar.com.ctemplarapp.message;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -23,14 +22,13 @@ import java.util.UUID;
 import io.reactivex.Observer;
 import io.reactivex.Single;
 import io.reactivex.SingleObserver;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import mobileapp.ctemplar.com.ctemplarapp.CTemplarApp;
 import mobileapp.ctemplar.com.ctemplarapp.net.ResponseStatus;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.messages.EncryptionMessageRequest;
-import mobileapp.ctemplar.com.ctemplarapp.net.request.PublicKeysRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.messages.SendMessageRequest;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.keys.KeysResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.EncryptionMessageResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.MessageAttachment;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.messages.MessagesResult;
@@ -38,6 +36,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.myself.MyselfResponse;
 import mobileapp.ctemplar.com.ctemplarapp.repository.MailboxDao;
 import mobileapp.ctemplar.com.ctemplarapp.repository.MessagesRepository;
 import mobileapp.ctemplar.com.ctemplarapp.repository.UserRepository;
+import mobileapp.ctemplar.com.ctemplarapp.repository.dto.DTOResource;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MailboxEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.entity.MessageEntity;
 import mobileapp.ctemplar.com.ctemplarapp.repository.provider.AttachmentProvider;
@@ -49,8 +48,6 @@ import mobileapp.ctemplar.com.ctemplarapp.utils.FileUtils;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
-import retrofit2.HttpException;
-import retrofit2.Response;
 import timber.log.Timber;
 
 public class SendMessageActivityViewModel extends ViewModel {
@@ -58,19 +55,16 @@ public class SendMessageActivityViewModel extends ViewModel {
     private final UserRepository userRepository;
     private final MailboxDao mailboxDao;
 
-    private MutableLiveData<ResponseStatus> responseStatus = new MutableLiveData<>();
-    private MutableLiveData<ResponseStatus> uploadAttachmentStatus = new MutableLiveData<>();
-    private MutableLiveData<AttachmentProvider> uploadAttachmentResponse = new MutableLiveData<>();
-    private MutableLiveData<ResponseStatus> deleteAttachmentStatus = new MutableLiveData<>();
-    private MutableLiveData<ResponseStatus> updateAttachmentStatus = new MutableLiveData<>();
-    private MutableLiveData<Boolean> grabAttachmentStatus = new MutableLiveData<>();
-    private MutableLiveData<MessagesResult> messagesResult = new MutableLiveData<>();
-    private MutableLiveData<MessagesResult> createMessageResponse = new MutableLiveData<>();
-    private MutableLiveData<ResponseStatus> createMessageStatus = new MutableLiveData<>();
-    private MutableLiveData<KeysResponse> keyResponse = new MutableLiveData<>();
-    private MutableLiveData<MessagesResult> messageEncryptionResult = new MutableLiveData<>();
-    private MutableLiveData<MyselfResponse> myselfResponse = new MutableLiveData<>();
-    private MutableLiveData<MessageProvider> openMessageResponse = new MutableLiveData<>();
+    private final MutableLiveData<ResponseStatus> responseStatus = new MutableLiveData<>();
+    private final MutableLiveData<ResponseStatus> deleteAttachmentStatus = new MutableLiveData<>();
+    private final MutableLiveData<AttachmentProvider> grabAttachmentResponse = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> grabAttachmentStatus = new MutableLiveData<>();
+    private final MutableLiveData<MessagesResult> messagesResult = new MutableLiveData<>();
+    private final MutableLiveData<MessagesResult> createMessageResponse = new MutableLiveData<>();
+    private final MutableLiveData<ResponseStatus> createMessageStatus = new MutableLiveData<>();
+    private final MutableLiveData<MessagesResult> messageEncryptionResult = new MutableLiveData<>();
+    private final MutableLiveData<MyselfResponse> myselfResponse = new MutableLiveData<>();
+    private final MutableLiveData<MessageProvider> openMessageResponse = new MutableLiveData<>();
 
     public SendMessageActivityViewModel() {
         messagesRepository = MessagesRepository.getInstance();
@@ -118,10 +112,6 @@ public class SendMessageActivityViewModel extends ViewModel {
         return responseStatus;
     }
 
-    public LiveData<KeysResponse> getKeyResponse() {
-        return keyResponse;
-    }
-
     public LiveData<MessagesResult> getCreateMessageResponse() {
         return createMessageResponse;
     }
@@ -130,24 +120,16 @@ public class SendMessageActivityViewModel extends ViewModel {
         return createMessageStatus;
     }
 
-    public LiveData<ResponseStatus> getUploadAttachmentStatus() {
-        return uploadAttachmentStatus;
-    }
-
-    public LiveData<ResponseStatus> getUpdateAttachmentStatus() {
-        return updateAttachmentStatus;
-    }
-
-    public LiveData<Boolean> getGrabAttachmentStatus() {
-        return grabAttachmentStatus;
-    }
-
-    public LiveData<AttachmentProvider> getUploadAttachmentResponse() {
-        return uploadAttachmentResponse;
-    }
-
     public LiveData<ResponseStatus> getDeleteAttachmentStatus() {
         return deleteAttachmentStatus;
+    }
+
+    public MutableLiveData<AttachmentProvider> getGrabAttachmentResponse() {
+        return grabAttachmentResponse;
+    }
+
+    public MutableLiveData<Boolean> getGrabAttachmentStatus() {
+        return grabAttachmentStatus;
     }
 
     public LiveData<MessagesResult> getMessageEncryptionResult() {
@@ -283,156 +265,28 @@ public class SendMessageActivityViewModel extends ViewModel {
     }
 
     public void deleteMessage(long messageId) {
-        userRepository.deleteMessages(new Long[]{messageId})
-                .subscribe(new Observer<Response<Void>>() {
-                    @Override
-                    public void onSubscribe(@NotNull Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(@NotNull Response<Void> voidResponse) {
-                        Timber.i("deleteMessage");
-                    }
-
-                    @Override
-                    public void onError(@NotNull Throwable e) {
-                        Timber.e(e);
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
+        userRepository.deleteMessages(new Long[]{messageId});
     }
 
-    public void getEmailPublicKeys(PublicKeysRequest request) {
-        userRepository.getEmailPublicKeys(request)
-                .subscribe(new Observer<KeysResponse>() {
-                    @Override
-                    public void onSubscribe(@NotNull Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(@NotNull KeysResponse keysResponse) {
-                        SendMessageActivityViewModel.this.keyResponse.postValue(keysResponse);
-                    }
-
-                    @Override
-                    public void onError(@NotNull Throwable e) {
-                        responseStatus.postValue(ResponseStatus.RESPONSE_ERROR);
-                        Timber.e(e);
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
-    }
-
-    public void uploadAttachment(
+    public MutableLiveData<DTOResource<MessageAttachment>> uploadAttachment(
             MultipartBody.Part document,
             long messageId,
             boolean isInline,
             boolean isEncrypted,
             String fileType,
             String name,
-            long actualSize,
-            String filePath
-    ) {
-        userRepository.uploadAttachment(
-                document, messageId, isInline, isEncrypted, fileType, name, actualSize
-        )
-                .subscribe(new Observer<MessageAttachment>() {
-                    @Override
-                    public void onSubscribe(@NotNull Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(@NotNull MessageAttachment messageAttachment) {
-                        AttachmentProvider attachmentProvider = AttachmentProvider.fromResponse(messageAttachment);
-                        attachmentProvider.setFilePath(filePath);
-                        uploadAttachmentResponse.postValue(attachmentProvider);
-                        uploadAttachmentStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
-                    }
-
-                    @Override
-                    public void onError(@NotNull Throwable e) {
-                        if (e instanceof HttpException) {
-                            if (((HttpException) e).code() == 413) {
-                                uploadAttachmentStatus.postValue(ResponseStatus.RESPONSE_ERROR_TOO_LARGE);
-                            } else {
-                                uploadAttachmentStatus.postValue(ResponseStatus.RESPONSE_ERROR);
-                            }
-                        } else {
-                            uploadAttachmentStatus.postValue(ResponseStatus.RESPONSE_ERROR);
-                        }
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
-    }
-
-    @Nullable
-    MessageAttachment uploadAttachmentSync(
-            MultipartBody.Part document,
-            long message,
-            boolean isInline,
-            boolean isEncrypted,
-            String fileType,
-            String name,
             long actualSize
     ) {
-        try {
-            return userRepository
-                    .uploadAttachment(document, message, isInline, isEncrypted, fileType, name, actualSize)
-                    .blockingSingle();
-        } catch (Throwable e) {
-            if (e instanceof HttpException) {
-                if (((HttpException) e).code() == 413) {
-                    uploadAttachmentStatus.postValue(ResponseStatus.RESPONSE_ERROR_TOO_LARGE);
-                } else {
-                    uploadAttachmentStatus.postValue(ResponseStatus.RESPONSE_ERROR);
-                }
-            } else {
-                uploadAttachmentStatus.postValue(ResponseStatus.RESPONSE_ERROR);
-            }
-            Timber.e(e, "uploadAttachmentSync blocking error");
-            return null;
-        }
+        return userRepository.uploadAttachment(document, messageId, isInline, isEncrypted, fileType,
+                name, actualSize);
     }
 
     public void deleteAttachment(long id) {
-        userRepository.deleteAttachment(id)
-                .subscribe(new Observer<Response<Void>>() {
-                    @Override
-                    public void onSubscribe(@NotNull Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(@NotNull Response<Void> voidResponse) {
-                        deleteAttachmentStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
-                    }
-
-                    @Override
-                    public void onError(@NotNull Throwable e) {
-                        deleteAttachmentStatus.postValue(ResponseStatus.RESPONSE_ERROR);
-                        Timber.e(e);
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
+        userRepository.deleteAttachment(id).observeForever(resource -> {
+            if (resource.isSuccess()) {
+                deleteAttachmentStatus.postValue(ResponseStatus.RESPONSE_COMPLETE);
+            }
+        });
     }
 
     public void mySelfData() {
@@ -460,30 +314,31 @@ public class SendMessageActivityViewModel extends ViewModel {
                 });
     }
 
-
-    void grabForwardedAttachments(
+    public void grabForwardedAttachments(
             @NonNull final List<AttachmentProvider> forwardedAttachments,
             final long messageId
     ) {
         Single.create(emitter -> {
             for (AttachmentProvider forwardedAttachment : forwardedAttachments) {
-                MessageAttachment attachment = remakeAttachment(forwardedAttachment, messageId);
+                MessageAttachment attachment = remakeAttachmentSync(forwardedAttachment, messageId);
                 if (attachment != null) {
                     AttachmentProvider attachmentProvider = AttachmentProvider.fromResponse(attachment);
                     attachmentProvider.setForwarded(true);
-                    uploadAttachmentResponse.postValue(attachmentProvider);
+                    grabAttachmentResponse.postValue(attachmentProvider);
                 } else {
                     Timber.e("grabForwardedAttachments uploaded attachment is null");
                 }
             }
             grabAttachmentStatus.postValue(true);
-            Timber.i("Grabbed all forwarded attachments");
+            Timber.d("Grabbed all forwarded attachments");
         })
                 .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe();
     }
 
-    private MessageAttachment remakeAttachment(AttachmentProvider attachmentProvider, long messageId) {
+    private MessageAttachment remakeAttachmentSync(AttachmentProvider attachmentProvider,
+                                                   long messageId) {
         File cacheDir = CTemplarApp.getInstance().getCacheDir();
         URL url;
         try {
@@ -553,13 +408,18 @@ public class SendMessageActivityViewModel extends ViewModel {
         final MultipartBody.Part document = MultipartBody.Part
                 .createFormData("document", fileName, attachmentPart);
 
-        MessageAttachment messageAttachment = uploadAttachmentSync(
-                document, messageId, false, attachmentProvider.isEncrypted(), type,
-                fileName, downloadedFile.length()
-        );
+        DTOResource<MessageAttachment> messageAttachment = userRepository.uploadAttachmentSync(
+                document, messageId, false, attachmentProvider.isEncrypted(), type, fileName,
+                downloadedFile.length());
+
         if (!downloadedFile.delete()) {
             Timber.e("Downloaded file is not deleted (2)");
         }
-        return messageAttachment;
+        if (!messageAttachment.isSuccess()) {
+            Timber.e("remakeAttachment uploadAttachmentSync error %s",
+                    messageAttachment.getError());
+            return null;
+        }
+        return messageAttachment.getDto();
     }
 }

@@ -198,9 +198,7 @@
 
     <!-- FOLDERS -->
     <string name="toast_folder_created">Папка создана</string>
-    <string name="toast_folder_not_created">Папка с таким именем уже существует.</string>
     <string name="txt_folder_deleted">Папка удалена</string>
-    <string name="txt_folder_not_deleted">Папка не удалена</string>
     <string name="txt_folder_edited">Папка отредактирована</string>
     <string name="txt_folder_not_edited">Папка не отредактирована</string>
     <string name="txt_folder_name_hint">Имя папки должно включать от 4 до 30 букв и цифр</string>
@@ -210,7 +208,6 @@
     <string name="txt_delete_folder">Удалить папку</string>
     <string name="txt_manage_folders">Управление папками</string>
     <string name="txt_folders_empty">Папки пусты</string>
-    <string name="txt_create_folder_free_error">Пользователи с бесплатными учетными записями могут создавать максимум 5 папок.</string>
 
     <!-- SEND MESSAGE -->
     <string name="toast_message_sent">Письмо отправлено</string>

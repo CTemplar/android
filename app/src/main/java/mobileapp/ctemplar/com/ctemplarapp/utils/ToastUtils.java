@@ -14,8 +14,8 @@ public class ToastUtils {
     }
 
     public static void showToast(Context context, String message) {
-        if (context == null) {
-            Timber.e("Context is null. Message: %s", message);
+        if (context == null || message == null || message.length() == 0) {
+            Timber.e("Context or message is null. Message: %s", message);
             return;
         }
         getMainHandler().post(() -> Toast.makeText(context, message, Toast.LENGTH_SHORT).show());
@@ -30,8 +30,8 @@ public class ToastUtils {
     }
 
     public static void showLongToast(Context context, String message) {
-        if (context == null) {
-            Timber.e("Context is null. Message: %s", message);
+        if (context == null || message == null || message.length() == 0) {
+            Timber.e("Context or message is null. Message: %s", message);
             return;
         }
         getMainHandler().post(() -> Toast.makeText(context, message, Toast.LENGTH_LONG).show());

@@ -1,5 +1,7 @@
 package mobileapp.ctemplar.com.ctemplarapp.net;
 
+import java.util.Map;
+
 import javax.inject.Singleton;
 
 import io.reactivex.Observable;
@@ -33,8 +35,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.request.domains.UpdateDomainReques
 import mobileapp.ctemplar.com.ctemplarapp.net.request.emails.UnsubscribeMailingRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.filters.EmailFilterOrderListRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.filters.EmailFilterRequest;
-import mobileapp.ctemplar.com.ctemplarapp.net.request.folders.AddFolderRequest;
-import mobileapp.ctemplar.com.ctemplarapp.net.request.folders.EditFolderRequest;
+import mobileapp.ctemplar.com.ctemplarapp.net.request.folders.FolderRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.folders.EmptyFolderRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.folders.MoveToFolderRequest;
 import mobileapp.ctemplar.com.ctemplarapp.net.request.mailboxes.CreateMailboxKeyRequest;
@@ -63,8 +64,7 @@ import mobileapp.ctemplar.com.ctemplarapp.net.response.domains.DomainsResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.filters.EmailFilterOrderListResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.filters.EmailFilterResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.filters.EmailFilterResult;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.folders.FoldersResponse;
-import mobileapp.ctemplar.com.ctemplarapp.net.response.folders.FoldersResult;
+import mobileapp.ctemplar.com.ctemplarapp.net.response.folders.CustomFolderResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.invites.InviteCodeResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.keys.KeysResponse;
 import mobileapp.ctemplar.com.ctemplarapp.net.response.mailboxes.MailboxKeyResponse;
@@ -140,7 +140,7 @@ public interface RestService {
 
     @Multipart
     @POST("emails/attachments/create/")
-    Observable<MessageAttachment> uploadAttachment(
+    Single<MessageAttachment> uploadAttachment(
             @Part MultipartBody.Part document,
             @Part("message") long message,
             @Part("is_inline") boolean isInline,
@@ -164,7 +164,7 @@ public interface RestService {
     );
 
     @DELETE("emails/attachments/{id}/")
-    Observable<Response<Void>> deleteAttachment(@Path("id") long id);
+    Single<Response<Void>> deleteAttachment(@Path("id") long id);
 
     @GET("emails/messages/")
     Observable<MessagesResponse> getMessages(
@@ -184,7 +184,7 @@ public interface RestService {
     Observable<MessagesResponse> getMessage(@Query("id") long id);
 
     @DELETE("emails/messages/")
-    Observable<Response<Void>> deleteMessages(@Query("id__in") String messageIds);
+    Single<Response<Void>> deleteMessages(@Query("id__in") String messageIds);
 
     @POST("emails/empty-folder/")
     Observable<EmptyFolderResponse> emptyFolder(@Body EmptyFolderRequest request);
@@ -227,19 +227,22 @@ public interface RestService {
     );
 
     @GET("emails/custom-folder/")
-    Observable<FoldersResponse> getFolders(@Query("limit") int limit, @Query("offset") int offset);
+    Single<PagableResponse<CustomFolderResponse>> getCustomFolders(
+            @Query("limit") int limit,
+            @Query("offset") int offset
+    );
 
     @GET("emails/unread/")
-    Observable<ResponseBody> getUnreadFolders();
+    Single<Map<String, Integer>> getUnreadFolders();
 
     @POST("emails/custom-folder/")
-    Observable<ResponseBody> addFolder(@Body AddFolderRequest request);
+    Single<CustomFolderResponse> addFolder(@Body FolderRequest request);
 
     @DELETE("emails/custom-folder/{id}/")
-    Observable<Response<Void>> deleteFolder(@Path("id") long id);
+    Single<Response<Void>> deleteFolder(@Path("id") long id);
 
     @PATCH("emails/custom-folder/{id}/")
-    Observable<FoldersResult> editFolder(@Path("id") long id, @Body EditFolderRequest request);
+    Single<CustomFolderResponse> editFolder(@Path("id") long id, @Body FolderRequest request);
 
     @GET("emails/mailboxes/")
     Observable<MailboxesResponse> getMailboxes(
@@ -266,7 +269,7 @@ public interface RestService {
     Single<Response<Void>> deleteMailboxKey(@Path("id") long id, @Body DeleteMailboxKeyRequest request);
 
     @POST("emails/keys/")
-    Observable<KeysResponse> getKeys(@Body PublicKeysRequest request);
+    Single<KeysResponse> getKeys(@Body PublicKeysRequest request);
 
     @POST("emails/messages/")
     Observable<MessagesResult> sendMessage(@Body SendMessageRequest request);

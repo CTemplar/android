@@ -6,14 +6,12 @@
     android:clickable="true"
     android:focusable="true">
 
-    <Button android:id="@+id/manager_folders_footer_btn"
+    <Button android:id="@+id/footer_button"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center_vertical"
-        android:layout_marginLeft="3dp"
         android:layout_marginStart="3dp"
         android:text="@string/btn_add_folder"
-        android:drawableLeft="@drawable/add_outline"
         android:drawableStart="@drawable/add_outline"
         android:textSize="16sp"
         android:textColor="@color/colorOrangeLight"

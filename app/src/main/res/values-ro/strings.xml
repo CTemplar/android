@@ -198,9 +198,7 @@
 
     <!-- FOLDERS -->
     <string name="toast_folder_created">Dosar creat</string>
-    <string name="toast_folder_not_created">Un dosar cu numele acesta există deja.</string>
     <string name="txt_folder_deleted">Dosar șters</string>
-    <string name="txt_folder_not_deleted">Dosarul nu a fost șters</string>
     <string name="txt_folder_edited">Dosar editat</string>
     <string name="txt_folder_not_edited">Dosarul nu a fost editat</string>
     <string name="txt_folder_name_hint">Numele dosarului trebuie să aibă măcar 4 caractere și nu mai multe de 30</string>
@@ -210,7 +208,6 @@
     <string name="txt_delete_folder">Șterge dosarul</string>
     <string name="txt_manage_folders">Gestionează dosarele</string>
     <string name="txt_folders_empty">Dosare goale</string>
-    <string name="txt_create_folder_free_error">Pentru a crea mai multe dosare, trebuie să îmbunătățiți planul.</string>
 
     <!-- SEND MESSAGE -->
     <string name="toast_message_sent">Mesaj trimis</string>
