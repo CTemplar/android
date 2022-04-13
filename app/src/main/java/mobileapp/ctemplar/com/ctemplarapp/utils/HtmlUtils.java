@@ -1,5 +1,7 @@
 package mobileapp.ctemplar.com.ctemplarapp.utils;
 
+import static org.jsoup.nodes.Document.OutputSettings.Syntax.html;
+
 import android.os.Build;
 import android.text.Html;
 import android.text.Spannable;
@@ -7,6 +9,10 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Evaluator;
 import org.owasp.html.HtmlPolicyBuilder;
 import org.owasp.html.PolicyFactory;
 
@@ -55,11 +61,19 @@ public class HtmlUtils {
         if (TextUtils.isEmpty(text)) {
             return new SpannableString("");
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            return Html.fromHtml(text, Html.FROM_HTML_MODE_LEGACY);//FROM_HTML_MODE_COMPACT
+        Document document = Jsoup.parse(text);
+        for (Element element : document.select("script,style,img"))
+            element.remove();
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+            return Html.fromHtml(document.html());
         } else {
-            return Html.fromHtml(text);
+            // FROM_HTML_MODE_COMPACT
+            return Html.fromHtml(document.html(), Html.FROM_HTML_MODE_LEGACY);
         }
+    }
+
+    public static boolean isContainImages(String text) {
+        return Jsoup.parse(text).select("img").size() > 0;
     }
 
     public static boolean isHtml(String text) {
