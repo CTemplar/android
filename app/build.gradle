@@ -99,6 +99,7 @@ dependencies {
     implementation 'com.google.dagger:dagger:2.40.5'
     implementation 'com.google.android.flexbox:flexbox:3.0.0'
     implementation 'com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer:20200713.1'
+    implementation 'org.jsoup:jsoup:1.14.3'
 
     implementation ('com.google.firebase:firebase-messaging:23.0.0') {
         exclude group: 'com.google.firebase', module: 'firebase-core'

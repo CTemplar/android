@@ -408,7 +408,7 @@ public class MessagesRecyclerViewAdapter extends RecyclerView.Adapter<MessagesRe
                 } else {
                     messageContent = encryptionMessage.getDecryptedMessage();
                 }
-                emailImagesLoadLayout.setVisibility(messageContent.contains("<img")
+                emailImagesLoadLayout.setVisibility(HtmlUtils.isContainImages(messageContent)
                         && blockExternalImages ? View.VISIBLE : View.GONE);
                 Spanned spannedMessageContent = HtmlUtils.fromHtml(messageContent);
                 collapsedContentTextView.setText(spannedMessageContent);
