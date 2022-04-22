@@ -2,6 +2,7 @@ package mobileapp.ctemplar.com.ctemplarapp.repository.entity;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 import java.util.Date;
@@ -65,6 +66,7 @@ public class MessageEntity {
     public MessageEntity() {
     }
 
+    @Ignore
     public MessageEntity(long id, EncryptionMessageEntity encryptionMessage, String sender,
                          boolean hasAttachments, List<AttachmentEntity> attachments, Date createdAt,
                          UserDisplayEntity senderDisplay,
