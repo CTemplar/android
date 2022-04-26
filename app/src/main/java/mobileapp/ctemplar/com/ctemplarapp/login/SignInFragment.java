@@ -1,5 +1,7 @@
 package mobileapp.ctemplar.com.ctemplarapp.login;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -10,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.LinearLayoutCompat;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -30,6 +33,9 @@ import mobileapp.ctemplar.com.ctemplarapp.utils.ToastUtils;
 import timber.log.Timber;
 
 public class SignInFragment extends BaseFragment {
+    @BindView(R.id.banner_layout)
+    LinearLayoutCompat bannerLayout;
+
     @BindView(R.id.fragment_sign_in_username_input)
     TextInputEditText editTextUsername;
 
@@ -143,6 +149,8 @@ public class SignInFragment extends BaseFragment {
 
             }
         });
+        bannerLayout.setOnClickListener(v -> startActivity(new Intent(Intent.ACTION_VIEW,
+                Uri.parse(getString(R.string.url_top_banner)))));
     }
 
     private void handleStatus(ResponseStatus status) {
