@@ -43,6 +43,47 @@
                 app:layout_constraintStart_toEndOf="@+id/fragment_sign_in_shield_logo"
                 app:layout_constraintTop_toTopOf="@+id/fragment_sign_in_shield_logo" />
 
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/banner_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorAccent"
+                android:padding="2dp"
+                android:orientation="vertical"
+                app:layout_constraintTop_toBottomOf="@id/fragment_sign_in_shield_logo"
+                app:layout_constraintBottom_toTopOf="@id/fragment_sign_in_username_input_layout">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:gravity="center"
+                    android:fontFamily="@font/lato_bold"
+                    android:text="@string/top_banner_title"
+                    android:textColor="@color/colorWhiteLight"
+                    android:textSize="18sp"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintHorizontal_chainStyle="spread" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:gravity="center"
+                    android:fontFamily="@font/lato_regular"
+                    android:text="@string/top_banner_description"
+                    android:textColor="@color/colorWhiteLight"
+                    android:textSize="16sp"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintHorizontal_chainStyle="spread" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1px"
+                    android:background="@color/disabledTextColor" />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/fragment_sign_in_username_input_layout"
                 android:layout_width="0dp"
