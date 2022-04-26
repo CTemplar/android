@@ -103,14 +103,14 @@ public class ViewPagerAdapter extends RecyclerView.Adapter<ViewPagerAdapter.View
             if (skuDetails == null) {
                 if (planInfo.getPlanType() == PlanType.FREE) {
                     binding.subscribeButton.setText(PlanType.FREE.name());
-                    binding.subscribeButton.setEnabled(true);
+                    binding.subscribeButton.setEnabled(false);
                 } else {
                     binding.subscribeButton.setText(R.string.not_available_on_android);
                     binding.subscribeButton.setEnabled(false);
                 }
             } else {
                 binding.subscribeButton.setText(context.getString(R.string.upgrade_button, skuDetails.getPrice()));
-                binding.subscribeButton.setEnabled(true);
+                binding.subscribeButton.setEnabled(false);
             }
             if (currentPlanData != null) {
                 if (currentPlanData.getPlanType() == planInfo.getPlanType()

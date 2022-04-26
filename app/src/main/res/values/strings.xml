@@ -594,10 +594,14 @@
     <string name="txt_and_more_features">and more features</string>
     <string name="txt_not_now">Not now</string>
 
+    <string name="top_banner_title">CTemplar is shutting down</string>
+    <string name="top_banner_description">Tap to read the full message</string>
+
     <!-- EXTERNAL URLS -->
     <string translatable="false" name="url_prime_upgrade">https://ctemplar.com/mail/settings/dashboard-and-plans</string>
     <string translatable="false" name="url_prime_more">https://ctemplar.com/pricing</string>
     <string translatable="false" name="url_helpdesk">https://ctemplar.com/help/</string>
+    <string translatable="false" name="url_top_banner">https://ctemplar.com/ctemplar-is-shutting-down</string>
 
     <!-- NOT TRANSLATABLE -->
     <string translatable="false" name="subscription_key">subscription_key</string>

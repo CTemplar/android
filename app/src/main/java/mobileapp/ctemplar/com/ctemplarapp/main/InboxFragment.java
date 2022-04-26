@@ -13,6 +13,7 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Looper;
 import android.text.TextUtils;
@@ -210,6 +211,8 @@ public class InboxFragment extends BaseFragment implements InboxMessagesAdapter.
         binding.fabCompose.setOnClickListener(v -> startSendMessageActivity());
         binding.sendButton.setOnClickListener(v -> startSendMessageActivity());
         binding.sendButtonLayout.setOnClickListener(v -> startSendMessageActivity());
+        binding.bannerLayout.setOnClickListener(v -> startActivity(new Intent(Intent.ACTION_VIEW,
+                Uri.parse(getString(R.string.url_top_banner)))));
 
         bindTouchListener();
         adapter.getSelectionState().observe(getViewLifecycleOwner(), this::handleSelectableStateChange);
